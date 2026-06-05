@@ -1,0 +1,120 @@
+/* Guardian Sprite & Widget 动画（纯 CSS，无 framer-motion 依赖） */
+
+@keyframes guardian-breathe {
+  0%, 100% { transform: scale(1) translateY(0); }
+  50% { transform: scale(1.05) translateY(-2px); }
+}
+@keyframes guardian-glow-pulse {
+  0%, 100% { opacity: 0.35; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.12); }
+}
+@keyframes guardian-nod {
+  0%, 100% { transform: scale(1.04) translateY(-3px) rotate(0deg); }
+  30% { transform: scale(1.04) translateY(-3px) rotate(3deg); }
+  60% { transform: scale(1.04) translateY(-3px) rotate(-1deg); }
+}
+@keyframes guardian-comfort-glow {
+  0%, 100% { opacity: 0.5; transform: scale(1.1); }
+  50% { opacity: 0.85; transform: scale(1.35); }
+}
+@keyframes guardian-celebrate {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  25% { transform: scale(1.15) rotate(-6deg); }
+  60% { transform: scale(1.1) rotate(6deg); }
+}
+@keyframes guardian-rest {
+  0%, 100% { transform: scale(0.95); opacity: 0.7; }
+  50% { transform: scale(0.98); opacity: 0.78; }
+}
+@keyframes guardian-sparkle {
+  0% { transform: translate(0, 0) scale(1); opacity: 1; }
+  100% { transform: translate(var(--gx), var(--gy)) scale(0.4); opacity: 0; }
+}
+@keyframes guardian-panel-in {
+  from { opacity: 0; transform: translateY(24px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.guardian-body { transform-origin: 50% 100%; }
+.guardian-body--idle { animation: guardian-breathe 3s ease-in-out infinite; }
+.guardian-body--listening { animation: guardian-nod 1.6s ease-in-out infinite; }
+.guardian-body--comforting { animation: guardian-breathe 2.2s ease-in-out infinite; }
+.guardian-body--praying { transform: scale(0.96) translateY(3px); transition: transform 1s; }
+.guardian-body--celebrating { animation: guardian-celebrate 0.9s ease-in-out infinite; }
+.guardian-body--resting { animation: guardian-rest 5s ease-in-out infinite; }
+
+.guardian-glow {
+  position: absolute; inset: 0; border-radius: 50%;
+  background: #ffd9a0; filter: blur(14px);
+}
+.guardian-glow--idle { animation: guardian-glow-pulse 3s ease-in-out infinite; }
+.guardian-glow--listening { opacity: 0.5; transform: scale(1.05); }
+.guardian-glow--comforting { animation: guardian-comfort-glow 2.2s ease-in-out infinite; }
+.guardian-glow--praying { opacity: 0.3; transform: scale(0.95); }
+.guardian-glow--celebrating { animation: guardian-comfort-glow 0.9s ease-in-out infinite; }
+.guardian-glow--resting { opacity: 0.15; animation: guardian-glow-pulse 5s ease-in-out infinite; }
+
+.guardian-sparkle {
+  position: absolute; left: 50%; top: 50%;
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #ffd9a0;
+  animation: guardian-sparkle 1.1s ease-out infinite;
+}
+
+.guardian-panel { animation: guardian-panel-in 0.28s cubic-bezier(0.2, 0.9, 0.3, 1.05); }
+
+/* ── 光灵立体细节：光环 / 星尘环 / 内核 / 嫩芽 / 星光 ── */
+@keyframes guardian-halo-breathe {
+  0%, 100% { opacity: 0.55; transform: scale(0.96); }
+  50% { opacity: 1; transform: scale(1.04); }
+}
+@keyframes guardian-ring-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes guardian-core-pulse {
+  0%, 100% { opacity: 0.85; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.08); }
+}
+@keyframes guardian-sprout-sway {
+  0%, 100% { transform: rotate(-4deg); }
+  50% { transform: rotate(5deg); }
+}
+@keyframes guardian-star-twinkle {
+  0%, 100% { opacity: 0.15; transform: scale(0.7); }
+  50% { opacity: 0.95; transform: scale(1.15); }
+}
+
+.guardian-halo {
+  transform-box: fill-box; transform-origin: center;
+  animation: guardian-halo-breathe 3.6s ease-in-out infinite;
+}
+.guardian-ring {
+  transform-box: view-box; transform-origin: 36px 38px;
+  animation: guardian-ring-spin 16s linear infinite;
+}
+.guardian-core {
+  transform-box: fill-box; transform-origin: center;
+  animation: guardian-core-pulse 2.8s ease-in-out infinite;
+}
+.guardian-sprout {
+  transform-box: fill-box; transform-origin: 50% 100%;
+  animation: guardian-sprout-sway 3.2s ease-in-out infinite;
+}
+.guardian-star {
+  transform-box: fill-box; transform-origin: center;
+  animation: guardian-star-twinkle 2.4s ease-in-out infinite;
+}
+.guardian-star--2 { animation-delay: 0.8s; animation-duration: 3s; }
+.guardian-star--3 { animation-delay: 1.5s; animation-duration: 2s; }
+
+/* 各状态对细节层的微调 */
+.guardian-body--resting .guardian-star,
+.guardian-body--resting .guardian-ring { animation-play-state: paused; opacity: 0.15; }
+.guardian-body--resting .guardian-core { animation-duration: 5s; }
+.guardian-body--praying .guardian-ring { animation-duration: 30s; }
+.guardian-body--celebrating .guardian-star { animation-duration: 0.9s; }
+.guardian-body--celebrating .guardian-ring { animation-duration: 5s; }
+.guardian-body--comforting .guardian-halo { animation-duration: 2.2s; }
+
+.guardian-grow-bar { transition: width 0.8s ease-out; }
