@@ -1,11 +1,11 @@
-# 情感星球前端（bible3dsphere-frontend）
+# 属灵星球前端（bible3dsphere-frontend）
 
 本仓库是 [bible3dsphere](https://github.com/stephenzhao/bible3dsphere) monorepo 的前端独立仓，
 从 `a4f0d6a` 提取 `emotion-sphere-ui/` 目录内容提升为仓库根。
 
 ## 项目简介
 
-情感星球（holiness.uk）是一款面向华人基督徒的属灵陪伴 PWA，
+属灵星球（holiness.uk）是一款面向华人基督徒的属灵陪伴 PWA，
 涵盖灵修、代祷、社区、圣经阅读、宣教地图等模块，
 后端部署于 Hugging Face Space（stephenzao-biblesphere）：
 `https://stephenzao-biblesphere.hf.space`
