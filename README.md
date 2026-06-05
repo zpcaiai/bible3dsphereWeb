@@ -54,3 +54,4 @@ VITE_API_BASE=https://stephenzao-biblesphere.hf.space/api npm run dev
 修改 `public/sw.js` 顶部的 `CACHE_VERSION` 常量（如 `v4` → `v5`）
 可强制所有用户在下次访问时清除旧缓存并加载新版本。
 每次有**破坏性前端变更**时应同步升级此版本号。
+# bible3dsphere-frontend
