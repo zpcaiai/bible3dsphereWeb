@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import { getMapboxToken, territoriesToFeatureCollection, SOURCE_IDS, LAYER_IDS } from '../lib/mapbox'
@@ -37,6 +37,8 @@ export function MapCanvas({
   onClickRef.current = onTerritoryClick
 
   const token = getMapboxToken()
+  const [phase, setPhase] = useState<'loading' | 'ready' | 'error'>('loading')
+  const [errMsg, setErrMsg] = useState('')
 
   // 初始化（一次）
   useEffect(() => {
@@ -47,8 +49,24 @@ export function MapCanvas({
       style: 'mapbox://styles/mapbox/dark-v11',
       center: DEFAULT_CENTER,
       zoom: DEFAULT_ZOOM,
+      cooperativeGestures: true, // 移动端需双指/桌面需 Ctrl 才缩放，避免地图抢占页面滚动
+      locale: {
+        'CooperativeGesturesHandler.WindowsHelpText': '按住 Ctrl 滚动以缩放地图',
+        'CooperativeGesturesHandler.MacHelpText': '按住 ⌘ 滚动以缩放地图',
+        'CooperativeGesturesHandler.MobileHelpText': '用双指移动地图',
+      },
     })
     mapRef.current = map
+
+    // 运行时错误（token 失效 / 配额 / style 失败）→ 友好提示，而非默默黑屏
+    map.on('error', (e) => {
+      const st = (e && e.error && (e.error as { status?: number }).status) || 0
+      const msg = (e && e.error && e.error.message) || ''
+      if (st === 401 || st === 403 || st === 429 || /access token|unauthorized|quota|rate limit/i.test(msg)) {
+        setPhase('error')
+        setErrMsg(st === 429 ? '地图配额已用尽，请稍后再试' : '地图凭证无效或受限')
+      }
+    })
 
     map.on('load', () => {
       map.addSource(SOURCE_IDS.territories, { type: 'geojson', data: EMPTY_FC })
@@ -99,6 +117,7 @@ export function MapCanvas({
       map.on('mouseleave', LAYER_IDS.territoryFill, () => { map.getCanvas().style.cursor = '' })
 
       loadedRef.current = true
+      setPhase('ready')
       // 容器在子页签切换时可能初始为 0 尺寸 → Mapbox 算出空视口、不加载瓦片而呈黑屏；
       // load 后强制 resize 一次，纠正视口并触发底图瓦片加载。
       map.resize()
@@ -280,5 +299,27 @@ export function MapCanvas({
     )
   }
 
-  return <div ref={containerRef} className="h-full min-h-[320px] w-full rounded-xl" />
+  return (
+    <div className="relative h-full min-h-[320px] w-full">
+      <div ref={containerRef} className="h-full min-h-[320px] w-full rounded-xl" />
+      {phase !== 'ready' && (
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center rounded-xl bg-[#0b1220]/80 text-center">
+          <div className="pointer-events-auto">
+            {phase === 'error' ? (
+              <>
+                <div className="mb-2 text-3xl">🗺️</div>
+                <p className="text-sm text-gray-300">{errMsg || '地图加载失败'}</p>
+                <p className="mt-1 text-xs text-gray-500">左侧时间轴、图层、事件与右侧详情仍可正常使用。</p>
+              </>
+            ) : (
+              <>
+                <div className="mb-2 animate-pulse text-2xl">🗺️</div>
+                <p className="text-sm text-gray-400">地图加载中…</p>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  )
 }

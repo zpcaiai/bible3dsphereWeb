@@ -1,4 +1,5 @@
 'use client'
+import { useEffect, useRef, useState } from 'react'
 import { YEAR_MIN, YEAR_MAX, YEAR_STEP } from '../domain/constants'
 import { formatYear } from '../lib/format'
 
@@ -8,21 +9,36 @@ interface Props {
 }
 
 export function TimelineSlider({ year, onYearChange }: Props) {
+  // 本地值保证拖动流畅；防抖向上传播，避免每帧都触发数据请求
+  const [local, setLocal] = useState(year)
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // 外部 year 变化（如点击时代按钮）时同步本地值
+  useEffect(() => { setLocal(year) }, [year])
+  useEffect(() => () => { if (timer.current) clearTimeout(timer.current) }, [])
+
+  const handle = (v: number) => {
+    setLocal(v)
+    if (timer.current) clearTimeout(timer.current)
+    timer.current = setTimeout(() => onYearChange(v), 180)
+  }
+
   return (
     <div className="rounded-xl border border-white/10 bg-white/5 p-3">
       <div className="mb-1 flex items-center justify-between">
         <span className="text-xs text-gray-400">时间轴</span>
-        <span className="text-lg font-bold text-amber-400">{formatYear(year)}</span>
+        <span className="text-lg font-bold text-amber-400">{formatYear(local)}</span>
       </div>
       <input
         type="range"
         min={YEAR_MIN}
         max={YEAR_MAX}
         step={YEAR_STEP}
-        value={year}
-        onChange={(e) => onYearChange(Number.parseInt(e.target.value, 10))}
+        value={local}
+        onChange={(e) => handle(Number.parseInt(e.target.value, 10))}
         className="w-full accent-amber-400"
         aria-label="年份时间轴"
+        aria-valuetext={formatYear(local)}
       />
       <div className="mt-1 flex justify-between text-[10px] text-gray-500">
         <span>{formatYear(YEAR_MIN)}</span>
