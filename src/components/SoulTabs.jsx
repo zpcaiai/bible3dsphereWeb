@@ -9,7 +9,7 @@
 export default function SoulTabs({ activeTab, onTabChange }) {
   const tabs = [
     { key: 'dashboard',   label: '今日心镜', emoji: '🪞' },
-    { key: 'personality', label: '人格塑造', emoji: '🔮' },
+    { key: 'personality', label: '属灵品格', emoji: '🔮' },
     { key: 'habits',      label: '灵修操练', emoji: '🌱' },
     { key: 'new',         label: '决策支持', emoji: '⚖️' },
   ]

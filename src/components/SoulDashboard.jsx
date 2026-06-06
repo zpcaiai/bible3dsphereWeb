@@ -236,7 +236,7 @@ export default function SoulDashboard({ user }) {
         <span style={{ fontSize: 26 }}>🪐</span>
         <div style={{ flex: 1 }}>
           <div style={{ fontSize: 14.5, fontWeight: 700 }}>属灵星球 · 成长地图</div>
-          <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.6)', marginTop: 2 }}>认识自己 · 回到福音 · 与神同行 · 等候上帝 · 人格塑造</div>
+          <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.6)', marginTop: 2 }}>认识自己 · 回到福音 · 与神同行 · 等候上帝 · 属灵品格</div>
         </div>
         <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.45)' }}>›</span>
       </button>

@@ -137,7 +137,7 @@ export default function PersonalityPage({ user, embedded = false, onSyncToHabits
         color: 'rgba(255,255,255,0.6)'
       }}>
         <div style={{ fontSize: '32px', marginBottom: '16px' }}>🔮</div>
-        <div>加载人格塑造档案...</div>
+        <div>加载属灵品格档案...</div>
       </div>
     )
   }
@@ -529,7 +529,7 @@ export default function PersonalityPage({ user, embedded = false, onSyncToHabits
           <div style={{ fontSize: '48px' }}>🔮</div>
           <div>
             <h2 style={{ margin: 0, fontSize: '24px', fontWeight: 600, color: '#fff' }}>
-              人格塑造
+              属灵品格
             </h2>
             <p style={{ margin: '4px 0 0 0', color: 'rgba(255,255,255,0.6)', fontSize: '14px' }}>
               性格轨迹分析 · 不是静态分数，而是动态信号
@@ -553,7 +553,7 @@ export default function PersonalityPage({ user, embedded = false, onSyncToHabits
               }}>
                 <div style={{ fontSize: '32px', marginBottom: '10px' }}>🌱</div>
                 <div style={{ color: '#c4b5fd', fontWeight: 600, fontSize: '15px', marginBottom: '8px' }}>
-                  尚无人格塑造数据
+                  尚无属灵品格数据
                 </div>
                 <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '13px', lineHeight: 1.7 }}>
                   形成弧线、轨迹方向、主导循环等指标需要通过<strong style={{ color: 'rgba(255,255,255,0.75)' }}>情感打卡</strong>或<strong style={{ color: 'rgba(255,255,255,0.75)' }}>决策分析</strong>积累数据后自动生成。<br/>
@@ -772,7 +772,7 @@ export default function PersonalityPage({ user, embedded = false, onSyncToHabits
               <div>
                 <div style={{ fontWeight: 600, color: '#fbbf24', marginBottom: '4px' }}>重要声明</div>
                 <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.7)', lineHeight: 1.5 }}>
-                  人格塑造系统提供的是结构化的反思镜像，而非精神权威。所有洞察都是概率性的。
+                  属灵品格系统提供的是结构化的反思镜像，而非精神权威。所有洞察都是概率性的。
                   人类的自由、恩典和奥秘总是超越任何模型所能捕捉的。这不是道德评判，而是轨迹信号。
                 </div>
               </div>
