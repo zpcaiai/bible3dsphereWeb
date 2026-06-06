@@ -1516,6 +1516,18 @@ function AppContent() {
                   )}
                 </div>
                 <button
+                  onClick={() => handlePanelSwitch('community')}
+                  title="社区"
+                  style={{
+                    background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)',
+                    borderRadius: '7px', color: 'rgba(255,255,255,0.45)',
+                    fontSize: '11px', padding: '3px 8px',
+                    cursor: 'pointer', fontFamily: 'inherit',
+                  }}
+                >
+                  🌐
+                </button>
+                <button
                   onClick={() => { setEditNickname(user?.nickname || ''); setEditAvatar(user?.avatar || ''); setShowEditProfile(true) }}
                   title="修改资料"
                   style={{
@@ -1641,8 +1653,7 @@ function AppContent() {
                       { icon: '🤝', label: '属灵伙伴', panel: 'partner' },
                       { icon: '📖', label: '通读', panel: 'bible-reading' },
                       { icon: '🗺', label: '圣经地图', panel: 'bible-maps' },
-                      { icon: '🌐', label: '社区', panel: 'community' },
-                      { icon: '🎙', label: '语音通话', panel: 'voice' },
+                                      { icon: '🎙', label: '语音通话', panel: 'voice' },
                     ].map((item, i) => (
                       <button key={i}
                         onClick={() => item.action ? item.action() : handlePanelSwitch(item.panel)}
