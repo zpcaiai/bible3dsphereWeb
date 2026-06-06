@@ -4085,6 +4085,43 @@ canvas {
 }
 .hymn-play-btn:hover { transform: scale(1.06); }
 .hymn-play-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.hymn-nav-btn {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+.hymn-nav-btn:hover { background: rgba(255, 255, 255, 0.12); transform: scale(1.06); }
+.hymn-share-btn {
+  margin-left: 10px;
+  font-size: 12px;
+  padding: 3px 10px;
+  border-radius: 14px;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: rgba(255, 255, 255, 0.65);
+  vertical-align: middle;
+  user-select: none;
+  transition: background 0.15s ease;
+}
+.hymn-share-btn:hover { background: rgba(255, 255, 255, 0.16); }
+.hymn-play-btn:focus-visible,
+.hymn-nav-btn:focus-visible,
+.hymn-share-btn:focus-visible,
+.hymn-chip:focus-visible,
+.hymn-seek:focus-visible {
+  outline: 2px solid rgba(255, 215, 0, 0.9);
+  outline-offset: 2px;
+}
 .hymn-time {
   font-size: 11px;
   color: rgba(255, 255, 255, 0.55);

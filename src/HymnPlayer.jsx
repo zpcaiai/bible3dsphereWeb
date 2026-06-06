@@ -190,16 +190,18 @@ const HYMNS = [
 
 function fmtTime(s) {
   if (!s || isNaN(s) || !isFinite(s)) return '0:00'
-  const m = Math.floor(s / 60)
+  const h = Math.floor(s / 3600)
+  const m = Math.floor((s % 3600) / 60)
   const sec = Math.floor(s % 60)
-  return `${m}:${String(sec).padStart(2, '0')}`
+  const mm = h > 0 ? String(m).padStart(2, '0') : String(m)
+  return h > 0 ? `${h}:${mm}:${String(sec).padStart(2, '0')}` : `${mm}:${String(sec).padStart(2, '0')}`
 }
 
 // 内置曲谱占位：一段简单的五线谱 SVG，资源缺失时显示
 function ScorePlaceholder({ title }) {
   const lineY = [22, 34, 46, 58, 70]
   return (
-    <svg className="hymn-score-svg" viewBox="0 0 320 110" preserveAspectRatio="xMidYMid meet">
+    <svg className="hymn-score-svg" viewBox="0 0 320 110" preserveAspectRatio="xMidYMid meet" role="img" aria-label={`${title} 曲谱占位`}>
       <text x="160" y="14" textAnchor="middle" className="hymn-score-svg-title">{title}</text>
       {lineY.map((y) => (
         <line key={y} x1="16" y1={y} x2="304" y2={y} stroke="rgba(255,255,255,0.28)" strokeWidth="1" />
@@ -250,6 +252,21 @@ export default function HymnPlayer() {
     if (playing) { a.pause() } else { a.play().catch(() => setAudioErr(true)) }
   }
 
+  const goPrev = () => setIdx((i) => (i - 1 + HYMNS.length) % HYMNS.length)
+  const goNext = () => setIdx((i) => (i + 1) % HYMNS.length)
+
+  // 离开页面时停止音频，避免在后台继续播放
+  useEffect(() => () => { const a = audioRef.current; if (a) { a.pause(); a.removeAttribute('src'); a.load() } }, [])
+
+  // 键盘快捷键：空格/Enter 播放暂停，左右箭头微调进度（输入框聚焦时不拦截）
+  const onPlayerKey = (e) => {
+    const a = audioRef.current
+    if (!a) return
+    if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); togglePlay() }
+    else if (e.key === 'ArrowRight' && dur) { e.preventDefault(); a.currentTime = Math.min(dur, a.currentTime + 5) }
+    else if (e.key === 'ArrowLeft' && dur) { e.preventDefault(); a.currentTime = Math.max(0, a.currentTime - 5) }
+  }
+
   const seek = (e) => {
     const a = audioRef.current
     if (!a || !dur) return
@@ -267,10 +284,12 @@ export default function HymnPlayer() {
   return (
     <div className="hymn-page">
       {/* 诗歌选择 */}
-      <div className="hymn-chips">
+      <div className="hymn-chips" role="tablist" aria-label="圣诗选择">
         {HYMNS.map((h, i) => (
           <button
             key={h.id}
+            role="tab"
+            aria-selected={i === idx}
             className={`hymn-chip ${i === idx ? 'active' : ''}`}
             onClick={() => setIdx(i)}
           >
@@ -283,7 +302,10 @@ export default function HymnPlayer() {
       <div className="hymn-meta">
         <div className="hymn-meta-title">
           {hymn.title}
-          <span
+          <button
+            type="button"
+            className="hymn-share-btn"
+            aria-label={`分享圣诗《${hymn.title}》`}
             onClick={() => {
               const url = `${window.location.origin}/?share=hymn:${hymn.id}`
               const data = { title: `圣诗《${hymn.title}》`, text: `圣诗《${hymn.title}》— 在属灵星球在线听唱（五线谱+逐句跟唱）`, url }
@@ -292,10 +314,7 @@ export default function HymnPlayer() {
                 navigator.clipboard.writeText(`${data.text} ${url}`)
                 if (window.showToast) window.showToast('分享链接已复制', 'success')
               }
-            }}
-            style={{ marginLeft: 10, fontSize: 12, padding: '3px 10px', borderRadius: 14, cursor: 'pointer',
-              background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.16)',
-              color: 'rgba(255,255,255,0.65)', verticalAlign: 'middle', userSelect: 'none' }}>↗ 分享</span>
+            }}>↗ 分享</button>
         </div>
         <div className="hymn-meta-en">{hymn.en}</div>
         <div className="hymn-meta-author">{hymn.author}</div>
@@ -307,8 +326,9 @@ export default function HymnPlayer() {
         {scoreExt ? (
           <img
             src={`/hymns/${hymn.id}.${scoreExt}`}
-            alt={`${hymn.title} 曲谱`}
+            alt={`圣诗《${hymn.title}》五线谱`}
             className="hymn-score-img"
+            loading="lazy"
             onError={() => setScoreExt(scoreExt === 'svg' ? 'png' : '')}
           />
         ) : (
@@ -317,7 +337,7 @@ export default function HymnPlayer() {
       </div>
 
       {/* 播放器 */}
-      <div className="hymn-player">
+      <div className="hymn-player" role="group" aria-label="播放控制" onKeyDown={onPlayerKey}>
         <audio
           ref={audioRef}
           src={hymnAudioUrl(hymn)}
@@ -329,12 +349,18 @@ export default function HymnPlayer() {
           onError={() => setAudioErr(true)}
           preload="metadata"
         />
+        <button className="hymn-nav-btn" onClick={goPrev} aria-label="上一首">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 6h2v12H7zm3.5 6l8.5 6V6z" /></svg>
+        </button>
         <button className="hymn-play-btn" onClick={togglePlay} disabled={audioErr} aria-label={playing ? '暂停' : '播放'}>
           {playing ? (
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1" /><rect x="14" y="5" width="4" height="14" rx="1" /></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1" /><rect x="14" y="5" width="4" height="14" rx="1" /></svg>
           ) : (
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
           )}
+        </button>
+        <button className="hymn-nav-btn" onClick={goNext} aria-label="下一首">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M15 6h2v12h-2zM5 6l8.5 6L5 18z" /></svg>
         </button>
         <span className="hymn-time">{fmtTime(cur)}</span>
         <input
@@ -343,6 +369,8 @@ export default function HymnPlayer() {
           value={pct}
           onChange={seek}
           disabled={audioErr}
+          aria-label="播放进度"
+          aria-valuetext={`${fmtTime(cur)} / ${fmtTime(dur)}`}
           style={{ '--pct': `${pct}%` }}
         />
         <span className="hymn-time">{fmtTime(dur)}</span>
