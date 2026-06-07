@@ -1,6 +1,6 @@
 // 属灵守护者 / AI Companion Sprite — 右下角常驻 Widget
 // 定位：属灵同行者，不是神/牧者/医生/心理咨询师的替代。
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useGuardianStore } from './guardianStore'
 import { fetchGuardianInsights } from './guardianApi'
 import GuardianSprite from './GuardianSprite'
@@ -55,10 +55,58 @@ function ReflectionPanel() {
   )
 }
 
+const POS_KEY = 'guardian-sprite-pos'
+const SPRITE_BOX = 70 // 小精灵按钮可视尺寸（58 + padding）
+
+function loadPos() {
+  try {
+    const raw = localStorage.getItem(POS_KEY)
+    if (!raw) return null
+    const { x, y } = JSON.parse(raw)
+    if (typeof x !== 'number' || typeof y !== 'number') return null
+    // 读取时夹紧到当前视口内（换设备/转屏后不丢）
+    return {
+      x: Math.min(Math.max(0, x), Math.max(0, window.innerWidth - SPRITE_BOX)),
+      y: Math.min(Math.max(0, y), Math.max(0, window.innerHeight - SPRITE_BOX)),
+    }
+  } catch { return null }
+}
+
 export default function GuardianWidget() {
   const { widgetMode, setWidgetMode, spriteState, profile, refresh } = useGuardianStore()
   const [tab, setTab] = useState('chat')
   const expanded = widgetMode !== 'collapsed'
+
+  // —— 拖拽：手指/鼠标皆可。null = 默认右下角；拖过后用 left/top 定位并持久化 ——
+  const [pos, setPos] = useState(loadPos)
+  const dragRef = useRef(null)      // { startX, startY, originX, originY }
+  const movedRef = useRef(false)    // 本次手势是否构成拖动（抑制 click）
+
+  const onSpritePointerDown = (e) => {
+    const el = e.currentTarget
+    // 以整个容器（面板+小人）为基准拖动，展开状态下也不会跳位
+    const box = el.parentElement?.getBoundingClientRect() || el.getBoundingClientRect()
+    dragRef.current = { startX: e.clientX, startY: e.clientY, originX: box.left, originY: box.top, w: box.width, h: box.height }
+    movedRef.current = false
+    el.setPointerCapture?.(e.pointerId)
+  }
+  const onSpritePointerMove = (e) => {
+    const d = dragRef.current
+    if (!d) return
+    const dx = e.clientX - d.startX
+    const dy = e.clientY - d.startY
+    if (!movedRef.current && Math.hypot(dx, dy) < 6) return // 阈值内视为点按
+    movedRef.current = true
+    const x = Math.min(Math.max(0, d.originX + dx), Math.max(0, window.innerWidth - (d.w || SPRITE_BOX)))
+    const y = Math.min(Math.max(0, d.originY + dy), Math.max(0, window.innerHeight - (d.h || SPRITE_BOX)))
+    setPos({ x, y })
+  }
+  const onSpritePointerUp = () => {
+    if (movedRef.current && dragRef.current) {
+      setPos((p) => { if (p) try { localStorage.setItem(POS_KEY, JSON.stringify(p)) } catch {} return p })
+    }
+    dragRef.current = null
+  }
 
   useEffect(() => { refresh() }, [])  // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -68,7 +116,8 @@ export default function GuardianWidget() {
   }
 
   return (
-    <div style={{ position: 'fixed', bottom: 20, right: 20, zIndex: 1200,
+    <div style={{ position: 'fixed', zIndex: 1200,
+      ...(pos ? { left: pos.x, top: pos.y } : { bottom: 20, right: 20 }),
       display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 12 }}>
       {expanded && (
         <div className="guardian-panel" style={{
@@ -130,10 +179,14 @@ export default function GuardianWidget() {
         </div>
       )}
 
-      {/* 收起状态的小精灵 */}
-      <button type="button" aria-label="打开属灵守护者"
-        onClick={() => setWidgetMode(expanded ? 'collapsed' : 'expanded')}
-        style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 6 }}>
+      {/* 收起状态的小精灵（可拖动，点按开合） */}
+      <button type="button" aria-label="打开属灵守护者（按住可拖动）"
+        onClick={() => { if (movedRef.current) { movedRef.current = false; return } setWidgetMode(expanded ? 'collapsed' : 'expanded') }}
+        onPointerDown={onSpritePointerDown}
+        onPointerMove={onSpritePointerMove}
+        onPointerUp={onSpritePointerUp}
+        onPointerCancel={onSpritePointerUp}
+        style={{ background: 'none', border: 'none', cursor: 'grab', padding: 6, touchAction: 'none' }}>
         <GuardianSprite state={spriteState} size={58} />
       </button>
     </div>
