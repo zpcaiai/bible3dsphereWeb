@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import {
   fetchFriends, requestFriend, acceptFriend, removeFriend,
   fetchChatHistory, markRead,
+  recallChat, fetchGroupList, fetchGroupChat, sendGroupChat, recallGroupChat,
 } from './realtime/realtimeApi'
 import realtimeStore from './realtime/realtimeStore'
 import { useRealtimeState, useRealtimeMessages } from './realtime/useRealtimeStore'
@@ -38,11 +39,18 @@ export default function CommunionPage({ user, onBack, onOpenVoice }) {
   const [draft, setDraft] = useState('')
   const [addEmail, setAddEmail] = useState('')
   const [typingFrom, setTypingFrom] = useState(null)
+  const [groups, setGroups] = useState([])
+  const [activeGroup, setActiveGroup] = useState(null)
+  const [gMessages, setGMessages] = useState([])
+  const [gDraft, setGDraft] = useState('')
+  const [, setRecallTick] = useState(0) // 周期刷新「撤回」按钮可见性
 
   const { connected, onlineFriends } = useRealtimeState()
 
   const activePeerRef = useRef(null)
   activePeerRef.current = activePeer
+  const activeGroupRef = useRef(null)
+  activeGroupRef.current = activeGroup
   const friendsRef = useRef([])
   friendsRef.current = friends
   const messagesEndRef = useRef(null)
@@ -56,8 +64,13 @@ export default function CommunionPage({ user, onBack, onOpenVoice }) {
       body: m.body,
       mine: (m.sender || m.from) === myEmail || m.self === true,
       created_at: m.created_at,
+      recalled: !!m.recalled,
     }
   }
+  // 撤回时限：2 分钟
+  const RECALL_MS = 2 * 60 * 1000
+  const canRecall = (m) => m.mine && m.id && !m.recalled &&
+    (Date.now() - (Date.parse(m.created_at) || 0) < RECALL_MS)
 
   // ---------------- Friends ----------------
   const loadFriends = useCallback(async () => {
@@ -95,6 +108,27 @@ export default function CommunionPage({ user, onBack, onOpenVoice }) {
         }
         break
       }
+      case 'chat_recall': {
+        const active = activePeerRef.current
+        if (active && active.email === msg.peer) {
+          setMessages((ms) => ms.map((x) => x.id === msg.id ? { ...x, recalled: true, body: '' } : x))
+        }
+        break
+      }
+      case 'group_chat': {
+        const g = activeGroupRef.current
+        if (g && g.id === msg.group && msg.message) {
+          setGMessages((ms) => ms.some((x) => x.id === msg.message.id) ? ms : [...ms, msg.message])
+        }
+        break
+      }
+      case 'group_chat_recall': {
+        const g = activeGroupRef.current
+        if (g && g.id === msg.group) {
+          setGMessages((ms) => ms.map((x) => x.id === msg.id ? { ...x, recalled: true, body: '' } : x))
+        }
+        break
+      }
       case 'error':
         if (msg.code === 'not_friends') showToast('仅好友之间可以聊天')
         break
@@ -105,6 +139,14 @@ export default function CommunionPage({ user, onBack, onOpenVoice }) {
 
   useEffect(() => { if (myEmail) loadFriends() }, [myEmail, loadFriends])
   useEffect(() => {
+    if (!myEmail) return
+    fetchGroupList().then((d) => setGroups(d.groups || [])).catch(() => {})
+  }, [myEmail])
+  useEffect(() => {
+    const t = setInterval(() => setRecallTick((x) => x + 1), 15000)
+    return () => clearInterval(t)
+  }, [])
+  useEffect(() => {
     // let the global incoming-call modal label the caller with a nickname
     realtimeStore.setFriendNicknameResolver((email) => {
       const f = friendsRef.current.find((x) => x.email === email)
@@ -113,7 +155,7 @@ export default function CommunionPage({ user, onBack, onOpenVoice }) {
   }, [])
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages, typingFrom])
+  }, [messages, gMessages, typingFrom])
 
   async function onAddFriend() {
     const email = addEmail.trim().toLowerCase()
@@ -136,6 +178,7 @@ export default function CommunionPage({ user, onBack, onOpenVoice }) {
 
   // ---------------- Chat ----------------
   async function openChat(friend) {
+    setActiveGroup(null)
     setActivePeer(friend); setMessages([]); setTypingFrom(null)
     try {
       const data = await fetchChatHistory(friend.email, { limit: 50 })
@@ -158,6 +201,40 @@ export default function CommunionPage({ user, onBack, onOpenVoice }) {
   function dial(friend) {
     realtimeStore.startDirectCall({ ...friend, online: isOnline(friend.email) })
   }
+
+  async function recallMsg(m) {
+    try {
+      await recallChat(m.id)
+      setMessages((ms) => ms.map((x) => x.id === m.id ? { ...x, recalled: true, body: '' } : x))
+    } catch (e) { showToast(e.message || '撤回失败') }
+  }
+
+  // ---------------- 群聊 ----------------
+  async function openGroup(g) {
+    setActivePeer(null); setTypingFrom(null)
+    setActiveGroup(g); setGMessages([])
+    try {
+      const data = await fetchGroupChat(g.id, { limit: 50 })
+      setGMessages(data.messages || [])
+    } catch (e) { showToast(e.message || '加载群消息失败') }
+  }
+  async function sendGroupMsg() {
+    const body = gDraft.trim()
+    if (!body || !activeGroup) return
+    setGDraft('')
+    try {
+      const r = await sendGroupChat(activeGroup.id, body)
+      if (r.message) setGMessages((ms) => ms.some((x) => x.id === r.message.id) ? ms : [...ms, r.message])
+    } catch (e) { showToast(e.message || '发送失败'); setGDraft(body) }
+  }
+  async function recallGroupMsg(m) {
+    try {
+      await recallGroupChat(activeGroup.id, m.id)
+      setGMessages((ms) => ms.map((x) => x.id === m.id ? { ...x, recalled: true, body: '' } : x))
+    } catch (e) { showToast(e.message || '撤回失败') }
+  }
+  const canRecallGroup = (m) => m.sender === myEmail && !m.recalled &&
+    (Date.now() - (Date.parse(m.created_at) || 0) < RECALL_MS)
   function openGroupVoice() {
     if (typeof onOpenVoice === 'function') onOpenVoice()
     else showToast('语音通话请前往「语音通话」页')
@@ -228,10 +305,80 @@ export default function CommunionPage({ user, onBack, onOpenVoice }) {
               )
             })}
           </div>
+
+          <div className="communion-section-title" style={{ marginTop: 10 }}>
+            群聊 ({groups.length})
+            <button title="创建/加入群组请到语音通话页"
+              onClick={openGroupVoice}
+              style={{ float: 'right', background: 'none', border: 'none', color: 'rgba(255,255,255,0.5)', cursor: 'pointer', fontSize: 12 }}>＋</button>
+          </div>
+          <div className="communion-friends">
+            {groups.length === 0 && <div className="communion-empty">还没有群组，去「语音通话」页创建或加入</div>}
+            {groups.map((g) => (
+              <div key={g.id}
+                className={`communion-friend ${activeGroup?.id === g.id ? 'active' : ''}`}
+                onClick={() => openGroup(g)}>
+                <div className="communion-avatar">👥</div>
+                <div className="communion-finfo">
+                  <div className="communion-fname">{g.name}</div>
+                  <div className="communion-flast">{g.member_count} 位成员</div>
+                </div>
+                <button className="communion-call-btn" title="进入群语音"
+                  onClick={(e) => { e.stopPropagation(); openGroupVoice() }}>🎙</button>
+              </div>
+            ))}
+          </div>
         </aside>
 
-        <main className={`communion-chat ${activePeer ? 'open' : ''}`}>
-          {!activePeer ? (
+        <main className={`communion-chat ${(activePeer || activeGroup) ? 'open' : ''}`}>
+          {activeGroup ? (
+            <>
+              <div className="communion-chat-head glass">
+                <button className="communion-back-mobile" onClick={() => setActiveGroup(null)}>←</button>
+                <div className="communion-chat-name">👥 {activeGroup.name}
+                  <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', marginLeft: 6 }}>{activeGroup.member_count} 人</span>
+                </div>
+                <button className="communion-head-call" onClick={openGroupVoice}>🎙 群语音</button>
+              </div>
+
+              <div className="communion-messages">
+                {gMessages.map((m) => {
+                  const mine = m.sender === myEmail
+                  return (
+                    <div key={`g${m.id}`} className={`communion-msg ${mine ? 'mine' : ''}`}>
+                      {!mine && <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', marginBottom: 2 }}>{m.sender_name}</div>}
+                      {m.recalled ? (
+                        <div className="communion-bubble" style={{ opacity: 0.55, fontStyle: 'italic', fontSize: 12 }}>
+                          {mine ? '你撤回了一条消息' : `${m.sender_name} 撤回了一条消息`}
+                        </div>
+                      ) : (
+                        <div className="communion-bubble">{m.body}</div>
+                      )}
+                      <div className="communion-msg-time">
+                        {timeLabel(m.created_at)}
+                        {canRecallGroup(m) && (
+                          <button onClick={() => recallGroupMsg(m)} title="撤回（2分钟内）"
+                            style={{ marginLeft: 6, background: 'none', border: 'none', color: 'rgba(255,255,255,0.45)', cursor: 'pointer', fontSize: 11, padding: 0 }}>撤回</button>
+                        )}
+                      </div>
+                    </div>
+                  )
+                })}
+                <div ref={messagesEndRef} />
+              </div>
+
+              <div className="communion-compose glass">
+                <textarea
+                  value={gDraft}
+                  onChange={(e) => setGDraft(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendGroupMsg() } }}
+                  placeholder="发到群里，Enter 发送"
+                  rows={1}
+                />
+                <button onClick={sendGroupMsg} disabled={!gDraft.trim()}>发送</button>
+              </div>
+            </>
+          ) : !activePeer ? (
             <div className="communion-placeholder">
               <div style={{ fontSize: 40 }}>🕊️</div>
               <p>选择一位弟兄姊妹开始聊天</p>
@@ -251,8 +398,20 @@ export default function CommunionPage({ user, onBack, onOpenVoice }) {
               <div className="communion-messages">
                 {messages.map((m) => (
                   <div key={m.key} className={`communion-msg ${m.mine ? 'mine' : ''}`}>
-                    <div className="communion-bubble">{m.body}</div>
-                    <div className="communion-msg-time">{timeLabel(m.created_at)}</div>
+                    {m.recalled ? (
+                      <div className="communion-bubble" style={{ opacity: 0.55, fontStyle: 'italic', fontSize: 12 }}>
+                        {m.mine ? '你撤回了一条消息' : '对方撤回了一条消息'}
+                      </div>
+                    ) : (
+                      <div className="communion-bubble">{m.body}</div>
+                    )}
+                    <div className="communion-msg-time">
+                      {timeLabel(m.created_at)}
+                      {canRecall(m) && (
+                        <button onClick={() => recallMsg(m)} title="撤回（2分钟内）"
+                          style={{ marginLeft: 6, background: 'none', border: 'none', color: 'rgba(255,255,255,0.45)', cursor: 'pointer', fontSize: 11, padding: 0 }}>撤回</button>
+                      )}
+                    </div>
                   </div>
                 ))}
                 {typingFrom && <div className="communion-typing">对方正在输入…</div>}

@@ -1607,6 +1607,7 @@ function AppContent() {
               <div style={{ display: 'flex', gap: '8px', margin: '0 0 4px' }}>
                 {[
                   { icon: '🎙', label: '语音通话', panel: 'voice' },
+                  { icon: '💬', label: '群聊', panel: 'communion' },
                   { icon: '🗺', label: '圣经地图', panel: 'bible-maps' },
                 ].map((item) => (
                   <button key={item.panel}
@@ -2886,7 +2887,7 @@ function AppContent() {
         {activePanel === 'communion' && (
           <div className="page-overlay">
             <Suspense fallback={null}>
-              <CommunionPage user={user} onBack={() => setActivePanel('sphere')} />
+              <CommunionPage user={user} onBack={() => setActivePanel('sphere')} onOpenVoice={() => handlePanelSwitch('voice')} />
             </Suspense>
           </div>
         )}

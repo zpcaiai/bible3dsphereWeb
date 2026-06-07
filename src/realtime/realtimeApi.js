@@ -94,3 +94,38 @@ export async function fetchDirectVoiceToken(peer, room = '') {
   })
   return jsonOrThrow(res)
 }
+
+// ===== 消息撤回（2分钟内） & 群文字聊天 =====
+
+export async function recallChat(id) {
+  const res = await fetch(`${API_BASE}/chat/recall`, {
+    method: 'POST', headers: authHeaders(), body: JSON.stringify({ id }),
+  })
+  return jsonOrThrow(res)
+}
+
+export async function fetchGroupList() {
+  const res = await fetch(`${API_BASE}/voice/groups`, { headers: authHeaders() })
+  return jsonOrThrow(res)
+}
+
+export async function fetchGroupChat(gid, { limit = 50, beforeId = 0 } = {}) {
+  const params = new URLSearchParams({ limit: String(limit) })
+  if (beforeId) params.set('before_id', String(beforeId))
+  const res = await fetch(`${API_BASE}/groups/${encodeURIComponent(gid)}/chat?${params}`, { headers: authHeaders() })
+  return jsonOrThrow(res)
+}
+
+export async function sendGroupChat(gid, body) {
+  const res = await fetch(`${API_BASE}/groups/${encodeURIComponent(gid)}/chat`, {
+    method: 'POST', headers: authHeaders(), body: JSON.stringify({ body }),
+  })
+  return jsonOrThrow(res)
+}
+
+export async function recallGroupChat(gid, id) {
+  const res = await fetch(`${API_BASE}/groups/${encodeURIComponent(gid)}/chat/recall`, {
+    method: 'POST', headers: authHeaders(), body: JSON.stringify({ id }),
+  })
+  return jsonOrThrow(res)
+}
