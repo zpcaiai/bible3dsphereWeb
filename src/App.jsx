@@ -1606,8 +1606,8 @@ function AppContent() {
               {/* 圣经地图 / 语音通话 快捷入口（置于今日灵命快照上方）*/}
               <div style={{ display: 'flex', gap: '8px', margin: '0 0 4px' }}>
                 {[
-                  { icon: '🗺', label: '圣经地图', panel: 'bible-maps' },
                   { icon: '🎙', label: '语音通话', panel: 'voice' },
+                  { icon: '🗺', label: '圣经地图', panel: 'bible-maps' },
                 ].map((item) => (
                   <button key={item.panel}
                     onClick={() => handlePanelSwitch(item.panel)}
