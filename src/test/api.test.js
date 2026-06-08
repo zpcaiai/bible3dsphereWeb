@@ -6,6 +6,10 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 
 // api.js uses import.meta.env which Vitest provides as an empty object by default
 // We need to handle the module's top-level API_BASE resolution
+beforeEach(() => {
+  vi.resetModules()
+  vi.unstubAllGlobals()
+})
 
 describe('API_BASE resolution', () => {
   it('resolves to /api by default', async () => {
@@ -15,7 +19,11 @@ describe('API_BASE resolution', () => {
 })
 
 describe('fetchLayout', () => {
-  afterEach(() => vi.restoreAllMocks())
+  afterEach(async () => {
+    const { clearSwrCache } = await import('../api')
+    clearSwrCache()
+    vi.restoreAllMocks()
+  })
 
   it('returns items from the API on success', async () => {
     const mockItems = [{ feature_key: 'joy' }, { feature_key: 'peace' }]
@@ -46,6 +54,20 @@ describe('fetchLayout', () => {
     const result = await fetchLayout()
     expect(result.items).toEqual(staticItems)
     expect(result.count).toBe(1)
+  })
+
+  it('returns an empty offline layout when both API and static fallback are unavailable', async () => {
+    vi.stubGlobal('fetch', vi.fn()
+      .mockResolvedValueOnce({ ok: false, status: 502 })
+      .mockResolvedValueOnce({
+        ok: true,
+        headers: { get: () => 'text/html' },
+        json: async () => { throw new SyntaxError('Unexpected token <') },
+      }))
+
+    const { fetchLayout } = await import('../api')
+    const result = await fetchLayout()
+    expect(result).toEqual({ items: [], count: 0, offline: true })
   })
 })
 
@@ -95,7 +117,11 @@ describe('fetchHistory', () => {
 })
 
 describe('fetchEmotionTrajectory', () => {
-  afterEach(() => vi.restoreAllMocks())
+  afterEach(async () => {
+    const { clearSwrCache } = await import('../api')
+    clearSwrCache()
+    vi.restoreAllMocks()
+  })
 
   it('returns trajectory data on success', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
@@ -186,7 +212,11 @@ describe('runQuery', () => {
 })
 
 describe('fetchCommunityHeatmap', () => {
-  afterEach(() => vi.unstubAllGlobals())
+  afterEach(async () => {
+    const { clearSwrCache } = await import('../api')
+    clearSwrCache()
+    vi.unstubAllGlobals()
+  })
 
   it('returns emotions array on success', async () => {
     const payload = {
