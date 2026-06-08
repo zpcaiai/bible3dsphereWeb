@@ -1,0 +1,50 @@
+Script started on Sat Jun  6 23:10:28 2026
+
+
+[1m[7m%[27m[1m[0m                                                                                                                                                  ]7;file://StephendeMacBook-Air.local/Users/stephen/Documents/Projects/DoctorPro/bible3dsphere-frontend[0m[27m[24m[J(base) stephen@StephendeMacBook-Air bible3dsphere-frontend % [K[?2004h[?2004l
+[1m[7m%[27m[1m[0m                                                                                                                                                  ]7;file://StephendeMacBook-Air.local/Users/stephen/Documents/Projects/DoctorPro/bible3dsphere-frontend[0m[27m[24m[J(base) stephen@StephendeMacBook-Air bible3dsphere-frontend % [K[?2004h[?2004l
+[1m[7m%[27m[1m[0m                                                                                                                                                  ]7;file://StephendeMacBook-Air.local/Users/stephen/Documents/Projects/DoctorPro/bible3dsphere-frontend[0m[27m[24m[J(base) stephen@StephendeMacBook-Air bible3dsphere-frontend % [K[?2004h[7mgit add src/App.jsx[27m[19D[27mg[27mi[27mt[27m [27ma[27md[27md[27m [27ms[27mr[27mc[27m/[27mA[27mp[27mp[27m.[27mj[27ms[27mx[?2004l
+[1m[7m%[27m[1m[0m                                                                                                                                                  ]7;file://StephendeMacBook-Air.local/Users/stephen/Documents/Projects/DoctorPro/bible3dsphere-frontend[0m[27m[24m[J(base) stephen@StephendeMacBook-Air bible3dsphere-frontend % [K[?2004h[7mgit commit -m "refactor: 圣经地图/语音通话 按钮移至 今日灵命快照与倾心吐意之间"[27m[79D[27mg[27mi[27mt[27m [27mc[27mo[27mm[27mm[27mi[27mt[27m [27m-[27mm[27m [27m"[27mr[27me[27mf[27ma[27mc[27mt[27mo[27mr[27m:[27m [27m圣[27m[27m经[27m[27m地[27m[27m图[27m[27m/[27m语[27m[27m音[27m[27m通[27m[27m话[27m[27m [27m按[27m[27m钮[27m[27m移[27m[27m至[27m[27m [27m今[27m[27m日[27m[27m灵[27m[27m命[27m[27m快[27m[27m照[27m[27m与[27m[27m倾[27m[27m心[27m[27m吐[27m[27m意[27m[27m之[27m[27m间[27m[27m"[?2004l
+[main 62771df] refactor: 圣经地图/语音通话 按钮移至 今日灵命快照与倾心吐意之间
+ 1 file changed, 20 insertions(+), 2 deletions(-)
+[1m[7m%[27m[1m[0m                                                                                                                                                  ]7;file://StephendeMacBook-Air.local/Users/stephen/Documents/Projects/DoctorPro/bible3dsphere-frontend[0m[27m[24m[J(base) stephen@StephendeMacBook-Air bible3dsphere-frontend % [K[?2004h不管    ggit push[?2004l
+fatal: unable to access 'https://github.com/zpcaiai/bible3dsphere-frontend.git/': LibreSSL SSL_connect: SSL_ERROR_SYSCALL in connection to github.com:443 
+[1m[7m%[27m[1m[0m                                                                                                                                                  ]7;file://StephendeMacBook-Air.local/Users/stephen/Documents/Projects/DoctorPro/bible3dsphere-frontend[0m[27m[24m[J(base) stephen@StephendeMacBook-Air bible3dsphere-frontend % [K[?2004hgit push[?2004l
+Enumerating objects: 7, done.
+Counting objects:  14% (1/7)Counting objects:  28% (2/7)Counting objects:  42% (3/7)Counting objects:  57% (4/7)Counting objects:  71% (5/7)Counting objects:  85% (6/7)Counting objects: 100% (7/7)Counting objects: 100% (7/7), done.
+Delta compression using up to 8 threads
+Compressing objects:  25% (1/4)Compressing objects:  50% (2/4)Compressing objects:  75% (3/4)Compressing objects: 100% (4/4)Compressing objects: 100% (4/4), done.
+Writing objects:  25% (1/4)Writing objects:  50% (2/4)Writing objects:  75% (3/4)Writing objects: 100% (4/4)Writing objects: 100% (4/4), 863 bytes | 863.00 KiB/s, done.
+Total 4 (delta 3), reused 0 (delta 0), pack-reused 0
+remote: Resolving deltas:   0% (0/3)[Kremote: Resolving deltas:  33% (1/3)[Kremote: Resolving deltas:  66% (2/3)[Kremote: Resolving deltas: 100% (3/3)[Kremote: Resolving deltas: 100% (3/3), completed with 3 local objects.[K
+To https://github.com/zpcaiai/bible3dsphere-frontend.git
+   a8b10bb..62771df  main -> main
+[1m[7m%[27m[1m[0m                                                                                                                                                  ]7;file://StephendeMacBook-Air.local/Users/stephen/Documents/Projects/DoctorPro/bible3dsphere-frontend[0m[27m[24m[J(base) stephen@StephendeMacBook-Air bible3dsphere-frontend % [K[?2004h[7mgit add src/App.jsx[27m[19D[27mg[27mi[27mt[27m [27ma[27md[27md[27m [27ms[27mr[27mc[27m/[27mA[27mp[27mp[27m.[27mj[27ms[27mx[?2004l
+[1m[7m%[27m[1m[0m                                                                                                                                                  ]7;file://StephendeMacBook-Air.local/Users/stephen/Documents/Projects/DoctorPro/bible3dsphere-frontend[0m[27m[24m[J(base) stephen@StephendeMacBook-Air bible3dsphere-frontend % [K[?2004h[7mgit commit -m "refactor: 圣经地图/语音通话 按钮移至 今日灵命快照与倾心吐意之间"[27m[79D[27mg[27mi[27mt[27m [27mc[27mo[27mm[27mm[27mi[27mt[27m [27m-[27mm[27m [27m"[27mr[27me[27mf[27ma[27mc[27mt[27mo[27mr[27m:[27m [27m圣[27m[27m经[27m[27m地[27m[27m图[27m[27m/[27m语[27m[27m音[27m[27m通[27m[27m话[27m[27m [27m按[27m[27m钮[27m[27m移[27m[27m至[27m[27m [27m今[27m[27m日[27m[27m灵[27m[27m命[27m[27m快[27m[27m照[27m[27m与[27m[27m倾[27m[27m心[27m[27m吐[27m[27m意[27m[27m之[27m[27m间[27m[27m"[?2004l
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	[31mmodified:   .gitignore[m
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	[31mtypescript[m
+
+no changes added to commit (use "git add" and/or "git commit -a")
+[1m[7m%[27m[1m[0m                                                                                                                                                  ]7;file://StephendeMacBook-Air.local/Users/stephen/Documents/Projects/DoctorPro/bible3dsphere-frontend[0m[27m[24m[J(base) stephen@StephendeMacBook-Air bible3dsphere-frontend % [K[?2004hgit commit -m "refactor: 圣经地图/语音通话 按钮移至 今日灵命快照与倾心吐意之间"am "refactor: 圣经地图/语音通话 按钮移至 今日灵命快照与倾心吐意之间"[67D[?2004l
+[main 989f23a] refactor: 圣经地图/语音通话 按钮移至 今日灵命快照与倾心吐意之间
+ 1 file changed, 1 insertion(+)
+[1m[7m%[27m[1m[0m                                                                                                                                                  ]7;file://StephendeMacBook-Air.local/Users/stephen/Documents/Projects/DoctorPro/bible3dsphere-frontend[0m[27m[24m[J(base) stephen@StephendeMacBook-Air bible3dsphere-frontend % [K[?2004hggit push[?2004l
+Enumerating objects: 5, done.
+Counting objects:  20% (1/5)Counting objects:  40% (2/5)Counting objects:  60% (3/5)Counting objects:  80% (4/5)Counting objects: 100% (5/5)Counting objects: 100% (5/5), done.
+Delta compression using up to 8 threads
+Compressing objects:  33% (1/3)Compressing objects:  66% (2/3)Compressing objects: 100% (3/3)Compressing objects: 100% (3/3), done.
+Writing objects:  33% (1/3)Writing objects:  66% (2/3)Writing objects: 100% (3/3)Writing objects: 100% (3/3), 390 bytes | 390.00 KiB/s, done.
+Total 3 (delta 2), reused 0 (delta 0), pack-reused 0
+remote: Resolving deltas:   0% (0/2)[Kremote: Resolving deltas:  50% (1/2)[Kremote: Resolving deltas: 100% (2/2)[Kremote: Resolving deltas: 100% (2/2), completed with 2 local objects.[K
+To https://github.com/zpcaiai/bible3dsphere-frontend.git
+   62771df..989f23a  main -> main
+[1m[7m%[27m[1m[0m                                                                                                                                                  ]7;file://StephendeMacBook-Air.local/Users/stephen/Documents/Projects/DoctorPro/bible3dsphere-frontend[0m[27m[24m[J(base) stephen@StephendeMacBook-Air bible3dsphere-frontend % [K[?2004h

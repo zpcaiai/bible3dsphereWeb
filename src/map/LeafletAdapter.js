@@ -77,7 +77,28 @@ export default class LeafletAdapter extends MapAdapter {
   setView(lngLat, zoom, animate = true) {
     if (!this.map) return
     if (!Array.isArray(lngLat) || !Number.isFinite(+lngLat[0]) || !Number.isFinite(+lngLat[1])) return
-    this.map.flyTo(lonlat(lngLat), zoom ?? this.map.getZoom(), { duration: animate ? 1.1 : 0 })
+    const target = lonlat(lngLat)
+    const z = Number.isFinite(+zoom) ? +zoom : this.map.getZoom()
+    // 子tab/动画切换后容器尺寸可能为0，先校正，否则 Leaflet 投影得 NaN
+    try { this.map.invalidateSize() } catch (e) {}
+    const size = this.map.getSize()
+    const cur = this.map.getCenter()
+    // 关键修复：Leaflet flyTo 在 ①容器尺寸为0 或 ②目标≈当前中心且缩放不变 时，
+    // 内部 project/unproject 会除0得 (NaN,NaN)，且在 requestAnimationFrame 帧里持续抛错崩整页。
+    // 这两种情况绝不能走 flyTo —— 输入坐标守卫拦不住（NaN 是 Leaflet 内部产生的）。改用无动画 setView。
+    const samePlace = cur &&
+      Math.abs(cur.lat - target[0]) < 1e-6 &&
+      Math.abs(cur.lng - target[1]) < 1e-6 &&
+      this.map.getZoom() === z
+    if (!animate || !size || !size.x || !size.y || samePlace) {
+      try { this.map.setView(target, z, { animate: false }) } catch (e) {}
+      return
+    }
+    try {
+      this.map.flyTo(target, z, { duration: 1.1 })
+    } catch (e) {
+      try { this.map.setView(target, z, { animate: false }) } catch (e2) {}
+    }
   }
 
   fitBounds(bounds, options = {}) {
@@ -87,7 +108,11 @@ export default class LeafletAdapter extends MapAdapter {
     // 防 NaN/Infinity：空数据时 Math.min(...[])=Infinity → Leaflet flyTo(NaN) 抛错崩页
     const ok = (p) => Array.isArray(p) && Number.isFinite(+p[0]) && Number.isFinite(+p[1])
     if (!ok(sw) || !ok(ne)) return
-    this.map.fitBounds([lonlat(sw), lonlat(ne)], { padding: [30, 30], ...options })
+    try { this.map.invalidateSize() } catch (e) {}
+    // 无动画，避免 fitBounds 内部走 flyTo 动画在退化 bounds 上产生 NaN 崩页
+    try {
+      this.map.fitBounds([lonlat(sw), lonlat(ne)], { padding: [30, 30], animate: false, ...options })
+    } catch (e) {}
   }
 
   addMarker(lngLat, options = {}) {
