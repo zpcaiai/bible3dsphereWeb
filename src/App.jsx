@@ -18,7 +18,7 @@ import TranslatableParagraph from './TranslatableParagraph'
 import { TTSButton, TTSFullBar } from './useGlobalAudio.jsx'
 import { useLang } from './i18n/LanguageContext'
 import LanguageToggle from './i18n/LanguageToggle'
-import { t } from './i18n/runtime'
+import { t, featureLabel } from './i18n/runtime'
 
 const CheckInPage = lazy(() => import('./CheckInPage'))
 const ShareWallPage = lazy(() => import('./ShareWallPage'))
@@ -1592,7 +1592,7 @@ function AppContent() {
               <div className="meta-chip">⚡ {queryResult.query_latency_ms} ms</div>
             )}
             {selectedFeature?.zh_label && (
-              <div className="meta-chip" style={{background: 'rgba(0,122,255,0.18)', color: '#5eb0ff', borderColor: 'rgba(0,122,255,0.25)'}}>✨ {selectedFeature.zh_label}</div>
+              <div className="meta-chip" style={{background: 'rgba(0,122,255,0.18)', color: '#5eb0ff', borderColor: 'rgba(0,122,255,0.25)'}}>✨ {featureLabel(selectedFeature)}</div>
             )}
           </div>
         </section>
@@ -1614,7 +1614,7 @@ function AppContent() {
             <div className="mobile-summary-grid">
               <div className="mobile-summary-card glass accent-card">
                 <div className="section-title"></div>
-                <div className="feature-name">{selectedFeature?.zh_label || ''}</div>
+                <div className="feature-name">{featureLabel(selectedFeature)}</div>
               </div>
             </div>
           </section>
@@ -2398,7 +2398,7 @@ function AppContent() {
                       <div className="result-block-title result-block-title-meditation">{t("默想经文")}</div>
                       {selectedFeature && (
                         <div className="result-feature-pill">
-                          {selectedFeature.zh_label || `${selectedFeature.layer}:${selectedFeature.feature_id}`}
+                          {featureLabel(selectedFeature) || `${selectedFeature.layer}:${selectedFeature.feature_id}`}
                         </div>
                       )}
                       {queryResult.rerank?.enabled && queryResult.rerank?.error && (
@@ -2700,7 +2700,7 @@ function AppContent() {
             {user ? (
               <CheckInPage
                 user={user}
-                emotionLabel={selectedFeature?.zh_label || ''}
+                emotionLabel={featureLabel(selectedFeature) || ''}
                 emotionQuery={query}
                 token={getToken()}
                 onBack={() => setActivePanel('sphere')}

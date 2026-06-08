@@ -51,3 +51,14 @@ export function t(key, params) {
     : key
   return typeof raw === 'string' ? interpolate(raw, params) : raw
 }
+
+// 情绪/特征向量的显示名 / Display name for an emotion-vector feature.
+// EN 模式：只显示英文（short_en / source_keyword），无英文则回退中文。
+// ZH 模式：显示中文；withEn=true 时显示「中文(English)」（用于星球标签）。
+export function featureLabel(item, { withEn = false } = {}) {
+  if (!item) return ''
+  const zh = item.zh_label || ''
+  const en = item.short_en || item.source_keyword || ''
+  if (currentLang === 'en') return en || zh
+  return withEn && zh && en ? `${zh}(${en})` : (zh || en)
+}

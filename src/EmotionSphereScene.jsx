@@ -5,7 +5,7 @@ import { Billboard, Html, OrbitControls, Stars, Text } from '@react-three/drei'
 import * as THREE from 'three'
 import { useEmotionStore } from './store'
 import TranslatableParagraph from './TranslatableParagraph'
-import { t } from './i18n/runtime'
+import { t, featureLabel } from './i18n/runtime'
 
 const SPHERE_RADIUS = 4.18
 // Generate a visually distinct color for each of the 171 points
@@ -200,10 +200,8 @@ function InstancedPoints({ items, onHover, onSelect, selectedKey, hoveredKey }) 
 }
 
 function itemLabel(item) {
-  const zh = item.zh_label || ''
-  const en = item.short_en || item.source_keyword || ''
-  if (zh && en) return `${zh}(${en})`
-  return zh || en || ''
+  // EN 模式只显示英文情绪向量；ZH 模式显示「中文(English)」
+  return featureLabel(item, { withEn: true })
 }
 
 // ─── All Point Labels — 3D Text, always visible, uniform sphere coverage ──────
@@ -278,7 +276,7 @@ function VersePopover3D({
         <div className="vp-header">
           <span className="vp-key">
             {feature.zh_label
-              ? <>{feature.zh_label} <small style={{opacity:0.5, fontWeight:400}}>#{feature.feature_id}</small></>
+              ? <>{featureLabel(feature)} <small style={{opacity:0.5, fontWeight:400}}>#{feature.feature_id}</small></>
               : `${feature.layer}:${feature.feature_id}`}
           </span>
         </div>
