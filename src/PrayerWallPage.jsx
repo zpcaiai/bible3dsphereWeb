@@ -1,3 +1,4 @@
+import { pickMimeType, contentTypeFor, makeBoostedStream, AUDIO_CONSTRAINTS } from './hooks/recorderUtils'
 import { useEffect, useRef, useState } from 'react'
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
@@ -244,9 +245,9 @@ export default function PrayerWallPage({ user, token, onBack }) {
       setTimeout(() => setSubmitDone(false), 3000)
     } catch (e) {
       const msg = e.message || ''
-      if (msg.includes(t("请先加入或创建教会"))) {
+      if (msg.includes("请先加入或创建教会")) {
         setError(t("请先加入或创建一个教会才能提交代祷"))
-      } else if (msg.includes('401') || msg.includes('Unauthorized') || msg.includes(t("未登录"))) {
+      } else if (msg.includes('401') || msg.includes('Unauthorized') || msg.includes("未登录")) {
         setError(t("请先登录后再提交代祷"))
       } else {
         setError(msg || t("提交失败"))
@@ -336,8 +337,12 @@ export default function PrayerWallPage({ user, token, onBack }) {
         return
       }
 
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-      const mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' })
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: AUDIO_CONSTRAINTS })
+      const _boost = makeBoostedStream(stream)
+      const _mt = pickMimeType()
+      const mediaRecorder = _mt
+        ? new MediaRecorder(_boost.stream, { mimeType: _mt })
+        : new MediaRecorder(_boost.stream)
 
       mediaRecorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
@@ -346,11 +351,13 @@ export default function PrayerWallPage({ user, token, onBack }) {
       }
 
       mediaRecorder.onstop = async () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' })
+        const _mime = mediaRecorder.mimeType || 'audio/webm'
+        const audioBlob = new Blob(audioChunksRef.current, { type: _mime })
         await transcribeAudio(audioBlob, onTranscript)
 
         // 停止所有音轨
         stream.getTracks().forEach(track => track.stop())
+        try { _boost.ctx && _boost.ctx.close() } catch (_) {}
       }
 
       mediaRecorderRef.current = mediaRecorder
@@ -400,11 +407,11 @@ export default function PrayerWallPage({ user, token, onBack }) {
       setRecordingError(t("正在识别语音..."))
 
       // 使用 Nova-2 多语言模型，自动检测语言
-      const response = await fetch('https://api.deepgram.com/v1/listen?model=nova-2&punctuate=true&paragraphs=true&smart_format=true', {
+      const response = await fetch('https://api.deepgram.com/v1/listen?model=nova-2&detect_language=true&punctuate=true&paragraphs=true&smart_format=true', {
         method: 'POST',
         headers: {
           'Authorization': `Token ${DEEPGRAM_API_KEY}`,
-          'Content-Type': 'audio/webm',
+          'Content-Type': contentTypeFor(audioBlob.type),
         },
         body: audioBlob,
       })
@@ -441,7 +448,7 @@ export default function PrayerWallPage({ user, token, onBack }) {
         onTranscript(bilingualText)
         setRecordingError(null)
       } else {
-        setRecordingError(t("未能识别到语音内容，请重试"))
+        setRecordingError(t("没听清，请离麦克风近一点、稍大声重说一次"))
       }
     } catch (err) {
       console.error('语音识别失败:', err)

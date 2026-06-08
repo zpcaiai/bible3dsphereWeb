@@ -1,3 +1,4 @@
+import { pickMimeType, contentTypeFor, makeBoostedStream, AUDIO_CONSTRAINTS } from './hooks/recorderUtils'
 import { useEffect, useRef, useState } from 'react'
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
@@ -173,7 +174,7 @@ const SEEKERS_META = {
 
 // 每个视频课程配套课件 PPT（R2 ppt/ 目录），手风琴式展开、Office Online 在线查看
 const SEEKERS_PPT_BASE = 'https://cdn.holiness.uk/ppt/'
-const SEEKERS_PPT_KEYWORDS = [t("认识圣经"), t("认识创造"), t("认识罪"), t("认识耶稣"), t("认识洗礼")]
+const SEEKERS_PPT_KEYWORDS = ["认识圣经", "认识创造", "认识罪", "认识耶稣", "认识洗礼"]
 const pptUrlFor = kw => `${SEEKERS_PPT_BASE}${encodeURIComponent(kw)}.pptx`
 const pptKeywordFor = filename => SEEKERS_PPT_KEYWORDS.find(kw => (filename || '').includes(kw)) || null
 
@@ -556,8 +557,12 @@ export default function EvangelismPage({ user, token, onBack, onPrayerWall }) {
         return
       }
 
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-      const mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' })
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: AUDIO_CONSTRAINTS })
+      const _boost = makeBoostedStream(stream)
+      const _mt = pickMimeType()
+      const mediaRecorder = _mt
+        ? new MediaRecorder(_boost.stream, { mimeType: _mt })
+        : new MediaRecorder(_boost.stream)
 
       mediaRecorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
@@ -566,11 +571,13 @@ export default function EvangelismPage({ user, token, onBack, onPrayerWall }) {
       }
 
       mediaRecorder.onstop = async () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' })
+        const _mime = mediaRecorder.mimeType || 'audio/webm'
+        const audioBlob = new Blob(audioChunksRef.current, { type: _mime })
         await transcribeAudio(audioBlob, onTranscript)
 
         // 停止所有音轨
         stream.getTracks().forEach(track => track.stop())
+        try { _boost.ctx && _boost.ctx.close() } catch (_) {}
       }
 
       mediaRecorderRef.current = mediaRecorder
@@ -620,11 +627,11 @@ export default function EvangelismPage({ user, token, onBack, onPrayerWall }) {
       setRecordingError(t("正在识别语音..."))
 
       // 使用 Nova-2 多语言模型，自动检测语言
-      const response = await fetch('https://api.deepgram.com/v1/listen?model=nova-2&punctuate=true&paragraphs=true&smart_format=true', {
+      const response = await fetch('https://api.deepgram.com/v1/listen?model=nova-2&detect_language=true&punctuate=true&paragraphs=true&smart_format=true', {
         method: 'POST',
         headers: {
           'Authorization': `Token ${DEEPGRAM_API_KEY}`,
-          'Content-Type': 'audio/webm',
+          'Content-Type': contentTypeFor(audioBlob.type),
         },
         body: audioBlob,
       })
@@ -661,7 +668,7 @@ export default function EvangelismPage({ user, token, onBack, onPrayerWall }) {
         onTranscript(bilingualText)
         setRecordingError(null)
       } else {
-        setRecordingError(t("未能识别到语音内容，请重试"))
+        setRecordingError(t("没听清，请离麦克风近一点、稍大声重说一次"))
       }
     } catch (err) {
       console.error('语音识别失败:', err)
