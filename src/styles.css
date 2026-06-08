@@ -4781,3 +4781,152 @@ canvas {
   .jeru-stage { height: 54vh; min-height: 320px; }
   .jeru-era { padding: 6px 9px; }
 }
+
+/* ═══ 圣徒相通 / 群聊（CommunionPage）══════════════════════════════════
+   两栏式聊天：左 sidebar（好友/群组）+ 右 chat（消息/输入）。
+   桌面两栏并列；移动端单栏，进入会话时 sidebar 隐藏、chat 铺满。
+   （此前组件提交未带样式，全部元素塌缩到左上角——本段补齐。） */
+.communion-page {
+  display: flex; flex-direction: column;
+  /* 预留底部导航栏高度，否则输入框被 .mobile-bottom-nav(z1000) 遮住 */
+  height: calc(100dvh - var(--tab-bar-height) - var(--safe-bottom));
+  max-height: calc(100dvh - var(--tab-bar-height) - var(--safe-bottom));
+  width: 100%; color: var(--ios-text); overflow: hidden;
+}
+.communion-header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 14px; margin: 8px 10px 6px; flex: 0 0 auto;
+}
+.communion-back {
+  background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12);
+  color: var(--ios-text); border-radius: 10px; padding: 6px 12px; cursor: pointer; font-size: 14px;
+}
+.communion-back:hover { background: rgba(255,255,255,0.14); }
+.communion-title { flex: 1; display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 600; }
+.communion-conn { font-size: 11px; padding: 2px 8px; border-radius: 999px; }
+.communion-conn.on  { color: #7ee2a8; background: rgba(126,226,168,0.12); }
+.communion-conn.off { color: rgba(255,255,255,0.45); background: rgba(255,255,255,0.06); }
+
+.communion-body { flex: 1 1 auto; display: flex; min-height: 0; gap: 10px; padding: 0 10px 10px; }
+
+/* 侧栏 */
+.communion-sidebar {
+  flex: 0 0 300px; max-width: 300px; display: flex; flex-direction: column;
+  gap: 8px; min-height: 0; overflow-y: auto; overflow-x: hidden;
+  background: rgba(22,24,38,0.55); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px; padding: 12px;
+}
+.communion-add { display: flex; gap: 6px; }
+.communion-add input {
+  flex: 1; min-width: 0; background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12); border-radius: 10px;
+  padding: 8px 10px; color: var(--ios-text); font-size: 13px;
+}
+.communion-add input::placeholder { color: rgba(255,255,255,0.35); }
+.communion-add button {
+  background: rgba(232,176,75,0.18); border: 1px solid rgba(232,176,75,0.4);
+  color: #ffe9b3; border-radius: 10px; padding: 8px 12px; cursor: pointer; font-size: 13px; white-space: nowrap;
+}
+.communion-section-title { font-size: 12.5px; color: rgba(255,255,255,0.5); padding: 6px 2px 2px; }
+.communion-incoming { display: flex; flex-direction: column; gap: 4px; }
+.communion-req {
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(255,255,255,0.05); border-radius: 10px; padding: 6px 10px; font-size: 13px;
+}
+.communion-req button {
+  background: rgba(126,226,168,0.16); border: 1px solid rgba(126,226,168,0.4);
+  color: #9ff0c0; border-radius: 8px; padding: 3px 10px; cursor: pointer; font-size: 12px;
+}
+.communion-friends { display: flex; flex-direction: column; gap: 4px; }
+.communion-empty { color: rgba(255,255,255,0.4); font-size: 12.5px; padding: 10px 4px; line-height: 1.6; }
+.communion-friend {
+  display: flex; align-items: center; gap: 10px; padding: 8px 10px;
+  border-radius: 12px; cursor: pointer; transition: background .15s; position: relative;
+}
+.communion-friend:hover { background: rgba(255,255,255,0.05); }
+.communion-friend.active { background: rgba(232,176,75,0.12); }
+.communion-avatar {
+  position: relative; flex: 0 0 40px; width: 40px; height: 40px; border-radius: 50%;
+  background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center;
+  font-size: 16px; overflow: visible;
+}
+.communion-avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+.communion-dot {
+  position: absolute; right: -1px; bottom: -1px; width: 11px; height: 11px; border-radius: 50%;
+  background: rgba(255,255,255,0.3); border: 2px solid #161826;
+}
+.communion-dot.online { background: #50d68a; }
+.communion-finfo { flex: 1; min-width: 0; }
+.communion-fname { font-size: 14px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.communion-flast { font-size: 12px; color: rgba(255,255,255,0.45); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.communion-badge {
+  flex: 0 0 auto; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px;
+  background: #e5484d; color: #fff; font-size: 11px; display: flex; align-items: center; justify-content: center;
+}
+.communion-call-btn {
+  flex: 0 0 auto; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 9px; padding: 5px 8px; cursor: pointer; font-size: 14px;
+}
+.communion-call-btn:hover { background: rgba(255,255,255,0.14); }
+
+/* 聊天主区 */
+.communion-chat {
+  flex: 1 1 auto; display: flex; flex-direction: column; min-width: 0; min-height: 0;
+  background: rgba(22,24,38,0.55); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; overflow: hidden;
+}
+.communion-chat-head {
+  display: flex; align-items: center; gap: 10px; padding: 10px 14px; flex: 0 0 auto;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.communion-chat-name { flex: 1; display: flex; align-items: center; font-size: 15px; font-weight: 600; }
+.communion-head-call {
+  background: rgba(232,176,75,0.16); border: 1px solid rgba(232,176,75,0.4);
+  color: #ffe9b3; border-radius: 10px; padding: 6px 12px; cursor: pointer; font-size: 13px; white-space: nowrap;
+}
+.communion-back-mobile { display: none; background: none; border: none; color: var(--ios-text); font-size: 20px; cursor: pointer; padding: 0 4px; }
+
+.communion-messages { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+.communion-msg { display: flex; flex-direction: column; align-items: flex-start; max-width: 78%; }
+.communion-msg.mine { align-self: flex-end; align-items: flex-end; }
+.communion-bubble {
+  background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.07);
+  padding: 8px 12px; border-radius: 14px; border-top-left-radius: 4px;
+  font-size: 14px; line-height: 1.5; word-break: break-word; white-space: pre-wrap;
+}
+.communion-msg.mine .communion-bubble {
+  background: rgba(232,176,75,0.20); border-color: rgba(232,176,75,0.3); color: #fff3da;
+  border-radius: 14px; border-top-right-radius: 4px;
+}
+.communion-msg-time { font-size: 10.5px; color: rgba(255,255,255,0.35); margin-top: 3px; display: flex; align-items: center; }
+.communion-typing { font-size: 12px; color: rgba(255,255,255,0.45); font-style: italic; padding: 2px 4px; }
+
+.communion-placeholder {
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 10px; color: rgba(255,255,255,0.5); text-align: center; padding: 20px;
+}
+
+.communion-compose { display: flex; align-items: flex-end; gap: 8px; padding: 10px 12px; flex: 0 0 auto; border-top: 1px solid rgba(255,255,255,0.08); }
+.communion-compose textarea {
+  flex: 1; min-width: 0; resize: none; max-height: 120px; background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; padding: 10px 12px;
+  color: var(--ios-text); font-size: 14px; line-height: 1.5; font-family: inherit;
+}
+.communion-compose textarea::placeholder { color: rgba(255,255,255,0.35); }
+.communion-compose button {
+  flex: 0 0 auto; background: rgba(232,176,75,0.22); border: 1px solid rgba(232,176,75,0.45);
+  color: #ffe9b3; border-radius: 12px; padding: 10px 16px; cursor: pointer; font-size: 14px; font-weight: 500;
+}
+.communion-compose button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* 移动端：单栏切换 */
+@media (max-width: 720px) {
+  .communion-body { gap: 0; padding: 0 8px 8px; }
+  .communion-sidebar { flex: 1 1 auto; max-width: none; width: 100%; }
+  .communion-chat { display: none; }
+  /* 进入会话（1对1 或 群聊）：隐藏侧栏、聊天铺满。
+     用 :has 兜底——群聊时 JSX 未给 sidebar 加 has-active，仅 chat 有 open。 */
+  .communion-sidebar.has-active { display: none; }
+  .communion-body:has(.communion-chat.open) .communion-sidebar { display: none; }
+  .communion-chat.open { display: flex; }
+  .communion-back-mobile { display: inline-block; }
+}
