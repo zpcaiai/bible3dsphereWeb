@@ -49,12 +49,7 @@ export function MapCanvas({
       style: 'mapbox://styles/mapbox/dark-v11',
       center: DEFAULT_CENTER,
       zoom: DEFAULT_ZOOM,
-      cooperativeGestures: true, // 移动端需双指/桌面需 Ctrl 才缩放，避免地图抢占页面滚动
-      locale: {
-        'CooperativeGesturesHandler.WindowsHelpText': '按住 Ctrl 滚动以缩放地图',
-        'CooperativeGesturesHandler.MacHelpText': '按住 ⌘ 滚动以缩放地图',
-        'CooperativeGesturesHandler.MobileHelpText': '用双指移动地图',
-      },
+      cooperativeGestures: false, // 单指即可拖动地图（关闭双指/Ctrl 限制）
     })
     mapRef.current = map
 
@@ -249,9 +244,12 @@ export function MapCanvas({
           MapboxOverlay: new (p: { layers: unknown[] }) => DeckOverlayLike
         }
         const layersMod = (await import('@deck.gl/layers')) as unknown as {
-          TripsLayer: new (p: Record<string, unknown>) => unknown
+          TripsLayer?: new (p: Record<string, unknown>) => unknown
         }
         if (cancelled || !mapRef.current) return
+        // TripsLayer 实际位于 @deck.gl/geo-layers（未安装）；从 layers 取为 undefined。
+        // 守卫：拿不到构造器就静默降级，保留 Mapbox 静态路线，绝不在 rAF 里 new undefined 崩页。
+        if (typeof layersMod.TripsLayer !== 'function') return
         const path = campaign.routeGeojson.coordinates.map((c) => [c[0], c[1]] as [number, number])
         const timestamps = path.map((_, i) => i)
         const maxTime = Math.max(1, path.length - 1)
@@ -259,10 +257,12 @@ export function MapCanvas({
         overlay = new mapboxMod.MapboxOverlay({ layers: [] })
         mapRef.current.addControl(overlay)
         let t = 0
+        const TripsLayer = layersMod.TripsLayer
         const tick = (): void => {
           if (cancelled || !overlay) return
+          try {
           t = (t + 0.03) % (maxTime + trailLength)
-          const layer = new layersMod.TripsLayer({
+          const layer = new TripsLayer({
             id: 'bm-trip',
             data: [{ path, timestamps }],
             getPath: (d: { path: [number, number][] }) => d.path,
@@ -275,6 +275,7 @@ export function MapCanvas({
             fadeTrail: true,
           })
           overlay.setProps({ layers: [layer] })
+          } catch { cleanup(); return }
           rafRef.current = requestAnimationFrame(tick)
         }
         rafRef.current = requestAnimationFrame(tick)

@@ -139,7 +139,7 @@ export default function JerusalemSandbox({ onBack }) {
             mapRef.current = null; glRef.current = null
             setEngine('maplibre'); boot('maplibre')
           }
-          const mbTimer = setTimeout(() => { if (!mbLoaded) fallbackToMaplibre() }, 8000)
+          const mbTimer = setTimeout(() => { if (!mbLoaded) fallbackToMaplibre() }, 4000)
           map.on('error', () => { if (!mbLoaded) { clearTimeout(mbTimer); fallbackToMaplibre() } })
           map.on('load', () => {
             mbLoaded = true; clearTimeout(mbTimer)
@@ -157,7 +157,20 @@ export default function JerusalemSandbox({ onBack }) {
             center: TEMPLE_CENTER, zoom: 15.4, pitch: 60, bearing: -22, antialias: true,
           })
           glRef.current = gl; mapRef.current = map
-          map.on('load', () => { if (!disposed) onMapReady(gl, map, 'maplibre') })
+          let mlReady = false
+          const enterMaplibre = () => {
+            if (disposed || mlReady) return
+            mlReady = true
+            onMapReady(gl, map, 'maplibre')
+          }
+          map.on('load', enterMaplibre)
+          // 瓦片/样式错误不致命（如个别 AMap 瓦片失败），记录即可，避免静默卡死
+          map.on('error', (e) => {
+            try { console.warn('[沙盘] MapLibre:', (e && e.error && e.error.message) || e) } catch (_) {}
+          })
+          // 兜底：某些环境（后台标签 rAF 节流、首帧延迟）'load' 迟迟不触发，
+          // 6 秒后强制进入——onMapReady 已对每层做容错，至少呈现底图与控制条。
+          setTimeout(enterMaplibre, 6000)
         }
       } catch (e) {
         if (eng === 'mapbox' && !triedFallbackRef.current) {
@@ -203,23 +216,34 @@ export default function JerusalemSandbox({ onBack }) {
         map.setTerrain({ source: 'dem', exaggeration: 1.2 })
       } catch (_) {}
     }
-    const g0 = eraGeoJSON(era.id)
-    map.addSource('jeru-poly', { type: 'geojson', data: g0.polygons })
-    map.addSource('jeru-wall', { type: 'geojson', data: g0.walls })
-
-    map.addLayer({
-      id: 'jeru-fill', type: 'fill-extrusion', source: 'jeru-poly',
-      paint: {
-        'fill-extrusion-color': ['coalesce', ['get', 'fill'], '#9a8b5a'],
-        'fill-extrusion-height': ['coalesce', ['get', 'height'], 0],
-        'fill-extrusion-base': 0,
-        'fill-extrusion-opacity': 0.86,
-      },
-    })
-    map.addLayer({
-      id: 'jeru-wall-line', type: 'line', source: 'jeru-wall',
-      paint: { 'line-color': '#e8b04b', 'line-width': 3, 'line-opacity': 0.9, 'line-dasharray': [2, 1.5] },
-    })
+    // 图层构建：包成可重入函数。若样式尚未就绪（兜底强制进入的情况），
+    // 先把状态切到 ready 让底图/控制条显示，待 style.load 后再补图层，绝不卡死。
+    let layersBuilt = false
+    const buildLayers = () => {
+      if (layersBuilt) return
+      if (map.isStyleLoaded && !map.isStyleLoaded()) return  // 样式没好，等 styledata 再来
+      layersBuilt = true
+      const g0 = eraGeoJSON(era.id)
+      try {
+        if (!map.getSource('jeru-poly')) map.addSource('jeru-poly', { type: 'geojson', data: g0.polygons })
+        if (!map.getSource('jeru-wall')) map.addSource('jeru-wall', { type: 'geojson', data: g0.walls })
+        if (!map.getLayer('jeru-fill')) map.addLayer({
+          id: 'jeru-fill', type: 'fill-extrusion', source: 'jeru-poly',
+          paint: {
+            'fill-extrusion-color': ['coalesce', ['get', 'fill'], '#9a8b5a'],
+            'fill-extrusion-height': ['coalesce', ['get', 'height'], 0],
+            'fill-extrusion-base': 0,
+            'fill-extrusion-opacity': 0.86,
+          },
+        })
+        if (!map.getLayer('jeru-wall-line')) map.addLayer({
+          id: 'jeru-wall-line', type: 'line', source: 'jeru-wall',
+          paint: { 'line-color': '#e8b04b', 'line-width': 3, 'line-opacity': 0.9, 'line-dasharray': [2, 1.5] },
+        })
+      } catch (err) { layersBuilt = false; try { console.warn('[沙盘] 图层构建延后:', err && err.message) } catch (_) {} }
+    }
+    buildLayers()
+    if (!layersBuilt) { try { map.on('styledata', buildLayers) } catch (_) {} }
 
     // 圣殿精细结构（默认隐藏，进入圣殿模式时显示）
     try {
