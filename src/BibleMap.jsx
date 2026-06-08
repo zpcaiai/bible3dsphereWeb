@@ -3,16 +3,17 @@
 // 扩展：地点插图（MapScenes）、AI 讲解（fetchFaithQA）、人物卡片闭环（config.profile）。
 import { useEffect, useMemo, useRef, useState } from 'react'
 import MapScene, { resolveScene } from './MapScenes'
-import { fetchFaithQA } from './api'
+import { fetchFaithQA, API_BASE } from './api'
+import { t } from './i18n/runtime'
 
 const VB_W = 1000
 const VB_H = 720
 const PAD = 56
 
 const CONFIDENCE = {
-  identified:  { label: '考古较确定', color: '#4ade80' },
-  approximate: { label: '传统推定',   color: '#fbbf24' },
-  unknown:     { label: '地点失考',   color: '#94a3b8' },
+  identified:  { label: t("考古较确定"), color: '#4ade80' },
+  approximate: { label: t("传统推定"),   color: '#fbbf24' },
+  unknown:     { label: t("地点失考"),   color: '#94a3b8' },
 }
 
 // 经纬度 → SVG 坐标（保持长宽比，按中纬度余弦校正经度）
@@ -78,7 +79,7 @@ function AIResult({ data }) {
   )
 }
 
-function AIExplain({ question, label = '✦ AI 讲解', compact }) {
+function AIExplain({ question, label = t("✦ AI 讲解"), compact }) {
   const [state, setState] = useState({ loading: false, data: null, error: null })
   useEffect(() => { setState({ loading: false, data: null, error: null }) }, [question])
   if (state.data) return <AIResult data={state.data} />
@@ -91,10 +92,10 @@ function AIExplain({ question, label = '✦ AI 讲解', compact }) {
             const data = await fetchFaithQA(question)
             setState({ loading: false, data, error: null })
           } catch (e) {
-            setState({ loading: false, data: null, error: e.message || 'AI 暂时不可用' })
+            setState({ loading: false, data: null, error: e.message || t("AI 暂时不可用") })
           }
         }}>
-        {state.loading ? '⏳ AI 思考中…' : label}
+        {state.loading ? t("⏳ AI 思考中…") : label}
       </button>
       {state.error && <div className="biblemap-ai-error">{state.error}</div>}
     </div>
@@ -159,6 +160,31 @@ export default function BibleMap({ config, onBack }) {
 
   const [selected, setSelected] = useState(null)
 
+  // ── 步行路由（陆地航段走真实路网；海上/失败回退直线）──────────────────────
+  const SEA_MAP_IDS = ['paul', 'exodus']
+  const isSeaLayer = (layer) =>
+    SEA_MAP_IDS.includes(config.id) || layer.route === false ||
+    layer.scene === 'boat' || layer.scene === 'sea'
+  const [routedGeom, setRoutedGeom] = useState({}) // layerId -> [[lng,lat],...]
+  useEffect(() => {
+    if (isTimeline) return
+    let cancelled = false
+    activeLayers.forEach(layer => {
+      if (!layer.route || routedGeom[layer.id]) return
+      const pts = [...(layer.points || [])].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+      if (pts.length < 2) return
+      fetch(`${API_BASE}/route`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ profile: isSeaLayer(layer) ? 'sea' : 'foot-walking', coordinates: pts.map(p => [p.lng, p.lat]) }),
+      }).then(r => r.ok ? r.json() : null).then(d => {
+        if (cancelled || !d || !d.ok || !Array.isArray(d.geometry) || d.geometry.length < 2) return
+        setRoutedGeom(prev => ({ ...prev, [layer.id]: d.geometry }))
+      }).catch(() => {})
+    })
+    return () => { cancelled = true }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeLayerIds.join(','), config.id])
+
   function visiblePoints(layer) {
     let pts = layer.points
     if (isTimeline && config.years) pts = pts.filter(p => (p.year ?? -99999) <= year)
@@ -172,6 +198,19 @@ export default function BibleMap({ config, onBack }) {
   function routePath(layer) {
     const pts = visiblePoints(layer).slice().sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
     if (pts.length < 2) return ''
+    const geom = routedGeom[layer.id] || null
+    if (geom && geom.length >= 2) {
+      let g = geom
+      if ((playing || progress > 0) && layer.id === animLayer?.id && !isTimeline) {
+        const total = (layer.points || []).length || 1
+        const frac = Math.min(1, revealCount / total)
+        g = geom.slice(0, Math.max(2, Math.ceil(frac * geom.length)))
+      }
+      return g.map(([lng, lat], i) => {
+        const [x, y] = project(lng, lat)
+        return `${i === 0 ? 'M' : 'L'}${x.toFixed(1)},${y.toFixed(1)}`
+      }).join(' ')
+    }
     return pts.map((p, i) => {
       const [x, y] = project(p.lng, p.lat)
       return `${i === 0 ? 'M' : 'L'}${x.toFixed(1)},${y.toFixed(1)}`
@@ -204,7 +243,7 @@ export default function BibleMap({ config, onBack }) {
   return (
     <div className="biblemap">
       <div className="biblemap-head">
-        <button className="biblemap-back" onClick={onBack}>← 返回</button>
+        <button className="biblemap-back" onClick={onBack}>{t("← 返回")}</button>
         <div className="biblemap-title">
           <h2>{config.title}</h2>
           <p>{config.subtitle}{config.era ? ` · ${config.era}` : ''}</p>
@@ -225,11 +264,11 @@ export default function BibleMap({ config, onBack }) {
         {!isTimeline && animLayer?.route !== false && orderedPoints.length > 1 && (
           <button className="biblemap-chip play"
             onClick={() => { if (progress >= orderedPoints.length - 1) setProgress(0); setPlaying(p => !p) }}>
-            {playing ? '⏸ 暂停' : (progress > 0 && progress < orderedPoints.length - 1 ? '▶ 继续' : '▶ 路线动画')}
+            {playing ? t("⏸ 暂停") : (progress > 0 && progress < orderedPoints.length - 1 ? t("▶ 继续") : t("▶ 路线动画"))}
           </button>
         )}
         {!isTimeline && progress > 0 && (
-          <button className="biblemap-chip" onClick={() => { setPlaying(false); setProgress(0) }}>↺ 重置</button>
+          <button className="biblemap-chip" onClick={() => { setPlaying(false); setProgress(0) }}>{t("↺ 重置")}</button>
         )}
       </div>
 
@@ -246,12 +285,12 @@ export default function BibleMap({ config, onBack }) {
             {profileLayer.bio && <p className="biblemap-profile-bio">{profileLayer.bio}</p>}
             {Array.isArray(profileLayer.epistles) && profileLayer.epistles.length > 0 && (
               <div className="biblemap-profile-epistles">
-                ✉ 相关书信：{profileLayer.epistles.map((e, i) => <span key={i} className="ep">{e}</span>)}
+                {t("✉ 相关书信：")}{profileLayer.epistles.map((e, i) => <span key={i} className="ep">{e}</span>)}
               </div>
             )}
             <AIExplain compact
               question={`请用简洁、温暖、适合查经班的话，介绍圣经人物「${profileLayer.label}」的生平、属灵意义与主要经历，并给出一句默想或祷告方向。`}
-              label="✦ 请 AI 讲解这位人物" />
+              label={t("✦ 请 AI 讲解这位人物")} />
           </div>
         </div>
       )}
@@ -349,11 +388,11 @@ export default function BibleMap({ config, onBack }) {
               <MapScene scene={resolveScene(selected, config.id)} color={selected._color} />
             </div>
             <div className="biblemap-detail-name" style={{ color: selected._color }}>
-              {selected.name_zh}<span className="en">{selected.name_en}</span>
+              {selected.name_zh}
             </div>
             <div className="biblemap-detail-meta">
               {selected.year != null && <span>🗓 {yearLabel(selected.year)}</span>}
-              {selected.age != null && <span>👤 亚伯拉罕 {selected.age} 岁</span>}
+              {selected.age != null && <span>{t("👤 亚伯拉罕")} {selected.age} {t("岁")}</span>}
               {selected.scriptureRef && <span>📖 {selected.scriptureRef}</span>}
               {selected.confidence && (
                 <span style={{ color: (CONFIDENCE[selected.confidence] || {}).color }}>
@@ -361,8 +400,8 @@ export default function BibleMap({ config, onBack }) {
                 </span>
               )}
             </div>
-            {selected.altar && <div className="biblemap-altar">⛪ 在此筑坛：{selected.altar}</div>}
-            {selected.promise && <div className="biblemap-promise">✝ 神的应许：{selected.promise}</div>}
+            {selected.altar && <div className="biblemap-altar">{t("⛪ 在此筑坛：")}{selected.altar}</div>}
+            {selected.promise && <div className="biblemap-promise">{t("✝ 神的应许：")}{selected.promise}</div>}
             {selected.note && <p className="biblemap-note">{selected.note}</p>}
             <div className="biblemap-events">
               {(selected.events || []).map((ev, i) => (
@@ -374,12 +413,12 @@ export default function BibleMap({ config, onBack }) {
                 </div>
               ))}
               {(!selected.events || selected.events.length === 0) && (
-                <p className="biblemap-note dim">途经此地。</p>
+                <p className="biblemap-note dim">{t("途经此地。")}</p>
               )}
             </div>
             <AIExplain
-              question={`请用简洁、温暖、适合主日学的话，讲解圣经地点「${selected.name_zh}（${selected.name_en}）」的历史背景与属灵意义${selected.scriptureRef ? `（相关经文：${selected.scriptureRef}）` : ''}，并给出一句默想或祷告方向。`}
-              label="✦ AI 讲解这个地点" />
+              question={`请用简洁、温暖、适合主日学的话，讲解圣经地点「${selected.name_zh}」的历史背景与属灵意义${selected.scriptureRef ? `（相关经文：${selected.scriptureRef}）` : ''}，并给出一句默想或祷告方向。`}
+              label={t("✦ AI 讲解这个地点")} />
           </div>
         )}
       </div>
@@ -388,7 +427,7 @@ export default function BibleMap({ config, onBack }) {
         {Object.entries(CONFIDENCE).map(([k, v]) => (
           <span key={k}><i style={{ background: v.color }} />{v.label}</span>
         ))}
-        <span className="hint">点击地标看经文与插图 · ✦ 可让 AI 现场讲解 · ⛪ 表示筑坛/圣所</span>
+        <span className="hint">{t("点击地标看经文与插图 · ✦ 可让 AI 现场讲解 · ⛪ 表示筑坛/圣所")}</span>
       </div>
     </div>
   )
