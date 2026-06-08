@@ -68,7 +68,7 @@ export default function SpiritualCheckupPage({ user, onBack, onNeedLogin }) {
             <div style={{ ...card, background: 'linear-gradient(135deg, rgba(218,119,242,0.12), rgba(52,199,89,0.08))' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
                 <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.55)' }}>{t("低潮指数")}</span>
-                <span style={{ fontSize: 13, fontWeight: 700, color: result.level === t("高") ? '#ff8787' : result.level === t("中") ? '#ffd43b' : '#34c759' }}>{Math.round((result.index || 0) * 100)} · {result.level}</span>
+                <span style={{ fontSize: 13, fontWeight: 700, color: result.level === "高" ? '#ff8787' : result.level === "中" ? '#ffd43b' : '#34c759' }}>{Math.round((result.index || 0) * 100)} · {result.level}</span>
               </div>
               <div style={{ fontSize: 13.5, lineHeight: 1.85, color: 'rgba(255,255,255,0.88)' }}>{result.summary}</div>
             </div>

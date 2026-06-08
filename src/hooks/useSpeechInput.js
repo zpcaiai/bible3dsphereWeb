@@ -65,6 +65,8 @@ export function useSpeechInput ({
   const recordingTimerRef = useRef(null)
   const audioCtxRef       = useRef(null)
   const mimeTypeRef       = useRef('')
+  const recordStartRef    = useRef(0)
+  const cancelStartRef    = useRef(false)
   const recordingDelayRef = useRef(null)
 
   const _closeAudioCtx = useCallback(() => {
@@ -138,6 +140,7 @@ export function useSpeechInput ({
   const startRecording = useCallback(async () => {
     setRecordingError(null)
     audioChunksRef.current = []
+    cancelStartRef.current = false
 
     if (!navigator.mediaDevices?.getUserMedia) {
       setRecordingError('您的浏览器不支持录音功能，请使用 Chrome、Safari 或 Edge 浏览器')
@@ -161,6 +164,13 @@ export function useSpeechInput ({
           channelCount: 1,
         },
       })
+
+      // 快速点按：录音还没真正开始就被松开 → 取消，避免麦克风卡住。
+      if (cancelStartRef.current) {
+        stream.getTracks().forEach(t => t.stop())
+        setIsRecording(false)
+        return
+      }
 
       // 软件增益链：source → compressor（拉平动态）→ gain（整体放大）→ dest。
       // 让低声/耳语达到识别引擎需要的响度，同时压缩器避免大声破音。
@@ -201,16 +211,22 @@ export function useSpeechInput ({
       mediaRecorder.onstop = async () => {
         clearInterval(recordingTimerRef.current)
         setRecordingSeconds(0)
+        const tooShort = Date.now() - recordStartRef.current < 1000
+        stream.getTracks().forEach(t => t.stop())
+        _closeAudioCtx()
+        if (tooShort) {
+          setRecordingError('说话时间太短，请按住至少 1 秒')
+          return
+        }
         const usedMime = mediaRecorder.mimeType || mimeTypeRef.current || 'audio/webm'
         const blob = new Blob(audioChunksRef.current, { type: usedMime })
         await _transcribe(blob, contentTypeFor(usedMime))
-        stream.getTracks().forEach(t => t.stop())
-        _closeAudioCtx()
       }
 
       mediaRecorderRef.current = mediaRecorder
       // timeslice：定期吐数据，避免极短录音丢帧。
       mediaRecorder.start(250)
+      recordStartRef.current = Date.now()
       setIsRecording(true)
       setRecordingSeconds(0)
 
@@ -264,8 +280,11 @@ export function useSpeechInput ({
   // ── stopRecording ──────────────────────────────────────────────────────────
   const stopRecording = useCallback(() => {
     clearInterval(recordingTimerRef.current)
-    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
-      mediaRecorderRef.current.stop()
+    const mr = mediaRecorderRef.current
+    if (mr && mr.state !== 'inactive') {
+      mr.stop()
+    } else {
+      cancelStartRef.current = true // 录音尚未开始（快速点按）→ 取消启动
     }
     setIsRecording(false)
   }, [])

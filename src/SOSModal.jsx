@@ -22,7 +22,7 @@ const DARK_MOMENT_CHARACTERS = [
   },
 ]
 
-const SOS_KEYWORDS = [t("绝望"), t("放弃"), t("活不下去"), t("不想活"), t("失去信仰"), t("看不见神"), t("神在哪里"), t("抛弃")]
+const SOS_KEYWORDS = ["绝望", "放弃", "活不下去", "不想活", "失去信仰", "看不见神", "神在哪里", "抛弃"]
 
 export function checkSOSKeywords(text) {
   if (!text) return false

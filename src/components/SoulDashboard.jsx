@@ -607,7 +607,7 @@ function Insight({r}){
   const loopInfo=ref.loop_detection||(r.graph_insight?.loop_detected?`检测到${r.graph_insight.loop_type||t("形成回路")}`:null)
   return <div style={{display:'flex',flexDirection:'column',gap:8}}>
     <div style={{fontSize:12,color:'rgba(255,255,255,0.75)',lineHeight:1.7}}>{interpretation}</div>
-    {loopInfo&&!loopInfo.includes(t("未检测到明显回路"))&&<div style={{fontSize:11,color:'#ffa94d',padding:'6px 10px',borderRadius:8,background:'rgba(255,169,77,0.06)',borderLeft:'2px solid rgba(255,169,77,0.4)'}}>🔄 {loopInfo}</div>}
+    {loopInfo&&!loopInfo.includes("未检测到明显回路")&&<div style={{fontSize:11,color:'#ffa94d',padding:'6px 10px',borderRadius:8,background:'rgba(255,169,77,0.06)',borderLeft:'2px solid rgba(255,169,77,0.4)'}}>🔄 {loopInfo}</div>}
     <div style={{marginTop:2,padding:10,borderRadius:10,background:'rgba(79,172,254,0.05)',borderLeft:'2px solid rgba(79,172,254,0.25)'}}>
       <span style={{fontSize:10,color:'#4facfe',fontWeight:600}}>{t("💡 反射问题")}</span>
       <div style={{fontSize:13,color:'#a0d4f7',fontStyle:'italic',marginTop:5}}>{ref.reflective_question||t("此刻，什么在你里面最活跃？")}</div>

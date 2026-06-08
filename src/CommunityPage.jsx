@@ -139,7 +139,7 @@ export default function CommunityPage({ user, token, onBack }) {
       await load(0)
     } catch (e) {
       const msg = e.message || ''
-      if (msg.includes(t("请先加入或创建教会"))) {
+      if (msg.includes("请先加入或创建教会")) {
         setPostErr(t("请先加入或创建一个教会才能发布内容"))
       } else {
         setPostErr(msg || t("发布失败"))

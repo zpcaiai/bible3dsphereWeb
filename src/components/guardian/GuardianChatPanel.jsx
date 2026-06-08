@@ -60,14 +60,18 @@ export default function GuardianChatPanel() {
     })
   }, [messages, autoSpeak, callMode])  // eslint-disable-line react-hooks/exhaustive-deps
 
-  const toggleMic = () => {
+  // 微信式按住说话：按下开麦、松开发送（对话模式由 📞 控制，长按无效）
+  const startMicHold = () => {
+    if (callMode) return
+    voice.stopSpeaking()
+    setSpriteState('listening')
+    voice.startRecording()
+  }
+  const endMicHold = () => {
+    if (callMode) return
     if (voice.isRecording) {
       voice.stopRecording()
       setSpriteState('idle')
-    } else {
-      voice.stopSpeaking()
-      setSpriteState('listening')
-      voice.startRecording()
     }
   }
 
@@ -136,7 +140,7 @@ export default function GuardianChatPanel() {
           display: 'flex', alignItems: 'center', gap: 6 }}>
           {voice.isRecording && <span className="guardian-rec-dot" />}
           {voice.isRecording
-            ? `正在聆听… ${voice.recordingSeconds}s（再按 🎤 结束）`
+            ? `正在聆听… ${voice.recordingSeconds}s（松开发送）`
             : voice.recordingError || (callMode ? t("对话模式开启：说完会自动回复并继续听你说") : '')}
         </div>
       )}
@@ -144,7 +148,13 @@ export default function GuardianChatPanel() {
       <div style={{ display: 'flex', gap: 6, alignItems: 'flex-end',
         borderTop: `1px solid ${C.lineSoft}`, padding: 12 }}>
         {/* 🎤 单次语音输入 */}
-        <button type="button" onClick={toggleMic} title={voice.isRecording ? t("结束并识别") : t("语音输入")}
+        <button type="button"
+          onMouseDown={startMicHold}
+          onMouseUp={endMicHold}
+          onMouseLeave={endMicHold}
+          onTouchStart={(e) => { e.preventDefault(); startMicHold() }}
+          onTouchEnd={(e) => { e.preventDefault(); endMicHold() }}
+          title={voice.isRecording ? t("松开发送") : t("按住说话")}
           style={iconBtn(voice.isRecording)}
           className={voice.isRecording ? 'guardian-rec-pulse' : ''}>
           🎤

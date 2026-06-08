@@ -433,6 +433,7 @@ export default function EvangelismPage({ user, token, onBack, onPrayerWall }) {
   const [recordingError, setRecordingError] = useState(null)
   const [isPolishing, setIsPolishing] = useState(false)
   const mediaRecorderRef = useRef(null)
+  const cancelStartRef = useRef(false)
   const audioChunksRef = useRef([])
 
   async function load(replace = true) {
@@ -551,6 +552,8 @@ export default function EvangelismPage({ user, token, onBack, onPrayerWall }) {
     try {
       setRecordingError(null)
       audioChunksRef.current = []
+      let startedAt = 0
+      cancelStartRef.current = false
 
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         setRecordingError(t("语音功能需要 HTTPS 环境，请通过 https:// 访问本页面"))
@@ -558,6 +561,7 @@ export default function EvangelismPage({ user, token, onBack, onPrayerWall }) {
       }
 
       const stream = await navigator.mediaDevices.getUserMedia({ audio: AUDIO_CONSTRAINTS })
+      if (cancelStartRef.current) { stream.getTracks().forEach(tr => tr.stop()); setIsRecording(false); return }
       const _boost = makeBoostedStream(stream)
       const _mt = pickMimeType()
       const mediaRecorder = _mt
@@ -571,17 +575,19 @@ export default function EvangelismPage({ user, token, onBack, onPrayerWall }) {
       }
 
       mediaRecorder.onstop = async () => {
-        const _mime = mediaRecorder.mimeType || 'audio/webm'
-        const audioBlob = new Blob(audioChunksRef.current, { type: _mime })
-        await transcribeAudio(audioBlob, onTranscript)
-
+        const _tooShort = Date.now() - startedAt < 1000
         // 停止所有音轨
         stream.getTracks().forEach(track => track.stop())
         try { _boost.ctx && _boost.ctx.close() } catch (_) {}
+        if (_tooShort) { setRecordingError(t("说话时间太短，请按住至少 1 秒")); return }
+        const _mime = mediaRecorder.mimeType || 'audio/webm'
+        const audioBlob = new Blob(audioChunksRef.current, { type: _mime })
+        await transcribeAudio(audioBlob, onTranscript)
       }
 
       mediaRecorderRef.current = mediaRecorder
       mediaRecorder.start()
+      startedAt = Date.now()
       setIsRecording(true)
     } catch (err) {
       console.error('录音启动失败:', err)
@@ -591,10 +597,13 @@ export default function EvangelismPage({ user, token, onBack, onPrayerWall }) {
 
   // 停止录音
   function stopRecording() {
-    if (mediaRecorderRef.current && isRecording) {
-      mediaRecorderRef.current.stop()
-      setIsRecording(false)
+    const mr = mediaRecorderRef.current
+    if (mr && mr.state !== 'inactive') {
+      mr.stop()
+    } else {
+      cancelStartRef.current = true // 快速点按：录音尚未开始 → 取消
     }
+    setIsRecording(false)
   }
 
   // 检测文本语言（中文或英文）
@@ -847,7 +856,11 @@ export default function EvangelismPage({ user, token, onBack, onPrayerWall }) {
               {/* 语音输入按钮 */}
               <button
                 type="button"
-                onClick={isRecording ? stopRecording : () => startRecording((text) => setDraft(prev => prev ? `${prev} ${text}` : text))}
+                onMouseDown={() => startRecording((text) => setDraft(prev => prev ? `${prev} ${text}` : text))}
+                onMouseUp={stopRecording}
+                onMouseLeave={() => { if (isRecording) stopRecording() }}
+                onTouchStart={(e) => { e.preventDefault(); startRecording((text) => setDraft(prev => prev ? `${prev} ${text}` : text)) }}
+                onTouchEnd={(e) => { e.preventDefault(); stopRecording() }}
                 disabled={submitting}
                 style={{
                   position: 'absolute',
@@ -874,7 +887,7 @@ export default function EvangelismPage({ user, token, onBack, onPrayerWall }) {
                   transition: 'all 0.2s ease',
                   zIndex: 10,
                 }}
-                title={isRecording ? t("点击停止录音") : t("点击开始语音输入")}
+                title={isRecording ? t("松开发送") : t("按住说话")}
               >
                 {isRecording ? '🔴' : '🎤'}
               </button>
@@ -1177,7 +1190,11 @@ export default function EvangelismPage({ user, token, onBack, onPrayerWall }) {
                           {/* 语音输入按钮 */}
                           <button
                             type="button"
-                            onClick={isRecording ? stopRecording : () => startRecording((text) => setEditDraft(prev => prev ? `${prev} ${text}` : text))}
+                            onMouseDown={() => startRecording((text) => setEditDraft(prev => prev ? `${prev} ${text}` : text))}
+                            onMouseUp={stopRecording}
+                            onMouseLeave={() => { if (isRecording) stopRecording() }}
+                            onTouchStart={(e) => { e.preventDefault(); startRecording((text) => setEditDraft(prev => prev ? `${prev} ${text}` : text)) }}
+                            onTouchEnd={(e) => { e.preventDefault(); stopRecording() }}
                             disabled={submitting}
                             style={{
                               position: 'absolute',
@@ -1204,7 +1221,7 @@ export default function EvangelismPage({ user, token, onBack, onPrayerWall }) {
                               transition: 'all 0.2s ease',
                               zIndex: 10,
                             }}
-                            title={isRecording ? t("点击停止录音") : t("点击开始语音输入")}
+                            title={isRecording ? t("松开发送") : t("按住说话")}
                           >
                             {isRecording ? '🔴' : '🎤'}
                           </button>
