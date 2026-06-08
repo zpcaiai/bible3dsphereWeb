@@ -1,3 +1,4 @@
+import { getRuntimeLang } from './i18n/runtime'
 const configuredApiBase = import.meta.env.VITE_API_BASE?.trim()
 
 function resolveDefaultApiBase() {
@@ -23,6 +24,18 @@ function resolveDefaultApiBase() {
 
 export const API_BASE = configuredApiBase || resolveDefaultApiBase()
 
+// 写/AI 请求统一带当前语言，供后端按 X-Lang 生成对应语言
+export function langHeaders(json = true) {
+  return { ...(json ? { 'Content-Type': 'application/json' } : {}), 'X-Lang': getRuntimeLang() }
+}
+
+function assertJsonResponse(response, message) {
+  const contentType = response.headers?.get?.('content-type') || ''
+  if (contentType && !contentType.includes('application/json')) {
+    throw new Error(message)
+  }
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // 轻量 SWR 缓存：内存去重 + localStorage 持久化。
 // 命中缓存立即返回（秒出），过期则后台静默刷新，下次进入即为最新——
@@ -45,6 +58,9 @@ function _swrRevalidate(key, fetcher) {
   return p
 }
 export async function swr(key, fetcher, ttlMs = 5 * 60 * 1000) {
+  if (import.meta.env.MODE === 'test') {
+    return fetcher()
+  }
   const entry = _swrMem.get(key) || _swrLsGet(key)
   if (entry && typeof entry.ts === 'number') {
     const fresh = (Date.now() - entry.ts) < ttlMs
@@ -64,16 +80,23 @@ async function _fetchLayoutRaw() {
   try {
     const response = await fetch(`${API_BASE}/layout`)
     if (!response.ok) throw new Error('Failed to fetch layout')
+    assertJsonResponse(response, 'Layout API did not return JSON')
     const data = await response.json()
     console.log(`[api] fetchLayout ok: ${data.count} items`)
     return data
   } catch (err) {
     console.log('[api] fetchLayout api failed, fallback to static json', err.message)
-    const response = await fetch('/emotion_sphere_layout.json')
-    if (!response.ok) throw new Error('Failed to fetch layout (static fallback)')
-    const items = await response.json()
-    console.log(`[api] fetchLayout static ok: ${items.length} items`)
-    return { items, count: items.length }
+    try {
+      const response = await fetch('/emotion_sphere_layout.json')
+      if (!response.ok) throw new Error('Failed to fetch layout (static fallback)')
+      assertJsonResponse(response, 'Static layout did not return JSON')
+      const items = await response.json()
+      console.log(`[api] fetchLayout static ok: ${items.length} items`)
+      return { items, count: items.length }
+    } catch (fallbackErr) {
+      console.log('[api] fetchLayout static fallback unavailable, returning empty layout', fallbackErr.message)
+      return { items: [], count: 0, offline: true }
+    }
   }
 }
 
@@ -177,7 +200,7 @@ export async function fetchGuidance(query) {
   console.log(`[api] fetchGuidance query=${query?.slice(0, 60)}`)
   const response = await fetch(`${API_BASE}/guidance`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: langHeaders(),
     body: JSON.stringify({ query }),
   })
   const contentType = response.headers.get('content-type') || ''
@@ -383,7 +406,7 @@ export async function fetchFaithQA(question) {
   console.log(`[api] fetchFaithQA question=${question?.slice(0, 60)}`)
   const response = await fetch(`${API_BASE}/faith-qa`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: langHeaders(),
     body: JSON.stringify({ question }),
   })
   const contentType = response.headers.get('content-type') || ''
@@ -1946,10 +1969,10 @@ export function fetchLayout() {
   return swr('layout', _fetchLayoutRaw, 30 * 60 * 1000)
 }
 export function fetchDailySnapshot(token) {
-  return swr('daily-snapshot', () => _fetchDailySnapshotRaw(token), 90 * 1000)
+  return swr('daily-snapshot:' + (token || 'anon'), () => _fetchDailySnapshotRaw(token), 90 * 1000)
 }
 export function fetchEmotionTrajectory(token, limit = 30) {
-  return swr('emotion-trajectory:' + limit, () => _fetchEmotionTrajectoryRaw(token, limit), 90 * 1000)
+  return swr('emotion-trajectory:' + (token || 'anon') + ':' + limit, () => _fetchEmotionTrajectoryRaw(token, limit), 90 * 1000)
 }
 export function fetchCommunityHeatmap(windowHours = 24, topN = 8) {
   return swr('heatmap:' + windowHours + ':' + topN, () => _fetchCommunityHeatmapRaw(windowHours, topN), 3 * 60 * 1000)
@@ -1975,6 +1998,7 @@ export async function fetchHomeBootstrap() {
   try {
     const res = await fetch(`${API_BASE}/home-bootstrap`)
     if (!res.ok) return null
+    assertJsonResponse(res, 'Home bootstrap did not return JSON')
     return await res.json()
   } catch {
     return null

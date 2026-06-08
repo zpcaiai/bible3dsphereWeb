@@ -1,6 +1,7 @@
 import { useState, useMemo, useCallback, useRef } from 'react'
 import { useGlobalAudio, TTSButton as _TTSBtn, TTSFullBar as _TTSFullBar } from './useGlobalAudio.jsx'
 import { MIRROR_CHARACTERS, MIRROR_THEMES } from './mirrorData'
+import { t } from './i18n/runtime'
 import { saveJournal } from './api'
 import BibleMap from './BibleMap'
 import { CHARACTER_JOURNEYS, buildCharacterMapConfig } from './data/characterJourneys'
@@ -148,13 +149,13 @@ function CharacterCard({ char, onClick }) {
         </div>
       </div>
       <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', lineHeight: 1.5 }}>
-        「{char.lesson}」
+        「{t(char.lesson)}」
       </div>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
         <span style={{ fontSize: 11, padding: '2px 8px', borderRadius: 20,
           background: (eraColor[char.era] || '#555') + '33',
           color: eraColor[char.era] || '#aaa', border: `1px solid ${eraColor[char.era] || '#555'}55` }}>
-          {char.era}
+          {t(char.era)}
         </span>
         <span style={{ fontSize: 11, padding: '2px 8px', borderRadius: 20,
           background: (typeColor[typeTag] || '#888') + '22',
@@ -165,7 +166,7 @@ function CharacterCard({ char, onClick }) {
           <span style={{ fontSize: 11, padding: '2px 8px', borderRadius: 20,
             background: 'rgba(255,214,10,0.12)', color: '#ffd60a',
             border: '1px solid rgba(255,214,10,0.3)' }}>
-            {char.kingdom}
+            {t(char.kingdom)}
           </span>
         )}
         {char.typology && (
@@ -188,7 +189,7 @@ function BulletList({ items, color }) {
       {items.map((item, i) => (
         <li key={i} style={{ display: 'flex', gap: 8, marginBottom: 8, alignItems: 'flex-start' }}>
           <span style={{ color: color || '#fff', flexShrink: 0, marginTop: 2 }}>•</span>
-          <span style={{ color: 'rgba(255,255,255,0.78)', fontSize: 14, lineHeight: 1.65 }}>{item}</span>
+          <span style={{ color: 'rgba(255,255,255,0.78)', fontSize: 14, lineHeight: 1.65 }}>{t(item)}</span>
         </li>
       ))}
     </ul>
@@ -239,7 +240,7 @@ function ScriptureChip({ scripture: refStr, color = '#5ac8fa', bg = 'rgba(0,122,
               {isLong && (
                 <span onClick={() => setExpanded(e => !e)}
                   style={{ color, cursor: 'pointer', marginLeft: 6, fontSize: 12 }}>
-                  {expanded ? "收起" : "展开"}
+                  {expanded ? t("收起") : t("展开")}
                 </span>
               )}
               <a href={toWdBibleUrl(refStr)} target="_blank" rel="noopener noreferrer"
@@ -268,6 +269,7 @@ function ScriptureChipList({ refs, color, bg, border }) {
 
 function CollapsibleText({ text, limit = 100, color }) {
   const [expanded, setExpanded] = useState(false)
+  text = t(text)
   const isLong = text && text.length > limit
   const displayed = isLong && !expanded ? text.slice(0, limit) + '…' : text
   return (
@@ -374,7 +376,7 @@ function CharacterDetail({ char, onBack, user, token }) {
         <div style={{ ...sectionTitle, display: 'flex', alignItems: 'center', gap: 6 }}>
           {"📖 人物简介"} <_TTSBtn text={`人物简介：${char.summary}`} />
         </div>
-        <div style={{ color: 'rgba(255,255,255,0.75)', fontSize: 14, lineHeight: 1.7 }}>{char.summary}</div>
+        <div style={{ color: 'rgba(255,255,255,0.75)', fontSize: 14, lineHeight: 1.7 }}>{t(char.summary)}</div>
       </div>
 
       {/* 2. 信靠神的核心见证 */}
@@ -429,12 +431,12 @@ function CharacterDetail({ char, onBack, user, token }) {
           <div style={{ ...sectionTitle, color: '#c084fc', display: 'flex', alignItems: 'center', gap: 6 }}>{"✨ 三一真神的作为"} <_TTSBtn text={char.works.map(g => `${g.group}。${g.items.join('。')}`).join('。')} /></div>
           {char.works.map((g, gi) => (
             <div key={gi} style={{ marginBottom: gi < char.works.length - 1 ? 16 : 0 }}>
-              <div style={{ fontSize: 14, fontWeight: 700, color: '#c084fc', margin: '4px 0 8px' }}>{g.group}</div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: '#c084fc', margin: '4px 0 8px' }}>{t(g.group)}</div>
               <ul style={{ margin: 0, padding: '0 0 0 4px', listStyle: 'none' }}>
                 {g.items.map((item, ii) => (
                   <li key={ii} style={{ display: 'flex', gap: 8, marginBottom: 8, alignItems: 'flex-start' }}>
                     <span style={{ color: '#c084fc', flexShrink: 0, marginTop: 2 }}>•</span>
-                    <span style={{ color: 'rgba(255,255,255,0.82)', fontSize: 14, lineHeight: 1.7 }}>{item}</span>
+                    <span style={{ color: 'rgba(255,255,255,0.82)', fontSize: 14, lineHeight: 1.7 }}>{t(item)}</span>
                   </li>
                 ))}
               </ul>

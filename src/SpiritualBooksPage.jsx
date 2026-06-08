@@ -56,8 +56,8 @@ function PdfBookReader({ book, onBack }) {
       <header style={S.header}>
         <button onClick={onBack} style={S.back} aria-label={t("返回书库")}>{t("‹ 返回书库")}</button>
         <div style={{ flex: 1 }}>
-          <div style={S.hTitle}>{book.emoji} {book.title}</div>
-          <div style={S.hSub}>{book.author}</div>
+          <div style={S.hTitle}>{book.emoji} {t(book.title)}</div>
+          <div style={S.hSub}>{t(book.author)}</div>
         </div>
         {book.pdf && (
           <a href={book.pdf} target="_blank" rel="noopener noreferrer" style={S.pdfBtn}>📄 PDF</a>

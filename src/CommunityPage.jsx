@@ -7,6 +7,7 @@ import {
 import { requestFriend } from './realtime/realtimeApi'
 import { COMMUNITY_STATUS_GROUPS } from './communityStatuses'
 import { t } from './i18n/runtime'
+import Translatable from './Translatable'
 
 const PAGE = 20
 
@@ -80,7 +81,7 @@ function Comments({ postId, token, user, onCountChange }) {
               <span className="cmty-time">{relTime(c.created_at)}</span>
               {c.is_own && <button className="cmty-del" onClick={() => remove(c.id)}>{t("删除")}</button>}
             </div>
-            <div className="cmty-comment-text">{c.content}</div>
+            <Translatable className="cmty-comment-text" text={c.content} />
           </div>
         </div>
       ))}
@@ -267,7 +268,7 @@ export default function CommunityPage({ user, token, onBack }) {
               </div>
               {post.is_own && <button className="cmty-del" onClick={() => removePost(post)}>{t("删除")}</button>}
             </div>
-            {post.content && <div className="cmty-post-content">{post.content}</div>}
+            {post.content && <Translatable className="cmty-post-content" text={post.content} />}
             <div className="cmty-post-actions">
               <button className={`cmty-act ${post.amened ? 'on' : ''}`} disabled={!user}
                 onClick={() => toggleAmen(post)} title={user ? t("阿们") : t("登录后可阿们")}>

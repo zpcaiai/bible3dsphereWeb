@@ -9,40 +9,13 @@ import {
 } from './realtime/realtimeApi'
 import realtimeStore from './realtime/realtimeStore'
 import { useRealtimeState, useRealtimeMessages } from './realtime/useRealtimeStore'
-import { t, getRuntimeLang } from './i18n/runtime'
-import { translateText } from './api'
+import { t } from './i18n/runtime'
+import Translatable from './Translatable'
 
 const showToast = (m) => window.showToast?.(m, 'info')
 function shortName(email, nickname) {
   return nickname || (email ? email.split('@')[0] : t("弟兄姐妹"))
 }
-// 可翻译气泡：当消息语言与当前界面语言不一致时显示「翻译」按钮，按需机翻。
-function Translatable({ text, className }) {
-  const [tr, setTr] = useState(null)
-  const [loading, setLoading] = useState(false)
-  const lang = getRuntimeLang()
-  const isZh = /[\u4e00-\u9fff]/.test(text || '')
-  const crossLang = lang === 'en' ? isZh : (!isZh && /[a-zA-Z]/.test(text || ''))
-  const onTranslate = async () => {
-    if (tr || loading) return
-    setLoading(true)
-    try { const r = await translateText(text, lang); if (r) setTr(r) } finally { setLoading(false) }
-  }
-  return (
-    <div className={className}>
-      {text}
-      {tr && <div style={{ marginTop: 4, paddingTop: 4, borderTop: '1px solid rgba(255,255,255,0.12)', opacity: 0.9 }}>{tr}</div>}
-      {crossLang && !tr && (
-        <button onClick={onTranslate} disabled={loading}
-          style={{ display: 'block', marginTop: 3, background: 'none', border: 'none', padding: 0,
-            color: 'rgba(255,255,255,0.45)', fontSize: 11, cursor: 'pointer' }}>
-          {loading ? t('翻译中…') : t('翻译')}
-        </button>
-      )}
-    </div>
-  )
-}
-
 function timeLabel(iso) {
   if (!iso) return ''
   try {

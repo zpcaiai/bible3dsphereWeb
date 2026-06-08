@@ -294,7 +294,7 @@ export default function HymnPlayer() {
             className={`hymn-chip ${i === idx ? 'active' : ''}`}
             onClick={() => setIdx(i)}
           >
-            {h.title}
+            {t(h.title)}
           </button>
         ))}
       </div>
@@ -302,7 +302,7 @@ export default function HymnPlayer() {
       {/* 标题信息 */}
       <div className="hymn-meta">
         <div className="hymn-meta-title">
-          {hymn.title}
+          {t(hymn.title)}
           <button
             type="button"
             className="hymn-share-btn"
@@ -318,8 +318,8 @@ export default function HymnPlayer() {
             }}>{t("↗ 分享")}</button>
         </div>
         <div className="hymn-meta-en">{hymn.en}</div>
-        <div className="hymn-meta-author">{hymn.author}</div>
-        {hymn.note && <div className="hymn-meta-note">{hymn.note}</div>}
+        <div className="hymn-meta-author">{t(hymn.author)}</div>
+        {hymn.note && <div className="hymn-meta-note">{t(hymn.note)}</div>}
       </div>
 
       {/* 曲谱展示 */}
