@@ -78,14 +78,18 @@ export default function GuardianWidget() {
   const expanded = widgetMode !== 'collapsed'
 
   // —— 拖拽：手指/鼠标皆可。null = 默认右下角；拖过后用 left/top 定位并持久化 ——
+  // 收起态拖小鸽子本体；展开态拖面板头部（拖拽手柄）。
   const [pos, setPos] = useState(loadPos)
+  const rootRef = useRef(null)
   const dragRef = useRef(null)      // { startX, startY, originX, originY }
   const movedRef = useRef(false)    // 本次手势是否构成拖动（抑制 click）
 
   const onSpritePointerDown = (e) => {
+    if (e.target.closest('[data-no-drag]')) return
     const el = e.currentTarget
-    // 以整个容器（面板+小人）为基准拖动，展开状态下也不会跳位
-    const box = el.parentElement?.getBoundingClientRect() || el.getBoundingClientRect()
+    // 以整个容器（面板+小鸽子）为基准拖动，展开状态下也不会跳位
+    const box = rootRef.current?.getBoundingClientRect()
+      || el.parentElement?.getBoundingClientRect() || el.getBoundingClientRect()
     dragRef.current = { startX: e.clientX, startY: e.clientY, originX: box.left, originY: box.top, w: box.width, h: box.height }
     movedRef.current = false
     el.setPointerCapture?.(e.pointerId)
@@ -116,7 +120,7 @@ export default function GuardianWidget() {
   }
 
   return (
-    <div style={{ position: 'fixed', zIndex: 1200,
+    <div ref={rootRef} style={{ position: 'fixed', zIndex: 1200,
       ...(pos ? { left: pos.x, top: pos.y } : { bottom: 20, right: 20 }),
       display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 12 }}>
       {expanded && (
@@ -128,9 +132,15 @@ export default function GuardianWidget() {
           background: C.panel, backdropFilter: 'blur(10px)',
           boxShadow: '0 18px 50px rgba(0,0,0,0.5)',
         }}>
-          {/* 头部 */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10,
-            borderBottom: `1px solid ${C.lineSoft}`, padding: '10px 12px' }}>
+          {/* 头部（拖拽手柄：展开状态按住这里也能拖动） */}
+          <div
+            onPointerDown={onSpritePointerDown}
+            onPointerMove={onSpritePointerMove}
+            onPointerUp={onSpritePointerUp}
+            onPointerCancel={onSpritePointerUp}
+            style={{ display: 'flex', alignItems: 'center', gap: 10,
+              borderBottom: `1px solid ${C.lineSoft}`, padding: '10px 12px',
+              cursor: 'grab', touchAction: 'none', userSelect: 'none' }}>
             <GuardianSprite state={spriteState} size={36} />
             <div style={{ flex: 1 }}>
               <p style={{ fontSize: 13.5, fontWeight: 600, color: C.text, margin: 0 }}>
@@ -140,7 +150,7 @@ export default function GuardianWidget() {
                 {profile ? `${profile.stageEmoji} ${profile.stageZh} · ` : ''}同行者，不是替代者
               </p>
             </div>
-            <button type="button" onClick={() => setWidgetMode('collapsed')} aria-label="收起"
+            <button type="button" data-no-drag onClick={() => setWidgetMode('collapsed')} aria-label="收起"
               style={{ background: 'none', border: 'none', cursor: 'pointer',
                 color: C.dim, fontSize: 14, padding: '4px 8px' }}>─</button>
           </div>
@@ -179,7 +189,7 @@ export default function GuardianWidget() {
         </div>
       )}
 
-      {/* 收起状态的小精灵（可拖动，点按开合） */}
+      {/* 小鸽子（可拖动，点按开合） */}
       <button type="button" aria-label="打开属灵守护者（按住可拖动）"
         onClick={() => { if (movedRef.current) { movedRef.current = false; return } setWidgetMode(expanded ? 'collapsed' : 'expanded') }}
         onPointerDown={onSpritePointerDown}
