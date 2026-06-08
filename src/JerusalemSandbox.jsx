@@ -65,6 +65,11 @@ function bearing(a, b) {
 }
 const sleep = (ms) => new Promise(r => setTimeout(r, ms))
 
+// 已 remove() 的 Mapbox/MapLibre 地图再调 getLayer/getSource 会直接抛异常（style 已销毁），
+// 回退切换引擎时曾导致整个应用崩溃黑屏——统一用安全探测。
+const safeLayer = (map, id) => { try { return map && map.getLayer ? map.getLayer(id) : null } catch (_) { return null } }
+const safeSource = (map, id) => { try { return map && map.getSource ? map.getSource(id) : null } catch (_) { return null } }
+
 export default function JerusalemSandbox({ onBack }) {
   const containerRef = useRef(null)
   const mapRef = useRef(null)
@@ -118,6 +123,7 @@ export default function JerusalemSandbox({ onBack }) {
             if (disposed || triedFallbackRef.current) return
             triedFallbackRef.current = true
             try { map.remove() } catch (_) {}
+            mapRef.current = null; glRef.current = null
             setEngine('maplibre'); boot('maplibre')
           }
           const mbTimer = setTimeout(() => { if (!mbLoaded) fallbackToMaplibre() }, 8000)
@@ -255,7 +261,7 @@ export default function JerusalemSandbox({ onBack }) {
 
   // —— 3D 平地起高楼：高度从 0 增长到目标 ——
   function riseTween() {
-    const map = mapRef.current; if (!map || !map.getLayer || !map.getLayer('jeru-fill')) return
+    const map = mapRef.current; if (!map || !safeLayer(map, 'jeru-fill')) return
     const start = performance.now(); const dur = 900
     const heightExpr = ['coalesce', ['get', 'height'], 0]
     const step = (t) => {
@@ -271,7 +277,7 @@ export default function JerusalemSandbox({ onBack }) {
   useEffect(() => {
     const map = mapRef.current; const gl = glRef.current
     if (!map || status !== 'ready' || !map.getSource) return
-    if (!map.getSource('jeru-poly')) return
+    if (!safeSource(map, 'jeru-poly')) return
     // 切换时期时自动退出圣殿模式，恢复城市图层
     if (templeModeRef.current) {
       templeModeRef.current = false; setTempleMode(false); setSelectedPart(null)
@@ -285,8 +291,8 @@ export default function JerusalemSandbox({ onBack }) {
     }
     const g = eraGeoJSON(era.id)
     try {
-      map.getSource('jeru-poly').setData(g.polygons)
-      map.getSource('jeru-wall').setData(g.walls)
+      try { map.getSource('jeru-poly').setData(g.polygons) } catch (_) { return }
+      try { map.getSource('jeru-wall').setData(g.walls) } catch (_) { return }
     } catch (_) {}
     addMarkers(gl, map, era.id)
     setSelectedLoc(null)
@@ -298,7 +304,7 @@ export default function JerusalemSandbox({ onBack }) {
   // —— OSM 底图开关（仅 MapLibre）——
   useEffect(() => {
     const map = mapRef.current
-    if (!map || engine !== 'maplibre' || !map.getLayer || !map.getLayer('osm')) return
+    if (!map || engine !== 'maplibre' || !safeLayer(map, 'osm')) return
     try { map.setLayoutProperty('osm', 'visibility', showOsm ? 'visible' : 'none') } catch (_) {}
   }, [showOsm, engine, status])
 
@@ -314,7 +320,7 @@ export default function JerusalemSandbox({ onBack }) {
   }
   function enterTemple() {
     const map = mapRef.current, gl = glRef.current
-    if (!map || !map.getLayer || !map.getLayer('temple-fill')) return
+    if (!map || !safeLayer(map, 'temple-fill')) return
     passionRunRef.current = false; setPassionActive(false)
     templeModeRef.current = true; setTempleMode(true); setSelectedLoc(null)
     try {
@@ -350,7 +356,7 @@ export default function JerusalemSandbox({ onBack }) {
   // 剖视开关
   useEffect(() => {
     const map = mapRef.current
-    if (!map || !templeMode || !map.getLayer || !map.getLayer('temple-fill')) return
+    if (!map || !templeMode || !safeLayer(map, 'temple-fill')) return
     try { map.setFilter('temple-fill', cutaway ? ['!=', ['get', 'cut'], 1] : null) } catch (_) {}
   }, [cutaway, templeMode])
 

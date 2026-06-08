@@ -123,8 +123,11 @@ export default class MapLibreAdapter extends MapAdapter {
     this.markers.forEach((m) => m.remove())
     this.markers = []
     this.sourceIds.forEach((id) => {
-      if (this.map.getLayer(id)) this.map.removeLayer(id)
-      if (this.map.getSource(id)) this.map.removeSource(id)
+      // style 已销毁的 map 调 getLayer/getSource 会抛异常（getOwnLayer of undefined）
+      try {
+        if (this.map.getLayer(id)) this.map.removeLayer(id)
+        if (this.map.getSource(id)) this.map.removeSource(id)
+      } catch (_) {}
     })
     this.sourceIds = []
   }
