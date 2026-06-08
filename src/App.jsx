@@ -12,10 +12,13 @@ import { isIosInstallable, promptInstall, subscribeToInstallPrompt } from './pwa
 import { escapeHtml } from './sanitize'
 import { getOrCreateVisitorId, verseGroupsFromResult, buildComparisonRows, formatLoginTime } from './utils'
 import { useEmotionStore } from './store'
-import { EmotionSphereScene } from './EmotionSphereScene'
+const EmotionSphereScene = lazy(() => import('./EmotionSphereScene').then((m) => ({ default: m.EmotionSphereScene })))
 import LoginScreen from './LoginScreen'
 import TranslatableParagraph from './TranslatableParagraph'
 import { TTSButton, TTSFullBar } from './useGlobalAudio.jsx'
+import { useLang } from './i18n/LanguageContext'
+import LanguageToggle from './i18n/LanguageToggle'
+import { t } from './i18n/runtime'
 
 const CheckInPage = lazy(() => import('./CheckInPage'))
 const ShareWallPage = lazy(() => import('./ShareWallPage'))
@@ -57,6 +60,7 @@ const queryClient = new QueryClient({
 
 function AppContent() {
   const { user, setUser, authLoading, handleLogout } = useAuth()
+  const { t } = useLang()
 
   const [showLogin, setShowLogin] = useState(false)
   const [showLoginOverlay, setShowLoginOverlay] = useState(false)
@@ -99,7 +103,7 @@ function AppContent() {
     setCommunityHeatmap,
   } = useEmotionStore()
 
-  const DEFAULT_QUERY_TEXT = '我感到很痛苦，也很想被安慰，但仍然想抓住一点盼望（也可以提问任何基督信仰的问题）'
+  const DEFAULT_QUERY_TEXT = t("我感到很痛苦，也很想被安慰，但仍然想抓住一点盼望（也可以提问任何基督信仰的问题）")
   const [query, setQuery] = useState('')
   const [includeGuidance, setIncludeGuidance] = useState(true)
   const [rerankMode, setRerankMode] = useState('llm')
@@ -273,11 +277,11 @@ function AppContent() {
 
   async function doQuery() {
     if (!query.trim()) {
-      setError('请先输入你想倾诉的内容')
+      setError(t("请先输入你想倾诉的内容"))
       return
     }
     setLoading(true)
-    if (window.showToast) window.showToast("🤔 正在思考…", "loading", 30000)
+    if (window.showToast) window.showToast(t("🤔 正在思考…"), "loading", 30000)
     setError('')
     setInstallMessage('')
     setGuidance(null)
@@ -354,60 +358,60 @@ function AppContent() {
   function buildSpeakText() {
     const parts = []
     // 1. 核心情绪
-    if (guidance?.core_emotions?.length) parts.push('核心情绪：' + guidance.core_emotions.join('、'))
+    if (guidance?.core_emotions?.length) parts.push(t("核心情绪：") + guidance.core_emotions.join('、'))
     // 2. 心理评估
-    if (guidance?.psychological_assessment) parts.push('心理评估。' + guidance.psychological_assessment)
+    if (guidance?.psychological_assessment) parts.push(t("心理评估。") + guidance.psychological_assessment)
     // 3. 属灵剖析
-    if (sermon?.spiritual_diagnosis) parts.push('属灵剖析。' + sermon.spiritual_diagnosis)
+    if (sermon?.spiritual_diagnosis) parts.push(t("属灵剖析。") + sermon.spiritual_diagnosis)
     // 4. 核心需要
-    if (guidance?.core_need) parts.push('核心需要：' + guidance.core_need)
+    if (guidance?.core_need) parts.push(t("核心需要：") + guidance.core_need)
     // 6. 属灵引导
-    if (guidance?.spiritual_guidance) parts.push('属灵引导。' + guidance.spiritual_guidance)
+    if (guidance?.spiritual_guidance) parts.push(t("属灵引导。") + guidance.spiritual_guidance)
 
     // 7. 圣经榜样
     if (biblicalExample) {
-      const parts_be = ['圣经榜样']
-      if (biblicalExample.person) parts_be.push('人物：' + biblicalExample.person)
-      if (biblicalExample.similar_situation) parts_be.push('相似处境：' + biblicalExample.similar_situation)
-      if (biblicalExample.biblical_response) parts_be.push('圣经回应：' + biblicalExample.biblical_response)
-      if (biblicalExample.key_verse) parts_be.push('关键经文：' + biblicalExample.key_verse)
+      const parts_be = [t("圣经榜样")]
+      if (biblicalExample.person) parts_be.push(t("人物：") + biblicalExample.person)
+      if (biblicalExample.similar_situation) parts_be.push(t("相似处境：") + biblicalExample.similar_situation)
+      if (biblicalExample.biblical_response) parts_be.push(t("圣经回应：") + biblicalExample.biblical_response)
+      if (biblicalExample.key_verse) parts_be.push(t("关键经文：") + biblicalExample.key_verse)
       parts.push(parts_be.join('。'))
     }
 
     // 8. 历史见证
     if (sermon?.historical_case) {
       const hc = sermon.historical_case
-      parts.push('历史见证。' + [hc.person, hc.story, hc.lesson].filter(Boolean).join('。'))
+      parts.push(t("历史见证。") + [hc.person, hc.story, hc.lesson].filter(Boolean).join('。'))
     }
 
     // 9. 专属讲道
     if (sermon) {
-      if (sermon.title) parts.push('专属讲道：' + sermon.title)
-      if (sermon.theme_verse) parts.push('主题经文：' + sermon.theme_verse)
-      if (sermon.introduction) parts.push('引言。' + sermon.introduction)
+      if (sermon.title) parts.push(t("专属讲道：") + sermon.title)
+      if (sermon.theme_verse) parts.push(t("主题经文：") + sermon.theme_verse)
+      if (sermon.introduction) parts.push(t("引言。") + sermon.introduction)
       sermon.sections?.forEach(s => { if (s.content) parts.push(s.heading + '。' + s.content) })
       if (sermon.application) {
         const app = Array.isArray(sermon.application) ? sermon.application.join('。') : sermon.application
-        parts.push('属灵操练。' + app)
+        parts.push(t("属灵操练。") + app)
       }
-      if (sermon.encouragement) parts.push('勉励与安慰。' + sermon.encouragement)
-      if (sermon.prayer) parts.push('祝祷。' + sermon.prayer)
+      if (sermon.encouragement) parts.push(t("勉励与安慰。") + sermon.encouragement)
+      if (sermon.prayer) parts.push(t("祝祷。") + sermon.prayer)
     }
 
     // 10. 应用建议 (Application from Biblical Example)
     if (biblicalExample?.application || guidance?.coping_suggestions?.length) {
-      const parts_app = ['应用建议 (Application from Biblical Example)']
+      const parts_app = [t("应用建议 (Application from Biblical Example)")]
       if (guidance?.coping_suggestions?.length) {
-        parts_app.push('日常应对：' + guidance.coping_suggestions.join('。'))
+        parts_app.push(t("日常应对：") + guidance.coping_suggestions.join('。'))
       }
       if (biblicalExample?.application) {
-        parts_app.push('圣经操练：' + biblicalExample.application)
+        parts_app.push(t("圣经操练：") + biblicalExample.application)
       }
       parts.push(parts_app.join('。'))
     }
 
     // 11. 结语
-    if (sermon?.conclusion) parts.push('结语与盼望。' + sermon.conclusion)
+    if (sermon?.conclusion) parts.push(t("结语与盼望。") + sermon.conclusion)
 
     return parts.join('\n\n')
   }
@@ -427,8 +431,8 @@ function AppContent() {
       'Microsoft Xiaoxiao',
       'Microsoft Zhiyu',
       'Ting-Ting',
-      'Google 普通话',
-      'Google 國語',
+      t("Google 普通话"),
+      t("Google 國語"),
     ]
     
     // 首先尝试找中文女声
@@ -441,7 +445,7 @@ function AppContent() {
     
     // fallback: 任何中文女声
     const zhFemale = voices.find(v => 
-      v.lang?.startsWith('zh') && (v.name.includes('Female') || v.name.includes('女'))
+      v.lang?.startsWith('zh') && (v.name.includes('Female') || v.name.includes(t("女")))
     )
     if (zhFemale) return zhFemale
     
@@ -464,7 +468,7 @@ function AppContent() {
   // 使用浏览器原生 TTS（作为 fallback）
   function speakWithNativeTTS(text) {
     if (!window.speechSynthesis) {
-      alert('您的浏览器不支持文字转语音功能')
+      alert(t("您的浏览器不支持文字转语音功能"))
       return
     }
     
@@ -642,7 +646,7 @@ function AppContent() {
       onPolished(polished)
     } catch (err) {
       console.error('润色失败:', err)
-      setRecordingError('文字润色失败，请检查网络连接')
+      setRecordingError(t("文字润色失败，请检查网络连接"))
     } finally {
       setIsPolishing(false)
     }
@@ -669,7 +673,7 @@ function AppContent() {
       onPolished(polished)
     } catch (err) {
       console.error('润色失败:', err)
-      setRecordingError('文字润色失败，请检查网络连接')
+      setRecordingError(t("文字润色失败，请检查网络连接"))
     } finally {
       setIsPolishing(false)
     }
@@ -678,7 +682,7 @@ function AppContent() {
   async function handleSubmit(event) {
     event.preventDefault()
     if (isPolishing) {
-      setRecordingError('正在润色中，请稍候...')
+      setRecordingError(t("正在润色中，请稍候..."))
       return
     }
     await doQuery()
@@ -687,7 +691,7 @@ function AppContent() {
   async function handleInstallApp() {
     const installed = await promptInstall()
     setCanInstall(false)
-    setInstallMessage(installed ? '已触发安装，你可以将应用添加到主屏幕。' : '当前浏览器没有弹出安装确认，可使用浏览器菜单手动添加到主屏幕。')
+    setInstallMessage(installed ? t("已触发安装，你可以将应用添加到主屏幕。") : t("当前浏览器没有弹出安装确认，可使用浏览器菜单手动添加到主屏幕。"))
   }
 
   async function handleVerseTrigger(feature) {
@@ -722,7 +726,7 @@ function AppContent() {
 
   function exportVersesToTxt() {
     if (!queryResult?.verse_summary && !sermon) return
-    const docTitle = sermon ? '属灵星球 - 专属讲道' : '属灵星球 - 求赐恩言'
+    const docTitle = sermon ? t("属灵星球 - 专属讲道") : t("属灵星球 - 求赐恩言")
     let content = `${docTitle}\n`
     content += `倾心吐意：${query}\n`
     content += `日期：${new Date().toLocaleString('zh-CN')}\n\n`
@@ -854,7 +858,7 @@ function AppContent() {
       content += `  默想经文\n`
       content += `━━━━━━━━━━━━━━━━━━━━━━━\n\n`
       groups.forEach(group => {
-        content += `─── ${group.language === 'cuv' ? '中文（和合本）' : 'English (ESV)'} ───\n\n`
+        content += `─── ${group.language === 'cuv' ? t("中文（和合本）") : 'English (ESV)'} ───\n\n`
         group.items.forEach(item => {
           content += `▸ ${item.book_name} ${item.chapter}:${item.verse}\n`
           content += `${item.raw_text}\n\n`
@@ -881,7 +885,7 @@ function AppContent() {
       const titleStr = typeof sermon.title === 'string' ? sermon.title : String(sermon.title)
       filenameBase = titleStr.replace(/[\\/:*?"<>|]/g, '')
     } else {
-      filenameBase = '默想经文'
+      filenameBase = t("默想经文")
     }
 
     a.download = `${filenameBase}_${datetime}.txt`
@@ -903,7 +907,7 @@ function AppContent() {
       const titleStr = typeof sermon.title === 'string' ? sermon.title : String(sermon.title)
       filenameBase = titleStr.replace(/[\\/:*?"<>|]/g, '')
     } else {
-      filenameBase = '默想经文'
+      filenameBase = t("默想经文")
     }
     const filename = `${filenameBase}_${datetime}.pdf`
 
@@ -976,7 +980,7 @@ function AppContent() {
 
     try {
       // Header block
-      const pdfTitle = sermon ? '属灵星球 - 专属讲道' : '属灵星球 - 求赐恩言'
+      const pdfTitle = sermon ? t("属灵星球 - 专属讲道") : t("属灵星球 - 求赐恩言")
       await addBlockToPdf(`
         <h1 style="font-size: 20px; color: #007aff; margin: 0 0 10px 0;">${pdfTitle}</h1>
         <div style="font-size: 12px; color:#9a9a9a; margin-bottom: 5px;">倾心吐意：${escapeHtml(query)}<br>日期：${new Date().toLocaleString('zh-CN')}</div>
@@ -984,7 +988,7 @@ function AppContent() {
 
       // Guidance block
       if (guidance) {
-        let guidanceHtml = '<div style="margin: 6px 0;"><div style="font-size: 14px; font-weight: bold; color: #444; margin-bottom: 4px; border-bottom: 1px solid #2e3c52; padding-bottom: 3px;">引导信息</div><div style="background: rgba(0,122,255,0.15); padding: 10px; border-radius: 8px; border: 1px solid rgba(0,122,255,0.25); color:#f0f0f0;">'
+        let guidanceHtml = t("<div style=\"margin: 6px 0;\"><div style=\"font-size: 14px; font-weight: bold; color: #444; margin-bottom: 4px; border-bottom: 1px solid #2e3c52; padding-bottom: 3px;\">引导信息</div><div style=\"background: rgba(0,122,255,0.15); padding: 10px; border-radius: 8px; border: 1px solid rgba(0,122,255,0.25); color:#f0f0f0;\">")
         if (guidance.core_emotions?.length) {
           guidanceHtml += `<div style="margin-bottom:8px;"><strong style="color:#5ea0ff;">核心情绪：</strong>${guidance.core_emotions.join('、')}</div>`
         }
@@ -1006,7 +1010,7 @@ function AppContent() {
 
       // Biblical example block
       if (biblicalExample) {
-        let exampleHtml = '<div style="margin: 6px 0;"><div style="font-size: 14px; font-weight: bold; color: #444; margin-bottom: 4px; border-bottom: 1px solid #2e3c52; padding-bottom: 3px;">圣经例子</div><div style="background: rgba(0,122,255,0.15); padding: 10px; border-radius: 8px; border: 1px solid rgba(0,122,255,0.25); color:#f0f0f0;">'
+        let exampleHtml = t("<div style=\"margin: 6px 0;\"><div style=\"font-size: 14px; font-weight: bold; color: #444; margin-bottom: 4px; border-bottom: 1px solid #2e3c52; padding-bottom: 3px;\">圣经例子</div><div style=\"background: rgba(0,122,255,0.15); padding: 10px; border-radius: 8px; border: 1px solid rgba(0,122,255,0.25); color:#f0f0f0;\">")
         if (biblicalExample.person) {
           exampleHtml += `<div style="margin-bottom:8px;"><strong style="color:#5ea0ff;">人物：</strong>${biblicalExample.person}${biblicalExample.era ? ` (${biblicalExample.era})` : ''}</div>`
         }
@@ -1083,9 +1087,9 @@ function AppContent() {
       // 12. Meditated Verses block
       const groups = verseGroupsFromResult(queryResult, languageFilter)
       if (groups.length > 0) {
-        let versesHtml = '<div style="margin: 6px 0;"><div style="font-size: 14px; font-weight: bold; color: #444; margin-bottom: 4px; border-bottom: 1px solid #2e3c52; padding-bottom: 3px;">默想经文</div>'
+        let versesHtml = t("<div style=\"margin: 6px 0;\"><div style=\"font-size: 14px; font-weight: bold; color: #444; margin-bottom: 4px; border-bottom: 1px solid #2e3c52; padding-bottom: 3px;\">默想经文</div>")
         groups.forEach(group => {
-          versesHtml += `<div style="margin: 8px 0 4px; font-size: 12px; color:#9a9a9a; font-weight: 600;">${group.language === 'cuv' ? '中文（和合本）' : 'English (ESV)'}</div>`
+          versesHtml += `<div style="margin: 8px 0 4px; font-size: 12px; color:#9a9a9a; font-weight: 600;">${group.language === 'cuv' ? t("中文（和合本）") : 'English (ESV)'}</div>`
           group.items.forEach(item => {
             versesHtml += `
               <div style="margin: 6px 0; padding: 10px; background:#1a2433; border-radius: 8px; border: 1px solid #2e3c52;">
@@ -1111,13 +1115,13 @@ function AppContent() {
       pdf.save(filename)
     } catch (err) {
       console.error('PDF generation failed:', err)
-      alert('PDF 生成失败，请重试')
+      alert(t("PDF 生成失败，请重试"))
     }
   }
 
   async function saveToDevotionJournal() {
     if (!user) {
-      setLoginMessage('请先登录，再保存灵修日记')
+      setLoginMessage(t("请先登录，再保存灵修日记"))
       setPendingPanel('sphere')
       setShowLogin(true)
       return
@@ -1128,7 +1132,7 @@ function AppContent() {
       const today = new Date().toISOString().slice(0, 10)
       const titleParts = []
       if (query) titleParts.push(query.slice(0, 40))
-      const title = titleParts.length ? titleParts[0] : '今日灵修'
+      const title = titleParts.length ? titleParts[0] : t("今日灵修")
 
       const verses = queryResult?.verse_summary?.slice(0, 3).map(v =>
         `${v.book_name} ${v.chapter}:${v.verse} — ${v.raw_text}`
@@ -1169,7 +1173,7 @@ function AppContent() {
         mood: guidance?.core_emotions?.[0] || '',
       }, getToken())
 
-      setToast({ message: '✅ 已存入今日灵修日记！', type: 'success' })
+      setToast({ message: t("✅ 已存入今日灵修日记！"), type: 'success' })
       if (toastTimerRef.current) clearTimeout(toastTimerRef.current)
       toastTimerRef.current = setTimeout(() => setToast(null), 3000)
     } catch (err) {
@@ -1202,21 +1206,21 @@ function AppContent() {
     const needsLogin = ['mydevotion', 'prayer', 'devotion', 'journal', 'evangelism', 'checkin', 'sharewall', 'innerlife', 'soul-question', 'growth-map', 'partner', 'bible-reading', 'communion', 'voice']
     if (needsLogin.includes(panel) && !user) {
       const messages = {
-        mydevotion: '登录后记录和分享你的灵修日记',
-        prayer: '登录后参与代祷和分享祷告需要',
-        devotion: '登录后记录你的灵修成长',
-        sharewall: '登录后查看分享墙内容',
-        journal: '登录后查看主日信息',
-        evangelism: '登录后参与传FY事工',
-        checkin: '登录后打卡记录情绪',
-        innerlife: '登录后使用属灵辨识与灵镜分析',
-        mirror: '登录后查看圣经人物镜鉴',
-        'soul-question': '登录后开始每日灵魂一问',
-        'growth-map': '登录后查看你的灵命成长图谱',
-        'partner': '登录后配对属灵伙伴',
-        'bible-reading': '登录后记录圣经通读进度',
-        'communion': '登录后与弟兄姊妹聊天和语音通话',
-        'voice': '登录后创建群并发起多人实时语音通话',
+        mydevotion: t("登录后记录和分享你的灵修日记"),
+        prayer: t("登录后参与代祷和分享祷告需要"),
+        devotion: t("登录后记录你的灵修成长"),
+        sharewall: t("登录后查看分享墙内容"),
+        journal: t("登录后查看主日信息"),
+        evangelism: t("登录后参与传FY事工"),
+        checkin: t("登录后打卡记录情绪"),
+        innerlife: t("登录后使用属灵辨识与灵镜分析"),
+        mirror: t("登录后查看圣经人物镜鉴"),
+        'soul-question': t("登录后开始每日灵魂一问"),
+        'growth-map': t("登录后查看你的灵命成长图谱"),
+        'partner': t("登录后配对属灵伙伴"),
+        'bible-reading': t("登录后记录圣经通读进度"),
+        'communion': t("登录后与弟兄姊妹聊天和语音通话"),
+        'voice': t("登录后创建群并发起多人实时语音通话"),
       }
       setLoginMessage(messages[panel])
       setPendingPanel(panel)
@@ -1244,7 +1248,7 @@ function AppContent() {
   }
 
   function handleNeedLogin(message) {
-    setLoginOverlayMessage(message || '请先登录后再继续操作')
+    setLoginOverlayMessage(message || t("请先登录后再继续操作"))
     setShowLoginOverlay(true)
   }
 
@@ -1289,15 +1293,15 @@ function AppContent() {
             padding: '24px',
           }}>
             <div style={{ fontSize: '20px', fontWeight: 600, color: 'rgba(255,255,255,0.95)', marginBottom: '20px', textAlign: 'center' }}>
-              ✏️ 修改资料
+              {t("✏️ 修改资料")}
             </div>
             <div style={{ marginBottom: '16px' }}>
-              <label style={{ display: 'block', fontSize: '13px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>昵称</label>
+              <label style={{ display: 'block', fontSize: '13px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>{t("昵称")}</label>
               <input
                 type="text"
                 value={editNickname}
                 onChange={(e) => setEditNickname(e.target.value.slice(0, 50))}
-                placeholder="输入昵称"
+                placeholder={t("输入昵称")}
                 style={{
                   width: '100%',
                   padding: '12px',
@@ -1311,7 +1315,7 @@ function AppContent() {
               />
             </div>
             <div style={{ marginBottom: '20px' }}>
-              <label style={{ display: 'block', fontSize: '13px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>头像 URL (可选)</label>
+              <label style={{ display: 'block', fontSize: '13px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>{t("头像 URL (可选)")}</label>
               <input
                 type="text"
                 value={editAvatar}
@@ -1359,7 +1363,7 @@ function AppContent() {
                     setUser(updatedUser)
                     setShowEditProfile(false)
                   } catch (e) {
-                    alert('保存失败: ' + e.message)
+                    alert(t("保存失败: ") + e.message)
                   } finally {
                     setEditProfileLoading(false)
                   }
@@ -1377,38 +1381,38 @@ function AppContent() {
                   opacity: editNickname.trim() && !editProfileLoading ? 1 : 0.5,
                 }}
               >
-                {editProfileLoading ? '💾 保存中…' : '💾 保存'}
+                {editProfileLoading ? t("💾 保存中…") : t("💾 保存")}
               </button>
             </div>
             {/* 我的教会 */}
             <div style={{ marginTop: 16, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, padding: '12px 14px' }}>
-              <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', marginBottom: 8 }}>⛪ 我的教会</div>
+              <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', marginBottom: 8 }}>{t("⛪ 我的教会")}</div>
               {!myChurch ? (
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span style={{ fontSize: 14, color: 'rgba(255,255,255,0.45)' }}>尚未加入教会</span>
+                  <span style={{ fontSize: 14, color: 'rgba(255,255,255,0.45)' }}>{t("尚未加入教会")}</span>
                   <button
                     onClick={() => { setShowEditProfile(false); setMyChurch(null); setChurchSkipped(false) }}
                     style={{ background: '#007aff', border: 'none', borderRadius: 8, padding: '5px 12px', color: '#fff', fontSize: 13, cursor: 'pointer' }}
-                  >加入 / 创建</button>
+                  >{t("加入 / 创建")}</button>
                 </div>
               ) : (
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
                     <div>
                       <span style={{ fontSize: 15, fontWeight: 600, color: 'rgba(255,255,255,0.9)' }}>{myChurch.name}</span>
-                      <span style={{ marginLeft: 8, fontSize: 12, background: 'rgba(0,122,255,0.15)', border: '1px solid rgba(0,122,255,0.4)', color: '#60a5fa', borderRadius: 6, padding: '1px 7px' }}>{myChurch.role === 'owner' ? '创建者' : myChurch.role === 'admin' ? '管理员' : '成员'}</span>
+                      <span style={{ marginLeft: 8, fontSize: 12, background: 'rgba(0,122,255,0.15)', border: '1px solid rgba(0,122,255,0.4)', color: '#60a5fa', borderRadius: 6, padding: '1px 7px' }}>{myChurch.role === 'owner' ? t("创建者") : myChurch.role === 'admin' ? t("管理员") : t("成员")}</span>
                     </div>
-                    <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)' }}>{myChurch.member_count} 人</span>
+                    <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)' }}>{myChurch.member_count} {t("人")}</span>
                   </div>
                   {(myChurch.role === 'owner' || myChurch.role === 'admin') && myChurch.join_code && (
                     <div style={{ marginBottom: 8 }}>
-                      <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)', marginBottom: 4 }}>邀请码</div>
+                      <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)', marginBottom: 4 }}>{t("邀请码")}</div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                         <span style={{ fontSize: 17, fontWeight: 800, letterSpacing: 3, color: '#007aff' }}>{myChurch.join_code}</span>
                         <button
                           onClick={() => { navigator.clipboard?.writeText(myChurch.join_code).then(() => { setChurchCodeCopied(true); setTimeout(() => setChurchCodeCopied(false), 2000) }) }}
                           style={{ background: 'rgba(0,122,255,0.15)', border: '1px solid rgba(0,122,255,0.4)', borderRadius: 7, padding: '3px 10px', color: '#60a5fa', fontSize: 12, cursor: 'pointer' }}
-                        >{churchCodeCopied ? '已复制 ✓' : '复制'}</button>
+                        >{churchCodeCopied ? t("已复制 ✓") : t("复制")}</button>
                         <button
                           disabled={churchRegenLoading}
                           onClick={async () => {
@@ -1416,12 +1420,12 @@ function AppContent() {
                             try {
                               const d = await regenerateChurchCode(getToken())
                               setMyChurch(prev => ({ ...prev, join_code: d.join_code }))
-                              window.showToast?.('邀请码已更新', 'success')
+                              window.showToast?.(t("邀请码已更新"), 'success')
                             } catch (e) { window.showToast?.(e.message, 'error') }
                             finally { setChurchRegenLoading(false) }
                           }}
                           style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 7, padding: '3px 10px', color: 'rgba(255,255,255,0.55)', fontSize: 12, cursor: 'pointer' }}
-                        >{churchRegenLoading ? '…' : '重新生成'}</button>
+                        >{churchRegenLoading ? '…' : t("重新生成")}</button>
                       </div>
                     </div>
                   )}
@@ -1429,17 +1433,17 @@ function AppContent() {
                     <button
                       disabled={churchLeaveLoading}
                       onClick={async () => {
-                        if (!window.confirm('确定退出「' + myChurch.name + '」？')) return
+                        if (!window.confirm(t("确定退出「") + myChurch.name + '」？')) return
                         setChurchLeaveLoading(true)
                         try {
                           await leaveChurch(getToken())
                           setMyChurch(null)
-                          window.showToast?.('已退出教会', 'info')
+                          window.showToast?.(t("已退出教会"), 'info')
                         } catch (e) { window.showToast?.(e.message, 'error') }
                         finally { setChurchLeaveLoading(false) }
                       }}
                       style={{ background: 'rgba(255,59,48,0.12)', border: '1px solid rgba(255,59,48,0.3)', borderRadius: 8, padding: '7px 14px', color: '#ff3b30', fontSize: 13, cursor: 'pointer', width: '100%' }}
-                    >{churchLeaveLoading ? '退出中…' : '退出教会'}</button>
+                    >{churchLeaveLoading ? t("退出中…") : t("退出教会")}</button>
                   )}
                 </div>
               )}
@@ -1464,8 +1468,8 @@ function AppContent() {
                 gap: '6px',
               }}
             >
-              🗑️ 回收站
-              <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.3)' }}>30天内可恢复</span>
+              {t("🗑️ 回收站")}
+              <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.3)' }}>{t("30天内可恢复")}</span>
             </button>
           </div>
         </div>
@@ -1477,18 +1481,19 @@ function AppContent() {
         <header className="mobile-topbar">
           <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
             <span style={{fontSize: '22px', lineHeight: 1}}>🔮</span>
-            <h1 className="mobile-app-title">属灵星球</h1>
+            <h1 className="mobile-app-title">{t('topbar.title')}</h1>
           </div>
           <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
+            <LanguageToggle />
             {layoutItems.length > 0 && (
-              <span className="topbar-pill">{layoutItems.length} 情绪</span>
+              <span className="topbar-pill">{t('topbar.emotions', { n: layoutItems.length })}</span>
             )}
             {user ? (
               <div style={{display: 'flex', alignItems: 'center', gap: '6px'}}>
                 {user.avatar ? (
                   <img
                     src={user.avatar}
-                    alt={user.nickname || '用户'}
+                    alt={user.nickname || t('topbar.userAlt')}
                     style={{
                       width: '28px', height: '28px', borderRadius: '50%',
                       objectFit: 'cover', border: '1.5px solid rgba(255,255,255,0.2)',
@@ -1502,22 +1507,22 @@ function AppContent() {
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     fontSize: '13px', fontWeight: 700, color: '#fff', flexShrink: 0,
                   }}>
-                    {(user.nickname || '用')[0]}
+                    {(user.nickname || t('topbar.defaultNickname'))[0]}
                   </div>
                 )}
                 <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '2px'}}>
                   <span style={{fontSize: '13px', color: 'rgba(255,255,255,0.7)', maxWidth: 80, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>
-                    {user.nickname || '弟兄'}
+                    {user.nickname || t('topbar.defaultNickname')}
                   </span>
                   {user.lastLoginAt && (
-                    <span style={{fontSize: '10px', color: 'rgba(255,255,255,0.45)'}} title="最近登录时间">
+                    <span style={{fontSize: '10px', color: 'rgba(255,255,255,0.45)'}} title={t('topbar.lastLogin')}>
                       {formatLoginTime(user.lastLoginAt)}
                     </span>
                   )}
                 </div>
                 <button
                   onClick={() => handlePanelSwitch('community')}
-                  title="社区"
+                  title={t('topbar.community')}
                   style={{
                     background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)',
                     borderRadius: '7px', color: 'rgba(255,255,255,0.45)',
@@ -1529,7 +1534,7 @@ function AppContent() {
                 </button>
                 <button
                   onClick={() => { setEditNickname(user?.nickname || ''); setEditAvatar(user?.avatar || ''); setShowEditProfile(true) }}
-                  title="修改资料"
+                  title={t('topbar.editProfile')}
                   style={{
                     background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)',
                     borderRadius: '7px', color: 'rgba(255,255,255,0.45)',
@@ -1562,7 +1567,7 @@ function AppContent() {
                   boxShadow: '0 2px 8px rgba(0,122,255,0.3)',
                 }}
               >
-                🔑 登录
+                🔑 {t('topbar.login')}
               </button>
             )}
           </div>
@@ -1570,7 +1575,7 @@ function AppContent() {
 
         <section className="mobile-hero-card glass" style={{padding: '8px 14px', minHeight: 'unset'}}>
           <div className="mobile-hero-meta" style={{gap: '6px', flexWrap: 'wrap'}}>
-            <div className="meta-chip">{zoomLevel === 'far' ? '🌌 远景' : zoomLevel === 'mid' ? '🔭 中景' : '🔬 近景'}</div>
+            <div className="meta-chip">{zoomLevel === 'far' ? '🌌 ' + t('home.zoom.far') : zoomLevel === 'mid' ? '🔭 ' + t('home.zoom.mid') : '🔬 ' + t('home.zoom.near')}</div>
             {queryResult?.query_latency_ms != null && (
               <div className="meta-chip">⚡ {queryResult.query_latency_ms} ms</div>
             )}
@@ -1582,14 +1587,16 @@ function AppContent() {
         <main className="mobile-app-main" style={{display: 'block'}}>
           <section className="mobile-pane mobile-sphere-pane" style={{display: 'flex'}}>
             <div className="mobile-sphere-stage">
-              <EmotionSphereScene 
-                onVerseTrigger={handleVerseTrigger}
-                expandedVerseId={expandedVerseId}
-                versePrayers={versePrayers}
-                versePrayerLoading={versePrayerLoading}
-                handleVerseClick={handleVerseClick}
-                onSelectFeature={setSelectedFeature}
-              />
+              <Suspense fallback={<div style={{display:'flex',alignItems:'center',justifyContent:'center',width:'100%',height:'100%',color:'rgba(255,255,255,0.5)',fontSize:14}}>{t("星球加载中…")}</div>}>
+                <EmotionSphereScene 
+                  onVerseTrigger={handleVerseTrigger}
+                  expandedVerseId={expandedVerseId}
+                  versePrayers={versePrayers}
+                  versePrayerLoading={versePrayerLoading}
+                  handleVerseClick={handleVerseClick}
+                  onSelectFeature={setSelectedFeature}
+                />
+              </Suspense>
             </div>
 
             <div className="mobile-summary-grid">
@@ -1606,9 +1613,9 @@ function AppContent() {
               {/* 圣经地图 / 语音通话 快捷入口（置于今日灵命快照上方）*/}
               <div style={{ display: 'flex', gap: '8px', margin: '0 0 4px' }}>
                 {[
-                  { icon: '🎙', label: '语音通话', panel: 'voice' },
-                  { icon: '💬', label: '群聊', panel: 'communion' },
-                  { icon: '🗺', label: '圣经地图', panel: 'bible-maps' },
+                  { icon: '🎙', label: t('home.quick.voice'), panel: 'voice' },
+                  { icon: '💬', label: t('home.quick.communion'), panel: 'communion' },
+                  { icon: '🗺', label: t('home.quick.bibleMaps'), panel: 'bible-maps' },
                 ].map((item) => (
                   <button key={item.panel}
                     onClick={() => handlePanelSwitch(item.panel)}
@@ -1631,7 +1638,7 @@ function AppContent() {
                   border: '1px solid rgba(88,86,214,0.3)',
                   padding: '14px 16px',
                 }}>
-                  <div style={{ fontSize: '12px', fontWeight: 700, color: 'rgba(180,180,255,0.7)', letterSpacing: '0.06em', marginBottom: '10px' }}>今日灵命快照</div>
+                  <div style={{ fontSize: '12px', fontWeight: 700, color: 'rgba(180,180,255,0.7)', letterSpacing: '0.06em', marginBottom: '10px' }}>{t('home.snapshot.title')}</div>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '10px' }}>
                     {dailySnapshot.trajectory_label && (
                       <span style={{ fontSize: '12px', background: 'rgba(88,86,214,0.25)', border: '1px solid rgba(88,86,214,0.4)', borderRadius: '20px', padding: '3px 10px', color: '#c4b5fd' }}>
@@ -1645,14 +1652,14 @@ function AppContent() {
                     )}
                     {dailySnapshot.has_devotion_today ? (
                       <span style={{ fontSize: '12px', background: 'rgba(52,199,89,0.18)', border: '1px solid rgba(52,199,89,0.3)', borderRadius: '20px', padding: '3px 10px', color: '#34c759' }}>
-                        📔 今日已灵修
+                        📔 {t('home.snapshot.devotionDone')}
                       </span>
                     ) : (
                       <span
                         style={{ fontSize: '12px', background: 'rgba(255,159,64,0.18)', border: '1px solid rgba(255,159,64,0.3)', borderRadius: '20px', padding: '3px 10px', color: '#ff9f40', cursor: 'pointer' }}
                         onClick={() => handlePanelSwitch('devotion')}
                       >
-                        📔 今日未灵修
+                        📔 {t('home.snapshot.devotionNone')}
                       </span>
                     )}
                     {dailySnapshot.pending_prayers > 0 && (
@@ -1660,19 +1667,19 @@ function AppContent() {
                         style={{ fontSize: '12px', background: 'rgba(255,215,0,0.14)', border: '1px solid rgba(255,215,0,0.3)', borderRadius: '20px', padding: '3px 10px', color: '#ffd700', cursor: 'pointer' }}
                         onClick={() => handlePanelSwitch('prayer')}
                       >
-                        🙏 {dailySnapshot.pending_prayers} 个待代祷
+                        🙏 {t('home.snapshot.pendingPrayers', { n: dailySnapshot.pending_prayers })}
                       </span>
                     )}
                   </div>
                   {/* 快捷入口按钮行 */}
                   <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                     {[
-                      { icon: '🔍', label: '今日一问', panel: 'soul-question' },
-                      { icon: '⏱', label: '2分钟灵修', action: () => setShowQuickDevotion(true) },
-                      { icon: '📊', label: '灵命图谱', panel: 'growth-map' },
-                      { icon: '📈', label: '灵命成长', panel: 'engineering' },
-                      { icon: '🤝', label: '属灵伙伴', panel: 'partner' },
-                      { icon: '📖', label: '通读', panel: 'bible-reading' },
+                      { icon: '🔍', label: t('home.snapshot.soulQuestion'), panel: 'soul-question' },
+                      { icon: '⏱', label: t('home.snapshot.quickDevotion'), action: () => setShowQuickDevotion(true) },
+                      { icon: '📊', label: t('home.snapshot.growthMap'), panel: 'growth-map' },
+                      { icon: '📈', label: t('home.snapshot.growth'), panel: 'engineering' },
+                      { icon: '🤝', label: t('home.snapshot.partner'), panel: 'partner' },
+                      { icon: '📖', label: t('home.snapshot.bibleReading'), panel: 'bible-reading' },
                     ].map((item, i) => (
                       <button key={i}
                         onClick={() => item.action ? item.action() : handlePanelSwitch(item.panel)}
@@ -1697,22 +1704,22 @@ function AppContent() {
                   padding: '14px 16px',
                 }}>
                   <div style={{ fontSize: '12px', fontWeight: 700, color: 'rgba(255,200,120,0.75)', letterSpacing: '0.06em', marginBottom: '10px' }}>
-                    🌀 近30天情感轨迹
+                    🌀 {t('home.trajectory.title')}
                   </div>
                   {/* 主导情绪 + 心情 */}
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '10px' }}>
                     {emotionTrajectory.dominant_emotion && (
                       <span style={{ fontSize: '12px', background: 'rgba(255,149,0,0.22)', border: '1px solid rgba(255,149,0,0.4)', borderRadius: '20px', padding: '3px 10px', color: '#ffb347' }}>
-                        💛 主导情绪：{emotionTrajectory.dominant_emotion}
+                        {t("💛 主导情绪：")}{emotionTrajectory.dominant_emotion}
                       </span>
                     )}
                     {emotionTrajectory.dominant_mood && (
                       <span style={{ fontSize: '12px', background: 'rgba(255,45,85,0.15)', border: '1px solid rgba(255,45,85,0.3)', borderRadius: '20px', padding: '3px 10px', color: '#ff6b8a' }}>
-                        🌡 主导心情：{emotionTrajectory.dominant_mood}
+                        {t("🌡 主导心情：")}{emotionTrajectory.dominant_mood}
                       </span>
                     )}
                     <span style={{ fontSize: '12px', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '20px', padding: '3px 10px', color: 'rgba(255,255,255,0.5)' }}>
-                      共 {emotionTrajectory.count} 次打卡
+                      {t("共")} {emotionTrajectory.count} {t("次打卡")}
                     </span>
                   </div>
                   {/* 情绪频次迷你条形图 */}
@@ -1753,7 +1760,7 @@ function AppContent() {
 
               <section className="mobile-card glass">
                 <div className="section-title" style={{display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '12px'}}>
-                  <span>🙏</span><span>倾心吐意</span>
+                  <span>🙏</span><span>{t("倾心吐意")}</span>
                 </div>
                 {/* 微信风格录音浮层 */}
                 {isRecording && (
@@ -1773,7 +1780,7 @@ function AppContent() {
                     pointerEvents: 'none',
                   }}>
                     <div style={{fontSize: '48px', animation: 'pulse 1s ease-in-out infinite'}}>🎙️</div>
-                    <div style={{color: '#fff', fontSize: '15px', fontWeight: 600}}>松开发送</div>
+                    <div style={{color: '#fff', fontSize: '15px', fontWeight: 600}}>{t("松开发送")}</div>
                     <div style={{color: 'rgba(255,255,255,0.65)', fontSize: '13px'}}>{recordingSeconds}s / {maxRecordingSeconds}s</div>
                     <div style={{
                       width: '160px',
@@ -1795,16 +1802,16 @@ function AppContent() {
                 <form className="query-form" onSubmit={handleSubmit}>
                   {/* 快速提示 */}
                   <div style={{margin: '0 0 10px 0'}}>
-                    <div style={{fontSize: '12px', color: 'rgba(255,255,255,0.5)', marginBottom: '8px'}}>✨ 你可以这样开始：</div>
+                    <div style={{fontSize: '12px', color: 'rgba(255,255,255,0.5)', marginBottom: '8px'}}>{t("✨ 你可以这样开始：")}</div>
                     <div style={{display: 'flex', flexWrap: 'wrap', gap: '8px'}}>
                       {[
-                        '我感到很痛苦，也很想被安慰，但仍然想抓住一点盼望',
-                        '我最近感到很焦虑，不知道神是否在乎我',
-                        '我在工作中遭遇不公平，很难饶恕那个人',
-                        '我对祷告感到疲惫，感觉神沉默不语',
-                        '我和配偶之间有很深的隔阂，不知道怎么办',
-                        '我重复犯同样的罪，非常自责',
-                        '我想更亲近神，但不知从哪里开始',
+                        t("我感到很痛苦，也很想被安慰，但仍然想抓住一点盼望"),
+                        t("我最近感到很焦虑，不知道神是否在乎我"),
+                        t("我在工作中遭遇不公平，很难饶恕那个人"),
+                        t("我对祷告感到疲惫，感觉神沉默不语"),
+                        t("我和配偶之间有很深的隔阂，不知道怎么办"),
+                        t("我重复犯同样的罪，非常自责"),
+                        t("我想更亲近神，但不知从哪里开始"),
                       ].map((s) => (
                         <button
                           key={s}
@@ -1937,11 +1944,11 @@ function AppContent() {
                         WebkitUserSelect: 'none',
                       }}
                       title={isWeChat 
-                        ? '微信浏览器不支持录音，请用 Safari/Chrome 打开' 
-                        : (isRecording ? `录音中 ${recordingSeconds}s / 松开停止` : '长按录音，松开识别')}
+                        ? t("微信浏览器不支持录音，请用 Safari/Chrome 打开") 
+                        : (isRecording ? `录音中 ${recordingSeconds}s / 松开停止` : t("长按录音，松开识别"))}
                     >
                       <span>{isRecording ? '🔴' : (isWeChat ? '🚫' : '🎤')}</span>
-                      <span>{isRecording ? `${recordingSeconds}s` : (isWeChat ? '微信不支持' : '长按录音')}</span>
+                      <span>{isRecording ? `${recordingSeconds}s` : (isWeChat ? t("微信不支持") : t("长按录音"))}</span>
                     </button>
                     {/* 润色按钮 - 微信浏览器隐藏，提示用外部浏览器 */}
                     {!isWeChat && (
@@ -1953,7 +1960,7 @@ function AppContent() {
                         polishQueryText(prev, (text) => {
                           setQuery(text)
                           // 显示成功提示
-                          setToast({ message: '✨ 文字已润色完成', type: 'success' })
+                          setToast({ message: t("✨ 文字已润色完成"), type: 'success' })
                           if (toastTimerRef.current) clearTimeout(toastTimerRef.current)
                           toastTimerRef.current = setTimeout(() => setToast(null), 3000)
                         })
@@ -1978,10 +1985,10 @@ function AppContent() {
                         opacity: (!query.trim() || isPolishing || loading) ? 0.5 : 1,
                         transition: 'all 0.2s ease',
                       }}
-                      title="润色文字：使用AI优化表达，使其更流畅、有属灵深度"
+                      title={t("润色文字：使用AI优化表达，使其更流畅、有属灵深度")}
                     >
                       <span>{isPolishing ? '✨' : '✏️'}</span>
-                      <span>{isPolishing ? '润色中…' : '润色'}</span>
+                      <span>{isPolishing ? t("润色中…") : t("润色")}</span>
                     </button>
                     )}
                     {/* 微信浏览器提示 */}
@@ -1998,7 +2005,7 @@ function AppContent() {
                         flex: 1,
                       }}>
                         <span>⚠️</span>
-                        <span>微信不支持录音，请用 Safari/Chrome 打开</span>
+                        <span>{t("微信不支持录音，请用 Safari/Chrome 打开")}</span>
                       </div>
                     )}
                   </div>
@@ -2033,7 +2040,7 @@ function AppContent() {
                   <div style={{display: 'none'}}>
                     <div className="segmented-control mobile-language-switch" style={{flex: 1}}>
                       {[
-                        ['cuv', '和合本'],
+                        ['cuv', t("和合本")],
                         ['esv', 'ESV'],
                       ].map(([value, label]) => (
                         <button
@@ -2067,17 +2074,17 @@ function AppContent() {
                         }
                       }}
                     >
-                      {loading ? '⏳ 祷告中...' : '🌿 求赐恩言'}
+                      {loading ? t("⏳ 祷告中...") : t("🌿 求赐恩言")}
                     </button>
                     {/* 从情绪/引导结果中提炼神学问题建议 */}
                     {guidance && !faithQa && (
                       <div style={{ marginBottom: '8px' }}>
-                        <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', marginBottom: '6px' }}>💡 可以这样提问：</div>
+                        <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', marginBottom: '6px' }}>{t("💡 可以这样提问：")}</div>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
                           {[
                             guidance.core_need ? `面对"${guidance.core_need.slice(0, 20)}"，圣经如何回应？` : null,
                             guidance.core_emotions?.length ? `当我感到${guidance.core_emotions.slice(0, 2).join('、')}时，神在哪里？` : null,
-                            guidance.spiritual_guidance ? '神允许痛苦存在，祂的目的是什么？' : null,
+                            guidance.spiritual_guidance ? t("神允许痛苦存在，祂的目的是什么？") : null,
                           ].filter(Boolean).slice(0, 2).map((suggestion, i) => (
                             <button
                               key={i}
@@ -2117,7 +2124,7 @@ function AppContent() {
                         }
                       }}
                     >
-                      {faithQaLoading ? '⏳ 思考中...' : '📖 提问'}
+                      {faithQaLoading ? t("⏳ 思考中...") : t("📖 提问")}
                     </button>
                     {/* 短视频功能已隐藏 */}
                   </div>
@@ -2130,14 +2137,14 @@ function AppContent() {
                       className={comparisonMode ? 'segment active' : 'segment'}
                       onClick={() => setComparisonMode(true)}
                   >
-                    中英对照
+                    {t("中英对照")}
                   </button>
                   <button
                       type="button"
                       className={!comparisonMode ? 'segment active' : 'segment'}
                       onClick={() => setComparisonMode(false)}
                   >
-                    分语言
+                    {t("分语言")}
                   </button>
                 </div>
               </section>
@@ -2153,30 +2160,30 @@ function AppContent() {
 
                   {/* 整体播放 ── 读出所有当前结果 */}
                   <TTSFullBar
-                    label="整体播放"
+                    label={t("整体播放")}
                     buildText={() => {
                       const parts = []
-                      if (guidance?.core_emotions?.length) parts.push('核心情绪：' + guidance.core_emotions.join('、'))
-                      if (guidance?.psychological_assessment) parts.push('心理评估：' + guidance.psychological_assessment)
-                      if (sermon?.spiritual_diagnosis) parts.push('属灵剖析：' + sermon.spiritual_diagnosis)
-                      if (guidance?.core_need) parts.push('核心需要：' + guidance.core_need)
-                      if (guidance?.spiritual_guidance) parts.push('属灵引导：' + guidance.spiritual_guidance)
+                      if (guidance?.core_emotions?.length) parts.push(t("核心情绪：") + guidance.core_emotions.join('、'))
+                      if (guidance?.psychological_assessment) parts.push(t("心理评估：") + guidance.psychological_assessment)
+                      if (sermon?.spiritual_diagnosis) parts.push(t("属灵剖析：") + sermon.spiritual_diagnosis)
+                      if (guidance?.core_need) parts.push(t("核心需要：") + guidance.core_need)
+                      if (guidance?.spiritual_guidance) parts.push(t("属灵引导：") + guidance.spiritual_guidance)
                       if (biblicalExample) {
                         const be = []
-                        if (biblicalExample.person) be.push('人物：' + biblicalExample.person)
-                        if (biblicalExample.similar_situation) be.push('相似处境：' + biblicalExample.similar_situation)
-                        if (biblicalExample.biblical_response) be.push('圣经回应：' + biblicalExample.biblical_response)
-                        if (biblicalExample.key_verse) be.push('关键经文：' + biblicalExample.key_verse)
-                        if (be.length) parts.push('圣经榜样。' + be.join('。'))
+                        if (biblicalExample.person) be.push(t("人物：") + biblicalExample.person)
+                        if (biblicalExample.similar_situation) be.push(t("相似处境：") + biblicalExample.similar_situation)
+                        if (biblicalExample.biblical_response) be.push(t("圣经回应：") + biblicalExample.biblical_response)
+                        if (biblicalExample.key_verse) be.push(t("关键经文：") + biblicalExample.key_verse)
+                        if (be.length) parts.push(t("圣经榜样。") + be.join('。'))
                       }
                       if (sermon) {
-                        if (sermon.title) parts.push('专属讲道：' + sermon.title)
-                        if (sermon.theme_verse) parts.push('主题经文：' + sermon.theme_verse)
-                        if (sermon.introduction) parts.push('引言：' + sermon.introduction)
+                        if (sermon.title) parts.push(t("专属讲道：") + sermon.title)
+                        if (sermon.theme_verse) parts.push(t("主题经文：") + sermon.theme_verse)
+                        if (sermon.introduction) parts.push(t("引言：") + sermon.introduction)
                         sermon.sections?.forEach(s => { if (s.content) parts.push(s.heading + '：' + s.content) })
-                        if (sermon.encouragement) parts.push('勉励与安慰：' + sermon.encouragement)
-                        if (sermon.prayer) parts.push('祝祷：' + sermon.prayer)
-                        if (sermon.conclusion) parts.push('结语：' + sermon.conclusion)
+                        if (sermon.encouragement) parts.push(t("勉励与安慰：") + sermon.encouragement)
+                        if (sermon.prayer) parts.push(t("祝祷：") + sermon.prayer)
+                        if (sermon.conclusion) parts.push(t("结语：") + sermon.conclusion)
                       }
                       return parts.join(`\n\n`)
                     }}
@@ -2187,7 +2194,7 @@ function AppContent() {
                     {/* 1. 核心情绪 */}
                     {guidance?.core_emotions?.length > 0 && (
                       <div className="result-block">
-                        <div className="result-block-title" style={{display:"flex",alignItems:"center",gap:6}}>核心情绪<TTSButton text={guidance.core_emotions.join("、")} /></div>
+                        <div className="result-block-title" style={{display:"flex",alignItems:"center",gap:6}}>{t("核心情绪")}<TTSButton text={guidance.core_emotions.join("、")} /></div>
                         <div className="guidance-emotions">
                           {guidance.core_emotions.map((e) => (
                             <span key={e} className="emotion-tag">{e}</span>
@@ -2199,7 +2206,7 @@ function AppContent() {
                     {/* 2. 心理评估 */}
                     {guidance?.psychological_assessment && (
                       <div className="result-block">
-                        <div className="result-block-title" style={{display:"flex",alignItems:"center",gap:6}}>心理评估<TTSButton text={guidance.psychological_assessment} /></div>
+                        <div className="result-block-title" style={{display:"flex",alignItems:"center",gap:6}}>{t("心理评估")}<TTSButton text={guidance.psychological_assessment} /></div>
                         <TranslatableParagraph className="result-body-text">{guidance.psychological_assessment}</TranslatableParagraph>
                       </div>
                     )}
@@ -2207,7 +2214,7 @@ function AppContent() {
                     {/* 3. 属灵剖析 (从专属讲道提取) */}
                     {sermon?.spiritual_diagnosis && (
                       <div className="result-block">
-                        <div className="result-block-title" style={{display:"flex",alignItems:"center",gap:6}}>属灵剖析<TTSButton text={sermon.spiritual_diagnosis} /></div>
+                        <div className="result-block-title" style={{display:"flex",alignItems:"center",gap:6}}>{t("属灵剖析")}<TTSButton text={sermon.spiritual_diagnosis} /></div>
                         <TranslatableParagraph className="result-body-text">{sermon.spiritual_diagnosis}</TranslatableParagraph>
                       </div>
                     )}
@@ -2215,7 +2222,7 @@ function AppContent() {
                     {/* 4. 核心需要 */}
                     {guidance?.core_need && (
                       <div className="result-block">
-                        <div className="result-block-title" style={{display:"flex",alignItems:"center",gap:6}}>核心需要<TTSButton text={guidance.core_need} /></div>
+                        <div className="result-block-title" style={{display:"flex",alignItems:"center",gap:6}}>{t("核心需要")}<TTSButton text={guidance.core_need} /></div>
                         <div className="result-core-need">{guidance.core_need}</div>
                       </div>
                     )}
@@ -2223,7 +2230,7 @@ function AppContent() {
                     {/* 6. 属灵引导 */}
                     {guidance?.spiritual_guidance && (
                       <div className="result-block">
-                        <div className="result-block-title" style={{display:"flex",alignItems:"center",gap:6}}>属灵引导<TTSButton text={guidance.spiritual_guidance} /></div>
+                        <div className="result-block-title" style={{display:"flex",alignItems:"center",gap:6}}>{t("属灵引导")}<TTSButton text={guidance.spiritual_guidance} /></div>
                         <div className="result-spiritual-block">
                           <TranslatableParagraph>{guidance.spiritual_guidance}</TranslatableParagraph>
                         </div>
@@ -2233,26 +2240,26 @@ function AppContent() {
                     {/* 7. 圣经榜样 (不含应用) */}
                     {biblicalExample && (
                       <div className="result-block">
-                        <div className="result-block-title" style={{display:"flex",alignItems:"center",gap:6}}>圣经榜样<TTSButton text={[biblicalExample.person,biblicalExample.similar_situation,biblicalExample.biblical_response,biblicalExample.key_verse].filter(Boolean).join("。")} /></div>
+                        <div className="result-block-title" style={{display:"flex",alignItems:"center",gap:6}}>{t("圣经榜样")}<TTSButton text={[biblicalExample.person,biblicalExample.similar_situation,biblicalExample.biblical_response,biblicalExample.key_verse].filter(Boolean).join("。")} /></div>
                         <div className="result-person-row">
                           <span className="result-person-name">{biblicalExample.person}</span>
                           {biblicalExample.era && <span className="result-person-era">{biblicalExample.era}</span>}
                         </div>
                         {biblicalExample.similar_situation && (
                           <>
-                            <div className="result-sub-label">相似处境</div>
+                            <div className="result-sub-label">{t("相似处境")}</div>
                             <TranslatableParagraph className="result-body-text">{biblicalExample.similar_situation}</TranslatableParagraph>
                           </>
                         )}
                         {biblicalExample.biblical_response && (
                           <>
-                            <div className="result-sub-label">圣经回应</div>
+                            <div className="result-sub-label">{t("圣经回应")}</div>
                             <TranslatableParagraph className="result-body-text">{biblicalExample.biblical_response}</TranslatableParagraph>
                           </>
                         )}
                         {biblicalExample.key_verse && (
                           <>
-                            <div className="result-sub-label">关键经文</div>
+                            <div className="result-sub-label">{t("关键经文")}</div>
                             <div className="result-spiritual-block">
                               <TranslatableParagraph style={{fontStyle: 'italic', margin: 0}}>{biblicalExample.key_verse}</TranslatableParagraph>
                             </div>
@@ -2264,7 +2271,7 @@ function AppContent() {
                     {/* 8. 历史见证 (从专属讲道提取) */}
                     {sermon?.historical_case && (
                       <div className="result-block">
-                        <div className="result-block-title" style={{display:"flex",alignItems:"center",gap:6}}>历史见证<TTSButton text={[sermon.historical_case.person,sermon.historical_case.story,sermon.historical_case.lesson].filter(Boolean).join("。")} /></div>
+                        <div className="result-block-title" style={{display:"flex",alignItems:"center",gap:6}}>{t("历史见证")}<TTSButton text={[sermon.historical_case.person,sermon.historical_case.story,sermon.historical_case.lesson].filter(Boolean).join("。")} /></div>
                         <div className="result-person-row">
                           <span className="result-person-name">{sermon.historical_case.person}</span>
                           {sermon.historical_case.era && <span className="result-person-era">{sermon.historical_case.era}</span>}
@@ -2281,7 +2288,7 @@ function AppContent() {
                     <>
                       <div className="result-block">
                         <div className="result-block-title" style={{display:"flex",alignItems:"center",gap:6}}>
-                        专属讲道：{sermon.title}
+                        {t("专属讲道：")}{sermon.title}
                         <TTSButton text={[sermon.title, sermon.theme_verse, sermon.introduction, ...(sermon.sections||[]).map(s=>s.heading+'：'+s.content), sermon.encouragement, sermon.prayer].filter(Boolean).join('\n\n')} />
                       </div>
                         {sermon.theme_verse && (
@@ -2292,7 +2299,7 @@ function AppContent() {
 
                         {sermon.introduction && (
                           <>
-                            <div className="result-sub-label">引言</div>
+                            <div className="result-sub-label">{t("引言")}</div>
                             <TranslatableParagraph className="result-body-text">{sermon.introduction}</TranslatableParagraph>
                           </>
                         )}
@@ -2313,7 +2320,7 @@ function AppContent() {
                         {sermon.application && (
                           <>
                             <div className="result-divider" />
-                            <div className="result-sub-label">属灵操练</div>
+                            <div className="result-sub-label">{t("属灵操练")}</div>
                             <TranslatableParagraph className="result-body-text" style={{whiteSpace: 'pre-line'}}>{Array.isArray(sermon.application) ? sermon.application.join('\n') : sermon.application}</TranslatableParagraph>
                           </>
                         )}
@@ -2321,7 +2328,7 @@ function AppContent() {
                         {sermon.encouragement && (
                           <>
                             <div className="result-divider" />
-                            <div className="result-sub-label">勉励与安慰</div>
+                            <div className="result-sub-label">{t("勉励与安慰")}</div>
                             <TranslatableParagraph className="result-body-text">{sermon.encouragement}</TranslatableParagraph>
                           </>
                         )}
@@ -2329,7 +2336,7 @@ function AppContent() {
                         {sermon.prayer && (
                           <>
                             <div className="result-divider" />
-                            <div className="result-sub-label">祝祷</div>
+                            <div className="result-sub-label">{t("祝祷")}</div>
                             <div className="result-spiritual-block">
                               <TranslatableParagraph style={{margin: 0, whiteSpace: 'pre-line'}}>{sermon.prayer}</TranslatableParagraph>
                             </div>
@@ -2343,11 +2350,11 @@ function AppContent() {
                    {/* 10. 应用建议 (合并 5 & 10) */}
                   {(biblicalExample?.application || guidance?.coping_suggestions?.length > 0) && (
                     <div className="result-block">
-                      <div className="result-block-title">应用建议 (Application from Biblical Example)</div>
+                      <div className="result-block-title">{t("应用建议 (Application from Biblical Example)")}</div>
                       
                       {guidance?.coping_suggestions?.length > 0 && (
                         <div style={{ marginBottom: '12px' }}>
-                          <div className="result-sub-label">日常应对</div>
+                          <div className="result-sub-label">{t("日常应对")}</div>
                           <ul className="guidance-tips" style={{ marginTop: '4px' }}>
                             {guidance.coping_suggestions.map((s, i) => (
                               <li key={i}>{s}</li>
@@ -2358,7 +2365,7 @@ function AppContent() {
 
                       {biblicalExample?.application && (
                         <div>
-                          <div className="result-sub-label">圣经操练</div>
+                          <div className="result-sub-label">{t("圣经操练")}</div>
                           <div className="result-core-need" style={{ marginTop: '4px' }}>{biblicalExample.application}</div>
                         </div>
                       )}
@@ -2368,7 +2375,7 @@ function AppContent() {
                   {/* 11. 结语与盼望 */}
                   {sermon?.conclusion && (
                     <div className="result-block">
-                      <div className="result-block-title" style={{display:"flex",alignItems:"center",gap:6}}>结语与盼望<TTSButton text={sermon.conclusion} /></div>
+                      <div className="result-block-title" style={{display:"flex",alignItems:"center",gap:6}}>{t("结语与盼望")}<TTSButton text={sermon.conclusion} /></div>
                       <TranslatableParagraph className="result-body-text">{sermon.conclusion}</TranslatableParagraph>
                     </div>
                   )}
@@ -2376,14 +2383,14 @@ function AppContent() {
                   {/* 12. 默想经文 */}
                   {queryResult && (
                     <div className="result-block">
-                      <div className="result-block-title result-block-title-meditation">默想经文</div>
+                      <div className="result-block-title result-block-title-meditation">{t("默想经文")}</div>
                       {selectedFeature && (
                         <div className="result-feature-pill">
                           {selectedFeature.zh_label || `${selectedFeature.layer}:${selectedFeature.feature_id}`}
                         </div>
                       )}
                       {queryResult.rerank?.enabled && queryResult.rerank?.error && (
-                        <div className="rerank-warning">⚠️ Rerank 降级：{queryResult.rerank.error}</div>
+                        <div className="rerank-warning">{t("⚠️ Rerank 降级：")}{queryResult.rerank.error}</div>
                       )}
                       <div className="verse-list">
                         {verseGroups.flatMap((group) =>
@@ -2410,10 +2417,10 @@ function AppContent() {
                                   animation: 'fadeIn 0.3s ease',
                                 }}>
                                   <div style={{ fontSize: '12px', fontWeight: 600, color: '#FFD700', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                    <span>🙏</span> 经文祷告
+                                    <span>🙏</span> {t("经文祷告")}
                                   </div>
                                   {versePrayerLoading === item.pk_id ? (
-                                    <div style={{ fontSize: '13px', color: '#FFD700', fontWeight: 700, fontStyle: 'italic' }}>✨ 正在生成祷告...</div>
+                                    <div style={{ fontSize: '13px', color: '#FFD700', fontWeight: 700, fontStyle: 'italic' }}>{t("✨ 正在生成祷告...")}</div>
                                   ) : versePrayers[item.pk_id] ? (
                                     <div style={{ fontSize: '13px', color: '#FFD700', fontWeight: 700, lineHeight: 1.8, whiteSpace: 'pre-wrap' }}>
                                       {versePrayers[item.pk_id]}
@@ -2423,10 +2430,10 @@ function AppContent() {
                                   {/* 默想此经文（展开即自动生成，直接显示） */}
                                   <div style={{ marginTop: '12px', borderTop: '1px solid rgba(99,179,237,0.2)', paddingTop: '10px' }}>
                                     <div style={{ fontSize: '12px', fontWeight: 600, color: '#63b3ed', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                      <span>🤔</span> 默想此经文
+                                      <span>🤔</span> {t("默想此经文")}
                                     </div>
                                     {meditationLoading === item.pk_id ? (
-                                      <div style={{ fontSize: '13px', color: '#63b3ed', fontStyle: 'italic' }}>✨ 正在生成默想...</div>
+                                      <div style={{ fontSize: '13px', color: '#63b3ed', fontStyle: 'italic' }}>{t("✨ 正在生成默想...")}</div>
                                     ) : meditationQuestions[item.pk_id] ? (
                                       <ol style={{ margin: '0', paddingLeft: '18px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
                                         {meditationQuestions[item.pk_id].map((q, qi) => (
@@ -2456,12 +2463,12 @@ function AppContent() {
                     className="export-btn"
                     onClick={saveToDevotionJournal}
                     disabled={savingJournal}
-                    title="存入今日灵修日记"
+                    title={t("存入今日灵修日记")}
                     style={{ color: '#34c759', borderColor: 'rgba(52,199,89,0.4)' }}
                   >
-                    📔 {savingJournal ? '保存中...' : '存入灵修'}
+                    📔 {savingJournal ? t("保存中...") : t("存入灵修")}
                   </button>
-                  <button className="export-btn" onClick={exportVersesToTxt} title="导出TXT">
+                  <button className="export-btn" onClick={exportVersesToTxt} title={t("导出TXT")}>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                       <polyline points="14 2 14 8 20 8"/>
@@ -2469,16 +2476,16 @@ function AppContent() {
                       <line x1="16" y1="17" x2="8" y2="17"/>
                       <polyline points="10 9 9 9 8 9"/>
                     </svg>
-                    导出TXT
+                    {t("导出TXT")}
                   </button>
-                  <button className="export-btn" onClick={exportVersesToPdf} title="导出PDF">
+                  <button className="export-btn" onClick={exportVersesToPdf} title={t("导出PDF")}>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                       <polyline points="14 2 14 8 20 8"/>
                       <path d="M9 15l3 3 3-3"/>
                       <path d="M12 18V9"/>
                     </svg>
-                    导出PDF
+                    {t("导出PDF")}
                   </button>
 
                 </div>
@@ -2487,7 +2494,7 @@ function AppContent() {
               {/* 信仰问答结果卡片 */}
               {faithQaError && (
                 <section className="result-unified-card mobile-card guidance-section">
-                  <div className="result-block-title" style={{color: '#ff6b6b'}}>提问失败</div>
+                  <div className="result-block-title" style={{color: '#ff6b6b'}}>{t("提问失败")}</div>
                   <p className="result-body-text" style={{color: '#ff6b6b'}}>{faithQaError}</p>
                 </section>
               )}
@@ -2496,7 +2503,7 @@ function AppContent() {
                   <div style={{color: '#FFD700', fontWeight: 'bold'}}>
 
                     <div className="result-block">
-                      <div className="result-block-title">📖 信仰问答</div>
+                      <div className="result-block-title">{t("📖 信仰问答")}</div>
                       {faithQa.question_summary && (
                         <div className="result-core-need" style={{marginBottom: '4px'}}>{faithQa.question_summary}</div>
                       )}
@@ -2504,21 +2511,21 @@ function AppContent() {
 
                     {faithQa.nature_analysis && (
                       <div className="result-block">
-                        <div className="result-block-title">问题本质分析</div>
+                        <div className="result-block-title">{t("问题本质分析")}</div>
                         <TranslatableParagraph className="result-body-text">{faithQa.nature_analysis}</TranslatableParagraph>
                       </div>
                     )}
 
                     {faithQa.contextual_analysis && (
                       <div className="result-block">
-                        <div className="result-block-title">具体情景分析</div>
+                        <div className="result-block-title">{t("具体情景分析")}</div>
                         <TranslatableParagraph className="result-body-text">{faithQa.contextual_analysis}</TranslatableParagraph>
                       </div>
                     )}
 
                     {faithQa.scriptures?.length > 0 && (
                       <div className="result-block">
-                        <div className="result-block-title">圣经中最适配的经文</div>
+                        <div className="result-block-title">{t("圣经中最适配的经文")}</div>
                         {faithQa.scriptures.map((s, i) => (
                           <div key={i} style={{marginBottom: '12px'}}>
                             <div className="result-sub-label">{s.reference}</div>
@@ -2535,7 +2542,7 @@ function AppContent() {
 
                     {faithQa.right_thinking && (
                       <div className="result-block">
-                        <div className="result-block-title">如何正确思考</div>
+                        <div className="result-block-title">{t("如何正确思考")}</div>
                         <div className="result-spiritual-block">
                           <TranslatableParagraph style={{margin: 0}}>{faithQa.right_thinking}</TranslatableParagraph>
                         </div>
@@ -2544,7 +2551,7 @@ function AppContent() {
 
                     {faithQa.action_steps?.length > 0 && (
                       <div className="result-block">
-                        <div className="result-block-title">建议行动</div>
+                        <div className="result-block-title">{t("建议行动")}</div>
                         <ul className="guidance-tips">
                           {faithQa.action_steps.map((step, i) => (
                             <li key={i}>{step}</li>
@@ -2555,7 +2562,7 @@ function AppContent() {
 
                     {faithQa.prayer_direction && (
                       <div className="result-block">
-                        <div className="result-block-title">祷告方向示范</div>
+                        <div className="result-block-title">{t("祷告方向示范")}</div>
                         <div className="result-spiritual-block">
                           <TranslatableParagraph style={{margin: 0, whiteSpace: 'pre-line'}}>{faithQa.prayer_direction}</TranslatableParagraph>
                         </div>
@@ -2569,7 +2576,7 @@ function AppContent() {
               {historyItems.length > 0 && (
               <section className="mobile-card glass">
                 <div className="section-title" style={{display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '12px'}}>
-                  <span>🕐</span><span>最近祷告</span>
+                  <span>🕐</span><span>{t("最近祷告")}</span>
                 </div>
                 <div className="history-list">
                   {historyItems.slice(0, 8).map((item, idx) => (
@@ -2598,38 +2605,38 @@ function AppContent() {
                 </div>
               </section> */}
               <section className="mobile-card glass">
-                <div className="section-title">安装到手机</div>
-                <div className="muted">将当前页面添加到主屏幕，获得更接近原生 App 的体验。</div>
+                <div className="section-title">{t("安装到手机")}</div>
+                <div className="muted">{t("将当前页面添加到主屏幕，获得更接近原生 App 的体验。")}</div>
                 {canInstall ? (
-                    <button className="primary-btn install-btn" type="button" onClick={handleInstallApp}>📲 安装</button>
+                    <button className="primary-btn install-btn" type="button" onClick={handleInstallApp}>{t("📲 安装")}</button>
                 ) : null}
                 {!canInstall && showIosInstallHint ? (
-                    <div className="install-hint">iPhone 请在 Safari 中点击"分享" → "添加到主屏幕"。</div>
+                    <div className="install-hint">{t("iPhone 请在 Safari 中点击\"分享\" → \"添加到主屏幕\"。")}</div>
                 ) : null}
                 {installMessage ? <div className="install-hint">{installMessage}</div> : null}
                 <div className="quick-action-list" style={{marginTop: '12px'}}>
                   <button className="segment active" type="button"
-                          onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>⬆️ 回顶部
+                          onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>{t("⬆️ 回顶部")}
                   </button>
                 </div>
               </section>
               <section className="mobile-card glass stats-gradient">
-                <div className="section-title">📊 访问统计</div>
+                <div className="section-title">{t("📊 访问统计")}</div>
                 <div className="stats-cards">
                   <div className="stats-card">
                     <div className="stats-pulse"></div>
                     <div className="stats-icon">👁</div>
                     <div className="stats-value">{visitStats.page_views.toLocaleString()}</div>
-                    <div className="stats-label">总浏览量</div>
+                    <div className="stats-label">{t("总浏览量")}</div>
                   </div>
                   <div className="stats-card">
                     <div className="stats-icon">👤</div>
                     <div className="stats-value">{visitStats.unique_visitors.toLocaleString()}</div>
-                    <div className="stats-label">独立访客</div>
+                    <div className="stats-label">{t("独立访客")}</div>
                   </div>
                 </div>
                 <div className="muted" style={{fontSize: '11px', marginTop: '10px', textAlign: 'center'}}>
-                  实时统计 · 持久化存储
+                  {t("实时统计 · 持久化存储")}
                 </div>
               </section>
             </div>
@@ -2638,16 +2645,16 @@ function AppContent() {
           {/* 站点声明页脚 */}
           <footer style={{ textAlign: 'center', padding: '18px 16px 8px', fontSize: 12,
             color: 'rgba(255,255,255,0.35)', lineHeight: 1.9 }}>
-            <div>属灵星球 · 内容为开发者 Ethan 原创，仅供个人灵修学习，不得用于商业用途</div>
+            <div>{t("属灵星球 · 内容为开发者 Ethan 原创，仅供个人灵修学习，不得用于商业用途")}</div>
             <div>
-              <span onClick={() => setActivePanel('about')} style={{ color: '#5ac8fa', cursor: 'pointer' }}>ℹ️ 关于本站</span>
+              <span onClick={() => setActivePanel('about')} style={{ color: '#5ac8fa', cursor: 'pointer' }}>{t("ℹ️ 关于本站")}</span>
               <span style={{ margin: '0 8px' }}>·</span>
               <a href="mailto:zpchoney@gmail.com" style={{ color: '#5ac8fa', textDecoration: 'none' }}>zpchoney@gmail.com</a>
             </div>
           </footer>
         </main>
 
-        <Suspense fallback={<div className="page-overlay" style={{display:'flex',alignItems:'center',justifyContent:'center'}}><span style={{color:'rgba(255,255,255,0.6)',fontSize:'15px'}}>加载中…</span></div>}>
+        <Suspense fallback={<div className="page-overlay" style={{display:'flex',alignItems:'center',justifyContent:'center'}}><span style={{color:'rgba(255,255,255,0.6)',fontSize:'15px'}}>{t("加载中…")}</span></div>}>
         {/* 代祷墙页面 */}
         {activePanel === 'prayer' && (
           <div className="page-overlay">
@@ -2845,15 +2852,15 @@ function AppContent() {
           <div className="page-overlay">
             <div style={{ maxWidth: 560, margin: '0 auto', padding: '24px 20px calc(env(safe-area-inset-bottom) + 96px)', color: 'rgba(255,255,255,0.88)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 18 }}>
-                <button onClick={() => setActivePanel('sphere')} style={{ background: 'rgba(255,255,255,0.1)', border: 'none', borderRadius: 8, color: '#fff', padding: '6px 12px', cursor: 'pointer', fontSize: 16 }} aria-label="返回">‹</button>
-                <h2 style={{ margin: 0, fontSize: 20 }}>ℹ️ 关于本站</h2>
+                <button onClick={() => setActivePanel('sphere')} style={{ background: 'rgba(255,255,255,0.1)', border: 'none', borderRadius: 8, color: '#fff', padding: '6px 12px', cursor: 'pointer', fontSize: 16 }} aria-label={t("返回")}>‹</button>
+                <h2 style={{ margin: 0, fontSize: 20 }}>{t("ℹ️ 关于本站")}</h2>
               </div>
               <div style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 14, padding: '18px 16px', lineHeight: 2, fontSize: 14 }}>
-                <p style={{ margin: '0 0 10px' }}>属灵星球（Bible Sphere）由开发者 <strong>Ethan</strong> 独立设计与开发。</p>
-                <p style={{ margin: '0 0 6px' }}>· 网站所有内容均为开发者所创作；</p>
-                <p style={{ margin: '0 0 6px' }}>· 仅供个人灵修与学习使用，<strong>不得用于任何商业用途</strong>；</p>
-                <p style={{ margin: '0 0 6px' }}>· 本站内容的最终解释权归网站开发者 Ethan 所有。</p>
-                <p style={{ margin: '12px 0 0' }}>如有任何问题或建议，欢迎邮件联系：<a href="mailto:zpchoney@gmail.com" style={{ color: '#5ac8fa', textDecoration: 'none' }}>zpchoney@gmail.com</a></p>
+                <p style={{ margin: '0 0 10px' }}>{t("属灵星球（Bible Sphere）由开发者")} <strong>Ethan</strong> {t("独立设计与开发。")}</p>
+                <p style={{ margin: '0 0 6px' }}>{t("· 网站所有内容均为开发者所创作；")}</p>
+                <p style={{ margin: '0 0 6px' }}>{t("· 仅供个人灵修与学习使用，")}<strong>{t("不得用于任何商业用途")}</strong>；</p>
+                <p style={{ margin: '0 0 6px' }}>{t("· 本站内容的最终解释权归网站开发者 Ethan 所有。")}</p>
+                <p style={{ margin: '12px 0 0' }}>{t("如有任何问题或建议，欢迎邮件联系：")}<a href="mailto:zpchoney@gmail.com" style={{ color: '#5ac8fa', textDecoration: 'none' }}>zpchoney@gmail.com</a></p>
               </div>
             </div>
           </div>
@@ -2926,63 +2933,63 @@ function AppContent() {
             onClick={() => setActivePanel('sphere')}
           >
             <span className="mobile-nav-icon">🔮</span>
-            <span className="mobile-nav-label">星球</span>
+            <span className="mobile-nav-label">{t('nav.sphere')}</span>
           </button>
           <button
             className={`mobile-nav-item ${activePanel === 'mirror' ? 'active' : ''}`}
             onClick={() => handlePanelSwitch('mirror')}
           >
             <span className="mobile-nav-icon">🪞</span>
-            <span className="mobile-nav-label">镜鉴</span>
+            <span className="mobile-nav-label">{t('nav.mirror')}</span>
           </button>
           <button
             className={`mobile-nav-item ${activePanel === 'sharewall' ? 'active' : ''}`}
             onClick={() => handlePanelSwitch('sharewall')}
           >
             <span className="mobile-nav-icon">🌟</span>
-            <span className="mobile-nav-label">分享</span>
+            <span className="mobile-nav-label">{t('nav.sharewall')}</span>
           </button>
           <button
             className={`mobile-nav-item ${activePanel === 'journal' ? 'active' : ''}`}
             onClick={() => handlePanelSwitch('journal')}
           >
             <span className="mobile-nav-icon">📖</span>
-            <span className="mobile-nav-label">主日</span>
+            <span className="mobile-nav-label">{t('nav.journal')}</span>
           </button>
           <button
             className={`mobile-nav-item ${activePanel === 'evangelism' ? 'active' : ''}`}
             onClick={() => handlePanelSwitch('evangelism')}
           >
             <span className="mobile-nav-icon">🌍</span>
-            <span className="mobile-nav-label">宣教</span>
+            <span className="mobile-nav-label">{t('nav.evangelism')}</span>
           </button>
           <button
             className={`mobile-nav-item ${activePanel === 'prayer' ? 'active' : ''}`}
             onClick={() => handlePanelSwitch('prayer')}
           >
             <span className="mobile-nav-icon">🙏</span>
-            <span className="mobile-nav-label">代祷</span>
+            <span className="mobile-nav-label">{t('nav.prayer')}</span>
           </button>
           <button
             className={`mobile-nav-item ${activePanel === 'devotion' ? 'active' : ''}`}
             onClick={() => handlePanelSwitch('devotion')}
           >
             <span className="mobile-nav-icon">📔</span>
-            <span className="mobile-nav-label">灵修</span>
+            <span className="mobile-nav-label">{t('nav.devotion')}</span>
           </button>
           <button
             className={`mobile-nav-item ${activePanel === 'innerlife' ? 'active' : ''}`}
             onClick={() => handlePanelSwitch('innerlife')}
           >
             <span className="mobile-nav-icon">⚖️</span>
-            <span className="mobile-nav-label">心迹</span>
+            <span className="mobile-nav-label">{t('nav.innerlife')}</span>
           </button>
           <button
             className={`mobile-nav-item ${activePanel === 'communion' ? 'active' : ''}`}
             onClick={() => handlePanelSwitch('communion')}
           >
             <span className="mobile-nav-icon">💬</span>
-            <span className="mobile-nav-label">相通</span>
+            <span className="mobile-nav-label">{t('nav.communion')}</span>
           </button>
         </nav>
 
@@ -3013,14 +3020,15 @@ function AppContent() {
 
 // ── 灵修 Tab 容器: 晨恩日新日历 + 灵修日记 ─────────────────────────────────────
 function DevotionTabContainer({ user, token, showLogin, renderInlineLogin, onBack }) {
+  const { t } = useLang()
   const [subTab, setSubTab] = useState(window.__deepLink?.kind === 'book' ? 'daily' : 'personal') // 'personal' | 'daily' | 'journal'
   const SUBTABS = [
-    { id: 'personal', label: '🌟', full: '今日灵修' },
-    { id: 'dew',      label: '🌅', full: '清晨甘露' },
-    { id: 'plan',     label: '📅', full: '读经计划' },
-    { id: 'memory',   label: '🧠', full: '背经' },
-    { id: 'daily',    label: '📚', full: '属灵书籍' },
-    { id: 'journal',  label: '📔', full: '灵修日记' },
+    { id: 'personal', label: '🌟', full: t('devotion.tab.personal') },
+    { id: 'dew',      label: '🌅', full: t('devotion.tab.dew') },
+    { id: 'plan',     label: '📅', full: t('devotion.tab.plan') },
+    { id: 'memory',   label: '🧠', full: t('devotion.tab.memory') },
+    { id: 'daily',    label: '📚', full: t('devotion.tab.books') },
+    { id: 'journal',  label: '📔', full: t('devotion.tab.journal') },
   ]
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
@@ -3115,7 +3123,7 @@ function GlobalToast() {
     window.showToast = (msg, type = 'info', duration) =>
       window.dispatchEvent(new CustomEvent('app-toast', { detail: { msg, type, duration } }))
     // busyBtn: wraps any async fn, disables the button + shows toast
-    window.busyBtn = async (e, fn, loadingMsg = '处理中…', doneMsg = null, errMsg = '操作失败，请重试') => {
+    window.busyBtn = async (e, fn, loadingMsg = t("处理中…"), doneMsg = null, errMsg = t("操作失败，请重试")) => {
       const btn = e?.currentTarget || e?.target
       if (btn?.disabled) return
       if (btn) { btn.disabled = true; btn.classList.add('busy') }
@@ -3168,10 +3176,10 @@ function AiStatusBanner() {
       background: 'rgba(255,159,10,0.96)', color: '#1a1200', padding: '8px 14px',
       fontSize: '13px', display: 'flex', alignItems: 'center', gap: '10px',
       justifyContent: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.25)' }}>
-      <span>⚠️ AI 服务暂时维护中，经文匹配与牧养内容质量可能暂时下降，请稍后再试。</span>
+      <span>{t("⚠️ AI 服务暂时维护中，经文匹配与牧养内容质量可能暂时下降，请稍后再试。")}</span>
       <button type="button" onClick={() => setDismissed(true)}
         style={{ background: 'rgba(0,0,0,0.18)', border: 'none', borderRadius: '6px',
-          color: '#1a1200', padding: '3px 10px', cursor: 'pointer', fontSize: '12px' }}>知道了</button>
+          color: '#1a1200', padding: '3px 10px', cursor: 'pointer', fontSize: '12px' }}>{t("知道了")}</button>
     </div>
   )
 }
@@ -3184,11 +3192,11 @@ function SeekersStandalonePage() {
       background: 'linear-gradient(180deg, #0b1020 0%, #101a33 100%)', color: '#fff',
     }}>
       <div style={{ padding: '20px 16px 10px', textAlign: 'center' }}>
-        <div style={{ fontSize: 20, fontWeight: 700 }}>📚 慕道班</div>
-        <div style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.45)', marginTop: 4 }}>慕道班课程 · 文字 / PPT / 视频</div>
+        <div style={{ fontSize: 20, fontWeight: 700 }}>{t("📚 慕道班")}</div>
+        <div style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.45)', marginTop: 4 }}>{t("慕道班课程 · 文字 / PPT / 视频")}</div>
       </div>
       <Suspense fallback={
-        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'rgba(255,255,255,0.35)', fontSize: 14 }}>加载中…</div>
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'rgba(255,255,255,0.35)', fontSize: 14 }}>{t("加载中…")}</div>
       }>
         <SeekersClassView />
       </Suspense>

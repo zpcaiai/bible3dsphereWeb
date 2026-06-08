@@ -23,7 +23,43 @@ function resolveDefaultApiBase() {
 
 export const API_BASE = configuredApiBase || resolveDefaultApiBase()
 
-export async function fetchLayout() {
+// ─────────────────────────────────────────────────────────────────────────────
+// 轻量 SWR 缓存：内存去重 + localStorage 持久化。
+// 命中缓存立即返回（秒出），过期则后台静默刷新，下次进入即为最新——
+// 后端每个只读请求约 1.3s，缓存后各 tab 重复进入几乎零等待。
+// ─────────────────────────────────────────────────────────────────────────────
+const _swrMem = new Map()        // key -> { data, ts }
+const _swrInflight = new Map()   // key -> Promise
+function _swrLsGet(key) {
+  try { const r = localStorage.getItem('swr:' + key); return r ? JSON.parse(r) : null } catch { return null }
+}
+function _swrLsSet(key, data) {
+  try { localStorage.setItem('swr:' + key, JSON.stringify({ data, ts: Date.now() })) } catch { /* 配额满则忽略 */ }
+}
+function _swrRevalidate(key, fetcher) {
+  if (_swrInflight.has(key)) return _swrInflight.get(key)
+  const p = Promise.resolve().then(fetcher)
+    .then((data) => { const e = { data, ts: Date.now() }; _swrMem.set(key, e); _swrLsSet(key, data); _swrInflight.delete(key); return data })
+    .catch((err) => { _swrInflight.delete(key); throw err })
+  _swrInflight.set(key, p)
+  return p
+}
+export async function swr(key, fetcher, ttlMs = 5 * 60 * 1000) {
+  const entry = _swrMem.get(key) || _swrLsGet(key)
+  if (entry && typeof entry.ts === 'number') {
+    const fresh = (Date.now() - entry.ts) < ttlMs
+    if (!fresh) _swrRevalidate(key, fetcher).catch(() => {}) // 后台刷新，不阻塞
+    return entry.data
+  }
+  return _swrRevalidate(key, fetcher) // 无缓存 → 等首次
+}
+// 退出登录时调用，清掉用户相关缓存
+export function clearSwrCache() {
+  _swrMem.clear(); _swrInflight.clear()
+  try { Object.keys(localStorage).filter(k => k.startsWith('swr:')).forEach(k => localStorage.removeItem(k)) } catch { /* ignore */ }
+}
+
+async function _fetchLayoutRaw() {
   console.log('[api] fetchLayout')
   try {
     const response = await fetch(`${API_BASE}/layout`)
@@ -171,7 +207,7 @@ export async function fetchSermon(query) {
   return data
 }
 
-export async function fetchDailySnapshot(token) {
+async function _fetchDailySnapshotRaw(token) {
   const response = await fetch(`${API_BASE}/daily-snapshot`, {
     headers: token ? { 'Authorization': `Bearer ${token}` } : {},
   })
@@ -180,7 +216,7 @@ export async function fetchDailySnapshot(token) {
   return data.ok ? data : null
 }
 
-export async function fetchEmotionTrajectory(token, limit = 30) {
+async function _fetchEmotionTrajectoryRaw(token, limit = 30) {
   const response = await fetch(`${API_BASE}/user/emotion-trajectory?limit=${limit}`, {
     headers: token ? { 'Authorization': `Bearer ${token}` } : {},
   })
@@ -189,7 +225,7 @@ export async function fetchEmotionTrajectory(token, limit = 30) {
   return data.ok ? data : null
 }
 
-export async function fetchCommunityHeatmap(windowHours = 24, topN = 8) {
+async function _fetchCommunityHeatmapRaw(windowHours = 24, topN = 8) {
   try {
     const params = new URLSearchParams({ window_hours: windowHours, top_n: topN })
     const res = await fetch(`${API_BASE}/community/emotion-heatmap?${params}`)
@@ -1902,4 +1938,19 @@ export async function leaveChurch(token) {
   const data = await res.json().catch(() => ({}))
   if (!res.ok) throw new Error(data.detail || '退出教会失败')
   return data
+}
+
+
+// ── 带缓存的只读接口（包裹上面的 _*Raw 实现，所有 tab 通用）──────────────────
+export function fetchLayout() {
+  return swr('layout', _fetchLayoutRaw, 30 * 60 * 1000)
+}
+export function fetchDailySnapshot(token) {
+  return swr('daily-snapshot', () => _fetchDailySnapshotRaw(token), 90 * 1000)
+}
+export function fetchEmotionTrajectory(token, limit = 30) {
+  return swr('emotion-trajectory:' + limit, () => _fetchEmotionTrajectoryRaw(token, limit), 90 * 1000)
+}
+export function fetchCommunityHeatmap(windowHours = 24, topN = 8) {
+  return swr('heatmap:' + windowHours + ':' + topN, () => _fetchCommunityHeatmapRaw(windowHours, topN), 3 * 60 * 1000)
 }

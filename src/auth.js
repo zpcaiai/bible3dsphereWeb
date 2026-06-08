@@ -1,4 +1,4 @@
-import { API_BASE } from './api'
+import { API_BASE, clearSwrCache } from './api'
 
 const TOKEN_KEY = 'bible-sphere-token'
 const USER_KEY = 'bible-sphere-user'
@@ -73,6 +73,7 @@ export async function logout() {
     }
   }
   clearToken()
+  try { clearSwrCache() } catch { /* ignore */ }
 }
 
 export function redirectToWechatLogin() {
