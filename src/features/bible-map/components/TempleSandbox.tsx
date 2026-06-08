@@ -1,8 +1,7 @@
 'use client'
 import { useEffect, useRef, useState } from 'react'
-import mapboxgl from 'mapbox-gl'
-import 'mapbox-gl/dist/mapbox-gl.css'
-import { getMapboxToken } from '../lib/mapbox'
+import maplibregl from 'maplibre-gl'
+import 'maplibre-gl/dist/maplibre-gl.css'
 import { featureCollection, feature } from '../lib/geojson'
 import {
   TEMPLE_CENTER, TEMPLE_COLORS, templeEras, templeEraForYear,
@@ -16,6 +15,27 @@ const LYR = 'temple-structures-3d'
 const YEAR_MIN = -1010
 const YEAR_MAX = 100
 
+// 高德境外卫星栅格（国内可直连，替代被墙的 Mapbox 矢量样式）。
+const AMAP_STYLE: maplibregl.Style = {
+  version: 8,
+  sources: {
+    sat: {
+      type: 'raster',
+      tiles: [
+        'https://webst01.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}',
+        'https://webst02.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}',
+        'https://webst03.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}',
+        'https://webst04.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}',
+      ],
+      tileSize: 256, maxzoom: 18, attribution: '© AutoNavi',
+    },
+  },
+  layers: [
+    { id: 'bg', type: 'background', paint: { 'background-color': '#0b1220' } },
+    { id: 'sat', type: 'raster', source: 'sat', paint: { 'raster-opacity': 0.92, 'raster-brightness-max': 0.92 } },
+  ],
+}
+
 interface StructProps extends Record<string, unknown> {
   kind: string
   height: number
@@ -28,10 +48,9 @@ interface Props {
 
 export function TempleSandbox({ onBack }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null)
-  const mapRef = useRef<mapboxgl.Map | null>(null)
+  const mapRef = useRef<maplibregl.Map | null>(null)
   const loadedRef = useRef(false)
   const [year, setYear] = useState<number>(-960)
-  const token = getMapboxToken()
   const era = templeEraForYear(year)
 
   function buildData(y: number) {
@@ -48,11 +67,10 @@ export function TempleSandbox({ onBack }: Props) {
   }
 
   useEffect(() => {
-    if (!token || !containerRef.current || mapRef.current) return
-    mapboxgl.accessToken = token
-    const map = new mapboxgl.Map({
+    if (!containerRef.current || mapRef.current) return
+    const map = new maplibregl.Map({
       container: containerRef.current,
-      style: 'mapbox://styles/mapbox/dark-v11',
+      style: AMAP_STYLE,
       center: TEMPLE_CENTER,
       zoom: 15.2,
       pitch: 60,
@@ -81,13 +99,13 @@ export function TempleSandbox({ onBack }: Props) {
       mapRef.current = null
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token])
+  }, [])
 
   useEffect(() => {
     const map = mapRef.current
     if (!map || !loadedRef.current) return
     const src = map.getSource(SRC)
-    if (src) (src as mapboxgl.GeoJSONSource).setData(buildData(year))
+    if (src) (src as maplibregl.GeoJSONSource).setData(buildData(year))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [year])
 
@@ -104,13 +122,7 @@ export function TempleSandbox({ onBack }: Props) {
       </header>
 
       <div className="relative flex-1">
-        {token ? (
-          <div ref={containerRef} className="h-full w-full" />
-        ) : (
-          <div className="flex h-full items-center justify-center p-6 text-center">
-            <p className="text-sm text-gray-300">请配置 NEXT_PUBLIC_MAPBOX_TOKEN 以启用 3D 圣殿沙盘。</p>
-          </div>
-        )}
+        <div ref={containerRef} className="h-full w-full" />
 
         {/* 时代信息卡 */}
         <div className="absolute left-4 top-4 max-w-sm rounded-xl border border-white/10 bg-black/70 p-4 backdrop-blur">

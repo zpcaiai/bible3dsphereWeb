@@ -1,8 +1,8 @@
 'use client'
 import { useEffect, useRef, useState } from 'react'
-import mapboxgl from 'mapbox-gl'
-import 'mapbox-gl/dist/mapbox-gl.css'
-import { getMapboxToken, territoriesToFeatureCollection, SOURCE_IDS, LAYER_IDS } from '../lib/mapbox'
+import maplibregl from 'maplibre-gl'
+import 'maplibre-gl/dist/maplibre-gl.css'
+import { territoriesToFeatureCollection, SOURCE_IDS, LAYER_IDS } from '../lib/mapbox'
 import { featureCollection, feature, point, lineBetween, bboxOf } from '../lib/geojson'
 import { PROPHECY_COLORS } from '../lib/colors'
 import { DEFAULT_CENTER, DEFAULT_ZOOM, JERUSALEM } from '../domain/constants'
@@ -26,109 +26,84 @@ interface Props {
 
 const EMPTY_FC: GeoJSON.FeatureCollection = { type: 'FeatureCollection', features: [] }
 
+// 高德境外卫星栅格（耶路撒冷/中东在 GCJ-02 加密区之外，与 WGS84 对齐，坐标准确，
+// 且国内可直连，替代被墙的 Mapbox 矢量样式）。叠加高德注记(cva)显示地名。
+const AMAP_STYLE: maplibregl.Style = {
+  version: 8,
+  sources: {
+    sat: {
+      type: 'raster',
+      tiles: [
+        'https://webst01.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}',
+        'https://webst02.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}',
+        'https://webst03.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}',
+        'https://webst04.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}',
+      ],
+      tileSize: 256, maxzoom: 18, attribution: '© AutoNavi',
+    },
+    label: {
+      type: 'raster',
+      tiles: [
+        'https://webst01.is.autonavi.com/appmaptile?style=8&x={x}&y={y}&z={z}',
+        'https://webst02.is.autonavi.com/appmaptile?style=8&x={x}&y={y}&z={z}',
+        'https://webst03.is.autonavi.com/appmaptile?style=8&x={x}&y={y}&z={z}',
+        'https://webst04.is.autonavi.com/appmaptile?style=8&x={x}&y={y}&z={z}',
+      ],
+      tileSize: 256, maxzoom: 18, attribution: '© AutoNavi',
+    },
+  },
+  layers: [
+    { id: 'bg', type: 'background', paint: { 'background-color': '#0b1220' } },
+    { id: 'sat', type: 'raster', source: 'sat', paint: { 'raster-opacity': 0.9, 'raster-brightness-max': 0.9 } },
+    { id: 'label', type: 'raster', source: 'label', paint: { 'raster-opacity': 0.5 } },
+  ],
+}
+
 export function MapCanvas({
   territories, prophecy, campaign, focusEvent, activeTerritoryId, onTerritoryClick,
 }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null)
-  const mapRef = useRef<mapboxgl.Map | null>(null)
+  const mapRef = useRef<maplibregl.Map | null>(null)
   const loadedRef = useRef(false)
   const rafRef = useRef<number | null>(null)
   const onClickRef = useRef(onTerritoryClick)
   onClickRef.current = onTerritoryClick
 
-  const token = getMapboxToken()
   const [phase, setPhase] = useState<'loading' | 'ready' | 'error'>('loading')
   const [errMsg, setErrMsg] = useState('')
 
   // 初始化（一次）
   useEffect(() => {
-    if (!token || !containerRef.current || mapRef.current) return
-    mapboxgl.accessToken = token
-    const map = new mapboxgl.Map({
+    if (!containerRef.current || mapRef.current) return
+    const map = new maplibregl.Map({
       container: containerRef.current,
-      style: 'mapbox://styles/mapbox/dark-v11',
+      style: AMAP_STYLE,
       center: DEFAULT_CENTER,
       zoom: DEFAULT_ZOOM,
-      cooperativeGestures: false, // 单指即可拖动地图（关闭双指/Ctrl 限制）
+      // MapLibre 默认单指拖动、滚轮缩放，无需 cooperativeGestures。
     })
     mapRef.current = map
 
-    // 运行时错误（token 失效 / 配额 / style 失败 / 国内连接被重置）→ 友好提示，而非默默黑屏
-    const loadTimer = setTimeout(() => {
-      if (!loadedRef.current) {
-        setPhase('error')
-        setErrMsg('无法连接 Mapbox 服务（可能被网络拦截），请检查网络后重试')
-      }
-    }, 10000)
-    map.on('error', (e) => {
-      const st = (e && e.error && (e.error as { status?: number }).status) || 0
-      const msg = (e && e.error && e.error.message) || ''
-      if (st === 401 || st === 403 || st === 429 || /access token|unauthorized|quota|rate limit/i.test(msg)) {
-        setPhase('error')
-        setErrMsg(st === 429 ? '地图配额已用尽，请稍后再试' : '地图凭证无效或受限')
-      } else if (!loadedRef.current) {
-        setPhase('error')
-        setErrMsg('地图样式加载失败（可能被网络拦截），请检查网络后重试')
-      }
-    })
-
-    map.on('load', () => {
-      clearTimeout(loadTimer)
-      map.addSource(SOURCE_IDS.territories, { type: 'geojson', data: EMPTY_FC })
-      map.addLayer({
-        id: LAYER_IDS.territoryFill, type: 'fill', source: SOURCE_IDS.territories,
-        paint: { 'fill-color': ['get', 'color'], 'fill-opacity': ['get', 'fillOpacity'] },
-      })
-      map.addLayer({
-        id: LAYER_IDS.territoryOutline, type: 'line', source: SOURCE_IDS.territories,
-        paint: { 'line-color': ['get', 'color'], 'line-width': 1.5 },
-      })
-      map.addLayer({
-        id: LAYER_IDS.territoryActive, type: 'line', source: SOURCE_IDS.territories,
-        paint: { 'line-color': '#ffffff', 'line-width': 3 },
-        filter: ['==', ['get', 'id'], '__none__'],
-      })
-
-      map.addSource(SOURCE_IDS.prophecyLine, { type: 'geojson', data: EMPTY_FC })
-      map.addLayer({
-        id: LAYER_IDS.prophecyLine, type: 'line', source: SOURCE_IDS.prophecyLine,
-        paint: { 'line-color': ['get', 'color'], 'line-width': 3, 'line-dasharray': [2, 1.5] },
-      })
-      map.addSource(SOURCE_IDS.prophecyTarget, { type: 'geojson', data: EMPTY_FC })
-      map.addLayer({
-        id: 'bm-prophecy-target-layer', type: 'circle', source: SOURCE_IDS.prophecyTarget,
-        paint: { 'circle-radius': 7, 'circle-color': ['get', 'color'], 'circle-stroke-color': '#fff', 'circle-stroke-width': 2 },
-      })
-
-      map.addSource(SOURCE_IDS.campaignRoute, { type: 'geojson', data: EMPTY_FC })
-      // TODO(deck.gl): 可用 @deck.gl/layers PathLayer + TripsLayer 做动态流光路线动画；
-      // 现阶段先用 Mapbox line layer 保证可运行。
-      map.addLayer({
-        id: LAYER_IDS.campaignRoute, type: 'line', source: SOURCE_IDS.campaignRoute,
-        paint: { 'line-color': '#f59e0b', 'line-width': 4, 'line-opacity': 0.9 },
-      })
-      map.addSource(SOURCE_IDS.campaignPoints, { type: 'geojson', data: EMPTY_FC })
-      map.addLayer({
-        id: 'bm-campaign-points-layer', type: 'circle', source: SOURCE_IDS.campaignPoints,
-        paint: { 'circle-radius': 6, 'circle-color': ['get', 'color'], 'circle-stroke-color': '#fff', 'circle-stroke-width': 2 },
-      })
-
-      map.on('click', LAYER_IDS.territoryFill, (e) => {
-        const f = e.features?.[0]
-        const props = (f?.properties ?? {}) as { id?: string }
-        if (typeof props.id === 'string') onClickRef.current(props.id)
-      })
-      map.on('mouseenter', LAYER_IDS.territoryFill, () => { map.getCanvas().style.cursor = 'pointer' })
-      map.on('mouseleave', LAYER_IDS.territoryFill, () => { map.getCanvas().style.cursor = '' })
-
+    // 栅格瓦片错误不致命（个别瓦片失败），仅当迟迟无法进入就绪态才提示。
+    const enter = () => {
+      if (loadedRef.current) return
+      buildLayers(map)
       loadedRef.current = true
       setPhase('ready')
-      // 容器在子页签切换时可能初始为 0 尺寸 → Mapbox 算出空视口、不加载瓦片而呈黑屏；
-      // load 后强制 resize 一次，纠正视口并触发底图瓦片加载。
       map.resize()
       const src = map.getSource(SOURCE_IDS.territories)
-      if (src && 'setData' in src) (src as mapboxgl.GeoJSONSource).setData(territoriesToFeatureCollection(territories))
+      if (src && 'setData' in src) (src as maplibregl.GeoJSONSource).setData(territoriesToFeatureCollection(territories))
+    }
+    map.on('load', enter)
+    map.on('error', (e) => {
+      try { console.warn('[圣经地图集] MapLibre:', (e && e.error && e.error.message) || e) } catch { /* ignore */ }
     })
+    // 兜底：某些环境 'load' 迟迟不触发（后台标签 rAF 节流、首帧延迟）→ 6s 强制进入。
+    const loadTimer = setTimeout(() => {
+      if (!loadedRef.current) {
+        try { enter() } catch { setPhase('error'); setErrMsg('地图加载失败（请检查网络后重试）') }
+      }
+    }, 6000)
 
     // 监听容器尺寸变化（懒显示/响应式/侧栏收展），自动 resize 保证地图始终铺满且加载瓦片。
     let ro: ResizeObserver | null = null
@@ -136,27 +111,76 @@ export function MapCanvas({
       ro = new ResizeObserver(() => { mapRef.current?.resize() })
       ro.observe(containerRef.current)
     }
-    // 兜底：首帧后再 resize 两次，覆盖 CSS 过渡/可见性切换的时序。
     const t1 = setTimeout(() => mapRef.current?.resize(), 250)
     const t2 = setTimeout(() => mapRef.current?.resize(), 800)
 
     return () => {
       loadedRef.current = false
       if (ro) ro.disconnect()
+      clearTimeout(loadTimer)
       clearTimeout(t1)
       clearTimeout(t2)
       map.remove()
       mapRef.current = null
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token])
+  }, [])
+
+  // 建立业务图层（疆域/预言/战役）
+  function buildLayers(map: maplibregl.Map): void {
+    if (map.getSource(SOURCE_IDS.territories)) return
+    map.addSource(SOURCE_IDS.territories, { type: 'geojson', data: EMPTY_FC })
+    map.addLayer({
+      id: LAYER_IDS.territoryFill, type: 'fill', source: SOURCE_IDS.territories,
+      paint: { 'fill-color': ['get', 'color'], 'fill-opacity': ['get', 'fillOpacity'] },
+    })
+    map.addLayer({
+      id: LAYER_IDS.territoryOutline, type: 'line', source: SOURCE_IDS.territories,
+      paint: { 'line-color': ['get', 'color'], 'line-width': 1.5 },
+    })
+    map.addLayer({
+      id: LAYER_IDS.territoryActive, type: 'line', source: SOURCE_IDS.territories,
+      paint: { 'line-color': '#ffffff', 'line-width': 3 },
+      filter: ['==', ['get', 'id'], '__none__'],
+    })
+
+    map.addSource(SOURCE_IDS.prophecyLine, { type: 'geojson', data: EMPTY_FC })
+    map.addLayer({
+      id: LAYER_IDS.prophecyLine, type: 'line', source: SOURCE_IDS.prophecyLine,
+      paint: { 'line-color': ['get', 'color'], 'line-width': 3, 'line-dasharray': [2, 1.5] },
+    })
+    map.addSource(SOURCE_IDS.prophecyTarget, { type: 'geojson', data: EMPTY_FC })
+    map.addLayer({
+      id: 'bm-prophecy-target-layer', type: 'circle', source: SOURCE_IDS.prophecyTarget,
+      paint: { 'circle-radius': 7, 'circle-color': ['get', 'color'], 'circle-stroke-color': '#fff', 'circle-stroke-width': 2 },
+    })
+
+    map.addSource(SOURCE_IDS.campaignRoute, { type: 'geojson', data: EMPTY_FC })
+    map.addLayer({
+      id: LAYER_IDS.campaignRoute, type: 'line', source: SOURCE_IDS.campaignRoute,
+      paint: { 'line-color': '#f59e0b', 'line-width': 4, 'line-opacity': 0.9 },
+    })
+    map.addSource(SOURCE_IDS.campaignPoints, { type: 'geojson', data: EMPTY_FC })
+    map.addLayer({
+      id: 'bm-campaign-points-layer', type: 'circle', source: SOURCE_IDS.campaignPoints,
+      paint: { 'circle-radius': 6, 'circle-color': ['get', 'color'], 'circle-stroke-color': '#fff', 'circle-stroke-width': 2 },
+    })
+
+    map.on('click', LAYER_IDS.territoryFill, (e) => {
+      const f = e.features?.[0]
+      const props = (f?.properties ?? {}) as { id?: string }
+      if (typeof props.id === 'string') onClickRef.current(props.id)
+    })
+    map.on('mouseenter', LAYER_IDS.territoryFill, () => { map.getCanvas().style.cursor = 'pointer' })
+    map.on('mouseleave', LAYER_IDS.territoryFill, () => { map.getCanvas().style.cursor = '' })
+  }
 
   // 疆域数据更新
   useEffect(() => {
     const map = mapRef.current
     if (!map || !loadedRef.current) return
     const src = map.getSource(SOURCE_IDS.territories)
-    if (src) (src as mapboxgl.GeoJSONSource).setData(territoriesToFeatureCollection(territories))
+    if (src) (src as maplibregl.GeoJSONSource).setData(territoriesToFeatureCollection(territories))
   }, [territories])
 
   // 高亮选中疆域
@@ -170,8 +194,8 @@ export function MapCanvas({
   useEffect(() => {
     const map = mapRef.current
     if (!map || !loadedRef.current) return
-    const lineSrc = map.getSource(SOURCE_IDS.prophecyLine) as mapboxgl.GeoJSONSource | undefined
-    const targetSrc = map.getSource(SOURCE_IDS.prophecyTarget) as mapboxgl.GeoJSONSource | undefined
+    const lineSrc = map.getSource(SOURCE_IDS.prophecyLine) as maplibregl.GeoJSONSource | undefined
+    const targetSrc = map.getSource(SOURCE_IDS.prophecyTarget) as maplibregl.GeoJSONSource | undefined
     if (!lineSrc || !targetSrc) return
     if (!prophecy) {
       lineSrc.setData(EMPTY_FC)
@@ -190,8 +214,8 @@ export function MapCanvas({
   useEffect(() => {
     const map = mapRef.current
     if (!map || !loadedRef.current) return
-    const routeSrc = map.getSource(SOURCE_IDS.campaignRoute) as mapboxgl.GeoJSONSource | undefined
-    const pointsSrc = map.getSource(SOURCE_IDS.campaignPoints) as mapboxgl.GeoJSONSource | undefined
+    const routeSrc = map.getSource(SOURCE_IDS.campaignRoute) as maplibregl.GeoJSONSource | undefined
+    const pointsSrc = map.getSource(SOURCE_IDS.campaignPoints) as maplibregl.GeoJSONSource | undefined
     if (!routeSrc || !pointsSrc) return
     if (!campaign) {
       routeSrc.setData(EMPTY_FC)
@@ -217,12 +241,12 @@ export function MapCanvas({
     map.fitBounds(bboxOf(coords), { padding: 90, duration: 900 })
   }, [campaign])
 
-  // 战役路线流光动画（deck.gl TripsLayer，可选；未安装则保留上面的 Mapbox line）
+  // 战役路线流光动画（deck.gl TripsLayer，可选；未安装则保留上面的静态 line）
   useEffect(() => {
     const map = mapRef.current
     if (!map || !loadedRef.current) return
     let cancelled = false
-    interface DeckOverlayLike extends mapboxgl.IControl {
+    interface DeckOverlayLike extends maplibregl.IControl {
       setProps(props: { layers: unknown[] }): void
     }
     let overlay: DeckOverlayLike | null = null
@@ -248,7 +272,7 @@ export function MapCanvas({
         }
         if (cancelled || !mapRef.current) return
         // TripsLayer 实际位于 @deck.gl/geo-layers（未安装）；从 layers 取为 undefined。
-        // 守卫：拿不到构造器就静默降级，保留 Mapbox 静态路线，绝不在 rAF 里 new undefined 崩页。
+        // 守卫：拿不到构造器就静默降级，保留静态路线，绝不在 rAF 里 new undefined 崩页。
         if (typeof layersMod.TripsLayer !== 'function') return
         const path = campaign.routeGeojson.coordinates.map((c) => [c[0], c[1]] as [number, number])
         const timestamps = path.map((_, i) => i)
@@ -261,26 +285,26 @@ export function MapCanvas({
         const tick = (): void => {
           if (cancelled || !overlay) return
           try {
-          t = (t + 0.03) % (maxTime + trailLength)
-          const layer = new TripsLayer({
-            id: 'bm-trip',
-            data: [{ path, timestamps }],
-            getPath: (d: { path: [number, number][] }) => d.path,
-            getTimestamps: (d: { timestamps: number[] }) => d.timestamps,
-            getColor: [245, 158, 11],
-            opacity: 0.9,
-            widthMinPixels: 5,
-            trailLength,
-            currentTime: t,
-            fadeTrail: true,
-          })
-          overlay.setProps({ layers: [layer] })
+            t = (t + 0.03) % (maxTime + trailLength)
+            const layer = new TripsLayer({
+              id: 'bm-trip',
+              data: [{ path, timestamps }],
+              getPath: (d: { path: [number, number][] }) => d.path,
+              getTimestamps: (d: { timestamps: number[] }) => d.timestamps,
+              getColor: [245, 158, 11],
+              opacity: 0.9,
+              widthMinPixels: 5,
+              trailLength,
+              currentTime: t,
+              fadeTrail: true,
+            })
+            overlay.setProps({ layers: [layer] })
           } catch { cleanup(); return }
           rafRef.current = requestAnimationFrame(tick)
         }
         rafRef.current = requestAnimationFrame(tick)
       } catch {
-        // deck.gl 未安装或失败 → 静默降级，保留 Mapbox line 路线
+        // deck.gl 未安装或失败 → 静默降级，保留静态 line 路线
       }
     })()
     return () => {
@@ -297,18 +321,6 @@ export function MapCanvas({
       map.flyTo({ center: [focusEvent.longitude, focusEvent.latitude], zoom: 8, duration: 900 })
     }
   }, [focusEvent])
-
-  if (!token) {
-    return (
-      <div className="flex h-full min-h-[320px] w-full items-center justify-center rounded-xl border border-white/10 bg-white/5 p-6 text-center">
-        <div>
-          <div className="mb-2 text-3xl">🗺️</div>
-          <p className="text-sm text-gray-300">请配置 NEXT_PUBLIC_MAPBOX_TOKEN 以启用地图。</p>
-          <p className="mt-1 text-xs text-gray-500">（左侧时间轴、图层、事件与右侧详情仍可正常使用。）</p>
-        </div>
-      </div>
-    )
-  }
 
   return (
     <div className="relative h-full min-h-[320px] w-full">
