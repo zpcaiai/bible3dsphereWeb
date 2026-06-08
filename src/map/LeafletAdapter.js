@@ -47,6 +47,18 @@ export default class LeafletAdapter extends MapAdapter {
     const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 18, attribution: '&copy; OpenStreetMap',
     })
+    // 国内 OSM 瓦片常被阻断（地图变灰板）：连续瓦片错误时自动切换高德底图（免 key）
+    let tileErrs = 0
+    osm.on('tileerror', () => {
+      tileErrs += 1
+      if (tileErrs >= 4 && !this._fellBackToAmap) {
+        this._fellBackToAmap = true
+        try { this.map.removeLayer(osm) } catch (e) {}
+        L.tileLayer('https://webrd0{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}', {
+          maxZoom: 18, subdomains: ['1', '2', '3', '4'], attribution: '&copy; \u9ad8\u5fb7\u5730\u56fe',
+        }).addTo(this.map)
+      }
+    })
     const topo = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
       maxZoom: 17, attribution: '&copy; OpenTopoMap',
     })
@@ -64,6 +76,7 @@ export default class LeafletAdapter extends MapAdapter {
 
   setView(lngLat, zoom, animate = true) {
     if (!this.map) return
+    if (!Array.isArray(lngLat) || !Number.isFinite(+lngLat[0]) || !Number.isFinite(+lngLat[1])) return
     this.map.flyTo(lonlat(lngLat), zoom ?? this.map.getZoom(), { duration: animate ? 1.1 : 0 })
   }
 

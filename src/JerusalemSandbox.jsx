@@ -111,16 +111,21 @@ export default function JerusalemSandbox({ onBack }) {
             center: TEMPLE_CENTER, zoom: 15.4, pitch: 62, bearing: -22, antialias: true,
           })
           glRef.current = gl; mapRef.current = map
-          map.on('error', (e) => {
-            const st = e && e.error && e.error.status
-            const msg = (e && e.error && e.error.message) || ''
-            if (!triedFallbackRef.current && (st === 401 || st === 403 || st === 429 || /access token|unauthorized|quota|rate limit/i.test(msg))) {
-              triedFallbackRef.current = true
-              try { map.remove() } catch (_) {}
-              setEngine('maplibre'); boot('maplibre')
-            }
+          // 国内 api.mapbox.com 常被连接重置(ERR_CONNECTION_CLOSED)：
+          // 任何 load 前的错误、或 8 秒仍未 load，都直接回退本地打包的 MapLibre。
+          let mbLoaded = false
+          const fallbackToMaplibre = () => {
+            if (disposed || triedFallbackRef.current) return
+            triedFallbackRef.current = true
+            try { map.remove() } catch (_) {}
+            setEngine('maplibre'); boot('maplibre')
+          }
+          const mbTimer = setTimeout(() => { if (!mbLoaded) fallbackToMaplibre() }, 8000)
+          map.on('error', () => { if (!mbLoaded) { clearTimeout(mbTimer); fallbackToMaplibre() } })
+          map.on('load', () => {
+            mbLoaded = true; clearTimeout(mbTimer)
+            if (!disposed) onMapReady(gl, map, 'mapbox')
           })
-          map.on('load', () => { if (!disposed) onMapReady(gl, map, 'mapbox') })
         } else {
           // MapLibre 走本地打包（国内 jsDelivr/CDN 不可靠，CDN 加载常失败导致无地图）
           const mod = await import('maplibre-gl')

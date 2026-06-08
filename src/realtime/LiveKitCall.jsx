@@ -3,7 +3,7 @@
 // 但解耦于"群"概念：直接吃 { url, token } 进房。
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-export default function LiveKitCall({ url, token, title, selfName, outgoing, onLeave }) {
+export default function LiveKitCall({ url, token, title, selfName, outgoing, onLeave, e2eeKey = '' }) {
   const [status, setStatus] = useState('connecting') // connecting | live | error
   const [errMsg, setErrMsg] = useState('')
   const [participants, setParticipants] = useState([])
@@ -36,18 +36,32 @@ export default function LiveKitCall({ url, token, title, selfName, outgoing, onL
   useEffect(() => {
     let cancelled = false
     let room = null
+    let e2eeWorker = null
     async function start() {
       let LK
       try { LK = await import('livekit-client') }
       catch { setStatus('error'); setErrMsg('语音组件加载失败'); return }
       const { Room, RoomEvent, Track } = LK
+      // 端到端加密：后端在 LIVEKIT_E2EE=1 时随凭证下发 e2ee_key
+      let keyProvider = null
+      if (e2eeKey) {
+        try {
+          keyProvider = new LK.ExternalE2EEKeyProvider()
+          e2eeWorker = new Worker(new URL('livekit-client/e2ee-worker', import.meta.url))
+        } catch (err) { keyProvider = null; e2eeWorker = null }
+      }
       room = new Room({
         adaptiveStream: false,
         dynacast: true,
         audioCaptureDefaults: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
         publishDefaults: { dtx: true, red: true, audioPreset: { maxBitrate: 32000 } },
+        ...(keyProvider && e2eeWorker ? { e2ee: { keyProvider, worker: e2eeWorker } } : {}),
       })
       roomRef.current = room
+      if (keyProvider && e2eeKey) {
+        try { await keyProvider.setKey(e2eeKey); await room.setE2EEEnabled(true) }
+        catch (err) { console.error('E2EE 启用失败', err) }
+      }
       const onChange = () => { if (!cancelled) sync() }
       room
         .on(RoomEvent.ParticipantConnected, onChange)
@@ -80,6 +94,7 @@ export default function LiveKitCall({ url, token, title, selfName, outgoing, onL
     return () => {
       cancelled = true
       try { room?.disconnect() } catch { /* noop */ }
+      try { e2eeWorker?.terminate() } catch { /* noop */ }
       roomRef.current = null
       if (audioBin.current) audioBin.current.innerHTML = ''
     }

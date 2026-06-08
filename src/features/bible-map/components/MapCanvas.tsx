@@ -58,17 +58,27 @@ export function MapCanvas({
     })
     mapRef.current = map
 
-    // 运行时错误（token 失效 / 配额 / style 失败）→ 友好提示，而非默默黑屏
+    // 运行时错误（token 失效 / 配额 / style 失败 / 国内连接被重置）→ 友好提示，而非默默黑屏
+    const loadTimer = setTimeout(() => {
+      if (!loadedRef.current) {
+        setPhase('error')
+        setErrMsg('无法连接 Mapbox 服务（可能被网络拦截），请检查网络后重试')
+      }
+    }, 10000)
     map.on('error', (e) => {
       const st = (e && e.error && (e.error as { status?: number }).status) || 0
       const msg = (e && e.error && e.error.message) || ''
       if (st === 401 || st === 403 || st === 429 || /access token|unauthorized|quota|rate limit/i.test(msg)) {
         setPhase('error')
         setErrMsg(st === 429 ? '地图配额已用尽，请稍后再试' : '地图凭证无效或受限')
+      } else if (!loadedRef.current) {
+        setPhase('error')
+        setErrMsg('地图样式加载失败（可能被网络拦截），请检查网络后重试')
       }
     })
 
     map.on('load', () => {
+      clearTimeout(loadTimer)
       map.addSource(SOURCE_IDS.territories, { type: 'geojson', data: EMPTY_FC })
       map.addLayer({
         id: LAYER_IDS.territoryFill, type: 'fill', source: SOURCE_IDS.territories,

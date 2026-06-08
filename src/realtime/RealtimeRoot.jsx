@@ -27,6 +27,7 @@ export default function RealtimeRoot({ user }) {
         <LiveKitCall
           url={activeCall.creds.url}
           token={activeCall.creds.token}
+          e2eeKey={activeCall.creds.e2ee_key || ''}
           title={activeCall.title}
           selfName={realtimeStore.selfName()}
           outgoing={activeCall.outgoing}

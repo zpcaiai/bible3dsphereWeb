@@ -231,8 +231,8 @@ function CallScreen({ group, user, token, onLeave }) {
       }
       if (cancelled) return
 
-      // 端到端加密（可选）：有本地口令时启用，密钥本地派生，服务器只转发密文
-      const e2eePass = e2eeKeyFor(group.id)
+      // 端到端加密：优先用后端下发的房间密钥（LIVEKIT_E2EE=1），否则用本地口令
+      const e2eePass = creds.e2ee_key || e2eeKeyFor(group.id)
       let keyProvider = null
       if (e2eePass) {
         try {

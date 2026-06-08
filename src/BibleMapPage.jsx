@@ -12,8 +12,10 @@ function popupHtml(p, cm, order) {
 }
 
 function coordsFor(feature, variant) {
-  const ov = variant?.overrides?.[feature.properties.id]
-  return ov || feature.geometry?.coordinates
+  const ov = variant?.overrides?.[feature?.properties?.id]
+  const c = ov || feature?.geometry?.coordinates
+  // 防 NaN：无效坐标返回 null（曾导致 Leaflet flyTo(NaN,NaN) 崩溃、播放行程中断）
+  return Array.isArray(c) && c.length >= 2 && Number.isFinite(+c[0]) && Number.isFinite(+c[1]) ? c : null
 }
 
 // 语音朗读（SpeechSynthesis，免素材、离线可用）
@@ -103,8 +105,9 @@ export default function BibleMapPage() {
     setSelectedId(f.properties.id)
     selectedRef.current = f
     const ad = adapterRef.current
-    if (ad?.ready) {
-      ad.setView(coordsFor(f, variant), variant?.stationIds ? 6 : 8)
+    const cc = coordsFor(f, variant)
+    if (ad?.ready && cc) {
+      ad.setView(cc, variant?.stationIds ? 6 : 8)
       const m = markersRef.current[f.properties.id]
       if (m && m.openPopup) setTimeout(() => m.openPopup(), fromMarker ? 0 : 250)
     }
@@ -119,7 +122,9 @@ export default function BibleMapPage() {
     if (variant.route?.length) ad.addRoute(variant.route, { color: variant.color, weight: 3 })
     STN.forEach((f, i) => {
       const cm = confidenceMeta[f.properties.confidence] || confidenceMeta.unknown
-      const m = ad.addMarker(coordsFor(f, variant), {
+      const cc = coordsFor(f, variant)
+      if (!cc) return
+      const m = ad.addMarker(cc, {
         label: i + 1, color: cm.color,
         active: selectedRef.current && selectedRef.current.properties.id === f.properties.id,
         html: popupHtml(f.properties, cm, i + 1),
@@ -128,8 +133,10 @@ export default function BibleMapPage() {
       markersRef.current[f.properties.id] = m
     })
     const coords = STN.map((f) => coordsFor(f, variant)).filter(Boolean)
-    const lngs = coords.map((c) => c[0]); const lats = coords.map((c) => c[1])
-    ad.fitBounds([[Math.min(...lngs), Math.min(...lats)], [Math.max(...lngs), Math.max(...lats)]])
+    if (coords.length) {
+      const lngs = coords.map((c) => c[0]); const lats = coords.map((c) => c[1])
+      ad.fitBounds([[Math.min(...lngs), Math.min(...lats)], [Math.max(...lngs), Math.max(...lats)]])
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ready, dataset, variantId])
 
@@ -212,7 +219,8 @@ export default function BibleMapPage() {
         const nx = STN[(idx + 1) % STN.length]
         selectedRef.current = nx
         const ad = adapterRef.current
-        if (ad?.ready) ad.setView(coordsFor(nx, variant), variant?.stationIds ? 6 : 8)
+        const cc = coordsFor(nx, variant)
+        if (ad?.ready && cc) ad.setView(cc, variant?.stationIds ? 6 : 8)
         return nx.properties.id
       })
     }, 2600)
