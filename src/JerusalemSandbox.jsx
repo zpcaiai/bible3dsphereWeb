@@ -44,6 +44,18 @@ async function loadCss(href) {
 const MAPLIBRE_STYLE = {
   version: 8,
   sources: {
+    // 高德境外卫星瓦片（耶路撒冷在 GCJ-02 加密区之外，与 WGS84 对齐，坐标准确，
+    // 且国内可直连，替代被墙的 Mapbox 卫星图）。默认显示，作为基础底图。
+    sat: {
+      type: 'raster',
+      tiles: [
+        'https://webst01.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}',
+        'https://webst02.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}',
+        'https://webst03.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}',
+        'https://webst04.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}',
+      ],
+      tileSize: 256, maxzoom: 18, attribution: '© AutoNavi',
+    },
     osm: {
       type: 'raster',
       tiles: ['https://a.tile.openstreetmap.org/{z}/{x}/{y}.png', 'https://b.tile.openstreetmap.org/{z}/{x}/{y}.png', 'https://c.tile.openstreetmap.org/{z}/{x}/{y}.png'],
@@ -52,6 +64,7 @@ const MAPLIBRE_STYLE = {
   },
   layers: [
     { id: 'bg', type: 'background', paint: { 'background-color': '#0e1726' } },
+    { id: 'sat', type: 'raster', source: 'sat', paint: { 'raster-opacity': 0.92, 'raster-brightness-max': 0.92 } },
     { id: 'osm', type: 'raster', source: 'osm', layout: { visibility: 'none' }, paint: { 'raster-opacity': 0.5, 'raster-saturation': -0.7, 'raster-brightness-max': 0.7 } },
   ],
 }
