@@ -82,7 +82,11 @@ export default class LeafletAdapter extends MapAdapter {
 
   fitBounds(bounds, options = {}) {
     if (!this.map) return
+    if (!Array.isArray(bounds) || bounds.length < 2) return
     const [sw, ne] = bounds
+    // 防 NaN/Infinity：空数据时 Math.min(...[])=Infinity → Leaflet flyTo(NaN) 抛错崩页
+    const ok = (p) => Array.isArray(p) && Number.isFinite(+p[0]) && Number.isFinite(+p[1])
+    if (!ok(sw) || !ok(ne)) return
     this.map.fitBounds([lonlat(sw), lonlat(ne)], { padding: [30, 30], ...options })
   }
 

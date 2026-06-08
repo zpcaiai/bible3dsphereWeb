@@ -63,6 +63,9 @@ export default class MapLibreAdapter extends MapAdapter {
 
   fitBounds(bounds, options = {}) {
     if (!this.map) return
+    if (!Array.isArray(bounds) || bounds.length < 2) return
+    const ok = (p) => Array.isArray(p) && Number.isFinite(+p[0]) && Number.isFinite(+p[1])
+    if (!ok(bounds[0]) || !ok(bounds[1])) return // 防 NaN bounds 崩溃
     this.map.fitBounds(bounds, { padding: 40, duration: 0, ...options })
   }
 
