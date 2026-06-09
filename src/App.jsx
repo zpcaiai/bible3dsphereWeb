@@ -3063,13 +3063,6 @@ function AppContent() {
             <span className="mobile-nav-icon">⚖️</span>
             <span className="mobile-nav-label">{t('nav.innerlife')}</span>
           </button>
-          <button
-            className={`mobile-nav-item ${activePanel === 'communion' ? 'active' : ''}`}
-            onClick={() => handlePanelSwitch('communion')}
-          >
-            <span className="mobile-nav-icon">💬</span>
-            <span className="mobile-nav-label">{t('nav.communion')}</span>
-          </button>
         </nav>
 
         {/* 全局实时：唯一 WebSocket + 任意页面来电弹窗 */}
@@ -3121,6 +3114,21 @@ function DevotionTabContainer({ user, token, showLogin, renderInlineLogin, onBac
         backdropFilter: 'blur(10px)',
         WebkitBackdropFilter: 'blur(10px)',
       }}>
+        <button
+          onClick={onBack}
+          aria-label={t('返回')}
+          title={t('返回')}
+          style={{
+            flexShrink: 0, width: 42, background: 'none', border: 'none',
+            borderRight: '1px solid rgba(255,255,255,0.08)', color: '#fff',
+            cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
+        </button>
         {SUBTABS.map(t => (
           <button
             key={t.id}
