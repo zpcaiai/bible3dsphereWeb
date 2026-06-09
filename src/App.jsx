@@ -124,7 +124,23 @@ function AppContent() {
   const [savingJournal, setSavingJournal] = useState(false)
   const [dailySnapshot, setDailySnapshot] = useState(null)
   const [emotionTrajectory, setEmotionTrajectory] = useState(null)
-  const [activePanel, setActivePanel] = useState('sphere')
+  const [activePanel, setActivePanel] = useState(() => {
+    // 语言切换会整页刷新(让模块级 t() 文案重建)；带回切换前所在 tab，
+    // 实现「在当前 tab 自由切换语言」。仅语言切换时恢复(一次性 flag)，
+    // 不影响深链/冷启动默认回首页。
+    try {
+      if (sessionStorage.getItem('lang-switch') === '1') {
+        sessionStorage.removeItem('lang-switch')
+        const p = sessionStorage.getItem('active-panel')
+        if (p) return p
+      }
+    } catch { /* ignore */ }
+    return 'sphere'
+  })
+  // 记录当前 tab，供语言切换刷新后恢复
+  useEffect(() => {
+    try { sessionStorage.setItem('active-panel', activePanel) } catch { /* ignore */ }
+  }, [activePanel])
   const [pendingPanel, setPendingPanel] = useState(null)
   const [loginMessage, setLoginMessage] = useState('')
   const [gardenClickCount, setGardenClickCount] = useState(0)
