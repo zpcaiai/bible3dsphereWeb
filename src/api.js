@@ -173,7 +173,7 @@ export async function runQuery(payload) {
   console.log(`[api] runQuery query=${payload.query?.slice(0, 60)} rerank=${payload.enableRerank}`)
   const response = await fetch(`${API_BASE}/query`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: langHeaders(),
     body: JSON.stringify(payload),
   })
   const contentType = response.headers.get('content-type') || ''
@@ -217,7 +217,7 @@ export async function fetchSermon(query) {
   console.log(`[api] fetchSermon query=${query?.slice(0, 60)}`)
   const response = await fetch(`${API_BASE}/sermon`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: langHeaders(),
     body: JSON.stringify({ query }),
   })
   const contentType = response.headers.get('content-type') || ''
@@ -440,7 +440,7 @@ export async function fetchBiblicalExample(query) {
   console.log(`[api] fetchBiblicalExample query=${query?.slice(0, 60)}`)
   const response = await fetch(`${API_BASE}/biblical-example`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: langHeaders(),
     body: JSON.stringify({ query }),
   })
   const contentType = response.headers.get('content-type') || ''

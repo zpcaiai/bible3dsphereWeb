@@ -18,7 +18,7 @@ import TranslatableParagraph from './TranslatableParagraph'
 import { TTSButton, TTSFullBar } from './useGlobalAudio.jsx'
 import { useLang } from './i18n/LanguageContext'
 import LanguageToggle from './i18n/LanguageToggle'
-import { t, featureLabel } from './i18n/runtime'
+import { t, featureLabel, formatEmotionList, getRuntimeLang, localizeEmotionName } from './i18n/runtime'
 
 const CheckInPage = lazy(() => import('./CheckInPage'))
 const ShareWallPage = lazy(() => import('./ShareWallPage'))
@@ -284,6 +284,24 @@ function AppContent() {
     return [...map.entries()].slice(0, 6)
   }, [layoutItems])
 
+  const buildGuidanceSuggestions = (data) => {
+    if (!data) return []
+    const lang = getRuntimeLang()
+    const emotions = formatEmotionList((data.core_emotions || []).slice(0, 2))
+    if (lang === 'en') {
+      return [
+        data.core_need ? 'How does Scripture answer this need?' : null,
+        emotions ? `When I feel ${emotions}, where is God?` : null,
+        data.spiritual_guidance ? 'Why does God allow pain, and what is His purpose in it?' : null,
+      ].filter(Boolean).slice(0, 2)
+    }
+    return [
+      data.core_need ? `面对"${data.core_need.slice(0, 20)}"，圣经如何回应？` : null,
+      emotions ? `当我感到${emotions}时，神在哪里？` : null,
+      data.spiritual_guidance ? t("神允许痛苦存在，祂的目的是什么？") : null,
+    ].filter(Boolean).slice(0, 2)
+  }
+
   const verseGroups = useMemo(() => verseGroupsFromResult(queryResult, languageFilter), [queryResult, languageFilter])
   const comparisonRows = useMemo(() => buildComparisonRows(queryResult), [queryResult])
 
@@ -370,7 +388,7 @@ function AppContent() {
   function buildSpeakText() {
     const parts = []
     // 1. 核心情绪
-    if (guidance?.core_emotions?.length) parts.push(t("核心情绪：") + guidance.core_emotions.join('、'))
+    if (guidance?.core_emotions?.length) parts.push(t("核心情绪：") + formatEmotionList(guidance.core_emotions))
     // 2. 心理评估
     if (guidance?.psychological_assessment) parts.push(t("心理评估。") + guidance.psychological_assessment)
     // 3. 属灵剖析
@@ -713,8 +731,13 @@ function AppContent() {
     try {
       const detail = await fetchFeatureDetail(feature.feature_key)
       setSelectedFeatureDetail(detail)
-      const parts = [feature.explanation, feature.zh_label].filter(Boolean)
-      const q = parts.join('，')
+      const isEnglish = getRuntimeLang() === 'en'
+      const promptLabel = featureLabel(feature)
+      const promptExplanation = isEnglish
+        ? (feature.explanation_en || feature.explanationEn || feature.description_en || feature.short_en || feature.source_keyword || feature.zh_label)
+        : feature.explanation
+      const parts = [promptExplanation, promptLabel].filter(Boolean)
+      const q = parts.join(isEnglish ? ', ' : '，')
       fetchGuidance(q).then(setSphereGuidance).catch(() => {})
       fetchBiblicalExample(q).then(setSpheresBiblicalExample).catch(() => {})
     } catch (err) {
@@ -750,7 +773,7 @@ function AppContent() {
       content += `━━━━━━━━━━━━━━━━━━━━━━━\n\n`
       if (guidance.core_emotions?.length) {
         content += `【核心情绪】\n`
-        content += `${guidance.core_emotions.join('、')}\n\n`
+        content += `${formatEmotionList(guidance.core_emotions)}\n\n`
       }
       if (guidance.psychological_assessment) {
         content += `【心理评估】\n`
@@ -1002,7 +1025,7 @@ function AppContent() {
       if (guidance) {
         let guidanceHtml = t("<div style=\"margin: 6px 0;\"><div style=\"font-size: 14px; font-weight: bold; color: #444; margin-bottom: 4px; border-bottom: 1px solid #2e3c52; padding-bottom: 3px;\">引导信息</div><div style=\"background: rgba(0,122,255,0.15); padding: 10px; border-radius: 8px; border: 1px solid rgba(0,122,255,0.25); color:#f0f0f0;\">")
         if (guidance.core_emotions?.length) {
-          guidanceHtml += `<div style="margin-bottom:8px;"><strong style="color:#5ea0ff;">核心情绪：</strong>${guidance.core_emotions.join('、')}</div>`
+          guidanceHtml += `<div style="margin-bottom:8px;"><strong style="color:#5ea0ff;">${t("核心情绪：")}</strong>${formatEmotionList(guidance.core_emotions)}</div>`
         }
         if (guidance.psychological_assessment) {
           guidanceHtml += `<div style="margin:12px 0;"><strong style="color:#5ea0ff;">心理评估</strong><div style="margin-top:6px;color:rgba(255,255,255,0.88);">${guidance.psychological_assessment.replace(/\n/g, '<br>')}</div></div>`
@@ -1151,7 +1174,7 @@ function AppContent() {
       ).join('\n') || ''
 
       const observation = [
-        guidance?.core_emotions?.length ? `核心情绪：${guidance.core_emotions.join('、')}` : '',
+        guidance?.core_emotions?.length ? `${t("核心情绪：")}${formatEmotionList(guidance.core_emotions)}` : '',
         guidance?.psychological_assessment ? `心理评估：${guidance.psychological_assessment}` : '',
         sermon?.spiritual_diagnosis ? `属灵剖析：${sermon.spiritual_diagnosis}` : '',
       ].filter(Boolean).join('\n\n')
@@ -1719,12 +1742,12 @@ function AppContent() {
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '10px' }}>
                     {emotionTrajectory.dominant_emotion && (
                       <span style={{ fontSize: '12px', background: 'rgba(255,149,0,0.22)', border: '1px solid rgba(255,149,0,0.4)', borderRadius: '20px', padding: '3px 10px', color: '#ffb347' }}>
-                        {t("💛 主导情绪：")}{emotionTrajectory.dominant_emotion}
+                        {t("💛 主导情绪：")}{localizeEmotionName(emotionTrajectory.dominant_emotion)}
                       </span>
                     )}
                     {emotionTrajectory.dominant_mood && (
                       <span style={{ fontSize: '12px', background: 'rgba(255,45,85,0.15)', border: '1px solid rgba(255,45,85,0.3)', borderRadius: '20px', padding: '3px 10px', color: '#ff6b8a' }}>
-                        {t("🌡 主导心情：")}{emotionTrajectory.dominant_mood}
+                        {t("🌡 主导心情：")}{localizeEmotionName(emotionTrajectory.dominant_mood)}
                       </span>
                     )}
                     <span style={{ fontSize: '12px', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '20px', padding: '3px 10px', color: 'rgba(255,255,255,0.5)' }}>
@@ -1758,7 +1781,7 @@ function AppContent() {
                       {emotionTrajectory.items.slice(-6).map((item, i) => (
                         item.emotion_label ? (
                           <span key={i} title={`${item.date}\n${item.scenario || ''}`} style={{ fontSize: '10px', background: 'rgba(255,149,0,0.12)', border: '1px solid rgba(255,149,0,0.2)', borderRadius: '12px', padding: '2px 7px', color: 'rgba(255,200,120,0.7)', cursor: 'default' }}>
-                            {item.emotion_label}
+                            {localizeEmotionName(item.emotion_label)}
                           </span>
                         ) : null
                       ))}
@@ -2090,11 +2113,7 @@ function AppContent() {
                       <div style={{ marginBottom: '8px' }}>
                         <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', marginBottom: '6px' }}>{t("💡 可以这样提问：")}</div>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                          {[
-                            guidance.core_need ? `面对"${guidance.core_need.slice(0, 20)}"，圣经如何回应？` : null,
-                            guidance.core_emotions?.length ? `当我感到${guidance.core_emotions.slice(0, 2).join('、')}时，神在哪里？` : null,
-                            guidance.spiritual_guidance ? t("神允许痛苦存在，祂的目的是什么？") : null,
-                          ].filter(Boolean).slice(0, 2).map((suggestion, i) => (
+                          {buildGuidanceSuggestions(guidance).map((suggestion, i) => (
                             <button
                               key={i}
                               type="button"
@@ -2172,7 +2191,7 @@ function AppContent() {
                     label={t("整体播放")}
                     buildText={() => {
                       const parts = []
-                      if (guidance?.core_emotions?.length) parts.push(t("核心情绪：") + guidance.core_emotions.join('、'))
+                      if (guidance?.core_emotions?.length) parts.push(t("核心情绪：") + formatEmotionList(guidance.core_emotions))
                       if (guidance?.psychological_assessment) parts.push(t("心理评估：") + guidance.psychological_assessment)
                       if (sermon?.spiritual_diagnosis) parts.push(t("属灵剖析：") + sermon.spiritual_diagnosis)
                       if (guidance?.core_need) parts.push(t("核心需要：") + guidance.core_need)
@@ -2203,10 +2222,10 @@ function AppContent() {
                     {/* 1. 核心情绪 */}
                     {guidance?.core_emotions?.length > 0 && (
                       <div className="result-block">
-                        <div className="result-block-title" style={{display:"flex",alignItems:"center",gap:6}}>{t("核心情绪")}<TTSButton text={guidance.core_emotions.join("、")} /></div>
+                        <div className="result-block-title" style={{display:"flex",alignItems:"center",gap:6}}>{t("核心情绪")}<TTSButton text={formatEmotionList(guidance.core_emotions)} /></div>
                         <div className="guidance-emotions">
                           {guidance.core_emotions.map((e) => (
-                            <span key={e} className="emotion-tag">{e}</span>
+                            <span key={e} className="emotion-tag">{localizeEmotionName(e)}</span>
                           ))}
                         </div>
                       </div>
@@ -2514,7 +2533,7 @@ function AppContent() {
                     <div className="result-block">
                       <div className="result-block-title">{t("📖 信仰问答")}</div>
                       {faithQa.question_summary && (
-                        <div className="result-core-need" style={{marginBottom: '4px'}}>{faithQa.question_summary}</div>
+                        <TranslatableParagraph className="result-core-need" style={{marginBottom: '4px'}}>{faithQa.question_summary}</TranslatableParagraph>
                       )}
                     </div>
 

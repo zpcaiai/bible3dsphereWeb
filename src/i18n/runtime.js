@@ -62,3 +62,61 @@ export function featureLabel(item, { withEn = false } = {}) {
   if (currentLang === 'en') return en || zh
   return withEn && zh && en ? `${zh}(${en})` : (zh || en)
 }
+
+const EMOTION_ZH_TO_EN = {
+  焦虑: 'Anxiety',
+  恐惧: 'Fear',
+  悲伤: 'Sadness',
+  难过: 'Sadness',
+  愤怒: 'Anger',
+  孤独: 'Loneliness',
+  迷茫: 'Confusion',
+  困惑: 'Confusion',
+  内疚: 'Guilt',
+  罪疚: 'Guilt',
+  羞愧: 'Shame',
+  羞耻: 'Shame',
+  绝望: 'Despair',
+  感恩: 'Gratitude',
+  喜乐: 'Joy',
+  快乐: 'Joy',
+  平安: 'Peace',
+  盼望: 'Hope',
+  爱: 'Love',
+  嫉妒: 'Envy',
+  厌恶: 'Disgust',
+  惊讶: 'Surprise',
+  麻木: 'Numbness',
+  忧郁: 'Melancholy',
+  痛苦: 'Pain',
+  疲惫: 'Weariness',
+  失落: 'Loss',
+  渴望: 'Longing',
+  安慰: 'Comfort',
+}
+
+const EMOTION_EN_TO_ZH = Object.fromEntries(
+  Object.entries(EMOTION_ZH_TO_EN).map(([zh, en]) => [en.toLowerCase(), zh]),
+)
+
+export function emotionZhKey(value) {
+  const raw = String(value || '').trim()
+  if (!raw) return ''
+  return EMOTION_EN_TO_ZH[raw.toLowerCase()] || raw
+}
+
+export function localizeEmotionName(value) {
+  const raw = String(value || '').trim()
+  if (!raw) return ''
+  const zh = emotionZhKey(raw)
+  if (currentLang === 'en') return EMOTION_ZH_TO_EN[zh] || t(raw)
+  return zh
+}
+
+export function localizeEmotionList(values = []) {
+  return values.map(localizeEmotionName).filter(Boolean)
+}
+
+export function formatEmotionList(values = []) {
+  return localizeEmotionList(values).join(currentLang === 'en' ? ', ' : '、')
+}

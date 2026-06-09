@@ -5,7 +5,7 @@ import { Billboard, Html, OrbitControls, Stars, Text } from '@react-three/drei'
 import * as THREE from 'three'
 import { useEmotionStore } from './store'
 import TranslatableParagraph from './TranslatableParagraph'
-import { t, featureLabel } from './i18n/runtime'
+import { t, featureLabel, localizeEmotionName } from './i18n/runtime'
 
 const SPHERE_RADIUS = 4.18
 // Generate a visually distinct color for each of the 171 points
@@ -73,7 +73,7 @@ class SceneErrorBoundary extends Component {
                   whiteSpace: 'nowrap',
                 }}
               >
-                {item.label || item.description?.slice(0, 18) || item.feature_key}
+                {featureLabel(item) || item.description?.slice(0, 18) || item.feature_key}
               </button>
             ))}
           </div>
@@ -290,7 +290,7 @@ function VersePopover3D({
             {sphereGuidance.core_emotions?.length > 0 && (
               <div className="vp-emotion-tags">
                 {sphereGuidance.core_emotions.map((e) => (
-                  <span key={e} className="vp-emotion-tag">{e}</span>
+                  <span key={e} className="vp-emotion-tag">{localizeEmotionName(e)}</span>
                 ))}
               </div>
             )}
@@ -298,7 +298,7 @@ function VersePopover3D({
               <TranslatableParagraph className="vp-body">{sphereGuidance.psychological_assessment}</TranslatableParagraph>
             )}
             {sphereGuidance.core_need && (
-              <div className="vp-core-need">{sphereGuidance.core_need}</div>
+              <TranslatableParagraph className="vp-core-need">{sphereGuidance.core_need}</TranslatableParagraph>
             )}
             {sphereGuidance.coping_suggestions?.length > 0 && (
               <ul className="vp-tips">
