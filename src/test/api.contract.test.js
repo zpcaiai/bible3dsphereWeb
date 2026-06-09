@@ -6,6 +6,7 @@
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import * as api from '../api'
+import { setRuntimeLang } from '../i18n/runtime'
 
 const okJson = (body = { ok: true }) => ({
   ok: true,
@@ -26,6 +27,7 @@ describe('api request contracts', () => {
   })
 
   afterEach(() => {
+    setRuntimeLang('zh')
     vi.unstubAllGlobals()
     vi.clearAllMocks()
   })
@@ -177,5 +179,31 @@ describe('api request contracts', () => {
       status_emoji: ':dove:',
       is_public: true,
     })
+  })
+
+  it.each([
+    [
+      'fetchVersePrayer',
+      () => api.fetchVersePrayer('John 3:16', 'For God so loved the world'),
+      { prayer: 'Lord, thank You.', reference: 'John 3:16' },
+      '/api/verse-prayer',
+    ],
+    [
+      'fetchMeditationQuestions',
+      () => api.fetchMeditationQuestions('John 3:16', 'For God so loved the world'),
+      { questions: ['What does this reveal about God?'] },
+      '/api/meditation-questions',
+    ],
+  ])('%s sends X-Lang for generated verse content', async (_name, call, body, expectedUrl) => {
+    setRuntimeLang('en')
+    global.fetch.mockResolvedValueOnce(okJson(body))
+
+    await call()
+
+    const { url, options } = lastFetch()
+    expect(url).toBe(expectedUrl)
+    expect(options.method).toBe('POST')
+    expect(jsonHeaders(options)['Content-Type']).toBe('application/json')
+    expect(jsonHeaders(options)['X-Lang']).toBe('en')
   })
 })

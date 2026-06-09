@@ -302,7 +302,11 @@ function VersePopover3D({
             )}
             {sphereGuidance.coping_suggestions?.length > 0 && (
               <ul className="vp-tips">
-                {sphereGuidance.coping_suggestions.map((s, i) => <li key={i}>{s}</li>)}
+                {sphereGuidance.coping_suggestions.map((s, i) => (
+                  <li key={i}>
+                    <TranslatableParagraph>{s}</TranslatableParagraph>
+                  </li>
+                ))}
               </ul>
             )}
             {sphereGuidance.spiritual_guidance && (

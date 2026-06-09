@@ -2251,7 +2251,7 @@ function AppContent() {
                     {guidance?.core_need && (
                       <div className="result-block">
                         <div className="result-block-title" style={{display:"flex",alignItems:"center",gap:6}}>{t("核心需要")}<TTSButton text={guidance.core_need} /></div>
-                        <div className="result-core-need">{guidance.core_need}</div>
+                        <TranslatableParagraph className="result-core-need">{guidance.core_need}</TranslatableParagraph>
                       </div>
                     )}
 
@@ -2385,7 +2385,9 @@ function AppContent() {
                           <div className="result-sub-label">{t("日常应对")}</div>
                           <ul className="guidance-tips" style={{ marginTop: '4px' }}>
                             {guidance.coping_suggestions.map((s, i) => (
-                              <li key={i}>{s}</li>
+                              <li key={i}>
+                                <TranslatableParagraph>{s}</TranslatableParagraph>
+                              </li>
                             ))}
                           </ul>
                         </div>
@@ -2450,9 +2452,9 @@ function AppContent() {
                                   {versePrayerLoading === item.pk_id ? (
                                     <div style={{ fontSize: '13px', color: '#FFD700', fontWeight: 700, fontStyle: 'italic' }}>{t("✨ 正在生成祷告...")}</div>
                                   ) : versePrayers[item.pk_id] ? (
-                                    <div style={{ fontSize: '13px', color: '#FFD700', fontWeight: 700, lineHeight: 1.8, whiteSpace: 'pre-wrap' }}>
+                                    <TranslatableParagraph style={{ fontSize: '13px', color: '#FFD700', fontWeight: 700, lineHeight: 1.8, whiteSpace: 'pre-wrap', margin: 0 }}>
                                       {versePrayers[item.pk_id]}
-                                    </div>
+                                    </TranslatableParagraph>
                                   ) : null}
 
                                   {/* 默想此经文（展开即自动生成，直接显示） */}
@@ -2465,7 +2467,9 @@ function AppContent() {
                                     ) : meditationQuestions[item.pk_id] ? (
                                       <ol style={{ margin: '0', paddingLeft: '18px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
                                         {meditationQuestions[item.pk_id].map((q, qi) => (
-                                          <li key={qi} style={{ fontSize: '13px', color: 'rgba(180,210,255,0.9)', lineHeight: 1.7 }}>{q}</li>
+                                          <li key={qi} style={{ fontSize: '13px', color: 'rgba(180,210,255,0.9)', lineHeight: 1.7 }}>
+                                            <TranslatableParagraph style={{ margin: 0 }}>{q}</TranslatableParagraph>
+                                          </li>
                                         ))}
                                       </ol>
                                     ) : null}
