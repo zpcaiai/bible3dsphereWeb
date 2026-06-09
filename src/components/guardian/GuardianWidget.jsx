@@ -16,6 +16,7 @@ import IdolMonitorCard from './IdolMonitorCard'
 import { C, S } from './guardianStyles'
 import './guardian.css'
 import { t } from '../../i18n/runtime'
+import { AutoText } from '../../autoTranslate.jsx'
 
 const TABS = [
   { key: 'chat', label: t("聊天"), icon: '💬' },
@@ -145,10 +146,10 @@ export default function GuardianWidget() {
             <GuardianSprite state={spriteState} size={36} />
             <div style={{ flex: 1 }}>
               <p style={{ fontSize: 13.5, fontWeight: 600, color: C.text, margin: 0 }}>
-                {profile?.name || t("属灵守护者")}
+                {profile?.name ? <AutoText>{profile.name}</AutoText> : t("属灵守护者")}
               </p>
               <p style={{ fontSize: 11, color: C.dim, margin: 0 }}>
-                {profile ? `${profile.stageEmoji} ${profile.stageZh} · ` : ''}{t("同行者，不是替代者")}
+                {profile ? <>{profile.stageEmoji} <AutoText>{profile.stageZh}</AutoText> · </> : ''}{t("同行者，不是替代者")}
               </p>
             </div>
             <button type="button" data-no-drag onClick={() => setWidgetMode('collapsed')} aria-label={t("收起")}

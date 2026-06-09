@@ -2,6 +2,7 @@ import { useGuardianStore } from './guardianStore'
 import { C, S } from './guardianStyles'
 import './guardian.css'
 import { t } from '../../i18n/runtime'
+import { AutoText } from '../../autoTranslate.jsx'
 
 // 成长阶段 + 信望爱三维度（信心之火 / 盼望之树 / 爱之河流）
 export default function GuardianGrowthBar() {
@@ -21,7 +22,7 @@ export default function GuardianGrowthBar() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <span style={S.dimText}>{t("成长阶段")}</span>
         <span style={{ fontSize: 13.5, color: C.text }}>
-          {profile ? `${profile.stageEmoji} ${profile.stageZh}` : t("🌱 种子")}
+          {profile ? <>{profile.stageEmoji} <AutoText>{profile.stageZh}</AutoText></> : t("🌱 种子")}
         </span>
       </div>
       <div style={track}>
