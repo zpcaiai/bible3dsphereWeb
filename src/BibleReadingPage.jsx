@@ -12,73 +12,73 @@ import { t } from './i18n/runtime'
 // ── 全部 66 卷（旧约 39 + 新约 27）────────────────────────────────────────────
 const BOOKS = [
   // ── 旧约 ──────────────────────────────────────────────────────────────────
-  { name: t("创世记"),       chapters: 50, testament: 'OT' },
-  { name: t("出埃及记"),     chapters: 40, testament: 'OT' },
-  { name: t("利未记"),       chapters: 27, testament: 'OT' },
-  { name: t("民数记"),       chapters: 36, testament: 'OT' },
-  { name: t("申命记"),       chapters: 34, testament: 'OT' },
-  { name: t("约书亚记"),     chapters: 24, testament: 'OT' },
-  { name: t("士师记"),       chapters: 21, testament: 'OT' },
-  { name: t("路得记"),       chapters: 4,  testament: 'OT' },
-  { name: t("撒母耳记上"),   chapters: 31, testament: 'OT' },
-  { name: t("撒母耳记下"),   chapters: 24, testament: 'OT' },
-  { name: t("列王纪上"),     chapters: 22, testament: 'OT' },
-  { name: t("列王纪下"),     chapters: 25, testament: 'OT' },
-  { name: t("历代志上"),     chapters: 29, testament: 'OT' },
-  { name: t("历代志下"),     chapters: 36, testament: 'OT' },
-  { name: t("以斯拉记"),     chapters: 10, testament: 'OT' },
-  { name: t("尼希米记"),     chapters: 13, testament: 'OT' },
-  { name: t("以斯帖记"),     chapters: 10, testament: 'OT' },
-  { name: t("约伯记"),       chapters: 42, testament: 'OT' },
-  { name: t("诗篇"),         chapters: 150, testament: 'OT' },
-  { name: t("箴言"),         chapters: 31, testament: 'OT' },
-  { name: t("传道书"),       chapters: 12, testament: 'OT' },
-  { name: t("雅歌"),         chapters: 8,  testament: 'OT' },
-  { name: t("以赛亚书"),     chapters: 66, testament: 'OT' },
-  { name: t("耶利米书"),     chapters: 52, testament: 'OT' },
-  { name: t("耶利米哀歌"),   chapters: 5,  testament: 'OT' },
-  { name: t("以西结书"),     chapters: 48, testament: 'OT' },
-  { name: t("但以理书"),     chapters: 12, testament: 'OT' },
-  { name: t("何西阿书"),     chapters: 14, testament: 'OT' },
-  { name: t("约珥书"),       chapters: 3,  testament: 'OT' },
-  { name: t("阿摩司书"),     chapters: 9,  testament: 'OT' },
-  { name: t("俄巴底亚书"),   chapters: 1,  testament: 'OT' },
-  { name: t("约拿书"),       chapters: 4,  testament: 'OT' },
-  { name: t("弥迦书"),       chapters: 7,  testament: 'OT' },
-  { name: t("那鸿书"),       chapters: 3,  testament: 'OT' },
-  { name: t("哈巴谷书"),     chapters: 3,  testament: 'OT' },
-  { name: t("西番雅书"),     chapters: 3,  testament: 'OT' },
-  { name: t("哈该书"),       chapters: 2,  testament: 'OT' },
-  { name: t("撒迦利亚书"),   chapters: 14, testament: 'OT' },
-  { name: t("玛拉基书"),     chapters: 4,  testament: 'OT' },
+  { name: "创世记",       chapters: 50, testament: 'OT' },
+  { name: "出埃及记",     chapters: 40, testament: 'OT' },
+  { name: "利未记",       chapters: 27, testament: 'OT' },
+  { name: "民数记",       chapters: 36, testament: 'OT' },
+  { name: "申命记",       chapters: 34, testament: 'OT' },
+  { name: "约书亚记",     chapters: 24, testament: 'OT' },
+  { name: "士师记",       chapters: 21, testament: 'OT' },
+  { name: "路得记",       chapters: 4,  testament: 'OT' },
+  { name: "撒母耳记上",   chapters: 31, testament: 'OT' },
+  { name: "撒母耳记下",   chapters: 24, testament: 'OT' },
+  { name: "列王纪上",     chapters: 22, testament: 'OT' },
+  { name: "列王纪下",     chapters: 25, testament: 'OT' },
+  { name: "历代志上",     chapters: 29, testament: 'OT' },
+  { name: "历代志下",     chapters: 36, testament: 'OT' },
+  { name: "以斯拉记",     chapters: 10, testament: 'OT' },
+  { name: "尼希米记",     chapters: 13, testament: 'OT' },
+  { name: "以斯帖记",     chapters: 10, testament: 'OT' },
+  { name: "约伯记",       chapters: 42, testament: 'OT' },
+  { name: "诗篇",         chapters: 150, testament: 'OT' },
+  { name: "箴言",         chapters: 31, testament: 'OT' },
+  { name: "传道书",       chapters: 12, testament: 'OT' },
+  { name: "雅歌",         chapters: 8,  testament: 'OT' },
+  { name: "以赛亚书",     chapters: 66, testament: 'OT' },
+  { name: "耶利米书",     chapters: 52, testament: 'OT' },
+  { name: "耶利米哀歌",   chapters: 5,  testament: 'OT' },
+  { name: "以西结书",     chapters: 48, testament: 'OT' },
+  { name: "但以理书",     chapters: 12, testament: 'OT' },
+  { name: "何西阿书",     chapters: 14, testament: 'OT' },
+  { name: "约珥书",       chapters: 3,  testament: 'OT' },
+  { name: "阿摩司书",     chapters: 9,  testament: 'OT' },
+  { name: "俄巴底亚书",   chapters: 1,  testament: 'OT' },
+  { name: "约拿书",       chapters: 4,  testament: 'OT' },
+  { name: "弥迦书",       chapters: 7,  testament: 'OT' },
+  { name: "那鸿书",       chapters: 3,  testament: 'OT' },
+  { name: "哈巴谷书",     chapters: 3,  testament: 'OT' },
+  { name: "西番雅书",     chapters: 3,  testament: 'OT' },
+  { name: "哈该书",       chapters: 2,  testament: 'OT' },
+  { name: "撒迦利亚书",   chapters: 14, testament: 'OT' },
+  { name: "玛拉基书",     chapters: 4,  testament: 'OT' },
   // ── 新约 ──────────────────────────────────────────────────────────────────
-  { name: t("马太福音"),       chapters: 28, testament: 'NT' },
-  { name: t("马可福音"),       chapters: 16, testament: 'NT' },
-  { name: t("路加福音"),       chapters: 24, testament: 'NT' },
-  { name: t("约翰福音"),       chapters: 21, testament: 'NT' },
-  { name: t("使徒行传"),       chapters: 28, testament: 'NT' },
-  { name: t("罗马书"),         chapters: 16, testament: 'NT' },
-  { name: t("哥林多前书"),     chapters: 16, testament: 'NT' },
-  { name: t("哥林多后书"),     chapters: 13, testament: 'NT' },
-  { name: t("加拉太书"),       chapters: 6,  testament: 'NT' },
-  { name: t("以弗所书"),       chapters: 6,  testament: 'NT' },
-  { name: t("腓立比书"),       chapters: 4,  testament: 'NT' },
-  { name: t("歌罗西书"),       chapters: 4,  testament: 'NT' },
-  { name: t("帖撒罗尼迦前书"), chapters: 5,  testament: 'NT' },
-  { name: t("帖撒罗尼迦后书"), chapters: 3,  testament: 'NT' },
-  { name: t("提摩太前书"),     chapters: 6,  testament: 'NT' },
-  { name: t("提摩太后书"),     chapters: 4,  testament: 'NT' },
-  { name: t("提多书"),         chapters: 3,  testament: 'NT' },
-  { name: t("腓利门书"),       chapters: 1,  testament: 'NT' },
-  { name: t("希伯来书"),       chapters: 13, testament: 'NT' },
-  { name: t("雅各书"),         chapters: 5,  testament: 'NT' },
-  { name: t("彼得前书"),       chapters: 5,  testament: 'NT' },
-  { name: t("彼得后书"),       chapters: 3,  testament: 'NT' },
-  { name: t("约翰一书"),       chapters: 5,  testament: 'NT' },
-  { name: t("约翰二书"),       chapters: 1,  testament: 'NT' },
-  { name: t("约翰三书"),       chapters: 1,  testament: 'NT' },
-  { name: t("犹大书"),         chapters: 1,  testament: 'NT' },
-  { name: t("启示录"),         chapters: 22, testament: 'NT' },
+  { name: "马太福音",       chapters: 28, testament: 'NT' },
+  { name: "马可福音",       chapters: 16, testament: 'NT' },
+  { name: "路加福音",       chapters: 24, testament: 'NT' },
+  { name: "约翰福音",       chapters: 21, testament: 'NT' },
+  { name: "使徒行传",       chapters: 28, testament: 'NT' },
+  { name: "罗马书",         chapters: 16, testament: 'NT' },
+  { name: "哥林多前书",     chapters: 16, testament: 'NT' },
+  { name: "哥林多后书",     chapters: 13, testament: 'NT' },
+  { name: "加拉太书",       chapters: 6,  testament: 'NT' },
+  { name: "以弗所书",       chapters: 6,  testament: 'NT' },
+  { name: "腓立比书",       chapters: 4,  testament: 'NT' },
+  { name: "歌罗西书",       chapters: 4,  testament: 'NT' },
+  { name: "帖撒罗尼迦前书", chapters: 5,  testament: 'NT' },
+  { name: "帖撒罗尼迦后书", chapters: 3,  testament: 'NT' },
+  { name: "提摩太前书",     chapters: 6,  testament: 'NT' },
+  { name: "提摩太后书",     chapters: 4,  testament: 'NT' },
+  { name: "提多书",         chapters: 3,  testament: 'NT' },
+  { name: "腓利门书",       chapters: 1,  testament: 'NT' },
+  { name: "希伯来书",       chapters: 13, testament: 'NT' },
+  { name: "雅各书",         chapters: 5,  testament: 'NT' },
+  { name: "彼得前书",       chapters: 5,  testament: 'NT' },
+  { name: "彼得后书",       chapters: 3,  testament: 'NT' },
+  { name: "约翰一书",       chapters: 5,  testament: 'NT' },
+  { name: "约翰二书",       chapters: 1,  testament: 'NT' },
+  { name: "约翰三书",       chapters: 1,  testament: 'NT' },
+  { name: "犹大书",         chapters: 1,  testament: 'NT' },
+  { name: "启示录",         chapters: 22, testament: 'NT' },
 ]
 
 const TOTAL_CHAPTERS = BOOKS.reduce((s, b) => s + b.chapters, 0)
@@ -316,7 +316,7 @@ function ChapterReader({ book, chapter, doneChapters, onMark, onBack, onNav, use
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><polyline points="15 18 9 12 15 6" /></svg>
         </button>
         <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 15, fontWeight: 700, color: '#fff' }}>{book.name} {t("· 第")}{chapter}{t("章")}</div>
+          <div style={{ fontSize: 15, fontWeight: 700, color: '#fff' }}>{t(book.name)} {t("· 第")}{chapter}{t("章")}</div>
           <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', marginTop: 1 }}>
             {isDone || marked ? t("✅ 已读") : `第 ${chapter}/${book.chapters} 章`}
           </div>
@@ -365,7 +365,7 @@ function ChapterReader({ book, chapter, doneChapters, onMark, onBack, onNav, use
             {/* Chapter title + TTS */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
               <div style={{ fontSize: 12, color: 'rgba(90,200,250,0.6)', fontWeight: 600, letterSpacing: '0.05em' }}>
-                {book.name} {chapter}{t("章 · 共")}{verses.length}{t("节")}
+                {t(book.name)} {chapter}{t("章 · 共")}{verses.length}{t("节")}
               </div>
               <TTSButton
                 text={`${book.name}第${chapter}章。\n` + verses.map(v => `第${v.verse}节。${v.text}`).join('\n')}
@@ -423,7 +423,7 @@ function ChapterReader({ book, chapter, doneChapters, onMark, onBack, onNav, use
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
                         <span style={{ fontSize: 18 }}>📖</span>
                         <div style={{ flex: 1 }}>
-                          <div style={{ fontSize: 14, fontWeight: 700, color: '#ffd60a' }}>{t("查经 —")} {book.name} {t("第")}{chapter}{t("章")}</div>
+                          <div style={{ fontSize: 14, fontWeight: 700, color: '#ffd60a' }}>{t("查经 —")} {t(book.name)} {t("第")}{chapter}{t("章")}</div>
                           <div style={{ fontSize: 11, color: 'rgba(255,200,50,0.55)', marginTop: 2 }}>{t("逐节精解 · 神学主题 · 祷告引导")}</div>
                         </div>
                       </div>
@@ -664,7 +664,7 @@ export default function BibleReadingPage({ user, token, onBack }) {
         </button>
         <div style={{ flex: 1 }}>
           <div style={{ fontSize: 15, fontWeight: 700, color: '#fff' }}>
-            {view === 'chapters' && selectedBook ? `📖 ${selectedBook.name}` : t("📖 圣经通读")}
+            {view === 'chapters' && selectedBook ? `📖 ${t(selectedBook.name)}` : t("📖 圣经通读")}
           </div>
           {view === 'books' ? (
             <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', marginTop: 1 }}>
@@ -725,7 +725,7 @@ export default function BibleReadingPage({ user, token, onBack }) {
                 <div key={book.name} style={S.bookCard(complete)}
                   onClick={() => { setSelectedBook(book); setView('chapters') }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5 }}>
-                    <span style={{ fontSize: 13, fontWeight: 600, color: '#fff' }}>{book.name}</span>
+                    <span style={{ fontSize: 13, fontWeight: 600, color: '#fff' }}>{t(book.name)}</span>
                     {complete && <span style={{ fontSize: 11 }}>✅</span>}
                   </div>
                   <div style={{ height: 3, background: 'rgba(255,255,255,0.1)', borderRadius: 2, marginBottom: 5 }}>
