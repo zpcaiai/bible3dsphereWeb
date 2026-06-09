@@ -2,7 +2,7 @@ import { useState, useMemo, useCallback, useRef } from 'react'
 import { useGlobalAudio, TTSButton as _TTSBtn, TTSFullBar as _TTSFullBar } from './useGlobalAudio.jsx'
 import { MIRROR_CHARACTERS, MIRROR_THEMES } from './mirrorData'
 import { emotionZhKey, getRuntimeLang, t } from './i18n/runtime'
-import { useAutoTranslate } from './autoTranslate.jsx'
+import { useAutoTranslate, requestTranslation } from './autoTranslate.jsx'
 import { saveJournal } from './api'
 import BibleMap from './BibleMap'
 import { CHARACTER_JOURNEYS, buildCharacterMapConfig } from './data/characterJourneys'
@@ -79,6 +79,29 @@ function characterName(char) {
 
 function characterSecondaryName(char) {
   return getRuntimeLang() === 'en' ? char.name : char.en
+}
+
+// 收集某人物详情页全部可机翻文本（约15-20条），供「防抖单卡预热」用。
+function collectCharTexts(char) {
+  if (!char) return []
+  const out = []
+  const push = (v) => { if (typeof v === 'string' && v.trim()) out.push(v) }
+  push(char.lesson); push(char.summary); push(char.witness); push(char.prayer)
+  if (char.typology) push(char.typology.summary)
+  ;(char.follow || []).forEach(push)
+  ;(char.caution || []).forEach(push)
+  ;(char.applications || []).forEach(push)
+  ;(char.works || []).forEach(g => { push(g.group); (g.items || []).forEach(push) })
+  if (char.type === "警戒") {
+    push(`以${char.name}为警戒，今天我立志：`)
+    push(`例：不像${char.name}那样，当面对试探时，我要警醒祷告，远离罪...`)
+  } else {
+    push(char.type === "混合"
+      ? `效法${char.name}的长处、以其失败为警戒，今天我立志：`
+      : `效法${char.name}，今天我立志：`)
+    push(`例：像${char.name}一样，当面对恐惧时，我要先求问神，再行动...`)
+  }
+  return out
 }
 
 const BOOK_MAP = {
@@ -171,6 +194,17 @@ function CharacterAvatar({ name, en, size = 56 }) {
 
 function CharacterCard({ char, onClick }) {
   useAutoTranslate([])
+  const prewarmTimer = useRef(null)
+  // 防抖单卡预热：指针在某卡停留 >200ms 才翻译这一张详情(约15-20条)，离开即取消。
+  // 绝不在 grid 扫动/滚动时批量触发——避免一次性灌爆 /api/translate-batch(上次全EN崩的原因)。
+  const schedulePrewarm = () => {
+    if (getRuntimeLang() !== 'en') return
+    clearTimeout(prewarmTimer.current)
+    prewarmTimer.current = setTimeout(() => {
+      collectCharTexts(char).forEach(requestTranslation)
+    }, 200)
+  }
+  const cancelPrewarm = () => clearTimeout(prewarmTimer.current)
   const typeTag = char.tags.find(tag => ["正面榜样","警戒为主","混合型"].includes(tag)) || char.type
   const lessonText = char.lesson ? t(char.lesson) : ""
   return (
@@ -180,8 +214,8 @@ function CharacterCard({ char, onClick }) {
       display: 'flex', flexDirection: 'column', gap: 10,
       border: '1px solid rgba(255,255,255,0.08)'
     }}
-      onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.11)'}
-      onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.06)'}
+      onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.11)'; schedulePrewarm() }}
+      onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; cancelPrewarm() }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
         <CharacterAvatar name={char.name} en={char.en} />
