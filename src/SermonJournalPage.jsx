@@ -6,6 +6,7 @@ import usePullToRefresh from './hooks/usePullToRefresh'
 import { TTSFullBar } from './useGlobalAudio.jsx'
 import { escapeHtml, escapeHtmlWithBr } from './sanitize'
 import { t } from './i18n/runtime'
+import { translateForExport, translateElementText } from './exportI18n'
 import { AutoText } from './autoTranslate.jsx'
 
 
@@ -314,7 +315,7 @@ export default function SermonJournalPage({ user, token, onBack }) {
     }
   }
 
-  function exportToTxt() {
+  async function exportToTxt() {
     if (!current) return
     let content = `主日信息\n\n`
     content += `日期：${current.date}\n`
@@ -349,7 +350,8 @@ export default function SermonJournalPage({ user, token, onBack }) {
       content += `鼓励与感恩\n${current.encouragement}\n`
     }
     
-    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' })
+    content = await translateForExport(content)
+  const blob = new Blob([content], { type: 'text/plain;charset=utf-8' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
@@ -377,7 +379,8 @@ export default function SermonJournalPage({ user, token, onBack }) {
 
     async function addBlock(html) {
       el.innerHTML = html
-      const canvas = await html2canvas(el, { scale: 2, useCORS: true, logging: false, backgroundColor: '#0e1726' })
+      await translateElementText(el)
+    const canvas = await html2canvas(el, { scale: 2, useCORS: true, logging: false, backgroundColor: '#0e1726' })
       const imgH = (canvas.height / canvas.width) * cw
       if (curY + imgH > PH - 10 && curY > M + 5) { pdf.addPage(); pdf.setFillColor(14, 23, 38); pdf.rect(0, 0, PW, PH, 'F'); curY = M }
       pdf.addImage(canvas.toDataURL('image/jpeg', 0.92), 'JPEG', M, curY, cw, imgH)

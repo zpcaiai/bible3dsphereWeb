@@ -6,6 +6,7 @@ import { useState } from 'react'
 import { submitCheckup } from './api'
 import { getToken } from './auth'
 import { t } from './i18n/runtime'
+import { AutoText } from './autoTranslate.jsx'
 
 const SYMPTOMS = [
   { key: 'joylessness', name: t("失去喜乐"), hint: t("提不起劲，喜乐淡了") },
@@ -70,7 +71,7 @@ export default function SpiritualCheckupPage({ user, onBack, onNeedLogin }) {
                 <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.55)' }}>{t("低潮指数")}</span>
                 <span style={{ fontSize: 13, fontWeight: 700, color: result.level === "高" ? '#ff8787' : result.level === "中" ? '#ffd43b' : '#34c759' }}>{Math.round((result.index || 0) * 100)} · {result.level}</span>
               </div>
-              <div style={{ fontSize: 13.5, lineHeight: 1.85, color: 'rgba(255,255,255,0.88)' }}>{result.summary}</div>
+              <div style={{ fontSize: 13.5, lineHeight: 1.85, color: 'rgba(255,255,255,0.88)' }}><AutoText>{result.summary}</AutoText></div>
             </div>
 
             {result.preach && (

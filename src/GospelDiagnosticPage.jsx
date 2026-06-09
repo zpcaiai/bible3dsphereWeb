@@ -85,7 +85,7 @@ export default function GospelDiagnosticPage({ user, onBack, onNeedLogin }) {
           <>
             <div style={{ ...card, background: 'linear-gradient(135deg, rgba(52,199,89,0.10), rgba(139,92,246,0.08))' }}>
               <div style={{ fontSize: 11, color: 'rgba(52,199,89,0.8)', fontWeight: 700, marginBottom: 8 }}>{t("✦ 属灵病历")}</div>
-              <div style={{ fontSize: 13.5, lineHeight: 1.85, color: 'rgba(255,255,255,0.88)' }}>{result.summary}</div>
+              <div style={{ fontSize: 13.5, lineHeight: 1.85, color: 'rgba(255,255,255,0.88)' }}><AutoText>{result.summary}</AutoText></div>
             </div>
 
             {/* 钟马田 · 诊断 */}

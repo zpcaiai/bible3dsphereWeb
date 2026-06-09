@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { fetchGuardianMemories } from './guardianApi'
 import { C, S } from './guardianStyles'
 import { t } from '../../i18n/runtime'
+import { AutoText } from '../../autoTranslate.jsx'
 
 const TYPE_LABELS = {
   event: t("事件"), stressor: t("压力源"), goal: t("目标"),
@@ -32,7 +33,7 @@ export default function GuardianMemoryPanel() {
             </span>
             <span style={S.dimText}>{'★'.repeat(Math.min(5, m.importance || 1))}</span>
           </div>
-          <p style={{ fontSize: 13.5, color: C.text, margin: 0 }}>{m.content}</p>
+          <p style={{ fontSize: 13.5, color: C.text, margin: 0 }}><AutoText>{m.content}</AutoText></p>
         </div>
       ))}
     </div>

@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import { fetchFormationProfile, evaluateVirtues } from './api'
 import { getToken } from './auth'
 import { t } from './i18n/runtime'
+import { AutoText } from './autoTranslate.jsx'
 
 const card = { background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, padding: 16, marginBottom: 12 }
 const INDEX_META = [
@@ -66,7 +67,7 @@ export default function FaithHopeLovePage({ user, onClose }) {
 
               {data.summary && (
                 <div style={{ ...card, background: 'linear-gradient(135deg, rgba(167,139,250,0.12), rgba(90,200,250,0.06))' }}>
-                  <div style={{ fontSize: 13.5, lineHeight: 1.85, color: 'rgba(255,255,255,0.86)' }}>{data.summary}</div>
+                  <div style={{ fontSize: 13.5, lineHeight: 1.85, color: 'rgba(255,255,255,0.86)' }}><AutoText>{data.summary}</AutoText></div>
                 </div>
               )}
 

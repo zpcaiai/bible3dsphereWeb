@@ -6,6 +6,7 @@ import usePullToRefresh from './hooks/usePullToRefresh'
 import { escapeHtml, escapeHtmlWithBr } from './sanitize'
 import EmojiTextarea from './EmojiTextarea'
 import { t } from './i18n/runtime'
+import { translateForExport, translateElementText } from './exportI18n'
 import { AutoText } from './autoTranslate.jsx'
 
 // 读取旧的 localStorage 灵修笔记（来自 ChatPage / DevotionNotePage）
@@ -262,7 +263,7 @@ function formatDateTime(ts) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`
 }
 
-function exportJournalToTxt(journal) {
+async function exportJournalToTxt(journal) {
   if (!journal) return
   let content = `属灵星球 - 灵修日记\n`
   content += `日期：${formatDate(journal.date)}\n`
@@ -288,6 +289,7 @@ function exportJournalToTxt(journal) {
     content += `${journal.prayer}\n\n`
   }
   
+  content = await translateForExport(content)
   const blob = new Blob([content], { type: 'text/plain;charset=utf-8' })
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
@@ -313,6 +315,7 @@ async function exportJournalToPdf(journal) {
 
   async function addBlock(html) {
     el.innerHTML = html
+    await translateElementText(el)
     const canvas = await html2canvas(el, { scale: 2, useCORS: true, logging: false, backgroundColor: '#0e1726' })
     const imgH = (canvas.height / canvas.width) * cw
     if (curY + imgH > PH - 10 && curY > M + 5) { pdf.addPage(); pdf.setFillColor(14, 23, 38); pdf.rect(0, 0, PW, PH, 'F'); curY = M }
@@ -426,7 +429,7 @@ function JournalDetail({ journal, onEdit, onBack }) {
   )
 }
 
-function exportAllJournalsToTxt(journals) {
+async function exportAllJournalsToTxt(journals) {
   if (!journals || journals.length === 0) return
   let content = `属灵星球 - 灵修日记汇总\n共 ${journals.length} 篇\n\n`
   journals.forEach((journal, i) => {
@@ -437,6 +440,7 @@ function exportAllJournalsToTxt(journals) {
     if (journal.application) content += `✅ 行道应用\n${journal.application}\n\n`
     if (journal.prayer) content += `🙏 祷告记录\n${journal.prayer}\n\n`
   })
+  content = await translateForExport(content)
   const blob = new Blob([content], { type: 'text/plain;charset=utf-8' })
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
@@ -463,6 +467,7 @@ async function exportAllJournalsToPdf(journals) {
 
   async function addBlock(html) {
     el.innerHTML = html
+    await translateElementText(el)
     const canvas = await html2canvas(el, { scale: 2, useCORS: true, logging: false, backgroundColor: '#0e1726' })
     const imgH = (canvas.height / canvas.width) * cw
     if (curY + imgH > PH - 10 && curY > M + 5) { pdf.addPage(); pdf.setFillColor(14, 23, 38); pdf.rect(0, 0, PW, PH, 'F'); curY = M }

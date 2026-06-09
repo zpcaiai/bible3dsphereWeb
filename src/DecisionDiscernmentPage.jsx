@@ -6,6 +6,7 @@ import { useState } from 'react'
 import { runDiscernment } from './api'
 import { getToken } from './auth'
 import { t } from './i18n/runtime'
+import { AutoText } from './autoTranslate.jsx'
 
 const SLIDERS = [
   { key: 'faith', name: t("需要的信心"), color: '#5ac8fa' },
@@ -78,7 +79,7 @@ export default function DecisionDiscernmentPage({ user, onBack, onNeedLogin }) {
         ) : (
           <>
             <div style={{ ...card, background: 'linear-gradient(135deg, rgba(52,199,89,0.10), rgba(90,200,250,0.08))' }}>
-              <div style={{ fontSize: 13.5, lineHeight: 1.85, color: 'rgba(255,255,255,0.88)' }}>{result.summary}</div>
+              <div style={{ fontSize: 13.5, lineHeight: 1.85, color: 'rgba(255,255,255,0.88)' }}><AutoText>{result.summary}</AutoText></div>
             </div>
 
             <div style={{ ...card }}>
@@ -116,7 +117,7 @@ export default function DecisionDiscernmentPage({ user, onBack, onNeedLogin }) {
 
             <div style={card}>
               <div style={{ fontSize: 11, color: '#a78bfa', fontWeight: 700, marginBottom: 6 }}>{t("祷告方向")}</div>
-              <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.82)', lineHeight: 1.8 }}>{result.prayer}</div>
+              <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.82)', lineHeight: 1.8 }}><AutoText>{result.prayer}</AutoText></div>
             </div>
             {result.scripture?.text && (
               <div style={{ ...card, borderLeft: '3px solid rgba(167,139,250,0.5)', borderRadius: 8 }}>

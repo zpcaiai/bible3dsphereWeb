@@ -7,6 +7,8 @@ import usePullToRefresh from './hooks/usePullToRefresh'
 import { escapeHtml, escapeHtmlWithBr } from './sanitize'
 import BibleMapPage from './BibleMapPage'
 import { t } from './i18n/runtime'
+import { translateForExport, translateElementText } from './exportI18n'
+import { AutoText } from './autoTranslate.jsx'
 
 // Deepgram API Key for voice input - 支持从环境变量读取
 const DEEPGRAM_API_KEY = import.meta.env.VITE_DEEPGRAM_API_KEY || 'a87cbb2d1ec9b07a456fb55319a104731924b12f'
@@ -60,7 +62,7 @@ function formatDateTime(ts) {
   return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日 ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`
 }
 
-function exportAllPrayersToTxt(items) {
+async function exportAllPrayersToTxt(items) {
   if (!items || items.length === 0) return
   let content = `属灵星球 - 传FY祷告墙\n`
   content += `导出时间：${new Date().toLocaleString('zh-CN')}\n`
@@ -78,6 +80,7 @@ function exportAllPrayersToTxt(items) {
     }
   })
   
+  content = await translateForExport(content)
   const blob = new Blob([content], { type: 'text/plain;charset=utf-8' })
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
@@ -102,6 +105,7 @@ async function exportAllPrayersToPdf(items) {
 
   async function addBlock(html) {
     el.innerHTML = html
+    await translateElementText(el)
     const canvas = await html2canvas(el, { scale: 2, useCORS: true, logging: false, backgroundColor: '#0e1726' })
     const imgH = (canvas.height / canvas.width) * cw
     if (curY + imgH > PH - 10 && curY > M + 5) { pdf.addPage(); pdf.setFillColor(14, 23, 38); pdf.rect(0, 0, PW, PH, 'F'); curY = M }
@@ -1309,7 +1313,7 @@ export default function EvangelismPage({ user, token, onBack, onPrayerWall }) {
                         </div>
                       </div>
                     ) : (
-                      <div className="pw-card-content" style={{ whiteSpace: 'pre-wrap', lineHeight: '1.7' }}>{prayer.content}</div>
+                      <div className="pw-card-content" style={{ whiteSpace: 'pre-wrap', lineHeight: '1.7' }}><AutoText>{prayer.content}</AutoText></div>
                     )}
                   </div>
                 ))}

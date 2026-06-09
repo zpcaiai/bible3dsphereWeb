@@ -408,6 +408,13 @@ export async function fetchTranslate(text, targetLang = 'en') {
 export async function translateTexts(texts, targetLang = 'en') {
   const list = Array.isArray(texts) ? texts.map((s) => (s == null ? '' : String(s))) : []
   if (list.length === 0) return []
+  // 分块（每块 <=50）后并发，避免后端单次批量上限并提升大导出可靠性
+  if (list.length > 50) {
+    const chunks = []
+    for (let i = 0; i < list.length; i += 50) chunks.push(list.slice(i, i + 50))
+    const parts = await Promise.all(chunks.map((c) => translateTexts(c, targetLang)))
+    return parts.flat()
+  }
   try {
     const response = await fetch(`${API_BASE}/translate-batch`, {
       method: 'POST',

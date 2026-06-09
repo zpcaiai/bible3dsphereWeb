@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { fetchPrayers, savePrayer, markPrayerAnswered } from './guardianApi'
 import { C, S } from './guardianStyles'
 import { t } from '../../i18n/runtime'
+import { AutoText } from '../../autoTranslate.jsx'
 
 const CATEGORIES = [
   { key: 'adoration', label: t("赞美") },
@@ -83,7 +84,7 @@ export default function PrayerJournal() {
                 </button>
               )}
             </div>
-            <p style={{ fontSize: 13.5, color: C.text, whiteSpace: 'pre-wrap', margin: 0 }}>{e.content}</p>
+            <p style={{ fontSize: 13.5, color: C.text, whiteSpace: 'pre-wrap', margin: 0 }}><AutoText>{e.content}</AutoText></p>
           </div>
         ))}
       </div>

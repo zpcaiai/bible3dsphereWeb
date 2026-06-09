@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "i18n:fill": "node scripts/i18n_autoen_fill.mjs",
+    "i18n:fill:dry": "node scripts/i18n_autoen_fill.mjs --dry-run",
     "preview": "vite preview",
     "preview:mobile": "vite preview --host 0.0.0.0 --port 4173",
     "test": "vitest run",

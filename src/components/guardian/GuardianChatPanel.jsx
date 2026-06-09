@@ -4,6 +4,7 @@ import { useGuardianVoice } from './useGuardianVoice'
 import { C, S } from './guardianStyles'
 import './guardian.css'
 import { t } from '../../i18n/runtime'
+import { AutoText } from '../../autoTranslate.jsx'
 
 const MODES = [
   { key: 'companion', label: t("陪伴") },
@@ -124,7 +125,7 @@ export default function GuardianChatPanel() {
               borderBottomLeftRadius: m.role === 'user' ? 16 : 4,
               background: m.role === 'user' ? 'rgba(255,179,71,0.92)' : 'rgba(42,51,88,0.5)',
               color: m.role === 'user' ? '#1a1200' : C.text,
-            }}>{m.content}</div>
+            }}><AutoText>{m.content}</AutoText></div>
           </div>
         ))}
         {sending && (

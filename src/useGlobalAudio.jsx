@@ -12,8 +12,8 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { fetchTTS } from './api'
-import { t } from './i18n/runtime'
+import { fetchTTS, translateText } from './api'
+import { t, getRuntimeLang } from './i18n/runtime'
 
 // ── Bible reference expansion ────────────────────────────────────────────────
 // Expands abbreviated references like "太 六 10" → "马太福音6章10节" before TTS.
@@ -168,8 +168,6 @@ export function useGlobalAudio() {
 
   const speak = useCallback(async (rawText) => {
     if (!rawText?.trim()) return
-    const text = _expandBibleRefs(rawText)
-
     // Stop whatever is currently playing globally, then claim a new generation
     // so any previous in-flight fetchTTS() call is silently discarded when it resolves.
     _globalStop()
@@ -178,9 +176,20 @@ export function useGlobalAudio() {
     if (!isMountedRef.current) return
     setTtsState('loading')
 
+    // EN 模式：先把中文机翻成英文再朗读，与画面保持一致
+    const enMode = getRuntimeLang() === 'en'
+    let srcText = rawText
+    if (enMode && /[一-鿿]/.test(srcText)) {
+      try { const tr = await translateText(srcText, 'en'); if (tr) srcText = tr } catch { /* 失败保留中文 */ }
+      if (_singleton.speakGen !== myGen || !isMountedRef.current) return
+    }
+    const text = _expandBibleRefs(srcText)
+
     // ── Try backend TTS (edge-tts / Google) ──────────────────────────
     try {
-      const blob = await fetchTTS(text, 'zh-CN', 'zh-CN-XiaoxiaoNeural')
+      const blob = enMode
+        ? await fetchTTS(text, 'en-US', 'en-US-AriaNeural')
+        : await fetchTTS(text, 'zh-CN', 'zh-CN-XiaoxiaoNeural')
       // If speak() was called again while we were fetching, bail out immediately
       // so we never create a second audio element.
       if (_singleton.speakGen !== myGen || !isMountedRef.current) return
@@ -222,17 +231,20 @@ export function useGlobalAudio() {
 
     window.speechSynthesis.cancel()
     const utter = new SpeechSynthesisUtterance(text)
-    utter.lang = 'zh-CN'
+    utter.lang = enMode ? 'en-US' : 'zh-CN'
     utter.rate = 0.9
     utter.pitch = 1.05
 
-    // Prefer Xiaoxiao or any zh-CN neural voice
+    // Prefer a matching neural voice for the active language
     const voices = window.speechSynthesis.getVoices()
-    const zhVoice =
-      voices.find(v => /xiaoxiao/i.test(v.name)) ||
-      voices.find(v => v.lang === 'zh-CN') ||
-      voices.find(v => v.lang.startsWith('zh'))
-    if (zhVoice) utter.voice = zhVoice
+    const pickVoice = enMode
+      ? (voices.find(v => /aria|jenny|guy/i.test(v.name) && v.lang?.startsWith('en')) ||
+         voices.find(v => v.lang === 'en-US') ||
+         voices.find(v => v.lang?.startsWith('en')))
+      : (voices.find(v => /xiaoxiao/i.test(v.name)) ||
+         voices.find(v => v.lang === 'zh-CN') ||
+         voices.find(v => v.lang?.startsWith('zh')))
+    if (pickVoice) utter.voice = pickVoice
 
     utter.onend = () => { if (isMountedRef.current) setTtsState('idle') }
     utter.onerror = () => { if (isMountedRef.current) setTtsState('idle') }

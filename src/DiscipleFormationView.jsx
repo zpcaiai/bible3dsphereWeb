@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { t } from './i18n/runtime'
+import { AutoText } from './autoTranslate.jsx'
 import {
   fetchDiscipleMeta, fetchDiscipleProfile, assessDisciple, fetchDiscipleHistory,
   askDiscipleMentor, fetchDiscipleNetwork, addDiscipleRelationship, endDiscipleRelationship,
@@ -299,7 +300,7 @@ function Review({ token, dimZh, stateZh }) {
         ))}
       </div>
       {loading && <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 13, padding: 20, textAlign: 'center' }}>{t("生成中…")}</div>}
-      {data && !data.has_data && <div style={{ color: 'rgba(255,255,255,0.45)', fontSize: 13, padding: 20, textAlign: 'center', lineHeight: 1.7 }}>{data.message}</div>}
+      {data && !data.has_data && <div style={{ color: 'rgba(255,255,255,0.45)', fontSize: 13, padding: 20, textAlign: 'center', lineHeight: 1.7 }}><AutoText>{data.message}</AutoText></div>}
       {data && data.has_data && (
         <div>
           <div style={{ ...card, display: 'flex', gap: 16, alignItems: 'center' }}>
@@ -316,7 +317,7 @@ function Review({ token, dimZh, stateZh }) {
           </div>
           <div style={card}>
             <div style={sectionTitle}>{t("📝 牧养复盘")}</div>
-            <p style={{ fontSize: 13.5, color: 'rgba(255,255,255,0.9)', lineHeight: 1.7, margin: '0 0 10px' }}>{data.summary}</p>
+            <p style={{ fontSize: 13.5, color: 'rgba(255,255,255,0.9)', lineHeight: 1.7, margin: '0 0 10px' }}><AutoText>{data.summary}</AutoText></p>
             {data.invitation && <p style={{ fontSize: 13, color: ACCENT, lineHeight: 1.6, margin: '0 0 10px' }}>👣 {data.invitation}</p>}
             {data.scripture?.text && (
               <div style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.65)', fontStyle: 'italic', borderLeft: `2px solid ${ACCENT}`, paddingLeft: 10 }}>
@@ -341,7 +342,7 @@ function Review({ token, dimZh, stateZh }) {
               <span style={{ fontSize: 15 }}>{m.kind === 'milestone' ? (m.up ? '🎉' : '🔄') : '🔔'}</span>
               <div style={{ flex: 1 }}>
                 <div style={{ fontSize: 12.5, fontWeight: 600, color: m.kind === 'milestone' ? '#34c759' : '#ff9f0a' }}>{m.title}</div>
-                <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.65)', lineHeight: 1.5 }}>{m.body}</div>
+                <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.65)', lineHeight: 1.5 }}><AutoText>{m.body}</AutoText></div>
                 <div style={{ fontSize: 10.5, color: 'rgba(255,255,255,0.3)', marginTop: 2 }}>{(m.created_at || '').slice(0, 10)}</div>
               </div>
             </div>
@@ -398,7 +399,7 @@ function Reflect({ token, onDone, meta, dimZh, idolZh, stateZh }) {
                 <span style={{ fontSize: 16 }}>{rx.kind === 'milestone' ? (rx.up ? '🎉' : '🔄') : '🔔'}</span>
                 <div>
                   <div style={{ fontSize: 12.5, fontWeight: 600, color: rx.kind === 'milestone' ? '#34c759' : '#ff9f0a' }}>{rx.title}</div>
-                  <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.7)', lineHeight: 1.5 }}>{rx.body}</div>
+                  <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.7)', lineHeight: 1.5 }}><AutoText>{rx.body}</AutoText></div>
                 </div>
               </div>
             ))}
@@ -510,7 +511,7 @@ function EngineBadge({ ek, data }) {
 function EngineDetail({ ek, data, idolZh }) {
   return (
     <div>
-      {data.summary && <p style={{ margin: '0 0 8px' }}>{data.summary}</p>}
+      {data.summary && <p style={{ margin: '0 0 8px' }}><AutoText>{data.summary}</AutoText></p>}
       {ek === 'idol' && data.scores && (
         <div style={{ margin: '6px 0' }}>
           {Object.entries(data.scores).sort((a, b) => b[1] - a[1]).slice(0, 5).map(([k, v]) => (
@@ -581,7 +582,7 @@ function Mentor({ token }) {
               background: m.role === 'user' ? ACCENT_DIM : 'rgba(255,255,255,0.05)',
               border: '1px solid ' + (m.role === 'user' ? ACCENT : 'rgba(255,255,255,0.08)'),
               color: m.role === 'user' ? '#fff' : 'rgba(255,255,255,0.9)',
-            }}>{m.text}</div>
+            }}><AutoText>{m.text}</AutoText></div>
           </div>
         ))}
         {loading && <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 12, padding: 6 }}>{t("导师默想中…")}</div>}

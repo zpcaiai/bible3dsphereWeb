@@ -5,6 +5,7 @@
 import { useEffect, useState } from 'react'
 import { fetchFuelMeta, fetchFuelPack } from './api'
 import { t } from './i18n/runtime'
+import { AutoText } from './autoTranslate.jsx'
 
 const card = { background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, padding: 16, marginBottom: 12 }
 
@@ -74,7 +75,7 @@ export default function FuelLibraryPage({ onClose }) {
             </div>
             <div style={{ ...card, borderColor: 'rgba(167,139,250,0.3)' }}>
               <div style={{ fontSize: 11, color: '#a78bfa', fontWeight: 700, marginBottom: 4 }}>{t("祷告")}</div>
-              <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.82)', lineHeight: 1.8 }}>{pack.prayer}</div>
+              <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.82)', lineHeight: 1.8 }}><AutoText>{pack.prayer}</AutoText></div>
             </div>
             <button onClick={() => setPack(null)} style={{ width: '100%', padding: 13, borderRadius: 12, border: 'none', background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.7)', fontSize: 14, fontWeight: 700, cursor: 'pointer' }}>{t("选另一个困扰")}</button>
           </>

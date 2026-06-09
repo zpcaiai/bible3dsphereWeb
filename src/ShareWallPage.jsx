@@ -7,6 +7,7 @@ import { escapeHtml, escapeHtmlWithBr } from './sanitize'
 import { fetchSharedNotes, toggleShareNote, amenSharedNote, toggleShareSermonJournal, fetchSundaySchoolVideos } from './api'
 import { getToken } from './auth'
 import { t } from './i18n/runtime'
+import { translateForExport, translateElementText } from './exportI18n'
 import { AutoText } from './autoTranslate.jsx'
 
 // 读取旧的 localStorage 分享记录（来自 ChatPage / DevotionNotePage / SermonJournalPage）
@@ -47,7 +48,7 @@ function formatDate(dateStr) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`
 }
 
-function exportSelectedToTxt(note) {
+async function exportSelectedToTxt(note) {
   if (!note) return
   let content = `属灵星球 - 灵修分享\n`
   content += `作者：${note.author || t("匿名")}\n`
@@ -73,6 +74,7 @@ function exportSelectedToTxt(note) {
     content += `${note.prayer}\n\n`
   }
   
+  content = await translateForExport(content)
   const blob = new Blob([content], { type: 'text/plain;charset=utf-8' })
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
@@ -98,6 +100,7 @@ async function exportSelectedToPdf(note) {
 
   async function addBlock(html) {
     el.innerHTML = html
+    await translateElementText(el)
     const canvas = await html2canvas(el, { scale: 2, useCORS: true, logging: false, backgroundColor: '#0e1726' })
     const imgH = (canvas.height / canvas.width) * cw
     if (curY + imgH > PH - 10 && curY > M + 5) { pdf.addPage(); pdf.setFillColor(14, 23, 38); pdf.rect(0, 0, PW, PH, 'F'); curY = M }
