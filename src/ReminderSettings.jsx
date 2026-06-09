@@ -3,6 +3,7 @@
  * 入口：今日心镜 (SoulDashboard) 卡片。优雅降级：服务器未配置 VAPID 时给出说明。
  */
 import { useEffect, useState } from 'react'
+import BackButton from './BackButton'
 import { fetchVapidKey, fetchPushPrefs, subscribePush, savePushPrefs, testPush } from './api'
 import { getToken } from './auth'
 import { t } from './i18n/runtime'
@@ -85,7 +86,7 @@ export default function ReminderSettings({ onBack }) {
   return (
     <div style={{ width: '100%', height: '100%', background: '#000', color: '#fff', overflowY: 'auto', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
       <div style={{ padding: '12px 16px', borderBottom: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', gap: 12, background: 'rgba(28,28,30,0.92)', position: 'sticky', top: 0, zIndex: 100, backdropFilter: 'blur(10px)' }}>
-        <button onClick={onBack} style={{ background: 'rgba(120,120,128,0.2)', border: 'none', borderRadius: '50%', width: 36, height: 36, color: '#fff', fontSize: 20, cursor: 'pointer' }}>‹</button>
+        <BackButton onClick={onBack} />
         <div><div style={{ fontSize: 17, fontWeight: 600 }}>{t("晨更 · 晚祷提醒")}</div>
           <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)' }}>{t("让灵修有节奏，不靠记性靠恩典")}</div></div>
       </div>

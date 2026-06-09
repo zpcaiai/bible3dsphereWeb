@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
+import BackButton from './BackButton'
 import { t } from './i18n/runtime'
 import {
   fetchVoiceConfig, fetchVoiceGroups, createVoiceGroup,
@@ -47,7 +48,7 @@ export default function VoiceRoomPage({ user, token, onBack }) {
   return (
     <div style={S.page}>
       <header style={S.header}>
-        <button onClick={onBack} style={S.backBtn}>{t("← 返回")}</button>
+        <BackButton onClick={onBack} />
         <span style={S.title}>{t("🎙 语音通话")}</span>
         <span style={{ width: 56 }} />
       </header>

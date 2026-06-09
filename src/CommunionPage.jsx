@@ -2,6 +2,7 @@
 // 实时连接与来电弹窗由全局 realtimeStore / RealtimeRoot 负责（App 顶层挂载），
 // 本页只订阅消息流处理好友/聊天，并通过 store 发起 1对1 语音通话。
 import { useCallback, useEffect, useRef, useState } from 'react'
+import BackButton from './BackButton'
 import {
   fetchFriends, requestFriend, acceptFriend, removeFriend,
   fetchChatHistory, markRead,
@@ -246,7 +247,7 @@ export default function CommunionPage({ user, onBack, onOpenVoice }) {
   return (
     <div className="communion-page">
       <header className="communion-header glass">
-        <button className="communion-back" onClick={onBack}>{t("← 返回")}</button>
+        <BackButton onClick={onBack} />
         <div className="communion-title">
           {t("圣徒相通")}
           <span className={`communion-conn ${connected ? 'on' : 'off'}`}>

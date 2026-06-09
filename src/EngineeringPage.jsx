@@ -5,6 +5,7 @@
  * 以及属灵健康检查和今日关怀信息。
  */
 import { useEffect, useState } from 'react'
+import BackButton from './BackButton'
 import { API_BASE } from './api.js'
 import { TTSButton } from './useGlobalAudio.jsx'
 import { t } from './i18n/runtime'
@@ -155,10 +156,7 @@ export default function EngineeringPage({ onBack, user, token }) {
         display: 'flex', alignItems: 'center', gap: 12,
         padding: '14px 16px', borderBottom: '1px solid rgba(255,255,255,0.07)',
       }}>
-        <button onClick={onBack} style={{
-          width: 36, height: 36, borderRadius: 10, border: '1px solid rgba(255,255,255,0.12)',
-          background: 'rgba(255,255,255,0.07)', color: '#fff', cursor: 'pointer', fontSize: 18,
-        }}>←</button>
+        <BackButton onClick={onBack} />
         <div>
           <div style={{ fontSize: 17, fontWeight: 700 }}>{t("🌱 灵命成长分析")}</div>
           <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', marginTop: 2 }}>

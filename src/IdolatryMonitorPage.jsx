@@ -5,6 +5,7 @@
  * 入口：今日心镜 (SoulDashboard) 卡片。
  */
 import { useEffect, useState } from 'react'
+import BackButton from './BackButton'
 import {
   fetchIdolatrySignals, assessIdolatry, fetchIdolatryPatterns,
 } from './api'
@@ -109,7 +110,7 @@ export default function IdolatryMonitorPage({ user, onBack, onNeedLogin }) {
       {/* 顶栏 */}
       <div style={{ padding: '12px 16px', borderBottom: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(28,28,30,0.92)', position: 'sticky', top: 0, zIndex: 100, backdropFilter: 'blur(10px)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <button onClick={onBack} style={backBtn}>‹</button>
+          <BackButton onClick={onBack} />
           <div>
             <div style={{ fontSize: 17, fontWeight: 600 }}>{t("偶像监测")}</div>
             <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)' }}>{t("依附强度指数 · Attachment Intensity")}</div>

@@ -5,6 +5,7 @@
  *   书卷列表 → 章节网格 → 章节阅读（完整经文 + 标记已读 + 上/下章）
  */
 import { useEffect, useRef, useState, useCallback } from 'react'
+import BackButton from './BackButton'
 import { API_BASE, fetchReadingProgress, markChapterRead, fetchBibleStudy, fetchScripture, langHeaders } from './api'
 import { TTSFullBar, TTSButton } from './useGlobalAudio.jsx'
 import { t, getRuntimeLang } from './i18n/runtime'
@@ -312,9 +313,7 @@ function ChapterReader({ book, chapter, doneChapters, onMark, onBack, onNav, use
     <div style={S.page}>
       {/* Header */}
       <div style={S.header}>
-        <button style={S.backBtn} onClick={onBack}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><polyline points="15 18 9 12 15 6" /></svg>
-        </button>
+        <BackButton onClick={onBack} />
         <div style={{ flex: 1 }}>
           <div style={{ fontSize: 15, fontWeight: 700, color: '#fff' }}>{t(book.name)} {t("· 第")}{chapter}{t("章")}</div>
           <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', marginTop: 1 }}>

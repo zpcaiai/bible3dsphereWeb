@@ -7,6 +7,7 @@
  * 入口：今日心镜 (SoulDashboard) 卡片。
  */
 import { useEffect, useState } from 'react'
+import BackButton from './BackButton'
 import {
   fetchWaitingCases, createWaitingCase, analyzeWaitingCase,
   generateWaitingPractices, fetchWaitingCase, completeWaitingPractice,
@@ -79,7 +80,7 @@ export default function WaitingPathPage({ user, onBack, onNeedLogin }) {
     <div style={{ width: '100%', height: '100%', background: '#000', color: '#fff', overflowY: 'auto', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
       <div style={{ padding: '12px 16px', borderBottom: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(28,28,30,0.92)', position: 'sticky', top: 0, zIndex: 100, backdropFilter: 'blur(10px)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <button onClick={view === 'home' ? onBack : () => { setView('home'); loadHome() }} style={backBtn}>‹</button>
+          <BackButton onClick={view === 'home' ? onBack : () => { setView('home'); loadHome() }} />
           <div>
             <div style={{ fontSize: 17, fontWeight: 600 }}>{t("等候之路")}</div>
             <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)' }}>{t("从等待戈多，到等候上帝")}</div>

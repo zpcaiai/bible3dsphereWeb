@@ -1,4 +1,5 @@
 import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react'
+import BackButton from './BackButton'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { pickVoiceFor, speechLangFor } from './voice'
 import { API_BASE, fetchHomeBootstrap, fetchBiblicalExample, fetchBibleVideo, fetchCommunityHeatmap, fetchDailySnapshot, fetchEmotionTrajectory, fetchFaithQA, fetchFeatureDetail, fetchGuidance, fetchHistory, fetchLayout, fetchMeditationQuestions, fetchSermon, fetchStats, fetchTTS, fetchVersePrayer, runQuery, saveJournal, trackStats, updateUserProfile, fetchMyChurch, regenerateChurchCode, leaveChurch } from './api'
@@ -2919,7 +2920,7 @@ function AppContent() {
           <div className="page-overlay">
             <div style={{ maxWidth: 560, margin: '0 auto', padding: '24px 20px calc(env(safe-area-inset-bottom) + 96px)', color: 'rgba(255,255,255,0.88)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 18 }}>
-                <button onClick={() => setActivePanel('sphere')} style={{ background: 'rgba(255,255,255,0.1)', border: 'none', borderRadius: 8, color: '#fff', padding: '6px 12px', cursor: 'pointer', fontSize: 16 }} aria-label={t("返回")}>‹</button>
+                <BackButton onClick={() => setActivePanel('sphere')} />
                 <h2 style={{ margin: 0, fontSize: 20 }}>{t("ℹ️ 关于本站")}</h2>
               </div>
               <div style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 14, padding: '18px 16px', lineHeight: 2, fontSize: 14 }}>

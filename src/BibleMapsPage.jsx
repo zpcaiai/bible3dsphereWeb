@@ -1,5 +1,6 @@
 // BibleMapsPage.jsx — 圣经地图中心：12 张交互地图 + 耶路撒冷数字孪生沙盘
 import { lazy, Suspense, useState } from 'react'
+import BackButton from './BackButton'
 import BibleMap from './BibleMap'
 import { BIBLE_MAPS } from './data/bibleMapsData'
 import { t } from './i18n/runtime'
@@ -47,7 +48,7 @@ export default function BibleMapsPage({ onBack, embedded, onOpenAtlas }) {
     <div className="biblemap-hub">
 {!embedded && (
         <div className="biblemap-head">
-          <button className="biblemap-back" onClick={onBack}>{t("← 返回")}</button>
+          <BackButton onClick={onBack} />
           <div className="biblemap-title">
             <h2>{t("🗺 圣经地图")}</h2>
             <p>{t("从亚伯拉罕到启示录 · 点击地标看经文，播放路线动画，拖动时间轴看历史展开")}</p>

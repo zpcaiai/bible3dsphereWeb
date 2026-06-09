@@ -3,6 +3,7 @@
  * 由 formation 八维推导「信/望/爱/像基督」四指数 + 9 品格评估。今日心镜 overlay。
  */
 import { useEffect, useState } from 'react'
+import BackButton from './BackButton'
 import { fetchFormationProfile, evaluateVirtues } from './api'
 import { getToken } from './auth'
 import { t } from './i18n/runtime'
@@ -37,7 +38,7 @@ export default function FaithHopeLovePage({ user, onClose }) {
   return (
     <div style={{ width: '100%', height: '100%', background: 'radial-gradient(circle at 50% 8%, rgba(167,139,250,0.18), #05060c 60%)', color: '#fff', overflowY: 'auto', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
       <div style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 12, position: 'sticky', top: 0, zIndex: 100, background: 'rgba(5,6,12,0.7)', backdropFilter: 'blur(10px)' }}>
-        <button onClick={onClose} style={backBtn}>‹</button>
+        <BackButton onClick={onClose} />
         <div><div style={{ fontSize: 17, fontWeight: 600 }}>{t("信望爱星系")}</div>
           <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.45)' }}>{t("不是学了多少，而是被塑造成什么样的人")}</div></div>
       </div>

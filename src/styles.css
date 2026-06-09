@@ -1922,15 +1922,20 @@ canvas {
   z-index: 10;
 }
 
-.checkin-back-btn {
-  width: 32px; height: 32px;
-  background: rgba(255,255,255,0.08);
-  border: none; border-radius: 8px;
-  color: rgba(255,255,255,0.75);
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer; flex-shrink: 0;
+/* 统一返回按钮：圆形磨砂 + 白箭头（.app-back-btn 组件 + 旧 .checkin-back-btn 复用同款） */
+.app-back-btn, .checkin-back-btn {
+  width: 40px; height: 40px;
+  background: rgba(255,255,255,0.14);
+  border: 1px solid rgba(255,255,255,0.25); border-radius: 50%;
+  color: #fff;
+  display: inline-flex; align-items: center; justify-content: center;
+  cursor: pointer; flex-shrink: 0; padding: 0;
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  transition: background .15s, transform .15s;
 }
-.checkin-back-btn:hover { background: rgba(255,255,255,0.14); }
+.app-back-btn:hover, .checkin-back-btn:hover { background: rgba(255,255,255,0.24); }
+.app-back-btn:active, .checkin-back-btn:active { transform: scale(0.92); }
+.app-back-btn > svg, .checkin-back-btn > svg { width: 22px; height: 22px; }
 
 .checkin-header-center {
   text-align: center;

@@ -3,6 +3,7 @@
  * 据近期状态定位你此刻身处天路历程的哪一处。作为今日心镜 overlay，go() 跳转相关功能。
  */
 import { useEffect, useState } from 'react'
+import BackButton from './BackButton'
 import { fetchPilgrimCurrent, fetchPilgrimJourney } from './api'
 import { getToken } from './auth'
 import { t } from './i18n/runtime'
@@ -28,7 +29,7 @@ export default function PilgrimJourneyPage({ onClose, go }) {
     <div style={{ width: '100%', height: '100%', background: 'radial-gradient(circle at 50% 10%, rgba(81,207,102,0.12), #05060c 62%)', color: '#fff', overflowY: 'auto', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
       <div style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'sticky', top: 0, zIndex: 100, background: 'rgba(5,6,12,0.7)', backdropFilter: 'blur(10px)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <button onClick={onClose} style={backBtn}>‹</button>
+          <BackButton onClick={onClose} />
           <div><div style={{ fontSize: 17, fontWeight: 600 }}>{t("天路客")}</div>
             <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.45)' }}>{t("本仁《天路历程》· 你此刻走到哪里")}</div></div>
         </div>

@@ -3,6 +3,7 @@
 // 核心：固定视角圣殿山 · 时间轴剥离各时期 · 3D fill-extrusion 平地起高楼 · 受难周 FPV 相机巡游。
 // 库与瓦片均从 CDN 动态加载（需联网）。
 import { useEffect, useRef, useState } from 'react'
+import BackButton from './BackButton'
 import { JERU_ERAS, TEMPLE_CENTER, PASSION_WEEK, eraGeoJSON, locationsFor, JERU_LOCATIONS } from './data/jerusalemChronology'
 import { TEMPLE_GEOJSON, TEMPLE_PARTS, TEMPLE_LABELS, TEMPLE_CAMERA } from './data/templeStructure'
 import { t, getRuntimeLang } from './i18n/runtime'
@@ -444,7 +445,7 @@ export default function JerusalemSandbox({ onBack }) {
   return (
     <div className="jeru">
       <div className="biblemap-head">
-        <button className="biblemap-back" onClick={onBack}>{t("← 返回")}</button>
+        <BackButton onClick={onBack} />
         <div className="biblemap-title">
           <h2>{t("🏛 耶路撒冷数字孪生沙盘")}</h2>
           <p>{t("圣城变迁与圣殿结构 · 时间轴剥离 · 受难周 FPV 步行 ·")} {engine === 'mapbox' ? 'Mapbox GL v3' : t("MapLibre GL v1（免 token）")}</p>

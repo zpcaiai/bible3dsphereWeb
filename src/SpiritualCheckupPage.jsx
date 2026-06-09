@@ -3,6 +3,7 @@
  * 「不要听自己，要向自己传讲福音。」入口：今日心镜卡片。
  */
 import { useState } from 'react'
+import BackButton from './BackButton'
 import { submitCheckup } from './api'
 import { getToken } from './auth'
 import { t } from './i18n/runtime'
@@ -36,7 +37,7 @@ export default function SpiritualCheckupPage({ user, onBack, onNeedLogin }) {
   return (
     <div style={{ width: '100%', height: '100%', background: '#000', color: '#fff', overflowY: 'auto', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
       <div style={{ padding: '12px 16px', borderBottom: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', gap: 12, background: 'rgba(28,28,30,0.92)', position: 'sticky', top: 0, zIndex: 100, backdropFilter: 'blur(10px)' }}>
-        <button onClick={result ? () => setResult(null) : onBack} style={backBtn}>‹</button>
+        <BackButton onClick={result ? () => setResult(null) : onBack} />
         <div><div style={{ fontSize: 17, fontWeight: 600 }}>{t("属灵低潮体检")}</div>
           <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)' }}>{t("钟马田 · 属灵医生")}</div></div>
       </div>

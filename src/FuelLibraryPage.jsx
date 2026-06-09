@@ -3,6 +3,7 @@
  * 内容只是燃料。今日心镜 overlay。
  */
 import { useEffect, useState } from 'react'
+import BackButton from './BackButton'
 import { fetchFuelMeta, fetchFuelPack } from './api'
 import { t } from './i18n/runtime'
 import { AutoText } from './autoTranslate.jsx'
@@ -20,7 +21,7 @@ export default function FuelLibraryPage({ onClose }) {
   return (
     <div style={{ width: '100%', height: '100%', background: '#000', color: '#fff', overflowY: 'auto', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
       <div style={{ padding: '12px 16px', borderBottom: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', gap: 12, background: 'rgba(28,28,30,0.92)', position: 'sticky', top: 0, zIndex: 100, backdropFilter: 'blur(10px)' }}>
-        <button onClick={pack ? () => setPack(null) : onClose} style={backBtn}>‹</button>
+        <BackButton onClick={pack ? () => setPack(null) : onClose} />
         <div><div style={{ fontSize: 17, fontWeight: 600 }}>{t("养料库")}</div>
           <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)' }}>{t("按你的困扰取用 · 内容只是燃料")}</div></div>
       </div>

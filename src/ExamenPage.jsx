@@ -5,6 +5,7 @@
  * 不定罪、温柔陪伴。入口：今日心镜 (SoulDashboard) 卡片。
  */
 import { useEffect, useState } from 'react'
+import BackButton from './BackButton'
 import { fetchExamenToday, saveExamen, fetchExamenHistory } from './api'
 import { getToken } from './auth'
 import { t } from './i18n/runtime'
@@ -67,7 +68,7 @@ export default function ExamenPage({ user, onBack, onNeedLogin }) {
     <div style={{ width: '100%', height: '100%', background: '#000', color: '#fff', overflowY: 'auto', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
       <div style={{ padding: '12px 16px', borderBottom: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(28,28,30,0.92)', position: 'sticky', top: 0, zIndex: 100, backdropFilter: 'blur(10px)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <button onClick={onBack} style={backBtn}>‹</button>
+          <BackButton onClick={onBack} />
           <div>
             <div style={{ fontSize: 17, fontWeight: 600 }}>{t("今日省察")}</div>
             <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)' }}>{t("依纳爵式 Examen · 与神同回顾这一天")}</div>

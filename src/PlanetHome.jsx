@@ -1,4 +1,5 @@
 import { t } from './i18n/runtime'
+import BackButton from './BackButton'
 
 /**
  * PlanetHome — 属灵星球 · 成长地图（IA v1，增量、不删现有功能）
@@ -72,14 +73,7 @@ export default function PlanetHome({ onClose, go }) {
   return (
     <main className="planet-home" aria-labelledby="planet-home-title">
       <header className="planet-home-topbar">
-        <button
-          type="button"
-          className="planet-back-btn"
-          onClick={onClose}
-          aria-label={t('返回')}
-        >
-          ‹
-        </button>
+        <BackButton onClick={onClose} />
         <div className="planet-title-group">
           <h1 id="planet-home-title">{t('属灵星球')}</h1>
           <p>{t('你不是在课程里学习，而是在一颗星球上成长')}</p>

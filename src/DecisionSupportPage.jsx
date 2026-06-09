@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import BackButton from './BackButton'
 import { API_BASE, fetchFormationProfile } from './api'
 import { getToken } from './auth'
 import HabitsPage from './HabitsPage'
@@ -1777,24 +1778,7 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
         zIndex: 100,
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <button
-            onClick={onBack}
-            style={{
-              background: 'rgba(120,120,128,0.2)',
-              border: 'none',
-              borderRadius: '50%',
-              width: '36px',
-              height: '36px',
-              color: '#fff',
-              fontSize: '20px',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            ‹
-          </button>
+          <BackButton onClick={onBack} />
           <div>
             <div style={{ fontSize: '17px', fontWeight: 600 }}>{t("心迹")}</div>
           </div>

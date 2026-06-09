@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import BackButton from './BackButton'
 import { loginWithEmail, registerWithEmail, sendEmailCode, sendResetCode, resetPassword } from './auth'
 import { t } from './i18n/runtime'
 
@@ -59,17 +60,7 @@ export default function LoginScreen({ onLogin, onBack, message }) {
       position: 'relative',
     }}>
       {onBack && (
-        <button
-          onClick={onBack}
-          style={{
-            position: 'absolute', top: '16px', left: '16px',
-            background: 'rgba(120,120,128,0.2)', border: 'none',
-            borderRadius: '50%', width: '36px', height: '36px',
-            color: 'rgba(255,255,255,0.7)', fontSize: '18px',
-            cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontFamily: 'inherit',
-          }}
-        >‹</button>
+        <BackButton onClick={onBack} style={{ position: 'absolute', top: 16, left: 16 }} />
       )}
       <div style={{ textAlign: 'center', marginBottom: '32px' }}>
         <div style={{ fontSize: '64px', lineHeight: 1, marginBottom: '12px' }}>🔮</div>

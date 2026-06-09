@@ -2,6 +2,7 @@
 // 统一数据 schema 见 data/bibleMapsData.js。一个引擎驱动全部地图。
 // 扩展：地点插图（MapScenes）、AI 讲解（fetchFaithQA）、人物卡片闭环（config.profile）。
 import { useEffect, useMemo, useRef, useState } from 'react'
+import BackButton from './BackButton'
 import MapScene, { resolveScene } from './MapScenes'
 import { fetchFaithQA, API_BASE } from './api'
 import { t, getRuntimeLang } from './i18n/runtime'
@@ -249,7 +250,7 @@ export default function BibleMap({ config, onBack }) {
   return (
     <div className="biblemap">
       <div className="biblemap-head">
-        <button className="biblemap-back" onClick={onBack}>{t("← 返回")}</button>
+        <BackButton onClick={onBack} />
         <div className="biblemap-title">
           <h2><AutoText>{config.title}</AutoText></h2>
           <p><AutoText>{config.subtitle}</AutoText>{config.era ? <> · <AutoText>{config.era}</AutoText></> : ''}</p>

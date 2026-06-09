@@ -1,5 +1,6 @@
 // CommunityPage.jsx — 在线社区：发个人状态 + 消息，浏览、阿们、评论
 import { useCallback, useEffect, useState } from 'react'
+import BackButton from './BackButton'
 import {
   fetchCommunityFeed, createCommunityPost, deleteCommunityPost, amenCommunityPost,
   fetchCommunityComments, createCommunityComment, deleteCommunityComment,
@@ -190,7 +191,7 @@ export default function CommunityPage({ user, token, onBack }) {
   return (
     <div className="cmty">
       <div className="cmty-head">
-        {onBack && <button className="cmty-back" onClick={onBack}>{t("← 返回")}</button>}
+        {onBack && <BackButton onClick={onBack} />}
         <div className="cmty-title">
           <h2>{t("🌐 在线社区")}</h2>
           <p>{t("分享你此刻的状态与心声，彼此守望、回应、代祷")}</p>

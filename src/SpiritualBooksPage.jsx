@@ -8,6 +8,7 @@
  *     · 若同时提供 chapters（文字），则也显示文字 + TTS 语音朗读。
  */
 import { useState, useRef, useEffect, lazy, Suspense } from 'react'
+import BackButton from './BackButton'
 import { TTSFullBar, TTSButton } from './useGlobalAudio.jsx'
 import DailyDevotionPage from './DailyDevotionPage.jsx'
 import { API_BASE } from './api.js'
@@ -54,7 +55,7 @@ function PdfBookReader({ book, onBack }) {
   return (
     <div style={S.page}>
       <header style={S.header}>
-        <button onClick={onBack} style={S.back} aria-label={t("返回书库")}>{t("‹ 返回书库")}</button>
+        <BackButton onClick={onBack} ariaLabel={t("返回书库")} />
         <div style={{ flex: 1 }}>
           <div style={S.hTitle}>{book.emoji} {t(book.title)}</div>
           <div style={S.hSub}>{t(book.author)}</div>
@@ -244,7 +245,7 @@ function EpubReader({ book, onBack }) {
   return (
     <div style={{ ...S.page, height: '100%' }}>
       <header style={S.header}>
-        <button onClick={onBack} style={S.back} aria-label={t("返回书库")}>{t("‹ 返回书库")}</button>
+        <BackButton onClick={onBack} ariaLabel={t("返回书库")} />
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ ...S.hTitle, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{book.emoji} {book.title}</div>
           <div style={S.hSub}>{book.author}{progress ? ` · ${progress}%` : ''}</div>
@@ -370,7 +371,7 @@ export default function SpiritualBooksPage({ onBack }) {
   return (
     <div style={S.page}>
       <header style={S.header}>
-        {onBack && <button onClick={onBack} style={S.back} aria-label={t("返回")}>‹</button>}
+        {onBack && <BackButton onClick={onBack} />}
         <div style={{ flex: 1 }}>
           <div style={S.hTitle}>{t("📚 属灵书籍")}</div>
           <div style={S.hSub}>{t("点开一本书，阅读全文并可语音朗读")}</div>
