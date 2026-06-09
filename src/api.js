@@ -398,8 +398,36 @@ export async function fetchTranslate(text, targetLang = 'en') {
   }
   const data = await response.json()
   if (!response.ok) throw new Error(data.error || 'Translation failed')
-  console.log(`[api] fetchTranslate ok len=${data.translation?.length}`)
-  return data.translation
+  const out = data.translation ?? data.text ?? ''
+  console.log(`[api] fetchTranslate ok len=${out?.length}`)
+  return out
+}
+
+// 批量按需机翻：texts[] → translations[]（与输入等长，失败项回退原文）。
+// 走 /api/translate-batch（逐条命中 translations_cache），后端不可用时回退逐条 /api/translate。
+export async function translateTexts(texts, targetLang = 'en') {
+  const list = Array.isArray(texts) ? texts.map((s) => (s == null ? '' : String(s))) : []
+  if (list.length === 0) return []
+  try {
+    const response = await fetch(`${API_BASE}/translate-batch`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ texts: list, target_lang: targetLang }),
+    })
+    const contentType = response.headers.get('content-type') || ''
+    if (response.ok && contentType.includes('application/json')) {
+      const data = await response.json()
+      if (data && Array.isArray(data.translations) && data.translations.length === list.length) {
+        return data.translations
+      }
+    }
+  } catch { /* fall through to per-item */ }
+  // 回退：逐条翻译（并发）
+  try {
+    return await Promise.all(list.map((s) => fetchTranslate(s, targetLang).catch(() => s)))
+  } catch {
+    return list
+  }
 }
 
 export async function fetchFaithQA(question) {
