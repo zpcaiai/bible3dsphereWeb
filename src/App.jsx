@@ -1629,17 +1629,26 @@ function AppContent() {
           </div>
         </header>
 
-        {/* 语言切换固定入口：非首页(各 page-overlay 覆盖顶栏)时浮在「左下角」，
-            避开各页右上角操作按钮(查经/翻章 ‹ ›/分享 等)与左上角统一返回按钮、右下角守护者精灵。
+        {/* 语言切换固定入口：非首页(各 page-overlay 覆盖顶栏)时贴「左侧边缘·垂直居中」，
+            避开所有页面顶栏(统一返回/操作按钮)、底部输入栏、右下守护者精灵。
             z 高于所有 overlay；首页已在顶栏内显示。 */}
         {activePanel !== 'sphere' && (
           <div style={{
             position: 'fixed',
-            bottom: 'calc(env(safe-area-inset-bottom, 0px) + 12px)',
-            left: 'calc(env(safe-area-inset-left, 0px) + 12px)',
+            top: '50%',
+            left: 0,
+            transform: 'translateY(-50%)',
             zIndex: 1500,
           }}>
-            <LanguageToggle />
+            <LanguageToggle style={{
+              borderTopLeftRadius: 0,
+              borderBottomLeftRadius: 0,
+              borderLeft: 'none',
+              boxShadow: '0 2px 12px rgba(0,0,0,0.35)',
+              background: 'rgba(20,22,30,0.82)',
+              WebkitBackdropFilter: 'blur(6px)',
+              backdropFilter: 'blur(6px)',
+            }} />
           </div>
         )}
 
