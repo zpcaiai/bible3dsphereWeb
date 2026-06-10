@@ -3,7 +3,7 @@
  * 灵修 tab 子页。计划内容来自 readingPlans.js，进度存后端。
  */
 import { useEffect, useState } from 'react'
-import { PLANS, planById, todayMMDD, seqDayKey } from './readingPlans'
+import { PLANS, planById, todayMMDD, planDayKey } from './readingPlans'
 import { fetchReadingStatus, enrollReadingPlan, completeReadingDay, uncompleteReadingDay } from './api'
 import { getToken } from './auth'
 import { t } from './i18n/runtime'
@@ -29,17 +29,18 @@ export default function ReadingPlanPage({ user }) {
 
   // 今天的 day_key + 经文
   const completed = new Set(status?.completed_keys || [])
-  let dayKey = '', refs = []
+  let dayKey = '', refs = [], theme = ''
   if (plan?.kind === 'date') {
     dayKey = todayMMDD()
     const e = mccheyne?.[dayKey]
     if (e) refs = [e.f1, e.f2, e.n1, e.ps].filter(Boolean)
   } else if (plan?.kind === 'seq') {
     let idx = 0
-    while (idx < plan.length && completed.has(seqDayKey(idx))) idx++
+    while (idx < plan.length && completed.has(planDayKey(plan, idx))) idx++
     if (idx >= plan.length) idx = plan.length - 1
-    dayKey = seqDayKey(idx)
+    dayKey = planDayKey(plan, idx)
     refs = plan.days[idx]?.refs || []
+    theme = plan.days[idx]?.theme || ''
   }
   const todayDone = completed.has(dayKey)
   const pct = plan ? Math.round((status?.completed_count || 0) / plan.length * 100) : 0
@@ -81,6 +82,7 @@ export default function ReadingPlanPage({ user }) {
           <div style={card}>
             <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)', marginBottom: 10 }}>
               {plan.kind === 'date' ? `今日 · ${dayKey}` : `第 ${parseInt(dayKey.slice(1))} 天`}
+              {theme && <span style={{ color: plan.color, fontWeight: 700 }}> · {theme}</span>}
             </div>
             {refs.length === 0 ? (
               <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)' }}>{plan.kind === 'date' && !mccheyne ? t("加载中…") : t("今日经文加载中…")}</div>

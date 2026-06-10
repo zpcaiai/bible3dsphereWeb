@@ -2039,3 +2039,69 @@ export async function fetchHomeBootstrap() {
     return null
   }
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 背经里程碑 / Memory milestones (1/10/30/50/100)
+// ─────────────────────────────────────────────────────────────────────────────
+export async function fetchMemoryMilestones(token) {
+  const res = await fetch(`${API_BASE}/memory/milestones`, { headers: rdHeaders(token) })
+  if (!res.ok) throw new Error('加载里程碑失败')
+  return res.json()  // {ok, total, memorized, mastered, next_target, milestones:[{count,title,blessing,achieved}]}
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 见证墙 / Testimony Wall (/api/testimonies)
+// ─────────────────────────────────────────────────────────────────────────────
+const twHeaders = (token, json = false) => ({
+  ...(json ? { 'Content-Type': 'application/json' } : {}),
+  ...(token ? { Authorization: `Bearer ${token}` } : {}),
+})
+
+export async function fetchTestimonies(limit = 20, offset = 0, token = null) {
+  console.log(`[api] fetchTestimonies limit=${limit} offset=${offset}`)
+  const res = await fetch(`${API_BASE}/testimonies?limit=${limit}&offset=${offset}`, { headers: twHeaders(token) })
+  const contentType = res.headers.get('content-type') || ''
+  if (!contentType.includes('application/json')) {
+    throw new Error('后端服务未运行（请先启动 backend/main.py）')
+  }
+  const data = await res.json()
+  if (!res.ok) throw new Error(data.detail || data.error || '加载见证失败')
+  console.log(`[api] fetchTestimonies ok: ${data.items?.length ?? 0}/${data.total} items`)
+  return data
+}
+
+export async function submitTestimony(payload, token) {
+  console.log(`[api] submitTestimony title=${payload.title?.slice(0, 30)}`)
+  const res = await fetch(`${API_BASE}/testimonies`, {
+    method: 'POST', headers: twHeaders(token, true), body: JSON.stringify(payload),
+  })
+  const data = await res.json().catch(() => ({}))
+  if (!res.ok) throw new Error(data.detail || data.error || '提交见证失败')
+  console.log(`[api] submitTestimony ok id=${data.id}`)
+  return data
+}
+
+export async function amenTestimony(id, token) {
+  console.log(`[api] amenTestimony id=${id}`)
+  const res = await fetch(`${API_BASE}/testimonies/${id}/amen`, { method: 'POST', headers: twHeaders(token) })
+  const data = await res.json().catch(() => ({}))
+  if (!res.ok) throw new Error(data.detail || data.error || '阿们失败')
+  return data  // {ok, amen_count}
+}
+
+export async function deleteTestimony(id, token) {
+  console.log(`[api] deleteTestimony id=${id}`)
+  const res = await fetch(`${API_BASE}/testimonies/${id}`, { method: 'DELETE', headers: twHeaders(token) })
+  const data = await res.json().catch(() => ({}))
+  if (!res.ok) throw new Error(data.detail || data.error || '删除失败')
+  return data
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 感恩回顾 / Gratitude review (近 N 天恩典回顾)
+// ─────────────────────────────────────────────────────────────────────────────
+export async function fetchGratitudeReview(days = 7, token) {
+  const res = await fetch(`${API_BASE}/gratitude/review?days=${days}`, { headers: hubHeaders(token) })
+  if (!res.ok) throw new Error('加载恩典回顾失败')
+  return res.json()  // {ok, days, total, active_days, by_day:[{day, entries:[{id,content,created_at}]}], verse}
+}

@@ -8,7 +8,15 @@ import { useEffect, useState } from 'react'
 import BackButton from './BackButton'
 import { fetchExamenToday, saveExamen, fetchExamenHistory } from './api'
 import { getToken } from './auth'
+import useDraft from './useDraft'
 import { t } from './i18n/runtime'
+
+const FIELD_MAX = 500
+
+function friendlyError(e, fallback) {
+  const msg = e?.message || ''
+  return /[一-龥]/.test(msg) ? msg : (fallback || '网络不稳定，请稍后重试')
+}
 
 const FIELDS = [
   { key: 'consolation',   icon: '🌤', title: t("安慰 · 神的同在"),
@@ -34,6 +42,9 @@ export default function ExamenPage({ user, onBack, onNeedLogin }) {
   const [saved, setSaved] = useState(false)
   const [error, setError] = useState('')
 
+  // 草稿自动保存（多字段表单，约 800ms 防抖）
+  const { savedHint, clearDraft } = useDraft('examen-draft-v1', vals, (restored) => setVals(v => ({ ...v, ...restored })))
+
   useEffect(() => {
     const t = getToken(); if (!t) { setLoading(false); return }
     fetchExamenToday(t)
@@ -54,14 +65,15 @@ export default function ExamenPage({ user, onBack, onNeedLogin }) {
         tomorrow_step: vals.tomorrow_step, consolation_level: vals.consolation_level,
       }, t)
       setSaved(true)
-    } catch (e) { setError(e.message || t("保存失败")) }
+      clearDraft()
+    } catch (e) { setError(friendlyError(e, '保存失败，请稍后重试')) }
     finally { setSaving(false) }
   }
 
   async function openHistory() {
     const t = getToken(); if (!t) { onNeedLogin && onNeedLogin(); return }
     try { const r = await fetchExamenHistory(t, 30); setHistory(r.entries || []); setView('history') }
-    catch (e) { setError(e.message || t("加载失败")) }
+    catch (e) { setError(friendlyError(e, '加载失败，请稍后重试')) }
   }
 
   return (
@@ -105,12 +117,16 @@ export default function ExamenPage({ user, onBack, onNeedLogin }) {
               <div key={f.key} style={card}>
                 <div style={{ fontSize: 13.5, fontWeight: 700, marginBottom: 4 }}>{f.icon} {f.title}</div>
                 <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', marginBottom: 8, lineHeight: 1.6 }}>{f.prompt}</div>
-                <textarea value={vals[f.key]} onChange={e => set(f.key, e.target.value)} rows={2} placeholder={f.ph}
+                <textarea value={vals[f.key]} onChange={e => set(f.key, e.target.value.slice(0, FIELD_MAX))} rows={2} placeholder={f.ph}
+                  aria-label={f.title}
                   style={{ width: '100%', boxSizing: 'border-box', padding: '10px 12px', borderRadius: 8, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', fontSize: 13, resize: 'vertical' }} />
+                <div style={{ fontSize: 10.5, color: 'rgba(255,255,255,0.3)', textAlign: 'right', marginTop: 4 }}>{(vals[f.key] || '').length}/{FIELD_MAX}</div>
               </div>
             ))}
 
-            <button onClick={save} disabled={saving || loading} style={{ width: '100%', padding: 14, borderRadius: 12, border: 'none', background: saved ? 'rgba(52,199,89,0.25)' : 'linear-gradient(135deg, #8b5cf6, #5ac8fa)', color: saved ? '#34c759' : '#fff', fontSize: 15, fontWeight: 700, cursor: 'pointer' }}>
+            {savedHint && <div role="status" style={{ fontSize: 11, color: 'rgba(52,199,89,0.75)', marginBottom: 8 }}>✓ 草稿已自动保存</div>}
+
+            <button onClick={save} disabled={saving || loading} style={{ width: '100%', minHeight: 44, padding: 14, borderRadius: 12, border: 'none', background: saved ? 'rgba(52,199,89,0.25)' : 'linear-gradient(135deg, #8b5cf6, #5ac8fa)', color: saved ? '#34c759' : '#fff', fontSize: 15, fontWeight: 700, cursor: 'pointer' }}>
               {saving ? t("保存中…") : saved ? t("✓ 已保存今日省察") : t("保存今日省察")}
             </button>
             <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.25)', textAlign: 'center', marginTop: 14, lineHeight: 1.6 }}>

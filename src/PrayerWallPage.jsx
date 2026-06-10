@@ -5,6 +5,7 @@ import html2canvas from 'html2canvas'
 import { amenPrayer, deletePrayer, fetchPrayers, restorePrayer, submitPrayer, updatePrayer, updatePrayerStatus, runQuery } from './api'
 import { requestFriend } from './realtime/realtimeApi'
 import usePullToRefresh from './hooks/usePullToRefresh'
+import useDraft from './useDraft'
 import { escapeHtml, escapeHtmlWithBr } from './sanitize'
 import HymnPlayer from './HymnPlayer'
 import DiscipleFormationView from './DiscipleFormationView'
@@ -196,6 +197,15 @@ export default function PrayerWallPage({ user, token, onBack }) {
   const cancelStartRef = useRef(false)
   const audioChunksRef = useRef([])
 
+  // 草稿自动保存（约 800ms 防抖）
+  const { savedHint: draftSaved, clearDraft } = useDraft('pw-compose-draft-v1', draft, setDraft)
+
+  // 把原始英文错误转成友好的中文提示
+  function friendlyError(e) {
+    const msg = e?.message || ''
+    return /[一-龥]/.test(msg) ? msg : '网络不稳定，请稍后重试'
+  }
+
   async function load(replace = true) {
     try {
       replace ? setLoading(true) : setLoadingMore(true)
@@ -210,7 +220,7 @@ export default function PrayerWallPage({ user, token, onBack }) {
       setItems(prev => replace ? sortedItems : [...prev, ...sortedItems])
       setError('')
     } catch (e) {
-      setError(e.message)
+      setError(friendlyError(e))
     } finally {
       setLoading(false)
       setLoadingMore(false)
@@ -243,6 +253,7 @@ export default function PrayerWallPage({ user, token, onBack }) {
     try {
       await submitPrayer(draft.trim(), false, token, isPublic)
       setDraft('')
+      clearDraft()
       setIsPublic(false)
       setSubmitDone(true)
       setShowCompose(false)
@@ -255,7 +266,7 @@ export default function PrayerWallPage({ user, token, onBack }) {
       } else if (msg.includes('401') || msg.includes('Unauthorized') || msg.includes("未登录")) {
         setError(t("请先登录后再提交代祷"))
       } else {
-        setError(msg || t("提交失败"))
+        setError(friendlyError(e))
       }
     } finally {
       setSubmitting(false)
@@ -291,7 +302,7 @@ export default function PrayerWallPage({ user, token, onBack }) {
       setEditingId(null)
       setEditDraft('')
     } catch (e) {
-      setError(e.message)
+      setError(friendlyError(e))
     }
   }
 
@@ -312,7 +323,7 @@ export default function PrayerWallPage({ user, token, onBack }) {
       setTotal(prev => prev - 1)
       setDeletingId(null)
     } catch (e) {
-      setError(e.message)
+      setError(friendlyError(e))
     }
   }
 
@@ -323,7 +334,7 @@ export default function PrayerWallPage({ user, token, onBack }) {
       setItems(prev => prev.map(p => p.id === id ? { ...p, deleted_at: null } : p))
       setTotal(prev => prev + 1)
     } catch (e) {
-      setError(e.message)
+      setError(friendlyError(e))
     }
   }
 
@@ -509,6 +520,7 @@ export default function PrayerWallPage({ user, token, onBack }) {
           className="pw-compose-btn"
           onClick={() => setShowCompose(true)}
           title={t("提交祷告")}
+          aria-label={t("提交祷告")}
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M12 5v14M5 12h14" />
@@ -643,6 +655,7 @@ export default function PrayerWallPage({ user, token, onBack }) {
                   zIndex: 10,
                 }}
                 title={isRecording ? t("松开发送") : t("按住说话")}
+                aria-label={isRecording ? t("停止录音") : t("开始语音输入")}
               >
                 {isRecording ? '🔴' : '🎤'}
               </button>
@@ -674,6 +687,7 @@ export default function PrayerWallPage({ user, token, onBack }) {
                   zIndex: 10,
                 }}
                 title={t("润色文字")}
+                aria-label={t("润色文字")}
               >
                 {isPolishing ? '✨' : '✏️'}
               </button>
@@ -691,7 +705,10 @@ export default function PrayerWallPage({ user, token, onBack }) {
                 ⚠️ {recordingError}
               </div>
             )}
-            <div className="pw-compose-count">{draft.length} / 500</div>
+            <div className="pw-compose-count" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span role="status" style={{ fontSize: 11, color: 'rgba(52,199,89,0.75)', visibility: draftSaved ? 'visible' : 'hidden' }}>✓ 草稿已自动保存</span>
+              <span>{draft.length} / 500</span>
+            </div>
             <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: 'rgba(255,255,255,0.55)', cursor: 'pointer', userSelect: 'none', margin: '8px 0 4px' }}>
               <input type="checkbox" checked={isPublic} onChange={e => setIsPublic(e.target.checked)} style={{ accentColor: '#007aff' }} />
               {t("🌍 公开请全平台代祷")}
@@ -880,6 +897,7 @@ export default function PrayerWallPage({ user, token, onBack }) {
                                 <button
                                   onClick={() => startEdit(prayer)}
                                   title={t("编辑")}
+                                  aria-label={t("编辑这条祷告")}
                                   style={{
                                     padding: '6px',
                                     background: 'rgba(255,255,255,0.08)',
@@ -900,6 +918,7 @@ export default function PrayerWallPage({ user, token, onBack }) {
                                 <button
                                   onClick={() => confirmDelete(prayer.id)}
                                   title={t("删除")}
+                                  aria-label={t("删除这条祷告")}
                                   style={{
                                     padding: '6px',
                                     background: 'rgba(239,68,68,0.15)',
@@ -924,6 +943,7 @@ export default function PrayerWallPage({ user, token, onBack }) {
                                   <button
                                     onClick={() => handleRestore(prayer.id)}
                                     title={t("恢复")}
+                                    aria-label={t("恢复这条祷告")}
                                     style={{
                                       padding: '6px',
                                       background: 'rgba(34,197,94,0.15)',
@@ -1003,6 +1023,7 @@ export default function PrayerWallPage({ user, token, onBack }) {
                                 zIndex: 10,
                               }}
                               title={isRecording ? t("松开发送") : t("按住说话")}
+                              aria-label={isRecording ? t("停止录音") : t("开始语音输入")}
                             >
                               {isRecording ? '🔴' : '🎤'}
                             </button>
@@ -1034,6 +1055,7 @@ export default function PrayerWallPage({ user, token, onBack }) {
                                 zIndex: 10,
                               }}
                               title={t("润色文字")}
+                              aria-label={t("润色文字")}
                             >
                               {isPolishing ? '✨' : '✏️'}
                             </button>
@@ -1135,7 +1157,7 @@ export default function PrayerWallPage({ user, token, onBack }) {
                                 try {
                                   await updatePrayerStatus(prayer.id, newStatus, token)
                                   setItems(prev => prev.map(p => p.id === prayer.id ? { ...p, status: newStatus } : p))
-                                } catch (e) { setError(e.message) }
+                                } catch (e) { setError(friendlyError(e)) }
                               }}
                               style={{ fontSize: '11px', padding: '3px 8px', borderRadius: '10px', border: '1px solid rgba(52,199,89,0.4)', background: prayer.status === 'answered' ? 'rgba(52,199,89,0.2)' : 'none', color: '#34c759', cursor: 'pointer' }}
                             >
@@ -1147,7 +1169,7 @@ export default function PrayerWallPage({ user, token, onBack }) {
                                 try {
                                   await updatePrayerStatus(prayer.id, newStatus, token)
                                   setItems(prev => prev.map(p => p.id === prayer.id ? { ...p, status: newStatus } : p))
-                                } catch (e) { setError(e.message) }
+                                } catch (e) { setError(friendlyError(e)) }
                               }}
                               style={{ fontSize: '11px', padding: '3px 8px', borderRadius: '10px', border: '1px solid rgba(255,215,0,0.3)', background: prayer.status === 'waiting' ? 'rgba(255,215,0,0.15)' : 'none', color: '#ffd700', cursor: 'pointer' }}
                             >

@@ -7,6 +7,7 @@ import usePullToRefresh from './hooks/usePullToRefresh'
 import { escapeHtml, escapeHtmlWithBr } from './sanitize'
 import { fetchSharedNotes, toggleShareNote, amenSharedNote, toggleShareSermonJournal, fetchSundaySchoolVideos } from './api'
 import { getToken } from './auth'
+import TestimonyWallPage from './TestimonyWallPage'
 import { t } from './i18n/runtime'
 import { translateForExport, translateElementText } from './exportI18n'
 import { AutoText } from './autoTranslate.jsx'
@@ -703,6 +704,7 @@ export default function ShareWallPage({ user, onBack }) {
             <div style={{ fontSize: 17, fontWeight: 600, color: 'rgba(255,255,255,0.95)' }}>{t("🌟 分享墙")}</div>
             {faithTab === 'share' && <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)', marginTop: 2 }}>{total > 0 ? `${total} 篇分享` : ''}</div>}
             {faithTab === 'sunday' && <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)', marginTop: 2 }}>{t("主日学视频")}</div>}
+            {faithTab === 'testimony' && <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)', marginTop: 2 }}>{t("述说祂的作为")}</div>}
           </div>
           {faithTab === 'share' ? (
             <button
@@ -716,6 +718,7 @@ export default function ShareWallPage({ user, onBack }) {
         <div style={{ display: 'flex', padding: '0 18px', gap: 4, marginTop: 8 }}>
           {[
             { key: 'share', label: t("社区分享"), emoji: '🌟' },
+            { key: 'testimony', label: t("见证墙"), emoji: '✨' },
             { key: 'faith', label: t("信仰宣言"), emoji: '✝️' },
             { key: 'sunday', label: t("主日学"), emoji: '🎬' },
           ].map(tab => (
@@ -737,6 +740,9 @@ export default function ShareWallPage({ user, onBack }) {
           ))}
         </div>
       </header>
+
+      {/* Testimony wall view (见证墙) */}
+      {faithTab === 'testimony' && <TestimonyWallPage user={user} token={token} />}
 
       {/* Faith document view */}
       {faithTab === 'faith' && <FaithDocumentView />}

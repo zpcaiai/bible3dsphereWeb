@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react'
 import BackButton from './BackButton'
 import { currentSeason } from './churchCalendar'
 import {
-  addGratitude, fetchGratitude, deleteGratitude,
+  addGratitude, fetchGratitude, deleteGratitude, fetchGratitudeReview,
   fetchGoals, addGoal, checkinGoal, deleteGoal,
   recordConfession, exportMyData,
 } from './api'
@@ -55,19 +55,74 @@ export default function PracticeHubPage({ user, onBack, onNeedLogin }) {
 
 function Gratitude({ onNeedLogin }) {
   const [text, setText] = useState(''); const [list, setList] = useState([]); const [busy, setBusy] = useState(false)
+  const [review, setReview] = useState(null)           // {days,total,active_days,by_day,verse}
+  const [showReview, setShowReview] = useState(false)
+  const [reviewLoading, setReviewLoading] = useState(false)
+  const [reviewError, setReviewError] = useState('')
   useEffect(() => { load() }, [])
   async function load() { const t = getToken(); if (!t) return; try { const r = await fetchGratitude(t); setList(r.entries || []) } catch (e) {} }
   async function add() { const t = getToken(); if (!t) { onNeedLogin && onNeedLogin(); return } if (!text.trim()) return; setBusy(true); try { await addGratitude(text.trim(), t); setText(''); load() } catch (e) {} finally { setBusy(false) } }
   async function del(id) { const t = getToken(); await deleteGratitude(id, t); load() }
+  async function loadReview() {
+    const tk = getToken(); if (!tk) { onNeedLogin && onNeedLogin(); return }
+    setReviewLoading(true); setReviewError('')
+    try { const r = await fetchGratitudeReview(7, tk); if (r.ok) setReview(r) }
+    catch (e) { setReviewError(/[一-龥]/.test(e.message || '') ? e.message : '网络不稳定，请稍后重试') }
+    finally { setReviewLoading(false) }
+  }
+  function openReview() {
+    if (showReview) { setShowReview(false); return }
+    setShowReview(true); loadReview()
+  }
   return (
     <>
       <div style={{ ...card, background: 'linear-gradient(135deg, rgba(52,199,89,0.10), rgba(90,200,250,0.06))' }}>
         <div style={{ fontSize: 13, lineHeight: 1.7, color: 'rgba(255,255,255,0.8)' }}>{t("感恩使人看见恩典的手。写下今天哪怕最小的一件，让喜乐落地生根。")}</div>
       </div>
       <div style={card}>
-        <textarea value={text} onChange={e => setText(e.target.value)} rows={2} placeholder={t("今天我感谢神……")} style={inp} />
+        <textarea value={text} onChange={e => setText(e.target.value)} rows={2} placeholder={t("今天我感谢神……")} style={inp} aria-label="感恩内容" />
         <button onClick={add} disabled={busy} style={btn('#34c759')}>{busy ? t("添加中…") : t("＋ 数算这件恩典")}</button>
       </div>
+
+      {/* 本周恩典回顾 */}
+      <button onClick={openReview} aria-expanded={showReview} style={{ ...btn('rgba(255,212,59,0.16)'), marginTop: 0, color: '#ffd43b', border: '1px solid rgba(255,212,59,0.35)', minHeight: 44 }}>
+        🌾 {showReview ? t("收起恩典回顾") : t("本周恩典回顾")}
+      </button>
+      {showReview && (
+        <div style={{ ...card, marginTop: 12, borderColor: 'rgba(255,212,59,0.25)' }} role="region" aria-label="本周恩典回顾">
+          {reviewLoading ? (
+            <div style={{ textAlign: 'center', color: 'rgba(255,255,255,0.5)', fontSize: 13, padding: '12px 0' }} role="status">{t("加载中…")}</div>
+          ) : reviewError ? (
+            <div style={{ textAlign: 'center', fontSize: 13 }} role="alert">
+              <div style={{ color: '#ff8787', marginBottom: 10 }}>⚠️ {reviewError}</div>
+              <button onClick={loadReview} style={{ minHeight: 44, padding: '10px 22px', borderRadius: 10, border: '1px solid rgba(90,200,250,0.4)', background: 'rgba(90,200,250,0.12)', color: '#5ac8fa', fontSize: 13, cursor: 'pointer' }}>{t("重试")}</button>
+            </div>
+          ) : review && review.total > 0 ? (
+            <>
+              <div style={{ fontSize: 13.5, fontWeight: 700, color: '#ffd43b', marginBottom: 10 }}>
+                这 {review.days || 7} 天你记录了 {review.total} 次感恩，遍布 {review.active_days} 天
+              </div>
+              {(review.by_day || []).map(d => (
+                <div key={d.day} style={{ marginBottom: 10 }}>
+                  <div style={{ fontSize: 11.5, fontWeight: 700, color: 'rgba(255,255,255,0.5)', marginBottom: 4 }}>{d.day}</div>
+                  {(d.entries || []).map(en => (
+                    <div key={en.id} style={{ fontSize: 13, color: 'rgba(255,255,255,0.82)', lineHeight: 1.7, padding: '4px 0 4px 10px', borderLeft: '2px solid rgba(52,199,89,0.45)', marginBottom: 4 }}>🙏 {en.content}</div>
+                  ))}
+                </div>
+              ))}
+              {review.verse && (
+                <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px dashed rgba(255,255,255,0.12)', fontSize: 13, color: 'rgba(255,255,255,0.8)', lineHeight: 1.9, fontStyle: 'italic', textAlign: 'center' }}>
+                  {review.verse}
+                </div>
+              )}
+            </>
+          ) : (
+            <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.65)', lineHeight: 1.9, textAlign: 'center', padding: '6px 2px' }}>
+              {t("本周还没有感恩记录。「我的心哪，你要称颂耶和华，不可忘记他的一切恩惠。」（诗 103:2）")}
+            </div>
+          )}
+        </div>
+      )}
       {list.map(g => (
         <div key={g.id} style={{ ...card, display: 'flex', justifyContent: 'space-between', gap: 10 }}>
           <div><div style={{ fontSize: 13.5, color: 'rgba(255,255,255,0.85)', lineHeight: 1.6 }}>🙏 {g.content}</div>
