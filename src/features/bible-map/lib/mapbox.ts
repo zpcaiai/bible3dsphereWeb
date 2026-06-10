@@ -18,6 +18,8 @@ export const SOURCE_IDS = {
   prophecyTarget: 'bm-prophecy-target',
   campaignRoute: 'bm-campaign-route',
   campaignPoints: 'bm-campaign-points',
+  personRoute: 'bm-person-route',
+  personStops: 'bm-person-stops',
 } as const
 
 export const LAYER_IDS = {
@@ -26,6 +28,7 @@ export const LAYER_IDS = {
   territoryActive: 'bm-territory-active',
   prophecyLine: 'bm-prophecy-line-layer',
   campaignRoute: 'bm-campaign-route-layer',
+  personRoute: 'bm-person-route-layer',
 } as const
 
 export interface TerritoryFeatureProps extends Record<string, unknown> {

@@ -10,6 +10,7 @@ import { t } from '../../../i18n/runtime'
 import type {
   BibleCampaignDTO,
   BibleMapEventDTO,
+  BiblePersonJourneyDTO,
   BibleProphecyDTO,
   BibleTerritoryDTO,
   GeoJsonPoint,
@@ -20,6 +21,7 @@ interface Props {
   territories: BibleTerritoryDTO[]
   prophecy: BibleProphecyDTO | null
   campaign: BibleCampaignDTO | null
+  person: BiblePersonJourneyDTO | null
   focusEvent: BibleMapEventDTO | null
   activeTerritoryId: string | null
   onTerritoryClick: (id: string) => void
@@ -61,7 +63,7 @@ const AMAP_STYLE: maplibregl.Style = {
 }
 
 export function MapCanvas({
-  territories, prophecy, campaign, focusEvent, activeTerritoryId, onTerritoryClick,
+  territories, prophecy, campaign, person, focusEvent, activeTerritoryId, onTerritoryClick,
 }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null)
   const mapRef = useRef<maplibregl.Map | null>(null)
@@ -167,6 +169,22 @@ export function MapCanvas({
       paint: { 'circle-radius': 6, 'circle-color': ['get', 'color'], 'circle-stroke-color': '#fff', 'circle-stroke-width': 2 },
     })
 
+    map.addSource(SOURCE_IDS.personRoute, { type: 'geojson', data: EMPTY_FC })
+    map.addLayer({
+      id: LAYER_IDS.personRoute, type: 'line', source: SOURCE_IDS.personRoute,
+      paint: { 'line-color': ['get', 'color'], 'line-width': 4, 'line-opacity': 0.95, 'line-dasharray': [1.2, 0.8] },
+    })
+    map.addSource(SOURCE_IDS.personStops, { type: 'geojson', data: EMPTY_FC })
+    map.addLayer({
+      id: 'bm-person-stops-layer', type: 'circle', source: SOURCE_IDS.personStops,
+      paint: {
+        'circle-radius': ['interpolate', ['linear'], ['get', 'sequence'], 1, 7, 14, 4.5],
+        'circle-color': ['get', 'color'],
+        'circle-stroke-color': '#ffffff',
+        'circle-stroke-width': 2,
+      },
+    })
+
     map.on('click', LAYER_IDS.territoryFill, (e) => {
       const f = e.features?.[0]
       const props = (f?.properties ?? {}) as { id?: string }
@@ -241,6 +259,29 @@ export function MapCanvas({
     const coords = campaign.routeGeojson.coordinates
     map.fitBounds(bboxOf(coords), { padding: 90, duration: 900 })
   }, [campaign])
+
+  // 人物生平轨迹
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map || !loadedRef.current) return
+    const routeSrc = map.getSource(SOURCE_IDS.personRoute) as maplibregl.GeoJSONSource | undefined
+    const stopsSrc = map.getSource(SOURCE_IDS.personStops) as maplibregl.GeoJSONSource | undefined
+    if (!routeSrc || !stopsSrc) return
+    if (!person) {
+      routeSrc.setData(EMPTY_FC)
+      stopsSrc.setData(EMPTY_FC)
+      return
+    }
+    routeSrc.setData(featureCollection([feature(person.routeGeojson, { id: person.id, color: person.color })]))
+    stopsSrc.setData(featureCollection<GeoJsonPoint, { color: string; nameZh: string; sequence: number }>(
+      person.stops.map((s) => feature(point([s.longitude, s.latitude]), {
+        color: person.color,
+        nameZh: s.nameZh,
+        sequence: s.sequence,
+      })),
+    ))
+    map.fitBounds(bboxOf(person.routeGeojson.coordinates), { padding: 90, duration: 900 })
+  }, [person])
 
   // 战役路线流光动画（deck.gl TripsLayer，可选；未安装则保留上面的静态 line）
   useEffect(() => {

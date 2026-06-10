@@ -11,12 +11,13 @@ import { formatYear } from '../lib/format'
 import { t, getRuntimeLang } from '../../../i18n/runtime'
 import { pickVal } from '../../../i18n/pickLang'
 import { PROPHECY_COLORS } from '../lib/colors'
-import { fetchTerritories, fetchEvents, fetchProphecies, fetchCampaigns } from '../lib/dataSource'
+import { fetchTerritories, fetchEvents, fetchProphecies, fetchCampaigns, fetchPeople } from '../lib/dataSource'
 import type {
   BibleCampaignDTO,
   BibleLayer,
   BibleMapEventDTO,
   BibleMapSelection,
+  BiblePersonJourneyDTO,
   BibleProphecyDTO,
   BibleTerritoryDTO,
 } from '../domain/types'
@@ -28,11 +29,12 @@ export function BibleMapClient() {
   const [events, setEvents] = useState<BibleMapEventDTO[]>([])
   const [prophecies, setProphecies] = useState<BibleProphecyDTO[]>([])
   const [campaigns, setCampaigns] = useState<BibleCampaignDTO[]>([])
+  const [people, setPeople] = useState<BiblePersonJourneyDTO[]>([])
   const [eventsLoading, setEventsLoading] = useState(false)
   const [selection, setSelection] = useState<BibleMapSelection | null>(null)
   const [focusEvent, setFocusEvent] = useState<BibleMapEventDTO | null>(null)
 
-  // 疆域：prophecies/campaigns 图层时用 all 作底图
+  // 疆域：people/prophecies/campaigns 图层时用 all 作底图
   useEffect(() => {
     const effective: BibleLayer = layer === 'tribes' || layer === 'empires' ? layer : 'all'
     void fetchTerritories(year, effective).then(setTerritories)
@@ -49,6 +51,7 @@ export function BibleMapClient() {
   useEffect(() => {
     void fetchProphecies().then(setProphecies)
     void fetchCampaigns().then(setCampaigns)
+    void fetchPeople().then(setPeople)
   }, [])
 
   const onTerritoryClick = useCallback((id: string) => {
@@ -61,9 +64,36 @@ export function BibleMapClient() {
 
   const prophecyForMap = selection?.kind === 'prophecy' ? (selection.prophecy ?? null) : null
   const campaignForMap = selection?.kind === 'campaign' ? (selection.campaign ?? null) : null
+  const personForMap = selection?.kind === 'person' ? (selection.person ?? null) : null
   const activeTerritoryId = selection?.kind === 'territory' ? (selection.territory?.id ?? null) : null
 
   const leftList = useMemo(() => {
+    if (layer === 'people') {
+      return (
+        <div className="rounded-xl border border-white/10 bg-white/5 p-3">
+          <div className="mb-2 text-xs text-gray-400">{t('人物生平地点轨迹（点击显示路线与站点）')}</div>
+          <ul className="space-y-1.5">
+            {people.map((p) => (
+              <li key={p.id}>
+                <button
+                  type="button"
+                  onClick={() => setSelection({ kind: 'person', person: p })}
+                  className={`w-full rounded-lg border px-3 py-2 text-left text-sm transition ${
+                    personForMap?.id === p.id ? 'border-amber-400/60 bg-amber-400/10' : 'border-white/10 bg-white/[0.03] hover:bg-white/10'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="inline-block h-2.5 w-2.5 rounded-full" style={{ background: p.color }} />
+                    <span className="font-semibold text-gray-100">{pickVal(p.personZh, p.person)}</span>
+                  </div>
+                  <div className="mt-0.5 text-[11px] text-gray-400">{p.era} · {p.stops.length} {t('站点')} · {p.scriptureRange}</div>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )
+    }
     if (layer === 'prophecies') {
       return (
         <div className="rounded-xl border border-white/10 bg-white/5 p-3">
@@ -121,7 +151,7 @@ export function BibleMapClient() {
         }}
       />
     )
-  }, [layer, prophecies, campaigns, events, eventsLoading, selection, prophecyForMap, campaignForMap])
+  }, [layer, people, prophecies, campaigns, events, eventsLoading, selection, prophecyForMap, campaignForMap, personForMap])
 
   return (
     <div className="mx-auto flex max-w-[1500px] flex-col gap-3 p-3 lg:h-[calc(100vh-2rem)] lg:flex-row">
@@ -139,6 +169,7 @@ export function BibleMapClient() {
             territories={territories}
             prophecy={prophecyForMap}
             campaign={campaignForMap}
+            person={personForMap}
             focusEvent={focusEvent}
             activeTerritoryId={activeTerritoryId}
             onTerritoryClick={onTerritoryClick}

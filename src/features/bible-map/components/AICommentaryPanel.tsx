@@ -20,6 +20,7 @@ function subjectName(s: BibleMapSelection): string {
   }
   if (s.kind === 'campaign' && s.campaign) return pickVal(s.campaign.nameZh, s.campaign.name)
   if (s.kind === 'event' && s.event) return pickVal(s.event.titleZh, s.event.title)
+  if (s.kind === 'person' && s.person) return pickVal(s.person.personZh, s.person.person)
   return t('所选内容')
 }
 
@@ -62,7 +63,7 @@ export function AICommentaryPanel({ selection }: Props) {
       </div>
       {!name ? (
         <p className="text-sm leading-relaxed text-gray-400">
-          {t('选择一个支派、帝国、预言、战役或事件，点「生成讲解」从历史背景、地理意义、属灵意义与现代应用四个维度获取讲解。')}
+          {t('选择一个支派、国家/帝国、人物、预言、战役或事件，点「生成讲解」从历史背景、地理意义、属灵意义与现代应用四个维度获取讲解。')}
         </p>
       ) : text ? (
         <>

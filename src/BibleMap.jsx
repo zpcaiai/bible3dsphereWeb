@@ -12,6 +12,17 @@ const VB_W = 1000
 const VB_H = 720
 const PAD = 56
 
+// 五角星路径（利未城/逃城符号用），中心在原点
+function starPathD(r) {
+  let d = ''
+  for (let i = 0; i < 10; i++) {
+    const ang = -Math.PI / 2 + (i * Math.PI) / 5
+    const rr = i % 2 ? r * 0.42 : r
+    d += (i ? 'L' : 'M') + (rr * Math.cos(ang)).toFixed(1) + ',' + (rr * Math.sin(ang)).toFixed(1)
+  }
+  return d + 'Z'
+}
+
 const CONFIDENCE = {
   identified:  { label: t("考古较确定"), color: '#4ade80' },
   approximate: { label: t("传统推定"),   color: '#fbbf24' },
@@ -259,6 +270,36 @@ export default function BibleMap({ config, onBack }) {
     return arr
   }
 
+  function visibleByYear(item) {
+    if (!isTimeline) return true
+    const from = item.showFrom ?? -99999
+    const to = item.showTo ?? 99999
+    return year >= from && year <= to
+  }
+
+  function polygonPath(region) {
+    const pts = region.polygon || []
+    if (pts.length < 3) return ''
+    return pts.map(([lng, lat], i) => {
+      const [x, y] = project(lng, lat)
+      return `${i === 0 ? 'M' : 'L'}${x.toFixed(1)},${y.toFixed(1)}`
+    }).join(' ') + ' Z'
+  }
+
+  function boundaryPath(boundary) {
+    const pts = boundary.path || []
+    if (pts.length < 2) return ''
+    return pts.map(([lng, lat], i) => {
+      const [x, y] = project(lng, lat)
+      return `${i === 0 ? 'M' : 'L'}${x.toFixed(1)},${y.toFixed(1)}`
+    }).join(' ')
+  }
+
+  function svgLabelWidth(label) {
+    const units = [...String(label || '')].reduce((sum, ch) => sum + (ch.charCodeAt(0) > 255 ? 12 : 7), 18)
+    return Math.min(210, Math.max(76, units))
+  }
+
   function toggleLayer(id) {
     if (singleSelect) { setActiveLayerIds([id]); setSelected(null); return }
     setActiveLayerIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id])
@@ -271,6 +312,8 @@ export default function BibleMap({ config, onBack }) {
   // 地名：EN 模式优先用数据自带的 name_en（地名无须机翻），否则回退中文
   const placeName = (p) => ((enMode && p && p.name_en) ? p.name_en : (p?.name_zh || p?.name_en || ''))
   const profileLayer = config.profile ? (activeLayers[0] || config.layers[0]) : null
+  const visibleRegions = (config.regions || []).filter(visibleByYear)
+  const visibleBoundaries = (config.boundaries || []).filter(visibleByYear)
 
   return (
     <div className="biblemap">
@@ -373,6 +416,62 @@ export default function BibleMap({ config, onBack }) {
             <text x="0" y="-22" textAnchor="middle" fill="#ffffff" fillOpacity="0.5" fontSize="11">N</text>
           </g>
 
+          {visibleRegions.map(region => {
+            const d = polygonPath(region)
+            if (!d) return null
+            return (
+              <path key={'region-' + region.id} d={d}
+                fill={region.color} fillOpacity="0.18"
+                stroke={region.color} strokeWidth="2" strokeOpacity="0.72"
+                strokeLinejoin="round"
+                style={{ cursor: region.note || region.scriptureRef ? 'pointer' : 'default' }}
+                onClick={() => setSelected({
+                  id: region.id,
+                  name_zh: region.label,
+                  name_en: region.name_en,
+                  lng: region.center?.[0],
+                  lat: region.center?.[1],
+                  confidence: 'approximate',
+                  scriptureRef: region.scriptureRef,
+                  note: region.note || t("疆域范围为教学示意，古代边界并非现代精确国界。"),
+                  events: region.events || [],
+                  _color: region.color,
+                })} />
+            )
+          })}
+
+          {visibleRegions.map(region => {
+            if (!region.center) return null
+            const [x, y] = project(region.center[0], region.center[1])
+            const label = enMode && region.name_en ? region.name_en : region.label
+            const w = svgLabelWidth(label)
+            return (
+              <g key={'region-label-' + region.id} transform={`translate(${x.toFixed(1)},${y.toFixed(1)})`} style={{ pointerEvents: 'none' }}>
+                <rect x={(-w / 2).toFixed(1)} y="-12" width={w.toFixed(1)} height="22" rx="6" fill="#08111f" fillOpacity="0.55" stroke={region.color} strokeOpacity="0.28" />
+                <text x="0" y="4" textAnchor="middle" fontSize="12" fontWeight="700" fill={region.color}
+                  stroke="#08111f" strokeWidth="3" paintOrder="stroke">{label}</text>
+              </g>
+            )
+          })}
+
+          {visibleBoundaries.map(boundary => {
+            const d = boundaryPath(boundary)
+            if (!d) return null
+            return (
+              <g key={'boundary-' + boundary.id}>
+                <path d={d} fill="none" stroke="#08111f" strokeWidth="5.5" strokeOpacity="0.62" strokeLinecap="round" strokeLinejoin="round" />
+                <path d={d} fill="none" stroke={boundary.color || '#f8fafc'} strokeWidth="2.2" strokeOpacity="0.9"
+                  strokeDasharray={boundary.dashed ? '8 8' : undefined} strokeLinecap="round" strokeLinejoin="round" />
+                {boundary.label && (() => {
+                  const mid = boundary.path[Math.floor(boundary.path.length / 2)]
+                  const [x, y] = project(mid[0], mid[1])
+                  return <text x={x + 8} y={y - 8} fontSize="11.5" fill={boundary.color || '#f8fafc'}
+                    stroke="#08111f" strokeWidth="3" paintOrder="stroke">{boundary.label}</text>
+                })()}
+              </g>
+            )
+          })}
+
           {activeLayers.map(layer => (
             <path key={'r-' + layer.id} d={routePath(layer)} fill="none"
               stroke={layer.color} strokeWidth="2.5" strokeOpacity="0.85"
@@ -403,8 +502,17 @@ export default function BibleMap({ config, onBack }) {
             return (
               <g key={layer.id + '-' + p.id} transform={`translate(${x},${y})`}
                 style={{ cursor: 'pointer' }} onClick={() => setSelected({ ...p, _color: layer.color })}>
-                <circle r={isSel ? 9 : 6} fill={layer.color} stroke="#0e1b2e" strokeWidth="2"
-                  filter={isSel ? 'url(#bm-glow)' : undefined} />
+                {p.marker === 'star' ? (
+                  <path d={starPathD(isSel ? 12 : 9)} fill={layer.color} stroke="#0e1b2e" strokeWidth="1.4"
+                    filter={isSel ? 'url(#bm-glow)' : undefined} />
+                ) : p.marker === 'diamond' ? (
+                  <rect x={isSel ? -7.5 : -5.5} y={isSel ? -7.5 : -5.5} width={isSel ? 15 : 11} height={isSel ? 15 : 11}
+                    transform="rotate(45)" fill={layer.color} stroke="#0e1b2e" strokeWidth="1.4"
+                    filter={isSel ? 'url(#bm-glow)' : undefined} />
+                ) : (
+                  <circle r={isSel ? 9 : 6} fill={layer.color} stroke="#0e1b2e" strokeWidth="2"
+                    filter={isSel ? 'url(#bm-glow)' : undefined} />
+                )}
                 {p.altar && <text x="0" y="-12" textAnchor="middle" fontSize="13">⛪</text>}
                 <text x="10" y="4" fontSize="13" fill="#fff" stroke="#0e1b2e" strokeWidth="3"
                   paintOrder="stroke" style={{ pointerEvents: 'none' }}>{placeName(p)}</text>
@@ -456,10 +564,13 @@ export default function BibleMap({ config, onBack }) {
       </div>
 
       <div className="biblemap-legend">
+        {visibleRegions.map(r => (
+          <span key={'leg-r-' + r.id}><i style={{ background: r.color, borderRadius: 2 }} />{enMode && r.name_en ? r.name_en : r.label}</span>
+        ))}
         {Object.entries(CONFIDENCE).map(([k, v]) => (
           <span key={k}><i style={{ background: v.color }} />{v.label}</span>
         ))}
-        <span className="hint">{t("点击地标看经文与插图 · ✦ 可让 AI 现场讲解 · ⛪ 表示筑坛/圣所")}</span>
+        <span className="hint">{t("点击地标/疆域看经文与插图 · ✦ 可让 AI 现场讲解 · ⛪ 表示筑坛/圣所")}</span>
       </div>
     </div>
   )

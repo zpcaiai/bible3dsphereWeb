@@ -237,6 +237,39 @@ const david = {
   bounds: { minLng: 33.5, maxLng: 37.0, minLat: 29.5, maxLat: 34.2 },
   mode: 'journey',
   layerSelect: 'multi',
+  regions: [
+    {
+      id: 'david-core',
+      label: '以色列核心疆域',
+      color: '#e8b04b',
+      center: [35.18, 32.18],
+      polygon: [[34.70, 33.25], [35.38, 33.25], [35.70, 32.70], [35.62, 31.85], [35.36, 31.18], [34.78, 31.05], [34.58, 31.55], [34.70, 32.35], [34.70, 33.25]],
+    },
+    {
+      id: 'david-philistia',
+      label: '非利士沿海',
+      color: '#ff8f70',
+      center: [34.70, 31.55],
+      polygon: [[34.35, 32.05], [34.80, 32.05], [34.92, 31.18], [34.50, 31.05], [34.35, 32.05]],
+    },
+    {
+      id: 'david-east',
+      label: '摩押·亚扪·以东',
+      color: '#7dd3fc',
+      center: [35.92, 31.35],
+      polygon: [[35.62, 32.25], [36.30, 32.20], [36.52, 30.35], [35.25, 29.78], [35.20, 31.00], [35.62, 32.25]],
+    },
+    {
+      id: 'david-aram',
+      label: '亚兰/大马士革势力范围',
+      color: '#c084fc',
+      center: [36.18, 33.25],
+      polygon: [[35.58, 33.75], [36.55, 33.78], [36.78, 32.82], [35.62, 32.55], [35.58, 33.75]],
+    },
+  ],
+  boundaries: [
+    { id: 'dan-beersheba-d', label: '但到别是巴', color: '#f8fafc', path: [[35.65, 33.25], [35.40, 32.45], [35.25, 31.95], [35.05, 31.45], [34.79, 31.25]], dashed: true },
+  ],
   layers: [
     { id: 'rise', label: '兴起之路', color: '#e8b04b', route: true, points: [
       { id: 'bethlehem-d', name_zh: '伯利恒', name_en: 'Bethlehem', lng: 35.20, lat: 31.70, order: 1, confidence: 'identified', year: -1040, scriptureRef: '撒上16', events: [
@@ -263,12 +296,16 @@ const david = {
         { title: '攻取耶布斯、定为京城', ref: '撒下5:6-9', summary: '大卫攻取耶布斯人的锡安保障，称为"大卫的城"，统一王国的政治与敬拜中心。' },
         { title: '迎约柜、神立永约', ref: '撒下6;7', summary: '大卫将约柜接进城；神借拿单应许大卫的国位必坚定到永远（弥赛亚之约）。' },
       ] },
+      { id: 'dan-d', name_zh: '但', name_en: 'Dan', lng: 35.65, lat: 33.25, order: 7.2, confidence: 'identified', scriptureRef: '撒下24:6；撒下3:10', note: '传统表达“从但到别是巴”的北端。', events: [] },
+      { id: 'beersheba-d', name_zh: '别是巴', name_en: 'Beersheba', lng: 34.79, lat: 31.25, order: 7.4, confidence: 'identified', scriptureRef: '撒下3:10；撒下24:7', note: '传统表达“从但到别是巴”的南端。', events: [] },
       { id: 'philistia', name_zh: '非利士（迦特）', name_en: 'Philistia', lng: 34.85, lat: 31.70, order: 8, confidence: 'approximate', scriptureRef: '撒下5:17-25', events: [
         { title: '制伏世仇非利士', ref: '撒下5:25', summary: '大卫两次在利乏音谷击败非利士人，解除西方威胁。' },
       ] },
       { id: 'rabbah', name_zh: '拉巴（亚扪）', name_en: 'Rabbah', lng: 35.93, lat: 31.95, order: 9, confidence: 'identified', scriptureRef: '撒下12:26-31', events: [
         { title: '征服亚扪', ref: '撒下12', summary: '约押围攻、大卫攻取亚扪京城拉巴（今安曼）。围城期间发生大卫与拔示巴之罪。' },
       ] },
+      { id: 'moab-d', name_zh: '摩押', name_en: 'Moab', lng: 35.70, lat: 31.20, order: 9.2, confidence: 'approximate', scriptureRef: '撒下8:2', note: '大卫击败摩押，使其进贡。', events: [] },
+      { id: 'edom-d', name_zh: '以东', name_en: 'Edom', lng: 35.35, lat: 30.55, order: 9.4, confidence: 'approximate', scriptureRef: '撒下8:13-14', note: '大卫在以东全地设防营，以东人归服。', events: [] },
       { id: 'damascus-d', name_zh: '大马士革（亚兰）', name_en: 'Damascus', lng: 36.30, lat: 33.51, order: 10, confidence: 'identified', scriptureRef: '撒下8:5-6', events: [
         { title: '疆界达伯拉大河', ref: '撒下8', summary: '大卫击败亚兰、摩押、以东、琐巴，使版图北达大马士革，奠定所罗门帝国的疆域。' },
       ] },
@@ -286,12 +323,43 @@ const solomon = {
   bounds: { minLng: 28, maxLng: 48, minLat: 13, maxLat: 35 },
   mode: 'journey',
   layerSelect: 'multi',
+  regions: [
+    {
+      id: 'solomon-core',
+      label: '核心王国（但至别是巴）',
+      color: '#e8b04b',
+      center: [35.18, 32.15],
+      polygon: [[34.65, 33.28], [35.50, 33.28], [35.82, 32.35], [35.52, 31.20], [34.78, 31.02], [34.55, 31.70], [34.65, 33.28]],
+    },
+    {
+      id: 'solomon-influence',
+      label: '所罗门势力范围',
+      color: '#5ec2e8',
+      center: [36.95, 32.25],
+      polygon: [[31.05, 30.20], [34.30, 31.10], [35.10, 33.10], [36.30, 33.55], [38.35, 34.60], [40.10, 34.85], [39.20, 33.45], [36.35, 31.80], [35.05, 29.55], [31.05, 30.20]],
+    },
+    {
+      id: 'solomon-trade-zone',
+      label: '红海与香料商路',
+      color: '#f472b6',
+      center: [39.25, 23.00],
+      polygon: [[34.80, 29.80], [36.80, 27.10], [42.40, 17.60], [45.20, 15.20], [43.20, 14.40], [38.30, 20.20], [34.80, 29.80]],
+    },
+  ],
+  boundaries: [
+    { id: 'solomon-euphrates-egypt', label: '伯拉河至埃及边界', color: '#f8fafc', path: [[40.10, 34.85], [38.27, 34.56], [36.30, 33.51], [35.24, 31.78], [34.98, 29.54], [31.20, 30.05]], dashed: true },
+  ],
   layers: [
     { id: 'core', label: '王国核心', color: '#e8b04b', route: false, points: [
       { id: 'temple', name_zh: '耶路撒冷圣殿', name_en: 'The Temple', lng: 35.235, lat: 31.778, confidence: 'identified', year: -966, scriptureRef: '王上6-8', altar: '建造耶和华的殿，献殿祷告，荣耀充满', events: [
         { title: '建造圣殿', ref: '王上6:1', summary: '出埃及后第480年、所罗门在位第四年开工，历时七年建成；推罗王希兰供应香柏木与匠人。' },
         { title: '献殿与神的荣耀', ref: '王上8:10-11', summary: '约柜安放至圣所，云彩充满殿宇，耶和华的荣光充满圣殿；所罗门献上著名的献殿祷告。' },
       ] },
+      { id: 'hazor-s', name_zh: '夏琐', name_en: 'Hazor', lng: 35.57, lat: 33.02, confidence: 'identified', scriptureRef: '王上9:15', note: '所罗门修筑的战略城之一。', events: [] },
+      { id: 'megiddo-s', name_zh: '米吉多', name_en: 'Megiddo', lng: 35.18, lat: 32.58, confidence: 'identified', scriptureRef: '王上9:15', note: '控制耶斯列平原与沿海大道的战略城。', events: [] },
+      { id: 'gezer-s', name_zh: '基色', name_en: 'Gezer', lng: 34.92, lat: 31.86, confidence: 'identified', scriptureRef: '王上9:15-17', note: '法老攻取后赐给女儿，所罗门重建。', events: [] },
+      { id: 'dan-s', name_zh: '但', name_en: 'Dan', lng: 35.65, lat: 33.25, confidence: 'identified', scriptureRef: '代下30:5', note: '以色列北端地标。', events: [] },
+      { id: 'beersheba-s', name_zh: '别是巴', name_en: 'Beersheba', lng: 34.79, lat: 31.25, confidence: 'identified', scriptureRef: '代下30:5', note: '以色列南端地标。', events: [] },
     ] },
     { id: 'trade', label: '贸易与外交', color: '#5ec2e8', route: true, points: [
       { id: 'tyre', name_zh: '推罗', name_en: 'Tyre', lng: 35.20, lat: 33.27, order: 1, confidence: 'identified', scriptureRef: '王上5;9:11', note: '腓尼基海上强国。', events: [
@@ -324,6 +392,47 @@ const dividedKingdom = {
   mode: 'timeline',
   layerSelect: 'multi',
   years: { min: -931, max: -586, default: -931, step: 1 },
+  regions: [
+    {
+      id: 'north-kingdom',
+      label: '北国以色列',
+      color: '#5ec2e8',
+      center: [35.30, 32.55],
+      showFrom: -931,
+      showTo: -722,
+      polygon: [[34.70, 33.25], [35.65, 33.25], [36.05, 32.72], [35.82, 31.95], [35.32, 31.88], [35.04, 32.00], [34.78, 32.46], [34.70, 33.25]],
+    },
+    {
+      id: 'south-kingdom',
+      label: '南国犹大',
+      color: '#e8b04b',
+      center: [35.08, 31.35],
+      showFrom: -931,
+      showTo: -586,
+      polygon: [[34.58, 31.92], [35.32, 31.92], [35.56, 31.10], [35.18, 30.62], [34.55, 30.82], [34.58, 31.92]],
+    },
+    {
+      id: 'assyria-shadow',
+      label: '亚述压力',
+      color: '#ff6b6b',
+      center: [39.20, 35.30],
+      showFrom: -745,
+      showTo: -609,
+      polygon: [[36.10, 34.00], [43.15, 36.36], [44.60, 35.10], [39.80, 33.20], [35.75, 32.30], [36.10, 34.00]],
+    },
+    {
+      id: 'babylon-shadow',
+      label: '巴比伦压力',
+      color: '#c084fc',
+      center: [41.30, 32.60],
+      showFrom: -625,
+      showTo: -586,
+      polygon: [[35.24, 31.78], [40.00, 34.00], [44.42, 32.54], [43.70, 31.50], [38.30, 31.10], [35.24, 31.78]],
+    },
+  ],
+  boundaries: [
+    { id: 'israel-judah-border', label: '北国/南国边界', color: '#f8fafc', path: [[34.72, 31.92], [35.00, 31.97], [35.28, 31.92], [35.55, 31.78]], dashed: true, showFrom: -931, showTo: -722 },
+  ],
   eras: [
     { label: '王国分裂', from: -931, to: -875 },
     { label: '先知时代', from: -874, to: -750 },
@@ -335,9 +444,17 @@ const dividedKingdom = {
       { id: 'shechem-n', name_zh: '示剑', name_en: 'Shechem', lng: 35.28, lat: 32.21, year: -931, confidence: 'identified', scriptureRef: '王上12', events: [
         { title: '王国分裂', ref: '王上12:16-20', summary: '罗波安拒绝减轻劳役，北方十支派拥立耶罗波安，国分为二；耶罗波安以示剑为初都。' },
       ] },
+      { id: 'dan-n', name_zh: '但（金牛犊）', name_en: 'Dan', lng: 35.65, lat: 33.25, year: -930, confidence: 'identified', scriptureRef: '王上12:29-30', events: [
+        { title: '北端敬拜中心', ref: '王上12:29-30', summary: '耶罗波安在但和伯特利设立金牛犊，成为北国持续的罪。' },
+      ] },
+      { id: 'bethel-n', name_zh: '伯特利（金牛犊）', name_en: 'Bethel', lng: 35.22, lat: 31.93, year: -930, confidence: 'identified', scriptureRef: '王上12:29-33', events: [
+        { title: '南端敬拜中心', ref: '王上12:29-33', summary: '伯特利靠近南北边界，成为北国替代耶路撒冷圣殿的政治性敬拜中心。' },
+      ] },
+      { id: 'tirzah-n', name_zh: '得撒', name_en: 'Tirzah', lng: 35.33, lat: 32.28, year: -910, confidence: 'approximate', scriptureRef: '王上14:17；15:21', note: '早期北国王城之一。', events: [] },
       { id: 'samaria', name_zh: '撒玛利亚', name_en: 'Samaria', lng: 35.19, lat: 32.28, year: -880, confidence: 'identified', scriptureRef: '王上16:24', events: [
         { title: '暗利建都撒玛利亚', ref: '王上16:24', summary: '暗利买下撒玛利亚山建为北国京城，亚哈继位后引入巴力崇拜。' },
       ] },
+      { id: 'jezreel-n', name_zh: '耶斯列', name_en: 'Jezreel', lng: 35.33, lat: 32.56, year: -870, confidence: 'identified', scriptureRef: '王上21；王下9', note: '亚哈王宫与拿伯葡萄园故事相关。', events: [] },
       { id: 'carmel', name_zh: '迦密山', name_en: 'Mt Carmel', lng: 35.03, lat: 32.73, year: -860, confidence: 'identified', scriptureRef: '王上18', events: [
         { title: '以利亚斗巴力先知', ref: '王上18:36-39', summary: '先知以利亚在迦密山求火降下，证明耶和华是神，众民俯伏说"耶和华是神"。' },
       ] },
@@ -349,6 +466,10 @@ const dividedKingdom = {
       { id: 'jerusalem-j', name_zh: '耶路撒冷', name_en: 'Jerusalem', lng: 35.235, lat: 31.778, year: -931, confidence: 'identified', scriptureRef: '王上12', events: [
         { title: '南国京城', ref: '王上12:21', summary: '大卫家罗波安保有犹大、便雅悯，以耶路撒冷为都；圣殿仍在，王位由大卫后裔承袭。' },
       ] },
+      { id: 'bethlehem-j', name_zh: '伯利恒', name_en: 'Bethlehem', lng: 35.20, lat: 31.70, year: -931, confidence: 'identified', scriptureRef: '弥5:2', note: '大卫之城，弥赛亚应许相关。', events: [] },
+      { id: 'hebron-j', name_zh: '希伯仑', name_en: 'Hebron', lng: 35.10, lat: 31.53, year: -931, confidence: 'identified', scriptureRef: '撒下2:1-4', note: '大卫早年作犹大王的城。', events: [] },
+      { id: 'lachish-j', name_zh: '拉吉', name_en: 'Lachish', lng: 34.85, lat: 31.56, year: -701, confidence: 'identified', scriptureRef: '王下18:13-14', note: '南国西南重镇，亚述西拿基立曾攻取。', events: [] },
+      { id: 'beersheba-j', name_zh: '别是巴', name_en: 'Beersheba', lng: 34.79, lat: 31.25, year: -931, confidence: 'identified', scriptureRef: '代下30:5', note: '南地重镇。', events: [] },
       { id: 'isaiah', name_zh: '希西家的耶路撒冷', name_en: 'Hezekiah', lng: 35.235, lat: 31.778, year: -701, confidence: 'identified', scriptureRef: '王下18-19', events: [
         { title: '亚述围城与神的拯救', ref: '王下19:35', summary: '亚述王西拿基立围困耶路撒冷，先知以赛亚宣告神必护卫此城；耶和华的使者一夜击杀亚述军十八万五千，城得保全。' },
       ] },

@@ -5011,6 +5011,22 @@ canvas {
 .jeru-stopdetail .t, .jeru-locdetail .t { color: #9ad0ff; font-weight: 700; }
 .jeru-stopdetail .ref, .jeru-locdetail .ref { color: #8fb8d8; font-size: 12px; margin-left: 8px; }
 .jeru-foot { margin-top: 12px; color: #8e96a8; font-size: 12px; line-height: 1.6; }
+
+/* —— 受难周 FPV 光影叙事 + 浮层（细化）—— */
+.jeru-darkness { position: absolute; inset: 0; z-index: 4; pointer-events: none; opacity: 0; transition: opacity 2.2s ease; background: #04060c; }
+.jeru-darkness.night { opacity: .82; }
+.jeru-darkness.dawn { opacity: .55; background: radial-gradient(circle at 50% 38%, rgba(255,228,170,.55), rgba(255,185,95,.18) 42%, rgba(4,6,12,0) 72%); }
+.jeru-fpv-cap { position: absolute; left: 50%; bottom: 56px; transform: translateX(-50%); width: min(540px, 92%); z-index: 7; padding: 12px 16px; border-radius: 14px; background: rgba(14,20,36,0.86); border: 1px solid rgba(232,176,75,0.4); backdrop-filter: blur(8px); box-shadow: 0 12px 36px rgba(0,0,0,0.5); text-align: center; }
+.jeru-fpv-cap .bar { height: 3px; border-radius: 3px; background: rgba(255,255,255,0.12); overflow: hidden; margin-bottom: 8px; }
+.jeru-fpv-cap .bar i { display: block; height: 100%; background: linear-gradient(90deg,#e8b04b,#ffe9b3); transition: width .5s ease; }
+.jeru-fpv-cap .d { font-size: 11px; letter-spacing: 1px; color: #f0d79b; }
+.jeru-fpv-cap h4 { margin: 4px 0 4px; font-size: 16px; color: #ffe9b3; }
+.jeru-fpv-cap h4 .ref { font-size: 11px; color: #9ad0ff; font-weight: 500; margin-left: 6px; }
+.jeru-fpv-cap p { margin: 0; font-size: 12.5px; color: #cfd6e4; line-height: 1.6; }
+.jeru-fpv-cap .nav { margin-top: 9px; display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+.jeru-fpv-cap .nav button { padding: 6px 12px; border-radius: 9px; font-size: 12.5px; border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.06); color: #e6ecf7; cursor: pointer; }
+.jeru-fpv-cap .nav button:disabled { opacity: .4; cursor: default; }
+.jeru-fpv-cap .nav button.stop { border-color: rgba(232,120,90,0.5); color: #ffbba8; }
 @media (max-width: 640px) {
   .jeru-stage { height: 54vh; min-height: 320px; }
   .jeru-era { padding: 6px 9px; }

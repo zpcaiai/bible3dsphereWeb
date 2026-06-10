@@ -18,6 +18,7 @@ export const LAYERS: ReadonlyArray<{ id: BibleLayer; label: string }> = [
   { id: 'tribes', label: t('十二支派') },
   { id: 'empires', label: t('列国帝国') },
   { id: 'all', label: t('全部疆域') },
+  { id: 'people', label: t('人物轨迹') },
   { id: 'prophecies', label: t('先知预言') },
   { id: 'campaigns', label: t('战役路线') },
 ]

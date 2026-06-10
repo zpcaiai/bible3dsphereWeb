@@ -13,6 +13,13 @@ const STATUS_LABEL: Record<string, string> = {
   stable: '稳固', disputed: '争夺中', oppressed: '受压制', lost: '失守', empire: '帝国',
 }
 
+const OWNER_LABEL: Record<string, string> = {
+  tribe: '支派',
+  empire: '帝国',
+  nation: '国家',
+  kingdom: '王国',
+}
+
 function Row({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex justify-between gap-3 py-0.5 text-sm">
@@ -27,7 +34,7 @@ export function DetailPanel({ selection }: Props) {
     return (
       <div className="rounded-xl border border-white/10 bg-white/5 p-4">
         <div className="text-sm text-gray-400">
-          {t('点击地图上的支派 / 帝国疆域，或左侧事件、图层中的预言与战役，查看详情。')}
+          {t('点击地图上的支派 / 帝国疆域，或左侧事件、人物、预言与战役，查看详情。')}
         </div>
       </div>
     )
@@ -43,7 +50,7 @@ export function DetailPanel({ selection }: Props) {
           <h3 className="text-lg font-bold text-white">{pickVal(t0.nameZh, t0.name)}</h3>
           <span className="text-xs text-gray-400">{t0.name}</span>
         </div>
-        <Row label={t('类型')} value={t0.ownerType === 'tribe' ? t('支派') : t('帝国')} />
+        <Row label={t('类型')} value={t(OWNER_LABEL[t0.ownerType] ?? t0.ownerType)} />
         <Row label={t('时期')} value={`${formatYear(t0.startYear)} – ${t0.endYear === null ? t('今') : formatYear(t0.endYear)}`} />
         <Row label={t('控制指数')} value={`${t0.controlScore} / 100`} />
         <Row label={t('状态')} value={t(STATUS_LABEL[t0.status] ?? t0.status)} />
@@ -105,6 +112,43 @@ export function DetailPanel({ selection }: Props) {
             {t('属灵意义')}：{meaning}
           </p>
         )}
+      </div>
+    )
+  }
+
+  if (selection.kind === 'person' && selection.person) {
+    const p = selection.person
+    return (
+      <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+        <div className="mb-2 flex items-center gap-2">
+          <span className="h-3 w-3 rounded-full" style={{ background: p.color }} />
+          <h3 className="text-lg font-bold text-white">{pickVal(p.personZh, p.person)}</h3>
+          <span className="text-xs text-gray-400">{p.person}</span>
+        </div>
+        <Row label={t('角色')} value={p.role} />
+        <Row label={t('时期')} value={p.era} />
+        <Row label={t('年代')} value={`${p.startYear === null ? '?' : formatYear(p.startYear)} – ${p.endYear === null ? '?' : formatYear(p.endYear)}`} />
+        <Row label={t('经文')} value={p.scriptureRange} />
+        <p className="mt-2 text-sm leading-relaxed text-gray-300">{p.description}</p>
+        <div className="mt-3 border-t border-white/10 pt-3">
+          <div className="mb-2 text-xs font-semibold text-amber-300">{t('地点轨迹')}</div>
+          <ol className="space-y-2">
+            {p.stops.map((stop) => (
+              <li key={stop.id} className="rounded-lg bg-white/[0.04] p-2">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="text-sm font-semibold text-gray-100">
+                    {stop.sequence}. {pickVal(stop.nameZh, stop.name)}
+                  </div>
+                  <div className="shrink-0 text-[11px] text-amber-300">{stop.ref}</div>
+                </div>
+                <div className="mt-0.5 text-[11px] text-gray-500">
+                  {stop.year === null ? t('年代不详') : formatYear(stop.year)} · {stop.latitude.toFixed(3)}, {stop.longitude.toFixed(3)}
+                </div>
+                <p className="mt-1 text-xs leading-relaxed text-gray-300">{stop.summary}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
       </div>
     )
   }

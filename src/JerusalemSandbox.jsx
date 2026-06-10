@@ -442,6 +442,26 @@ export default function JerusalemSandbox({ onBack }) {
     map.easeTo({ center: stop.coord, zoom: 17, pitch: 72, duration: 1600 })
   }
 
+  // —— FPV 手动翻站（暂停自动巡游，保留叙事浮层）——
+  function gotoStopManual(i) {
+    if (i < 0 || i >= PASSION_WEEK.length) return
+    passionRunRef.current = false
+    if (!passionActive) setPassionActive(true)
+    jumpStop(i)
+  }
+  // 受难周巡游时支持 ← → 翻站、Esc 退出
+  useEffect(() => {
+    if (!passionActive) return
+    const onKey = (e) => {
+      if (e.key === 'ArrowRight') gotoStopManual((passionStop < 0 ? 0 : passionStop) + 1)
+      else if (e.key === 'ArrowLeft') gotoStopManual((passionStop < 0 ? 0 : passionStop) - 1)
+      else if (e.key === 'Escape') stopPassion()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [passionActive, passionStop])
+
   return (
     <div className="jeru">
       <div className="biblemap-head">
@@ -464,6 +484,23 @@ export default function JerusalemSandbox({ onBack }) {
 
       <div className="jeru-stage">
         <div ref={containerRef} className="jeru-map" />
+        {/* 受难周光影叙事：各各他遍地黑暗 → 复活黎明 */}
+        <div className={`jeru-darkness${passionActive && passionStop === 6 ? ' night' : ''}${passionActive && passionStop === 7 ? ' dawn' : ''}`} />
+
+        {/* 受难周 FPV 叙事浮层（自动巡游时自述站点 + 翻站） */}
+        {passionActive && passionStop >= 0 && (
+          <div className="jeru-fpv-cap">
+            <div className="bar"><i style={{ width: `${((passionStop + 1) / PASSION_WEEK.length) * 100}%` }} /></div>
+            <div className="d"><AutoText>{PASSION_WEEK[passionStop].day}</AutoText> · STEP {passionStop + 1}/{PASSION_WEEK.length}</div>
+            <h4><AutoText>{PASSION_WEEK[passionStop].title}</AutoText> <span className="ref">{PASSION_WEEK[passionStop].ref}</span></h4>
+            <p><AutoText>{PASSION_WEEK[passionStop].summary}</AutoText></p>
+            <div className="nav">
+              <button onClick={() => gotoStopManual(passionStop - 1)} disabled={passionStop <= 0}>‹ {t("上一站")}</button>
+              <button onClick={() => gotoStopManual(passionStop + 1)} disabled={passionStop >= PASSION_WEEK.length - 1}>{t("下一站")} ›</button>
+              <button className="stop" onClick={stopPassion}>✕ {t("退出")}</button>
+            </div>
+          </div>
+        )}
         {status !== 'ready' && (
           <div className="jeru-overlay">
             {status === 'loading' && <div className="jeru-loading">{t("🌍 正在加载")}{engine === 'mapbox' ? ' Mapbox' : ' MapLibre'} {t("三维沙盘…")}</div>}
