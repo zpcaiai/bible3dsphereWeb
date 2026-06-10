@@ -1,4 +1,3 @@
-'use client'
 import type { BibleMapSelection } from '../domain/types'
 import { formatYear } from '../lib/format'
 import { STATUS_COLORS } from '../lib/colors'

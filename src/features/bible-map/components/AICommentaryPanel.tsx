@@ -1,4 +1,3 @@
-'use client'
 import { useState } from 'react'
 import type { BibleMapSelection } from '../domain/types'
 import { generateAi } from '../lib/dataSource'

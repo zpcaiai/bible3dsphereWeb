@@ -1,4 +1,3 @@
-'use client'
 // GraphPanel — 圣经关系图谱可视化（预言→列国 / 帝国征服与更替 / 战役统帅 / 支派相邻）
 // 零依赖：内置轻量力导向布局 + SVG 渲染；数据走 /api/bible-map/graph，离线回退本地图谱。
 import { useEffect, useMemo, useRef, useState } from 'react'

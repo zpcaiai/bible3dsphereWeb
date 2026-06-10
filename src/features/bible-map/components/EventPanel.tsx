@@ -1,4 +1,3 @@
-'use client'
 import type { BibleMapEventDTO } from '../domain/types'
 import { formatYear } from '../lib/format'
 import { t } from '../../../i18n/runtime'

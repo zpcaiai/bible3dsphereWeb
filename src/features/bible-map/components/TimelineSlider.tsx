@@ -1,4 +1,3 @@
-'use client'
 import { useEffect, useRef, useState } from 'react'
 import { YEAR_MIN, YEAR_MAX, YEAR_STEP } from '../domain/constants'
 import { formatYear } from '../lib/format'

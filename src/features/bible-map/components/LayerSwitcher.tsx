@@ -1,4 +1,3 @@
-'use client'
 import { LAYERS } from '../domain/constants'
 import type { BibleLayer } from '../domain/types'
 import { cn } from '@/lib/utils'
