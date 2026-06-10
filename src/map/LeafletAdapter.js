@@ -119,10 +119,11 @@ export default class LeafletAdapter extends MapAdapter {
     if (!this.map) return null
     const L = this.L
     const { label, color = '#fbbf24', onClick, html, active } = options
-    const size = active ? 30 : 24
+    // 尺寸恒为 24、锚点固定（高亮用中心缩放 transform，不改宽高），避免激活态标记偏移
+    const size = 24
     const icon = L.divIcon({
       className: 'biblemap-pin',
-      html: `<div class="biblemap-pin-dot${active ? ' active' : ''}" style="--pin:${color};width:${size}px;height:${size}px">${label ?? ''}</div>`,
+      html: `<div class="biblemap-pin-dot${active ? ' active' : ''}" style="--pin:${color};width:${size}px;height:${size}px${active ? ';transform:scale(1.25)' : ''}">${label ?? ''}</div>`,
       iconSize: [size, size],
       iconAnchor: [size / 2, size / 2],
     })
@@ -141,10 +142,27 @@ export default class LeafletAdapter extends MapAdapter {
       color: options.color ?? '#ffd700',
       weight: options.weight ?? 3,
       opacity: options.opacity ?? 0.8,
-      dashArray: options.dashArray ?? '6 8',
+      dashArray: options.solid ? null : (options.dashArray ?? '6 8'),
     }).addTo(this.map)
     this.layers.push(line)
     return line
+  }
+
+  removeRoute(handle) {
+    if (!this.map || !handle) return
+    try { this.map.removeLayer(handle) } catch (e) {}
+    this.layers = this.layers.filter((l) => l !== handle)
+  }
+
+  setMarkerActive(handle, active) {
+    try {
+      const el = handle && handle.getElement ? handle.getElement() : null
+      const dot = el && el.querySelector ? el.querySelector('.biblemap-pin-dot') : null
+      if (!dot) return
+      dot.classList.toggle('active', !!active)
+      // 中心缩放而非改宽高：divIcon 锚点固定在 12,12，改宽高会让激活态偏移
+      dot.style.transform = active ? 'scale(1.25)' : ''
+    } catch (e) {}
   }
 
   showPopup(lngLat, html) {

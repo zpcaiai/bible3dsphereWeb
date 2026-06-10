@@ -1,5 +1,5 @@
 'use client'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { MapCanvas } from './MapCanvas'
 import { TimelineSlider } from './TimelineSlider'
 import { LayerSwitcher } from './LayerSwitcher'
@@ -10,6 +10,7 @@ import { DEFAULT_YEAR, DISCLAIMER } from '../domain/constants'
 import { formatYear } from '../lib/format'
 import { t, getRuntimeLang } from '../../../i18n/runtime'
 import { pickVal } from '../../../i18n/pickLang'
+import { AutoText } from '../../../autoTranslate.jsx'
 import { PROPHECY_COLORS } from '../lib/colors'
 import { fetchTerritories, fetchEvents, fetchProphecies, fetchCampaigns, fetchPeople } from '../lib/dataSource'
 import type {
@@ -33,16 +34,31 @@ export function BibleMapClient() {
   const [eventsLoading, setEventsLoading] = useState(false)
   const [selection, setSelection] = useState<BibleMapSelection | null>(null)
   const [focusEvent, setFocusEvent] = useState<BibleMapEventDTO | null>(null)
+  // 人物行程播放
+  const [eraFilter, setEraFilter] = useState<string | null>(null)
+  const [timeLinked, setTimeLinked] = useState(false) // 人物列表随时间轴过滤（仅显示当前年代在世者）
+  const [playIdx, setPlayIdx] = useState<number | null>(null)
+  const [playing, setPlaying] = useState(false)
+
+  // 请求竞态守卫：时间轴快速拖动/自动播放时，慢的旧响应可能后到，
+  // 用自增序号丢弃过期响应，避免旧年代数据覆盖新数据。
+  const terrSeqRef = useRef(0)
+  const evtSeqRef = useRef(0)
 
   // 疆域：people/prophecies/campaigns 图层时用 all 作底图
   useEffect(() => {
     const effective: BibleLayer = layer === 'tribes' || layer === 'empires' ? layer : 'all'
-    void fetchTerritories(year, effective).then(setTerritories)
+    const seq = ++terrSeqRef.current
+    void fetchTerritories(year, effective).then((d) => {
+      if (terrSeqRef.current === seq) setTerritories(d)
+    })
   }, [year, layer])
 
   useEffect(() => {
+    const seq = ++evtSeqRef.current
     setEventsLoading(true)
     void fetchEvents(year).then((d) => {
+      if (evtSeqRef.current !== seq) return
       setEvents(d)
       setEventsLoading(false)
     })
@@ -67,13 +83,118 @@ export function BibleMapClient() {
   const personForMap = selection?.kind === 'person' ? (selection.person ?? null) : null
   const activeTerritoryId = selection?.kind === 'territory' ? (selection.territory?.id ?? null) : null
 
+  // —— 人物行程播放：换人/换图层即复位；播放时定时步进 ——
+  useEffect(() => { setPlayIdx(null); setPlaying(false) }, [personForMap?.id, layer])
+  useEffect(() => {
+    if (!playing || !personForMap) return
+    if (playIdx === null) { setPlayIdx(0); return }
+    if (playIdx >= personForMap.stops.length - 1) { setPlaying(false); return }
+    const timer = setTimeout(() => setPlayIdx((i) => (i === null ? 0 : i + 1)), 3000)
+    return () => clearTimeout(timer)
+  }, [playing, playIdx, personForMap])
+  const focusStop = personForMap && playIdx !== null
+    ? personForMap.stops[Math.min(playIdx, personForMap.stops.length - 1)]
+    : null
+
+  const peopleEras = useMemo(() => [...new Set(people.map((p) => p.era))], [people])
+  const filteredPeople = useMemo(() => {
+    let list = eraFilter ? people.filter((p) => p.era === eraFilter) : people
+    if (timeLinked) {
+      list = list.filter((p) =>
+        p.startYear === null || (p.startYear <= year && (p.endYear === null || p.endYear >= year)),
+      )
+    }
+    return list
+  }, [people, eraFilter, timeLinked, year])
+
   const leftList = useMemo(() => {
     if (layer === 'people') {
       return (
         <div className="rounded-xl border border-white/10 bg-white/5 p-3">
           <div className="mb-2 text-xs text-gray-400">{t('人物生平地点轨迹（点击显示路线与站点）')}</div>
+          {/* 时期筛选 */}
+          <div className="mb-2 flex flex-wrap gap-1.5">
+            <button
+              type="button"
+              onClick={() => setEraFilter(null)}
+              className={`rounded-full border px-2 py-0.5 text-[11px] transition ${
+                eraFilter === null ? 'border-amber-400/60 bg-amber-400/15 text-amber-300' : 'border-white/10 bg-white/5 text-gray-400 hover:bg-white/10'
+              }`}
+            >
+              {t('全部')}
+            </button>
+            {peopleEras.map((era) => (
+              <button
+                key={era}
+                type="button"
+                onClick={() => setEraFilter(era === eraFilter ? null : era)}
+                className={`rounded-full border px-2 py-0.5 text-[11px] transition ${
+                  eraFilter === era ? 'border-amber-400/60 bg-amber-400/15 text-amber-300' : 'border-white/10 bg-white/5 text-gray-400 hover:bg-white/10'
+                }`}
+              >
+                <AutoText>{era}</AutoText>
+              </button>
+            ))}
+            <button
+              type="button"
+              onClick={() => setTimeLinked((v) => !v)}
+              title={t('仅显示当前年代在世的人物')}
+              className={`rounded-full border px-2 py-0.5 text-[11px] transition ${
+                timeLinked ? 'border-sky-400/60 bg-sky-400/15 text-sky-300' : 'border-white/10 bg-white/5 text-gray-400 hover:bg-white/10'
+              }`}
+            >
+              {t('🕰 随时间轴')}
+            </button>
+          </div>
+          {timeLinked && filteredPeople.length === 0 && (
+            <p className="mb-2 rounded-lg bg-white/[0.04] p-2 text-[11px] leading-relaxed text-gray-400">
+              {formatYear(year)}{t(' 无收录人物在世——拖动时间轴，或点「🕰 随时间轴」关闭过滤。')}
+            </p>
+          )}
+          {/* 行程播放控制 */}
+          {personForMap && (
+            <div className="mb-2 rounded-lg border border-amber-400/30 bg-amber-400/5 p-2">
+              <div className="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => setPlaying((v) => !v)}
+                  className="rounded-md border border-amber-400/50 bg-amber-400/15 px-2.5 py-1 text-xs font-semibold text-amber-300 hover:bg-amber-400/25"
+                >
+                  {playing ? t('⏸ 暂停') : t('▶ 播放行程')}
+                </button>
+                <button
+                  type="button"
+                  disabled={playIdx === null || playIdx <= 0}
+                  onClick={() => { setPlaying(false); setPlayIdx((i) => Math.max(0, (i ?? 0) - 1)) }}
+                  className="rounded-md border border-white/15 bg-white/5 px-2 py-1 text-xs text-gray-300 hover:bg-white/10 disabled:opacity-40"
+                >
+                  ‹
+                </button>
+                <button
+                  type="button"
+                  disabled={playIdx !== null && playIdx >= personForMap.stops.length - 1}
+                  onClick={() => { setPlaying(false); setPlayIdx((i) => Math.min(personForMap.stops.length - 1, (i ?? -1) + 1)) }}
+                  className="rounded-md border border-white/15 bg-white/5 px-2 py-1 text-xs text-gray-300 hover:bg-white/10 disabled:opacity-40"
+                >
+                  ›
+                </button>
+                {focusStop && (
+                  <span className="ml-auto text-[11px] text-gray-400">{focusStop.sequence}/{personForMap.stops.length}</span>
+                )}
+              </div>
+              {focusStop && (
+                <div className="mt-1.5">
+                  <div className="flex items-start justify-between gap-2">
+                    <span className="text-sm font-semibold text-gray-100">{pickVal(focusStop.nameZh, focusStop.name)}</span>
+                    <span className="shrink-0 text-[11px] text-amber-300">{focusStop.ref}</span>
+                  </div>
+                  <p className="mt-0.5 text-xs leading-relaxed text-gray-300"><AutoText>{focusStop.summary}</AutoText></p>
+                </div>
+              )}
+            </div>
+          )}
           <ul className="space-y-1.5">
-            {people.map((p) => (
+            {filteredPeople.map((p) => (
               <li key={p.id}>
                 <button
                   type="button"
@@ -151,7 +272,7 @@ export function BibleMapClient() {
         }}
       />
     )
-  }, [layer, people, prophecies, campaigns, events, eventsLoading, selection, prophecyForMap, campaignForMap, personForMap])
+  }, [layer, people, prophecies, campaigns, events, eventsLoading, selection, prophecyForMap, campaignForMap, personForMap, peopleEras, filteredPeople, eraFilter, timeLinked, year, playing, playIdx, focusStop])
 
   return (
     <div className="mx-auto flex max-w-[1500px] flex-col gap-3 p-3 lg:h-[calc(100vh-2rem)] lg:flex-row">
@@ -170,6 +291,7 @@ export function BibleMapClient() {
             prophecy={prophecyForMap}
             campaign={campaignForMap}
             person={personForMap}
+            focusStop={focusStop}
             focusEvent={focusEvent}
             activeTerritoryId={activeTerritoryId}
             onTerritoryClick={onTerritoryClick}

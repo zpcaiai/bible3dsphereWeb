@@ -95,10 +95,31 @@ export default class MapLibreAdapter extends MapAdapter {
     this.map.addLayer({
       id, type: 'line', source: id,
       layout: { 'line-cap': 'round', 'line-join': 'round' },
-      paint: { 'line-color': options.color ?? '#ffd700', 'line-width': options.weight ?? 3, 'line-opacity': options.opacity ?? 0.85, 'line-dasharray': [2, 2] },
+      paint: { 'line-color': options.color ?? '#ffd700', 'line-width': options.weight ?? 3, 'line-opacity': options.opacity ?? 0.85, 'line-dasharray': options.solid ? [1, 0] : [2, 2] },
     })
     this.sourceIds.push(id)
     return id
+  }
+
+  removeRoute(handle) {
+    if (!this.map || !handle) return
+    try {
+      if (this.map.getLayer(handle)) this.map.removeLayer(handle)
+      if (this.map.getSource(handle)) this.map.removeSource(handle)
+    } catch (_) {}
+    this.sourceIds = this.sourceIds.filter((x) => x !== handle)
+  }
+
+  setMarkerActive(handle, active) {
+    try {
+      const raw = handle && handle.raw ? handle.raw : handle
+      const el = raw && raw.getElement ? raw.getElement() : null
+      if (!el) return
+      el.classList.toggle('active', !!active)
+      const size = active ? 30 : 24
+      el.style.width = `${size}px`
+      el.style.height = `${size}px`
+    } catch (_) {}
   }
 
   showPopup(lngLat, html) {

@@ -22,12 +22,24 @@ import { getRuntimeLang } from '../../../i18n/runtime'
 
 const API_BASE = ((import.meta.env.VITE_API_BASE as string | undefined) ?? '/api').replace(/\/+$/, '')
 
+// 会话级内存缓存：圣经地图数据静态，同一年代/图层反复请求（尤其时间轴自动播放）
+// 直接命中缓存，秒响应且省后端。仅缓存成功响应；带 TTL，后端更新数据无需刷新页面也能生效。
+const CACHE_TTL_MS = 10 * 60 * 1000 // 10 分钟
+const apiCache = new Map<string, { data: unknown; ts: number }>()
+
 async function apiGet<T>(path: string): Promise<T | null> {
+  const key = `${getRuntimeLang()}|${path}`
+  const hit = apiCache.get(key)
+  if (hit && Date.now() - hit.ts < CACHE_TTL_MS) return hit.data as T
+  if (hit) apiCache.delete(key)
   try {
-    const res = await fetch(`${API_BASE}/bible-map${path}`, { cache: 'no-store', headers: { 'X-Lang': getRuntimeLang() } })
+    // 不再 no-store：后端已返回 Cache-Control/ETag，刷新页面可走 HTTP 缓存/304
+    const res = await fetch(`${API_BASE}/bible-map${path}`, { headers: { 'X-Lang': getRuntimeLang() } })
     if (!res.ok) return null
     const json = (await res.json()) as { success: boolean; data?: T }
-    return json.success && json.data !== undefined ? json.data : null
+    const data = json.success && json.data !== undefined ? json.data : null
+    if (data !== null) apiCache.set(key, { data, ts: Date.now() })
+    return data
   } catch {
     return null
   }

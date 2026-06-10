@@ -3,19 +3,28 @@ import { t, getRuntimeLang } from '../../i18n/runtime'
 import { useState } from 'react'
 import { BibleMapClient } from './components/BibleMapClient'
 import { TempleSandbox } from './components/TempleSandbox'
+import { GraphPanel } from './components/GraphPanel'
 
 interface Props {
   onBack?: () => void
 }
 
-// Vite 入口：圣经地图集（A 策略，新独立视图）。地图视图 / 3D 圣殿沙盘内部切换。
+// Vite 入口：圣经地图集（A 策略，新独立视图）。地图视图 / 3D 圣殿沙盘 / 关系图谱内部切换。
 export default function BibleAtlasPage({ onBack }: Props) {
-  const [view, setView] = useState<'map' | 'temple'>('map')
+  const [view, setView] = useState<'map' | 'temple' | 'graph'>('map')
 
   if (view === 'temple') {
     return (
       <div className="h-full w-full overflow-hidden bg-[#0b1220] text-gray-200">
         <TempleSandbox onBack={() => setView('map')} />
+      </div>
+    )
+  }
+
+  if (view === 'graph') {
+    return (
+      <div className="h-full w-full overflow-hidden bg-[#0b1220] text-gray-200">
+        <GraphPanel onBack={() => setView('map')} />
       </div>
     )
   }
@@ -34,12 +43,20 @@ export default function BibleAtlasPage({ onBack }: Props) {
             <p className="text-xs text-gray-400">{t('十二支派 · 士师 · 列国兴衰 · 先知预言 · 帝国扩张 · 基甸战役')}</p>
           </div>
         </div>
-        <button
-          onClick={() => setView('temple')}
-          className="rounded-lg border border-amber-400/40 bg-amber-400/10 px-3 py-1.5 text-sm text-amber-300 hover:bg-amber-400/20"
-        >
-          {t('🏛️ 3D 圣殿沙盘')}
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setView('graph')}
+            className="rounded-lg border border-violet-400/40 bg-violet-400/10 px-3 py-1.5 text-sm text-violet-300 hover:bg-violet-400/20"
+          >
+            {t('🕸 关系图谱')}
+          </button>
+          <button
+            onClick={() => setView('temple')}
+            className="rounded-lg border border-amber-400/40 bg-amber-400/10 px-3 py-1.5 text-sm text-amber-300 hover:bg-amber-400/20"
+          >
+            {t('🏛️ 3D 圣殿沙盘')}
+          </button>
+        </div>
       </header>
       <div className="flex-1">
         <BibleMapClient />

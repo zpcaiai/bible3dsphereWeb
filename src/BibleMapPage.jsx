@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { pickVoiceFor, speechLangFor } from './voice'
 import { createMapAdapter } from './map/createMapAdapter'
+import { curvedPath } from './map/arc'
 import { loadBibleMap, BIBLE_MAPS, confidenceMeta, fetchTimeSlice, fetchRegions, fetchRelations, fetchLandmarks, landmarkNoteBySlug } from './data/bibleGeoSource'
 import { t, getRuntimeLang } from './i18n/runtime'
 import { AutoText } from './autoTranslate.jsx'
@@ -58,6 +59,7 @@ export default function BibleMapPage() {
   const markersRef = useRef({})
   const playRef = useRef(null)
   const selectedRef = useRef(null)
+  const progressRef = useRef(null)   // 已走过路程的实线（弧线）
 
   const [datasetId, setDatasetId] = useState('exodus')
   const [dataset, setDataset] = useState(null)
@@ -141,7 +143,9 @@ export default function BibleMapPage() {
     if (!ad?.ready || !dataset || dataset.temporal || !variant || !STN.length) return
     ad.clear()
     markersRef.current = {}
-    if (variant.route?.length) ad.addRoute(variant.route, { color: variant.color, weight: 3 })
+    progressRef.current = null
+    // 地点连线用弧线（航线风格），不再用生硬直线
+    if (variant.route?.length) ad.addRoute(curvedPath(variant.route), { color: variant.color, weight: 3 })
     STN.forEach((f, i) => {
       const cm = confidenceMeta[f.properties.confidence] || confidenceMeta.unknown
       const cc = coordsFor(f, variant)
@@ -221,6 +225,27 @@ export default function BibleMapPage() {
     })()
     return () => { cancelled = true }
   }, [ready, dataset, year])
+
+  // 当前站高亮 + 已走过路程实线：切换站点时上一站自动恢复原状
+  useEffect(() => {
+    const ad = adapterRef.current
+    if (!ad?.ready || !dataset || dataset.temporal || !STN.length) return
+    // 标记高亮：仅当前站 active，其余恢复原状
+    STN.forEach((f) => {
+      const m = markersRef.current[f.properties.id]
+      if (m && ad.setMarkerActive) ad.setMarkerActive(m, f.properties.id === selectedId)
+    })
+    // 已走过的路程画成实线弧线（第一站之前无路程）
+    if (ad.removeRoute && progressRef.current) { ad.removeRoute(progressRef.current); progressRef.current = null }
+    const curIdx = STN.findIndex((s) => s.properties.id === selectedId)
+    if (curIdx > 0) {
+      const walked = STN.slice(0, curIdx + 1).map((f) => coordsFor(f, variant)).filter(Boolean)
+      if (walked.length >= 2 && ad.addRoute) {
+        progressRef.current = ad.addRoute(curvedPath(walked), { color: variant?.color || '#ffd700', weight: 4, opacity: 1, solid: true })
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedId, ready, dataset, variantId])
 
   function step(dir) {
     if (!selected) return

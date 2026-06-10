@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import BackButton from './BackButton'
 import MapScene, { resolveScene } from './MapScenes'
 import { fetchFaithQA, API_BASE } from './api'
+import { curvedSegment } from './map/arc'
 import { t, getRuntimeLang } from './i18n/runtime'
 import { AutoText } from './autoTranslate.jsx'
 
@@ -161,15 +162,13 @@ export default function BibleMap({ config, onBack }) {
 
   const revealCount = (playing || progress > 0) ? Math.floor(progress) + 1 : Infinity
 
-  const travelDot = useMemo(() => {
-    if (!(playing || progress > 0) || orderedPoints.length < 2) return null
-    const i = Math.min(Math.floor(progress), orderedPoints.length - 2)
-    const f = progress - i
-    const a = orderedPoints[i], b = orderedPoints[i + 1]
-    const [ax, ay] = project(a.lng, a.lat)
-    const [bx, by] = project(b.lng, b.lat)
-    return { x: ax + (bx - ax) * f, y: ay + (by - ay) * f }
-  }, [playing, progress, orderedPoints, project])
+  // 播放到站：当前地点高亮（行进离站后自动恢复原状）
+  const activePointIdx = useMemo(() => {
+    if (!playing || orderedPoints.length < 2) return -1
+    const i = Math.floor(progress + 1e-4)
+    const frac = progress - i
+    return frac < 0.4 ? i : -1
+  }, [playing, progress, orderedPoints.length])
 
   const [selected, setSelected] = useState(null)
 
@@ -179,6 +178,34 @@ export default function BibleMap({ config, onBack }) {
     SEA_MAP_IDS.includes(config.id) || layer.route === false ||
     layer.scene === 'boat' || layer.scene === 'sea'
   const [routedGeom, setRoutedGeom] = useState({}) // layerId -> [[lng,lat],...]
+
+  // 行进光点：沿弧线（或真实路网）行进，不再走直线
+  const travelDot = useMemo(() => {
+    if (!(playing || progress > 0) || orderedPoints.length < 2) return null
+    const i = Math.min(Math.floor(progress), orderedPoints.length - 2)
+    const f = progress - i
+    const entry = animLayer ? routedGeom[animLayer.id] : null
+    // 有真实路网且站点索引完整：按"站点 i → 站点 i+1"的路网区间插值，
+    // progress 为整数时光点精确落在站点上（与到站高亮同步）。
+    if (entry && entry.coords.length >= 2 && entry.stationIdx.length === orderedPoints.length) {
+      const a = entry.stationIdx[i]
+      const b = entry.stationIdx[i + 1]
+      const fi = a + f * (b - a)
+      const si = Math.max(0, Math.min(Math.floor(fi), entry.coords.length - 2))
+      const sf = fi - si
+      const [ax, ay] = project(entry.coords[si][0], entry.coords[si][1])
+      const [bx, by] = project(entry.coords[si + 1][0], entry.coords[si + 1][1])
+      return { x: ax + (bx - ax) * sf, y: ay + (by - ay) * sf }
+    }
+    const a = orderedPoints[i], b = orderedPoints[i + 1]
+    const seg = curvedSegment([a.lng, a.lat], [b.lng, b.lat])
+    const fi = f * (seg.length - 1)
+    const si = Math.min(Math.floor(fi), seg.length - 2)
+    const sf = fi - si
+    const [ax, ay] = project(seg[si][0], seg[si][1])
+    const [bx, by] = project(seg[si + 1][0], seg[si + 1][1])
+    return { x: ax + (bx - ax) * sf, y: ay + (by - ay) * sf }
+  }, [playing, progress, orderedPoints, project, routedGeom, animLayer])
   // 逐段解析路线：ORS 会因为整条请求里任一段不可路由（航段过长超出步行距离上限、
   // 或跨越水域）而拒绝整条多点请求，导致整条旅程退化为直线。改为「每相邻两点单独请求」，
   // 可路由的段走真实道路/航线，仅真正不可路由的那一段才退化为直线。陆地段再按
@@ -215,9 +242,16 @@ export default function BibleMap({ config, onBack }) {
         pts.slice(0, -1).map((a, i) => resolveLeg(a, pts[i + 1], chain))
       )
       if (cancelled) return
+      // 拼接时去掉衔接处重复点，并记录每个站点在路网坐标中的索引（stationIdx），
+      // 让行进光点/逐站揭示能精确对位到站点，不再按"点数均匀"近似。
       const stitched = []
-      legs.forEach(seg => seg.forEach(pt => stitched.push(pt)))
-      if (stitched.length >= 2) setRoutedGeom(prev => ({ ...prev, [layer.id]: stitched }))
+      const stationIdx = [0]
+      legs.forEach((seg) => {
+        const add = stitched.length ? seg.slice(1) : seg
+        add.forEach(pt => stitched.push(pt))
+        stationIdx.push(stitched.length - 1)
+      })
+      if (stitched.length >= 2) setRoutedGeom(prev => ({ ...prev, [layer.id]: { coords: stitched, stationIdx } }))
     })
     return () => { cancelled = true }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -249,8 +283,14 @@ export default function BibleMap({ config, onBack }) {
         return `${i === 0 ? 'M' : 'L'}${x.toFixed(1)},${y.toFixed(1)}`
       }).join(' ')
     }
-    return pts.map((p, i) => {
-      const [x, y] = project(p.lng, p.lat)
+    // 无真实路网时：站点间用弧线连接（航线风格），不用生硬直线
+    const arc = []
+    for (let i = 0; i < pts.length - 1; i++) {
+      const seg = curvedSegment([pts[i].lng, pts[i].lat], [pts[i + 1].lng, pts[i + 1].lat])
+      arc.push(...(arc.length ? seg.slice(1) : seg))
+    }
+    return arc.map(([lng, lat], i) => {
+      const [x, y] = project(lng, lat)
       return `${i === 0 ? 'M' : 'L'}${x.toFixed(1)},${y.toFixed(1)}`
     }).join(' ')
   }
@@ -264,7 +304,11 @@ export default function BibleMap({ config, onBack }) {
       const [x2, y2] = project(pts[i + 1].lng, pts[i + 1].lat)
       const dx = x2 - x1, dy = y2 - y1
       if (Math.hypot(dx, dy) < 24) continue // 太近的段不放，避免拥挤
-      arr.push({ key: `ar-${layer.id}-${i}`, mx: (x1 + x2) / 2, my: (y1 + y2) / 2,
+      // 箭头放在弧线中点（二次贝塞尔 t=0.5 处切线与弦平行，角度仍用弦向）
+      const seg = curvedSegment([pts[i].lng, pts[i].lat], [pts[i + 1].lng, pts[i + 1].lat])
+      const mid = seg[Math.floor(seg.length / 2)]
+      const [mx, my] = project(mid[0], mid[1])
+      arr.push({ key: `ar-${layer.id}-${i}`, mx, my,
         ang: (Math.atan2(dy, dx) * 180) / Math.PI })
     }
     return arr
@@ -499,19 +543,29 @@ export default function BibleMap({ config, onBack }) {
           {activeLayers.flatMap(layer => visiblePoints(layer).map(p => {
             const [x, y] = project(p.lng, p.lat)
             const isSel = selected && selected.id === p.id
+            // 播放到站：当前地点高亮（脉冲光环），行进离站后自动恢复
+            const isCur = layer.id === animLayer?.id && activePointIdx >= 0 &&
+              orderedPoints[activePointIdx] && orderedPoints[activePointIdx].id === p.id
+            const big = isSel || isCur
             return (
               <g key={layer.id + '-' + p.id} transform={`translate(${x},${y})`}
                 style={{ cursor: 'pointer' }} onClick={() => setSelected({ ...p, _color: layer.color })}>
+                {isCur && (
+                  <circle r="13" fill="none" stroke={layer.color} strokeWidth="2.5">
+                    <animate attributeName="r" values="9;19;9" dur="1.1s" repeatCount="indefinite" />
+                    <animate attributeName="stroke-opacity" values="0.9;0;0.9" dur="1.1s" repeatCount="indefinite" />
+                  </circle>
+                )}
                 {p.marker === 'star' ? (
-                  <path d={starPathD(isSel ? 12 : 9)} fill={layer.color} stroke="#0e1b2e" strokeWidth="1.4"
-                    filter={isSel ? 'url(#bm-glow)' : undefined} />
+                  <path d={starPathD(big ? 12 : 9)} fill={layer.color} stroke="#0e1b2e" strokeWidth="1.4"
+                    filter={big ? 'url(#bm-glow)' : undefined} />
                 ) : p.marker === 'diamond' ? (
-                  <rect x={isSel ? -7.5 : -5.5} y={isSel ? -7.5 : -5.5} width={isSel ? 15 : 11} height={isSel ? 15 : 11}
+                  <rect x={big ? -7.5 : -5.5} y={big ? -7.5 : -5.5} width={big ? 15 : 11} height={big ? 15 : 11}
                     transform="rotate(45)" fill={layer.color} stroke="#0e1b2e" strokeWidth="1.4"
-                    filter={isSel ? 'url(#bm-glow)' : undefined} />
+                    filter={big ? 'url(#bm-glow)' : undefined} />
                 ) : (
-                  <circle r={isSel ? 9 : 6} fill={layer.color} stroke="#0e1b2e" strokeWidth="2"
-                    filter={isSel ? 'url(#bm-glow)' : undefined} />
+                  <circle r={big ? 9 : 6} fill={layer.color} stroke="#0e1b2e" strokeWidth="2"
+                    filter={big ? 'url(#bm-glow)' : undefined} />
                 )}
                 {p.altar && <text x="0" y="-12" textAnchor="middle" fontSize="13">⛪</text>}
                 <text x="10" y="4" fontSize="13" fill="#fff" stroke="#0e1b2e" strokeWidth="3"

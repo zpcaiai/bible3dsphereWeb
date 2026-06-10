@@ -26,6 +26,12 @@ export default class MapAdapter {
   /** 渲染 GeoJSON。@param {object} geojson @param {object} options @returns handle */
   renderGeoJson(geojson, options = {}) { throw new Error('未实现') }
 
+  /** 移除单条路线（addRoute 返回的 handle）。默认安全空实现。 */
+  removeRoute(handle) { /* no-op */ }
+
+  /** 切换标记高亮状态（addMarker 返回的 handle）。默认安全空实现。 */
+  setMarkerActive(handle, active) { /* no-op */ }
+
   /** 清空所有图层。 */
   clear() { throw new Error('未实现') }
 

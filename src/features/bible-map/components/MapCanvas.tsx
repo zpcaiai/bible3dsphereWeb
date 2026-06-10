@@ -3,14 +3,16 @@ import { useEffect, useRef, useState } from 'react'
 import maplibregl from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { territoriesToFeatureCollection, SOURCE_IDS, LAYER_IDS } from '../lib/mapbox'
-import { featureCollection, feature, point, lineBetween, bboxOf } from '../lib/geojson'
+import { featureCollection, feature, point, lineString, bboxOf } from '../lib/geojson'
 import { PROPHECY_COLORS } from '../lib/colors'
 import { DEFAULT_CENTER, DEFAULT_ZOOM, JERUSALEM } from '../domain/constants'
 import { t } from '../../../i18n/runtime'
+import { pickVal } from '../../../i18n/pickLang'
 import type {
   BibleCampaignDTO,
   BibleMapEventDTO,
   BiblePersonJourneyDTO,
+  BiblePersonJourneyStopDTO,
   BibleProphecyDTO,
   BibleTerritoryDTO,
   GeoJsonPoint,
@@ -22,12 +24,42 @@ interface Props {
   prophecy: BibleProphecyDTO | null
   campaign: BibleCampaignDTO | null
   person: BiblePersonJourneyDTO | null
+  focusStop?: BiblePersonJourneyStopDTO | null
   focusEvent: BibleMapEventDTO | null
   activeTerritoryId: string | null
   onTerritoryClick: (id: string) => void
 }
 
 const EMPTY_FC: GeoJSON.FeatureCollection = { type: 'FeatureCollection', features: [] }
+
+// 两点间二次贝塞尔弧线（航线风格），替代生硬直线。
+// 控制点取中点向行进方向左侧偏移（偏移量与两点距离成正比）。
+function curvedSegment(a: GeoJsonPosition, b: GeoJsonPosition, curvature = 0.18, steps = 28): GeoJsonPosition[] {
+  const dx = b[0] - a[0]
+  const dy = b[1] - a[1]
+  const mx = (a[0] + b[0]) / 2
+  const my = (a[1] + b[1]) / 2
+  const cx = mx - dy * curvature
+  const cy = my + dx * curvature
+  const out: GeoJsonPosition[] = []
+  for (let i = 0; i <= steps; i++) {
+    const t = i / steps
+    const u = 1 - t
+    out.push([u * u * a[0] + 2 * u * t * cx + t * t * b[0], u * u * a[1] + 2 * u * t * cy + t * t * b[1]])
+  }
+  return out
+}
+// 多段弧线拼接（去掉相邻段重复的衔接点）
+function joinSegments(segs: GeoJsonPosition[][], count = segs.length): GeoJsonPosition[] {
+  const out: GeoJsonPosition[] = []
+  for (let i = 0; i < Math.min(count, segs.length); i++) {
+    out.push(...(out.length ? segs[i].slice(1) : segs[i]))
+  }
+  return out
+}
+
+const PERSON_PROGRESS_SRC = 'bm-person-progress'
+const PERSON_PROGRESS_LYR = 'bm-person-progress-layer'
 
 // 高德境外卫星栅格（耶路撒冷/中东在 GCJ-02 加密区之外，与 WGS84 对齐，坐标准确，
 // 且国内可直连，替代被墙的 Mapbox 矢量样式）。叠加高德注记(cva)显示地名。
@@ -63,12 +95,19 @@ const AMAP_STYLE: maplibregl.Style = {
 }
 
 export function MapCanvas({
-  territories, prophecy, campaign, person, focusEvent, activeTerritoryId, onTerritoryClick,
+  territories, prophecy, campaign, person, focusStop = null, focusEvent, activeTerritoryId, onTerritoryClick,
 }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null)
   const mapRef = useRef<maplibregl.Map | null>(null)
   const loadedRef = useRef(false)
   const rafRef = useRef<number | null>(null)
+  const stopMarkersRef = useRef<maplibregl.Marker[]>([])
+  const fadeRafRef = useRef<number | null>(null)
+  const hasTerritoryDataRef = useRef(false)
+  const curvedSegsRef = useRef<GeoJsonPosition[][]>([])
+  const personColorRef = useRef('#fbbf24')
+  const progressRafRef = useRef<number | null>(null)
+  const pulseRafRef = useRef<number | null>(null)
   const onClickRef = useRef(onTerritoryClick)
   onClickRef.current = onTerritoryClick
 
@@ -95,7 +134,10 @@ export function MapCanvas({
       setPhase('ready')
       map.resize()
       const src = map.getSource(SOURCE_IDS.territories)
-      if (src && 'setData' in src) (src as maplibregl.GeoJSONSource).setData(territoriesToFeatureCollection(territories))
+      if (src && 'setData' in src) {
+        (src as maplibregl.GeoJSONSource).setData(territoriesToFeatureCollection(territories))
+        hasTerritoryDataRef.current = territories.length > 0
+      }
     }
     map.on('load', enter)
     map.on('error', (e) => {
@@ -163,6 +205,13 @@ export function MapCanvas({
       id: LAYER_IDS.campaignRoute, type: 'line', source: SOURCE_IDS.campaignRoute,
       paint: { 'line-color': '#f59e0b', 'line-width': 4, 'line-opacity': 0.9 },
     })
+    // 战役流光：沿弧线滑动的亮色短线（原生 rAF，无 deck.gl 依赖）
+    map.addSource('bm-campaign-flow', { type: 'geojson', data: EMPTY_FC })
+    map.addLayer({
+      id: 'bm-campaign-flow-layer', type: 'line', source: 'bm-campaign-flow',
+      layout: { 'line-cap': 'round', 'line-join': 'round' },
+      paint: { 'line-color': '#fde68a', 'line-width': 5.5, 'line-opacity': 0.95, 'line-blur': 0.5 },
+    })
     map.addSource(SOURCE_IDS.campaignPoints, { type: 'geojson', data: EMPTY_FC })
     map.addLayer({
       id: 'bm-campaign-points-layer', type: 'circle', source: SOURCE_IDS.campaignPoints,
@@ -174,6 +223,13 @@ export function MapCanvas({
       id: LAYER_IDS.personRoute, type: 'line', source: SOURCE_IDS.personRoute,
       paint: { 'line-color': ['get', 'color'], 'line-width': 4, 'line-opacity': 0.95, 'line-dasharray': [1.2, 0.8] },
     })
+    // 播放进度线：已走过的路程（实线，叠在全程虚线之上、站点圆点之下）
+    map.addSource(PERSON_PROGRESS_SRC, { type: 'geojson', data: EMPTY_FC })
+    map.addLayer({
+      id: PERSON_PROGRESS_LYR, type: 'line', source: PERSON_PROGRESS_SRC,
+      layout: { 'line-cap': 'round', 'line-join': 'round' },
+      paint: { 'line-color': ['get', 'color'], 'line-width': 5, 'line-opacity': 1 },
+    })
     map.addSource(SOURCE_IDS.personStops, { type: 'geojson', data: EMPTY_FC })
     map.addLayer({
       id: 'bm-person-stops-layer', type: 'circle', source: SOURCE_IDS.personStops,
@@ -183,6 +239,12 @@ export function MapCanvas({
         'circle-stroke-color': '#ffffff',
         'circle-stroke-width': 2,
       },
+    })
+    // 行程播放时当前站点的高亮光圈
+    map.addLayer({
+      id: 'bm-person-stop-active', type: 'circle', source: SOURCE_IDS.personStops,
+      paint: { 'circle-radius': 11, 'circle-color': 'rgba(251,191,36,0.18)', 'circle-stroke-color': '#fbbf24', 'circle-stroke-width': 3 },
+      filter: ['==', ['get', 'sequence'], -1],
     })
 
     map.on('click', LAYER_IDS.territoryFill, (e) => {
@@ -194,12 +256,47 @@ export function MapCanvas({
     map.on('mouseleave', LAYER_IDS.territoryFill, () => { map.getCanvas().style.cursor = '' })
   }
 
-  // 疆域数据更新
+  // 疆域数据更新：年代切换时溶解渐变（淡出旧疆域→换数据→淡入新疆域），
+  // 让帝国版图随时间轴推移呈现消长动画，而非生硬跳变。
   useEffect(() => {
     const map = mapRef.current
     if (!map || !loadedRef.current) return
-    const src = map.getSource(SOURCE_IDS.territories)
-    if (src) (src as maplibregl.GeoJSONSource).setData(territoriesToFeatureCollection(territories))
+    const src = map.getSource(SOURCE_IDS.territories) as maplibregl.GeoJSONSource | undefined
+    if (!src) return
+    const setFade = (k: number): void => {
+      try {
+        map.setPaintProperty(LAYER_IDS.territoryFill, 'fill-opacity', ['*', ['get', 'fillOpacity'], k])
+        map.setPaintProperty(LAYER_IDS.territoryOutline, 'line-opacity', k)
+      } catch { /* style 销毁等场景忽略 */ }
+    }
+    if (fadeRafRef.current !== null) { cancelAnimationFrame(fadeRafRef.current); fadeRafRef.current = null }
+    const data = territoriesToFeatureCollection(territories)
+    // 首次有数据时直接呈现，之后的切换走溶解动画
+    if (!hasTerritoryDataRef.current) {
+      src.setData(data)
+      hasTerritoryDataRef.current = territories.length > 0
+      setFade(1)
+      return
+    }
+    const OUT = 160, IN = 460
+    const start = performance.now()
+    let swapped = false
+    const step = (now: number): void => {
+      const dt = now - start
+      if (dt < OUT) {
+        setFade(1 - dt / OUT)
+      } else {
+        if (!swapped) { swapped = true; src.setData(data) }
+        const k = Math.min(1, (dt - OUT) / IN)
+        setFade(1 - (1 - k) * (1 - k)) // easeOutQuad
+        if (k >= 1) { fadeRafRef.current = null; return }
+      }
+      fadeRafRef.current = requestAnimationFrame(step)
+    }
+    fadeRafRef.current = requestAnimationFrame(step)
+    return () => {
+      if (fadeRafRef.current !== null) { cancelAnimationFrame(fadeRafRef.current); fadeRafRef.current = null }
+    }
   }, [territories])
 
   // 高亮选中疆域
@@ -223,7 +320,8 @@ export function MapCanvas({
     }
     const target: [number, number] = [prophecy.targetLongitude, prophecy.targetLatitude]
     const color = PROPHECY_COLORS[prophecy.prophecyType] ?? '#ef4444'
-    lineSrc.setData(featureCollection([feature(lineBetween(JERUSALEM, target), { color })]))
+    // 预言射线也用弧线（航线风格），不用生硬直线
+    lineSrc.setData(featureCollection([feature(lineString(curvedSegment(JERUSALEM as GeoJsonPosition, target as GeoJsonPosition, 0.22, 40)), { color })]))
     targetSrc.setData(featureCollection([feature(point(target), { color })]))
     const bounds = bboxOf([JERUSALEM as GeoJsonPosition, target as GeoJsonPosition])
     map.fitBounds(bounds, { padding: 80, duration: 800 })
@@ -241,7 +339,12 @@ export function MapCanvas({
       pointsSrc.setData(EMPTY_FC)
       return
     }
-    routeSrc.setData(featureCollection([feature(campaign.routeGeojson, { id: campaign.id })]))
+    // 战役路线同样弧线化
+    const waypoints = campaign.routeGeojson.coordinates
+    const curvedRoute = waypoints.length >= 2
+      ? joinSegments(waypoints.slice(0, -1).map((c, i) => curvedSegment(c, waypoints[i + 1])))
+      : waypoints
+    routeSrc.setData(featureCollection([feature(curvedRoute.length >= 2 ? lineString(curvedRoute) : campaign.routeGeojson, { id: campaign.id })]))
     const kindColor: Record<string, string> = { camp: '#22c55e', enemy: '#ef4444', retreat: '#eab308' }
     if (campaign.pointsGeojson) {
       const colored = featureCollection<GeoJsonPoint, { color: string; nameZh: string }>(
@@ -256,8 +359,7 @@ export function MapCanvas({
     } else {
       pointsSrc.setData(EMPTY_FC)
     }
-    const coords = campaign.routeGeojson.coordinates
-    map.fitBounds(bboxOf(coords), { padding: 90, duration: 900 })
+    map.fitBounds(bboxOf(curvedRoute.length >= 2 ? curvedRoute : waypoints), { padding: 90, duration: 900 })
   }, [campaign])
 
   // 人物生平轨迹
@@ -267,12 +369,29 @@ export function MapCanvas({
     const routeSrc = map.getSource(SOURCE_IDS.personRoute) as maplibregl.GeoJSONSource | undefined
     const stopsSrc = map.getSource(SOURCE_IDS.personStops) as maplibregl.GeoJSONSource | undefined
     if (!routeSrc || !stopsSrc) return
+    // 站点名 DOM 标注（避免字形/CJK glyphs 依赖）
+    stopMarkersRef.current.forEach((m) => { try { m.remove() } catch { /* ignore */ } })
+    stopMarkersRef.current = []
+    const progressSrc = map.getSource(PERSON_PROGRESS_SRC) as maplibregl.GeoJSONSource | undefined
+    progressSrc?.setData(EMPTY_FC)
+    curvedSegsRef.current = []
     if (!person) {
       routeSrc.setData(EMPTY_FC)
       stopsSrc.setData(EMPTY_FC)
       return
     }
-    routeSrc.setData(featureCollection([feature(person.routeGeojson, { id: person.id, color: person.color })]))
+    // 站点间连线用贝塞尔弧线（航线风格），不再用生硬直线
+    const segs = person.stops.length >= 2
+      ? person.stops.slice(0, -1).map((s, i) => curvedSegment(
+          [s.longitude, s.latitude],
+          [person.stops[i + 1].longitude, person.stops[i + 1].latitude],
+        ))
+      : []
+    curvedSegsRef.current = segs
+    personColorRef.current = person.color
+    const fullPath = joinSegments(segs)
+    const routeLine = fullPath.length >= 2 ? lineString(fullPath) : person.routeGeojson
+    routeSrc.setData(featureCollection([feature(routeLine, { id: person.id, color: person.color })]))
     stopsSrc.setData(featureCollection<GeoJsonPoint, { color: string; nameZh: string; sequence: number }>(
       person.stops.map((s) => feature(point([s.longitude, s.latitude]), {
         color: person.color,
@@ -280,79 +399,128 @@ export function MapCanvas({
         sequence: s.sequence,
       })),
     ))
-    map.fitBounds(bboxOf(person.routeGeojson.coordinates), { padding: 90, duration: 900 })
+    person.stops.forEach((s) => {
+      const el = document.createElement('div')
+      el.style.cssText = 'pointer-events:none;font-size:11px;font-weight:600;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.95),0 0 6px rgba(0,0,0,.7);white-space:nowrap;transform:translateY(-9px);'
+      el.textContent = `${s.sequence} ${pickVal(s.nameZh, s.name)}`
+      stopMarkersRef.current.push(
+        new maplibregl.Marker({ element: el, anchor: 'bottom' }).setLngLat([s.longitude, s.latitude]).addTo(map),
+      )
+    })
+    map.fitBounds(bboxOf(fullPath.length >= 2 ? fullPath : person.routeGeojson.coordinates), { padding: 90, duration: 900 })
   }, [person])
 
-  // 战役路线流光动画（deck.gl TripsLayer，可选；未安装则保留上面的静态 line）
+  // 行程播放：进度线沿弧线逐段绘制；到站后当前站点脉冲高亮；
+  // 离开该站（focusStop 变化）或停止播放（null）即恢复原来状态。
   useEffect(() => {
     const map = mapRef.current
     if (!map || !loadedRef.current) return
-    let cancelled = false
-    interface DeckOverlayLike extends maplibregl.IControl {
-      setProps(props: { layers: unknown[] }): void
+    const progressSrc = map.getSource(PERSON_PROGRESS_SRC) as maplibregl.GeoJSONSource | undefined
+    const cancelAnims = (): void => {
+      if (progressRafRef.current !== null) { cancelAnimationFrame(progressRafRef.current); progressRafRef.current = null }
+      if (pulseRafRef.current !== null) { cancelAnimationFrame(pulseRafRef.current); pulseRafRef.current = null }
     }
-    let overlay: DeckOverlayLike | null = null
-    const cleanup = (): void => {
-      if (rafRef.current !== null) cancelAnimationFrame(rafRef.current)
-      rafRef.current = null
-      if (overlay && mapRef.current) {
-        try { mapRef.current.removeControl(overlay) } catch { /* ignore */ }
-      }
-      overlay = null
+    const setActive = (seq: number): void => {
+      try { map.setFilter('bm-person-stop-active', ['==', ['get', 'sequence'], seq]) } catch { /* ignore */ }
     }
-    if (!campaign) {
-      cleanup()
+    const setActiveRadius = (r: number): void => {
+      try { map.setPaintProperty('bm-person-stop-active', 'circle-radius', r) } catch { /* ignore */ }
+    }
+    cancelAnims()
+    if (!focusStop) {
+      // 恢复原状：取消高亮、清空进度线、全程虚线恢复原透明度
+      setActive(-1)
+      setActiveRadius(11)
+      try { map.setPaintProperty(LAYER_IDS.personRoute, 'line-opacity', 0.95) } catch { /* ignore */ }
+      progressSrc?.setData(EMPTY_FC)
       return
     }
-    void (async () => {
-      try {
-        const mapboxMod = (await import('@deck.gl/mapbox')) as unknown as {
-          MapboxOverlay: new (p: { layers: unknown[] }) => DeckOverlayLike
-        }
-        const layersMod = (await import('@deck.gl/layers')) as unknown as {
-          TripsLayer?: new (p: Record<string, unknown>) => unknown
-        }
-        if (cancelled || !mapRef.current) return
-        // TripsLayer 实际位于 @deck.gl/geo-layers（未安装）；从 layers 取为 undefined。
-        // 守卫：拿不到构造器就静默降级，保留静态路线，绝不在 rAF 里 new undefined 崩页。
-        if (typeof layersMod.TripsLayer !== 'function') return
-        const path = campaign.routeGeojson.coordinates.map((c) => [c[0], c[1]] as [number, number])
-        const timestamps = path.map((_, i) => i)
-        const maxTime = Math.max(1, path.length - 1)
-        const trailLength = 1.4
-        overlay = new mapboxMod.MapboxOverlay({ layers: [] })
-        mapRef.current.addControl(overlay)
-        let t = 0
-        const TripsLayer = layersMod.TripsLayer
-        const tick = (): void => {
-          if (cancelled || !overlay) return
-          try {
-            t = (t + 0.03) % (maxTime + trailLength)
-            const layer = new TripsLayer({
-              id: 'bm-trip',
-              data: [{ path, timestamps }],
-              getPath: (d: { path: [number, number][] }) => d.path,
-              getTimestamps: (d: { timestamps: number[] }) => d.timestamps,
-              getColor: [245, 158, 11],
-              opacity: 0.9,
-              widthMinPixels: 5,
-              trailLength,
-              currentTime: t,
-              fadeTrail: true,
-            })
-            overlay.setProps({ layers: [layer] })
-          } catch { cleanup(); return }
-          rafRef.current = requestAnimationFrame(tick)
-        }
-        rafRef.current = requestAnimationFrame(tick)
-      } catch {
-        // deck.gl 未安装或失败 → 静默降级，保留静态 line 路线
-      }
-    })()
-    return () => {
-      cancelled = true
-      cleanup()
+    // 行进中：先取消上一站的高亮（让上一站恢复原状），弱化全程虚线以凸显进度实线
+    setActive(-1)
+    setActiveRadius(11)
+    try { map.setPaintProperty(LAYER_IDS.personRoute, 'line-opacity', 0.32) } catch { /* ignore */ }
+
+    const segs = curvedSegsRef.current
+    const color = personColorRef.current
+    const seq = focusStop.sequence
+    const doneCount = Math.max(0, seq - 2)            // 已完整走过的弧线段
+    const animSeg = seq >= 2 ? segs[seq - 2] : null   // 正在行进的弧线段（上一站→当前站）
+    const base = joinSegments(segs, doneCount)
+    const DRAW = 1300
+    const start = performance.now()
+    const setProgress = (coords: GeoJsonPosition[]): void => {
+      if (progressSrc) progressSrc.setData(coords.length >= 2 ? featureCollection([feature(lineString(coords), { color })]) : EMPTY_FC)
     }
+    const startPulse = (): void => {
+      // 到站：当前站点脉冲高亮
+      setActive(seq)
+      const t0 = performance.now()
+      const pulse = (now: number): void => {
+        setActiveRadius(11 + 3.5 * Math.abs(Math.sin((now - t0) / 380)))
+        pulseRafRef.current = requestAnimationFrame(pulse)
+      }
+      pulseRafRef.current = requestAnimationFrame(pulse)
+    }
+    if (!animSeg || animSeg.length < 2) {
+      setProgress(base)
+      startPulse()
+    } else {
+      const step = (now: number): void => {
+        const k = Math.min(1, (now - start) / DRAW)
+        const e = 1 - (1 - k) * (1 - k) // easeOutQuad
+        const npts = Math.max(2, Math.round(animSeg.length * e))
+        setProgress([...base, ...(base.length ? animSeg.slice(1, npts) : animSeg.slice(0, npts))])
+        if (k >= 1) { progressRafRef.current = null; startPulse(); return }
+        progressRafRef.current = requestAnimationFrame(step)
+      }
+      progressRafRef.current = requestAnimationFrame(step)
+    }
+    // 智能缩放：按本段行程跨度调整 zoom——跨千里看全局，城内短途拉近看细节
+    const zoomSeg = seq >= 2 ? segs[seq - 2] : segs[0]
+    let zoom = 7.2
+    if (zoomSeg && zoomSeg.length >= 2) {
+      const a = zoomSeg[0]
+      const b = zoomSeg[zoomSeg.length - 1]
+      const d = Math.hypot(b[0] - a[0], b[1] - a[1]) // 度数距离（近似）
+      zoom = d > 5 ? 5.6 : d > 2 ? 6.4 : d > 0.8 ? 7.2 : d > 0.25 ? 8.4 : 9.6
+    }
+    map.flyTo({ center: [focusStop.longitude, focusStop.latitude], zoom, duration: 1500 })
+    return cancelAnims
+  }, [focusStop])
+
+  // 战役路线流光动画：亮色短线沿弧线循环滑动（原生 MapLibre setData + rAF，
+  // 替代此前从未真正生效的 deck.gl TripsLayer——TripsLayer 在未安装的 @deck.gl/geo-layers 里）。
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map || !loadedRef.current) return
+    const flowSrc = map.getSource('bm-campaign-flow') as maplibregl.GeoJSONSource | undefined
+    const stop = (): void => {
+      if (rafRef.current !== null) { cancelAnimationFrame(rafRef.current); rafRef.current = null }
+      flowSrc?.setData(EMPTY_FC)
+    }
+    stop()
+    if (!campaign || !flowSrc) return
+    const wps = campaign.routeGeojson.coordinates
+    if (wps.length < 2) return
+    const arc = joinSegments(wps.slice(0, -1).map((c, i) => curvedSegment(c, wps[i + 1])))
+    const n = arc.length
+    const windowLen = Math.max(3, Math.round(n * 0.18)) // 流光长度 ≈ 路线 18%
+    const stride = Math.max(1, Math.round(n / 150))     // 一圈约 6 秒
+    let head = 0
+    let last = 0
+    const step = (now: number): void => {
+      if (now - last > 40) { // ~25fps 足够顺滑且省电
+        last = now
+        head = (head + stride) % (n + windowLen)
+        const s = Math.max(0, head - windowLen)
+        const e = Math.min(n, head)
+        if (e - s >= 2) flowSrc.setData(featureCollection([feature(lineString(arc.slice(s, e)), {})]))
+        else flowSrc.setData(EMPTY_FC)
+      }
+      rafRef.current = requestAnimationFrame(step)
+    }
+    rafRef.current = requestAnimationFrame(step)
+    return stop
   }, [campaign])
 
   // 事件定位

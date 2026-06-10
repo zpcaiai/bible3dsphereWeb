@@ -7,6 +7,8 @@ import BackButton from './BackButton'
 import { JERU_ERAS, TEMPLE_CENTER, PASSION_WEEK, eraGeoJSON, locationsFor, JERU_LOCATIONS } from './data/jerusalemChronology'
 import { TEMPLE_GEOJSON, TEMPLE_PARTS, TEMPLE_LABELS, TEMPLE_CAMERA } from './data/templeStructure'
 import { TEMPLE_GEOJSON_HEROD, TEMPLE_PARTS_HEROD, TEMPLE_LABELS_HEROD, TEMPLE_CAMERA_HEROD } from './data/templeStructureHerod'
+import { TEMPLE_GEOJSON_TABERNACLE, TEMPLE_PARTS_TABERNACLE, TEMPLE_LABELS_TABERNACLE, TEMPLE_CAMERA_TABERNACLE } from './data/templeStructureTabernacle'
+import { TEMPLE_GEOJSON_ZERUBBABEL, TEMPLE_PARTS_ZERUBBABEL, TEMPLE_LABELS_ZERUBBABEL, TEMPLE_CAMERA_ZERUBBABEL } from './data/templeStructureZerubbabel'
 import { createModelLayer } from './lib/gltfModelLayer'
 import { t, getRuntimeLang } from './i18n/runtime'
 import { AutoText } from './autoTranslate.jsx'
@@ -87,11 +89,24 @@ const sleep = (ms) => new Promise(r => setTimeout(r, ms))
 // 回退切换引擎时曾导致整个应用崩溃黑屏——统一用安全探测。
 const safeLayer = (map, id) => { try { return map && map.getLayer ? map.getLayer(id) : null } catch (_) { return null } }
 const safeSource = (map, id) => { try { return map && map.getSource ? map.getSource(id) : null } catch (_) { return null } }
-const dataFor = (v) => (v === 'herod' ? TEMPLE_GEOJSON_HEROD : TEMPLE_GEOJSON)
-const partsFor = (v) => (v === 'herod' ? TEMPLE_PARTS_HEROD : TEMPLE_PARTS)
-const labelsFor = (v) => (v === 'herod' ? TEMPLE_LABELS_HEROD : TEMPLE_LABELS)
-const cameraFor = (v) => (v === 'herod' ? TEMPLE_CAMERA_HEROD : TEMPLE_CAMERA)
-const variantForEra = (id) => (id === 'solomon' || id === 'hezekiah' ? 'solomon' : 'herod')
+// 四个时期的圣殿/会幕结构：会幕 → 所罗门第一圣殿 → 所罗巴伯第二圣殿 → 希律扩建
+const TEMPLE_VARIANTS = {
+  tabernacle: { data: TEMPLE_GEOJSON_TABERNACLE, parts: TEMPLE_PARTS_TABERNACLE, labels: TEMPLE_LABELS_TABERNACLE, camera: TEMPLE_CAMERA_TABERNACLE, name: '会幕', icon: '⛺' },
+  solomon: { data: TEMPLE_GEOJSON, parts: TEMPLE_PARTS, labels: TEMPLE_LABELS, camera: TEMPLE_CAMERA, name: '所罗门圣殿', icon: '⛪' },
+  zerubbabel: { data: TEMPLE_GEOJSON_ZERUBBABEL, parts: TEMPLE_PARTS_ZERUBBABEL, labels: TEMPLE_LABELS_ZERUBBABEL, camera: TEMPLE_CAMERA_ZERUBBABEL, name: '所罗巴伯圣殿', icon: '🧱' },
+  herod: { data: TEMPLE_GEOJSON_HEROD, parts: TEMPLE_PARTS_HEROD, labels: TEMPLE_LABELS_HEROD, camera: TEMPLE_CAMERA_HEROD, name: '希律圣殿', icon: '🏛' },
+}
+const TEMPLE_VARIANT_ORDER = ['tabernacle', 'solomon', 'zerubbabel', 'herod']
+const dataFor = (v) => (TEMPLE_VARIANTS[v] || TEMPLE_VARIANTS.herod).data
+const partsFor = (v) => (TEMPLE_VARIANTS[v] || TEMPLE_VARIANTS.herod).parts
+const labelsFor = (v) => (TEMPLE_VARIANTS[v] || TEMPLE_VARIANTS.herod).labels
+const cameraFor = (v) => (TEMPLE_VARIANTS[v] || TEMPLE_VARIANTS.herod).camera
+const variantForEra = (id) => {
+  if (id === 'david') return 'tabernacle'
+  if (id === 'solomon' || id === 'hezekiah') return 'solomon'
+  if (id === 'nehemiah') return 'zerubbabel'
+  return 'herod'
+}
 const MODEL_URL = (import.meta.env && import.meta.env.VITE_TEMPLE_GLTF_URL) || ''
 
 export default function JerusalemSandbox({ onBack }) {
@@ -504,6 +519,8 @@ export default function JerusalemSandbox({ onBack }) {
   function stopPassion() {
     passionRunRef.current = false; setPassionActive(false); setPassionStop(-1)
     if (passionMarkerRef.current) { try { passionMarkerRef.current.remove() } catch (_) {} }
+    // 中断已发出的 easeTo 飞行，避免退出巡游后镜头仍"幽灵漂移"
+    try { mapRef.current && mapRef.current.stop() } catch (_) {}
     resetView()
   }
   function jumpStop(i) {
@@ -607,7 +624,9 @@ export default function JerusalemSandbox({ onBack }) {
           {status === 'ready' && (!templeMode
             ? <button className="primary" onClick={enterTemple}>{t("🏛 圣殿3D结构")}</button>
             : <>
-                <button onClick={() => switchTempleVariant(templeVariant === 'herod' ? 'solomon' : 'herod')}>{templeVariant === 'herod' ? t("⛪ 切第一圣殿") : t("🏛 切第二圣殿")}</button>
+                {TEMPLE_VARIANT_ORDER.filter(v => v !== templeVariant).map(v => (
+                  <button key={v} onClick={() => switchTempleVariant(v)}>{TEMPLE_VARIANTS[v].icon} <AutoText>{TEMPLE_VARIANTS[v].name}</AutoText></button>
+                ))}
                 <button className={cutaway ? 'on' : ''} onClick={() => setCutaway(c => !c)}>{t("✂ 剖视")}{cutaway ? t("·开") : t("·关")}</button>
                 <button onClick={exitTemple}>{t("🚪 离开圣殿")}</button>
               </>)}
@@ -645,9 +664,11 @@ export default function JerusalemSandbox({ onBack }) {
       {/* 圣殿模式提示 */}
       {templeMode && (
         <div className="jeru-temple-hint">
-          {templeVariant === 'herod'
-            ? t("🏛 希律第二圣殿（约2:20；可13:1-2，按传统尺寸示意复原）· 由外而内：外邦人院→隔墙Soreg→妇女院→以色列人院→祭司院与大祭坛→圣所→至圣所，南接皇家柱廊 · 点件看经文 · ✂ 剖视揭顶察看圣所与至圣所")
-            : t("🏛 所罗门第一圣殿（王上6–7，按肘比例示意复原）· 点击任一部件看经文与尺寸 · ✂ 剖视揭开殿顶察看圣所与至圣所")}
+          {era.id === 'modern' && <>{t("⚠ 此为公元70年被毁前的希律圣殿复原——今日圣殿山仅存西墙（哭墙）等台基残迹（可13:2 应验）。")}<br /></>}
+          {templeVariant === 'herod' && t("🏛 希律第二圣殿（约2:20；可13:1-2，按传统尺寸示意复原）· 由外而内：外邦人院→隔墙Soreg→妇女院→以色列人院→祭司院与大祭坛→圣所→至圣所，南接皇家柱廊 · 点件看经文 · ✂ 剖视揭顶察看圣所与至圣所")}
+          {templeVariant === 'solomon' && t("⛪ 所罗门第一圣殿（王上6–7，按肘比例示意复原）· 点击任一部件看经文与尺寸 · ✂ 剖视揭开殿顶察看圣所与至圣所")}
+          {templeVariant === 'tabernacle' && t("⛺ 会幕（出25–27，按肘比例示意复原）· 由外而内：院门→铜祭坛→洗濯盆→圣所→至圣所，一条亲近神的路 · 点件看经文 · ✂ 剖视揭开罩棚与南帷察看内部")}
+          {templeVariant === 'zerubbabel' && t("🧱 所罗巴伯第二圣殿（拉3–6；该2，示意复原）· 归回余民先筑坛后建殿：朴素无华、至圣所空无约柜——「这殿后来的荣耀必大过先前」· 点件看经文 · ✂ 剖视揭顶察看")}
         </div>
       )}
 
