@@ -560,7 +560,7 @@ function SundaySchoolView() {
             <div style={{ padding: '10px 14px 12px', display: 'flex', alignItems: 'flex-start', gap: 10 }}>
               <div style={{ flex: 1 }}>
                 <div style={{ fontSize: 14, fontWeight: 600, color: 'rgba(255,255,255,0.92)', lineHeight: 1.4, marginBottom: 3 }}>
-                  {v.title || v.filename || t("未命名")}
+                  {v.alias || v.title || v.filename || t("未命名")}
                 </div>
                 <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)' }}>
                   {v.filename}
