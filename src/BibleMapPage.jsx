@@ -28,6 +28,36 @@ function coordsFor(feature, variant) {
   return Array.isArray(c) && c.length >= 2 && Number.isFinite(+c[0]) && Number.isFinite(+c[1]) ? c : null
 }
 
+function distanceKm(a, b) {
+  if (!a || !b) return Infinity
+  const rad = Math.PI / 180
+  const lat1 = a[1] * rad
+  const lat2 = b[1] * rad
+  const dLat = (b[1] - a[1]) * rad
+  const dLng = (b[0] - a[0]) * rad
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2
+  return 6371 * 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h))
+}
+
+function journeyZoomForStation(stations, variant, feature, indexHint = -1) {
+  if (!variant?.stationIds) return 8
+  const idx = indexHint >= 0 ? indexHint : stations.findIndex((s) => s === feature || s.properties.id === feature?.properties?.id)
+  const cur = coordsFor(feature, variant)
+  if (!cur) return 6
+  const neighbors = [stations[idx - 1], stations[idx + 1]]
+    .map((s) => coordsFor(s, variant))
+    .filter(Boolean)
+  const nearest = neighbors.length ? Math.min(...neighbors.map((c) => distanceKm(cur, c))) : Infinity
+  if (nearest < 1) return 15
+  if (nearest < 3) return 14
+  if (nearest < 8) return 13
+  if (nearest < 20) return 11
+  if (nearest < 60) return 9
+  if (nearest < 150) return 8
+  if (nearest < 500) return 6
+  return 5
+}
+
 // 语音朗读：优先后端自然女声（edge-tts 晓晓），失败回退浏览器原生
 let _mapAudio = null
 async function speak(text) {
@@ -178,17 +208,23 @@ export default function BibleMapPage({ initialDatasetId = 'exodus', onBack, sing
     return () => clearInterval(timer)
   }, [dataset, timelinePlaying, timelineSpeed])
 
-  const selectStation = useCallback((f, fromMarker = false) => {
-    setSelectedId(f.properties.id)
-    selectedRef.current = f
+  const focusStation = useCallback((f, indexHint = -1) => {
     const ad = adapterRef.current
     const cc = coordsFor(f, variant)
-    if (ad?.ready && cc) {
-      ad.setView(cc, variant?.stationIds ? 6 : 8)
+    if (!ad?.ready || !cc) return
+    ad.setView(cc, journeyZoomForStation(STN, variant, f, indexHint))
+  }, [STN, variant])
+
+  const selectStation = useCallback((f, fromMarker = false, indexHint = -1) => {
+    setSelectedId(f.properties.id)
+    selectedRef.current = f
+    focusStation(f, indexHint)
+    const ad = adapterRef.current
+    if (ad?.ready) {
       const m = markersRef.current[f.properties.id]
       if (m && m.openPopup) setTimeout(() => m.openPopup(), fromMarker ? 0 : 250)
     }
-  }, [variant])
+  }, [focusStation])
 
   // 渲染图层（旅程/路线模式）
   useEffect(() => {
@@ -207,7 +243,7 @@ export default function BibleMapPage({ initialDatasetId = 'exodus', onBack, sing
         label: i + 1, color: cm.color,
         active: selectedRef.current && selectedRef.current.properties.id === f.properties.id,
         html: popupHtml(f.properties, cm, i + 1),
-        onClick: () => selectStation(f, true),
+        onClick: () => selectStation(f, true, i),
       })
       markersRef.current[f.properties.id] = m
     })
@@ -306,7 +342,7 @@ export default function BibleMapPage({ initialDatasetId = 'exodus', onBack, sing
     let next = idx + dir
     if (next < 0) next = STN.length - 1
     if (next >= STN.length) next = 0
-    selectStation(STN[next])
+    selectStation(STN[next], false, next)
   }
 
   function togglePlay() {
@@ -317,10 +353,9 @@ export default function BibleMapPage({ initialDatasetId = 'exodus', onBack, sing
         if (!STN.length) return curId
         const idx = STN.findIndex((s) => s.properties.id === curId)
         const nx = STN[(idx + 1) % STN.length]
+        const nextIndex = (idx + 1) % STN.length
         selectedRef.current = nx
-        const ad = adapterRef.current
-        const cc = coordsFor(nx, variant)
-        if (ad?.ready && cc) ad.setView(cc, variant?.stationIds ? 6 : 8)
+        focusStation(nx, nextIndex)
         return nx.properties.id
       })
     }, 2600)
@@ -501,7 +536,7 @@ export default function BibleMapPage({ initialDatasetId = 'exodus', onBack, sing
   const stationYears = hasYears ? STN.map((_, i) => Math.round(variant.startYear + (variant.endYear - variant.startYear) * i / (STN.length - 1))) : null
   const jYLabel = (y) => (getRuntimeLang() === 'en' ? (y < 0 ? `c. ${-y} BC` : `c. AD ${y}`) : (y < 0 ? `约公元前 ${-y}` : `约公元 ${y}`))
   const curYear = hasYears ? stationYears[idx < 0 ? 0 : idx] : null
-  const selectByYear = (y) => { if (!stationYears) return; let i = 0; for (let k = 0; k < stationYears.length; k++) { if (stationYears[k] <= y) i = k }; selectStation(STN[i]) }
+  const selectByYear = (y) => { if (!stationYears) return; let i = 0; for (let k = 0; k < stationYears.length; k++) { if (stationYears[k] <= y) i = k }; selectStation(STN[i], false, i) }
 
   return (
     <div className="biblemap-page">
@@ -533,7 +568,7 @@ export default function BibleMapPage({ initialDatasetId = 'exodus', onBack, sing
           max={hasYears ? variant.endYear : Math.max(0, STN.length - 1)}
           step={1}
           value={hasYears ? curYear : (idx < 0 ? 0 : idx)}
-          onChange={(e) => hasYears ? selectByYear(parseInt(e.target.value, 10)) : selectStation(STN[parseInt(e.target.value, 10)])}
+          onChange={(e) => hasYears ? selectByYear(parseInt(e.target.value, 10)) : selectStation(STN[parseInt(e.target.value, 10)], false, parseInt(e.target.value, 10))}
           aria-label={t("行程进度")}
         />
         <div className="biblemap-axis-ends">
@@ -573,7 +608,7 @@ export default function BibleMapPage({ initialDatasetId = 'exodus', onBack, sing
         {STN.map((f, i) => (
           <button key={`${f.properties.id}-${i}`} className={`biblemap-chip ${i === idx ? 'active' : ''}`}
             style={{ '--c': (confidenceMeta[f.properties.confidence] || confidenceMeta.unknown).color }}
-            onClick={() => selectStation(f)}>
+            onClick={() => selectStation(f, false, i)}>
             <span className="biblemap-chip-no">{i + 1}</span>
             <span className="biblemap-chip-name">{getRuntimeLang() === 'en' && f.properties.name_en ? f.properties.name_en : f.properties.name_zh}</span>
           </button>
