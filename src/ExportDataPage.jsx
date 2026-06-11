@@ -2,7 +2,10 @@
 // 年底回顾"这一年神的带领"，或换设备前备份。数据完全归你。
 import { useState } from 'react'
 import BackButton from './BackButton'
-import { fetchJournals, fetchPrayers, fetchReadingProgress } from './api'
+import {
+  fetchJournals, fetchPrayers, fetchReadingProgress,
+  fetchSermonJournals, fetchEvangelismPrayers, fetchSharedNotes,
+} from './api'
 import { getToken } from './auth'
 import { t } from './i18n/runtime'
 
@@ -21,6 +24,18 @@ async function collect(parts) {
   }
   if (parts.reading) {
     try { out.reading = await fetchReadingProgress(token) } catch { out.reading = null }
+  }
+  if (parts.sermon) {
+    try { out.sermons = (await fetchSermonJournals(token, 500, 0)).items || [] } catch { out.sermons = [] }
+  }
+  if (parts.gospel) {
+    try {
+      const d = await fetchEvangelismPrayers(500, 0, token)
+      out.gospel = d.prayers || d.items || []
+    } catch { out.gospel = [] }
+  }
+  if (parts.testimony) {
+    try { out.testimonies = (await fetchSharedNotes(token, 1, 200)).items || [] } catch { out.testimonies = [] }
   }
   return out
 }
@@ -57,17 +72,44 @@ function toText(data) {
     for (const b of books) L.push(`  ${b}：${(by[b] || []).length} 章`)
     L.push('')
   }
+  if (data.sermons) {
+    L.push('───────────────────────────────────', '')
+    L.push(`【讲道笔记】共 ${data.sermons.length} 篇`, '')
+    for (const s of data.sermons) {
+      L.push(`◆ ${fmtDate(s.created_at)}${s.title ? ` · ${s.title}` : ''}${s.preacher ? ` | 讲道者：${s.preacher}` : ''}`)
+      if (s.scripture_ref) L.push(`  📖 ${s.scripture_ref}`)
+      if (s.content) L.push(`  ${String(s.content).replace(/\n/g, '\n  ')}`)
+      if (s.application) L.push(`  ✦ 应用：${String(s.application).replace(/\n/g, '\n  ')}`)
+      L.push('')
+    }
+  }
+  if (data.gospel) {
+    L.push('───────────────────────────────────', '')
+    L.push(`【福音代祷】共 ${data.gospel.length} 条`, '')
+    for (const p of data.gospel) {
+      L.push(`✝ ${fmtDate(p.created_at)}${p.nickname ? ` · ${p.nickname}` : ''}`)
+      L.push(`  ${String(p.content || '').replace(/\n/g, '\n  ')}`, '')
+    }
+  }
+  if (data.testimonies) {
+    L.push('───────────────────────────────────', '')
+    L.push(`【见证墙】共 ${data.testimonies.length} 条`, '')
+    for (const n of data.testimonies) {
+      L.push(`🌟 ${fmtDate(n.created_at || n.shared_at)}${n.nickname ? ` · ${n.nickname}` : ''}${n.title ? ` · ${n.title}` : ''}`)
+      L.push(`  ${String(n.content || n.body || '').replace(/\n/g, '\n  ')}`, '')
+    }
+  }
   L.push('───────────────────────────────────')
   L.push('「要记念耶和华你的神在旷野引导你这一切的路。」（申 8:2）')
   return L.join('\n')
 }
 
 export default function ExportDataPage({ onBack }) {
-  const [parts, setParts] = useState({ journal: true, prayer: true, reading: true })
+  const [parts, setParts] = useState({ journal: true, prayer: true, reading: true, sermon: true, gospel: true, testimony: true })
   const [busy, setBusy] = useState(false)
 
   const togglePart = (k) => setParts((p) => ({ ...p, [k]: !p[k] }))
-  const nothing = !parts.journal && !parts.prayer && !parts.reading
+  const nothing = Object.values(parts).every((v) => !v)
 
   async function exportTxt() {
     setBusy(true)
@@ -123,8 +165,11 @@ export default function ExportDataPage({ onBack }) {
       <div style={S.body}>
         <p style={S.lead}>{t('你的灵修数据完全归你。选择要导出的内容，保存为 TXT 或打印成 PDF——年底回顾这一年神的带领，或换设备前留个备份。')}</p>
         <Item k="journal" icon="📔" label={t('灵修日志')} desc={t('每日灵修记录与默想')} />
-        <Item k="prayer" icon="🙏" label={t('祷告记录')} desc={t('祷告与应允见证')} />
+        <Item k="prayer" icon="🙏" label={t('祷告记录')} desc={t('代祷墙的祷告与应允见证')} />
         <Item k="reading" icon="📖" label={t('读经进度')} desc={t('已读书卷与章数统计')} />
+        <Item k="sermon" icon="📝" label={t('讲道笔记')} desc={t('主日讲道笔记与应用')} />
+        <Item k="gospel" icon="✝" label={t('福音代祷')} desc={t('传福音页的代祷记录')} />
+        <Item k="testimony" icon="🌟" label={t('见证墙')} desc={t('分享墙上的见证')} />
         <div style={S.btns}>
           <button style={S.ghost} disabled={busy || nothing} onClick={exportTxt}>{busy ? t('整理中…') : t('⬇ 导出 TXT')}</button>
           <button style={S.primary} disabled={busy || nothing} onClick={exportPdf}>{busy ? t('整理中…') : t('🖨 打印 / 存为 PDF')}</button>
