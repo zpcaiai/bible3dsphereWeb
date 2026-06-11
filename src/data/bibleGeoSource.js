@@ -72,6 +72,7 @@ import { JERUSALEM_SLUG, jerusalemPoint, jerusalemEras, landmarksFCForYear, land
 import { territoryEras, colorBySlug, regionsFCForYear } from './territories'
 import { JOURNEY_DATASETS } from './bibleJourneys'
 import { kingsEras } from './kingsTimeline'
+import { BIBLE_MAPS_BY_ID } from './bibleMapsData'
 
 async function buildExodusDataset() {
   const { stations, source } = await loadExodusStations()
@@ -136,7 +137,7 @@ async function buildPaulDataset() {
     // route 不再用站点直连（直线）；BibleMapPage 经 /api/route 解析真实航线/路网，弧线兜底
     sea: true,
   }))
-  return {
+  return completeDatasetFromSvg({
     id: 'paul',
     title: '保罗宣教旅程',
     subtitle: '使徒行传 · 三次旅程 + 押往罗马',
@@ -145,7 +146,7 @@ async function buildPaulDataset() {
     variants,
     defaultVariantId: 'journey-1',
     source,
-  }
+  }, 'paul')
 }
 
 function buildJerusalemDataset() {
@@ -235,6 +236,75 @@ export async function fetchRelations(slug, year) {
 }
 
 // 数据集注册表（数据集选择器用）
+// 手绘讲解版点位作为真实地理版补点来源，避免双视图主题维护两份不一致的地点清单。
+const SVG_COMPLETION = {
+  jesus: { replace: { life: 'life' } },
+  abraham: { replace: { route: 'journey' } },
+  joshua: { replace: { central: 'central', south: 'southern', north: 'northern' } },
+  paul: { replace: { first: 'journey-1', second: 'journey-2', third: 'journey-3', rome: 'voyage-rome' } },
+  david: { append: ['rise', 'reign'] },
+  solomon: { append: ['core', 'trade'] },
+  'seven-churches': { replace: { churches: 'circuit' } },
+}
+
+function svgPointToStation(p) {
+  return {
+    type: 'Feature',
+    geometry: { type: 'Point', coordinates: [p.lng, p.lat] },
+    properties: {
+      id: p.id,
+      name_zh: p.name_zh || p.name_en || p.id,
+      name_en: p.name_en || p.name_zh || p.id,
+      name_he: '',
+      confidence: p.confidence || 'approximate',
+      events: p.events || [],
+      scriptureRef: p.scriptureRef || p.events?.[0]?.ref || '',
+      note: p.note || '',
+    },
+  }
+}
+
+function completeDatasetFromSvg(dataset, svgId = dataset.id) {
+  const cfg = BIBLE_MAPS_BY_ID[svgId]
+  const rule = SVG_COMPLETION[svgId]
+  if (!cfg?.layers?.length || !rule) return dataset
+
+  const stationIds = new Set(dataset.stations.map((f) => f.properties.id))
+  const stations = [...dataset.stations]
+  for (const layer of cfg.layers) {
+    for (const p of layer.points || []) {
+      if (stationIds.has(p.id)) continue
+      stations.push(svgPointToStation(p))
+      stationIds.add(p.id)
+    }
+  }
+
+  const variants = dataset.variants.map((v) => ({ ...v }))
+  if (rule.replace) {
+    for (const [layerId, variantId] of Object.entries(rule.replace)) {
+      const layer = cfg.layers.find((l) => l.id === layerId)
+      const variant = variants.find((v) => v.id === variantId)
+      if (layer && variant) variant.stationIds = layer.points.map((p) => p.id)
+    }
+  }
+  if (rule.append) {
+    for (const layerId of rule.append) {
+      const layer = cfg.layers.find((l) => l.id === layerId)
+      if (!layer?.points?.length || variants.some((v) => v.id === `svg-${layer.id}`)) continue
+      variants.push({
+        id: `svg-${layer.id}`,
+        label: `${layer.label}（手绘补点）`,
+        color: layer.color,
+        description: `按手绘讲解版补齐的地点清单：${layer.points.map((p) => p.name_zh || p.name_en).join(' → ')}。`,
+        stationIds: layer.points.map((p) => p.id),
+        sea: layer.id === 'trade',
+      })
+    }
+  }
+
+  return { ...dataset, stations, variants }
+}
+
 // 通用行程数据集构建（耶稣/亚伯拉罕/约书亚/大卫/所罗门/七教会/受难周）
 function buildJourneyDataset(d) {
   const byId = new Map(d.cities.map((c) => [c.id, c]))
@@ -253,10 +323,10 @@ function buildJourneyDataset(d) {
     // route 留空：BibleMapPage 经 /api/route 解析真实步行/迁徙路线，弧线兜底
     sea: v.sea || d.sea || false,
   }))
-  return {
+  return completeDatasetFromSvg({
     id: d.id, title: d.title, subtitle: d.subtitle, variantLabel: d.variantLabel || '路线',
     stations, variants, defaultVariantId: d.variants[0].id, source: 'local',
-  }
+  }, d.id)
 }
 
 function buildKingsDataset() {
