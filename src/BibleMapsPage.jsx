@@ -20,7 +20,14 @@ const STAGES = [
 ]
 
 export default function BibleMapsPage({ onBack, embedded, onOpenAtlas }) {
-  const [activeId, setActiveId] = useState(null)
+  // 深链：经文搜索/读经页"相关地图"入口写 sessionStorage，进来直接打开对应地图
+  const [activeId, setActiveId] = useState(() => {
+    try {
+      const v = sessionStorage.getItem('biblemaps-open')
+      if (v) { sessionStorage.removeItem('biblemaps-open'); return v }
+    } catch (e) { /* ignore */ }
+    return null
+  })
 
   if (activeId === 'jerusalem') {
     return (

@@ -9,6 +9,9 @@ import BackButton from './BackButton'
 import { API_BASE, fetchReadingProgress, markChapterRead, fetchBibleStudy, fetchScripture, langHeaders } from './api'
 import { TTSFullBar, TTSButton } from './useGlobalAudio.jsx'
 import { t, getRuntimeLang } from './i18n/runtime'
+import { AutoText } from './autoTranslate.jsx'
+import { mapsForBook, openMapEntry } from './data/bibleMapLinks'
+import { putJson, getJson } from './lib/offlinePack'
 
 // ── 全部 66 卷（旧约 39 + 新约 27）────────────────────────────────────────────
 const BOOKS = [
@@ -219,7 +222,7 @@ function CrossRefText({ text, autoExpand = false }) {
 }
 
 // ── 子组件：章节阅读视图 ──────────────────────────────────────────────────────
-function ChapterReader({ book, chapter, doneChapters, onMark, onBack, onNav, user, token }) {
+function ChapterReader({ book, chapter, doneChapters, onMark, onBack, onNav, onOpenPanel, user, token }) {
   const [verses, setVerses] = useState(null)
   const [loadErr, setLoadErr] = useState(null)
   const [highlight, setHighlight] = useState('')
@@ -237,14 +240,38 @@ function ChapterReader({ book, chapter, doneChapters, onMark, onBack, onNav, use
 
   const load = useCallback(() => {
     setVerses(null); setLoadErr(null)
-    fetch(`${API_BASE}/scripture?ref=${encodeURIComponent(book.name + chapter)}`, { headers: langHeaders(false) })
+    const ref = book.name + chapter
+    fetch(`${API_BASE}/scripture?ref=${encodeURIComponent(ref)}`, { headers: langHeaders(false) })
       .then(r => r.json())
       .then(d => {
-        if (d.ok && d.verses?.length) setVerses(d.verses)
+        if (d.ok && d.verses?.length) {
+          setVerses(d.verses)
+          // 离线灵修包：读过的章节自动入包；并静默预取下一章备用
+          putJson('scripture', ref, d)
+          const nextRef = book.name + (chapter + 1)
+          if (chapter + 1 <= book.chapters) {
+            getJson('scripture', nextRef).then((hit) => {
+              if (hit) return
+              fetch(`${API_BASE}/scripture?ref=${encodeURIComponent(nextRef)}`, { headers: langHeaders(false) })
+                .then(r => r.json())
+                .then(nd => { if (nd.ok && nd.verses?.length) putJson('scripture', nextRef, nd) })
+                .catch(() => {})
+            })
+          }
+        }
         else setLoadErr(d.error || t("暂无经文内容"))
       })
-      .catch(() => setLoadErr(t("加载失败，请检查网络")))
-  }, [book.name, chapter])
+      .catch(async () => {
+        // 断网：回退离线包
+        const hit = await getJson('scripture', ref)
+        if (hit?.verses?.length) {
+          setVerses(hit.verses)
+          window.showToast?.(t('📴 离线模式：显示已缓存的经文'), 'info')
+        } else {
+          setLoadErr(t("加载失败，请检查网络"))
+        }
+      })
+  }, [book.name, book.chapters, chapter])
 
   useEffect(() => {
     load()
@@ -348,6 +375,24 @@ function ChapterReader({ book, chapter, doneChapters, onMark, onBack, onNav, use
       {/* Body */}
       <div style={S.body}>
         <div ref={topRef} />
+
+        {/* 读经→地图联动：本卷有相关地图时浮现入口 */}
+        {onOpenPanel && mapsForBook(book.name).length > 0 && (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, margin: '0 0 12px' }}>
+            {mapsForBook(book.name).slice(0, 2).map((entry) => (
+              <button key={entry.label}
+                onClick={() => onOpenPanel(openMapEntry(entry))}
+                style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 6,
+                  background: 'rgba(125,211,252,0.1)', border: '1px solid rgba(125,211,252,0.32)',
+                  borderRadius: 999, padding: '6px 14px', color: '#7dd3fc', fontSize: 12.5,
+                  cursor: 'pointer', fontFamily: 'inherit',
+                }}>
+                🗺 <AutoText>{entry.label}</AutoText>
+              </button>
+            ))}
+          </div>
+        )}
 
         {!verses && !loadErr && (
           <div style={{ textAlign: 'center', padding: '60px 0', color: 'rgba(90,200,250,0.5)', fontSize: 14 }}>{t("经文加载中…")}</div>
@@ -597,7 +642,7 @@ function ChapterReader({ book, chapter, doneChapters, onMark, onBack, onNav, use
 }
 
 // ── 主组件 ────────────────────────────────────────────────────────────────────
-export default function BibleReadingPage({ user, token, onBack }) {
+export default function BibleReadingPage({ user, token, onBack, onOpenPanel }) {
   const [progress, setProgress] = useState({ items: [], by_book: {} })
   const [loadingProgress, setLoadingProgress] = useState(true)
   const [view, setView] = useState('books')      // 'books' | 'chapters' | 'reading'
@@ -638,6 +683,7 @@ export default function BibleReadingPage({ user, token, onBack }) {
         chapter={selectedChapter}
         doneChapters={progress.by_book[selectedBook.name] || []}
         onMark={handleMark}
+        onOpenPanel={onOpenPanel}
         user={user}
         token={token}
         onBack={() => setView('chapters')}

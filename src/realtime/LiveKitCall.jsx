@@ -3,6 +3,8 @@
 // 但解耦于"群"概念：直接吃 { url, token } 进房。video=true 时进房即开摄像头。
 import { useCallback, useEffect, useRef, useState } from 'react'
 import VideoTile from './VideoTile'
+import NotesButton from './NotesButton'
+import { stopNotes, setLineSink, addRemoteLine } from './callNotes'
 import { t } from '../i18n/runtime'
 
 // 按来源取参与者当前可渲染的视频轨（'camera' 摄像头 / 'screen_share' 屏幕共享）
@@ -104,9 +106,24 @@ export default function LiveKitCall({ url, token, title, selfName, outgoing, onL
           if (pub?.kind !== 'video') track.detach().forEach((el) => el.remove())
           onChange()
         })
+        .on(RoomEvent.DataReceived, (payload) => {
+          try {
+            const m = JSON.parse(new TextDecoder().decode(payload))
+            if (m && m.k === 'pn') addRemoteLine(m.name, m.text)
+          } catch { /* 忽略 */ }
+        })
       try {
         await room.connect(url, token)
         await room.localParticipant.setMicrophoneEnabled(true)
+        const enc = new TextEncoder()
+        setLineSink((line) => {
+          try {
+            room.localParticipant.publishData(
+              enc.encode(JSON.stringify({ k: 'pn', name: line.name, text: line.text })),
+              { reliable: true },
+            )
+          } catch { /* noop */ }
+        })
         if (video) {
           // 视频通话：进房即开摄像头；权限被拒不阻断通话，降级为语音
           try { await room.localParticipant.setCameraEnabled(true); if (!cancelled) setCamOn(true) }
@@ -123,6 +140,7 @@ export default function LiveKitCall({ url, token, title, selfName, outgoing, onL
     start()
     return () => {
       cancelled = true
+      setLineSink(null)
       try { room?.disconnect() } catch { /* noop */ }
       try { e2eeWorker?.terminate() } catch { /* noop */ }
       roomRef.current = null
@@ -164,7 +182,11 @@ export default function LiveKitCall({ url, token, title, selfName, outgoing, onL
       }
     }
   }
-  const hangUp = async () => { try { await roomRef.current?.disconnect() } catch { /* noop */ } onLeave?.() }
+  const hangUp = async () => {
+    stopNotes() // 停止转写；缓冲保留给挂断后的纪要弹窗
+    try { await roomRef.current?.disconnect() } catch { /* noop */ }
+    onLeave?.()
+  }
 
   const remoteCount = participants.filter((p) => !p.isLocal).length
   const anyVideo = participants.some((p) => p.videoTrack)
@@ -226,6 +248,8 @@ export default function LiveKitCall({ url, token, title, selfName, outgoing, onL
             <div style={{ fontSize: 22 }}>🖥</div>
             <div className="communion-call-ctrl-label">{shareOn ? t("停止共享") : t("共享屏幕")}</div>
           </button>
+          <NotesButton className="communion-call-ctrl" disabled={status !== 'live'}
+            labelStyle={{ fontSize: 11 }} selfName={selfName || ''} />
           <button className="communion-call-ctrl" onClick={hangUp} style={{ background: '#ff3b30' }}>
             <div style={{ fontSize: 22 }}>📴</div>
             <div className="communion-call-ctrl-label">{t("挂断")}</div>

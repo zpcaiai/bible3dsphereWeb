@@ -23,6 +23,7 @@ class RealtimeStore {
     this.onlineFriends = new Set()
     this.incomingCall = null   // { from, room, name }
     this.activeCall = null     // { creds, title, outgoing, peer }
+    this.missedPeer = null     // { email, name } 未接来电留言入口
 
     this.msgListeners = new Set()
     this.stateListeners = new Set()
@@ -96,7 +97,11 @@ class RealtimeStore {
         break
       }
       case 'call_decline':
-        if (this.activeCall?.outgoing) { toast('对方未接听'); this._setState({ activeCall: null }) }
+        if (this.activeCall?.outgoing) {
+          toast('对方未接听')
+          // 未接来电 → 提供留言入口（语音转写为文字，经聊天送达）
+          this._setState({ activeCall: null, missedPeer: { email: this.activeCall.peer, name: this.activeCall.title } })
+        }
         if (this.incomingCall && this.incomingCall.from === msg.from) this._setState({ incomingCall: null })
         break
       default:
@@ -163,12 +168,15 @@ class RealtimeStore {
   // ---- pub/sub ----
   subscribe(cb) { this.msgListeners.add(cb); return () => this.msgListeners.delete(cb) }
   subscribeState(cb) { this.stateListeners.add(cb); return () => this.stateListeners.delete(cb) }
+  clearMissed() { this._setState({ missedPeer: null }) }
+
   getState() {
     return {
       connected: this.connected,
       onlineFriends: this.onlineFriends,
       incomingCall: this.incomingCall,
       activeCall: this.activeCall,
+      missedPeer: this.missedPeer,
     }
   }
   _setState(patch) {

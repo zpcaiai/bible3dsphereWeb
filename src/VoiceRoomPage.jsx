@@ -1,6 +1,10 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import BackButton from './BackButton'
 import VideoTile from './realtime/VideoTile'
+import NotesButton from './realtime/NotesButton'
+import MinutesModal from './realtime/MinutesModal'
+import MeetingScheduleModal from './MeetingScheduleModal'
+import { stopNotes, hasNotes, setLineSink, addRemoteLine } from './realtime/callNotes'
 import { t } from './i18n/runtime'
 import {
   fetchVoiceConfig, fetchVoiceGroups, createVoiceGroup,
@@ -43,8 +47,14 @@ export default function VoiceRoomPage({ user, token, onBack }) {
     refresh()
   }, [token, refresh])
 
+  const [minutesFor, setMinutesFor] = useState(null)
+  const [scheduleFor, setScheduleFor] = useState(null)
   const enterCall = (group) => { setActiveGroup(group); setView('call') }
-  const exitCall = () => { setView('list'); setActiveGroup(null); refresh() }
+  const exitCall = (groupName) => {
+    stopNotes()
+    if (hasNotes()) setMinutesFor(groupName || activeGroup?.name || '')
+    setView('list'); setActiveGroup(null); refresh()
+  }
 
   return (
     <div style={S.page}>
@@ -55,12 +65,21 @@ export default function VoiceRoomPage({ user, token, onBack }) {
       </header>
 
       {view === 'call' && activeGroup ? (
-        <CallScreen group={activeGroup} user={user} token={token} onLeave={exitCall} />
+        <CallScreen group={activeGroup} user={user} token={token} onLeave={() => exitCall(activeGroup.name)} />
       ) : (
         <GroupList
           enabled={enabled} groups={groups} loading={loading}
           token={token} onRefresh={refresh} onEnter={enterCall}
+          onSchedule={(g) => setScheduleFor(g)}
         />
+      )}
+
+      {minutesFor !== null && (
+        <MinutesModal title={minutesFor} onClose={() => setMinutesFor(null)} />
+      )}
+
+      {scheduleFor && (
+        <MeetingScheduleModal group={scheduleFor} token={token} onClose={() => setScheduleFor(null)} />
       )}
     </div>
   )
@@ -69,7 +88,7 @@ export default function VoiceRoomPage({ user, token, onBack }) {
 // ─────────────────────────────────────────────────────────────────────────────
 // 群列表 + 建群 + 加群
 // ─────────────────────────────────────────────────────────────────────────────
-function GroupList({ enabled, groups, loading, token, onRefresh, onEnter }) {
+function GroupList({ enabled, groups, loading, token, onRefresh, onEnter, onSchedule }) {
   const [newName, setNewName] = useState('')
   const [code, setCode] = useState('')
   const [creating, setCreating] = useState(false)
@@ -158,6 +177,7 @@ function GroupList({ enabled, groups, loading, token, onRefresh, onEnter }) {
                 <span style={S.codeChip} onClick={() => copyCode(g.join_code)}>{g.join_code} 📋</span>
               </div>
             </div>
+            <button style={S.ghostBtn} onClick={() => onSchedule(g)} title={t('聚会排期与提醒')}>📅</button>
             <button style={S.callBtn} onClick={() => onEnter(g)} disabled={!enabled}>
               {t("📞 进入")}
             </button>
@@ -321,10 +341,27 @@ function CallScreen({ group, user, token, onLeave }) {
           if (pub?.kind !== 'video') track.detach().forEach(el => el.remove())
           onChange()
         })
+        // 祷告会聚合：接收别人广播的转写行（带名字），拼成全房间共同记录
+        .on(RoomEvent.DataReceived, (payload) => {
+          try {
+            const m = JSON.parse(new TextDecoder().decode(payload))
+            if (m && m.k === 'pn') addRemoteLine(m.name, m.text)
+          } catch { /* 非本功能数据，忽略 */ }
+        })
 
       try {
         await room.connect(creds.url, creds.token)
         await room.localParticipant.setMicrophoneEnabled(true)
+        // 自己的转写行实时广播给全房间（reliable 数据通道）
+        const enc = new TextEncoder()
+        setLineSink((line) => {
+          try {
+            room.localParticipant.publishData(
+              enc.encode(JSON.stringify({ k: 'pn', name: line.name, text: line.text })),
+              { reliable: true },
+            )
+          } catch { /* noop */ }
+        })
         if (!cancelled) { setStatus('live'); setMicOn(true); sync() }
       } catch (e) {
         if (!cancelled) {
@@ -337,6 +374,7 @@ function CallScreen({ group, user, token, onLeave }) {
     start()
     return () => {
       cancelled = true
+      setLineSink(null)
       try { krispRef.current?.dispose?.() } catch {}
       try { e2eeWorkerRef.current?.terminate?.() } catch {}
       e2eeWorkerRef.current = null
@@ -533,6 +571,8 @@ function CallScreen({ group, user, token, onLeave }) {
           <div style={{ fontSize: 22 }}>✨</div>
           <div style={S.ctrlLabel}>{denoise ? t("AI降噪开") : t("AI降噪")}</div>
         </button>
+        <NotesButton disabled={status !== 'live'} style={S.ctrlBtn} labelStyle={S.ctrlLabel}
+          selfName={user?.nickname || (user?.email || '').split('@')[0] || t('弟兄姐妹')} />
         <button onClick={hangUp} style={{ ...S.ctrlBtn, background: '#ff3b30' }}>
           <div style={{ fontSize: 22 }}>📴</div>
           <div style={S.ctrlLabel}>{t("挂断")}</div>

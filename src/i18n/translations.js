@@ -26,6 +26,10 @@ const namespacedZh = {
   'home.zoom.mid': '中景',
   'home.zoom.near': '近景',
 
+  'home.quick.bibleSearch': '经文搜索',
+  'home.quick.groupHub': '小组中心',
+  'home.snapshot.memoryDeck': '背经卡',
+  'home.snapshot.exportData': '数据导出',
   'home.quick.voice': '音视频通话',
   'home.quick.communion': '群聊',
   'home.quick.bibleMaps': '圣经地图',
@@ -78,6 +82,10 @@ const namespacedEn = {
   'home.zoom.mid': 'Mid',
   'home.zoom.near': 'Near',
 
+  'home.quick.bibleSearch': 'Verse Search',
+  'home.quick.groupHub': 'Groups',
+  'home.snapshot.memoryDeck': 'Memory Cards',
+  'home.snapshot.exportData': 'Export',
   'home.quick.voice': 'Voice & Video',
   'home.quick.communion': 'Group Chat',
   'home.quick.bibleMaps': 'Bible Maps',

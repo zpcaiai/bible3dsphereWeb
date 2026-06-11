@@ -47,6 +47,10 @@ const MorningDewPage = lazy(() => import('./MorningDewPage'))
 const EngineeringPage = lazy(() => import('./EngineeringPage'))
 const BibleMapsPage = lazy(() => import('./BibleMapsPage'))
 const BibleAtlasPage = lazy(() => import('./features/bible-map/BibleAtlasPage'))
+const BibleSearchPage = lazy(() => import('./BibleSearchPage'))
+const MemoryDeckPage = lazy(() => import('./MemoryDeckPage'))
+const ExportDataPage = lazy(() => import('./ExportDataPage'))
+const GroupHubPage = lazy(() => import('./GroupHubPage'))
 const CommunityPage = lazy(() => import('./CommunityPage'))
 const VoiceRoomPage = lazy(() => import('./VoiceRoomPage'))
 const CommunionPage = lazy(() => import('./CommunionPage'))
@@ -1693,6 +1697,8 @@ function AppContent() {
               {/* 圣经地图 / 语音通话 快捷入口（置于今日灵命快照上方）*/}
               <div style={{ display: 'flex', gap: '8px', margin: '0 0 4px' }}>
                 {[
+                  { icon: '🔍', label: t('home.quick.bibleSearch'), panel: 'bible-search' },
+                  { icon: '👥', label: t('home.quick.groupHub'), panel: 'group-hub' },
                   { icon: '🎙', label: t('home.quick.voice'), panel: 'voice' },
                   { icon: '💬', label: t('home.quick.communion'), panel: 'communion' },
                   { icon: '🗺', label: t('home.quick.bibleMaps'), panel: 'bible-maps' },
@@ -1760,6 +1766,8 @@ function AppContent() {
                       { icon: '📈', label: t('home.snapshot.growth'), panel: 'engineering' },
                       { icon: '🤝', label: t('home.snapshot.partner'), panel: 'partner' },
                       { icon: '📖', label: t('home.snapshot.bibleReading'), panel: 'bible-reading' },
+                      { icon: '🃏', label: t('home.snapshot.memoryDeck'), panel: 'memory-deck' },
+                      { icon: '📦', label: t('home.snapshot.exportData'), panel: 'export-data' },
                     ].map((item, i) => (
                       <button key={i}
                         onClick={() => item.action ? item.action() : handlePanelSwitch(item.panel)}
@@ -2898,7 +2906,7 @@ function AppContent() {
           <div className="page-overlay" style={{ zIndex: 400 }}>
             {user ? (
               <Suspense fallback={null}>
-                <BibleReadingPage user={user} token={getToken()} onBack={() => setActivePanel('sphere')} />
+                <BibleReadingPage user={user} token={getToken()} onBack={() => setActivePanel('sphere')} onOpenPanel={(panel) => setActivePanel(panel)} />
               </Suspense>
             ) : showLogin ? renderInlineLogin() : null}
           </div>
@@ -2909,6 +2917,45 @@ function AppContent() {
           <div className="page-overlay">
             <Suspense fallback={null}>
               <EngineeringPage onBack={() => setActivePanel('sphere')} user={user} token={getToken()} />
+            </Suspense>
+          </div>
+        )}
+
+        {/* 经文搜索（语义检索） */}
+        {activePanel === 'bible-search' && (
+          <div className="page-overlay">
+            <Suspense fallback={null}>
+              <BibleSearchPage
+                onBack={() => setActivePanel('sphere')}
+                onOpenMap={(panel) => setActivePanel(panel)}
+              />
+            </Suspense>
+          </div>
+        )}
+
+        {/* 背经卡（间隔重复） */}
+        {activePanel === 'memory-deck' && (
+          <div className="page-overlay">
+            <Suspense fallback={null}>
+              <MemoryDeckPage onBack={() => setActivePanel('sphere')} />
+            </Suspense>
+          </div>
+        )}
+
+        {/* 个人数据导出 */}
+        {activePanel === 'export-data' && (
+          <div className="page-overlay">
+            <Suspense fallback={null}>
+              <ExportDataPage onBack={() => setActivePanel('sphere')} />
+            </Suspense>
+          </div>
+        )}
+
+        {/* 小组中心（聚合：聊天/语音/祷告/排期） */}
+        {activePanel === 'group-hub' && (
+          <div className="page-overlay">
+            <Suspense fallback={null}>
+              <GroupHubPage user={user} token={getToken()} onBack={() => setActivePanel('sphere')} onOpenPanel={(p) => setActivePanel(p)} />
             </Suspense>
           </div>
         )}

@@ -1,10 +1,13 @@
 // 全局实时根组件：在 App 顶层挂载一次。负责
 //   1) 用单例 store 维持唯一的 WebSocket 连接（按登录状态启停）
 //   2) 渲染**全局来电弹窗 + 通话面板**——无论用户在哪个页面都能接到来电。
-import { useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import realtimeStore from './realtimeStore'
 import { useRealtimeState } from './useRealtimeStore'
 import LiveKitCall from './LiveKitCall'
+import MinutesModal from './MinutesModal'
+import VoicemailModal from './VoicemailModal'
+import { hasNotes } from './callNotes'
 import { t } from '../i18n/runtime'
 
 export default function RealtimeRoot({ user }) {
@@ -18,7 +21,17 @@ export default function RealtimeRoot({ user }) {
     if (!user) realtimeStore.stop()
   }, [user])
 
-  const { incomingCall, activeCall } = useRealtimeState()
+  const { incomingCall, activeCall, missedPeer } = useRealtimeState()
+
+  // 通话结束后：若开过「记录」，弹出 AI 纪要
+  const [minutesFor, setMinutesFor] = useState(null)
+  const prevCallRef = useRef(null)
+  useEffect(() => {
+    if (prevCallRef.current && !activeCall && hasNotes()) {
+      setMinutesFor(prevCallRef.current.title || '')
+    }
+    prevCallRef.current = activeCall
+  }, [activeCall])
 
   if (!user) return null
 
@@ -35,6 +48,14 @@ export default function RealtimeRoot({ user }) {
           video={!!activeCall.video}
           onLeave={() => realtimeStore.endCall()}
         />
+      )}
+
+      {minutesFor !== null && !activeCall && (
+        <MinutesModal title={minutesFor} onClose={() => setMinutesFor(null)} />
+      )}
+
+      {missedPeer && !activeCall && !incomingCall && (
+        <VoicemailModal peer={missedPeer} onClose={() => realtimeStore.clearMissed()} />
       )}
 
       {incomingCall && !activeCall && (
