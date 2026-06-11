@@ -2214,15 +2214,11 @@ function AppContent() {
                     >
                       {faithQaLoading ? t("⏳ 思考中...") : t("📖 提问")}
                     </button>
-                    {/* 经文搜索：凭印象找经文（语义检索），置于提问按钮之下 */}
+                    {/* 经文搜索：凭印象找经文（语义检索），置于提问按钮之下，同款蓝色 */}
                     <button
                       type="button"
-                      style={{
-                        width: '100%', marginTop: '8px', padding: '11px 0',
-                        background: 'rgba(232,176,75,0.12)', border: '1px solid rgba(232,176,75,0.4)',
-                        borderRadius: '12px', color: '#ffe9b3', fontSize: '14px', fontWeight: 600,
-                        cursor: 'pointer', fontFamily: 'inherit',
-                      }}
+                      className="primary-btn"
+                      style={{ width: '100%', marginTop: '8px' }}
                       onClick={() => handlePanelSwitch('bible-search')}
                     >
                       {t("🔍 经文搜索（凭印象找经文）")}
