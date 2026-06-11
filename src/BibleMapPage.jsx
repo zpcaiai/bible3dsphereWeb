@@ -26,8 +26,20 @@ function coordsFor(feature, variant) {
   return Array.isArray(c) && c.length >= 2 && Number.isFinite(+c[0]) && Number.isFinite(+c[1]) ? c : null
 }
 
-// 语音朗读（SpeechSynthesis，免素材、离线可用）
-function speak(text) {
+// 语音朗读：优先后端自然女声（edge-tts 晓晓），失败回退浏览器原生
+let _mapAudio = null
+async function speak(text) {
+  try {
+    if (_mapAudio) { try { _mapAudio.pause() } catch (e) {} _mapAudio = null }
+    const { fetchTTS } = await import('./api')
+    const en = !/[一-鿿]/.test(text)
+    const blob = await fetchTTS(text, en ? 'en-US' : 'zh-CN', en ? 'en-US-AriaNeural' : 'zh-CN-XiaoxiaoNeural')
+    const audio = new Audio(URL.createObjectURL(blob))
+    _mapAudio = audio
+    audio.onended = () => { try { URL.revokeObjectURL(audio.src) } catch (e) {} }
+    await audio.play()
+    return
+  } catch (e) { /* 后端不可用 → 原生兜底 */ }
   try {
     if (!('speechSynthesis' in window)) return
     window.speechSynthesis.cancel()
