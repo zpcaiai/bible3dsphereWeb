@@ -1697,8 +1697,6 @@ function AppContent() {
               {/* 圣经地图 / 语音通话 快捷入口（置于今日灵命快照上方）*/}
               <div style={{ display: 'flex', gap: '8px', margin: '0 0 4px' }}>
                 {[
-                  { icon: '🔍', label: t('home.quick.bibleSearch'), panel: 'bible-search' },
-                  { icon: '👥', label: t('home.quick.groupHub'), panel: 'group-hub' },
                   { icon: '🎙', label: t('home.quick.voice'), panel: 'voice' },
                   { icon: '💬', label: t('home.quick.communion'), panel: 'communion' },
                   { icon: '🗺', label: t('home.quick.bibleMaps'), panel: 'bible-maps' },
@@ -2213,6 +2211,19 @@ function AppContent() {
                       }}
                     >
                       {faithQaLoading ? t("⏳ 思考中...") : t("📖 提问")}
+                    </button>
+                    {/* 经文搜索：凭印象找经文（语义检索），置于提问按钮之下 */}
+                    <button
+                      type="button"
+                      style={{
+                        width: '100%', marginTop: '8px', padding: '11px 0',
+                        background: 'rgba(232,176,75,0.12)', border: '1px solid rgba(232,176,75,0.4)',
+                        borderRadius: '12px', color: '#ffe9b3', fontSize: '14px', fontWeight: 600,
+                        cursor: 'pointer', fontFamily: 'inherit',
+                      }}
+                      onClick={() => handlePanelSwitch('bible-search')}
+                    >
+                      {t("🔍 经文搜索（凭印象找经文）")}
                     </button>
                     {/* 短视频功能已隐藏 */}
                   </div>
@@ -2755,6 +2766,7 @@ function AppContent() {
                 user={user}
                 token={getToken()}
                 onBack={() => setActivePanel('sphere')}
+                onOpenPanel={(p) => setActivePanel(p)}
               />
             ) : showLogin ? renderInlineLogin() : null}
           </div>

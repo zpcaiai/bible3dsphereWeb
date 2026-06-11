@@ -167,7 +167,7 @@ function Avatar({ nickname }) {
   )
 }
 
-export default function PrayerWallPage({ user, token, onBack }) {
+export default function PrayerWallPage({ user, token, onBack, onOpenPanel }) {
   const [items, setItems] = useState([])
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(true)
@@ -545,6 +545,29 @@ export default function PrayerWallPage({ user, token, onBack }) {
       {/* ===== 代祷墙子页 ===== */}
       {subTab === 'wall' && (
       <>
+      {/* 小组中心入口：小组的聊天/语音/祷告/聚会排期聚合页 */}
+      {onOpenPanel && (
+        <button
+          onClick={() => onOpenPanel('group-hub')}
+          style={{
+            display: 'flex', alignItems: 'center', gap: 10, width: 'calc(100% - 28px)',
+            margin: '10px 14px 2px', padding: '11px 14px', boxSizing: 'border-box',
+            background: 'linear-gradient(135deg, rgba(232,176,75,0.14), rgba(125,211,252,0.1))',
+            border: '1px solid rgba(232,176,75,0.4)', borderRadius: 14,
+            color: '#ffe9b3', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit',
+          }}
+        >
+          <span style={{ fontSize: 20 }}>👥</span>
+          <span style={{ flex: 1, textAlign: 'left' }}>
+            {t("小组中心")}
+            <span style={{ display: 'block', fontSize: 11.5, fontWeight: 400, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>
+              {t("小组聊天 · 语音祷告会 · 聚会排期，一处直达")}
+            </span>
+          </span>
+          <span style={{ color: 'rgba(255,255,255,0.5)' }}>›</span>
+        </button>
+      )}
+
       {/* Success toast */}
       {submitDone && (
         <div className="pw-toast">{t("✅ 祷告已提交，愿神垂听")}</div>
