@@ -1,12 +1,13 @@
 // BibleMapsPage.jsx — 圣经地图中心：12 张交互地图 + 耶路撒冷数字孪生沙盘
-import { lazy, Suspense, useState } from 'react'
+import { Suspense, useState } from 'react'
+import lazyWithRetry from './lazyWithRetry'
 import BackButton from './BackButton'
 import BibleMap from './BibleMap'
 import { BIBLE_MAPS } from './data/bibleMapsData'
 import { t } from './i18n/runtime'
 import { AutoText } from './autoTranslate.jsx'
 
-const JerusalemSandbox = lazy(() => import('./JerusalemSandbox'))
+const JerusalemSandbox = lazyWithRetry(() => import('./JerusalemSandbox'))
 
 const ICONS = {
   abraham: '🏕', exodus: '🔥', joshua: '⚔️', tribes: '🧩', david: '👑', solomon: '🏛',

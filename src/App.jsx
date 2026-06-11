@@ -1,4 +1,5 @@
-import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react'
+import lazyWithRetry from './lazyWithRetry'
+import { Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import BackButton from './BackButton'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { pickVoiceFor, speechLangFor } from './voice'
@@ -14,7 +15,7 @@ import { isIosInstallable, promptInstall, subscribeToInstallPrompt } from './pwa
 import { escapeHtml } from './sanitize'
 import { getOrCreateVisitorId, verseGroupsFromResult, buildComparisonRows, formatLoginTime } from './utils'
 import { useEmotionStore } from './store'
-const EmotionSphereScene = lazy(() => import('./EmotionSphereScene').then((m) => ({ default: m.EmotionSphereScene })))
+const EmotionSphereScene = lazyWithRetry(() => import('./EmotionSphereScene').then((m) => ({ default: m.EmotionSphereScene })))
 import LoginScreen from './LoginScreen'
 import TranslatableParagraph from './TranslatableParagraph'
 import { TTSButton, TTSFullBar } from './useGlobalAudio.jsx'
@@ -23,37 +24,37 @@ import LanguageToggle from './i18n/LanguageToggle'
 import { AutoText } from './autoTranslate.jsx'
 import { t, featureLabel, formatEmotionList, getRuntimeLang, localizeEmotionName } from './i18n/runtime'
 
-const CheckInPage = lazy(() => import('./CheckInPage'))
-const ShareWallPage = lazy(() => import('./ShareWallPage'))
-const SermonJournalPage = lazy(() => import('./SermonJournalPage'))
-const PrayerWallPage = lazy(() => import('./PrayerWallPage'))
-const EvangelismPage = lazy(() => import('./EvangelismPage'))
-const SeekersClassView = lazy(() => import('./EvangelismPage').then(m => ({ default: m.SeekersClassView })))
-const DevotionJournalPage = lazy(() => import('./DevotionJournalPage'))
-const RecycleBinPage = lazy(() => import('./RecycleBinPage'))
-const DecisionSupportPage = lazy(() => import('./DecisionSupportPage'))
-const MirrorPage = lazy(() => import('./MirrorPage'))
-const DailySoulQuestionPage = lazy(() => import('./DailySoulQuestionPage'))
-const GrowthMapPage = lazy(() => import('./GrowthMapPage'))
-const SpiritualPartnerPage = lazy(() => import('./SpiritualPartnerPage'))
-const QuickDevotionPage = lazy(() => import('./QuickDevotionPage'))
-const BibleReadingPage = lazy(() => import('./BibleReadingPage'))
-const DailyDevotionPage = lazy(() => import('./DailyDevotionPage'))
-const SpiritualBooksPage = lazy(() => import('./SpiritualBooksPage'))
-const PersonalDevotionPage = lazy(() => import('./PersonalDevotionPage'))
-const ReadingPlanPage = lazy(() => import('./ReadingPlanPage'))
-const MemoryVersePage = lazy(() => import('./MemoryVersePage'))
-const MorningDewPage = lazy(() => import('./MorningDewPage'))
-const EngineeringPage = lazy(() => import('./EngineeringPage'))
-const BibleMapsPage = lazy(() => import('./BibleMapsPage'))
-const BibleAtlasPage = lazy(() => import('./features/bible-map/BibleAtlasPage'))
-const BibleSearchPage = lazy(() => import('./BibleSearchPage'))
-const MemoryDeckPage = lazy(() => import('./MemoryDeckPage'))
-const ExportDataPage = lazy(() => import('./ExportDataPage'))
-const GroupHubPage = lazy(() => import('./GroupHubPage'))
-const CommunityPage = lazy(() => import('./CommunityPage'))
-const VoiceRoomPage = lazy(() => import('./VoiceRoomPage'))
-const CommunionPage = lazy(() => import('./CommunionPage'))
+const CheckInPage = lazyWithRetry(() => import('./CheckInPage'))
+const ShareWallPage = lazyWithRetry(() => import('./ShareWallPage'))
+const SermonJournalPage = lazyWithRetry(() => import('./SermonJournalPage'))
+const PrayerWallPage = lazyWithRetry(() => import('./PrayerWallPage'))
+const EvangelismPage = lazyWithRetry(() => import('./EvangelismPage'))
+const SeekersClassView = lazyWithRetry(() => import('./EvangelismPage').then(m => ({ default: m.SeekersClassView })))
+const DevotionJournalPage = lazyWithRetry(() => import('./DevotionJournalPage'))
+const RecycleBinPage = lazyWithRetry(() => import('./RecycleBinPage'))
+const DecisionSupportPage = lazyWithRetry(() => import('./DecisionSupportPage'))
+const MirrorPage = lazyWithRetry(() => import('./MirrorPage'))
+const DailySoulQuestionPage = lazyWithRetry(() => import('./DailySoulQuestionPage'))
+const GrowthMapPage = lazyWithRetry(() => import('./GrowthMapPage'))
+const SpiritualPartnerPage = lazyWithRetry(() => import('./SpiritualPartnerPage'))
+const QuickDevotionPage = lazyWithRetry(() => import('./QuickDevotionPage'))
+const BibleReadingPage = lazyWithRetry(() => import('./BibleReadingPage'))
+const DailyDevotionPage = lazyWithRetry(() => import('./DailyDevotionPage'))
+const SpiritualBooksPage = lazyWithRetry(() => import('./SpiritualBooksPage'))
+const PersonalDevotionPage = lazyWithRetry(() => import('./PersonalDevotionPage'))
+const ReadingPlanPage = lazyWithRetry(() => import('./ReadingPlanPage'))
+const MemoryVersePage = lazyWithRetry(() => import('./MemoryVersePage'))
+const MorningDewPage = lazyWithRetry(() => import('./MorningDewPage'))
+const EngineeringPage = lazyWithRetry(() => import('./EngineeringPage'))
+const BibleMapsPage = lazyWithRetry(() => import('./BibleMapsPage'))
+const BibleAtlasPage = lazyWithRetry(() => import('./features/bible-map/BibleAtlasPage'))
+const BibleSearchPage = lazyWithRetry(() => import('./BibleSearchPage'))
+const MemoryDeckPage = lazyWithRetry(() => import('./MemoryDeckPage'))
+const ExportDataPage = lazyWithRetry(() => import('./ExportDataPage'))
+const GroupHubPage = lazyWithRetry(() => import('./GroupHubPage'))
+const CommunityPage = lazyWithRetry(() => import('./CommunityPage'))
+const VoiceRoomPage = lazyWithRetry(() => import('./VoiceRoomPage'))
+const CommunionPage = lazyWithRetry(() => import('./CommunionPage'))
 
 // React Query client for HabitsPage
 const queryClient = new QueryClient({
@@ -138,6 +139,10 @@ function AppContent() {
     try {
       if (sessionStorage.getItem('lang-switch') === '1') {
         sessionStorage.removeItem('lang-switch')
+        // 浏览器会还原刷新前的滚动位置——语言切换场景强制回顶，
+        // 避免用户停在页面中部误以为上方内容（3D 星球/提问区）消失
+        try { window.history.scrollRestoration = 'manual' } catch (e) { /* ignore */ }
+        setTimeout(() => window.scrollTo(0, 0), 0)
         const p = sessionStorage.getItem('active-panel')
         // 白名单校验：旧版本存的 panel id 可能已不存在，恢复到未知 id 会导致
         // 首页被空覆盖层遮挡/内容残缺——不合法时回首页

@@ -482,7 +482,7 @@ button, input, textarea {
 
 .mobile-app-title {
   margin: 0;
-  font-size: 20px;
+  font-size: 17px;
   font-weight: 700;
   line-height: 1.2;
   letter-spacing: -0.02em;
@@ -1776,7 +1776,7 @@ canvas {
   }
 
   .mobile-app-title {
-    font-size: 20px;
+    font-size: 17px;
   }
 
   .mobile-hero-card,
@@ -3712,7 +3712,7 @@ canvas {
   }
 
   .mobile-app-title {
-    font-size: 18px;
+    font-size: 16px;
   }
 
   .eyebrow,
