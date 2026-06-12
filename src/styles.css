@@ -5332,14 +5332,27 @@ canvas {
   background: rgba(0,0,0,0.55); backdrop-filter: blur(4px);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.communion-call-actions { display: flex; justify-content: center; gap: 16px; }
+.communion-call-actions {
+  --call-ctrl-size: clamp(42px, 11vw, 48px);
+  --call-ctrl-gap: clamp(4px, 1.6vw, 10px);
+  display: flex; justify-content: center; flex-wrap: nowrap;
+  gap: var(--call-ctrl-gap);
+  transform: translateY(calc(var(--call-ctrl-size) / -2));
+  margin-bottom: calc(var(--call-ctrl-size) / -2);
+}
 .communion-call-ctrl {
-  display: flex; flex-direction: column; align-items: center; gap: 4px;
-  border: none; border-radius: 16px; padding: 12px 16px; min-width: 84px;
+  width: var(--call-ctrl-size); min-width: var(--call-ctrl-size); min-height: var(--call-ctrl-size);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  border: none; border-radius: clamp(9px, 2.6vw, 12px); padding: 4px 3px;
   color: #fff; cursor: pointer; font-family: inherit;
+  box-sizing: border-box;
 }
 .communion-call-ctrl:disabled { opacity: .45; cursor: default; }
-.communion-call-ctrl-label { font-size: 11px; }
+.communion-call-ctrl-icon { font-size: clamp(13px, 3.6vw, 16px); line-height: 1; }
+.communion-call-ctrl-label {
+  font-size: clamp(7.5px, 2.2vw, 9px); line-height: 1.05;
+  max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
 
 /* 来电弹窗 */
 .communion-invite-overlay {

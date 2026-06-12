@@ -235,23 +235,32 @@ export default function LiveKitCall({ url, token, title, selfName, outgoing, onL
         <div className="communion-call-actions">
           <button className="communion-call-ctrl" onClick={toggleMic} disabled={status !== 'live'}
             style={{ background: micOn ? 'rgba(255,255,255,.12)' : '#ff6b6b' }}>
-            <div style={{ fontSize: 22 }}>{micOn ? '🎙' : '🔇'}</div>
+            <div className="communion-call-ctrl-icon">{micOn ? '🎙' : '🔇'}</div>
             <div className="communion-call-ctrl-label">{micOn ? t("静音") : t("取消静音")}</div>
           </button>
           <button className="communion-call-ctrl" onClick={toggleCam} disabled={status !== 'live'}
             style={{ background: camOn ? 'rgba(52,199,89,.25)' : 'rgba(255,255,255,.12)' }}>
-            <div style={{ fontSize: 22 }}>{camOn ? '📹' : '📷'}</div>
+            <div className="communion-call-ctrl-icon">{camOn ? '📹' : '📷'}</div>
             <div className="communion-call-ctrl-label">{camOn ? t("关闭摄像头") : t("开启摄像头")}</div>
           </button>
           <button className="communion-call-ctrl" onClick={toggleShare} disabled={status !== 'live'}
             style={{ background: shareOn ? 'rgba(56,189,248,.28)' : 'rgba(255,255,255,.12)' }}>
-            <div style={{ fontSize: 22 }}>🖥</div>
+            <div className="communion-call-ctrl-icon">🖥</div>
             <div className="communion-call-ctrl-label">{shareOn ? t("停止共享") : t("共享屏幕")}</div>
           </button>
           <NotesButton className="communion-call-ctrl" disabled={status !== 'live'}
-            labelStyle={{ fontSize: 11 }} selfName={selfName || ''} />
+            iconStyle={{ fontSize: 'clamp(13px, 3.6vw, 16px)', lineHeight: 1 }}
+            labelStyle={{
+              fontSize: 'clamp(7.5px, 2.2vw, 9px)',
+              lineHeight: 1.05,
+              maxWidth: '100%',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+            }}
+            selfName={selfName || ''} />
           <button className="communion-call-ctrl" onClick={hangUp} style={{ background: '#ff3b30' }}>
-            <div style={{ fontSize: 22 }}>📴</div>
+            <div className="communion-call-ctrl-icon">📴</div>
             <div className="communion-call-ctrl-label">{t("挂断")}</div>
           </button>
         </div>

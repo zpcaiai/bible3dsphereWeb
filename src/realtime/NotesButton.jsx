@@ -10,7 +10,7 @@ import { getRuntimeLang, t } from '../i18n/runtime'
 
 const toast = (m, ty = 'info') => window.showToast?.(m, ty)
 
-export default function NotesButton({ className, style = {}, labelStyle = {}, disabled, selfName = '' }) {
+export default function NotesButton({ className, style = {}, iconStyle = {}, labelStyle = {}, disabled, selfName = '' }) {
   const [st, setSt] = useState(getState())
   const prevEngineRef = useRef(st.engine)
   useEffect(() => subscribe((s) => {
@@ -50,7 +50,7 @@ export default function NotesButton({ className, style = {}, labelStyle = {}, di
       disabled={disabled}
       style={{ position: 'relative', background: st.active ? 'rgba(232,176,75,0.3)' : 'rgba(255,255,255,0.1)', ...style }}
     >
-      <div style={{ fontSize: 22 }}>{st.active ? '🔴' : '📝'}</div>
+      <div style={{ fontSize: 22, ...iconStyle }}>{st.active ? '🔴' : '📝'}</div>
       <div style={labelStyle}>{st.active ? `${t('记录中')}${engineTag} ${st.lines}` : `${t('记录')}${engineTag}`}</div>
       {/* 引擎切换小徽章（记录中不可切） */}
       {!st.active && !disabled && (

@@ -553,28 +553,28 @@ function CallScreen({ group, user, token, onLeave }) {
       <div style={S.controls}>
         <button onClick={toggleMic} style={{ ...S.ctrlBtn, background: micOn ? 'rgba(255,255,255,0.1)' : '#ff6b6b' }}
           disabled={status !== 'live'}>
-          <div style={{ fontSize: 22 }}>{micOn ? '🎙' : '🔇'}</div>
+          <div style={S.ctrlIcon}>{micOn ? '🎙' : '🔇'}</div>
           <div style={S.ctrlLabel}>{micOn ? t("静音") : t("取消静音")}</div>
         </button>
         <button onClick={toggleCam} style={{ ...S.ctrlBtn, background: camOn ? 'rgba(52,199,89,0.25)' : 'rgba(255,255,255,0.1)' }}
           disabled={status !== 'live'}>
-          <div style={{ fontSize: 22 }}>{camOn ? '📹' : '📷'}</div>
+          <div style={S.ctrlIcon}>{camOn ? '📹' : '📷'}</div>
           <div style={S.ctrlLabel}>{camOn ? t("关闭摄像头") : t("开启摄像头")}</div>
         </button>
         <button onClick={toggleShare} style={{ ...S.ctrlBtn, background: shareOn ? 'rgba(56,189,248,0.28)' : 'rgba(255,255,255,0.1)' }}
           disabled={status !== 'live'}>
-          <div style={{ fontSize: 22 }}>🖥</div>
+          <div style={S.ctrlIcon}>🖥</div>
           <div style={S.ctrlLabel}>{shareOn ? t("停止共享") : t("共享屏幕")}</div>
         </button>
         <button onClick={toggleDenoise} style={{ ...S.ctrlBtn, background: denoise ? 'rgba(52,199,89,0.25)' : 'rgba(255,255,255,0.1)' }}
           disabled={status !== 'live'}>
-          <div style={{ fontSize: 22 }}>✨</div>
+          <div style={S.ctrlIcon}>✨</div>
           <div style={S.ctrlLabel}>{denoise ? t("AI降噪开") : t("AI降噪")}</div>
         </button>
-        <NotesButton disabled={status !== 'live'} style={S.ctrlBtn} labelStyle={S.ctrlLabel}
+        <NotesButton disabled={status !== 'live'} style={S.ctrlBtn} iconStyle={S.ctrlIcon} labelStyle={S.ctrlLabel}
           selfName={user?.nickname || (user?.email || '').split('@')[0] || t('弟兄姐妹')} />
         <button onClick={hangUp} style={{ ...S.ctrlBtn, background: '#ff3b30' }}>
-          <div style={{ fontSize: 22 }}>📴</div>
+          <div style={S.ctrlIcon}>📴</div>
           <div style={S.ctrlLabel}>{t("挂断")}</div>
         </button>
       </div>
@@ -583,6 +583,10 @@ function CallScreen({ group, user, token, onLeave }) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+const CALL_CTRL_SIZE = 'clamp(42px, 11vw, 48px)'
+const CALL_CTRL_GAP = 'clamp(4px, 1.6vw, 10px)'
+const CALL_CTRL_SHIFT = 'calc(clamp(42px, 11vw, 48px) / -2)'
+
 const S = {
   page: { position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', background: '#0d1117', color: '#fff', fontFamily: 'inherit' },
   header: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 14px', borderBottom: '1px solid rgba(255,255,255,0.1)', background: 'rgba(13,17,23,0.98)', flexShrink: 0 },
@@ -627,7 +631,40 @@ const S = {
   tileName: { fontSize: 12, color: 'rgba(255,255,255,0.85)', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' },
   mutedTag: { fontSize: 10, color: 'rgba(255,255,255,0.4)' },
   waitHint: { gridColumn: '1 / -1', textAlign: 'center', color: 'rgba(255,255,255,0.45)', fontSize: 13, lineHeight: 1.7, padding: 12 },
-  controls: { display: 'flex', justifyContent: 'center', gap: 18, padding: '14px 16px 26px', borderTop: '1px solid rgba(255,255,255,0.08)', flexShrink: 0 },
-  ctrlBtn: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, border: 'none', borderRadius: 16, padding: '12px 16px', color: '#fff', cursor: 'pointer', minWidth: 76 },
-  ctrlLabel: { fontSize: 11 },
+  controls: {
+    display: 'flex',
+    justifyContent: 'center',
+    flexWrap: 'nowrap',
+    gap: CALL_CTRL_GAP,
+    padding: '6px 12px calc(14px + env(safe-area-inset-bottom))',
+    borderTop: '1px solid rgba(255,255,255,0.08)',
+    flexShrink: 0,
+    transform: `translateY(${CALL_CTRL_SHIFT})`,
+    marginBottom: CALL_CTRL_SHIFT,
+  },
+  ctrlBtn: {
+    width: CALL_CTRL_SIZE,
+    minWidth: CALL_CTRL_SIZE,
+    minHeight: CALL_CTRL_SIZE,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 2,
+    border: 'none',
+    borderRadius: 'clamp(9px, 2.6vw, 12px)',
+    padding: '4px 3px',
+    color: '#fff',
+    cursor: 'pointer',
+    boxSizing: 'border-box',
+  },
+  ctrlIcon: { fontSize: 'clamp(13px, 3.6vw, 16px)', lineHeight: 1 },
+  ctrlLabel: {
+    fontSize: 'clamp(7.5px, 2.2vw, 9px)',
+    lineHeight: 1.05,
+    maxWidth: '100%',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+  },
 }
