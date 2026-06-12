@@ -9,6 +9,7 @@
  */
 
 import { useState, useEffect } from 'react'
+import SinPatternLibrary from './features/spiritual-formation/components/SinPatternLibrary'
 import { API_BASE } from './api'
 import { getToken } from './auth'
 
@@ -50,6 +51,7 @@ export default function HabitsPage({ user, token: propToken, embedded = false, o
   const [todayCount, setTodayCount] = useState(0)
   const [loading, setLoading]       = useState(true)
   const [activeView, setActiveView] = useState('today')  // 'today' | 'add'
+  const [showLibrary, setShowLibrary] = useState(false)
   const [notes, setNotes]           = useState({})       // habitId → draft note
   const [saving, setSaving]         = useState({})       // habitId → bool
   const [addingPreset, setAddingPreset] = useState(null)
@@ -230,6 +232,27 @@ export default function HabitsPage({ user, token: propToken, embedded = false, o
               borderRadius: 3,
               transition: 'width 0.4s',
             }} />
+          </div>
+        )}
+
+        {/* 罪的模式库入口 */}
+        <button
+          onClick={() => setShowLibrary(v => !v)}
+          style={{
+            width: '100%', textAlign: 'left', padding: '10px 12px',
+            borderRadius: 8, border: '1px solid rgba(255,149,0,0.3)',
+            background: 'rgba(255,149,0,0.08)', color: '#ffd699',
+            cursor: 'pointer', fontSize: 13, fontWeight: 600,
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            marginTop: 12,
+          }}
+        >
+          <span>🔍 罪的模式库 — 在神的光中审视内心模式</span>
+          <span>{showLibrary ? '▲' : '▼'}</span>
+        </button>
+        {showLibrary && (
+          <div style={{ marginTop: 8 }}>
+            <SinPatternLibrary />
           </div>
         )}
 

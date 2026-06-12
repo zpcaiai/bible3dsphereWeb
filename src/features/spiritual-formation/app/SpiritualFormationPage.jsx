@@ -19,22 +19,20 @@ import DailySpiritualScanForm from '../components/DailySpiritualScanForm'
 import FruitTree from '../components/FruitTree'
 import GraceRecoveryFlow from '../components/GraceRecoveryFlow'
 import NewCreationMap from '../components/NewCreationMap'
-import SinPatternLibrary from '../components/SinPatternLibrary'
 import ThoughtCaptiveFlow from '../components/ThoughtCaptiveFlow'
 import TransformationPlanDashboard from '../components/TransformationPlanDashboard'
 import WeeklyReviewPanel from '../components/WeeklyReviewPanel'
 import './spiritual-formation.css'
 
 const TABS = [
-  ['home', 'Home'],
-  ['library', 'Library'],
-  ['daily', 'Daily Scan'],
-  ['thought', 'Thought Captive'],
-  ['recovery', 'Grace Recovery'],
-  ['plans', 'Plans'],
-  ['fruit', 'Fruit Tree'],
-  ['weekly', 'Weekly Review'],
-  ['map', 'New Creation Map'],
+  ['home', '首页'],
+  ['daily', '每日扫描'],
+  ['thought', '思想俘虏'],
+  ['recovery', '恩典恢复'],
+  ['plans', '转化计划'],
+  ['fruit', '圣灵果实'],
+  ['weekly', '每周回顾'],
+  ['map', '新造地图'],
 ]
 
 function resolveUserId(user) {
@@ -124,7 +122,6 @@ export default function SpiritualFormationPage({ user, onBack }) {
         </section>
       )}
 
-      {tab === 'library' && <SinPatternLibrary />}
       {tab === 'daily' && <DailySpiritualScanForm userId={userId} onSave={(entry) => saveAndRefresh(saveDailyExamen, entry)} />}
       {tab === 'thought' && <ThoughtCaptiveFlow userId={userId} onSave={(entry) => saveAndRefresh(saveThoughtCaptiveEntry, entry)} />}
       {tab === 'recovery' && <GraceRecoveryFlow userId={userId} onSave={(entry) => saveAndRefresh(saveGraceRecoveryEntry, entry)} />}
