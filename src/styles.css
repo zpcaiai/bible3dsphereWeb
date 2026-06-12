@@ -482,7 +482,7 @@ button, input, textarea {
 
 .mobile-app-title {
   margin: 0;
-  font-size: 17px;
+  font-size: 20px;
   font-weight: 700;
   line-height: 1.2;
   letter-spacing: -0.02em;
@@ -671,22 +671,14 @@ button, input, textarea {
   bottom: 0;
   padding: 8px 8px calc(8px + var(--safe-bottom));
   display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: minmax(58px, 1fr);
+  grid-template-columns: repeat(8, 1fr);
   gap: 2px;
   z-index: 1000;
   background: rgba(0, 0, 0, 0.75);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   border-top: 0.5px solid var(--ios-border);
-  min-height: calc(var(--tab-bar-height) + var(--safe-bottom));
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  scrollbar-width: none;
-}
-
-.mobile-bottom-nav::-webkit-scrollbar {
-  display: none;
+  height: var(--tab-bar-height);
 }
 
 .mobile-nav-item {
@@ -704,7 +696,6 @@ button, input, textarea {
   gap: 3px;
   transition: color 0.2s ease;
   padding: 4px 4px;
-  min-width: 0;
 }
 
 .mobile-nav-item.active {
@@ -722,226 +713,6 @@ button, input, textarea {
   font-size: 9px;
   line-height: 1;
   font-weight: 500;
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* ── Planet Home ─────────────────────────────────────────────────────── */
-.planet-home {
-  width: 100%;
-  height: 100%;
-  overflow-y: auto;
-  color: #fff;
-  background:
-    radial-gradient(circle at 50% 8%, rgba(90, 200, 250, 0.14), transparent 28%),
-    radial-gradient(circle at 12% 20%, rgba(255, 214, 10, 0.10), transparent 24%),
-    linear-gradient(180deg, #05060c 0%, #080a12 100%);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-}
-
-.planet-home-topbar {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  background: rgba(5, 6, 12, 0.76);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(14px) saturate(160%);
-  -webkit-backdrop-filter: blur(14px) saturate(160%);
-}
-
-.planet-back-btn {
-  width: 38px;
-  height: 38px;
-  flex: 0 0 38px;
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.08);
-  color: #fff;
-  cursor: pointer;
-  font-size: 24px;
-  line-height: 1;
-}
-
-.planet-title-group {
-  min-width: 0;
-}
-
-.planet-title-group h1 {
-  margin: 0;
-  font-size: 18px;
-  line-height: 1.2;
-  font-weight: 700;
-}
-
-.planet-title-group p {
-  margin: 2px 0 0;
-  color: rgba(255, 255, 255, 0.54);
-  font-size: 11px;
-  line-height: 1.4;
-}
-
-.planet-hero {
-  max-width: 680px;
-  margin: 0 auto;
-  padding: 18px 18px 20px;
-  text-align: center;
-}
-
-.planet-mark {
-  font-size: 48px;
-  line-height: 1;
-  margin-bottom: 8px;
-}
-
-.planet-hero p {
-  max-width: 480px;
-  margin: 0 auto;
-  color: rgba(255, 255, 255, 0.68);
-  font-size: 13.5px;
-  line-height: 1.75;
-}
-
-.planet-card-list {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 12px;
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 0 16px 110px;
-}
-
-.planet-card {
-  border: 1px solid color-mix(in srgb, var(--planet-color) 36%, transparent);
-  border-radius: 16px;
-  background:
-    linear-gradient(135deg, color-mix(in srgb, var(--planet-color) 18%, transparent), rgba(255, 255, 255, 0.03)),
-    rgba(14, 16, 26, 0.78);
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.24);
-  overflow: hidden;
-}
-
-.planet-card-main {
-  width: 100%;
-  display: grid;
-  grid-template-columns: 36px minmax(0, 1fr);
-  gap: 12px;
-  align-items: start;
-  padding: 16px 16px 10px;
-  border: 0;
-  background: transparent;
-  color: inherit;
-  text-align: left;
-  cursor: pointer;
-}
-
-.planet-card-main:hover,
-.planet-card-main:focus-visible {
-  background: rgba(255, 255, 255, 0.05);
-}
-
-.planet-card-icon {
-  font-size: 30px;
-  line-height: 1.1;
-}
-
-.planet-card-copy {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
-
-.planet-card-title {
-  font-size: 17px;
-  line-height: 1.25;
-  font-weight: 750;
-}
-
-.planet-card-meta {
-  margin-top: 2px;
-  color: var(--planet-color);
-  font-size: 10.5px;
-  line-height: 1.45;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-}
-
-.planet-card-question {
-  margin-top: 9px;
-  color: rgba(255, 255, 255, 0.84);
-  font-size: 13.5px;
-  line-height: 1.6;
-}
-
-.planet-chip-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  padding: 0 16px 16px 64px;
-}
-
-.planet-chip {
-  min-height: 32px;
-  padding: 6px 13px;
-  border: 1px solid color-mix(in srgb, var(--planet-color) 42%, transparent);
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--planet-color) 18%, transparent);
-  color: var(--planet-color);
-  cursor: pointer;
-  font-size: 12.5px;
-  font-weight: 750;
-}
-
-.planet-chip:hover,
-.planet-chip:focus-visible {
-  background: color-mix(in srgb, var(--planet-color) 26%, transparent);
-}
-
-.planet-card-note {
-  margin: -4px 16px 16px 64px;
-  color: rgba(255, 255, 255, 0.48);
-  font-size: 11px;
-  line-height: 1.55;
-}
-
-.planet-footer {
-  max-width: 560px;
-  margin: -88px auto 0;
-  padding: 0 18px 112px;
-  color: rgba(255, 255, 255, 0.36);
-  text-align: center;
-  font-size: 11px;
-  line-height: 1.8;
-}
-
-@media (max-width: 420px) {
-  .planet-home-topbar {
-    padding-inline: 12px;
-  }
-
-  .planet-card-list {
-    padding-inline: 12px;
-  }
-
-  .planet-card-main {
-    grid-template-columns: 32px minmax(0, 1fr);
-    padding: 14px 14px 9px;
-  }
-
-  .planet-card-icon {
-    font-size: 27px;
-  }
-
-  .planet-chip-row,
-  .planet-card-note {
-    margin-left: 0;
-    padding-left: 14px;
-  }
 }
 
 @keyframes paneIn {
@@ -1776,7 +1547,7 @@ canvas {
   }
 
   .mobile-app-title {
-    font-size: 17px;
+    font-size: 20px;
   }
 
   .mobile-hero-card,
@@ -1922,20 +1693,15 @@ canvas {
   z-index: 10;
 }
 
-/* 统一返回按钮：圆形磨砂 + 白箭头（.app-back-btn 组件 + 旧 .checkin-back-btn 复用同款） */
-.app-back-btn, .checkin-back-btn {
-  width: 40px; height: 40px;
-  background: rgba(255,255,255,0.14);
-  border: 1px solid rgba(255,255,255,0.25); border-radius: 50%;
-  color: #fff;
-  display: inline-flex; align-items: center; justify-content: center;
-  cursor: pointer; flex-shrink: 0; padding: 0;
-  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
-  transition: background .15s, transform .15s;
+.checkin-back-btn {
+  width: 32px; height: 32px;
+  background: rgba(255,255,255,0.08);
+  border: none; border-radius: 8px;
+  color: rgba(255,255,255,0.75);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; flex-shrink: 0;
 }
-.app-back-btn:hover, .checkin-back-btn:hover { background: rgba(255,255,255,0.24); }
-.app-back-btn:active, .checkin-back-btn:active { transform: scale(0.92); }
-.app-back-btn > svg, .checkin-back-btn > svg { width: 22px; height: 22px; }
+.checkin-back-btn:hover { background: rgba(255,255,255,0.14); }
 
 .checkin-header-center {
   text-align: center;
@@ -3712,7 +3478,7 @@ canvas {
   }
 
   .mobile-app-title {
-    font-size: 16px;
+    font-size: 18px;
   }
 
   .eyebrow,
@@ -4667,30 +4433,7 @@ canvas {
   max-width: 920px; margin: 0 auto; padding: 16px 14px 48px;
   color: #f3ede0;
 }
-.biblemap-hub.embedded {
-  max-width: none;
-  padding: 12px 12px calc(env(safe-area-inset-bottom) + 24px);
-}
 .biblemap-head { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
-.biblemap-live-head {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 12px 14px 10px;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-  flex-shrink: 0;
-}
-.biblemap-live-head h2 {
-  margin: 0 0 3px;
-  font-size: 17px;
-  color: #f0d79b;
-}
-.biblemap-live-head p {
-  margin: 0;
-  font-size: 12px;
-  line-height: 1.45;
-  color: rgba(255,255,255,0.55);
-}
 .biblemap-back {
   flex: 0 0 auto; font-size: 13px; padding: 7px 14px; border-radius: 20px;
   background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14);
@@ -4752,49 +4495,11 @@ canvas {
 /* ===== 地图中心 hub ===== */
 .biblemap-stage-group { margin-bottom: 22px; }
 .biblemap-stage-label { font-size: 13px; color: rgba(240,215,155,0.8); margin: 0 0 10px; letter-spacing: 0.04em; }
-.biblemap-stage-copy {
-  margin-bottom: 10px;
-}
-.biblemap-stage-copy .biblemap-stage-label {
-  margin-bottom: 4px;
-}
-.biblemap-stage-copy p {
-  margin: 0;
-  font-size: 12px;
-  line-height: 1.5;
-  color: rgba(255,255,255,0.48);
-}
-.biblemap-hub-summary {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
-  margin: 0 0 16px;
-}
-.biblemap-hub-summary div {
-  min-width: 0;
-  padding: 10px 12px;
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 8px;
-  background: rgba(255,255,255,0.04);
-}
-.biblemap-hub-summary strong {
-  display: block;
-  font-size: 18px;
-  line-height: 1;
-  color: #f0d79b;
-  margin-bottom: 4px;
-}
-.biblemap-hub-summary span {
-  display: block;
-  font-size: 11.5px;
-  line-height: 1.35;
-  color: rgba(255,255,255,0.58);
-}
 .biblemap-card-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
 @media (min-width: 560px) { .biblemap-card-grid { grid-template-columns: 1fr 1fr; } }
 .biblemap-card {
   display: flex; align-items: center; gap: 13px; text-align: left; width: 100%;
-  padding: 14px 15px; border-radius: 8px; cursor: pointer;
+  padding: 14px 15px; border-radius: 14px; cursor: pointer;
   background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
   border: 1px solid rgba(255,255,255,0.1); color: #f3ede0; transition: all .15s;
 }
@@ -4905,17 +4610,6 @@ canvas {
 }
 .biblemap-year {
   text-align: center; font-size: 16px; font-weight: 800; color: #ffd700; margin-bottom: 6px;
-}
-.biblemap-timeline-controls {
-  display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; margin-bottom: 8px;
-}
-.biblemap-timeline-controls button {
-  border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 999px;
-  background: rgba(255, 255, 255, 0.06); color: rgba(255, 255, 255, 0.72);
-  padding: 5px 10px; font-size: 12px; font-weight: 700; cursor: pointer;
-}
-.biblemap-timeline-controls button.on {
-  border-color: rgba(255, 215, 0, 0.44); background: rgba(255, 215, 0, 0.16); color: #ffd700;
 }
 .biblemap-slider {
   width: 100%; -webkit-appearance: none; appearance: none; height: 5px; border-radius: 4px;
@@ -5046,360 +4740,24 @@ canvas {
 .jeru-temple-hint { margin-top: 12px; padding: 10px 14px; border-radius: 10px; font-size: 12.5px; line-height: 1.6; color: #f0d79b; background: rgba(232,176,75,0.1); border: 1px solid rgba(232,176,75,0.3); }
 .jeru-part-dims { font-size: 12.5px; color: #9ad0ff; margin: 2px 0 6px; }
 
-/* ═══ 耶路撒冷数字孪生沙盘（JerusalemSandbox）═══
-   注意：.jeru-stage 必须有明确高度，否则地图容器塌缩为 0 → 地图渲染了也看不见 */
-.jeru { max-width: 1100px; margin: 0 auto; padding: 0 14px 28px; }
-.jeru-timeline { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0 12px; }
-.jeru-era { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 7px 12px; border-radius: 10px; border: 1px solid rgba(232,176,75,0.25); background: rgba(232,176,75,0.06); color: #d8cba6; cursor: pointer; transition: all .15s; }
-.jeru-era:hover { border-color: rgba(232,176,75,0.55); }
-.jeru-era.on { background: rgba(232,176,75,0.18); border-color: #e8b04b; color: #ffe9b3; box-shadow: 0 0 12px rgba(232,176,75,0.25); }
-.jeru-era .y { font-size: 13px; font-weight: 700; }
-.jeru-era .l { font-size: 11.5px; opacity: .85; }
-.jeru-stage { position: relative; height: 62vh; min-height: 380px; border-radius: 14px; overflow: hidden; border: 1px solid rgba(232,176,75,0.3); background: #0e1726; }
-.jeru-map { position: absolute; inset: 0; }
-.jeru-map canvas { outline: none; }
-.jeru-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(10,15,28,0.72); z-index: 5; text-align: center; padding: 20px; }
-.jeru-loading { color: #ffe9b3; font-size: 15px; animation: jeruPulse 1.4s ease-in-out infinite; }
-@keyframes jeruPulse { 0%,100% { opacity: .55; } 50% { opacity: 1; } }
-.jeru-err { color: #ffb4a8; font-size: 14px; line-height: 1.7; max-width: 480px; }
-.jeru-err .dim { color: #9aa3b5; font-size: 12.5px; }
-.jeru-controls { position: absolute; left: 10px; right: 10px; bottom: 10px; display: flex; gap: 8px; flex-wrap: wrap; z-index: 6; }
-.jeru-controls button { padding: 7px 13px; border-radius: 9px; font-size: 12.5px; border: 1px solid rgba(255,255,255,0.18); background: rgba(14,20,36,0.82); color: #e6ecf7; cursor: pointer; backdrop-filter: blur(6px); }
-.jeru-controls button:hover { border-color: rgba(232,176,75,0.6); }
-.jeru-controls button.primary { background: rgba(232,176,75,0.22); border-color: #e8b04b; color: #ffe9b3; }
-.jeru-controls button.on { background: rgba(120,200,255,0.2); border-color: #7ac8ff; color: #cfeaff; }
-.jeru-erainfo { margin: 14px 0 0; padding: 12px 16px; border-radius: 12px; border: 1px solid; background: rgba(232,176,75,0.05); }
-.jeru-erainfo-h { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 4px; }
-.jeru-erainfo-h strong { color: #ffe9b3; font-size: 15px; }
-.jeru-erainfo-h .en { color: #b8a87a; font-size: 12.5px; }
-.jeru-erainfo-h .ref { color: #9ad0ff; font-size: 12px; }
-.jeru-erainfo p { color: #cfd6e4; font-size: 13.5px; line-height: 1.75; margin: 0; }
-.jeru-passion { margin-top: 14px; }
-.jeru-passion-h { color: #f0d79b; font-size: 13.5px; margin-bottom: 8px; }
-.jeru-stops { display: flex; gap: 6px; flex-wrap: wrap; }
-.jeru-stops button { padding: 6px 10px; border-radius: 8px; font-size: 12px; border: 1px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.05); color: #d9e0ee; cursor: pointer; }
-.jeru-stops button:hover, .jeru-stops button.on { border-color: #e8b04b; color: #ffe9b3; background: rgba(232,176,75,0.12); }
-.jeru-stopdetail, .jeru-locdetail { margin-top: 10px; padding: 10px 14px; border-radius: 10px; background: rgba(122,200,255,0.07); border: 1px solid rgba(122,200,255,0.25); color: #d5e8f8; font-size: 13px; line-height: 1.7; }
-.jeru-stopdetail .t, .jeru-locdetail .t { color: #9ad0ff; font-weight: 700; }
-.jeru-stopdetail .ref, .jeru-locdetail .ref { color: #8fb8d8; font-size: 12px; margin-left: 8px; }
-.jeru-foot { margin-top: 12px; color: #8e96a8; font-size: 12px; line-height: 1.6; }
-
-/* —— 受难周 FPV 光影叙事 + 浮层（细化）—— */
-.jeru-darkness { position: absolute; inset: 0; z-index: 4; pointer-events: none; opacity: 0; transition: opacity 2.2s ease; background: #04060c; }
-.jeru-darkness.night { opacity: .82; }
-.jeru-darkness.dawn { opacity: .55; background: radial-gradient(circle at 50% 38%, rgba(255,228,170,.55), rgba(255,185,95,.18) 42%, rgba(4,6,12,0) 72%); }
-.jeru-fpv-cap { position: absolute; left: 50%; bottom: 56px; transform: translateX(-50%); width: min(540px, 92%); z-index: 7; padding: 12px 16px; border-radius: 14px; background: rgba(14,20,36,0.86); border: 1px solid rgba(232,176,75,0.4); backdrop-filter: blur(8px); box-shadow: 0 12px 36px rgba(0,0,0,0.5); text-align: center; }
-.jeru-fpv-cap .bar { height: 3px; border-radius: 3px; background: rgba(255,255,255,0.12); overflow: hidden; margin-bottom: 8px; }
-.jeru-fpv-cap .bar i { display: block; height: 100%; background: linear-gradient(90deg,#e8b04b,#ffe9b3); transition: width .5s ease; }
-.jeru-fpv-cap .d { font-size: 11px; letter-spacing: 1px; color: #f0d79b; }
-.jeru-fpv-cap h4 { margin: 4px 0 4px; font-size: 16px; color: #ffe9b3; }
-.jeru-fpv-cap h4 .ref { font-size: 11px; color: #9ad0ff; font-weight: 500; margin-left: 6px; }
-.jeru-fpv-cap p { margin: 0; font-size: 12.5px; color: #cfd6e4; line-height: 1.6; }
-.jeru-fpv-cap .nav { margin-top: 9px; display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
-.jeru-fpv-cap .nav button { padding: 6px 12px; border-radius: 9px; font-size: 12.5px; border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.06); color: #e6ecf7; cursor: pointer; }
-.jeru-fpv-cap .nav button:disabled { opacity: .4; cursor: default; }
-.jeru-fpv-cap .nav button.stop { border-color: rgba(232,120,90,0.5); color: #ffbba8; }
-@media (max-width: 640px) {
-  .jeru-stage { height: 54vh; min-height: 320px; }
-  .jeru-era { padding: 6px 9px; }
-}
-@media (max-width: 480px) {
-  .jeru { padding: 0 10px calc(24px + env(safe-area-inset-bottom)); }
-  .jeru-timeline {
-    flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px;
-    -webkit-overflow-scrolling: touch; scroll-snap-type: x proximity;
-  }
-  .jeru-era { flex: 0 0 auto; scroll-snap-align: start; min-width: 82px; }
-  .jeru-stage { height: 58dvh; min-height: 360px; border-radius: 12px; }
-  .jeru-controls {
-    left: 8px; right: 8px; bottom: calc(8px + env(safe-area-inset-bottom));
-    max-height: 112px; overflow-y: auto; align-content: flex-start;
-  }
-  .jeru-controls button { padding: 6px 9px; font-size: 11.5px; border-radius: 8px; }
-  .jeru-fpv-cap {
-    left: 8px; right: 8px; bottom: calc(124px + env(safe-area-inset-bottom));
-    transform: none; width: auto; max-height: 42dvh; overflow-y: auto;
-    padding: 10px 12px; text-align: left;
-  }
-  .jeru-fpv-cap h4 { font-size: 14px; line-height: 1.25; }
-  .jeru-fpv-cap p { font-size: 11.5px; line-height: 1.45; }
-  .jeru-fpv-cap .nav { justify-content: flex-start; gap: 6px; }
-  .jeru-fpv-cap .nav button { padding: 5px 9px; font-size: 11.5px; }
-}
-@media (max-width: 380px) {
-  .jeru-erainfo, .jeru-stopdetail, .jeru-locdetail, .jeru-temple-hint {
-    padding: 9px 11px; font-size: 12px; line-height: 1.5;
-  }
-  .jeru-erainfo p, .jeru-stopdetail p, .jeru-locdetail p { font-size: 12px; line-height: 1.5; }
-  .jeru-erainfo-h strong { font-size: 13.5px; }
-  .jeru-foot { font-size: 11px; }
-}
-
-/* ═══ 圣徒相通 / 群聊（CommunionPage）══════════════════════════════════
-   两栏式聊天：左 sidebar（好友/群组）+ 右 chat（消息/输入）。
-   桌面两栏并列；移动端单栏，进入会话时 sidebar 隐藏、chat 铺满。
-   （此前组件提交未带样式，全部元素塌缩到左上角——本段补齐。） */
-.communion-page {
-  display: flex; flex-direction: column;
-  /* 预留底部导航栏高度，否则输入框被 .mobile-bottom-nav(z1000) 遮住 */
-  height: calc(100dvh - var(--tab-bar-height) - var(--safe-bottom));
-  max-height: calc(100dvh - var(--tab-bar-height) - var(--safe-bottom));
-  width: 100%; color: var(--ios-text); overflow: hidden;
-}
-.communion-header {
-  display: flex; align-items: center; gap: 12px;
-  padding: 10px 14px; margin: 8px 10px 6px; flex: 0 0 auto;
-}
-.communion-back {
-  background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12);
-  color: var(--ios-text); border-radius: 10px; padding: 6px 12px; cursor: pointer; font-size: 14px;
-}
-.communion-back:hover { background: rgba(255,255,255,0.14); }
-.communion-title { flex: 1; display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 600; }
-.communion-conn { font-size: 11px; padding: 2px 8px; border-radius: 999px; }
-.communion-conn.on  { color: #7ee2a8; background: rgba(126,226,168,0.12); }
-.communion-conn.off { color: rgba(255,255,255,0.45); background: rgba(255,255,255,0.06); }
-
-.communion-body { flex: 1 1 auto; display: flex; min-height: 0; gap: 10px; padding: 0 10px 10px; }
-
-/* 侧栏 */
-.communion-sidebar {
-  flex: 0 0 300px; max-width: 300px; display: flex; flex-direction: column;
-  gap: 8px; min-height: 0; overflow-y: auto; overflow-x: hidden;
-  background: rgba(22,24,38,0.55); border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 16px; padding: 12px;
-}
-.communion-add { display: flex; gap: 6px; }
-.communion-add input {
-  flex: 1; min-width: 0; background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.12); border-radius: 10px;
-  padding: 8px 10px; color: var(--ios-text); font-size: 13px;
-}
-.communion-add input::placeholder { color: rgba(255,255,255,0.35); }
-.communion-add button {
-  background: rgba(232,176,75,0.18); border: 1px solid rgba(232,176,75,0.4);
-  color: #ffe9b3; border-radius: 10px; padding: 8px 12px; cursor: pointer; font-size: 13px; white-space: nowrap;
-}
-.communion-section-title { font-size: 12.5px; color: rgba(255,255,255,0.5); padding: 6px 2px 2px; }
-.communion-incoming { display: flex; flex-direction: column; gap: 4px; }
-.communion-req {
-  display: flex; align-items: center; justify-content: space-between;
-  background: rgba(255,255,255,0.05); border-radius: 10px; padding: 6px 10px; font-size: 13px;
-}
-.communion-req button {
-  background: rgba(126,226,168,0.16); border: 1px solid rgba(126,226,168,0.4);
-  color: #9ff0c0; border-radius: 8px; padding: 3px 10px; cursor: pointer; font-size: 12px;
-}
-.communion-friends { display: flex; flex-direction: column; gap: 4px; }
-.communion-empty { color: rgba(255,255,255,0.4); font-size: 12.5px; padding: 10px 4px; line-height: 1.6; }
-.communion-friend {
-  display: flex; align-items: center; gap: 10px; padding: 8px 10px;
-  border-radius: 12px; cursor: pointer; transition: background .15s; position: relative;
-}
-.communion-friend:hover { background: rgba(255,255,255,0.05); }
-.communion-friend.active { background: rgba(232,176,75,0.12); }
-.communion-avatar {
-  position: relative; flex: 0 0 40px; width: 40px; height: 40px; border-radius: 50%;
-  background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center;
-  font-size: 16px; overflow: visible;
-}
-.communion-avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
-.communion-dot {
-  position: absolute; right: -1px; bottom: -1px; width: 11px; height: 11px; border-radius: 50%;
-  background: rgba(255,255,255,0.3); border: 2px solid #161826;
-}
-.communion-dot.online { background: #50d68a; }
-.communion-finfo { flex: 1; min-width: 0; }
-.communion-fname { font-size: 14px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.communion-flast { font-size: 12px; color: rgba(255,255,255,0.45); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.communion-badge {
-  flex: 0 0 auto; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px;
-  background: #e5484d; color: #fff; font-size: 11px; display: flex; align-items: center; justify-content: center;
-}
-.communion-call-btn {
-  flex: 0 0 auto; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 9px; padding: 5px 8px; cursor: pointer; font-size: 14px;
-}
-.communion-call-btn:hover { background: rgba(255,255,255,0.14); }
-
-/* 聊天主区 */
-.communion-chat {
-  flex: 1 1 auto; display: flex; flex-direction: column; min-width: 0; min-height: 0;
-  background: rgba(22,24,38,0.55); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; overflow: hidden;
-}
-.communion-chat-head {
-  display: flex; align-items: center; gap: 10px; padding: 10px 14px; flex: 0 0 auto;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-}
-.communion-chat-name { flex: 1; display: flex; align-items: center; font-size: 15px; font-weight: 600; }
-.communion-head-call {
-  background: rgba(232,176,75,0.16); border: 1px solid rgba(232,176,75,0.4);
-  color: #ffe9b3; border-radius: 10px; padding: 6px 12px; cursor: pointer; font-size: 13px; white-space: nowrap;
-}
-.communion-back-mobile { display: none; background: none; border: none; color: var(--ios-text); font-size: 20px; cursor: pointer; padding: 0 4px; }
-
-.communion-messages { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
-.communion-msg { display: flex; flex-direction: column; align-items: flex-start; max-width: 78%; }
-.communion-msg.mine { align-self: flex-end; align-items: flex-end; }
-.communion-bubble {
-  background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.07);
-  padding: 8px 12px; border-radius: 14px; border-top-left-radius: 4px;
-  font-size: 14px; line-height: 1.5; word-break: break-word; white-space: pre-wrap;
-}
-.communion-msg.mine .communion-bubble {
-  background: rgba(232,176,75,0.20); border-color: rgba(232,176,75,0.3); color: #fff3da;
-  border-radius: 14px; border-top-right-radius: 4px;
-}
-.communion-msg-time { font-size: 10.5px; color: rgba(255,255,255,0.35); margin-top: 3px; display: flex; align-items: center; }
-.communion-typing { font-size: 12px; color: rgba(255,255,255,0.45); font-style: italic; padding: 2px 4px; }
-
-.communion-placeholder {
-  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 10px; color: rgba(255,255,255,0.5); text-align: center; padding: 20px;
-}
-
-.communion-compose { display: flex; align-items: flex-end; gap: 8px; padding: 10px 12px; flex: 0 0 auto; border-top: 1px solid rgba(255,255,255,0.08); }
-.communion-compose textarea {
-  flex: 1; min-width: 0; resize: none; max-height: 120px; background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; padding: 10px 12px;
-  color: var(--ios-text); font-size: 14px; line-height: 1.5; font-family: inherit;
-}
-.communion-compose textarea::placeholder { color: rgba(255,255,255,0.35); }
-.communion-compose button {
-  flex: 0 0 auto; background: rgba(232,176,75,0.22); border: 1px solid rgba(232,176,75,0.45);
-  color: #ffe9b3; border-radius: 12px; padding: 10px 16px; cursor: pointer; font-size: 14px; font-weight: 500;
-}
-.communion-compose button:disabled { opacity: 0.4; cursor: not-allowed; }
-
-/* 移动端：单栏切换 */
-@media (max-width: 720px) {
-  .communion-body { gap: 0; padding: 0 8px 8px; }
-  .communion-sidebar { flex: 1 1 auto; max-width: none; width: 100%; }
-  .communion-chat { display: none; }
-  /* 进入会话（1对1 或 群聊）：隐藏侧栏、聊天铺满。
-     用 :has 兜底——群聊时 JSX 未给 sidebar 加 has-active，仅 chat 有 open。 */
-  .communion-sidebar.has-active { display: none; }
-  .communion-body:has(.communion-chat.open) .communion-sidebar { display: none; }
-  .communion-chat.open { display: flex; }
-  .communion-back-mobile { display: inline-block; }
-}
-
-/* ═══ 实时通话（语音 + 视频）覆盖层 ════════════════════════════════════
-   LiveKitCall（1对1 全局通话）+ RealtimeRoot 来电弹窗。
-   视频瓦片：有视频轨时瓦片切换为 16:12 画面，姓名压在画面左下角。 */
-.communion-call-overlay {
-  position: fixed; inset: 0; z-index: 1200;
-  background: rgba(8, 10, 18, 0.92); backdrop-filter: blur(10px);
-  display: flex; align-items: center; justify-content: center;
-  padding: 16px; box-sizing: border-box;
-}
-.communion-call-screen {
-  width: min(720px, 100%); max-height: 100%;
-  display: flex; flex-direction: column; gap: 14px;
-  background: rgba(20, 24, 40, 0.85); border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 20px; padding: 18px; box-sizing: border-box;
-  box-shadow: 0 24px 64px rgba(0,0,0,0.6);
-}
-.communion-call-top { text-align: center; }
-.communion-call-peer { font-size: 18px; font-weight: 700; color: #fff; }
-.communion-call-state { font-size: 13px; margin-top: 4px; }
-.communion-call-tiles {
-  flex: 1; min-height: 180px; overflow-y: auto;
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 12px; align-content: center;
-}
-.communion-call-tiles.has-video { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
-.communion-call-tile {
-  position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 8px; padding: 16px 8px; border-radius: 16px;
-  background: rgba(255,255,255,0.05); border: 1.5px solid rgba(255,255,255,0.12);
-  transition: box-shadow .12s, border-color .12s;
-}
-.communion-call-tile.speaking { border-color: #34c759; box-shadow: 0 0 0 2px #34c759, 0 0 18px rgba(52,199,89,0.5); }
-.communion-call-tile.video { padding: 0; aspect-ratio: 4 / 3; overflow: hidden; }
-.communion-call-bubble {
-  width: 56px; height: 56px; border-radius: 50%; font-size: 26px;
-  display: flex; align-items: center; justify-content: center;
-  background: rgba(255,255,255,0.08);
-}
-.communion-call-tname {
-  font-size: 12px; color: rgba(255,255,255,0.85); max-width: 100%;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.communion-call-vname {
-  position: absolute; left: 8px; bottom: 8px; max-width: calc(100% - 16px);
-  font-size: 11.5px; color: #fff; padding: 3px 8px; border-radius: 8px;
-  background: rgba(0,0,0,0.55); backdrop-filter: blur(4px);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
 .communion-call-actions {
-  --call-ctrl-size: clamp(42px, 11vw, 48px);
-  --call-ctrl-gap: clamp(4px, 1.6vw, 10px);
+  --call-ctrl-size: calc(2vw + 1.8vh);
+  --call-ctrl-gap: calc(0.5vw + 0.5vh);
   display: flex; justify-content: center; flex-wrap: nowrap;
   gap: var(--call-ctrl-gap);
-  transform: translateY(calc(var(--call-ctrl-size) / -2));
-  margin-bottom: calc(var(--call-ctrl-size) / -2);
+  transform: translateY(calc(var(--call-ctrl-size) * -1.5));
+  margin-bottom: calc(var(--call-ctrl-size) * -1.5);
 }
 .communion-call-ctrl {
   width: var(--call-ctrl-size); min-width: var(--call-ctrl-size); min-height: var(--call-ctrl-size);
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
-  border: none; border-radius: clamp(9px, 2.6vw, 12px); padding: 4px 3px;
+  border: none; border-radius: calc(1.2vw + 1vh); padding: calc(0.3vw + 0.3vh) calc(0.45vw + 0.4vh);
   color: #fff; cursor: pointer; font-family: inherit;
   box-sizing: border-box;
 }
 .communion-call-ctrl:disabled { opacity: .45; cursor: default; }
-.communion-call-ctrl-icon { font-size: clamp(13px, 3.6vw, 16px); line-height: 1; }
+.communion-call-ctrl-icon { font-size: calc(1.5vw + 1.4vh); line-height: 1; }
 .communion-call-ctrl-label {
-  font-size: clamp(7.5px, 2.2vw, 9px); line-height: 1.05;
+  font-size: calc(1vw + 0.9vh); line-height: 1.05;
   max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-
-/* 来电弹窗 */
-.communion-invite-overlay {
-  position: fixed; inset: 0; z-index: 1300;
-  background: rgba(8, 10, 18, 0.75); backdrop-filter: blur(8px);
-  display: flex; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box;
-}
-.communion-invite {
-  width: min(360px, 100%); text-align: center;
-  background: rgba(24, 28, 46, 0.95); border: 1px solid rgba(255,255,255,0.14);
-  border-radius: 18px; padding: 22px 18px;
-  box-shadow: 0 18px 52px rgba(0,0,0,0.55);
-}
-.communion-invite-title { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 16px; line-height: 1.5; }
-.communion-invite-actions { display: flex; gap: 12px; justify-content: center; }
-.communion-accept, .communion-decline {
-  border: none; border-radius: 12px; padding: 11px 26px; font-size: 14px; font-weight: 700;
-  cursor: pointer; font-family: inherit;
-}
-.communion-accept { background: #34c759; color: #06210f; }
-.communion-decline { background: #ff3b30; color: #fff; }
-@media (max-width: 480px) {
-  .communion-call-overlay { padding: 0; }
-  .communion-call-screen { width: 100%; height: 100%; max-height: none; border-radius: 0; padding: 14px 12px calc(14px + env(safe-area-inset-bottom)); }
-  .communion-call-tiles.has-video { grid-template-columns: 1fr; }
-}
-
-/* 通话屏幕共享大舞台（1对1 LiveKitCall） */
-.communion-call-stage {
-  position: relative; width: 100%; flex: 1; min-height: 200px;
-  background: #000; border: 1px solid rgba(255,255,255,0.14);
-  border-radius: 14px; overflow: hidden;
-}
-.communion-call-tiles.with-stage {
-  flex: 0 0 auto; max-height: 150px; align-content: start;
-  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-}
-.communion-call-tiles.with-stage .communion-call-tile.video { aspect-ratio: 16 / 10; }
-
-/* 统一地图查看器：双视图切换 */
-.biblemap-view-toggle { display: flex; gap: 8px; justify-content: center; padding: 10px 12px 0; }
-.biblemap-view-toggle button {
-  padding: 6px 14px; border-radius: 999px; font-size: 13px; cursor: pointer;
-  border: 1px solid rgba(240,215,155,0.35); background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.75);
-}
-.biblemap-view-toggle button.on {
-  background: rgba(240,215,155,0.18); border-color: rgba(240,215,155,0.8); color: #f0d79b; font-weight: 600;
-}
-.biblemap-card-badge-dual { font-size: 10px; padding: 1px 6px; border-radius: 6px; margin-left: 6px;
-  background: rgba(94,194,232,0.18); border: 1px solid rgba(94,194,232,0.5); color: #5ec2e8; }

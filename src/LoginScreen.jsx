@@ -1,7 +1,5 @@
 import { useEffect, useState } from 'react'
-import BackButton from './BackButton'
 import { loginWithEmail, registerWithEmail, sendEmailCode, sendResetCode, resetPassword } from './auth'
-import { t } from './i18n/runtime'
 
 const cardStyle = {
   width: '100%',
@@ -60,11 +58,21 @@ export default function LoginScreen({ onLogin, onBack, message }) {
       position: 'relative',
     }}>
       {onBack && (
-        <BackButton onClick={onBack} style={{ position: 'absolute', top: 16, left: 16 }} />
+        <button
+          onClick={onBack}
+          style={{
+            position: 'absolute', top: '16px', left: '16px',
+            background: 'rgba(120,120,128,0.2)', border: 'none',
+            borderRadius: '50%', width: '36px', height: '36px',
+            color: 'rgba(255,255,255,0.7)', fontSize: '18px',
+            cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontFamily: 'inherit',
+          }}
+        >‹</button>
       )}
       <div style={{ textAlign: 'center', marginBottom: '32px' }}>
         <div style={{ fontSize: '64px', lineHeight: 1, marginBottom: '12px' }}>🔮</div>
-        <h1 style={{ margin: 0, fontSize: '26px', fontWeight: 700, color: '#fff', letterSpacing: '-0.02em' }}>{t("属灵星球")}</h1>
+        <h1 style={{ margin: 0, fontSize: '26px', fontWeight: 700, color: '#fff', letterSpacing: '-0.02em' }}>属灵星球</h1>
         <p style={{ margin: '6px 0 0', fontSize: '14px', color: 'rgba(255,255,255,0.4)' }}>Bible Emotion Sphere</p>
       </div>
 
@@ -90,7 +98,7 @@ export default function LoginScreen({ onLogin, onBack, message }) {
           display: 'flex', gap: '2px', padding: '3px',
           background: 'rgba(120,120,128,0.2)', borderRadius: '10px', marginBottom: '24px',
         }}>
-          {[['login', t("登录")], ['register', t("注册")], ['reset', t("重置密码")]].map(([key, label]) => (
+          {[['login', '登录'], ['register', '注册'], ['reset', '重置密码']].map(([key, label]) => (
             <button
               key={key}
               onClick={() => setTab(key)}
@@ -109,13 +117,13 @@ export default function LoginScreen({ onLogin, onBack, message }) {
         {tab === 'register' && <RegisterForm email={sharedEmail} setEmail={setSharedEmail} onDone={() => setTab('login')} onLogin={onLogin} />}
         {tab === 'reset' && <ResetPasswordForm email={sharedEmail} setEmail={setSharedEmail} onDone={() => setTab('login')} />}
 
-        <p style={mutedText}>{t("登录即表示同意服务条款与隐私政策")}</p>
+        <p style={mutedText}>登录即表示同意服务条款与隐私政策</p>
       </div>
 
       {/* 站点声明 */}
       <div style={{ marginTop: '18px', textAlign: 'center', fontSize: '11px',
         color: 'rgba(255,255,255,0.32)', lineHeight: 1.8, maxWidth: 360 }}>
-        <div>{t("本站内容为开发者 Ethan 原创，仅供个人灵修学习，不得用于商业用途，最终解释权归开发者所有")}</div>
+        <div>本站内容为开发者 Ethan 原创，仅供个人灵修学习，不得用于商业用途，最终解释权归开发者所有</div>
         <a href="mailto:zpchoney@gmail.com" style={{ color: 'rgba(90,200,250,0.7)', textDecoration: 'none' }}>zpchoney@gmail.com</a>
       </div>
     </div>
@@ -160,7 +168,7 @@ function LoginForm({ email, setEmail, onLogin, onReset }) {
   return (
     <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
       <div>
-        <label style={labelStyle}>{t("邮箱")}</label>
+        <label style={labelStyle}>邮箱</label>
         <input
           type="email" required value={email} onChange={e => setEmail(e.target.value)}
           placeholder="john@bible-sphere.com" autoComplete="email"
@@ -168,10 +176,10 @@ function LoginForm({ email, setEmail, onLogin, onReset }) {
         />
       </div>
       <div>
-        <label style={labelStyle}>{t("密码")}</label>
+        <label style={labelStyle}>密码</label>
         <input
           type="password" required value={password} onChange={e => setPassword(e.target.value)}
-          placeholder={t("输入密码")} autoComplete="current-password"
+          placeholder="输入密码" autoComplete="current-password"
           style={inputStyle}
         />
       </div>
@@ -180,11 +188,11 @@ function LoginForm({ email, setEmail, onLogin, onReset }) {
           type="checkbox" checked={rememberMe} onChange={e => setRememberMe(e.target.checked)}
           style={{ width: '16px', height: '16px', accentColor: '#007aff' }}
         />
-        {t("记住账号密码")}
+        记住账号密码
       </label>
       {error && <p style={errorText}>{error}</p>}
       <button type="submit" disabled={loading} style={primaryBtnStyle(loading)}>
-        {loading ? t("⏳ 登录中...") : t("🔑 登录")}
+        {loading ? '⏳ 登录中...' : '🔑 登录'}
       </button>
       <div style={{ textAlign: 'center', marginTop: '8px' }}>
         <button
@@ -196,7 +204,7 @@ function LoginForm({ email, setEmail, onLogin, onReset }) {
             fontFamily: 'inherit',
           }}
         >
-          {t("🔒 忘记密码？")}
+          🔒 忘记密码？
         </button>
       </div>
     </form>
@@ -238,7 +246,7 @@ function RegisterForm({ email, setEmail, onDone, onLogin }) {
       const data = await sendEmailCode(email.trim())
       // Check if email already registered
       if (data.registered) {
-        setError(data.message || t("该邮箱已注册，请直接登录"))
+        setError(data.message || '该邮箱已注册，请直接登录')
         setSendLoading(false)
         // Auto switch to login tab after 1.5s
         setTimeout(() => onDone && onDone(), 1500)
@@ -273,7 +281,7 @@ function RegisterForm({ email, setEmail, onDone, onLogin }) {
   return (
     <form onSubmit={handleRegister} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
       <div>
-        <label style={labelStyle}>{t("邮箱")}</label>
+        <label style={labelStyle}>邮箱</label>
         <div style={{ display: 'flex', gap: '8px' }}>
           <input
             type="email" required value={email} onChange={e => handleEmailChange(e.target.value)}
@@ -292,42 +300,42 @@ function RegisterForm({ email, setEmail, onDone, onLogin }) {
               whiteSpace: 'nowrap',
             }}
           >
-            {countdown > 0 ? `${countdown}s` : sendLoading ? t("发送中") : t("获取验证码")}
+            {countdown > 0 ? `${countdown}s` : sendLoading ? '发送中' : '获取验证码'}
           </button>
         </div>
       </div>
       <div>
-        <label style={labelStyle}>{t("验证码")}</label>
+        <label style={labelStyle}>验证码</label>
         <input
           type="text" required value={code} onChange={e => setCode(e.target.value)}
-          placeholder={t("6位验证码")} maxLength={6} inputMode="numeric"
+          placeholder="6位验证码" maxLength={6} inputMode="numeric"
           style={inputStyle}
         />
         {devCode && (
           <p style={{ fontSize: '12px', color: '#34c759', margin: '6px 0 0', textAlign: 'center' }}>
-            {t("开发模式 — 验证码:")} <b>{devCode}</b>{t("（请在上方输入）")}
+            开发模式 — 验证码: <b>{devCode}</b>（请在上方输入）
           </p>
         )}
       </div>
       <div>
-        <label style={labelStyle}>{t("密码（至少6位）")}</label>
+        <label style={labelStyle}>密码（至少6位）</label>
         <input
           type="password" required value={password} onChange={e => setPassword(e.target.value)}
-          placeholder={t("设置登录密码")} autoComplete="new-password" minLength={6}
+          placeholder="设置登录密码" autoComplete="new-password" minLength={6}
           style={inputStyle}
         />
       </div>
       <div>
-        <label style={labelStyle}>{t("昵称（选填）")}</label>
+        <label style={labelStyle}>昵称（选填）</label>
         <input
           type="text" value={nickname} onChange={e => setNickname(e.target.value)}
-          placeholder={t("你的名字")}
+          placeholder="你的名字"
           style={inputStyle}
         />
       </div>
       {error && <p style={errorText}>{error}</p>}
       <button type="submit" disabled={regLoading || !codeSent} style={primaryBtnStyle(regLoading || !codeSent)}>
-        {regLoading ? t("⏳ 注册中...") : t("✅ 注册并登录")}
+        {regLoading ? '⏳ 注册中...' : '✅ 注册并登录'}
       </button>
     </form>
   )
@@ -375,11 +383,11 @@ function ResetPasswordForm({ email, setEmail, onDone }) {
     setError('')
 
     if (password !== confirmPassword) {
-      setError(t("两次输入的密码不一致"))
+      setError('两次输入的密码不一致')
       return
     }
     if (password.length < 6) {
-      setError(t("密码至少需要6位"))
+      setError('密码至少需要6位')
       return
     }
 
@@ -399,8 +407,8 @@ function ResetPasswordForm({ email, setEmail, onDone }) {
     return (
       <div style={{ textAlign: 'center', padding: '20px' }}>
         <div style={{ fontSize: '48px', marginBottom: '16px' }}>✅</div>
-        <div style={{ fontSize: '16px', color: '#fff', marginBottom: '8px' }}>{t("密码重置成功")}</div>
-        <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)' }}>{t("请使用新密码登录")}</div>
+        <div style={{ fontSize: '16px', color: '#fff', marginBottom: '8px' }}>密码重置成功</div>
+        <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)' }}>请使用新密码登录</div>
       </div>
     )
   }
@@ -408,7 +416,7 @@ function ResetPasswordForm({ email, setEmail, onDone }) {
   return (
     <form onSubmit={handleReset} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
       <div>
-        <label style={labelStyle}>{t("注册邮箱")}</label>
+        <label style={labelStyle}>注册邮箱</label>
         <div style={{ display: 'flex', gap: '8px' }}>
           <input
             type="email" required value={email} onChange={e => setEmail(e.target.value)}
@@ -427,42 +435,42 @@ function ResetPasswordForm({ email, setEmail, onDone }) {
               whiteSpace: 'nowrap',
             }}
           >
-            {countdown > 0 ? `${countdown}s` : sendLoading ? t("发送中") : t("获取验证码")}
+            {countdown > 0 ? `${countdown}s` : sendLoading ? '发送中' : '获取验证码'}
           </button>
         </div>
       </div>
       <div>
-        <label style={labelStyle}>{t("验证码")}</label>
+        <label style={labelStyle}>验证码</label>
         <input
           type="text" required value={code} onChange={e => setCode(e.target.value)}
-          placeholder={t("6位验证码")} maxLength={6} inputMode="numeric"
+          placeholder="6位验证码" maxLength={6} inputMode="numeric"
           style={inputStyle}
         />
         {devCode && (
           <p style={{ fontSize: '12px', color: '#34c759', margin: '6px 0 0', textAlign: 'center' }}>
-            {t("开发模式 — 验证码:")} <b>{devCode}</b>{t("（请在上方输入）")}
+            开发模式 — 验证码: <b>{devCode}</b>（请在上方输入）
           </p>
         )}
       </div>
       <div>
-        <label style={labelStyle}>{t("新密码（至少6位）")}</label>
+        <label style={labelStyle}>新密码（至少6位）</label>
         <input
           type="password" required value={password} onChange={e => setPassword(e.target.value)}
-          placeholder={t("设置新密码")} autoComplete="new-password" minLength={6}
+          placeholder="设置新密码" autoComplete="new-password" minLength={6}
           style={inputStyle}
         />
       </div>
       <div>
-        <label style={labelStyle}>{t("确认密码")}</label>
+        <label style={labelStyle}>确认密码</label>
         <input
           type="password" required value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)}
-          placeholder={t("再次输入新密码")} autoComplete="new-password"
+          placeholder="再次输入新密码" autoComplete="new-password"
           style={inputStyle}
         />
       </div>
       {error && <p style={errorText}>{error}</p>}
       <button type="submit" disabled={resetLoading || !codeSent} style={primaryBtnStyle(resetLoading || !codeSent)}>
-        {resetLoading ? t("⏳ 重置中...") : t("🔄 重置密码")}
+        {resetLoading ? '⏳ 重置中...' : '🔄 重置密码'}
       </button>
       <div style={{ textAlign: 'center', marginTop: '4px' }}>
         <button
@@ -474,7 +482,7 @@ function ResetPasswordForm({ email, setEmail, onDone }) {
             fontFamily: 'inherit',
           }}
         >
-          {t("← 返回登录")}
+          ← 返回登录
         </button>
       </div>
     </form>

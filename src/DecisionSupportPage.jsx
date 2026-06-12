@@ -1,212 +1,209 @@
 import { useEffect, useState } from 'react'
-import BackButton from './BackButton'
 import { API_BASE, fetchFormationProfile } from './api'
 import { getToken } from './auth'
 import HabitsPage from './HabitsPage'
 import PersonalityPage from './PersonalityPage'
 import SoulTabs from './components/SoulTabs'
 import SoulDashboard from './components/SoulDashboard'
-import { t } from './i18n/runtime'
-import { AutoText } from './autoTranslate.jsx'
 
 const sfdsUrl = (path) => `${API_BASE}/sfds${path}`
 const MVFE_BASE = API_BASE + '/mvfe'
 
 const QUICK_PROMPTS = [
-  {t:t("最近工作压力很大，总是担心做不好，想逃避..."),e:'😰',l:t("焦虑逃避")},
-  {t:t("今天内心很平静，和家人一起很感恩..."),e:'😌',l:t("平静感恩")},
-  {t:t("感觉被忽视了，有点生气又不知道怎么表达..."),e:'😤',l:t("被忽视")},
-  {t:t("对未来充满期待，想尝试新的事情..."),e:'✨',l:t("充满期待")},
-  {t:t("一直在同一件事上反复纠结，走不出来..."),e:'🔄',l:t("反复纠结")},
+  {t:'最近工作压力很大，总是担心做不好，想逃避...',e:'😰',l:'焦虑逃避'},
+  {t:'今天内心很平静，和家人一起很感恩...',e:'😌',l:'平静感恩'},
+  {t:'感觉被忽视了，有点生气又不知道怎么表达...',e:'😤',l:'被忽视'},
+  {t:'对未来充满期待，想尝试新的事情...',e:'✨',l:'充满期待'},
+  {t:'一直在同一件事上反复纠结，走不出来...',e:'🔄',l:'反复纠结'},
 ]
 
 // ==================== 现代生活决策类别（12大类，覆盖人生主要领域）====================
 const decisionCategories = [
   // 职业与发展
-  { value: 'career', label: t("职业/工作"), emoji: '💼', desc: t("换工作、升职、创业、离职、职业规划") },
-  { value: 'education', label: t("教育/学习"), emoji: '📚', desc: t("升学、留学、进修、专业选择、技能学习") },
-  { value: 'calling', label: t("呼召/使命"), emoji: '🎯', desc: t("全职服事、跨文化宣教、蒙召确认") },
+  { value: 'career', label: '职业/工作', emoji: '💼', desc: '换工作、升职、创业、离职、职业规划' },
+  { value: 'education', label: '教育/学习', emoji: '📚', desc: '升学、留学、进修、专业选择、技能学习' },
+  { value: 'calling', label: '呼召/使命', emoji: '🎯', desc: '全职服事、跨文化宣教、蒙召确认' },
   
   // 人际关系
-  { value: 'relationship', label: t("人际关系"), emoji: '💕', desc: t("恋爱、婚姻、家庭、朋友、冲突处理") },
-  { value: 'family', label: t("家庭/亲子"), emoji: '👨‍👩‍👧‍👦', desc: t("育儿、夫妻关系、原生家庭、赡养老人") },
-  { value: 'community', label: t("社群/教会"), emoji: '⛪', desc: t("小组参与、教会选择、服事分工、人际边界") },
+  { value: 'relationship', label: '人际关系', emoji: '💕', desc: '恋爱、婚姻、家庭、朋友、冲突处理' },
+  { value: 'family', label: '家庭/亲子', emoji: '👨‍👩‍👧‍👦', desc: '育儿、夫妻关系、原生家庭、赡养老人' },
+  { value: 'community', label: '社群/教会', emoji: '⛪', desc: '小组参与、教会选择、服事分工、人际边界' },
   
   // 资源管理
-  { value: 'financial', label: t("财务/金钱"), emoji: '💰', desc: t("投资、消费、债务、奉献、财务规划") },
-  { value: 'housing', label: t("居住/房产"), emoji: '🏠', desc: t("买房、租房、装修、搬家、选址") },
-  { value: 'possessions', label: t("物品/消费"), emoji: '📱', desc: t("大额消费、断舍离、购物诱惑、资产管理") },
+  { value: 'financial', label: '财务/金钱', emoji: '💰', desc: '投资、消费、债务、奉献、财务规划' },
+  { value: 'housing', label: '居住/房产', emoji: '🏠', desc: '买房、租房、装修、搬家、选址' },
+  { value: 'possessions', label: '物品/消费', emoji: '📱', desc: '大额消费、断舍离、购物诱惑、资产管理' },
   
   // 身心健康
-  { value: 'health', label: t("健康/身体"), emoji: '🏥', desc: t("就医、治疗、体检、生活方式改变") },
-  { value: 'mental', label: t("心理/情绪"), emoji: '🧠', desc: t("心理咨询、情绪管理、压力应对、休息安排") },
+  { value: 'health', label: '健康/身体', emoji: '🏥', desc: '就医、治疗、体检、生活方式改变' },
+  { value: 'mental', label: '心理/情绪', emoji: '🧠', desc: '心理咨询、情绪管理、压力应对、休息安排' },
   
   // 灵性与道德
-  { value: 'temptation', label: t("试探/诱惑"), emoji: '⚠️', desc: t("道德抉择、犯罪边缘、成瘾行为、灰色地带") },
-  { value: 'spiritual', label: t("灵修/信仰"), emoji: '🙏', desc: t("灵修习惯、信仰怀疑、神学问题、属灵追求") },
-  { value: 'ministry', label: t("事工/服事"), emoji: '🤝', desc: t("服事平衡、领袖角色、团队冲突、禾场选择") },
+  { value: 'temptation', label: '试探/诱惑', emoji: '⚠️', desc: '道德抉择、犯罪边缘、成瘾行为、灰色地带' },
+  { value: 'spiritual', label: '灵修/信仰', emoji: '🙏', desc: '灵修习惯、信仰怀疑、神学问题、属灵追求' },
+  { value: 'ministry', label: '事工/服事', emoji: '🤝', desc: '服事平衡、领袖角色、团队冲突、禾场选择' },
   
   // 时间与生活方式
-  { value: 'time', label: t("时间/节奏"), emoji: '⏰', desc: t("工作与生活平衡、安息、优先级排序") },
-  { value: 'lifestyle', label: t("生活方式"), emoji: '🌱', desc: t("饮食习惯、运动、社交方式、数字健康") },
-  { value: 'boundary', label: t("边界/拒绝"), emoji: '🚧', desc: t("说\"不\"、设立界限、拒绝请求、保护自己") },
+  { value: 'time', label: '时间/节奏', emoji: '⏰', desc: '工作与生活平衡、安息、优先级排序' },
+  { value: 'lifestyle', label: '生活方式', emoji: '🌱', desc: '饮食习惯、运动、社交方式、数字健康' },
+  { value: 'boundary', label: '边界/拒绝', emoji: '🚧', desc: '说"不"、设立界限、拒绝请求、保护自己' },
   
   // 危机与转变
-  { value: 'crisis', label: t("危机/急难"), emoji: '🚨', desc: t("突发事件、危机应对、紧急抉择") },
-  { value: 'transition', label: t("转变/过渡"), emoji: '🌊', desc: t("人生阶段转换、移民、退休、身份转变") },
-  { value: 'loss', label: t("失落/哀伤"), emoji: '💔', desc: t("分手、离婚、丧亲、失业、梦想破灭") },
+  { value: 'crisis', label: '危机/急难', emoji: '🚨', desc: '突发事件、危机应对、紧急抉择' },
+  { value: 'transition', label: '转变/过渡', emoji: '🌊', desc: '人生阶段转换、移民、退休、身份转变' },
+  { value: 'loss', label: '失落/哀伤', emoji: '💔', desc: '分手、离婚、丧亲、失业、梦想破灭' },
   
   // 社会与文化
-  { value: 'ethics', label: t("伦理/正义"), emoji: '⚖️', desc: t("社会议题、公义行动、良心抉择、职场伦理") },
-  { value: 'media', label: t("媒体/信息"), emoji: '📺', desc: t("内容消费、社交媒体、新闻判断、网络行为") },
-  { value: 'other', label: t("其他/独特"), emoji: '📝', desc: t("无法归类、多重混合、独特处境") },
+  { value: 'ethics', label: '伦理/正义', emoji: '⚖️', desc: '社会议题、公义行动、良心抉择、职场伦理' },
+  { value: 'media', label: '媒体/信息', emoji: '📺', desc: '内容消费、社交媒体、新闻判断、网络行为' },
+  { value: 'other', label: '其他/独特', emoji: '📝', desc: '无法归类、多重混合、独特处境' },
 ]
 
 // ==================== 87个核心情绪（按属灵星球分类）====================
 
 // 正向情绪 — 渴望类
 const positiveEmotionsLonging = [
-  { value: 'desire', label: t("渴望"), emoji: '💧', category: t("渴望"), en: 'desire', scripture: t("诗42:1") },
-  { value: 'longing', label: t("思念"), emoji: '💌', category: t("思念"), en: 'longing', scripture: t("诗63:1") },
-  { value: 'reminiscence', label: t("怀念"), emoji: '📷', category: t("怀念"), en: 'reminiscence', scripture: t("诗77:11") },
-  { value: 'yearning', label: t("向往"), emoji: '🌅', category: t("向往"), en: 'yearning', scripture: t("启22:20") },
-  { value: 'anticipation', label: t("期待"), emoji: '🎁', category: t("期待"), en: 'anticipation', scripture: t("赛40:31") },
-  { value: 'craving', label: t("强烈渴求"), emoji: '🔥', category: t("渴求"), en: 'craving', scripture: t("诗63:1") },
+  { value: 'desire', label: '渴望', emoji: '💧', category: '渴望', en: 'desire', scripture: '诗42:1' },
+  { value: 'longing', label: '思念', emoji: '💌', category: '思念', en: 'longing', scripture: '诗63:1' },
+  { value: 'reminiscence', label: '怀念', emoji: '📷', category: '怀念', en: 'reminiscence', scripture: '诗77:11' },
+  { value: 'yearning', label: '向往', emoji: '🌅', category: '向往', en: 'yearning', scripture: '启22:20' },
+  { value: 'anticipation', label: '期待', emoji: '🎁', category: '期待', en: 'anticipation', scripture: '赛40:31' },
+  { value: 'craving', label: '强烈渴求', emoji: '🔥', category: '渴求', en: 'craving', scripture: '诗63:1' },
 ]
 
 // 正向情绪 — 喜悦类
 const positiveEmotionsJoy = [
-  { value: 'joy', label: t("喜悦"), emoji: '😊', category: t("喜悦"), en: 'joy', scripture: t("加5:22") },
-  { value: 'happiness', label: t("快乐"), emoji: '😄', category: t("快乐"), en: 'happiness', scripture: t("诗16:11") },
-  { value: 'pleasure', label: t("愉悦"), emoji: '😃', category: t("愉悦"), en: 'pleasure', scripture: t("诗1:2") },
-  { value: 'gladness', label: t("欣喜"), emoji: '🙂', category: t("欣喜"), en: 'gladness', scripture: t("诗30:5") },
-  { value: 'bliss', label: t("幸福"), emoji: '🥰', category: t("幸福"), en: 'bliss', scripture: t("太5:3-12") },
-  { value: 'gratitude', label: t("感激"), emoji: '🙏', category: t("感激"), en: 'gratitude', scripture: t("帖前5:18") },
-  { value: 'thankfulness', label: t("感恩"), emoji: '💝', category: t("感恩"), en: 'thankfulness', scripture: t("诗107:1") },
+  { value: 'joy', label: '喜悦', emoji: '😊', category: '喜悦', en: 'joy', scripture: '加5:22' },
+  { value: 'happiness', label: '快乐', emoji: '😄', category: '快乐', en: 'happiness', scripture: '诗16:11' },
+  { value: 'pleasure', label: '愉悦', emoji: '😃', category: '愉悦', en: 'pleasure', scripture: '诗1:2' },
+  { value: 'gladness', label: '欣喜', emoji: '🙂', category: '欣喜', en: 'gladness', scripture: '诗30:5' },
+  { value: 'bliss', label: '幸福', emoji: '🥰', category: '幸福', en: 'bliss', scripture: '太5:3-12' },
+  { value: 'gratitude', label: '感激', emoji: '🙏', category: '感激', en: 'gratitude', scripture: '帖前5:18' },
+  { value: 'thankfulness', label: '感恩', emoji: '💝', category: '感恩', en: 'thankfulness', scripture: '诗107:1' },
 ]
 
 // 正向情绪 — 希望与热情类
 const positiveEmotionsHope = [
-  { value: 'hope', label: t("希望"), emoji: '🌟', category: t("希望"), en: 'hope', scripture: t("罗15:13") },
-  { value: 'optimism', label: t("乐观"), emoji: '☀️', category: t("乐观"), en: 'optimism', scripture: t("箴3:5") },
-  { value: 'eagerness', label: t("热忱"), emoji: '⚡', category: t("热忱"), en: 'eagerness', scripture: t("罗12:11") },
-  { value: 'ardor', label: t("热情"), emoji: '🔥', category: t("热情"), en: 'ardor', scripture: t("启3:19") },
-  { value: 'fervor', label: t("激情"), emoji: '✨', category: t("激情"), en: 'fervor', scripture: t("徒18:25") },
-  { value: 'exuberance', label: t("活力充沛"), emoji: '🎉', category: t("活力"), en: 'exuberance', scripture: t("约10:10") },
-  { value: 'excitement', label: t("兴奋"), emoji: '🤩', category: t("兴奋"), en: 'excitement', scripture: t("徒2:46") },
-  { value: 'exhilaration', label: t("激动"), emoji: '🥳', category: t("激动"), en: 'exhilaration', scripture: t("诗51:12") },
-  { value: 'rapture', label: t("陶醉"), emoji: '😇', category: t("陶醉"), en: 'rapture', scripture: t("帖前4:17") },
+  { value: 'hope', label: '希望', emoji: '🌟', category: '希望', en: 'hope', scripture: '罗15:13' },
+  { value: 'optimism', label: '乐观', emoji: '☀️', category: '乐观', en: 'optimism', scripture: '箴3:5' },
+  { value: 'eagerness', label: '热忱', emoji: '⚡', category: '热忱', en: 'eagerness', scripture: '罗12:11' },
+  { value: 'ardor', label: '热情', emoji: '🔥', category: '热情', en: 'ardor', scripture: '启3:19' },
+  { value: 'fervor', label: '激情', emoji: '✨', category: '激情', en: 'fervor', scripture: '徒18:25' },
+  { value: 'exuberance', label: '活力充沛', emoji: '🎉', category: '活力', en: 'exuberance', scripture: '约10:10' },
+  { value: 'excitement', label: '兴奋', emoji: '🤩', category: '兴奋', en: 'excitement', scripture: '徒2:46' },
+  { value: 'exhilaration', label: '激动', emoji: '🥳', category: '激动', en: 'exhilaration', scripture: '诗51:12' },
+  { value: 'rapture', label: '陶醉', emoji: '😇', category: '陶醉', en: 'rapture', scripture: '帖前4:17' },
 ]
 
 // 正向情绪 — 喜爱与好奇类
 const positiveEmotionsLove = [
-  { value: 'fascination', label: t("着迷"), emoji: '🤯', category: t("着迷"), en: 'fascination', scripture: t("雅歌 良人属我") },
-  { value: 'infatuation', label: t("迷恋"), emoji: '💘', category: t("迷恋"), en: 'infatuation', scripture: t("林后5:13") },
-  { value: 'fondness', label: t("喜爱"), emoji: '🥺', category: t("喜爱"), en: 'fondness', scripture: t("彼后1:7") },
-  { value: 'affection', label: t("情谊"), emoji: '💕', category: t("情谊"), en: 'affection', scripture: t("罗12:10") },
-  { value: 'interest', label: t("兴趣"), emoji: '👀', category: t("兴趣"), en: 'interest', scripture: t("彼前2:2") },
-  { value: 'curiosity', label: t("好奇"), emoji: '🤔', category: t("好奇"), en: 'curiosity', scripture: t("箴2:4") },
+  { value: 'fascination', label: '着迷', emoji: '🤯', category: '着迷', en: 'fascination', scripture: '雅歌 良人属我' },
+  { value: 'infatuation', label: '迷恋', emoji: '💘', category: '迷恋', en: 'infatuation', scripture: '林后5:13' },
+  { value: 'fondness', label: '喜爱', emoji: '🥺', category: '喜爱', en: 'fondness', scripture: '彼后1:7' },
+  { value: 'affection', label: '情谊', emoji: '💕', category: '情谊', en: 'affection', scripture: '罗12:10' },
+  { value: 'interest', label: '兴趣', emoji: '👀', category: '兴趣', en: 'interest', scripture: '彼前2:2' },
+  { value: 'curiosity', label: '好奇', emoji: '🤔', category: '好奇', en: 'curiosity', scripture: '箴2:4' },
 ]
 
 // 正向情绪 — 平静与安宁类
 const positiveEmotionsCalm = [
-  { value: 'invigoration', label: t("振奋"), emoji: '💪', category: t("振奋"), en: 'invigoration', scripture: t("弗6:10") },
-  { value: 'encouragement', label: t("受到鼓励"), emoji: '📈', category: t("受鼓励"), en: 'encouragement', scripture: t("帖前5:11") },
-  { value: 'peace', label: t("平静"), emoji: '😌', category: t("平静"), en: 'peace', scripture: t("约14:27") },
-  { value: 'tranquility', label: t("宁静"), emoji: '🧘', category: t("宁静"), en: 'tranquility', scripture: t("诗23:2") },
-  { value: 'serenity', label: t("安宁"), emoji: '🕊️', category: t("安宁"), en: 'serenity', scripture: t("赛26:3") },
-  { value: 'security', label: t("安全感"), emoji: '🛡️', category: t("安全感"), en: 'security', scripture: t("彼前1:5") },
+  { value: 'invigoration', label: '振奋', emoji: '💪', category: '振奋', en: 'invigoration', scripture: '弗6:10' },
+  { value: 'encouragement', label: '受到鼓励', emoji: '📈', category: '受鼓励', en: 'encouragement', scripture: '帖前5:11' },
+  { value: 'peace', label: '平静', emoji: '😌', category: '平静', en: 'peace', scripture: '约14:27' },
+  { value: 'tranquility', label: '宁静', emoji: '🧘', category: '宁静', en: 'tranquility', scripture: '诗23:2' },
+  { value: 'serenity', label: '安宁', emoji: '🕊️', category: '安宁', en: 'serenity', scripture: '赛26:3' },
+  { value: 'security', label: '安全感', emoji: '🛡️', category: '安全感', en: 'security', scripture: '彼前1:5' },
 ]
 
 // 正向情绪 — 释然与满足类
 const positiveEmotionsRelief = [
-  { value: 'relief', label: t("如释重负"), emoji: '😮', category: t("释然"), en: 'relief', scripture: t("诗32:1") },
-  { value: 'lightness', label: t("轻松"), emoji: '🎈', category: t("轻松"), en: 'lightness', scripture: t("太11:28") },
-  { value: 'comfort', label: t("慰藉"), emoji: '🛋️', category: t("慰藉"), en: 'comfort', scripture: t("约14:16") },
-  { value: 'enjoyment', label: t("享受"), emoji: '😋', category: t("享受"), en: 'enjoyment', scripture: t("诗34:8") },
-  { value: 'fulfillment', label: t("充实"), emoji: '✅', category: t("充实"), en: 'fulfillment', scripture: t("腓4:19") },
-  { value: 'satisfaction', label: t("满足"), emoji: '👍', category: t("满足"), en: 'satisfaction', scripture: t("太25:23") },
+  { value: 'relief', label: '如释重负', emoji: '😮', category: '释然', en: 'relief', scripture: '诗32:1' },
+  { value: 'lightness', label: '轻松', emoji: '🎈', category: '轻松', en: 'lightness', scripture: '太11:28' },
+  { value: 'comfort', label: '慰藉', emoji: '🛋️', category: '慰藉', en: 'comfort', scripture: '约14:16' },
+  { value: 'enjoyment', label: '享受', emoji: '😋', category: '享受', en: 'enjoyment', scripture: '诗34:8' },
+  { value: 'fulfillment', label: '充实', emoji: '✅', category: '充实', en: 'fulfillment', scripture: '腓4:19' },
+  { value: 'satisfaction', label: '满足', emoji: '👍', category: '满足', en: 'satisfaction', scripture: '太25:23' },
 ]
 
 // 负向情绪 — 孤独类
 const negativeEmotionsLonely = [
-  { value: 'loneliness', label: t("孤独"), emoji: '💔', category: t("孤独"), en: 'loneliness', scripture: t("诗22:1") },
-  { value: 'solitude', label: t("独处"), emoji: '🚶', category: t("独处"), en: 'solitude', scripture: t("路8:3") },
-  { value: 'isolation', label: t("被孤立"), emoji: '🏝️', category: t("被孤立"), en: 'isolation', scripture: t("加4:16") },
-  { value: 'hunger', label: t("内心空乏"), emoji: '😣', category: t("空乏"), en: 'hunger', scripture: t("太5:3") },
+  { value: 'loneliness', label: '孤独', emoji: '💔', category: '孤独', en: 'loneliness', scripture: '诗22:1' },
+  { value: 'solitude', label: '独处', emoji: '🚶', category: '独处', en: 'solitude', scripture: '路8:3' },
+  { value: 'isolation', label: '被孤立', emoji: '🏝️', category: '被孤立', en: 'isolation', scripture: '加4:16' },
+  { value: 'hunger', label: '内心空乏', emoji: '😣', category: '空乏', en: 'hunger', scripture: '太5:3' },
 ]
 
 // 负向情绪 — 悲伤与绝望类
 const negativeEmotionsSad = [
-  { value: 'sadness', label: t("悲伤"), emoji: '😢', category: t("悲伤"), en: 'sadness', scripture: t("太5:4") },
-  { value: 'sorrow', label: t("忧郁"), emoji: '😞', category: t("忧郁"), en: 'sorrow', scripture: t("诗51:17") },
-  { value: 'grief', label: t("哀痛"), emoji: '😭', category: t("哀痛"), en: 'grief', scripture: t("诗30:5") },
-  { value: 'anguish', label: t("痛苦"), emoji: '💔', category: t("痛苦"), en: 'anguish', scripture: t("罗9:2") },
-  { value: 'despair', label: t("绝望"), emoji: '🌑', category: t("绝望"), en: 'despair', scripture: t("伯3:20") },
-  { value: 'hopelessness', label: t("无望"), emoji: '⚫', category: t("无望"), en: 'hopelessness', scripture: t("箴13:12") },
+  { value: 'sadness', label: '悲伤', emoji: '😢', category: '悲伤', en: 'sadness', scripture: '太5:4' },
+  { value: 'sorrow', label: '忧郁', emoji: '😞', category: '忧郁', en: 'sorrow', scripture: '诗51:17' },
+  { value: 'grief', label: '哀痛', emoji: '😭', category: '哀痛', en: 'grief', scripture: '诗30:5' },
+  { value: 'anguish', label: '痛苦', emoji: '💔', category: '痛苦', en: 'anguish', scripture: '罗9:2' },
+  { value: 'despair', label: '绝望', emoji: '🌑', category: '绝望', en: 'despair', scripture: '伯3:20' },
+  { value: 'hopelessness', label: '无望', emoji: '⚫', category: '无望', en: 'hopelessness', scripture: '箴13:12' },
 ]
 
 // 负向情绪 — 失落与懊悔类
 const negativeEmotionsLoss = [
-  { value: 'loss', label: t("失落"), emoji: '📉', category: t("失落"), en: 'loss', scripture: t("传1:2") },
-  { value: 'emptiness', label: t("空虚"), emoji: '🕳️', category: t("空虚"), en: 'emptiness', scripture: t("耶2:13") },
-  { value: 'regret', label: t("后悔"), emoji: '😔', category: t("后悔"), en: 'regret', scripture: t("太27:3") },
-  { value: 'remorse', label: t("懊悔"), emoji: '😖', category: t("懊悔"), en: 'remorse', scripture: t("林后7:10") },
-  { value: 'self_condemnation', label: t("自责"), emoji: '💢', category: t("自责"), en: 'self-condemnation', scripture: t("约壹3:20") },
+  { value: 'loss', label: '失落', emoji: '📉', category: '失落', en: 'loss', scripture: '传1:2' },
+  { value: 'emptiness', label: '空虚', emoji: '🕳️', category: '空虚', en: 'emptiness', scripture: '耶2:13' },
+  { value: 'regret', label: '后悔', emoji: '😔', category: '后悔', en: 'regret', scripture: '太27:3' },
+  { value: 'remorse', label: '懊悔', emoji: '😖', category: '懊悔', en: 'remorse', scripture: '林后7:10' },
+  { value: 'self_condemnation', label: '自责', emoji: '💢', category: '自责', en: 'self-condemnation', scripture: '约壹3:20' },
 ]
 
 // 负向情绪 — 羞耻类
 const negativeEmotionsShame = [
-  { value: 'shame', label: t("羞耻"), emoji: '🔴', category: t("羞耻"), en: 'shame', scripture: t("创3:7") },
-  { value: 'embarrassment', label: t("尴尬"), emoji: '😳', category: t("尴尬"), en: 'embarrassment', scripture: t("来12:2") },
-  { value: 'guilt', label: t("愧疚"), emoji: '⛓️', category: t("愧疚"), en: 'guilt', scripture: t("罗8:1") },
+  { value: 'shame', label: '羞耻', emoji: '🔴', category: '羞耻', en: 'shame', scripture: '创3:7' },
+  { value: 'embarrassment', label: '尴尬', emoji: '😳', category: '尴尬', en: 'embarrassment', scripture: '来12:2' },
+  { value: 'guilt', label: '愧疚', emoji: '⛓️', category: '愧疚', en: 'guilt', scripture: '罗8:1' },
 ]
 
 // 负向情绪 — 恐惧与焦虑类
 const negativeEmotionsFear = [
-  { value: 'fear', label: t("恐惧"), emoji: '😱', category: t("恐惧"), en: 'fear', scripture: t("箴9:10") },
-  { value: 'dread', label: t("害怕"), emoji: '😨', category: t("害怕"), en: 'dread', scripture: t("提后1:7") },
-  { value: 'anxiety', label: t("焦虑"), emoji: '😰', category: t("焦虑"), en: 'anxiety', scripture: t("腓4:6") },
-  { value: 'worry', label: t("担忧"), emoji: '🤯', category: t("担忧"), en: 'worry', scripture: t("太6:30") },
-  { value: 'nervousness', label: t("紧张"), emoji: '😬', category: t("紧张"), en: 'nervousness', scripture: t("彼前3:15") },
-  { value: 'panic', label: t("惊慌"), emoji: '😵', category: t("惊慌"), en: 'panic', scripture: t("诗46:1-2") },
+  { value: 'fear', label: '恐惧', emoji: '😱', category: '恐惧', en: 'fear', scripture: '箴9:10' },
+  { value: 'dread', label: '害怕', emoji: '😨', category: '害怕', en: 'dread', scripture: '提后1:7' },
+  { value: 'anxiety', label: '焦虑', emoji: '😰', category: '焦虑', en: 'anxiety', scripture: '腓4:6' },
+  { value: 'worry', label: '担忧', emoji: '🤯', category: '担忧', en: 'worry', scripture: '太6:30' },
+  { value: 'nervousness', label: '紧张', emoji: '😬', category: '紧张', en: 'nervousness', scripture: '彼前3:15' },
+  { value: 'panic', label: '惊慌', emoji: '😵', category: '惊慌', en: 'panic', scripture: '诗46:1-2' },
 ]
 
 // 负向情绪 — 愤怒类
 const negativeEmotionsAnger = [
-  { value: 'anger', label: t("愤怒"), emoji: '😠', category: t("愤怒"), en: 'anger', scripture: t("弗4:26") },
-  { value: 'rage', label: t("愤恨"), emoji: '🤬', category: t("愤恨"), en: 'rage', scripture: t("雅1:20") },
-  { value: 'fury', label: t("暴怒"), emoji: '😡', category: t("暴怒"), en: 'fury', scripture: t("箴14:17") },
-  { value: 'irritation', label: t("烦躁"), emoji: '😤', category: t("烦躁"), en: 'irritation', scripture: t("箴14:29") },
-  { value: 'impatience', label: t("急躁"), emoji: '⏱️', category: t("急躁"), en: 'impatience', scripture: t("加5:22-23") },
+  { value: 'anger', label: '愤怒', emoji: '😠', category: '愤怒', en: 'anger', scripture: '弗4:26' },
+  { value: 'rage', label: '愤恨', emoji: '🤬', category: '愤恨', en: 'rage', scripture: '雅1:20' },
+  { value: 'fury', label: '暴怒', emoji: '😡', category: '暴怒', en: 'fury', scripture: '箴14:17' },
+  { value: 'irritation', label: '烦躁', emoji: '😤', category: '烦躁', en: 'irritation', scripture: '箴14:29' },
+  { value: 'impatience', label: '急躁', emoji: '⏱️', category: '急躁', en: 'impatience', scripture: '加5:22-23' },
 ]
 
 // 负向情绪 — 厌恶类
 const negativeEmotionsDisgust = [
-  { value: 'disgust', label: t("厌恶"), emoji: '🤢', category: t("厌恶"), en: 'disgust', scripture: t("诗97:10") },
-  { value: 'contempt', label: t("鄙视"), emoji: '😒', category: t("鄙视"), en: 'contempt', scripture: t("箴18:12") },
-  { value: 'jealousy', label: t("嫉妒"), emoji: '😒', category: t("嫉妒"), en: 'jealousy', scripture: t("加5:19-21") },
-  { value: 'envy', label: t("羡慕嫉妒"), emoji: '👀', category: t("羡慕"), en: 'envy', scripture: t("来13:5") },
+  { value: 'disgust', label: '厌恶', emoji: '🤢', category: '厌恶', en: 'disgust', scripture: '诗97:10' },
+  { value: 'contempt', label: '鄙视', emoji: '😒', category: '鄙视', en: 'contempt', scripture: '箴18:12' },
+  { value: 'jealousy', label: '嫉妒', emoji: '😒', category: '嫉妒', en: 'jealousy', scripture: '加5:19-21' },
+  { value: 'envy', label: '羡慕嫉妒', emoji: '👀', category: '羡慕', en: 'envy', scripture: '来13:5' },
 ]
 
 // 复杂/关系情绪 — 同理心类
 const complexEmotionsCompassion = [
-  { value: 'compassion', label: t("怜悯"), emoji: '🧡', category: t("怜悯"), en: 'compassion', scripture: t("腓1:8") },
-  { value: 'sympathy', label: t("同情"), emoji: '🤝', category: t("同情"), en: 'sympathy', scripture: t("罗12:15") },
-  { value: 'empathy', label: t("共情"), emoji: '💜', category: t("共情"), en: 'empathy', scripture: t("来4:15") },
-  { value: 'comprehension', label: t("豁然开朗"), emoji: '💡', category: t("领悟"), en: 'comprehension', scripture: t("弗1:18") },
-  { value: 'forgiveness', label: t("释怀"), emoji: '🕊️', category: t("释怀"), en: 'forgiveness', scripture: t("太6:14") },
-  { value: 'pardon', label: t("宽恕"), emoji: '✝️', category: t("宽恕"), en: 'pardon', scripture: t("诗103:3") },
+  { value: 'compassion', label: '怜悯', emoji: '🧡', category: '怜悯', en: 'compassion', scripture: '腓1:8' },
+  { value: 'sympathy', label: '同情', emoji: '🤝', category: '同情', en: 'sympathy', scripture: '罗12:15' },
+  { value: 'empathy', label: '共情', emoji: '💜', category: '共情', en: 'empathy', scripture: '来4:15' },
+  { value: 'comprehension', label: '豁然开朗', emoji: '💡', category: '领悟', en: 'comprehension', scripture: '弗1:18' },
+  { value: 'forgiveness', label: '释怀', emoji: '🕊️', category: '释怀', en: 'forgiveness', scripture: '太6:14' },
+  { value: 'pardon', label: '宽恕', emoji: '✝️', category: '宽恕', en: 'pardon', scripture: '诗103:3' },
 ]
 
 // 复杂/关系情绪 — 矛盾与迷茫类
 const complexEmotionsAmbivalence = [
-  { value: 'ambivalence', label: t("矛盾纠结"), emoji: '⚖️', category: t("矛盾"), en: 'ambivalence', scripture: t("加5:17") },
-  { value: 'confusion', label: t("迷茫"), emoji: '🌫️', category: t("迷茫"), en: 'confusion', scripture: t("彼后3:16") },
-  { value: 'uncertainty', label: t("不确定"), emoji: '❓', category: t("不确定"), en: 'uncertainty', scripture: t("箴3:5-6") },
-  { value: 'doubt', label: t("怀疑"), emoji: '🤔', category: t("怀疑"), en: 'doubt', scripture: t("太14:31") },
-  { value: 'defensiveness', label: t("防御"), emoji: '🛡️', category: t("防御"), en: 'defensiveness', scripture: t("林后10:5") },
-  { value: 'alienation', label: t("疏离"), emoji: '🧱', category: t("疏离"), en: 'alienation', scripture: t("西1:21") },
+  { value: 'ambivalence', label: '矛盾纠结', emoji: '⚖️', category: '矛盾', en: 'ambivalence', scripture: '加5:17' },
+  { value: 'confusion', label: '迷茫', emoji: '🌫️', category: '迷茫', en: 'confusion', scripture: '彼后3:16' },
+  { value: 'uncertainty', label: '不确定', emoji: '❓', category: '不确定', en: 'uncertainty', scripture: '箴3:5-6' },
+  { value: 'doubt', label: '怀疑', emoji: '🤔', category: '怀疑', en: 'doubt', scripture: '太14:31' },
+  { value: 'defensiveness', label: '防御', emoji: '🛡️', category: '防御', en: 'defensiveness', scripture: '林后10:5' },
+  { value: 'alienation', label: '疏离', emoji: '🧱', category: '疏离', en: 'alienation', scripture: '西1:21' },
 ]
 
 // 完整情绪列表（87个）
@@ -230,33 +227,33 @@ const emotionTypes = [
 
 // 情绪分类导航（用于UI展示）
 const emotionCategories = [
-  { key: 'longing', label: t("渴望与盼望"), emotions: [...positiveEmotionsLonging, ...positiveEmotionsHope.filter(e => e.category === t("盼望类"))] },
-  { key: 'joy', label: t("快乐与感激"), emotions: positiveEmotionsJoy },
-  { key: 'passion', label: t("热情与兴奋"), emotions: positiveEmotionsHope.filter(e => [t("热情类"), t("兴奋类"), t("陶醉类")].includes(e.category)) },
-  { key: 'love', label: t("喜爱与好奇"), emotions: positiveEmotionsLove },
-  { key: 'calm', label: t("平静与安宁"), emotions: [...positiveEmotionsCalm, ...positiveEmotionsRelief] },
-  { key: 'lonely', label: t("孤独与失落"), emotions: [...negativeEmotionsLonely, ...negativeEmotionsLoss] },
-  { key: 'sad', label: t("悲伤与绝望"), emotions: negativeEmotionsSad },
-  { key: 'shame', label: t("羞愧与内疚"), emotions: negativeEmotionsShame },
-  { key: 'fear', label: t("恐惧与焦虑"), emotions: negativeEmotionsFear },
-  { key: 'anger', label: t("愤怒与厌恶"), emotions: [...negativeEmotionsAnger, ...negativeEmotionsDisgust] },
-  { key: 'complex', label: t("复杂与关系"), emotions: [...complexEmotionsCompassion, ...complexEmotionsAmbivalence] },
+  { key: 'longing', label: '渴望与盼望', emotions: [...positiveEmotionsLonging, ...positiveEmotionsHope.filter(e => e.category === '盼望类')] },
+  { key: 'joy', label: '快乐与感激', emotions: positiveEmotionsJoy },
+  { key: 'passion', label: '热情与兴奋', emotions: positiveEmotionsHope.filter(e => ['热情类', '兴奋类', '陶醉类'].includes(e.category)) },
+  { key: 'love', label: '喜爱与好奇', emotions: positiveEmotionsLove },
+  { key: 'calm', label: '平静与安宁', emotions: [...positiveEmotionsCalm, ...positiveEmotionsRelief] },
+  { key: 'lonely', label: '孤独与失落', emotions: [...negativeEmotionsLonely, ...negativeEmotionsLoss] },
+  { key: 'sad', label: '悲伤与绝望', emotions: negativeEmotionsSad },
+  { key: 'shame', label: '羞愧与内疚', emotions: negativeEmotionsShame },
+  { key: 'fear', label: '恐惧与焦虑', emotions: negativeEmotionsFear },
+  { key: 'anger', label: '愤怒与厌恶', emotions: [...negativeEmotionsAnger, ...negativeEmotionsDisgust] },
+  { key: 'complex', label: '复杂与关系', emotions: [...complexEmotionsCompassion, ...complexEmotionsAmbivalence] },
 ]
 
 // 灵性原则
 const spiritualPrinciples = [
-  { id: '1', text: t("凡事察验，善美的要持守"), ref: t("帖前5:21") },
-  { id: '2', text: t("你要保守你心，胜过保守一切"), ref: t("箴4:23") },
-  { id: '3', text: t("不要恐惧，因为我与你同在"), ref: t("赛41:10") },
-  { id: '4', text: t("看别人比自己强"), ref: t("腓2:3") },
-  { id: '5', text: t("凭果子认出他们来"), ref: t("太7:20") },
-  { id: '6', text: t("爱比成功更高"), ref: t("林前13:1-3") },
-  { id: '7', text: t("真理比舒适更重要"), ref: t("约8:32") },
-  { id: '8', text: t("谦卑在智慧以先"), ref: t("箴11:2") },
-  { id: '9', text: t("安息是属灵操练"), ref: t("可6:31") },
-  { id: '10', text: t("顺服神，不顺从人"), ref: t("徒5:29") },
-  { id: '11', text: t("愿意受苦而不愿犯罪"), ref: t("来11:25") },
-  { id: '12', text: t("患难生忍耐，忍耐生老练"), ref: t("罗5:3-4") },
+  { id: '1', text: '凡事察验，善美的要持守', ref: '帖前5:21' },
+  { id: '2', text: '你要保守你心，胜过保守一切', ref: '箴4:23' },
+  { id: '3', text: '不要恐惧，因为我与你同在', ref: '赛41:10' },
+  { id: '4', text: '看别人比自己强', ref: '腓2:3' },
+  { id: '5', text: '凭果子认出他们来', ref: '太7:20' },
+  { id: '6', text: '爱比成功更高', ref: '林前13:1-3' },
+  { id: '7', text: '真理比舒适更重要', ref: '约8:32' },
+  { id: '8', text: '谦卑在智慧以先', ref: '箴11:2' },
+  { id: '9', text: '安息是属灵操练', ref: '可6:31' },
+  { id: '10', text: '顺服神，不顺从人', ref: '徒5:29' },
+  { id: '11', text: '愿意受苦而不愿犯罪', ref: '来11:25' },
+  { id: '12', text: '患难生忍耐，忍耐生老练', ref: '罗5:3-4' },
 ]
 
 export default function DecisionSupportPage({ user, onBack, embedded = false, onNeedLogin }) {
@@ -457,7 +454,7 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
     
     // 按分类分组
     const tagsByCategory = userTags.reduce((acc, tag) => {
-      const cat = tag.tag_category || t("其他")
+      const cat = tag.tag_category || '其他'
       if (!acc[cat]) acc[cat] = []
       acc[cat].push(tag)
       return acc
@@ -465,16 +462,16 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
     
     // 分类中文映射
     const categoryNames = {
-      'emotion_type': t("情绪特征"),
-      'life_domain': t("生活领域"),
-      'behavior': t("行为模式"),
-      'value': t("价值观"),
-      'relationship': t("关系模式"),
-      'spiritual': t("灵性状态"),
-      'cognitive': t("认知风格"),
-      'decision': t("决策风格"),
-      'manual': t("手动添加"),
-      'unknown': t("其他")
+      'emotion_type': '情绪特征',
+      'life_domain': '生活领域',
+      'behavior': '行为模式',
+      'value': '价值观',
+      'relationship': '关系模式',
+      'spiritual': '灵性状态',
+      'cognitive': '认知风格',
+      'decision': '决策风格',
+      'manual': '手动添加',
+      'unknown': '其他'
     }
     
     // 分类颜色
@@ -506,11 +503,11 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
           marginBottom: '12px',
         }}>
           <div style={{ fontSize: '14px', fontWeight: 600, color: '#fff' }}>
-            {t("🏷️ 我的个人标签")}
+            🏷️ 我的个人标签
           </div>
           {tagInsights && (
             <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)' }}>
-              {t("共")} {tagInsights.total_tags} {t("个标签 ·")} {tagInsights.total_categories} {t("个维度")}
+              共 {tagInsights.total_tags} 个标签 · {tagInsights.total_categories} 个维度
             </div>
           )}
         </div>
@@ -549,7 +546,7 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
             color: 'rgba(255,255,255,0.4)',
             textAlign: 'center'
           }}>
-            +{userTags.length - 15} {t("更多标签")}
+            +{userTags.length - 15} 更多标签
           </div>
         )}
       </div>
@@ -562,7 +559,7 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
       const res = await fetch(sfdsUrl('/decisions') + '?user_id=' + encodeURIComponent(userId), {
         headers: { Authorization: `Bearer ${token}` },
       })
-      if (!res.ok) throw new Error(t("加载失败"))
+      if (!res.ok) throw new Error('加载失败')
       const data = await res.json()
       setDecisions(data)
     } catch (err) {
@@ -583,7 +580,7 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
       })
       const respText = await r.text()
       if (!r.ok) {
-        let msg = t("灵镜分析失败")
+        let msg = '灵镜分析失败'
         try {
           const j = JSON.parse(respText)
           msg = j.detail || j.error || msg
@@ -671,7 +668,7 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
       
       if (!res.ok) {
         const err = await res.json()
-        throw new Error(err.detail || t("提交失败"))
+        throw new Error(err.detail || '提交失败')
       }
       
       const result = await res.json()
@@ -799,7 +796,7 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
 
       if (!res.ok) {
         const err = await res.json()
-        throw new Error(err.detail || t("提交失败"))
+        throw new Error(err.detail || '提交失败')
       }
 
       const result = await res.json()
@@ -869,27 +866,27 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
   // 渲染新决策表单
   const renderNewDecisionForm = () => {
     const DECISION_CATS = [
-      { value:'career', emoji:'💼', label:t("职业发展") },
-      { value:'relationship', emoji:'💞', label:t("关系婚姻") },
-      { value:'family', emoji:'🏠', label:t("家庭责任") },
-      { value:'church', emoji:'⛪', label:t("事奉职分") },
-      { value:'financial', emoji:'💰', label:t("财务奉献") },
-      { value:'health', emoji:'🏃', label:t("健康身体") },
-      { value:'education', emoji:'🎓', label:t("学习进修") },
-      { value:'relocation', emoji:'✈️', label:t("搬迁移居") },
-      { value:'ministry', emoji:'🙏', label:t("使命呼召") },
-      { value:'conflict', emoji:'🤝', label:t("人际冲突") },
-      { value:'forgiveness', emoji:'💙', label:t("饶恕和好") },
-      { value:'other', emoji:'💡', label:t("其他决策") },
+      { value:'career', emoji:'💼', label:'职业发展' },
+      { value:'relationship', emoji:'💞', label:'关系婚姻' },
+      { value:'family', emoji:'🏠', label:'家庭责任' },
+      { value:'church', emoji:'⛪', label:'事奉职分' },
+      { value:'financial', emoji:'💰', label:'财务奉献' },
+      { value:'health', emoji:'🏃', label:'健康身体' },
+      { value:'education', emoji:'🎓', label:'学习进修' },
+      { value:'relocation', emoji:'✈️', label:'搬迁移居' },
+      { value:'ministry', emoji:'🙏', label:'使命呼召' },
+      { value:'conflict', emoji:'🤝', label:'人际冲突' },
+      { value:'forgiveness', emoji:'💙', label:'饶恕和好' },
+      { value:'other', emoji:'💡', label:'其他决策' },
     ]
 
     const MOVEMENT_OPTS = [
-      { value:'consolation', emoji:'☀️', label:t("神慰"), color:'#34c759',
-        desc:t("感到平静、喜乐、信心加增、爱的流动，似乎与神更靠近") },
-      { value:'desolation',  emoji:'🌧️', label:t("神枯"), color:'#f87171',
-        desc:t("感到黑暗、混乱、平静消失、拒绝神的冲动，似乎与神疏远") },
-      { value:'uncertain',   emoji:'🌫️', label:t("不确定"), color:'#fbbf24',
-        desc:t("难以辨别，内心混合，需要更多等候和观察") },
+      { value:'consolation', emoji:'☀️', label:'神慰', color:'#34c759',
+        desc:'感到平静、喜乐、信心加增、爱的流动，似乎与神更靠近' },
+      { value:'desolation',  emoji:'🌧️', label:'神枯', color:'#f87171',
+        desc:'感到黑暗、混乱、平静消失、拒绝神的冲动，似乎与神疏远' },
+      { value:'uncertain',   emoji:'🌫️', label:'不确定', color:'#fbbf24',
+        desc:'难以辨别，内心混合，需要更多等候和观察' },
     ]
 
     async function searchVerses() {
@@ -914,7 +911,7 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
     async function generatePrayer() {
       setDiscernPrayerLoading(true)
       const mv = MOVEMENT_OPTS.find(o => o.value === discernMovement)
-      const prompt = `我面临的处境：${discernSituation}\n内心感受（${mv?.label || ''}）：${discernMovementNote || t("尚未填写")}\n相关经文：${discernVerses.slice(0,2).map(v => v.reference || v.text || '').join('；') || t("暂无")}\n\n请为这个处境和心境，生成一段真诚的属灵祷告文（150-200字），用第一人称，融入经文，向神坦陈内心。`
+      const prompt = `我面临的处境：${discernSituation}\n内心感受（${mv?.label || ''}）：${discernMovementNote || '尚未填写'}\n相关经文：${discernVerses.slice(0,2).map(v => v.reference || v.text || '').join('；') || '暂无'}\n\n请为这个处境和心境，生成一段真诚的属灵祷告文（150-200字），用第一人称，融入经文，向神坦陈内心。`
       try {
         const res = await fetch(API_BASE + '/guidance', {
           method: 'POST',
@@ -922,10 +919,10 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
           body: JSON.stringify({ query: prompt }),
         })
         const data = await res.json()
-        setDiscernPrayer(data.guidance || data.result || data.text || t("祷告生成失败，请重试。"))
+        setDiscernPrayer(data.guidance || data.result || data.text || '祷告生成失败，请重试。')
       } catch (err) {
         console.error('[Discern] prayer gen error:', err)
-        setDiscernPrayer(t("祷告生成失败，请检查网络连接后重试。"))
+        setDiscernPrayer('祷告生成失败，请检查网络连接后重试。')
       } finally {
         setDiscernPrayerLoading(false)
       }
@@ -964,13 +961,13 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
         {/* ── 第一步：描述处境 ── */}
         {discernStep === 1 && (
           <div>
-            <div style={{ fontSize:16, fontWeight:700, color:'#fff', marginBottom:6 }}>{t("第一步：描述处境")}</div>
-            <div style={{ fontSize:12, color:'rgba(255,255,255,0.4)', marginBottom:16 }}>{t("用一两句话说出你正在面对的处境或决策")}</div>
+            <div style={{ fontSize:16, fontWeight:700, color:'#fff', marginBottom:6 }}>第一步：描述处境</div>
+            <div style={{ fontSize:12, color:'rgba(255,255,255,0.4)', marginBottom:16 }}>用一两句话说出你正在面对的处境或决策</div>
 
             <textarea
               value={discernSituation}
               onChange={e => setDiscernSituation(e.target.value)}
-              placeholder={t("例如：我收到了另一家公司的工作邀请，薪资更高但离家更远…")}
+              placeholder="例如：我收到了另一家公司的工作邀请，薪资更高但离家更远…"
               rows={4}
               style={{
                 width:'100%', boxSizing:'border-box',
@@ -983,7 +980,7 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
               }}
             />
 
-            <div style={{ fontSize:12, fontWeight:700, color:'rgba(255,255,255,0.5)', marginBottom:10 }}>{t("这属于哪类处境？")}</div>
+            <div style={{ fontSize:12, fontWeight:700, color:'rgba(255,255,255,0.5)', marginBottom:10 }}>这属于哪类处境？</div>
             <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:8 }}>
               {DECISION_CATS.map(cat => (
                 <button key={cat.value} onClick={() => setDiscernCategory(cat.value)} style={{
@@ -1005,12 +1002,12 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
         {/* ── 第二步：神慰/神枯 ── */}
         {discernStep === 2 && (
           <div>
-            <div style={{ fontSize:16, fontWeight:700, color:'#fff', marginBottom:6 }}>{t("第二步：内心感受")}</div>
+            <div style={{ fontSize:16, fontWeight:700, color:'#fff', marginBottom:6 }}>第二步：内心感受</div>
             <div style={{ fontSize:12, color:'rgba(255,255,255,0.4)', marginBottom:4 }}>
-              {t("在这个处境中，你内心有什么样的属灵感受？")}
+              在这个处境中，你内心有什么样的属灵感受？
             </div>
             <div style={{ fontSize:11, color:'rgba(255,255,255,0.25)', marginBottom:16, fontStyle:'italic' }}>
-              {t("伊纳爵灵修传统：神慰指向神，神枯需分辨根源")}
+              伊纳爵灵修传统：神慰指向神，神枯需分辨根源
             </div>
 
             <div style={{ display:'flex', flexDirection:'column', gap:10, marginBottom:16 }}>
@@ -1033,12 +1030,12 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
             {discernMovement && (
               <div>
                 <div style={{ fontSize:12, fontWeight:700, color:'rgba(255,255,255,0.5)', marginBottom:8 }}>
-                  {t("简短描述你的感受原因（可选）")}
+                  简短描述你的感受原因（可选）
                 </div>
                 <textarea
                   value={discernMovementNote}
                   onChange={e => setDiscernMovementNote(e.target.value)}
-                  placeholder={t("例如：每次想到这个方向，内心就感到平安和兴奋；但想到另一个方向，就感到焦虑…")}
+                  placeholder="例如：每次想到这个方向，内心就感到平安和兴奋；但想到另一个方向，就感到焦虑…"
                   rows={3}
                   style={{
                     width:'100%', boxSizing:'border-box',
@@ -1058,9 +1055,9 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
         {/* ── 第三步：经文检索 ── */}
         {discernStep === 3 && (
           <div>
-            <div style={{ fontSize:16, fontWeight:700, color:'#fff', marginBottom:6 }}>{t("第三步：相关经文")}</div>
+            <div style={{ fontSize:16, fontWeight:700, color:'#fff', marginBottom:6 }}>第三步：相关经文</div>
             <div style={{ fontSize:12, color:'rgba(255,255,255,0.4)', marginBottom:16 }}>
-              {t("输入一个关键词，检索与你处境相关的圣经经文（可跳过）")}
+              输入一个关键词，检索与你处境相关的圣经经文（可跳过）
             </div>
 
             <div style={{ display:'flex', gap:8, marginBottom:14 }}>
@@ -1068,7 +1065,7 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
                 value={discernKeyword}
                 onChange={e => setDiscernKeyword(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && searchVerses()}
-                placeholder={t("如：工作、等候、恐惧、信靠、呼召…")}
+                placeholder="如：工作、等候、恐惧、信靠、呼召…"
                 style={{
                   flex:1, background:'rgba(255,255,255,0.06)',
                   border:'1px solid rgba(255,255,255,0.12)',
@@ -1082,7 +1079,7 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
                 color: discernKeyword.trim() ? '#5ac8fa' : 'rgba(255,255,255,0.3)',
                 fontSize:13, fontWeight:600, cursor:'pointer', flexShrink:0,
               }}>
-                {discernVersesLoading ? '⏳' : t("检索")}
+                {discernVersesLoading ? '⏳' : '检索'}
               </button>
             </div>
 
@@ -1104,13 +1101,13 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
 
             {discernVerses.length === 0 && !discernVersesLoading && discernKeyword && (
               <div style={{ textAlign:'center', padding:'20px', color:'rgba(255,255,255,0.3)', fontSize:13 }}>
-                {t("未找到相关经文，尝试其他关键词")}
+                未找到相关经文，尝试其他关键词
               </div>
             )}
 
             <div style={{ marginTop:16, padding:'10px 14px', background:'rgba(255,255,255,0.04)', borderRadius:10 }}>
               <div style={{ fontSize:11, color:'rgba(255,255,255,0.3)' }}>
-                {t("💡 你也可以直接跳到第四步生成祷告文")}
+                💡 你也可以直接跳到第四步生成祷告文
               </div>
             </div>
           </div>
@@ -1119,16 +1116,16 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
         {/* ── 第四步：祷告文 ── */}
         {discernStep === 4 && (
           <div>
-            <div style={{ fontSize:16, fontWeight:700, color:'#fff', marginBottom:6 }}>{t("第四步：属灵祷告")}</div>
+            <div style={{ fontSize:16, fontWeight:700, color:'#fff', marginBottom:6 }}>第四步：属灵祷告</div>
             <div style={{ fontSize:12, color:'rgba(255,255,255,0.4)', marginBottom:16 }}>
-              {t("基于你的处境和内心感受，生成一段属灵祷告文")}
+              基于你的处境和内心感受，生成一段属灵祷告文
             </div>
 
             {/* 分辨摘要 */}
             <div style={{ background:'rgba(255,255,255,0.04)', borderRadius:12, padding:'12px 14px', marginBottom:16 }}>
-              <div style={{ fontSize:11, color:'rgba(255,255,255,0.35)', marginBottom:6 }}>{t("分辨摘要")}</div>
+              <div style={{ fontSize:11, color:'rgba(255,255,255,0.35)', marginBottom:6 }}>分辨摘要</div>
               <div style={{ fontSize:13, color:'rgba(255,255,255,0.75)', lineHeight:1.6, marginBottom:6 }}>
-                {discernSituation || t("（未填写处境）")}
+                {discernSituation || '（未填写处境）'}
               </div>
               {discernMovement && (
                 <div style={{ fontSize:12, color: MOVEMENT_OPTS.find(o => o.value === discernMovement)?.color || '#fff' }}>
@@ -1148,9 +1145,9 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
                 display:'flex', alignItems:'center', justifyContent:'center', gap:8,
               }}>
                 {discernPrayerLoading ? (
-                  <><span>⏳</span><span>{t("祷告文生成中…")}</span></>
+                  <><span>⏳</span><span>祷告文生成中…</span></>
                 ) : (
-                  <><span>🙏</span><span>{t("生成属灵祷告文")}</span></>
+                  <><span>🙏</span><span>生成属灵祷告文</span></>
                 )}
               </button>
             ) : (
@@ -1161,7 +1158,7 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
                   borderRadius:14, padding:'16px',
                   marginBottom:12,
                 }}>
-                  <div style={{ fontSize:11, color:'rgba(52,199,89,0.7)', fontWeight:700, marginBottom:10 }}>{t("🙏 属灵祷告")}</div>
+                  <div style={{ fontSize:11, color:'rgba(52,199,89,0.7)', fontWeight:700, marginBottom:10 }}>🙏 属灵祷告</div>
                   <div style={{ fontSize:14, color:'rgba(255,255,255,0.88)', lineHeight:1.85, whiteSpace:'pre-wrap' }}>{discernPrayer}</div>
                 </div>
                 <button onClick={() => { setDiscernPrayer(''); generatePrayer() }} style={{
@@ -1169,7 +1166,7 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
                   borderRadius:10, border:'1px solid rgba(255,255,255,0.12)',
                   background:'transparent', color:'rgba(255,255,255,0.5)',
                   fontSize:12, cursor:'pointer',
-                }}>{t("重新生成")}</button>
+                }}>重新生成</button>
               </div>
             )}
 
@@ -1183,7 +1180,7 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
               borderRadius:8, border:'none',
               background:'transparent', color:'rgba(255,255,255,0.25)',
               fontSize:11, cursor:'pointer',
-            }}>{t("↩ 重新开始分辨")}</button>
+            }}>↩ 重新开始分辨</button>
           </div>
         )}
 
@@ -1194,7 +1191,7 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
               flex:1, padding:'12px', borderRadius:12, border:'1px solid rgba(255,255,255,0.12)',
               background:'transparent', color:'rgba(255,255,255,0.55)',
               fontSize:14, fontWeight:600, cursor:'pointer',
-            }}>{t("← 上一步")}</button>
+            }}>← 上一步</button>
           )}
           {discernStep < 4 && (
             <button onClick={() => canNext && setDiscernStep(s => s + 1)} disabled={!canNext} style={{
@@ -1202,7 +1199,7 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
               background: canNext ? 'rgba(90,200,250,0.2)' : 'rgba(255,255,255,0.06)',
               color: canNext ? '#5ac8fa' : 'rgba(255,255,255,0.25)',
               fontSize:14, fontWeight:700, cursor: canNext ? 'pointer' : 'default',
-            }}>{t("下一步 →")}</button>
+            }}>下一步 →</button>
           )}
         </div>
       </div>
@@ -1226,21 +1223,21 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
           color: '#fff',
         }}>
           <div style={{ fontSize: '20px', fontWeight: 700, marginBottom: '8px' }}>
-            {t("✨ 辨识分析完成")}
+            ✨ 辨识分析完成
           </div>
           <div style={{ fontSize: '14px', opacity: 0.9 }}>
-            {t("基于当前状态，系统已完成动机分析与来源辨识")}
+            基于当前状态，系统已完成动机分析与来源辨识
           </div>
         </div>
 
         {/* 动机分析 */}
         {motive_analysis && (
           <div style={resultCardStyle}>
-            <div style={resultTitleStyle}>{t("🧠 动机分析")}</div>
+            <div style={resultTitleStyle}>🧠 动机分析</div>
             <div style={{ marginBottom: '12px' }}>
               <div style={progressBarContainer}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '4px' }}>
-                  <span>{t("😨 恐惧驱动")}</span>
+                  <span>😨 恐惧驱动</span>
                   <span>{(motive_analysis.fear_driven_score * 100).toFixed(2)}%</span>
                 </div>
                 <div style={progressBarBg}>
@@ -1250,7 +1247,7 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
               
               <div style={progressBarContainer}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '4px' }}>
-                  <span>{t("😤 骄傲驱动")}</span>
+                  <span>😤 骄傲驱动</span>
                   <span>{(motive_analysis.pride_driven_score * 100).toFixed(2)}%</span>
                 </div>
                 <div style={progressBarBg}>
@@ -1260,7 +1257,7 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
               
               <div style={progressBarContainer}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '4px' }}>
-                  <span>{t("❤️ 爱驱动")}</span>
+                  <span>❤️ 爱驱动</span>
                   <span>{(motive_analysis.love_driven_score * 100).toFixed(2)}%</span>
                 </div>
                 <div style={progressBarBg}>
@@ -1270,7 +1267,7 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
               
               <div style={progressBarContainer}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '4px' }}>
-                  <span>{t("🔥 欲望驱动")}</span>
+                  <span>🔥 欲望驱动</span>
                   <span>{(motive_analysis.desire_driven_score * 100).toFixed(2)}%</span>
                 </div>
                 <div style={progressBarBg}>
@@ -1285,14 +1282,14 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
               padding: '12px',
               fontSize: '13px',
             }}>
-              <strong>{t("主导动机：")}</strong>
+              <strong>主导动机：</strong>
               <span style={{ color: '#007aff', fontWeight: 600 }}>
-                {motive_analysis.dominant_motive === 'fear' && t("😨 恐惧")}
-                {motive_analysis.dominant_motive === 'pride' && t("😤 骄傲")}
-                {motive_analysis.dominant_motive === 'love' && t("❤️ 爱")}
-                {motive_analysis.dominant_motive === 'desire' && t("🔥 欲望")}
-                {motive_analysis.dominant_motive === 'duty' && t("📋 责任")}
-                {motive_analysis.dominant_motive === 'ambition' && t("🎯 雄心")}
+                {motive_analysis.dominant_motive === 'fear' && '😨 恐惧'}
+                {motive_analysis.dominant_motive === 'pride' && '😤 骄傲'}
+                {motive_analysis.dominant_motive === 'love' && '❤️ 爱'}
+                {motive_analysis.dominant_motive === 'desire' && '🔥 欲望'}
+                {motive_analysis.dominant_motive === 'duty' && '📋 责任'}
+                {motive_analysis.dominant_motive === 'ambition' && '🎯 雄心'}
               </span>
             </div>
           </div>
@@ -1301,7 +1298,7 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
         {/* 来源辨识 */}
         {discernment_result && (
           <div style={resultCardStyle}>
-            <div style={resultTitleStyle}>{t("🔮 来源辨识")}</div>
+            <div style={resultTitleStyle}>🔮 来源辨识</div>
             
             <div style={{ 
               background: 'rgba(255,255,255,0.05)',
@@ -1318,14 +1315,14 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
                 marginBottom: '8px',
                 ...getSourceStyle(discernment_result.primary_source),
               }}>
-                {discernment_result.primary_source === 'holy_spirit' && t("✨ 圣灵感动")}
-                {discernment_result.primary_source === 'conscience' && t("🤔 良心/理性")}
-                {discernment_result.primary_source === 'fear_response' && t("😨 恐惧反应")}
-                {discernment_result.primary_source === 'pride_response' && t("😤 骄傲反应")}
-                {discernment_result.primary_source === 'trauma_response' && t("💔 创伤反应")}
-                {discernment_result.primary_source === 'worldly_value' && t("🌍 世俗价值观")}
-                {discernment_result.primary_source === 'flesh_desire' && t("🔥 肉体欲望")}
-                {discernment_result.primary_source === 'uncertain' && t("❓ 不确定")}
+                {discernment_result.primary_source === 'holy_spirit' && '✨ 圣灵感动'}
+                {discernment_result.primary_source === 'conscience' && '🤔 良心/理性'}
+                {discernment_result.primary_source === 'fear_response' && '😨 恐惧反应'}
+                {discernment_result.primary_source === 'pride_response' && '😤 骄傲反应'}
+                {discernment_result.primary_source === 'trauma_response' && '💔 创伤反应'}
+                {discernment_result.primary_source === 'worldly_value' && '🌍 世俗价值观'}
+                {discernment_result.primary_source === 'flesh_desire' && '🔥 肉体欲望'}
+                {discernment_result.primary_source === 'uncertain' && '❓ 不确定'}
               </div>
               
               <div style={{ fontSize: '13px', lineHeight: 1.5, marginBottom: '8px' }}>
@@ -1333,8 +1330,8 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
               </div>
               
               <div style={{ display: 'flex', gap: '16px', fontSize: '12px' }}>
-                <span>{t("置信度:")} {(discernment_result.confidence * 100).toFixed(2)}%</span>
-                <span>{t("长期果实:")} {discernment_result.long_term_fruit_score > 0 ? '+' : ''}{discernment_result.long_term_fruit_score}</span>
+                <span>置信度: {(discernment_result.confidence * 100).toFixed(2)}%</span>
+                <span>长期果实: {discernment_result.long_term_fruit_score > 0 ? '+' : ''}{discernment_result.long_term_fruit_score}</span>
               </div>
             </div>
           </div>
@@ -1343,7 +1340,7 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
         {/* 指导建议 */}
         {guidance && (
           <div style={resultCardStyle}>
-            <div style={resultTitleStyle}>{t("📖 指导建议")}</div>
+            <div style={resultTitleStyle}>📖 指导建议</div>
             
             <div style={{ 
               background: 'rgba(52,199,89,0.15)',
@@ -1361,7 +1358,7 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
             {guidance.risks && guidance.risks.length > 0 && (
               <div style={{ marginBottom: '16px' }}>
                 <div style={{ fontSize: '13px', fontWeight: 600, marginBottom: '8px', color: '#ff3b30' }}>
-                  {t("⚠️ 潜在风险")}
+                  ⚠️ 潜在风险
                 </div>
                 {guidance.risks.map((risk, i) => (
                   <div key={i} style={{
@@ -1381,7 +1378,7 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
             {guidance.alternative_interpretations && guidance.alternative_interpretations.length > 0 && (
               <div style={{ marginBottom: '16px' }}>
                 <div style={{ fontSize: '13px', fontWeight: 600, marginBottom: '8px', color: '#ff9500' }}>
-                  {t("💭 替代视角")}
+                  💭 替代视角
                 </div>
                 {guidance.alternative_interpretations.map((alt, i) => (
                   <div key={i} style={{
@@ -1401,7 +1398,7 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
             {guidance.recommended_actions && guidance.recommended_actions.length > 0 && (
               <div>
                 <div style={{ fontSize: '13px', fontWeight: 600, marginBottom: '8px', color: '#007aff' }}>
-                  {t("✅ 建议行动")}
+                  ✅ 建议行动
                 </div>
                 {guidance.recommended_actions.map((action, i) => (
                   <div key={i} style={{
@@ -1423,16 +1420,16 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
         {/* SFDS → 习惯行动链路 */}
         {guidance && (guidance.recommended_actions?.length > 0 || discernment_result) && (
           <div style={{ ...resultCardStyle, background: 'rgba(52,199,89,0.07)', border: '1px solid rgba(52,199,89,0.2)' }}>
-            <div style={{ ...resultTitleStyle, color: '#34c759' }}>{t("🌱 本周属灵操练建议")}</div>
+            <div style={{ ...resultTitleStyle, color: '#34c759' }}>🌱 本周属灵操练建议</div>
             <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.7)', marginBottom: '12px', lineHeight: 1.6 }}>
-              {t("根据辨识结果，建议本周将以下操练设为习惯：")}
+              根据辨识结果，建议本周将以下操练设为习惯：
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '14px' }}>
               {[
-                discernment_result?.dominant_source === 'fear' && t("每日5分钟：写下一件神过去信实的事（感恩日记）"),
-                discernment_result?.dominant_source === 'pride' && t("每日晨祷：「神啊，今天让我在谦卑中事奉」"),
+                discernment_result?.dominant_source === 'fear' && '每日5分钟：写下一件神过去信实的事（感恩日记）',
+                discernment_result?.dominant_source === 'pride' && '每日晨祷：「神啊，今天让我在谦卑中事奉」',
                 guidance.recommended_actions?.[0] && `行动操练：${guidance.recommended_actions[0]}`,
-                t("每周至少一次：在安静中等候神（默观祷告）"),
+                '每周至少一次：在安静中等候神（默观祷告）',
               ].filter(Boolean).slice(0, 3).map((practice, i) => (
                 <div key={i} style={{
                   padding: '9px 12px', background: 'rgba(52,199,89,0.12)',
@@ -1451,14 +1448,14 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
                 color: '#34c759', fontSize: '13px', fontWeight: 700, cursor: 'pointer',
               }}
             >
-              {t("➕ 前往习惯页面，将这些操练加入每日习惯")}
+              ➕ 前往习惯页面，将这些操练加入每日习惯
             </button>
           </div>
         )}
 
         {/* 灵性原则引用 */}
         <div style={resultCardStyle}>
-          <div style={resultTitleStyle}>{t("📜 相关灵性原则")}</div>
+          <div style={resultTitleStyle}>📜 相关灵性原则</div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
             {spiritualPrinciples.slice(0, 5).map(p => (
               <div key={p.id} style={{
@@ -1469,7 +1466,7 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
                 flex: '1 1 calc(50% - 8px)',
                 minWidth: '140px',
               }}>
-                <div><AutoText>{p.text}</AutoText></div>
+                <div>{p.text}</div>
                 <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)', marginTop: '4px' }}>
                   {p.ref}
                 </div>
@@ -1488,7 +1485,7 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
           color: 'rgba(255,255,255,0.7)',
           textAlign: 'center',
         }}>
-          {t("⚠️ 本分析仅供参考，不构成权威属灵指导。请寻求属灵导师、牧师或专业辅导的意见。")}
+          ⚠️ 本分析仅供参考，不构成权威属灵指导。请寻求属灵导师、牧师或专业辅导的意见。
         </div>
 
         {/* 返回按钮 */}
@@ -1532,7 +1529,7 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
             cursor: 'pointer',
           }}
         >
-          {t("🔄 新辨识")}
+          🔄 新辨识
         </button>
       </div>
     )
@@ -1544,7 +1541,7 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
       {decisions.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '40px', color: 'rgba(255,255,255,0.5)' }}>
           <div style={{ fontSize: '48px', marginBottom: '16px' }}>📭</div>
-          <div>{t("暂无决策记录")}</div>
+          <div>暂无决策记录</div>
         </div>
       ) : (
         decisions.map((d, i) => (
@@ -1562,7 +1559,7 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
               <div style={{ fontWeight: 600, fontSize: '15px', flex: 1, marginRight: '8px' }}>
-                <AutoText>{d.title}</AutoText>
+                {d.title}
               </div>
               <span style={{
                 padding: '2px 8px',
@@ -1571,7 +1568,7 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
                 background: d.status === 'guided' ? 'rgba(52,199,89,0.2)' : 'rgba(255,149,0,0.2)',
                 color: d.status === 'guided' ? '#34c759' : '#ff9500',
               }}>
-                {d.status === 'guided' ? t("已完成") : t("分析中")}
+                {d.status === 'guided' ? '已完成' : '分析中'}
               </span>
             </div>
             <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', marginBottom: '8px' }}>
@@ -1582,7 +1579,7 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
                 {decisionCategories.find(c => c.value === d.category)?.emoji} {decisionCategories.find(c => c.value === d.category)?.label}
               </span>
               <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)' }}>
-                {t("紧急")}{d.urgency} {t("• 重要")}{d.importance}
+                紧急{d.urgency} • 重要{d.importance}
               </span>
             </div>
           </div>
@@ -1595,7 +1592,7 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
   const renderPrinciples = () => (
     <div style={{ padding: '16px' }}>
       <div style={{ fontSize: '14px', color: 'rgba(255,255,255,0.7)', marginBottom: '16px', textAlign: 'center' }}>
-        {t("在决策中默想这些原则，帮助辨识真伪")}
+        在决策中默想这些原则，帮助辨识真伪
       </div>
       
       {spiritualPrinciples.map(p => (
@@ -1606,7 +1603,7 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
           marginBottom: '12px',
         }}>
           <div style={{ fontSize: '15px', fontWeight: 500, marginBottom: '8px', lineHeight: 1.5 }}>
-            "<AutoText>{p.text}</AutoText>"
+            "{p.text}"
           </div>
           <div style={{ fontSize: '12px', color: '#007aff' }}>
             — {p.ref}
@@ -1778,9 +1775,26 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
         zIndex: 100,
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <BackButton onClick={onBack} />
+          <button
+            onClick={onBack}
+            style={{
+              background: 'rgba(120,120,128,0.2)',
+              border: 'none',
+              borderRadius: '50%',
+              width: '36px',
+              height: '36px',
+              color: '#fff',
+              fontSize: '20px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            ‹
+          </button>
           <div>
-            <div style={{ fontSize: '17px', fontWeight: 600 }}>{t("心迹")}</div>
+            <div style={{ fontSize: '17px', fontWeight: 600 }}>心迹</div>
           </div>
         </div>
 
@@ -1813,7 +1827,7 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
         fontSize: '11px',
         color: 'rgba(255,255,255,0.5)',
       }}>
-        {t("本系统旨在辅助属灵辨识，不取代个人自由意志或权威属灵指导")}
+        本系统旨在辅助属灵辨识，不取代个人自由意志或权威属灵指导
       </div>
 
       {/* 添加CSS动画 */}

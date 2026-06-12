@@ -129,7 +129,6 @@ describe('useSpeechInput', () => {
     await act(async () => { await result.current.startRecording() })
     // Simulate data + stop
     act(() => { mediaRecorderMock.ondataavailable?.({ data: { size: 10 } }) })
-    act(() => { vi.advanceTimersByTime(1000) })
     await act(async () => { mediaRecorderMock.onstop?.() })
 
     // Let async work settle
@@ -167,7 +166,6 @@ describe('useSpeechInput', () => {
 
     await act(async () => { await result.current.startRecording() })
     act(() => { mediaRecorderMock.ondataavailable?.({ data: { size: 5 } }) })
-    act(() => { vi.advanceTimersByTime(1000) })
     await act(async () => { mediaRecorderMock.onstop?.() })
     await act(async () => {})
 

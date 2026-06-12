@@ -42,7 +42,7 @@ export interface GeoJsonFeatureCollection<
 
 export type TerritoryStatus = 'stable' | 'disputed' | 'oppressed' | 'lost' | 'empire'
 export type ProphecyType = 'judgment' | 'restoration' | 'warning' | 'messianic'
-export type BibleLayer = 'tribes' | 'empires' | 'all' | 'people' | 'prophecies' | 'campaigns'
+export type BibleLayer = 'tribes' | 'empires' | 'all' | 'prophecies' | 'campaigns'
 
 export interface BibleTerritoryDTO {
   id: string
@@ -110,41 +110,13 @@ export interface BibleCampaignDTO {
   description: string | null
 }
 
-export interface BiblePersonJourneyStopDTO {
-  id: string
-  name: string
-  nameZh: string
-  latitude: number
-  longitude: number
-  year: number | null
-  sequence: number
-  ref: string
-  summary: string
-}
-
-export interface BiblePersonJourneyDTO {
-  id: string
-  person: string
-  personZh: string
-  era: string
-  startYear: number | null
-  endYear: number | null
-  role: string
-  color: string
-  routeGeojson: GeoJsonLineString
-  stops: BiblePersonJourneyStopDTO[]
-  description: string
-  scriptureRange: string
-}
-
-export type BibleMapSelectionKind = 'territory' | 'event' | 'prophecy' | 'campaign' | 'person'
+export type BibleMapSelectionKind = 'territory' | 'event' | 'prophecy' | 'campaign'
 export interface BibleMapSelection {
   kind: BibleMapSelectionKind
   territory?: BibleTerritoryDTO
   event?: BibleMapEventDTO
   prophecy?: BibleProphecyDTO
   campaign?: BibleCampaignDTO
-  person?: BiblePersonJourneyDTO
 }
 
 export interface ApiOk<T> {
@@ -158,8 +130,8 @@ export interface ApiErr {
 export type ApiResult<T> = ApiOk<T> | ApiErr
 
 // ── 关系图谱（Neo4j 预留 + 本地 fallback）────────────────────────────────
-export type GraphNodeKind = 'tribe' | 'empire' | 'nation' | 'prophecy' | 'campaign' | 'commander' | 'person' | 'place' | 'event'
-export type GraphEdgeType = 'AGAINST' | 'LED_BY' | 'CONQUERED' | 'NEIGHBORS' | 'SUCCEEDED' | 'TRAVELED_TO' | 'HAPPENED_AT' | 'FEATURES'
+export type GraphNodeKind = 'tribe' | 'empire' | 'nation' | 'prophecy' | 'campaign' | 'commander'
+export type GraphEdgeType = 'AGAINST' | 'LED_BY' | 'CONQUERED' | 'NEIGHBORS' | 'SUCCEEDED'
 
 export interface GraphNode {
   id: string

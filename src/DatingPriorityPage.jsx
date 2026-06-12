@@ -1,47 +1,45 @@
 import { useState, useCallback, useEffect } from 'react'
-import BackButton from './BackButton'
 import { API_BASE } from './api'
 import { getOrCreateVisitorId } from './utils'
-import { t } from './i18n/runtime'
 
 const DATA = {
   dx_focus: [
-    t("属灵生命的真实委身度"),
-    t("外形吸引力"),
-    t("\"好相处\""),
-    t("情绪稳定性"),
-    t("明确婚恋意图"),
-    t("消费观"),
-    t("呼召与使命同路人"),
-    t("内在品格"),
-    t("生活习惯与理念"),
-    t("年龄适宜"),
+    '属灵生命的真实委身度',
+    '外形吸引力',
+    '"好相处"',
+    '情绪稳定性',
+    '明确婚恋意图',
+    '消费观',
+    '呼召与使命同路人',
+    '内在品格',
+    '生活习惯与理念',
+    '年龄适宜',
   ],
   dx_block: [
-    t("性格强势或不稳定"),
-    t("消费观严重不合"),
-    t("忽略对方"),
-    t("信仰背景冲突"),
-    t("健康隐患或不良习惯"),
+    '性格强势或不稳定',
+    '消费观严重不合',
+    '忽略对方',
+    '信仰背景冲突',
+    '健康隐患或不良习惯',
   ],
   zm_focus: [
-    t("属灵生命的真实委身度"),
-    t("稳定的经济能力"),
-    t("安全舒适感"),
-    t("真诚可沟通"),
-    t("三观与信仰背景同频"),
-    t("原生家庭和睦"),
-    t("明确的未来规划"),
-    t("责任与担当"),
-    t("优先被选择感"),
-    t("主动推进关系"),
+    '属灵生命的真实委身度',
+    '稳定的经济能力',
+    '安全舒适感',
+    '真诚可沟通',
+    '三观与信仰背景同频',
+    '原生家庭和睦',
+    '明确的未来规划',
+    '责任与担当',
+    '优先被选择感',
+    '主动推进关系',
   ],
   zm_block: [
-    t("控制欲强"),
-    t("原生家庭复杂或世俗"),
-    t("生活懒惰或严重不良习惯"),
-    t("性格幼稚不成熟"),
-    t("信仰冷淡"),
+    '控制欲强',
+    '原生家庭复杂或世俗',
+    '生活懒惰或严重不良习惯',
+    '性格幼稚不成熟',
+    '信仰冷淡',
   ],
 }
 
@@ -193,20 +191,22 @@ export default function DatingPriorityPage({ onBack }) {
     return (
       <div style={pageStyle}>
         <header style={headerStyle}>
-          <BackButton onClick={onBack} />
-          <h1 style={{ fontSize: '18px', fontWeight: 600, margin: 0 }}>{t("交友原则排序")}</h1>
+          <button onClick={onBack} style={{
+            background: 'none', border: 'none', color: '#a0aec0', fontSize: '22px', padding: '4px 12px 4px 0', cursor: 'pointer'
+          }}>←</button>
+          <h1 style={{ fontSize: '18px', fontWeight: 600, margin: 0 }}>交友原则排序</h1>
         </header>
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 20px', gap: '24px' }}>
           <div style={{ fontSize: '48px' }}>💒</div>
           <p style={{ fontSize: '15px', color: 'rgba(255,255,255,0.5)', textAlign: 'center', maxWidth: '300px', lineHeight: 1.6 }}>
-            {t("请选择你的视角：")}<br/>{t("点选顺序即为你的优先级排序")}
+            请选择你的视角：<br/>点选顺序即为你的优先级排序
           </p>
           <div style={{ display: 'flex', gap: '12px', width: '100%', maxWidth: '320px' }}>
             <button onClick={() => changePerspective('dx')} style={perspBtn(false)}>
-              {t("🙋‍♂️ 弟兄对姐妹")}
+              🙋‍♂️ 弟兄对姐妹
             </button>
             <button onClick={() => changePerspective('zm')} style={perspBtn(false)}>
-              {t("🙋‍♀️ 姐妹对弟兄")}
+              🙋‍♀️ 姐妹对弟兄
             </button>
           </div>
         </div>
@@ -217,21 +217,23 @@ export default function DatingPriorityPage({ onBack }) {
   return (
     <div style={pageStyle}>
       <header style={headerStyle}>
-        <BackButton onClick={onBack} />
-        <h1 style={{ fontSize: '18px', fontWeight: 600, margin: 0, flex: 1 }}>{t("交友原则排序")}</h1>
+        <button onClick={onBack} style={{
+          background: 'none', border: 'none', color: '#a0aec0', fontSize: '22px', padding: '4px 12px 4px 0', cursor: 'pointer'
+        }}>←</button>
+        <h1 style={{ fontSize: '18px', fontWeight: 600, margin: 0, flex: 1 }}>交友原则排序</h1>
         <button onClick={resetAll} style={{
           background: 'rgba(255,59,48,0.15)', border: 'none', color: '#ff6b6b',
           fontSize: '13px', padding: '6px 12px', borderRadius: '8px', cursor: 'pointer',
-        }}>{t("🔄 重置")}</button>
+        }}>🔄 重置</button>
       </header>
 
       {/* Perspective toggle */}
       <div style={{ padding: '12px 20px', display: 'flex', gap: '8px' }}>
         <button onClick={() => changePerspective('dx')} style={perspBtn(perspective === 'dx')}>
-          {t("🙋‍♂️ 弟兄→姐妹")}
+          🙋‍♂️ 弟兄→姐妹
         </button>
         <button onClick={() => changePerspective('zm')} style={perspBtn(perspective === 'zm')}>
-          {t("🙋‍♀️ 姐妹→弟兄")}
+          🙋‍♀️ 姐妹→弟兄
         </button>
       </div>
 
@@ -239,9 +241,9 @@ export default function DatingPriorityPage({ onBack }) {
         {/* 关注点 */}
         <div style={sectionTitle}>
           <span>💚</span>
-          <span>{t("关注点")}</span>
+          <span>关注点</span>
           <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.35)', fontWeight: 400 }}>
-            {t("(已选")} {focusOrder.length}/{focusList.length})
+            (已选 {focusOrder.length}/{focusList.length})
           </span>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -264,9 +266,9 @@ export default function DatingPriorityPage({ onBack }) {
         {/* 阻力点 */}
         <div style={sectionTitle}>
           <span>🚫</span>
-          <span>{t("阻力点")}</span>
+          <span>阻力点</span>
           <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.35)', fontWeight: 400 }}>
-            {t("(已选")} {blockOrder.length}/{blockList.length})
+            (已选 {blockOrder.length}/{blockList.length})
           </span>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -290,11 +292,11 @@ export default function DatingPriorityPage({ onBack }) {
         {(focusOrder.length > 0 || blockOrder.length > 0) && (
           <div style={{ marginTop: '28px', padding: '16px', borderRadius: '14px', background: 'rgba(79,172,254,0.06)', border: '1px solid rgba(79,172,254,0.15)' }}>
             <div style={{ fontSize: '15px', fontWeight: 600, marginBottom: '12px', color: '#4facfe' }}>
-              {t("📋 你的优先级排序")}
+              📋 你的优先级排序
             </div>
             {focusOrder.length > 0 && (
               <div style={{ marginBottom: '12px' }}>
-                <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)', marginBottom: '6px' }}>{t("💚 关注点排序：")}</div>
+                <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)', marginBottom: '6px' }}>💚 关注点排序：</div>
                 {focusOrder.map((item, i) => (
                   <div key={item} style={{ fontSize: '14px', padding: '4px 0', color: '#e6e6e6' }}>
                     <span style={{ color: '#4facfe', fontWeight: 600, marginRight: '8px' }}>{i + 1}.</span>{item}
@@ -304,7 +306,7 @@ export default function DatingPriorityPage({ onBack }) {
             )}
             {blockOrder.length > 0 && (
               <div>
-                <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)', marginBottom: '6px' }}>{t("🚫 阻力点排序：")}</div>
+                <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)', marginBottom: '6px' }}>🚫 阻力点排序：</div>
                 {blockOrder.map((item, i) => (
                   <div key={item} style={{ fontSize: '14px', padding: '4px 0', color: '#e6e6e6' }}>
                     <span style={{ color: '#ff6b6b', fontWeight: 600, marginRight: '8px' }}>{i + 1}.</span>{item}
@@ -324,11 +326,11 @@ export default function DatingPriorityPage({ onBack }) {
                   color: '#fff', fontSize: '15px', fontWeight: 600, cursor: submitting ? 'not-allowed' : 'pointer',
                 }}
               >
-                {submitting ? t("⏳ 提交中...") : t("✅ 提交我的排序")}
+                {submitting ? '⏳ 提交中...' : '✅ 提交我的排序'}
               </button>
             ) : (
               <div style={{ marginTop: '16px', textAlign: 'center', color: '#51cf66', fontSize: '14px', fontWeight: 600 }}>
-                {t("✅ 已提交！感谢你的参与")}
+                ✅ 已提交！感谢你的参与
               </div>
             )}
           </div>
@@ -345,7 +347,7 @@ export default function DatingPriorityPage({ onBack }) {
                 color: 'rgba(255,255,255,0.7)', fontSize: '14px', cursor: 'pointer',
               }}
             >
-              {showStats ? t("🔼 收起统计") : t("📊 查看大家的排序统计")}
+              {showStats ? '🔼 收起统计' : '📊 查看大家的排序统计'}
             </button>
           </div>
         )}
@@ -354,26 +356,26 @@ export default function DatingPriorityPage({ onBack }) {
         {showStats && (
           <div style={{ marginTop: '16px', padding: '16px', borderRadius: '14px', background: 'rgba(81,207,102,0.06)', border: '1px solid rgba(81,207,102,0.15)' }}>
             <div style={{ fontSize: '15px', fontWeight: 600, marginBottom: '12px', color: '#51cf66' }}>
-              {t("📊 群体排序统计 (")}{perspective === 'dx' ? t("弟兄→姐妹") : t("姐妹→弟兄")})
+              📊 群体排序统计 ({perspective === 'dx' ? '弟兄→姐妹' : '姐妹→弟兄'})
             </div>
             {statsLoading ? (
-              <div style={{ textAlign: 'center', color: 'rgba(255,255,255,0.5)', padding: '20px' }}>{t("加载中...")}</div>
+              <div style={{ textAlign: 'center', color: 'rgba(255,255,255,0.5)', padding: '20px' }}>加载中...</div>
             ) : !stats || stats.total === 0 ? (
-              <div style={{ textAlign: 'center', color: 'rgba(255,255,255,0.4)', padding: '20px' }}>{t("暂无数据，等待更多人参与")}</div>
+              <div style={{ textAlign: 'center', color: 'rgba(255,255,255,0.4)', padding: '20px' }}>暂无数据，等待更多人参与</div>
             ) : (
               <>
                 <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)', marginBottom: '12px' }}>
-                  {t("共")} {stats.total} {t("人参与")}
+                  共 {stats.total} 人参与
                 </div>
                 {stats.focus_stats.length > 0 && (
                   <div style={{ marginBottom: '16px' }}>
-                    <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)', marginBottom: '8px' }}>{t("💚 关注点（按平均排序）：")}</div>
+                    <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)', marginBottom: '8px' }}>💚 关注点（按平均排序）：</div>
                     {stats.focus_stats.map((s, i) => (
                       <div key={s.item} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 0', fontSize: '13px' }}>
                         <span style={{ color: '#4facfe', fontWeight: 700, minWidth: '24px' }}>{i + 1}.</span>
                         <span style={{ flex: 1, color: '#e6e6e6' }}>{s.item}</span>
                         <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '11px' }}>
-                          {t("均")}{s.avg_rank} | {s.selection_rate}{t("%选")}
+                          均{s.avg_rank} | {s.selection_rate}%选
                         </span>
                       </div>
                     ))}
@@ -381,13 +383,13 @@ export default function DatingPriorityPage({ onBack }) {
                 )}
                 {stats.block_stats.length > 0 && (
                   <div>
-                    <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)', marginBottom: '8px' }}>{t("🚫 阻力点（按平均排序）：")}</div>
+                    <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)', marginBottom: '8px' }}>🚫 阻力点（按平均排序）：</div>
                     {stats.block_stats.map((s, i) => (
                       <div key={s.item} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 0', fontSize: '13px' }}>
                         <span style={{ color: '#ff6b6b', fontWeight: 700, minWidth: '24px' }}>{i + 1}.</span>
                         <span style={{ flex: 1, color: '#e6e6e6' }}>{s.item}</span>
                         <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '11px' }}>
-                          {t("均")}{s.avg_rank} | {s.selection_rate}{t("%选")}
+                          均{s.avg_rank} | {s.selection_rate}%选
                         </span>
                       </div>
                     ))}

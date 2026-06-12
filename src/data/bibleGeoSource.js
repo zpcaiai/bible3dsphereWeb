@@ -2,7 +2,6 @@
 // 失败/离线时回退到本地静态 GeoJSON。后端只提供几何+时代正确的地名+经文，
 // 事件(events)与置信度(confidence)等展示元数据始终来自本地静态文件，按 order 合并。
 import { API_BASE } from '../api'
-import { getRuntimeLang } from '../i18n/runtime'
 import { exodusStations, exodusRoute, routeHypotheses, confidenceMeta } from './exodusStations'
 
 const LOCAL_STATIONS = exodusStations.features
@@ -18,7 +17,7 @@ async function tryFetchExodus() {
   const ctrl = new AbortController()
   const t = setTimeout(() => ctrl.abort(), 3500)
   try {
-    const res = await fetch(`${API_BASE}/geo/exodus`, { signal: ctrl.signal, headers: { 'X-Lang': getRuntimeLang() } })
+    const res = await fetch(`${API_BASE}/geo/exodus`, { signal: ctrl.signal })
     if (!res.ok) throw new Error(`HTTP ${res.status}`)
     const data = await res.json()
     if (!data?.stations?.features?.length) throw new Error('空数据')
@@ -72,7 +71,6 @@ import { JERUSALEM_SLUG, jerusalemPoint, jerusalemEras, landmarksFCForYear, land
 import { territoryEras, colorBySlug, regionsFCForYear } from './territories'
 import { JOURNEY_DATASETS } from './bibleJourneys'
 import { kingsEras } from './kingsTimeline'
-import { BIBLE_MAPS_BY_ID } from './bibleMapsData'
 
 async function buildExodusDataset() {
   const { stations, source } = await loadExodusStations()
@@ -92,7 +90,7 @@ async function tryFetchPaul() {
   const ctrl = new AbortController()
   const t = setTimeout(() => ctrl.abort(), 3500)
   try {
-    const res = await fetch(`${API_BASE}/geo/paul`, { signal: ctrl.signal, headers: { 'X-Lang': getRuntimeLang() } })
+    const res = await fetch(`${API_BASE}/geo/paul`, { signal: ctrl.signal })
     if (!res.ok) throw new Error(`HTTP ${res.status}`)
     const data = await res.json()
     if (!data?.features?.length) throw new Error('空数据')
@@ -134,10 +132,9 @@ async function buildPaulDataset() {
     id: j.id, label: j.label, short: j.short, color: j.color, description: j.description,
     startYear: j.startYear, endYear: j.endYear,
     stationIds: j.stationIds,
-    // route 不再用站点直连（直线）；BibleMapPage 经 /api/route 解析真实航线/路网，弧线兜底
-    sea: true,
+    route: j.stationIds.map((id) => { const c = byId.get(id); return [c.lng, c.lat] }),
   }))
-  return completeDatasetFromSvg({
+  return {
     id: 'paul',
     title: '保罗宣教旅程',
     subtitle: '使徒行传 · 三次旅程 + 押往罗马',
@@ -146,7 +143,7 @@ async function buildPaulDataset() {
     variants,
     defaultVariantId: 'journey-1',
     source,
-  }, 'paul')
+  }
 }
 
 function buildJerusalemDataset() {
@@ -167,7 +164,7 @@ export async function fetchLandmarks(year) {
   const ctrl = new AbortController()
   const t = setTimeout(() => ctrl.abort(), 3500)
   try {
-    const res = await fetch(`${API_BASE}/geo/landmarks?year=${year}`, { signal: ctrl.signal, headers: { 'X-Lang': getRuntimeLang() } })
+    const res = await fetch(`${API_BASE}/geo/landmarks?year=${year}`, { signal: ctrl.signal })
     if (!res.ok) throw new Error(`HTTP ${res.status}`)
     const fc = await res.json()
     return { fc, source: 'api' }
@@ -182,7 +179,7 @@ export async function fetchTimeSlice(slug, year) {
   const ctrl = new AbortController()
   const t = setTimeout(() => ctrl.abort(), 3500)
   try {
-    const res = await fetch(`${API_BASE}/geo/timeline?slug=${encodeURIComponent(slug)}&year=${year}`, { signal: ctrl.signal, headers: { 'X-Lang': getRuntimeLang() } })
+    const res = await fetch(`${API_BASE}/geo/timeline?slug=${encodeURIComponent(slug)}&year=${year}`, { signal: ctrl.signal })
     if (!res.ok) throw new Error(`HTTP ${res.status}`)
     const data = await res.json()
     if (!data?.geometry) throw new Error('空')
@@ -210,7 +207,7 @@ export async function fetchRegions(year) {
   const ctrl = new AbortController()
   const t = setTimeout(() => ctrl.abort(), 3500)
   try {
-    const res = await fetch(`${API_BASE}/geo/regions?year=${year}`, { signal: ctrl.signal, headers: { 'X-Lang': getRuntimeLang() } })
+    const res = await fetch(`${API_BASE}/geo/regions?year=${year}`, { signal: ctrl.signal })
     if (!res.ok) throw new Error(`HTTP ${res.status}`)
     const fc = await res.json()
     if (!fc?.features?.length) throw new Error('空')
@@ -226,7 +223,7 @@ export async function fetchRelations(slug, year) {
   const t = setTimeout(() => ctrl.abort(), 3500)
   try {
     const q = year != null ? `?slug=${encodeURIComponent(slug)}&year=${year}` : `?slug=${encodeURIComponent(slug)}`
-    const res = await fetch(`${API_BASE}/geo/relations${q}`, { signal: ctrl.signal, headers: { 'X-Lang': getRuntimeLang() } })
+    const res = await fetch(`${API_BASE}/geo/relations${q}`, { signal: ctrl.signal })
     if (!res.ok) throw new Error(`HTTP ${res.status}`)
     const data = await res.json()
     return data.relations || []
@@ -236,75 +233,6 @@ export async function fetchRelations(slug, year) {
 }
 
 // 数据集注册表（数据集选择器用）
-// 手绘讲解版点位作为真实地理版补点来源，避免双视图主题维护两份不一致的地点清单。
-const SVG_COMPLETION = {
-  jesus: { replace: { life: 'life' } },
-  abraham: { replace: { route: 'journey' } },
-  joshua: { replace: { central: 'central', south: 'southern', north: 'northern' } },
-  paul: { replace: { first: 'journey-1', second: 'journey-2', third: 'journey-3', rome: 'voyage-rome' } },
-  david: { append: ['rise', 'reign'] },
-  solomon: { append: ['core', 'trade'] },
-  'seven-churches': { replace: { churches: 'circuit' } },
-}
-
-function svgPointToStation(p) {
-  return {
-    type: 'Feature',
-    geometry: { type: 'Point', coordinates: [p.lng, p.lat] },
-    properties: {
-      id: p.id,
-      name_zh: p.name_zh || p.name_en || p.id,
-      name_en: p.name_en || p.name_zh || p.id,
-      name_he: '',
-      confidence: p.confidence || 'approximate',
-      events: p.events || [],
-      scriptureRef: p.scriptureRef || p.events?.[0]?.ref || '',
-      note: p.note || '',
-    },
-  }
-}
-
-function completeDatasetFromSvg(dataset, svgId = dataset.id) {
-  const cfg = BIBLE_MAPS_BY_ID[svgId]
-  const rule = SVG_COMPLETION[svgId]
-  if (!cfg?.layers?.length || !rule) return dataset
-
-  const stationIds = new Set(dataset.stations.map((f) => f.properties.id))
-  const stations = [...dataset.stations]
-  for (const layer of cfg.layers) {
-    for (const p of layer.points || []) {
-      if (stationIds.has(p.id)) continue
-      stations.push(svgPointToStation(p))
-      stationIds.add(p.id)
-    }
-  }
-
-  const variants = dataset.variants.map((v) => ({ ...v }))
-  if (rule.replace) {
-    for (const [layerId, variantId] of Object.entries(rule.replace)) {
-      const layer = cfg.layers.find((l) => l.id === layerId)
-      const variant = variants.find((v) => v.id === variantId)
-      if (layer && variant) variant.stationIds = layer.points.map((p) => p.id)
-    }
-  }
-  if (rule.append) {
-    for (const layerId of rule.append) {
-      const layer = cfg.layers.find((l) => l.id === layerId)
-      if (!layer?.points?.length || variants.some((v) => v.id === `svg-${layer.id}`)) continue
-      variants.push({
-        id: `svg-${layer.id}`,
-        label: `${layer.label}（手绘补点）`,
-        color: layer.color,
-        description: `按手绘讲解版补齐的地点清单：${layer.points.map((p) => p.name_zh || p.name_en).join(' → ')}。`,
-        stationIds: layer.points.map((p) => p.id),
-        sea: layer.id === 'trade',
-      })
-    }
-  }
-
-  return { ...dataset, stations, variants }
-}
-
 // 通用行程数据集构建（耶稣/亚伯拉罕/约书亚/大卫/所罗门/七教会/受难周）
 function buildJourneyDataset(d) {
   const byId = new Map(d.cities.map((c) => [c.id, c]))
@@ -320,13 +248,12 @@ function buildJourneyDataset(d) {
   const variants = d.variants.map((v) => ({
     id: v.id, label: v.label, short: v.short, color: v.color, description: v.description,
     startYear: v.startYear, endYear: v.endYear, stationIds: v.stationIds,
-    // route 留空：BibleMapPage 经 /api/route 解析真实步行/迁徙路线，弧线兜底
-    sea: v.sea || d.sea || false,
+    route: v.stationIds.map((id) => { const c = byId.get(id); return [c.lng, c.lat] }),
   }))
-  return completeDatasetFromSvg({
+  return {
     id: d.id, title: d.title, subtitle: d.subtitle, variantLabel: d.variantLabel || '路线',
     stations, variants, defaultVariantId: d.variants[0].id, source: 'local',
-  }, d.id)
+  }
 }
 
 function buildKingsDataset() {

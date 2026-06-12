@@ -126,21 +126,15 @@ export const JERU_LOCATIONS = [
 ]
 
 // —— 受难周 FPV 步行巡游（希律时期）——
-// 坐标统一引用 JERU_LOCATIONS（单一数据源，避免同一地点两处硬编码改一漏一）
-const _loc = (id) => {
-  const l = JERU_LOCATIONS.find(x => x.id === id)
-  return l ? l.coord : TEMPLE_CENTER
-}
-
 export const PASSION_WEEK = [
-  { day: '主日', title: '荣入圣城', locId: 'olives', coord: _loc('olives'), ref: '太21:1-11', summary: '耶稣从橄榄山骑驴进城，众人将衣服与棕树枝铺在路上高呼"和散那"。' },
-  { day: '周一', title: '洁净圣殿', locId: 'temple-mount', coord: [35.23560,31.77790], ref: '可11:15-17', summary: '进入圣殿，推倒兑换银钱之人的桌子："我的殿必称为祷告的殿。"' },
-  { day: '周四晚', title: '最后晚餐', locId: 'upper-room', coord: _loc('upper-room'), ref: '路22:14-20', summary: '在马可楼设立圣餐："这是我的身体，为你们舍的。"' },
-  { day: '周四夜', title: '客西马尼祷告与被捕', locId: 'gethsemane', coord: _loc('gethsemane'), ref: '太26:36-50', summary: '过汲沦溪到园中祷告："不要照我的意思，只要照你的意思。"随后被犹大出卖被捕。' },
-  { day: '周五凌晨', title: '该亚法宅受审', locId: 'caiaphas', coord: _loc('caiaphas'), ref: '太26:57-68', summary: '在大祭司宅被公会审问、定为僭妄；彼得在院中三次不认主。' },
-  { day: '周五晨', title: '彼拉多定罪', locId: 'antonia', coord: _loc('antonia'), ref: '约19:13-16', summary: '在安东尼亚堡铺华石处，彼拉多将耶稣交给众人钉十字架。' },
-  { day: '周五午', title: '各各他受难', locId: 'golgotha', coord: _loc('golgotha'), ref: '路23:33-46', summary: '在髑髅地被钉十字架；遍地黑暗，耶稣说"成了"，气就断了。' },
-  { day: '主日清晨', title: '空坟与复活', locId: 'tomb', coord: _loc('tomb'), ref: '路24:1-6', summary: '妇女清晨到坟墓，石头已滚开："为什么在死人中找活人？他不在这里，已经复活了！"' },
+  { day: '主日', title: '荣入圣城', coord: [35.24520,31.77850], ref: '太21:1-11', summary: '耶稣从橄榄山骑驴进城，众人将衣服与棕树枝铺在路上高呼"和散那"。' },
+  { day: '周一', title: '洁净圣殿', coord: [35.23560,31.77790], ref: '可11:15-17', summary: '进入圣殿，推倒兑换银钱之人的桌子："我的殿必称为祷告的殿。"' },
+  { day: '周四晚', title: '最后晚餐', coord: [35.22930,31.77150], ref: '路22:14-20', summary: '在马可楼设立圣餐："这是我的身体，为你们舍的。"' },
+  { day: '周四夜', title: '客西马尼祷告与被捕', coord: [35.23980,31.77940], ref: '太26:36-50', summary: '过汲沦溪到园中祷告："不要照我的意思，只要照你的意思。"随后被犹大出卖被捕。' },
+  { day: '周五凌晨', title: '该亚法宅受审', coord: [35.22900,31.77200], ref: '太26:57-68', summary: '在大祭司宅被公会审问、定为僭妄；彼得在院中三次不认主。' },
+  { day: '周五晨', title: '彼拉多定罪', coord: [35.23760,31.78000], ref: '约19:13-16', summary: '在安东尼亚堡铺华石处，彼拉多将耶稣交给众人钉十字架。' },
+  { day: '周五午', title: '各各他受难', coord: [35.22980,31.77840], ref: '路23:33-46', summary: '在髑髅地被钉十字架；遍地黑暗，耶稣说"成了"，气就断了。' },
+  { day: '主日清晨', title: '空坟与复活', coord: [35.22950,31.77870], ref: '路24:1-6', summary: '妇女清晨到坟墓，石头已滚开："为什么在死人中找活人？他不在这里，已经复活了！"' },
 ]
 
 // 取某时期的 GeoJSON（建筑面 + 城墙线分开，便于不同图层）

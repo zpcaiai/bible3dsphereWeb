@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import BackButton from './BackButton'
 import jsPDF from 'jspdf'
 import { TTSButton } from './useGlobalAudio.jsx'
 import html2canvas from 'html2canvas'
@@ -8,9 +7,6 @@ import { escapeHtml, escapeHtmlWithBr } from './sanitize'
 import { fetchSharedNotes, toggleShareNote, amenSharedNote, toggleShareSermonJournal, fetchSundaySchoolVideos } from './api'
 import { getToken } from './auth'
 import TestimonyWallPage from './TestimonyWallPage'
-import { t } from './i18n/runtime'
-import { translateForExport, translateElementText } from './exportI18n'
-import { AutoText } from './autoTranslate.jsx'
 
 // 读取旧的 localStorage 分享记录（来自 ChatPage / DevotionNotePage / SermonJournalPage）
 function getLegacySharedNotes() {
@@ -31,7 +27,7 @@ function getLegacySharedNotes() {
         prayer: n.prayer || '',
         mood: n.mood || '',
         shared: true,
-        author: n.author || t("匿名"),
+        author: n.author || '匿名',
         avatar: n.avatar || '',
         createdAt: n.createdAt ? new Date(n.createdAt).toISOString() : null,
         updatedAt: n.sharedAt ? new Date(n.sharedAt).toISOString() : null,
@@ -50,14 +46,14 @@ function formatDate(dateStr) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`
 }
 
-async function exportSelectedToTxt(note) {
+function exportSelectedToTxt(note) {
   if (!note) return
   let content = `属灵星球 - 灵修分享\n`
-  content += `作者：${note.author || t("匿名")}\n`
+  content += `作者：${note.author || '匿名'}\n`
   content += `日期：${formatDate(note.date)}\n`
   if (note.mood) content += `心情：${note.mood}\n`
   content += `\n━━━━━━━━━━━━━━━━━━━━━━━\n  经文\n━━━━━━━━━━━━━━━━━━━━━━━\n\n`
-  content += `${note.scripture || t("未记录")}\n\n`
+  content += `${note.scripture || '未记录'}\n\n`
   
   if (note.observation) {
     content += `━━━━━━━━━━━━━━━━━━━━━━━\n  观察\n━━━━━━━━━━━━━━━━━━━━━━━\n\n`
@@ -76,12 +72,11 @@ async function exportSelectedToTxt(note) {
     content += `${note.prayer}\n\n`
   }
   
-  content = await translateForExport(content)
   const blob = new Blob([content], { type: 'text/plain;charset=utf-8' })
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
   a.href = url
-  const title = (note.scripture || t("灵修分享")).replace(/[\\/:*?"<>|]/g, '').slice(0, 20)
+  const title = (note.scripture || '灵修分享').replace(/[\\/:*?"<>|]/g, '').slice(0, 20)
   a.download = `${title}_${new Date().getFullYear()}${String(new Date().getMonth()+1).padStart(2,'0')}${String(new Date().getDate()).padStart(2,'0')}.txt`
   a.click()
   URL.revokeObjectURL(url)
@@ -102,7 +97,6 @@ async function exportSelectedToPdf(note) {
 
   async function addBlock(html) {
     el.innerHTML = html
-    await translateElementText(el)
     const canvas = await html2canvas(el, { scale: 2, useCORS: true, logging: false, backgroundColor: '#0e1726' })
     const imgH = (canvas.height / canvas.width) * cw
     if (curY + imgH > PH - 10 && curY > M + 5) { pdf.addPage(); pdf.setFillColor(14, 23, 38); pdf.rect(0, 0, PW, PH, 'F'); curY = M }
@@ -114,13 +108,13 @@ async function exportSelectedToPdf(note) {
     await addBlock(`
       <div style="text-align:center;margin-bottom:10px;border-bottom:1px solid #2e3c52;padding-bottom:10px;">
         <h1 style="color:#007aff;font-size:20px;margin:0 0 6px 0;">属灵星球 - 灵修分享</h1>
-        <div style="color:#9a9a9a;font-size:13px;">作者：${escapeHtml(note.author) || t("匿名")} | 日期：${formatDate(note.date)}${note.mood ? ' | ' + escapeHtml(note.mood) : ''}</div>
+        <div style="color:#9a9a9a;font-size:13px;">作者：${escapeHtml(note.author) || '匿名'} | 日期：${formatDate(note.date)}${note.mood ? ' | ' + escapeHtml(note.mood) : ''}</div>
       </div>
     `)
     await addBlock(`
       <div style="margin:6px 0;">
         <div style="font-size:14px;font-weight:bold;color:#444;margin-bottom:5px;border-bottom:1px solid #2e3c52;padding-bottom:3px;">经文</div>
-        <div style="font-size:15px;color:#f0f0f0;font-weight:600;margin:5px 0;">${escapeHtml(note.scripture) || t("未记录")}</div>
+        <div style="font-size:15px;color:#f0f0f0;font-weight:600;margin:5px 0;">${escapeHtml(note.scripture) || '未记录'}</div>
       </div>
     `)
     if (note.observation) {
@@ -160,9 +154,9 @@ async function exportSelectedToPdf(note) {
       pdf.setPage(p); pdf.setFontSize(9); pdf.setTextColor(180, 180, 180)
       pdf.text('https://holiness.uk/', PW / 2, PH - 4, { align: 'center' })
     }
-    const title = (note.scripture || t("灵修分享")).replace(/[\\/:*?"<>|]/g, '').slice(0, 20)
+    const title = (note.scripture || '灵修分享').replace(/[\\/:*?"<>|]/g, '').slice(0, 20)
     pdf.save(`${title}_${new Date().getFullYear()}${String(new Date().getMonth()+1).padStart(2,'0')}${String(new Date().getDate()).padStart(2,'0')}.pdf`)
-  } catch (err) { console.error('PDF generation failed:', err); alert(t("PDF 生成失败，请重试")) }
+  } catch (err) { console.error('PDF generation failed:', err); alert('PDF 生成失败，请重试') }
   finally { document.body.removeChild(el) }
 }
 
@@ -171,78 +165,78 @@ async function exportSelectedToPdf(note) {
 // 信仰宣言与持守信经 — Statement of Faith
 // ─────────────────────────────────────────────────────────────
 const FAITH_DATA = {
-  anchor: { ref: t("犹大书 1:3"), text: t("亲爱的弟兄啊，我想尽心写信给你们，论我们同得救恩的时候，就不得不写信劝你们，要为从前一次交付圣徒的真道竭力地争辩。") },
+  anchor: { ref: '犹大书 1:3', text: '亲爱的弟兄啊，我想尽心写信给你们，论我们同得救恩的时候，就不得不写信劝你们，要为从前一次交付圣徒的真道竭力地争辩。' },
   sections: [
     {
-      title: t("一、核心教义与神学基石"),
+      title: '一、核心教义与神学基石',
       icon: '📜',
       items: [
         {
-          heading: t("圣经"),
-          body: t("我们相信圣经旧约与新约全书是神所默示的，是无误、无谬的上帝之言，是信仰与生活一切事务的最高权威（提摩太后书 3:16-17）。"),
+          heading: '圣经',
+          body: '我们相信圣经旧约与新约全书是神所默示的，是无误、无谬的上帝之言，是信仰与生活一切事务的最高权威（提摩太后书 3:16-17）。',
         },
         {
-          heading: t("三位一体神"),
-          body: t("我们相信独一真神永恒地以三个位格存在——圣父、圣子、圣灵，三位同质、同等、同荣（申命记 6:4；马太福音 28:19）。"),
+          heading: '三位一体神',
+          body: '我们相信独一真神永恒地以三个位格存在——圣父、圣子、圣灵，三位同质、同等、同荣（申命记 6:4；马太福音 28:19）。',
         },
         {
-          heading: t("耶稣基督"),
-          body: t("我们相信耶稣基督是完全的神、完全的人，由圣灵感孕、童贞女所生，过无罪的一生，在十字架上为我们的罪死，肉身复活，升天坐在父神右边，并将再来审判活人死人（约翰福音 1:1,14；哥林多前书 15:3-4）。"),
+          heading: '耶稣基督',
+          body: '我们相信耶稣基督是完全的神、完全的人，由圣灵感孕、童贞女所生，过无罪的一生，在十字架上为我们的罪死，肉身复活，升天坐在父神右边，并将再来审判活人死人（约翰福音 1:1,14；哥林多前书 15:3-4）。',
         },
         {
-          heading: t("人与救恩"),
-          body: t("我们相信人是按上帝形象所造，因亚当堕落而全然败坏。救恩唯独出于恩典，唯独藉着信心，唯独在基督里——任何人悔改相信耶稣基督，便因他的宝血得蒙赦免、被称为义，与神和好（以弗所书 2:8-9；罗马书 3:23-24）。"),
+          heading: '人与救恩',
+          body: '我们相信人是按上帝形象所造，因亚当堕落而全然败坏。救恩唯独出于恩典，唯独藉着信心，唯独在基督里——任何人悔改相信耶稣基督，便因他的宝血得蒙赦免、被称为义，与神和好（以弗所书 2:8-9；罗马书 3:23-24）。',
         },
         {
-          heading: t("教会"),
-          body: t("我们相信普世教会是基督的身体，由一切重生信徒组成；地方教会应当忠实传讲圣道、施行洗礼与圣餐、彼此相顾、差遣宣教（马太福音 16:18；使徒行传 2:42）。"),
+          heading: '教会',
+          body: '我们相信普世教会是基督的身体，由一切重生信徒组成；地方教会应当忠实传讲圣道、施行洗礼与圣餐、彼此相顾、差遣宣教（马太福音 16:18；使徒行传 2:42）。',
         },
       ],
     },
     {
-      title: t("二、当代保守派伦理声明"),
+      title: '二、当代保守派伦理声明',
       icon: '⚖️',
       items: [
         {
-          heading: t("性别与身份"),
-          body: t("上帝创造人类为男性与女性，性别是由神所赐、不可更改的礼物。我们肯定每一个人按照神所赋予的生理性别生活的尊严（创世记 1:27）。"),
+          heading: '性别与身份',
+          body: '上帝创造人类为男性与女性，性别是由神所赐、不可更改的礼物。我们肯定每一个人按照神所赋予的生理性别生活的尊严（创世记 1:27）。',
         },
         {
-          heading: t("婚姻"),
-          body: t("婚姻是一男一女在神面前所立的终身圣约，是家庭与社会的基本单元，也是基督与教会关系的象征（创世记 2:24；以弗所书 5:31-32）。"),
+          heading: '婚姻',
+          body: '婚姻是一男一女在神面前所立的终身圣约，是家庭与社会的基本单元，也是基督与教会关系的象征（创世记 2:24；以弗所书 5:31-32）。',
         },
         {
-          heading: t("男女互补"),
-          body: t("男女在价值与尊严上完全平等，在家庭与教会中蒙召扮演互补的角色——男性有爱妻如己、服事领导的责任；女性有智慧帮助、同工建造的呼召（以弗所书 5:22-33；提摩太前书 2:12-13）。"),
+          heading: '男女互补',
+          body: '男女在价值与尊严上完全平等，在家庭与教会中蒙召扮演互补的角色——男性有爱妻如己、服事领导的责任；女性有智慧帮助、同工建造的呼召（以弗所书 5:22-33；提摩太前书 2:12-13）。',
         },
         {
-          heading: t("生命神圣"),
-          body: t("人的生命自受孕起即是神的形象，应当受到保护。我们反对一切剥夺无辜生命的行为，并呼召教会为弱势群体发声、提供关怀（诗篇 139:13-16；箴言 31:8）。"),
+          heading: '生命神圣',
+          body: '人的生命自受孕起即是神的形象，应当受到保护。我们反对一切剥夺无辜生命的行为，并呼召教会为弱势群体发声、提供关怀（诗篇 139:13-16；箴言 31:8）。',
         },
       ],
     },
     {
-      title: t("三、历代信经信条"),
+      title: '三、历代信经信条',
       icon: '🕊️',
       subsections: [
         {
-          subtitle: t("普世公认信经"),
+          subtitle: '普世公认信经',
           creed: true,
           items: [
-            { heading: t("使徒信经（约 2世纪）"), body: t("我信上帝，全能的父，创造天地的主。\n我信我主耶稣基督，上帝的独生子；因圣灵感孕，由童贞女马利亚所生；在本丢彼拉多手下受难，被钉于十字架，受死，埋葬；降在阴间；第三天从死人中复活；升天，坐在全能父上帝的右边；将来必从那里降临，审判活人死人。\n我信圣灵；我信圣而公之教会；我信圣徒相通；我信罪得赦免；我信身体复活；我信永生。阿们。") },
-            { heading: t("尼西亚信经（325 / 381年）"), body: t("我信独一上帝，全能的父，创造天地和有形无形万物的主。\n我信独一主耶稣基督，上帝的独生子，在万世以前为父所生：出于神而为神，出于光而为光，出于真神而为真神，被生非被造，与父同质，万物都是藉着他造的。他为要拯救我们世人，从天降临，因着圣灵，并从童贞女马利亚取了肉身成为人，在本丢彼拉多手下为我们钉十字架，受难受葬，照圣经第三天复活，并升上天，坐在父的右边，将来必有荣耀再降临，审判活人死人，他的国没有穷尽。\n我信圣灵，赐生命的主，从父（和子）出来，与父及子同受敬拜，同受尊荣，他曾藉众先知说话。\n我信独一、圣洁、公教、使徒的教会，我认使罪得赦的独一洗礼，我望死人复活，并来世的生命。阿们。") },
-            { heading: t("迦克墩信经（451年）"), body: t("我们同声教导人承认同一位子、我们的主耶稣基督，是完全的神、完全的人，真实具有理性的灵魂与肉体；按神性与父同质，按人性与我们同质，在各方面与我们相同，只是没有罪。\n按神性，在万世之先为父所生；按人性，在末后这些日子，为了我们和我们的救恩，从童贞女、上帝之母马利亚而生。\n是同一基督、子、主、独生的，具有两个本性，不相混乱、不相交换、不能分开、不能离散；两性的区别不因联合而消除，各性的特质反得以保全，汇合于一个位格、一个本体之内，并不分裂或分离为两个位格，乃是同一位子、独生的、道、主耶稣基督——正如从太初先知论及他的，主耶稣基督自己所教导我们的，并圣教父的信经所传递给我们的。") },
-            { heading: t("亚他那修信经（约 5世纪，节选）"), body: t("凡人若要得救，首先必须持守公教信仰；若不完整无误地持守，必永远灭亡。\n公教信仰是这样的：我们敬拜三位一体中的独一真神，以及独一真神中的三位一体，不混淆三个位格，也不分裂神的本质。圣父是一个位格，圣子是一个位格，圣灵是一个位格；然而圣父、圣子、圣灵的神性是同一的，荣耀相等，威严同永恒。\n圣父怎样，圣子也怎样，圣灵也怎样：圣父是无受造的，圣子是无受造的，圣灵也是无受造的；圣父是永恒的，圣子是永恒的，圣灵也是永恒的；然而并非三个永恒者，乃是一个永恒者。\n更多，为要得救，必须笃信我们的主耶稣基督成肉身之事：正确的信仰就是相信并承认我们的主耶稣基督，上帝之子，是神，也是人……") },
+            { heading: '使徒信经（约 2世纪）', body: '我信上帝，全能的父，创造天地的主。\n我信我主耶稣基督，上帝的独生子；因圣灵感孕，由童贞女马利亚所生；在本丢彼拉多手下受难，被钉于十字架，受死，埋葬；降在阴间；第三天从死人中复活；升天，坐在全能父上帝的右边；将来必从那里降临，审判活人死人。\n我信圣灵；我信圣而公之教会；我信圣徒相通；我信罪得赦免；我信身体复活；我信永生。阿们。' },
+            { heading: '尼西亚信经（325 / 381年）', body: '我信独一上帝，全能的父，创造天地和有形无形万物的主。\n我信独一主耶稣基督，上帝的独生子，在万世以前为父所生：出于神而为神，出于光而为光，出于真神而为真神，被生非被造，与父同质，万物都是藉着他造的。他为要拯救我们世人，从天降临，因着圣灵，并从童贞女马利亚取了肉身成为人，在本丢彼拉多手下为我们钉十字架，受难受葬，照圣经第三天复活，并升上天，坐在父的右边，将来必有荣耀再降临，审判活人死人，他的国没有穷尽。\n我信圣灵，赐生命的主，从父（和子）出来，与父及子同受敬拜，同受尊荣，他曾藉众先知说话。\n我信独一、圣洁、公教、使徒的教会，我认使罪得赦的独一洗礼，我望死人复活，并来世的生命。阿们。' },
+            { heading: '迦克墩信经（451年）', body: '我们同声教导人承认同一位子、我们的主耶稣基督，是完全的神、完全的人，真实具有理性的灵魂与肉体；按神性与父同质，按人性与我们同质，在各方面与我们相同，只是没有罪。\n按神性，在万世之先为父所生；按人性，在末后这些日子，为了我们和我们的救恩，从童贞女、上帝之母马利亚而生。\n是同一基督、子、主、独生的，具有两个本性，不相混乱、不相交换、不能分开、不能离散；两性的区别不因联合而消除，各性的特质反得以保全，汇合于一个位格、一个本体之内，并不分裂或分离为两个位格，乃是同一位子、独生的、道、主耶稣基督——正如从太初先知论及他的，主耶稣基督自己所教导我们的，并圣教父的信经所传递给我们的。' },
+            { heading: '亚他那修信经（约 5世纪，节选）', body: '凡人若要得救，首先必须持守公教信仰；若不完整无误地持守，必永远灭亡。\n公教信仰是这样的：我们敬拜三位一体中的独一真神，以及独一真神中的三位一体，不混淆三个位格，也不分裂神的本质。圣父是一个位格，圣子是一个位格，圣灵是一个位格；然而圣父、圣子、圣灵的神性是同一的，荣耀相等，威严同永恒。\n圣父怎样，圣子也怎样，圣灵也怎样：圣父是无受造的，圣子是无受造的，圣灵也是无受造的；圣父是永恒的，圣子是永恒的，圣灵也是永恒的；然而并非三个永恒者，乃是一个永恒者。\n更多，为要得救，必须笃信我们的主耶稣基督成肉身之事：正确的信仰就是相信并承认我们的主耶稣基督，上帝之子，是神，也是人……' },
           ],
         },
         {
-          subtitle: t("历代改革宗与福音派宣言"),
+          subtitle: '历代改革宗与福音派宣言',
           creed: false,
           items: [
-            { heading: t("海德堡要理问答（1563年）"), body: t("第一问：你活着和死的时候，你惟一的安慰是什么？\n答：我的灵魂和身体，不论活着还是死的，不属于我自己，乃属于我忠实的救主耶稣基督。他用自己宝贵的血赎买了我，使我从魔鬼一切的权势中得释放……") },
-            { heading: t("威斯敏斯特信条（1646年）"), body: t("【论圣经（第一章）】圣经旧约与新约全书，是上帝所默示的，是信仰和生活的法则。圣经的权威不依赖任何人或教会的见证，完全依赖于上帝本身——祂是真理，也是圣经的作者。\n【论上帝与三位一体（第二章）】只有一位活的真神，祂是无限完全的灵，全知、全能、全善、至圣、至公；在上帝的独一性里，有三个位格：圣父、圣子和圣灵，本质相同，权能荣耀相等。\n【论基督的中保工作（第八章）】上帝在永恒的拣选中，指定祂的独生子主耶稣基督作神人之间的中保，先知、祭司和君王；他取了人性，完全遵行了律法，在十字架上作了挽回祭，胜过了死亡，并在荣耀里升天，以拯救所有父神赐给祂的人。\n【论称义（第十一章）】上帝称凡有效蒙召之人为义，不是因为在他们里面注入了义，也不是因为他们的任何行为，只是因为赦免了他们的罪，认为并接受他们为义——只因归算给他们的基督的顺服与受苦偿还，单靠信心接受称义，这信心本身不是他们自己所能生出的。") },
-            { heading: t("洛桑信约（1974年）"), body: t("【上帝的旨意与我们的使命】我们宣认上帝在创造、护理、审判、救赎和赐恩等方面的主权，同时为祂向世人所赐的救恩而感恩。我们宣称，教会被召出来，是要在人类各族中荣耀上帝，并宣告福音直到地极。\n【圣经的权威与能力】我们肯定圣经的神圣默示、真实性和权威性，宣认圣经是判断一切事物的最高准则，是引导我们认识上帝旨意的无误向导。\n【基督的独特性与普世性】只有一位救主，只有一篇福音。我们宣认耶稣基督是主，是救主；祂的救恩既是普世性的，也是排他的——除他以外，别无拯救。\n【传福音与社会责任】传福音与基督徒社会关怀，两者都是我们的基督徒职责。我们呼召教会不仅传讲和好的福音，也要用行动彰显上帝对公义的关怀。\n【教会与宣教】我们宣认教会是宣教的核心，并承诺效法基督、舍己服务，进入一切文化，藉着圣灵能力向万国传扬耶稣基督。") },
-            { heading: t("芝加哥圣经无误宣言（1978年）"), body: t("【默示与无误】我们肯定，圣经的整体以及每一部分，直到原文的每一个字，都是出于上帝的默示；我们否认，上帝的默示只是局限于某些部分，或圣经的某些命题不是无误的。\n【真理与诚实】我们肯定，圣经是无误和无谬的——在它所确认的一切事上是真实的，不会误导人；我们否认，圣经的无误性与无谬性仅限于属灵或宗教的事物，而不延伸至历史和科学领域。\n【解释与权威】我们肯定，圣经整体及各个部分的意思，包括预言性的内容，是单义的，虽然其应用可以是多元的；我们否认，解释者可以透过任何理由合法地将自己的意思加于经文。\n【圣经的充足性】我们肯定，圣经包含了所有关乎救恩和所有信仰生活所必须知道、相信和遵守的事；我们否认，任何教会、传统或个人经历可以在权威上与圣经并驾齐驱。") },
+            { heading: '海德堡要理问答（1563年）', body: '第一问：你活着和死的时候，你惟一的安慰是什么？\n答：我的灵魂和身体，不论活着还是死的，不属于我自己，乃属于我忠实的救主耶稣基督。他用自己宝贵的血赎买了我，使我从魔鬼一切的权势中得释放……' },
+            { heading: '威斯敏斯特信条（1646年）', body: '【论圣经（第一章）】圣经旧约与新约全书，是上帝所默示的，是信仰和生活的法则。圣经的权威不依赖任何人或教会的见证，完全依赖于上帝本身——祂是真理，也是圣经的作者。\n【论上帝与三位一体（第二章）】只有一位活的真神，祂是无限完全的灵，全知、全能、全善、至圣、至公；在上帝的独一性里，有三个位格：圣父、圣子和圣灵，本质相同，权能荣耀相等。\n【论基督的中保工作（第八章）】上帝在永恒的拣选中，指定祂的独生子主耶稣基督作神人之间的中保，先知、祭司和君王；他取了人性，完全遵行了律法，在十字架上作了挽回祭，胜过了死亡，并在荣耀里升天，以拯救所有父神赐给祂的人。\n【论称义（第十一章）】上帝称凡有效蒙召之人为义，不是因为在他们里面注入了义，也不是因为他们的任何行为，只是因为赦免了他们的罪，认为并接受他们为义——只因归算给他们的基督的顺服与受苦偿还，单靠信心接受称义，这信心本身不是他们自己所能生出的。' },
+            { heading: '洛桑信约（1974年）', body: '【上帝的旨意与我们的使命】我们宣认上帝在创造、护理、审判、救赎和赐恩等方面的主权，同时为祂向世人所赐的救恩而感恩。我们宣称，教会被召出来，是要在人类各族中荣耀上帝，并宣告福音直到地极。\n【圣经的权威与能力】我们肯定圣经的神圣默示、真实性和权威性，宣认圣经是判断一切事物的最高准则，是引导我们认识上帝旨意的无误向导。\n【基督的独特性与普世性】只有一位救主，只有一篇福音。我们宣认耶稣基督是主，是救主；祂的救恩既是普世性的，也是排他的——除他以外，别无拯救。\n【传福音与社会责任】传福音与基督徒社会关怀，两者都是我们的基督徒职责。我们呼召教会不仅传讲和好的福音，也要用行动彰显上帝对公义的关怀。\n【教会与宣教】我们宣认教会是宣教的核心，并承诺效法基督、舍己服务，进入一切文化，藉着圣灵能力向万国传扬耶稣基督。' },
+            { heading: '芝加哥圣经无误宣言（1978年）', body: '【默示与无误】我们肯定，圣经的整体以及每一部分，直到原文的每一个字，都是出于上帝的默示；我们否认，上帝的默示只是局限于某些部分，或圣经的某些命题不是无误的。\n【真理与诚实】我们肯定，圣经是无误和无谬的——在它所确认的一切事上是真实的，不会误导人；我们否认，圣经的无误性与无谬性仅限于属灵或宗教的事物，而不延伸至历史和科学领域。\n【解释与权威】我们肯定，圣经整体及各个部分的意思，包括预言性的内容，是单义的，虽然其应用可以是多元的；我们否认，解释者可以透过任何理由合法地将自己的意思加于经文。\n【圣经的充足性】我们肯定，圣经包含了所有关乎救恩和所有信仰生活所必须知道、相信和遵守的事；我们否认，任何教会、传统或个人经历可以在权威上与圣经并驾齐驱。' },
           ],
         },
       ],
@@ -300,7 +294,7 @@ function FaithDocumentView() {
                 </button>
                 {open && (
                   <div style={{ padding: '0 14px 14px', fontSize: 13, color: 'rgba(255,255,255,0.72)', lineHeight: 1.8 }}>
-                    <AutoText>{item.body}</AutoText>
+                    {item.body}
                   </div>
                 )}
               </div>
@@ -336,7 +330,7 @@ function FaithDocumentView() {
                     </button>
                     {open && (
                       <div style={{ padding: '0 14px 14px', fontSize: 12.5, color: 'rgba(255,255,255,0.65)', lineHeight: 1.85, whiteSpace: 'pre-wrap', fontStyle: sub.creed ? 'italic' : 'normal' }}>
-                        <AutoText>{item.body}</AutoText>
+                        {item.body}
                       </div>
                     )}
                   </div>
@@ -348,7 +342,7 @@ function FaithDocumentView() {
       ))}
 
       <div style={{ textAlign: 'center', fontSize: 11, color: 'rgba(255,255,255,0.25)', marginTop: 8 }}>
-        {t("属灵星球 · 持守古道 · 传扬真道")}
+        属灵星球 · 持守古道 · 传扬真道
       </div>
     </div>
   )
@@ -380,7 +374,7 @@ function NoteDetailOverlay({ note, onClose, onUnshare, onAmen, token }) {
   }
 
   async function handleUnshare() {
-    if (!window.confirm(t("确定要从分享墙撤回这篇内容吗？"))) return
+    if (!window.confirm('确定要从分享墙撤回这篇内容吗？')) return
     onUnshare(note.id)
     onClose()
   }
@@ -393,7 +387,7 @@ function NoteDetailOverlay({ note, onClose, onUnshare, onAmen, token }) {
     }}>
       {/* Detail header */}
       <div style={{ position: 'sticky', top: 0, zIndex: 1, background: 'rgba(22,33,62,0.95)', backdropFilter: 'blur(10px)', borderBottom: '1px solid rgba(255,255,255,0.08)', padding: '14px 18px', display: 'flex', alignItems: 'center', gap: 12 }}>
-        <BackButton onClick={onClose} size={36} />
+        <button onClick={onClose} style={{ background: 'rgba(255,255,255,0.1)', border: 'none', borderRadius: 8, color: '#fff', padding: '6px 12px', cursor: 'pointer', fontSize: 13 }}>← 返回</button>
         <div style={{ flex: 1 }} />
         {/* Amen button in header */}
         <button
@@ -407,7 +401,7 @@ function NoteDetailOverlay({ note, onClose, onUnshare, onAmen, token }) {
             fontSize: 13, cursor: 'pointer', fontWeight: amenByMe ? 600 : 400,
           }}
         >
-          {t("🙌 阿们")} {amenCount > 0 && <span style={{ fontWeight: 700 }}>{amenCount}</span>}
+          🙌 阿们 {amenCount > 0 && <span style={{ fontWeight: 700 }}>{amenCount}</span>}
         </button>
       </div>
 
@@ -423,7 +417,7 @@ function NoteDetailOverlay({ note, onClose, onUnshare, onAmen, token }) {
             </div>
           )}
           <div>
-            <div style={{ fontSize: 16, fontWeight: 600, color: 'rgba(255,255,255,0.95)' }}>{note.author || t("匿名")}</div>
+            <div style={{ fontSize: 16, fontWeight: 600, color: 'rgba(255,255,255,0.95)' }}>{note.author || '匿名'}</div>
             <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)', marginTop: 2 }}>
               {note.mood && <span style={{ marginRight: 6 }}>{note.mood}</span>}
               {formatDate(note.sharedAt || note.date)}
@@ -439,12 +433,12 @@ function NoteDetailOverlay({ note, onClose, onUnshare, onAmen, token }) {
         {/* Scripture */}
         <div style={{ fontSize: 18, fontWeight: 700, color: '#fff', marginBottom: 20, lineHeight: 1.5 }}>{note.scripture}</div>
 
-        {[[t("👁️ 观察"), note.observation], [t("💭 反思"), note.reflection], [t("✨ 应用"), note.application], [t("🙏 祷告"), note.prayer]]
+        {[['👁️ 观察', note.observation], ['💭 反思', note.reflection], ['✨ 应用', note.application], ['🙏 祷告', note.prayer]]
           .filter(([, v]) => v)
           .map(([label, text]) => (
             <div key={label} style={{ marginBottom: 18 }}>
               <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', marginBottom: 6, fontWeight: 600, letterSpacing: '0.04em' }}>{label}</div>
-              <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.85)', lineHeight: 1.75, whiteSpace: 'pre-wrap', fontStyle: label.includes(t("祷告")) ? 'italic' : 'normal' }}>{text}</div>
+              <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.85)', lineHeight: 1.75, whiteSpace: 'pre-wrap', fontStyle: label.includes('祷告') ? 'italic' : 'normal' }}>{text}</div>
             </div>
           ))}
 
@@ -455,10 +449,23 @@ function NoteDetailOverlay({ note, onClose, onUnshare, onAmen, token }) {
               onClick={handleUnshare}
               style={{ width: '100%', padding: '11px', marginBottom: 6, background: 'rgba(255,59,48,0.12)', border: '1px solid rgba(255,59,48,0.35)', borderRadius: 10, color: '#ff6b6b', fontSize: 13, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
             >
-              {t("↩️ 从分享墙撤回")}
+              ↩️ 从分享墙撤回
             </button>
           )}
-          {/* 导出已统一收口到首页「📦 数据导出」 */}
+          <button
+            onClick={e => window.busyBtn(e, () => exportSelectedToTxt(note), "导出 TXT 中…", "✅ TXT 已导出")}
+            style={{ flex: 1, padding: '10px', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 10, color: 'rgba(255,255,255,0.8)', fontSize: 13, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}
+          >
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            TXT
+          </button>
+          <button
+            onClick={e => window.busyBtn(e, () => exportSelectedToPdf(note), "生成 PDF 中…", "✅ PDF 已导出")}
+            style={{ flex: 1, padding: '10px', background: 'rgba(0,122,255,0.18)', border: '1px solid rgba(0,122,255,0.35)', borderRadius: 10, color: '#5ac8fa', fontSize: 13, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}
+          >
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 15l3 3 3-3"/><path d="M12 18V9"/></svg>
+            PDF
+          </button>
         </div>
       </div>
     </div>
@@ -481,7 +488,7 @@ function SundaySchoolView() {
   useEffect(() => {
     fetchSundaySchoolVideos()
       .then(d => setVideos(d.videos || []))
-      .catch(() => setErr(t("视频加载失败，请稍后重试")))
+      .catch(() => setErr('视频加载失败，请稍后重试'))
   }, [])
 
   if (err) return (
@@ -492,16 +499,16 @@ function SundaySchoolView() {
 
   if (!videos) return (
     <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'rgba(255,255,255,0.3)', fontSize: 14 }}>
-      {t("加载中…")}
+      加载中…
     </div>
   )
 
   if (videos.length === 0) return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 32, gap: 12 }}>
       <div style={{ fontSize: 44 }}>🎬</div>
-      <div style={{ fontSize: 16, color: 'rgba(255,255,255,0.7)', fontWeight: 600 }}>{t("暂无主日学视频")}</div>
+      <div style={{ fontSize: 16, color: 'rgba(255,255,255,0.7)', fontWeight: 600 }}>暂无主日学视频</div>
       <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.35)', textAlign: 'center', lineHeight: 1.7 }}>
-        {t("视频上传到 cdn.holiness.uk/videos/ 后将自动显示")}
+        视频上传到 cdn.holiness.uk/videos/ 后将自动显示
       </div>
     </div>
   )
@@ -560,7 +567,7 @@ function SundaySchoolView() {
             <div style={{ padding: '10px 14px 12px', display: 'flex', alignItems: 'flex-start', gap: 10 }}>
               <div style={{ flex: 1 }}>
                 <div style={{ fontSize: 14, fontWeight: 600, color: 'rgba(255,255,255,0.92)', lineHeight: 1.4, marginBottom: 3 }}>
-                  {v.alias || v.title || v.filename || t("未命名")}
+                  {v.alias || v.title || v.filename || '未命名'}
                 </div>
                 <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)' }}>
                   {v.filename}
@@ -651,7 +658,7 @@ export default function ShareWallPage({ user, onBack }) {
       setNotes(prev => prev.filter(n => n.id !== noteId))
       setTotal(t => Math.max(0, t - 1))
     } catch (err) {
-      alert(err.message || t("操作失败"))
+      alert(err.message || '操作失败')
     }
   }
 
@@ -663,9 +670,9 @@ export default function ShareWallPage({ user, onBack }) {
     return (
       <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg,#1a1a2e,#16213e)' }}>
         <div style={{ fontSize: 48, marginBottom: 16 }}>🌟</div>
-        <div style={{ fontSize: 18, color: 'rgba(255,255,255,0.9)', marginBottom: 8 }}>{t("分享墙")}</div>
-        <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', marginBottom: 24 }}>{t("登录后查看分享墙内容")}</div>
-        <BackButton onClick={onBack} />
+        <div style={{ fontSize: 18, color: 'rgba(255,255,255,0.9)', marginBottom: 8 }}>分享墙</div>
+        <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', marginBottom: 24 }}>登录后查看分享墙内容</div>
+        <button onClick={onBack} style={{ padding: '10px 24px', background: 'rgba(0,122,255,0.3)', border: '1px solid rgba(0,122,255,0.5)', borderRadius: 8, color: '#5ac8fa', fontSize: 14, cursor: 'pointer' }}>← 返回</button>
       </div>
     )
   }
@@ -686,28 +693,30 @@ export default function ShareWallPage({ user, onBack }) {
       {/* Header */}
       <header style={{ borderBottom: '1px solid rgba(255,255,255,0.08)', background: 'rgba(13,13,26,0.85)', backdropFilter: 'blur(10px)' }}>
         <div style={{ padding: '12px 18px 0', display: 'flex', alignItems: 'center', gap: 12 }}>
-          <BackButton onClick={onBack} />
+          <button onClick={onBack} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.7)', cursor: 'pointer', padding: 8 }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15 18 9 12 15 6" /></svg>
+          </button>
           <div style={{ flex: 1, textAlign: 'center' }}>
-            <div style={{ fontSize: 17, fontWeight: 600, color: 'rgba(255,255,255,0.95)' }}>{t("🌟 分享墙")}</div>
+            <div style={{ fontSize: 17, fontWeight: 600, color: 'rgba(255,255,255,0.95)' }}>🌟 分享墙</div>
             {faithTab === 'share' && <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)', marginTop: 2 }}>{total > 0 ? `${total} 篇分享` : ''}</div>}
-            {faithTab === 'sunday' && <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)', marginTop: 2 }}>{t("主日学视频")}</div>}
-            {faithTab === 'testimony' && <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)', marginTop: 2 }}>{t("述说祂的作为")}</div>}
+            {faithTab === 'sunday' && <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)', marginTop: 2 }}>主日学视频</div>}
+            {faithTab === 'testimony' && <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)', marginTop: 2 }}>述说祂的作为</div>}
           </div>
           {faithTab === 'share' ? (
             <button
               onClick={() => loadNotes(1)}
               style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.5)', cursor: 'pointer', padding: 8, fontSize: 16 }}
-              title={t("刷新")}
+              title="刷新"
             >↻</button>
           ) : <div style={{ width: 36 }} />}
         </div>
         {/* Sub-tab switcher */}
         <div style={{ display: 'flex', padding: '0 18px', gap: 4, marginTop: 8 }}>
           {[
-            { key: 'share', label: t("社区分享"), emoji: '🌟' },
-            { key: 'testimony', label: t("见证墙"), emoji: '✨' },
-            { key: 'faith', label: t("信仰宣言"), emoji: '✝️' },
-            { key: 'sunday', label: t("主日学"), emoji: '🎬' },
+            { key: 'share', label: '社区分享', emoji: '🌟' },
+            { key: 'testimony', label: '见证墙', emoji: '✨' },
+            { key: 'faith', label: '信仰宣言', emoji: '✝️' },
+            { key: 'sunday', label: '主日学', emoji: '🎬' },
           ].map(tab => (
             <button
               key={tab.key}
@@ -742,12 +751,12 @@ export default function ShareWallPage({ user, onBack }) {
         <div style={indicatorStyle}>{indicatorText}</div>
 
         {loading && notes.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '60px 0', color: 'rgba(255,255,255,0.4)' }}>{t("加载中...")}</div>
+          <div style={{ textAlign: 'center', padding: '60px 0', color: 'rgba(255,255,255,0.4)' }}>加载中...</div>
         ) : notes.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '60px 0', color: 'rgba(255,255,255,0.4)' }}>
             <div style={{ fontSize: 40, marginBottom: 12 }}>📝</div>
-            <div style={{ fontSize: 15 }}>{t("暂无分享")}</div>
-            <div style={{ fontSize: 13, marginTop: 8, opacity: 0.6 }}>{t("在日记页面分享你的灵修心得")}</div>
+            <div style={{ fontSize: 15 }}>暂无分享</div>
+            <div style={{ fontSize: 13, marginTop: 8, opacity: 0.6 }}>在日记页面分享你的灵修心得</div>
           </div>
         ) : (
           <>
@@ -780,7 +789,7 @@ export default function ShareWallPage({ user, onBack }) {
                       </div>
                     )}
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: 13, fontWeight: 500, color: 'rgba(255,255,255,0.9)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{note.author || t("匿名")}</div>
+                      <div style={{ fontSize: 13, fontWeight: 500, color: 'rgba(255,255,255,0.9)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{note.author || '匿名'}</div>
                       <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)' }}>{note.mood && <span style={{ marginRight: 5 }}>{note.mood}</span>}{formatDate(note.sharedAt || note.date)}</div>
                     </div>
                     {/* Inline amen count badge */}
@@ -812,7 +821,7 @@ export default function ShareWallPage({ user, onBack }) {
                           onClick={e => { e.stopPropagation(); toggleExpand(note.id) }}
                           style={{ background: 'none', border: 'none', padding: '4px 0', color: '#5ac8fa', fontSize: 12, cursor: 'pointer', fontFamily: 'inherit' }}
                         >
-                          {expanded ? t("收起 ▲") : t("展开全文 ▼")}
+                          {expanded ? '收起 ▲' : '展开全文 ▼'}
                         </button>
                       )}
                     </div>
@@ -829,7 +838,7 @@ export default function ShareWallPage({ user, onBack }) {
                   disabled={loading}
                   style={{ padding: '10px 28px', background: 'rgba(0,122,255,0.2)', border: '1px solid rgba(0,122,255,0.35)', borderRadius: 20, color: '#5ac8fa', fontSize: 13, cursor: 'pointer' }}
                 >
-                  {loading ? t("加载中...") : t("加载更多")}
+                  {loading ? '加载中...' : '加载更多'}
                 </button>
               </div>
             )}

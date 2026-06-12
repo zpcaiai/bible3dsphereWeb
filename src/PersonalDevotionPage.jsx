@@ -7,9 +7,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { TTSButton, TTSFullBar } from './useGlobalAudio.jsx'
-import { API_BASE, langHeaders } from './api.js'
-import { t } from './i18n/runtime'
-import { AutoText } from './autoTranslate.jsx'
+import { API_BASE } from './api.js'
 
 // ── Mobile detection ──────────────────────────────────────────────────────────
 function useIsMobile() {
@@ -65,14 +63,14 @@ function ScriptureVerses({ scriptureRef, initialOpen = false }) {
   useEffect(() => {
     if (!scriptureRef) return
     setLoading(true); setVerses(null); setError(null)
-    fetch(`${API}/scripture?ref=${encodeURIComponent(scriptureRef)}`, { headers: langHeaders(false) })
+    fetch(`${API}/scripture?ref=${encodeURIComponent(scriptureRef)}`)
       .then(r => r.json())
-      .then(d => { if (d.ok && d.verses?.length) setVerses(d); else setError(d.error || t("暂无经文")) })
-      .catch(() => setError(t("加载失败")))
+      .then(d => { if (d.ok && d.verses?.length) setVerses(d); else setError(d.error || '暂无经文') })
+      .catch(() => setError('加载失败'))
       .finally(() => setLoading(false))
   }, [scriptureRef])
 
-  if (loading) return <div style={SV.loading}>{t("加载经文中…")}</div>
+  if (loading) return <div style={SV.loading}>加载经文中…</div>
   if (error)   return <div style={SV.loading}>{error}</div>
   if (!verses) return null
 
@@ -83,7 +81,7 @@ function ScriptureVerses({ scriptureRef, initialOpen = false }) {
     <div style={SV.wrapper}>
       {/* ── Toggle header ── */}
       <div style={SV.toggleRow} onClick={() => setOpen(o => !o)}>
-        <span style={SV.refLabel}>📖 {book} {chapter}{t("章 ·")} {list.length}{t("节")}</span>
+        <span style={SV.refLabel}>📖 {book} {chapter}章 · {list.length}节</span>
         {/* TTS — stop propagation so click doesn't toggle accordion */}
         <div onClick={e => e.stopPropagation()}>
           <TTSButton text={ttsAll} />
@@ -182,15 +180,15 @@ function PersonalCard({ user, token }) {
   if (!user) return (
     <div style={{ ...S.section, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '32px 16px', textAlign: 'center', gap: 8 }}>
       <div style={{ fontSize: 32 }}>🌟</div>
-      <div style={{ fontSize: 15, color: 'rgba(255,255,255,0.8)' }}>{t("登录后查看个性化灵修")}</div>
-      <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)' }}>{t("根据你的灵命状态每天生成专属灵修内容")}</div>
+      <div style={{ fontSize: 15, color: 'rgba(255,255,255,0.8)' }}>登录后查看个性化灵修</div>
+      <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)' }}>根据你的灵命状态每天生成专属灵修内容</div>
     </div>
   )
 
   if (loading) return (
     <div style={S.section}>
       <div style={{ padding: '32px 16px', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
-        <div style={{ fontSize: 28, marginBottom: 10 }}>✨</div>{t("正在为你生成今日灵修…")}
+        <div style={{ fontSize: 28, marginBottom: 10 }}>✨</div>正在为你生成今日灵修…
       </div>
     </div>
   )
@@ -198,7 +196,7 @@ function PersonalCard({ user, token }) {
   if (error || !data) return (
     <div style={S.section}>
       <div style={{ padding: '24px 16px', textAlign: 'center', color: 'rgba(255,255,255,0.4)', fontSize: 13 }}>
-        {error ? `加载失败: ${error}` : t("暂无个性化灵修内容")}
+        {error ? `加载失败: ${error}` : '暂无个性化灵修内容'}
       </div>
     </div>
   )
@@ -210,17 +208,17 @@ function PersonalCard({ user, token }) {
       <div style={S.sectionHeader('rgba(90,200,250,0.07)')}>
         <span style={{ fontSize: 18 }}>🌟</span>
         <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 14, fontWeight: 700, color: 'rgba(255,255,255,0.95)' }}>{t("今日个性化灵修")}</div>
-          <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', marginTop: 1 }}>{t("聚焦 ·")} <AutoText>{data.theme}</AutoText></div>
+          <div style={{ fontSize: 14, fontWeight: 700, color: 'rgba(255,255,255,0.95)' }}>今日个性化灵修</div>
+          <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', marginTop: 1 }}>聚焦 · {data.theme}</div>
         </div>
-        <span style={S.stageTag(data.stage)}>{data.stage_icon} <AutoText>{data.stage_label}</AutoText></span>
-        <TTSFullBar buildText={() => ttsText} label={t("朗读")} />
+        <span style={S.stageTag(data.stage)}>{data.stage_icon} {data.stage_label}</span>
+        <TTSFullBar buildText={() => ttsText} label="朗读" />
       </div>
 
       <div style={S.sectionBody}>
         {/* Verse */}
         <div style={S.label}>
-          <span>{t("✨ 今日经文")}</span>
+          <span>✨ 今日经文</span>
           <TTSButton text={`${data.verse_ref}——${data.verse_text}`} />
         </div>
         <div style={{ marginBottom: 4, fontSize: 11, color: 'rgba(90,200,250,0.7)', fontWeight: 600 }}>{data.verse_ref}</div>
@@ -230,21 +228,21 @@ function PersonalCard({ user, token }) {
 
         {/* Devotion text */}
         <div style={{ ...S.label, marginTop: 16 }}>
-          <span>{t("📖 灵修默想")}</span>
+          <span>📖 灵修默想</span>
           <TTSButton text={data.devotion_text} />
         </div>
-        <div style={S.body}><AutoText>{data.devotion_text}</AutoText></div>
+        <div style={S.body}>{data.devotion_text}</div>
 
         {/* Prayer */}
         <div style={{ ...S.label, marginTop: 16 }}>
-          <span>{t("🙏 今日祷告")}</span>
+          <span>🙏 今日祷告</span>
           <TTSButton text={data.prayer_text} />
         </div>
-        <div style={S.prayer}><AutoText>{data.prayer_text}</AutoText></div>
+        <div style={S.prayer}>{data.prayer_text}</div>
 
         {/* Stage action */}
         <div style={{ marginTop: 14, padding: '10px 12px', background: 'rgba(255,255,255,0.04)', borderRadius: 10, fontSize: 13, color: 'rgba(255,255,255,0.65)' }}>
-          💡 <strong style={{ color: 'rgba(255,255,255,0.85)' }}>{t("今日可行一步")}</strong> — <AutoText>{data.stage_action}</AutoText>
+          💡 <strong style={{ color: 'rgba(255,255,255,0.85)' }}>今日可行一步</strong> — {data.stage_action}
         </div>
       </div>
     </div>
@@ -260,10 +258,10 @@ function McCheyneCard() {
   const dayStr = `${today.getMonth() + 1}月${today.getDate()}日`
 
   const chapters = reading ? [
-    { label: t("家庭晨读"), icon: '🌅', ref: reading.f1 },
-    { label: t("家庭晚读"), icon: '🌙', ref: reading.f2 },
-    { label: t("个人新约"), icon: '✝️',  ref: reading.n1 },
-    { label: t("个人诗篇"), icon: '🎵', ref: reading.ps },
+    { label: '家庭晨读', icon: '🌅', ref: reading.f1 },
+    { label: '家庭晚读', icon: '🌙', ref: reading.f2 },
+    { label: '个人新约', icon: '✝️',  ref: reading.n1 },
+    { label: '个人诗篇', icon: '🎵', ref: reading.ps },
   ] : []
 
   const ttsFull = reading
@@ -284,17 +282,17 @@ function McCheyneCard() {
       <div style={S.sectionHeader('rgba(52,199,89,0.06)')}>
         <span style={{ fontSize: 18 }}>📖</span>
         <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 14, fontWeight: 700, color: 'rgba(255,255,255,0.95)' }}>{t("麦琴读经计划")}</div>
-          <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', marginTop: 1 }}>{dayStr} {t("· 麦契尼一年读经计划")}</div>
+          <div style={{ fontSize: 14, fontWeight: 700, color: 'rgba(255,255,255,0.95)' }}>麦琴读经计划</div>
+          <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', marginTop: 1 }}>{dayStr} · 麦契尼一年读经计划</div>
         </div>
-        {reading && <TTSFullBar buildText={() => ttsFull} label={t("朗读")} />}
+        {reading && <TTSFullBar buildText={() => ttsFull} label="朗读" />}
       </div>
 
       <div style={S.sectionBody}>
         {reading === undefined ? (
-          <div style={{ textAlign: 'center', color: 'rgba(255,255,255,0.4)', fontSize: 13 }}>{t("加载中…")}</div>
+          <div style={{ textAlign: 'center', color: 'rgba(255,255,255,0.4)', fontSize: 13 }}>加载中…</div>
         ) : reading === null ? (
-          <div style={{ textAlign: 'center', color: 'rgba(255,255,255,0.4)', fontSize: 13 }}>{t("今日读经计划暂无数据")}</div>
+          <div style={{ textAlign: 'center', color: 'rgba(255,255,255,0.4)', fontSize: 13 }}>今日读经计划暂无数据</div>
         ) : (
           <>
             {/* Summary chips */}
@@ -338,7 +336,7 @@ function McCheyneCard() {
             })}
 
             <div style={{ marginTop: 4, padding: '7px 12px', background: 'rgba(52,199,89,0.05)', borderRadius: 8, fontSize: 11, color: 'rgba(52,199,89,0.6)', textAlign: 'center' }}>
-              {t("麦契尼一年读经计划 · 每日4章 · 一年读完圣经")}
+              麦契尼一年读经计划 · 每日4章 · 一年读完圣经
             </div>
           </>
         )}

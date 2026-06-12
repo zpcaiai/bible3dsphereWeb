@@ -3,18 +3,15 @@
  * 由 formation 八维推导「信/望/爱/像基督」四指数 + 9 品格评估。今日心镜 overlay。
  */
 import { useEffect, useState } from 'react'
-import BackButton from './BackButton'
 import { fetchFormationProfile, evaluateVirtues } from './api'
 import { getToken } from './auth'
-import { t } from './i18n/runtime'
-import { AutoText } from './autoTranslate.jsx'
 
 const card = { background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, padding: 16, marginBottom: 12 }
 const INDEX_META = [
-  { key: 'faith', name: t("信靠"), color: '#5ac8fa' },
-  { key: 'hope', name: t("盼望"), color: '#51cf66' },
-  { key: 'love', name: t("爱人"), color: '#ff8787' },
-  { key: 'christlikeness', name: t("像基督"), color: '#a78bfa' },
+  { key: 'faith', name: '信靠', color: '#5ac8fa' },
+  { key: 'hope', name: '盼望', color: '#51cf66' },
+  { key: 'love', name: '爱人', color: '#ff8787' },
+  { key: 'christlikeness', name: '像基督', color: '#a78bfa' },
 ]
 
 export default function FaithHopeLovePage({ user, onClose }) {
@@ -38,18 +35,18 @@ export default function FaithHopeLovePage({ user, onClose }) {
   return (
     <div style={{ width: '100%', height: '100%', background: 'radial-gradient(circle at 50% 8%, rgba(167,139,250,0.18), #05060c 60%)', color: '#fff', overflowY: 'auto', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
       <div style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 12, position: 'sticky', top: 0, zIndex: 100, background: 'rgba(5,6,12,0.7)', backdropFilter: 'blur(10px)' }}>
-        <BackButton onClick={onClose} />
-        <div><div style={{ fontSize: 17, fontWeight: 600 }}>{t("信望爱星系")}</div>
-          <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.45)' }}>{t("不是学了多少，而是被塑造成什么样的人")}</div></div>
+        <button onClick={onClose} style={backBtn}>‹</button>
+        <div><div style={{ fontSize: 17, fontWeight: 600 }}>信望爱星系</div>
+          <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.45)' }}>不是学了多少，而是被塑造成什么样的人</div></div>
       </div>
 
       <div style={{ padding: '8px 16px 110px', maxWidth: 640, margin: '0 auto' }}>
-        {loading ? <div style={{ ...card, textAlign: 'center', color: 'rgba(255,255,255,0.5)' }}>{t("正在点亮你的星系…")}</div>
+        {loading ? <div style={{ ...card, textAlign: 'center', color: 'rgba(255,255,255,0.5)' }}>正在点亮你的星系…</div>
           : !data?.has_data ? (
             <div style={{ ...card, textAlign: 'center', padding: '30px 16px' }}>
               <div style={{ fontSize: 30, marginBottom: 8 }}>🌌</div>
-              <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 6 }}>{t("星系尚未点亮")}</div>
-              <div style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.55)', lineHeight: 1.7 }}>{t("完成一些打卡、省察与诊断，这里会呈现你真实的信望爱成长。")}</div>
+              <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 6 }}>星系尚未点亮</div>
+              <div style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.55)', lineHeight: 1.7 }}>完成一些打卡、省察与诊断，这里会呈现你真实的信望爱成长。</div>
             </div>
           ) : (
             <>
@@ -68,11 +65,11 @@ export default function FaithHopeLovePage({ user, onClose }) {
 
               {data.summary && (
                 <div style={{ ...card, background: 'linear-gradient(135deg, rgba(167,139,250,0.12), rgba(90,200,250,0.06))' }}>
-                  <div style={{ fontSize: 13.5, lineHeight: 1.85, color: 'rgba(255,255,255,0.86)' }}><AutoText>{data.summary}</AutoText></div>
+                  <div style={{ fontSize: 13.5, lineHeight: 1.85, color: 'rgba(255,255,255,0.86)' }}>{data.summary}</div>
                 </div>
               )}
 
-              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', margin: '4px 4px 10px', fontWeight: 700 }}>{t("九个属灵品格")}</div>
+              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', margin: '4px 4px 10px', fontWeight: 700 }}>九个属灵品格</div>
               {(data.virtues || []).map(v => (
                 <div key={v.key} style={card}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
@@ -81,7 +78,7 @@ export default function FaithHopeLovePage({ user, onClose }) {
                   </div>
                   <Bar pct={Math.round(v.score * 100)} color={v.color} />
                   <div style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.72)', lineHeight: 1.7, marginTop: 10 }}>🌱 {v.grow}</div>
-                  <div style={{ fontSize: 12.5, color: '#5ac8fa', marginTop: 6 }}>{t("操练：")}{v.practice}</div>
+                  <div style={{ fontSize: 12.5, color: '#5ac8fa', marginTop: 6 }}>操练：{v.practice}</div>
                   {v.scripture?.text && (
                     <div style={{ borderLeft: `3px solid ${v.color}88`, paddingLeft: 10, marginTop: 8, fontSize: 12, color: 'rgba(255,255,255,0.68)', fontStyle: 'italic' }}>
                       「{v.scripture.text}」<span style={{ color: v.color, fontStyle: 'normal' }}> —— {v.scripture.ref}</span>

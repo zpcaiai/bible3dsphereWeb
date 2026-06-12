@@ -61,8 +61,6 @@ export function useRealtime(onMessage, enabled = true) {
 
     function scheduleReconnect() {
       attemptsRef.current += 1
-      // 连续失败上限：token失效(服务器403拒绝握手)时停止无限重连
-      if (attemptsRef.current > 10) return
       const delay = Math.min(15000, 1000 * 2 ** Math.min(attemptsRef.current, 4))
       reconnectRef.current = setTimeout(connect, delay)
     }

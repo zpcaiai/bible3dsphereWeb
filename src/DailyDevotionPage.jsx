@@ -6,16 +6,13 @@
  */
 
 import { useEffect, useMemo, useState } from 'react'
-import BackButton from './BackButton'
-import { API_BASE, langHeaders } from './api.js'
+import { API_BASE } from './api.js'
 import { TTSButton, TTSFullBar } from './useGlobalAudio.jsx'
-import { t } from './i18n/runtime'
-import { AutoText } from './autoTranslate.jsx'
 
 // ── Chinese month / day labels ────────────────────────────────────────────────
-const MONTH_LABELS = [t("一月"),t("二月"),t("三月"),t("四月"),t("五月"),t("六月"),
-                      t("七月"),t("八月"),t("九月"),t("十月"),t("十一月"),t("十二月")]
-const WEEKDAY_LABELS = [t("日"),t("一"),t("二"),t("三"),t("四"),t("五"),t("六")]
+const MONTH_LABELS = ['一月','二月','三月','四月','五月','六月',
+                      '七月','八月','九月','十月','十一月','十二月']
+const WEEKDAY_LABELS = ['日','一','二','三','四','五','六']
 
 // ── Calendar helpers ──────────────────────────────────────────────────────────
 function daysInMonth(year, month) {   // month: 1-12
@@ -228,17 +225,17 @@ function ScriptureVerses({ scriptureRef }) {
     setLoading(true)
     setVerses(null)
     setError(null)
-    fetch(`${API_BASE}/scripture?ref=${encodeURIComponent(scriptureRef)}`, { headers: langHeaders(false) })
+    fetch(`${API_BASE}/scripture?ref=${encodeURIComponent(scriptureRef)}`)
       .then(r => r.json())
       .then(d => {
         if (d.ok && d.verses?.length) setVerses(d)
-        else setError(d.error || t("暂无经文"))
+        else setError(d.error || '暂无经文')
       })
-      .catch(() => setError(t("加载失败")))
+      .catch(() => setError('加载失败'))
       .finally(() => setLoading(false))
   }, [scriptureRef])
 
-  if (loading) return <div style={SV.loading}>{t("加载经文中…")}</div>
+  if (loading) return <div style={SV.loading}>加载经文中…</div>
   if (error) return <div style={SV.loading}>{error}</div>
   if (!verses) return null
 
@@ -248,7 +245,7 @@ function ScriptureVerses({ scriptureRef }) {
   return (
     <div style={SV.wrapper}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
-        <div style={SV.refLabel}>{book} {chapter}{t("章 · 共")}{list.length}{t("节")}</div>
+        <div style={SV.refLabel}>{book} {chapter}章 · 共{list.length}节</div>
         <div style={{ flex: 1 }} />
         <TTSButton text={ttsAll} />
       </div>
@@ -300,7 +297,7 @@ export default function DailyDevotionPage({ onBack }) {
     const parts = []
     if (d.quote) parts.push(d.quote)
     if (d.body) parts.push(d.body)
-    if (d.scripture) parts.push(t("更多的信息和勉励：") + d.scripture)
+    if (d.scripture) parts.push('更多的信息和勉励：' + d.scripture)
     return parts.join('\n\n')
   }
 
@@ -309,7 +306,7 @@ export default function DailyDevotionPage({ onBack }) {
       <div style={S.page}>
         <div style={{ ...S.emptyState, paddingTop: 80 }}>
           <div style={{ fontSize: 28, marginBottom: 12 }}>📖</div>
-          {t("加载灵修内容…")}
+          加载灵修内容…
         </div>
       </div>
     )
@@ -320,7 +317,7 @@ export default function DailyDevotionPage({ onBack }) {
       <div style={S.page}>
         <div style={S.emptyState}>
           <div style={{ fontSize: 28, marginBottom: 12 }}>😔</div>
-          {t("灵修内容暂时无法加载")}
+          灵修内容暂时无法加载
         </div>
       </div>
     )
@@ -331,11 +328,11 @@ export default function DailyDevotionPage({ onBack }) {
       {/* ── Header ── */}
       <div style={S.header}>
         {onBack && (
-          <BackButton onClick={onBack} />
+          <button style={S.backBtn} onClick={onBack}>‹</button>
         )}
         <div style={S.titleBlock}>
-          <div style={S.titleMain}>{t("晨恩日新")}</div>
-          <div style={S.titleSub}>{t("保罗·区普 · 福音灵修日引 · 365天")}</div>
+          <div style={S.titleMain}>晨恩日新</div>
+          <div style={S.titleSub}>保罗·区普 · 福音灵修日引 · 365天</div>
         </div>
         <div style={{ fontSize: 11, color: 'rgba(52,199,89,0.8)', fontWeight: 600 }}>
           {MONTH_LABELS[viewMonth-1]}
@@ -384,13 +381,13 @@ export default function DailyDevotionPage({ onBack }) {
         <div style={S.card}>
           <div style={S.cardHeader}>
             <div style={S.cardDate}>
-              {MONTH_LABELS[devotion.month - 1]} {t("· 第")} {devotion.day} {t("日")}
+              {MONTH_LABELS[devotion.month - 1]} · 第 {devotion.day} 日
             </div>
 
             {/* 整体朗读 */}
             <TTSFullBar
               buildText={() => buildTTSText(devotion)}
-              label={t("整体朗读")}
+              label="整体朗读"
             />
           </div>
 
@@ -400,10 +397,10 @@ export default function DailyDevotionPage({ onBack }) {
             {devotion.quote && (
               <>
                 <div style={S.sectionLabel}>
-                  <span>{t("✨ 今日金句")}</span>
+                  <span>✨ 今日金句</span>
                   <TTSButton text={devotion.quote} />
                 </div>
-                <div style={S.quoteBox}><AutoText>{devotion.quote}</AutoText></div>
+                <div style={S.quoteBox}>{devotion.quote}</div>
               </>
             )}
 
@@ -411,10 +408,10 @@ export default function DailyDevotionPage({ onBack }) {
             {devotion.body && (
               <>
                 <div style={{ ...S.sectionLabel, marginTop: 18 }}>
-                  <span>{t("📖 灵修正文")}</span>
+                  <span>📖 灵修正文</span>
                   <TTSButton text={devotion.body} />
                 </div>
-                <div style={S.bodyText}><AutoText>{devotion.body}</AutoText></div>
+                <div style={S.bodyText}>{devotion.body}</div>
               </>
             )}
 
@@ -422,7 +419,7 @@ export default function DailyDevotionPage({ onBack }) {
             {devotion.scripture && (
               <>
                 <div style={{ ...S.sectionLabel, marginTop: 18 }}>
-                  <span>{t("📜 更多信息与勉励")}</span>
+                  <span>📜 更多信息与勉励</span>
                 </div>
                 <div style={{ ...S.scriptureBox, paddingBottom: 4 }}>
                   <div style={{ fontSize: 12, color: 'rgba(90,200,250,0.7)', marginBottom: 6, fontStyle: 'italic' }}>
@@ -439,8 +436,8 @@ export default function DailyDevotionPage({ onBack }) {
         <div style={S.emptyState}>
           <div style={{ fontSize: 24, marginBottom: 8 }}>📅</div>
           {selectedKey
-            ? t("该日期暂无灵修内容")
-            : t("请选择日期查看灵修内容")}
+            ? '该日期暂无灵修内容'
+            : '请选择日期查看灵修内容'}
         </div>
       )}
     </div>

@@ -5,14 +5,13 @@
 import { useEffect, useState } from 'react'
 import { addMemoryVerse, fetchMemoryDue, fetchMemoryList, reviewMemoryVerse, deleteMemoryVerse, fetchMemoryMilestones } from './api'
 import { getToken } from './auth'
-import { t } from './i18n/runtime'
 
 const card = { background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, padding: 16, marginBottom: 12 }
 const GRADES = [
-  { g: 0, label: t("忘了"), color: '#ff8787' },
-  { g: 1, label: t("吃力"), color: '#ffa94d' },
-  { g: 2, label: t("记得"), color: '#5ac8fa' },
-  { g: 3, label: t("轻松"), color: '#34c759' },
+  { g: 0, label: '忘了', color: '#ff8787' },
+  { g: 1, label: '吃力', color: '#ffa94d' },
+  { g: 2, label: '记得', color: '#5ac8fa' },
+  { g: 3, label: '轻松', color: '#34c759' },
 ]
 
 export default function MemoryVersePage({ user }) {
@@ -30,7 +29,7 @@ export default function MemoryVersePage({ user }) {
   useEffect(() => { loadDue(); loadList(); loadMilestones() }, [])
   async function loadDue() { const t = getToken(); if (!t) return; try { const r = await fetchMemoryDue(t); setDue(r.cards || []); setIdx(0); setRevealed(false) } catch (e) {} }
   async function loadList() { const t = getToken(); if (!t) return; try { const r = await fetchMemoryList(t); setList(r.cards || []) } catch (e) {} }
-  async function loadMilestones() { const tk = getToken(); if (!tk) return; try { const r = await fetchMemoryMilestones(tk); if (r.ok) setMilestones(r) } catch (e) {} }
+  async function loadMilestones() { const t = getToken(); if (!t) return; try { const r = await fetchMemoryMilestones(t); if (r.ok) setMilestones(r) } catch (e) {} }
 
   async function grade(g) {
     const t = getToken(); const cardObj = due[idx]; if (!t || !cardObj) return
@@ -45,10 +44,10 @@ export default function MemoryVersePage({ user }) {
 
   async function add() {
     const t = getToken(); if (!t) return
-    if (!ref.trim() || !text.trim()) { setMsg(t("请填写经节与经文")); return }
+    if (!ref.trim() || !text.trim()) { setMsg('请填写经节与经文'); return }
     setBusy(true); setMsg('')
-    try { await addMemoryVerse({ reference: ref.trim(), verse_text: text.trim() }, t); setRef(''); setText(''); setMsg(t("✓ 已加入背诵")); loadDue(); loadList(); loadMilestones() }
-    catch (e) { setMsg(e.message || t("添加失败")) } finally { setBusy(false) }
+    try { await addMemoryVerse({ reference: ref.trim(), verse_text: text.trim() }, t); setRef(''); setText(''); setMsg('✓ 已加入背诵'); loadDue(); loadList(); loadMilestones() }
+    catch (e) { setMsg(/[一-龥]/.test(e.message || '') ? e.message : '网络不稳定，请稍后重试') } finally { setBusy(false) }
   }
 
   async function del(id) {
@@ -56,7 +55,7 @@ export default function MemoryVersePage({ user }) {
     await deleteMemoryVerse(id, t); loadList(); loadDue(); loadMilestones()
   }
 
-  const TABS = [['review', `复习 ${due.length ? `(${due.length})` : ''}`], ['list', t("我的")], ['add', t("＋ 添加")]]
+  const TABS = [['review', `复习 ${due.length ? `(${due.length})` : ''}`], ['list', '我的'], ['add', '＋ 添加']]
 
   // 背经里程碑：最高已达成的祝福经文 + 下一目标
   const achievedList = (milestones?.milestones || []).filter(m => m.achieved)
@@ -112,17 +111,17 @@ export default function MemoryVersePage({ user }) {
         due.length === 0 ? (
           <div style={{ ...card, textAlign: 'center', padding: '32px 16px' }}>
             <div style={{ fontSize: 26, marginBottom: 8 }}>🎉</div>
-            <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 6 }}>{t("今天的背诵都复习完了")}</div>
-            <div style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.55)', lineHeight: 1.7 }}>{t("愿这些话语住在你心里。明天会有新的卡片到期。")}</div>
+            <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 6 }}>今天的背诵都复习完了</div>
+            <div style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.55)', lineHeight: 1.7 }}>愿这些话语住在你心里。明天会有新的卡片到期。</div>
           </div>
         ) : (
           <>
-            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', marginBottom: 8, textAlign: 'center' }}>{t("还剩")} {due.length} {t("张 · 先回想，再翻看")}</div>
+            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', marginBottom: 8, textAlign: 'center' }}>还剩 {due.length} 张 · 先回想，再翻看</div>
             <div style={{ ...card, minHeight: 180, display: 'flex', flexDirection: 'column', justifyContent: 'center', textAlign: 'center', padding: '28px 18px' }}>
               <div style={{ fontSize: 16, fontWeight: 700, color: '#a78bfa', marginBottom: 14 }}>{due[idx]?.reference}</div>
               {revealed
                 ? <div style={{ fontSize: 15, lineHeight: 1.9, color: 'rgba(255,255,255,0.92)' }}>{due[idx]?.verse_text}</div>
-                : <button onClick={() => setRevealed(true)} style={{ alignSelf: 'center', padding: '10px 22px', borderRadius: 20, border: '1px solid rgba(167,139,250,0.4)', background: 'rgba(167,139,250,0.12)', color: '#a78bfa', fontSize: 14, cursor: 'pointer' }}>{t("先在心里背一遍，再点开")}</button>}
+                : <button onClick={() => setRevealed(true)} style={{ alignSelf: 'center', padding: '10px 22px', borderRadius: 20, border: '1px solid rgba(167,139,250,0.4)', background: 'rgba(167,139,250,0.12)', color: '#a78bfa', fontSize: 14, cursor: 'pointer' }}>先在心里背一遍，再点开</button>}
             </div>
             {revealed && (
               <div style={{ display: 'flex', gap: 8 }}>
@@ -137,26 +136,26 @@ export default function MemoryVersePage({ user }) {
 
       {tab === 'list' && (
         list.length === 0
-          ? <div style={{ ...card, textAlign: 'center', color: 'rgba(255,255,255,0.5)' }}>{t("还没有背诵卡片，去「添加」开始吧")}</div>
+          ? <div style={{ ...card, textAlign: 'center', color: 'rgba(255,255,255,0.5)' }}>还没有背诵卡片，去「添加」开始吧</div>
           : list.map(c => (
             <div key={c.id} style={card}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
                 <span style={{ fontSize: 13.5, fontWeight: 700, color: '#a78bfa' }}>{c.reference}</span>
-                <button onClick={() => del(c.id)} style={{ background: 'none', border: 'none', color: 'rgba(255,135,135,0.6)', fontSize: 12, cursor: 'pointer', flexShrink: 0 }}>{t("删除")}</button>
+                <button onClick={() => del(c.id)} style={{ background: 'none', border: 'none', color: 'rgba(255,135,135,0.6)', fontSize: 12, cursor: 'pointer', flexShrink: 0 }}>删除</button>
               </div>
               <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.72)', lineHeight: 1.7, marginTop: 6 }}>{c.verse_text}</div>
-              <div style={{ fontSize: 10.5, color: 'rgba(255,255,255,0.35)', marginTop: 6 }}>{t("下次复习")} {c.due_date} {t("· 已复习")} {c.repetitions} {t("次")}</div>
+              <div style={{ fontSize: 10.5, color: 'rgba(255,255,255,0.35)', marginTop: 6 }}>下次复习 {c.due_date} · 已复习 {c.repetitions} 次</div>
             </div>
           ))
       )}
 
       {tab === 'add' && (
         <div style={card}>
-          <label style={{ display: 'block', fontSize: 12, color: 'rgba(255,255,255,0.6)', marginBottom: 6 }}>{t("经节出处")}</label>
-          <input value={ref} onChange={e => setRef(e.target.value)} placeholder={t("如：腓立比书 4:6-7")} style={inp} />
-          <label style={{ display: 'block', fontSize: 12, color: 'rgba(255,255,255,0.6)', margin: '14px 0 6px' }}>{t("经文")}</label>
-          <textarea value={text} onChange={e => setText(e.target.value)} rows={4} placeholder={t("把要背诵的经文抄在这里…")} style={{ ...inp, resize: 'vertical' }} />
-          <button onClick={add} disabled={busy} style={{ width: '100%', marginTop: 14, padding: 13, borderRadius: 12, border: 'none', background: 'linear-gradient(135deg, #8b5cf6, #5ac8fa)', color: '#fff', fontSize: 15, fontWeight: 700, cursor: 'pointer' }}>{t("加入背诵")}</button>
+          <label style={{ display: 'block', fontSize: 12, color: 'rgba(255,255,255,0.6)', marginBottom: 6 }}>经节出处</label>
+          <input value={ref} onChange={e => setRef(e.target.value)} placeholder="如：腓立比书 4:6-7" style={inp} />
+          <label style={{ display: 'block', fontSize: 12, color: 'rgba(255,255,255,0.6)', margin: '14px 0 6px' }}>经文</label>
+          <textarea value={text} onChange={e => setText(e.target.value)} rows={4} placeholder="把要背诵的经文抄在这里…" style={{ ...inp, resize: 'vertical' }} />
+          <button onClick={add} disabled={busy} style={{ width: '100%', marginTop: 14, padding: 13, borderRadius: 12, border: 'none', background: 'linear-gradient(135deg, #8b5cf6, #5ac8fa)', color: '#fff', fontSize: 15, fontWeight: 700, cursor: 'pointer' }}>加入背诵</button>
           {msg && <div style={{ textAlign: 'center', marginTop: 12, fontSize: 13, color: msg.startsWith('✓') ? '#34c759' : '#ffd43b' }}>{msg}</div>}
         </div>
       )}

@@ -2,32 +2,17 @@
 // 统一数据 schema 见 data/bibleMapsData.js。一个引擎驱动全部地图。
 // 扩展：地点插图（MapScenes）、AI 讲解（fetchFaithQA）、人物卡片闭环（config.profile）。
 import { useEffect, useMemo, useRef, useState } from 'react'
-import BackButton from './BackButton'
 import MapScene, { resolveScene } from './MapScenes'
 import { fetchFaithQA, API_BASE } from './api'
-import { curvedSegment } from './map/arc'
-import { t, getRuntimeLang } from './i18n/runtime'
-import { AutoText } from './autoTranslate.jsx'
 
 const VB_W = 1000
 const VB_H = 720
 const PAD = 56
 
-// 五角星路径（利未城/逃城符号用），中心在原点
-function starPathD(r) {
-  let d = ''
-  for (let i = 0; i < 10; i++) {
-    const ang = -Math.PI / 2 + (i * Math.PI) / 5
-    const rr = i % 2 ? r * 0.42 : r
-    d += (i ? 'L' : 'M') + (rr * Math.cos(ang)).toFixed(1) + ',' + (rr * Math.sin(ang)).toFixed(1)
-  }
-  return d + 'Z'
-}
-
 const CONFIDENCE = {
-  identified:  { label: t("考古较确定"), color: '#4ade80' },
-  approximate: { label: t("传统推定"),   color: '#fbbf24' },
-  unknown:     { label: t("地点失考"),   color: '#94a3b8' },
+  identified:  { label: '考古较确定', color: '#4ade80' },
+  approximate: { label: '传统推定',   color: '#fbbf24' },
+  unknown:     { label: '地点失考',   color: '#94a3b8' },
 }
 
 // 经纬度 → SVG 坐标（保持长宽比，按中纬度余弦校正经度）
@@ -67,6 +52,57 @@ function graticule(bounds, project) {
   return lines
 }
 
+// —— 真实路线查询：逐段经后端 /api/route 代理 OpenRouteService ——
+// 与移动端 RoutingApi 行为一致：逐段解析，可路由的段走真实道路/航线，
+// 不可路由的段退化为该段直线；结果按“段+profile”缓存，整段会话复用。
+const _routeCache = new Map() // sig -> [[lng,lat],...] | null(确认不可路由)
+const _routeSig = (a, b, prof) =>
+  `${prof}|${a[0].toFixed(4)},${a[1].toFixed(4)};${b[0].toFixed(4)},${b[1].toFixed(4)}`
+
+function _profileChain(profile) {
+  if (profile === 'sea') return ['sea']
+  return [profile, 'foot-hiking', 'driving-car'].filter((v, i, arr) => arr.indexOf(v) === i)
+}
+
+async function _routeSegment(a, b, profile) {
+  const sig = _routeSig(a, b, profile)
+  if (_routeCache.has(sig)) return _routeCache.get(sig)
+  try {
+    const res = await fetch(`${API_BASE}/route`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ profile, coordinates: [[a[0], a[1]], [b[0], b[1]]] }),
+    })
+    if (!res.ok) { _routeCache.set(sig, null); return null }
+    const data = await res.json()
+    if (!data || data.ok !== true || !Array.isArray(data.geometry) || data.geometry.length < 2) {
+      _routeCache.set(sig, null); return null
+    }
+    const geom = data.geometry.map(pt => [Number(pt[0]), Number(pt[1])]) // [lng,lat]
+    _routeCache.set(sig, geom)
+    return geom
+  } catch {
+    _routeCache.set(sig, null)
+    return null
+  }
+}
+
+async function _routeLeg(a, b, chain) {
+  for (const prof of chain) {
+    const r = await _routeSegment(a, b, prof)
+    if (r && r.length >= 2) return r
+  }
+  return [a, b] // 该段退化为直线
+}
+
+// 解析有序 [lng,lat] 路点 → 每段一条折线（routed 或直线）。
+async function fetchRouteLegs(waypoints, profile) {
+  const chain = _profileChain(profile)
+  return Promise.all(
+    waypoints.slice(0, -1).map((a, i) => _routeLeg(a, waypoints[i + 1], chain))
+  )
+}
+
 // —— AI 讲解（复用 /faith-qa，无需登录）——
 function AIResult({ data }) {
   return (
@@ -93,7 +129,7 @@ function AIResult({ data }) {
   )
 }
 
-function AIExplain({ question, label = t("✦ AI 讲解"), compact }) {
+function AIExplain({ question, label = '✦ AI 讲解', compact }) {
   const [state, setState] = useState({ loading: false, data: null, error: null })
   useEffect(() => { setState({ loading: false, data: null, error: null }) }, [question])
   if (state.data) return <AIResult data={state.data} />
@@ -106,10 +142,10 @@ function AIExplain({ question, label = t("✦ AI 讲解"), compact }) {
             const data = await fetchFaithQA(question)
             setState({ loading: false, data, error: null })
           } catch (e) {
-            setState({ loading: false, data: null, error: e.message || t("AI 暂时不可用") })
+            setState({ loading: false, data: null, error: e.message || 'AI 暂时不可用' })
           }
         }}>
-        {state.loading ? t("⏳ AI 思考中…") : label}
+        {state.loading ? '⏳ AI 思考中…' : label}
       </button>
       {state.error && <div className="biblemap-ai-error">{state.error}</div>}
     </div>
@@ -128,6 +164,26 @@ export default function BibleMap({ config, onBack }) {
   const activeLayers = config.layers.filter(l => activeLayerIds.includes(l.id))
 
   const [year, setYear] = useState(config.years ? config.years.default : 0)
+
+  // 各路线层的真实路线几何：layerId -> [leg,...]，leg = [[lng,lat],...]
+  const [routedLegs, setRoutedLegs] = useState({})
+  useEffect(() => {
+    if (isTimeline) return
+    let cancelled = false
+    for (const layer of activeLayers) {
+      if (layer.route === false) continue
+      const pts = [...layer.points].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+      if (pts.length < 2) continue
+      const isSea = layer.scene === 'boat' || layer.scene === 'sea'
+        || config.id === 'paul' || config.id === 'exodus'
+      const profile = isSea ? 'sea' : 'foot-walking'
+      fetchRouteLegs(pts.map(p => [p.lng, p.lat]), profile).then(legs => {
+        if (!cancelled) setRoutedLegs(prev => ({ ...prev, [layer.id]: legs }))
+      })
+    }
+    return () => { cancelled = true }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeLayerIds.join(','), config.id, isTimeline])
 
   const animLayer = activeLayers[0] || config.layers[0]
   const orderedPoints = useMemo(() => {
@@ -162,100 +218,17 @@ export default function BibleMap({ config, onBack }) {
 
   const revealCount = (playing || progress > 0) ? Math.floor(progress) + 1 : Infinity
 
-  // 播放到站：当前地点高亮（行进离站后自动恢复原状）
-  const activePointIdx = useMemo(() => {
-    if (!playing || orderedPoints.length < 2) return -1
-    const i = Math.floor(progress + 1e-4)
-    const frac = progress - i
-    return frac < 0.4 ? i : -1
-  }, [playing, progress, orderedPoints.length])
+  const travelDot = useMemo(() => {
+    if (!(playing || progress > 0) || !animLayer || orderedPoints.length < 2) return null
+    const ll = revealedLngLat(animLayer)
+    if (ll.length < 1) return null
+    const [lng, lat] = ll[ll.length - 1]
+    const [x, y] = project(lng, lat)
+    return { x, y }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [playing, progress, animLayer, routedLegs, orderedPoints.length, project])
 
   const [selected, setSelected] = useState(null)
-
-  // ── 步行路由（陆地航段走真实路网；海上/失败回退直线）──────────────────────
-  const SEA_MAP_IDS = ['paul', 'exodus']
-  const isSeaLayer = (layer) =>
-    SEA_MAP_IDS.includes(config.id) || layer.route === false ||
-    layer.scene === 'boat' || layer.scene === 'sea'
-  const [routedGeom, setRoutedGeom] = useState({}) // layerId -> [[lng,lat],...]
-
-  // 行进光点：沿弧线（或真实路网）行进，不再走直线
-  const travelDot = useMemo(() => {
-    if (!(playing || progress > 0) || orderedPoints.length < 2) return null
-    const i = Math.min(Math.floor(progress), orderedPoints.length - 2)
-    const f = progress - i
-    const entry = animLayer ? routedGeom[animLayer.id] : null
-    // 有真实路网且站点索引完整：按"站点 i → 站点 i+1"的路网区间插值，
-    // progress 为整数时光点精确落在站点上（与到站高亮同步）。
-    if (entry && entry.coords.length >= 2 && entry.stationIdx.length === orderedPoints.length) {
-      const a = entry.stationIdx[i]
-      const b = entry.stationIdx[i + 1]
-      const fi = a + f * (b - a)
-      const si = Math.max(0, Math.min(Math.floor(fi), entry.coords.length - 2))
-      const sf = fi - si
-      const [ax, ay] = project(entry.coords[si][0], entry.coords[si][1])
-      const [bx, by] = project(entry.coords[si + 1][0], entry.coords[si + 1][1])
-      return { x: ax + (bx - ax) * sf, y: ay + (by - ay) * sf }
-    }
-    const a = orderedPoints[i], b = orderedPoints[i + 1]
-    const seg = curvedSegment([a.lng, a.lat], [b.lng, b.lat])
-    const fi = f * (seg.length - 1)
-    const si = Math.min(Math.floor(fi), seg.length - 2)
-    const sf = fi - si
-    const [ax, ay] = project(seg[si][0], seg[si][1])
-    const [bx, by] = project(seg[si + 1][0], seg[si + 1][1])
-    return { x: ax + (bx - ax) * sf, y: ay + (by - ay) * sf }
-  }, [playing, progress, orderedPoints, project, routedGeom, animLayer])
-  // 逐段解析路线：ORS 会因为整条请求里任一段不可路由（航段过长超出步行距离上限、
-  // 或跨越水域）而拒绝整条多点请求，导致整条旅程退化为直线。改为「每相邻两点单独请求」，
-  // 可路由的段走真实道路/航线，仅真正不可路由的那一段才退化为直线。陆地段再按
-  // foot-walking → foot-hiking → driving-car 依次回退，长途段也能贴着路网走。
-  useEffect(() => {
-    if (isTimeline) return
-    let cancelled = false
-    const chainFor = (sea) => sea ? ['sea'] : ['foot-walking', 'foot-hiking', 'driving-car']
-    const fetchSeg = async (a, b, profile) => {
-      try {
-        const r = await fetch(`${API_BASE}/route`, {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ profile, coordinates: [[a.lng, a.lat], [b.lng, b.lat]] }),
-        })
-        if (!r.ok) return null
-        const d = await r.json()
-        if (!d || !d.ok || !Array.isArray(d.geometry) || d.geometry.length < 2) return null
-        return d.geometry.map(pt => [Number(pt[0]), Number(pt[1])]) // [lng,lat]
-      } catch { return null }
-    }
-    const resolveLeg = async (a, b, chain) => {
-      for (const prof of chain) {
-        const g = await fetchSeg(a, b, prof)
-        if (g && g.length >= 2) return g
-      }
-      return [[a.lng, a.lat], [b.lng, b.lat]] // 该段退化为直线
-    }
-    activeLayers.forEach(async (layer) => {
-      if (!layer.route || routedGeom[layer.id]) return
-      const pts = [...(layer.points || [])].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
-      if (pts.length < 2) return
-      const chain = chainFor(isSeaLayer(layer))
-      const legs = await Promise.all(
-        pts.slice(0, -1).map((a, i) => resolveLeg(a, pts[i + 1], chain))
-      )
-      if (cancelled) return
-      // 拼接时去掉衔接处重复点，并记录每个站点在路网坐标中的索引（stationIdx），
-      // 让行进光点/逐站揭示能精确对位到站点，不再按"点数均匀"近似。
-      const stitched = []
-      const stationIdx = [0]
-      legs.forEach((seg) => {
-        const add = stitched.length ? seg.slice(1) : seg
-        add.forEach(pt => stitched.push(pt))
-        stationIdx.push(stitched.length - 1)
-      })
-      if (stitched.length >= 2) setRoutedGeom(prev => ({ ...prev, [layer.id]: { coords: stitched, stationIdx } }))
-    })
-    return () => { cancelled = true }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeLayerIds.join(','), config.id])
 
   function visiblePoints(layer) {
     let pts = layer.points
@@ -267,82 +240,107 @@ export default function BibleMap({ config, onBack }) {
     return pts
   }
 
+  // 站点间直线路径（territory 边界 / 时间轴层仍用此，按年份过滤的 visiblePoints）。
   function routePath(layer) {
     const pts = visiblePoints(layer).slice().sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
     if (pts.length < 2) return ''
-    const entry = routedGeom[layer.id] || null
-    if (entry && entry.coords && entry.coords.length >= 2) {
-      let g = entry.coords
-      if ((playing || progress > 0) && layer.id === animLayer?.id && !isTimeline) {
-        // 按站点索引精确揭示：显示到"已到达的最后一站"，与光点/高亮完全同步
-        const lastStation = Math.min(revealCount, entry.stationIdx.length) - 1
-        const cut = entry.stationIdx[Math.max(0, lastStation)] ?? entry.coords.length - 1
-        g = entry.coords.slice(0, Math.max(2, cut + 1))
+    return pts.map((p, i) => {
+      const [x, y] = project(p.lng, p.lat)
+      return `${i === 0 ? 'M' : 'L'}${x.toFixed(1)},${y.toFixed(1)}`
+    }).join(' ')
+  }
+
+  // 段内按弧长比例 f(0..1) 截取折线，末点为插值点。
+  function _sliceLeg(leg, f) {
+    if (leg.length < 2) return leg.slice()
+    const seg = []
+    let total = 0
+    for (let i = 0; i < leg.length - 1; i++) {
+      const l = Math.hypot(leg[i + 1][0] - leg[i][0], leg[i + 1][1] - leg[i][1])
+      seg.push(l); total += l
+    }
+    if (total <= 0) return [leg[0]]
+    const target = total * Math.max(0, Math.min(1, f))
+    const out = [leg[0]]
+    let acc = 0
+    for (let i = 0; i < seg.length; i++) {
+      if (acc + seg[i] < target) { acc += seg[i]; out.push(leg[i + 1]) }
+      else {
+        const r = seg[i] > 0 ? (target - acc) / seg[i] : 0
+        out.push([leg[i][0] + (leg[i + 1][0] - leg[i][0]) * r,
+                  leg[i][1] + (leg[i + 1][1] - leg[i][1]) * r])
+        break
       }
-      return g.map(([lng, lat], i) => {
-        const [x, y] = project(lng, lat)
-        return `${i === 0 ? 'M' : 'L'}${x.toFixed(1)},${y.toFixed(1)}`
-      }).join(' ')
     }
-    // 无真实路网时：站点间用弧线连接（航线风格），不用生硬直线
-    const arc = []
+    return out
+  }
+
+  // 某层分段几何：有真实路线用之，否则站点间直线。
+  function legsFor(layer) {
+    const pts = [...layer.points].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+    const routed = routedLegs[layer.id]
+    if (routed && routed.length === pts.length - 1) return routed
+    const legs = []
     for (let i = 0; i < pts.length - 1; i++) {
-      const seg = curvedSegment([pts[i].lng, pts[i].lat], [pts[i + 1].lng, pts[i + 1].lat])
-      arc.push(...(arc.length ? seg.slice(1) : seg))
+      legs.push([[pts[i].lng, pts[i].lat], [pts[i + 1].lng, pts[i + 1].lat]])
     }
-    return arc.map(([lng, lat], i) => {
+    return legs
+  }
+
+  // 当前应显示的 [lng,lat] 折线（含播放进度的逐段揭示）。
+  function revealedLngLat(layer) {
+    const legs = legsFor(layer)
+    if (!legs.length) return []
+    const isAnim = layer.id === animLayer?.id && (playing || progress > 0) && !isTimeline
+    let lastIdx = legs.length - 1
+    let frac = 1
+    if (isAnim) {
+      lastIdx = Math.min(Math.floor(progress), legs.length - 1)
+      frac = progress - lastIdx
+    }
+    const out = []
+    const pushLeg = (leg) => {
+      for (let k = 0; k < leg.length; k++) {
+        if (out.length && k === 0) continue
+        out.push(leg[k])
+      }
+    }
+    for (let li = 0; li < lastIdx; li++) pushLeg(legs[li])
+    const cur = legs[lastIdx]
+    if (!isAnim || frac >= 1) pushLeg(cur)
+    else pushLeg(_sliceLeg(cur, frac))
+    return out
+  }
+
+  // 路线 path（真实路线，含进度揭示）。
+  function routedPathD(layer) {
+    const ll = revealedLngLat(layer)
+    if (ll.length === 1) {
+      const [x, y] = project(ll[0][0], ll[0][1]); return `M${x.toFixed(1)},${y.toFixed(1)}`
+    }
+    if (ll.length < 2) return ''
+    return ll.map(([lng, lat], i) => {
       const [x, y] = project(lng, lat)
       return `${i === 0 ? 'M' : 'L'}${x.toFixed(1)},${y.toFixed(1)}`
     }).join(' ')
   }
 
-  // 每段中点放一个指向行进方向的箭头（手绘三角，渲染器无关，支持移动端 webview）
+  // 沿真实路线均匀放置指向行进方向的箭头（约每 80px 一个）。
   function routeArrows(layer) {
-    const pts = visiblePoints(layer).slice().sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+    const proj = revealedLngLat(layer).map(([lng, lat]) => project(lng, lat))
     const arr = []
-    for (let i = 0; i < pts.length - 1; i++) {
-      const [x1, y1] = project(pts[i].lng, pts[i].lat)
-      const [x2, y2] = project(pts[i + 1].lng, pts[i + 1].lat)
-      const dx = x2 - x1, dy = y2 - y1
-      if (Math.hypot(dx, dy) < 24) continue // 太近的段不放，避免拥挤
-      // 箭头放在弧线中点（二次贝塞尔 t=0.5 处切线与弦平行，角度仍用弦向）
-      const seg = curvedSegment([pts[i].lng, pts[i].lat], [pts[i + 1].lng, pts[i + 1].lat])
-      const mid = seg[Math.floor(seg.length / 2)]
-      const [mx, my] = project(mid[0], mid[1])
-      arr.push({ key: `ar-${layer.id}-${i}`, mx, my,
-        ang: (Math.atan2(dy, dx) * 180) / Math.PI })
+    let acc = 0, lastAt = -1e9
+    for (let i = 0; i < proj.length - 1; i++) {
+      const [x1, y1] = proj[i], [x2, y2] = proj[i + 1]
+      const dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy)
+      acc += len
+      if (len > 4 && acc - lastAt >= 80) {
+        lastAt = acc
+        arr.push({ key: `ar-${layer.id}-${i}`, mx: (x1 + x2) / 2, my: (y1 + y2) / 2,
+          ang: (Math.atan2(dy, dx) * 180) / Math.PI })
+      }
     }
     return arr
-  }
-
-  function visibleByYear(item) {
-    if (!isTimeline) return true
-    const from = item.showFrom ?? -99999
-    const to = item.showTo ?? 99999
-    return year >= from && year <= to
-  }
-
-  function polygonPath(region) {
-    const pts = region.polygon || []
-    if (pts.length < 3) return ''
-    return pts.map(([lng, lat], i) => {
-      const [x, y] = project(lng, lat)
-      return `${i === 0 ? 'M' : 'L'}${x.toFixed(1)},${y.toFixed(1)}`
-    }).join(' ') + ' Z'
-  }
-
-  function boundaryPath(boundary) {
-    const pts = boundary.path || []
-    if (pts.length < 2) return ''
-    return pts.map(([lng, lat], i) => {
-      const [x, y] = project(lng, lat)
-      return `${i === 0 ? 'M' : 'L'}${x.toFixed(1)},${y.toFixed(1)}`
-    }).join(' ')
-  }
-
-  function svgLabelWidth(label) {
-    const units = [...String(label || '')].reduce((sum, ch) => sum + (ch.charCodeAt(0) > 255 ? 12 : 7), 18)
-    return Math.min(210, Math.max(76, units))
   }
 
   function toggleLayer(id) {
@@ -350,23 +348,16 @@ export default function BibleMap({ config, onBack }) {
     setActiveLayerIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id])
   }
 
-  const enMode = getRuntimeLang() === 'en'
-  const yearLabel = (y) => (y < 0
-    ? (enMode ? `${Math.abs(y)} BC` : `公元前 ${Math.abs(y)}`)
-    : (enMode ? `AD ${y}` : `公元 ${y}`))
-  // 地名：EN 模式优先用数据自带的 name_en（地名无须机翻），否则回退中文
-  const placeName = (p) => ((enMode && p && p.name_en) ? p.name_en : (p?.name_zh || p?.name_en || ''))
+  const yearLabel = (y) => (y < 0 ? `公元前 ${Math.abs(y)}` : `公元 ${y}`)
   const profileLayer = config.profile ? (activeLayers[0] || config.layers[0]) : null
-  const visibleRegions = (config.regions || []).filter(visibleByYear)
-  const visibleBoundaries = (config.boundaries || []).filter(visibleByYear)
 
   return (
     <div className="biblemap">
       <div className="biblemap-head">
-        <BackButton onClick={onBack} />
+        <button className="biblemap-back" onClick={onBack}>← 返回</button>
         <div className="biblemap-title">
-          <h2><AutoText>{config.title}</AutoText></h2>
-          <p><AutoText>{config.subtitle}</AutoText>{config.era ? <> · <AutoText>{config.era}</AutoText></> : ''}</p>
+          <h2>{config.title}</h2>
+          <p>{config.subtitle}{config.era ? ` · ${config.era}` : ''}</p>
         </div>
       </div>
 
@@ -377,18 +368,18 @@ export default function BibleMap({ config, onBack }) {
             <button key={l.id} className={`biblemap-chip ${on ? 'on' : ''}`}
               onClick={() => toggleLayer(l.id)}
               style={on ? { background: l.color + '33', borderColor: l.color, color: l.color } : {}}>
-              <span className="dot" style={{ background: l.color }} /><AutoText>{l.label}</AutoText>
+              <span className="dot" style={{ background: l.color }} />{l.label}
             </button>
           )
         })}
         {!isTimeline && animLayer?.route !== false && orderedPoints.length > 1 && (
           <button className="biblemap-chip play"
             onClick={() => { if (progress >= orderedPoints.length - 1) setProgress(0); setPlaying(p => !p) }}>
-            {playing ? t("⏸ 暂停") : (progress > 0 && progress < orderedPoints.length - 1 ? t("▶ 继续") : t("▶ 路线动画"))}
+            {playing ? '⏸ 暂停' : (progress > 0 && progress < orderedPoints.length - 1 ? '▶ 继续' : '▶ 路线动画')}
           </button>
         )}
         {!isTimeline && progress > 0 && (
-          <button className="biblemap-chip" onClick={() => { setPlaying(false); setProgress(0) }}>{t("↺ 重置")}</button>
+          <button className="biblemap-chip" onClick={() => { setPlaying(false); setProgress(0) }}>↺ 重置</button>
         )}
       </div>
 
@@ -400,17 +391,17 @@ export default function BibleMap({ config, onBack }) {
           </div>
           <div className="biblemap-profile-body">
             <div className="biblemap-profile-name" style={{ color: profileLayer.color }}>
-              <AutoText>{profileLayer.label}</AutoText>{profileLayer.era && <span className="era"><AutoText>{profileLayer.era}</AutoText></span>}
+              {profileLayer.label}{profileLayer.era && <span className="era">{profileLayer.era}</span>}
             </div>
-            {profileLayer.bio && <p className="biblemap-profile-bio"><AutoText>{profileLayer.bio}</AutoText></p>}
+            {profileLayer.bio && <p className="biblemap-profile-bio">{profileLayer.bio}</p>}
             {Array.isArray(profileLayer.epistles) && profileLayer.epistles.length > 0 && (
               <div className="biblemap-profile-epistles">
-                {t("✉ 相关书信：")}{profileLayer.epistles.map((e, i) => <span key={i} className="ep"><AutoText>{e}</AutoText></span>)}
+                ✉ 相关书信：{profileLayer.epistles.map((e, i) => <span key={i} className="ep">{e}</span>)}
               </div>
             )}
             <AIExplain compact
               question={`请用简洁、温暖、适合查经班的话，介绍圣经人物「${profileLayer.label}」的生平、属灵意义与主要经历，并给出一句默想或祷告方向。`}
-              label={t("✦ 请 AI 讲解这位人物")} />
+              label="✦ 请 AI 讲解这位人物" />
           </div>
         </div>
       )}
@@ -423,7 +414,7 @@ export default function BibleMap({ config, onBack }) {
           <div className="biblemap-eras">
             {(config.eras || []).map(er => (
               <button key={er.label} className={`era ${year >= er.from && year <= er.to ? 'on' : ''}`}
-                onClick={() => setYear(Math.round((er.from + er.to) / 2))}><AutoText>{er.label}</AutoText></button>
+                onClick={() => setYear(Math.round((er.from + er.to) / 2))}>{er.label}</button>
             ))}
           </div>
         </div>
@@ -461,64 +452,10 @@ export default function BibleMap({ config, onBack }) {
             <text x="0" y="-22" textAnchor="middle" fill="#ffffff" fillOpacity="0.5" fontSize="11">N</text>
           </g>
 
-          {visibleRegions.map(region => {
-            const d = polygonPath(region)
-            if (!d) return null
-            return (
-              <path key={'region-' + region.id} d={d}
-                fill={region.color} fillOpacity="0.18"
-                stroke={region.color} strokeWidth="2" strokeOpacity="0.72"
-                strokeLinejoin="round"
-                style={{ cursor: region.note || region.scriptureRef ? 'pointer' : 'default' }}
-                onClick={() => setSelected({
-                  id: region.id,
-                  name_zh: region.label,
-                  name_en: region.name_en,
-                  lng: region.center?.[0],
-                  lat: region.center?.[1],
-                  confidence: 'approximate',
-                  scriptureRef: region.scriptureRef,
-                  note: region.note || t("疆域范围为教学示意，古代边界并非现代精确国界。"),
-                  events: region.events || [],
-                  _color: region.color,
-                })} />
-            )
-          })}
-
-          {visibleRegions.map(region => {
-            if (!region.center) return null
-            const [x, y] = project(region.center[0], region.center[1])
-            const label = enMode && region.name_en ? region.name_en : region.label
-            const w = svgLabelWidth(label)
-            return (
-              <g key={'region-label-' + region.id} transform={`translate(${x.toFixed(1)},${y.toFixed(1)})`} style={{ pointerEvents: 'none' }}>
-                <rect x={(-w / 2).toFixed(1)} y="-12" width={w.toFixed(1)} height="22" rx="6" fill="#08111f" fillOpacity="0.55" stroke={region.color} strokeOpacity="0.28" />
-                <text x="0" y="4" textAnchor="middle" fontSize="12" fontWeight="700" fill={region.color}
-                  stroke="#08111f" strokeWidth="3" paintOrder="stroke">{label}</text>
-              </g>
-            )
-          })}
-
-          {visibleBoundaries.map(boundary => {
-            const d = boundaryPath(boundary)
-            if (!d) return null
-            return (
-              <g key={'boundary-' + boundary.id}>
-                <path d={d} fill="none" stroke="#08111f" strokeWidth="5.5" strokeOpacity="0.62" strokeLinecap="round" strokeLinejoin="round" />
-                <path d={d} fill="none" stroke={boundary.color || '#f8fafc'} strokeWidth="2.2" strokeOpacity="0.9"
-                  strokeDasharray={boundary.dashed ? '8 8' : undefined} strokeLinecap="round" strokeLinejoin="round" />
-                {boundary.label && (() => {
-                  const mid = boundary.path[Math.floor(boundary.path.length / 2)]
-                  const [x, y] = project(mid[0], mid[1])
-                  return <text x={x + 8} y={y - 8} fontSize="11.5" fill={boundary.color || '#f8fafc'}
-                    stroke="#08111f" strokeWidth="3" paintOrder="stroke">{boundary.label}</text>
-                })()}
-              </g>
-            )
-          })}
-
           {activeLayers.map(layer => (
-            <path key={'r-' + layer.id} d={routePath(layer)} fill="none"
+            <path key={'r-' + layer.id}
+              d={(layer.route === false || isTimeline) ? routePath(layer) : routedPathD(layer)}
+              fill="none"
               stroke={layer.color} strokeWidth="2.5" strokeOpacity="0.85"
               strokeDasharray={layer.route === false ? '2 8' : '7 6'} strokeLinecap="round" strokeLinejoin="round" />
           ))}
@@ -541,39 +478,30 @@ export default function BibleMap({ config, onBack }) {
             </g>
           )}
 
-          {activeLayers.flatMap(layer => visiblePoints(layer).map(p => {
-            const [x, y] = project(p.lng, p.lat)
-            const isSel = selected && selected.id === p.id
-            // 播放到站：当前地点高亮（脉冲光环），行进离站后自动恢复
-            const isCur = layer.id === animLayer?.id && activePointIdx >= 0 &&
-              orderedPoints[activePointIdx] && orderedPoints[activePointIdx].id === p.id
-            const big = isSel || isCur
-            return (
-              <g key={layer.id + '-' + p.id} transform={`translate(${x},${y})`}
-                style={{ cursor: 'pointer' }} onClick={() => setSelected({ ...p, _color: layer.color })}>
-                {isCur && (
-                  <circle r="13" fill="none" stroke={layer.color} strokeWidth="2.5">
-                    <animate attributeName="r" values="9;19;9" dur="1.1s" repeatCount="indefinite" />
-                    <animate attributeName="stroke-opacity" values="0.9;0;0.9" dur="1.1s" repeatCount="indefinite" />
-                  </circle>
-                )}
-                {p.marker === 'star' ? (
-                  <path d={starPathD(big ? 12 : 9)} fill={layer.color} stroke="#0e1b2e" strokeWidth="1.4"
-                    filter={big ? 'url(#bm-glow)' : undefined} />
-                ) : p.marker === 'diamond' ? (
-                  <rect x={big ? -7.5 : -5.5} y={big ? -7.5 : -5.5} width={big ? 15 : 11} height={big ? 15 : 11}
-                    transform="rotate(45)" fill={layer.color} stroke="#0e1b2e" strokeWidth="1.4"
-                    filter={big ? 'url(#bm-glow)' : undefined} />
-                ) : (
-                  <circle r={big ? 9 : 6} fill={layer.color} stroke="#0e1b2e" strokeWidth="2"
-                    filter={big ? 'url(#bm-glow)' : undefined} />
-                )}
-                {p.altar && <text x="0" y="-12" textAnchor="middle" fontSize="13">⛪</text>}
-                <text x="10" y="4" fontSize="13" fill="#fff" stroke="#0e1b2e" strokeWidth="3"
-                  paintOrder="stroke" style={{ pointerEvents: 'none' }}>{placeName(p)}</text>
-              </g>
-            )
-          }))}
+          {activeLayers.flatMap(layer => {
+            const vpts = visiblePoints(layer)
+            const isAnimL = layer.id === animLayer?.id && (playing || progress > 0) && !isTimeline
+            return vpts.map((p, pi) => {
+              const [x, y] = project(p.lng, p.lat)
+              const isSel = selected && selected.id === p.id
+              // 播放经过的站点保持红色高亮；最后一个是“当前站”，更大且发光。
+              const isReached = isAnimL
+              const isCurrent = isAnimL && pi === vpts.length - 1
+              const fill = isReached ? '#ff2d2d' : layer.color
+              const stroke = isReached ? '#ffffff' : '#0e1b2e'
+              const r = isCurrent ? 8.5 : (isSel ? 9 : 6)
+              return (
+                <g key={layer.id + '-' + p.id} transform={`translate(${x},${y})`}
+                  style={{ cursor: 'pointer' }} onClick={() => setSelected({ ...p, _color: layer.color })}>
+                  <circle r={r} fill={fill} stroke={stroke} strokeWidth={isCurrent ? 2.5 : 2}
+                    filter={(isCurrent || isSel) ? 'url(#bm-glow)' : undefined} />
+                  {p.altar && <text x="0" y="-12" textAnchor="middle" fontSize="13">⛪</text>}
+                  <text x="10" y="4" fontSize="13" fill="#fff" stroke="#0e1b2e" strokeWidth="3"
+                    paintOrder="stroke" style={{ pointerEvents: 'none' }}>{p.name_zh}</text>
+                </g>
+              )
+            })
+          })}
         </svg>
 
         {selected && (
@@ -583,49 +511,46 @@ export default function BibleMap({ config, onBack }) {
               <MapScene scene={resolveScene(selected, config.id)} color={selected._color} />
             </div>
             <div className="biblemap-detail-name" style={{ color: selected._color }}>
-              {placeName(selected)}
+              {selected.name_zh}<span className="en">{selected.name_en}</span>
             </div>
             <div className="biblemap-detail-meta">
               {selected.year != null && <span>🗓 {yearLabel(selected.year)}</span>}
-              {selected.age != null && <span>{t("👤 亚伯拉罕")} {selected.age} {t("岁")}</span>}
-              {selected.scriptureRef && <span>📖 <AutoText>{selected.scriptureRef}</AutoText></span>}
+              {selected.age != null && <span>👤 亚伯拉罕 {selected.age} 岁</span>}
+              {selected.scriptureRef && <span>📖 {selected.scriptureRef}</span>}
               {selected.confidence && (
                 <span style={{ color: (CONFIDENCE[selected.confidence] || {}).color }}>
                   ◎ {(CONFIDENCE[selected.confidence] || {}).label}
                 </span>
               )}
             </div>
-            {selected.altar && <div className="biblemap-altar">{t("⛪ 在此筑坛：")}<AutoText>{selected.altar}</AutoText></div>}
-            {selected.promise && <div className="biblemap-promise">{t("✝ 神的应许：")}<AutoText>{selected.promise}</AutoText></div>}
-            {selected.note && <p className="biblemap-note"><AutoText>{selected.note}</AutoText></p>}
+            {selected.altar && <div className="biblemap-altar">⛪ 在此筑坛：{selected.altar}</div>}
+            {selected.promise && <div className="biblemap-promise">✝ 神的应许：{selected.promise}</div>}
+            {selected.note && <p className="biblemap-note">{selected.note}</p>}
             <div className="biblemap-events">
               {(selected.events || []).map((ev, i) => (
                 <div key={i} className="biblemap-event">
                   <div className="biblemap-event-h">
-                    <strong><AutoText>{ev.title}</AutoText></strong>{ev.ref && <span className="ref"><AutoText>{ev.ref}</AutoText></span>}
+                    <strong>{ev.title}</strong>{ev.ref && <span className="ref">{ev.ref}</span>}
                   </div>
-                  <p><AutoText>{ev.summary}</AutoText></p>
+                  <p>{ev.summary}</p>
                 </div>
               ))}
               {(!selected.events || selected.events.length === 0) && (
-                <p className="biblemap-note dim">{t("途经此地。")}</p>
+                <p className="biblemap-note dim">途经此地。</p>
               )}
             </div>
             <AIExplain
-              question={`请用简洁、温暖、适合主日学的话，讲解圣经地点「${selected.name_zh}」的历史背景与属灵意义${selected.scriptureRef ? `（相关经文：${selected.scriptureRef}）` : ''}，并给出一句默想或祷告方向。`}
-              label={t("✦ AI 讲解这个地点")} />
+              question={`请用简洁、温暖、适合主日学的话，讲解圣经地点「${selected.name_zh}（${selected.name_en}）」的历史背景与属灵意义${selected.scriptureRef ? `（相关经文：${selected.scriptureRef}）` : ''}，并给出一句默想或祷告方向。`}
+              label="✦ AI 讲解这个地点" />
           </div>
         )}
       </div>
 
       <div className="biblemap-legend">
-        {visibleRegions.map(r => (
-          <span key={'leg-r-' + r.id}><i style={{ background: r.color, borderRadius: 2 }} />{enMode && r.name_en ? r.name_en : r.label}</span>
-        ))}
         {Object.entries(CONFIDENCE).map(([k, v]) => (
           <span key={k}><i style={{ background: v.color }} />{v.label}</span>
         ))}
-        <span className="hint">{t("点击地标/疆域看经文与插图 · ✦ 可让 AI 现场讲解 · ⛪ 表示筑坛/圣所")}</span>
+        <span className="hint">点击地标看经文与插图 · ✦ 可让 AI 现场讲解 · ⛪ 表示筑坛/圣所</span>
       </div>
     </div>
   )

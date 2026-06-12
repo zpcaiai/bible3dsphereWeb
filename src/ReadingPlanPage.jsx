@@ -6,7 +6,6 @@ import { useEffect, useState } from 'react'
 import { PLANS, planById, todayMMDD, planDayKey } from './readingPlans'
 import { fetchReadingStatus, enrollReadingPlan, completeReadingDay, uncompleteReadingDay } from './api'
 import { getToken } from './auth'
-import { t } from './i18n/runtime'
 
 const card = { background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, padding: 16, marginBottom: 12 }
 
@@ -73,8 +72,8 @@ export default function ReadingPlanPage({ user }) {
             <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginTop: 14 }}>
               <Ring pct={pct} color={plan.color} />
               <div>
-                <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)' }}>{t("已完成")} {status?.completed_count || 0} / {plan.length} {t("天")}</div>
-                <div style={{ fontSize: 13, color: plan.color, fontWeight: 700, marginTop: 4 }}>{t("🔥 连续")} {status?.streak || 0} {t("天")}</div>
+                <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)' }}>已完成 {status?.completed_count || 0} / {plan.length} 天</div>
+                <div style={{ fontSize: 13, color: plan.color, fontWeight: 700, marginTop: 4 }}>🔥 连续 {status?.streak || 0} 天</div>
               </div>
             </div>
           </div>
@@ -85,7 +84,7 @@ export default function ReadingPlanPage({ user }) {
               {theme && <span style={{ color: plan.color, fontWeight: 700 }}> · {theme}</span>}
             </div>
             {refs.length === 0 ? (
-              <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)' }}>{plan.kind === 'date' && !mccheyne ? t("加载中…") : t("今日经文加载中…")}</div>
+              <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)' }}>{plan.kind === 'date' && !mccheyne ? '加载中…' : '今日经文加载中…'}</div>
             ) : (
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                 {refs.map((r, i) => (
@@ -95,11 +94,11 @@ export default function ReadingPlanPage({ user }) {
             )}
             <button onClick={toggle} disabled={busy || loading} style={{ width: '100%', marginTop: 16, padding: 13, borderRadius: 12, border: 'none', cursor: 'pointer', fontSize: 15, fontWeight: 700,
               background: todayDone ? 'rgba(52,199,89,0.22)' : `linear-gradient(135deg, ${plan.color}, #5ac8fa)`, color: todayDone ? '#34c759' : '#fff' }}>
-              {busy ? t("处理中…") : todayDone ? t("✓ 今日已读（点击撤销）") : t("标记今日已读")}
+              {busy ? '处理中…' : todayDone ? '✓ 今日已读（点击撤销）' : '标记今日已读'}
             </button>
           </div>
           <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)', textAlign: 'center', lineHeight: 1.6 }}>
-            {t("读经不为打卡，乃为遇见神。慢慢读，让一句话住在你里面。")}
+            读经不为打卡，乃为遇见神。慢慢读，让一句话住在你里面。
           </div>
         </>
       )}

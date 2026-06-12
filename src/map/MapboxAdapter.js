@@ -60,9 +60,6 @@ export default class MapboxAdapter extends MapAdapter {
 
   fitBounds(bounds, options = {}) {
     if (!this.map) return
-    if (!Array.isArray(bounds) || bounds.length < 2) return
-    const ok = (p) => Array.isArray(p) && Number.isFinite(+p[0]) && Number.isFinite(+p[1])
-    if (!ok(bounds[0]) || !ok(bounds[1])) return // 防 NaN bounds 崩溃
     this.map.fitBounds(bounds, { padding: 40, duration: 0, ...options })
   }
 
@@ -102,32 +99,11 @@ export default class MapboxAdapter extends MapAdapter {
         'line-color': options.color ?? '#ffd700',
         'line-width': options.weight ?? 3,
         'line-opacity': options.opacity ?? 0.85,
-        'line-dasharray': options.solid ? [1, 0] : [2, 2],
+        'line-dasharray': [2, 2],
       },
     })
     this.sourceIds.push(id)
     return id
-  }
-
-  removeRoute(handle) {
-    if (!this.map || !handle) return
-    try {
-      if (this.map.getLayer(handle)) this.map.removeLayer(handle)
-      if (this.map.getSource(handle)) this.map.removeSource(handle)
-    } catch (_) {}
-    this.sourceIds = this.sourceIds.filter((x) => x !== handle)
-  }
-
-  setMarkerActive(handle, active) {
-    try {
-      const raw = handle && handle.raw ? handle.raw : handle
-      const el = raw && raw.getElement ? raw.getElement() : null
-      if (!el) return
-      el.classList.toggle('active', !!active)
-      const size = active ? 30 : 24
-      el.style.width = `${size}px`
-      el.style.height = `${size}px`
-    } catch (_) {}
   }
 
   showPopup(lngLat, html) {
@@ -149,11 +125,8 @@ export default class MapboxAdapter extends MapAdapter {
     this.markers.forEach((m) => m.remove())
     this.markers = []
     this.sourceIds.forEach((id) => {
-      // style 已销毁的 map 调 getLayer/getSource 会抛异常（getOwnLayer of undefined）
-      try {
-        if (this.map.getLayer(id)) this.map.removeLayer(id)
-        if (this.map.getSource(id)) this.map.removeSource(id)
-      } catch (_) {}
+      if (this.map.getLayer(id)) this.map.removeLayer(id)
+      if (this.map.getSource(id)) this.map.removeSource(id)
     })
     this.sourceIds = []
   }

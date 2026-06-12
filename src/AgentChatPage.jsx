@@ -3,11 +3,8 @@
  * 今日心镜 overlay。
  */
 import { useEffect, useRef, useState } from 'react'
-import BackButton from './BackButton'
 import { fetchAgentMeta, chatAgent } from './api'
 import { getToken } from './auth'
-import { t } from './i18n/runtime'
-import { AutoText } from './autoTranslate.jsx'
 
 export default function AgentChatPage({ onBack, onNeedLogin }) {
   const [agents, setAgents] = useState([])
@@ -39,15 +36,15 @@ export default function AgentChatPage({ onBack, onNeedLogin }) {
       setMsgs([...next, { role: 'assistant', content: r.reply }])
       if (typeof r.configured === 'boolean') setConfigured(r.configured)
     } catch (e) {
-      setMsgs([...next, { role: 'assistant', content: t("（一时无法回应，请稍后再试。）") }])
+      setMsgs([...next, { role: 'assistant', content: '（一时无法回应，请稍后再试。）' }])
     } finally { setBusy(false) }
   }
 
   return (
     <div style={{ width: '100%', height: '100%', background: '#000', color: '#fff', display: 'flex', flexDirection: 'column', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
       <div style={{ padding: '12px 16px', borderBottom: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', gap: 12, background: 'rgba(28,28,30,0.92)', flexShrink: 0 }}>
-        <BackButton onClick={onBack} />
-        <div><div style={{ fontSize: 17, fontWeight: 600 }}>{t("属灵牧者")}</div>
+        <button onClick={onBack} style={backBtn}>‹</button>
+        <div><div style={{ fontSize: 17, fontWeight: 600 }}>属灵牧者</div>
           <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)' }}>{agentMeta.icon} {agentMeta.name} · {agentMeta.role}</div></div>
       </div>
 
@@ -59,7 +56,7 @@ export default function AgentChatPage({ onBack, onNeedLogin }) {
 
       {!configured && (
         <div style={{ margin: '0 16px 8px', padding: 12, borderRadius: 10, background: 'rgba(255,212,59,0.08)', border: '1px solid rgba(255,212,59,0.25)', fontSize: 12, color: '#ffd43b', lineHeight: 1.6 }}>
-          {t("AI 牧者暂未配置（需服务器设置 LLM 密钥）。福音诊断室 / 属灵低潮体检等结构化功能无需联网即可使用。")}
+          AI 牧者暂未配置（需服务器设置 LLM 密钥）。福音诊断室 / 属灵低潮体检等结构化功能无需联网即可使用。
         </div>
       )}
 
@@ -69,17 +66,17 @@ export default function AgentChatPage({ onBack, onNeedLogin }) {
             <div style={{ maxWidth: '82%', padding: '10px 13px', borderRadius: 14, fontSize: 13.5, lineHeight: 1.7,
               background: m.role === 'user' ? 'rgba(90,200,250,0.18)' : `${agentMeta.color}1c`,
               border: `1px solid ${m.role === 'user' ? 'rgba(90,200,250,0.25)' : agentMeta.color + '33'}`,
-              color: 'rgba(255,255,255,0.9)', whiteSpace: 'pre-wrap' }}><AutoText>{m.content}</AutoText></div>
+              color: 'rgba(255,255,255,0.9)', whiteSpace: 'pre-wrap' }}>{m.content}</div>
           </div>
         ))}
-        {busy && <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', paddingLeft: 4 }}>{agentMeta.name}{t("正在回应…")}</div>}
+        {busy && <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', paddingLeft: 4 }}>{agentMeta.name}正在回应…</div>}
         <div ref={endRef} />
       </div>
 
       <div style={{ display: 'flex', gap: 8, padding: '10px 16px', borderTop: '1px solid rgba(255,255,255,0.1)', background: 'rgba(28,28,30,0.92)', flexShrink: 0 }}>
         <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && send()} placeholder={`对${agentMeta.name}说…`}
           style={{ flex: 1, padding: '11px 14px', borderRadius: 22, background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)', color: '#fff', fontSize: 14 }} />
-        <button onClick={send} disabled={busy} style={{ width: 64, borderRadius: 22, border: 'none', background: `linear-gradient(135deg, ${agentMeta.color}, #5ac8fa)`, color: '#fff', fontSize: 14, fontWeight: 700, cursor: 'pointer' }}>{t("发送")}</button>
+        <button onClick={send} disabled={busy} style={{ width: 64, borderRadius: 22, border: 'none', background: `linear-gradient(135deg, ${agentMeta.color}, #5ac8fa)`, color: '#fff', fontSize: 14, fontWeight: 700, cursor: 'pointer' }}>发送</button>
       </div>
     </div>
   )

@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react'
-import BackButton from './BackButton'
 import { fetchRecycleBin, restoreRecycleItem } from './api'
 import { getToken } from './auth'
-import { t } from './i18n/runtime'
 
 const TYPE_ICONS = {
   prayer: '🙏',
@@ -49,7 +47,7 @@ export default function RecycleBinPage({ onBack }) {
       await restoreRecycleItem(item.type, item.id, token)
       setItems(prev => prev.filter(i => !(i.type === item.type && i.id === item.id)))
     } catch (e) {
-      alert(t("恢复失败: ") + e.message)
+      alert('恢复失败: ' + e.message)
     } finally {
       setRestoringId(null)
     }
@@ -71,10 +69,19 @@ export default function RecycleBinPage({ onBack }) {
         display: 'flex', alignItems: 'center', gap: '12px',
         borderBottom: '1px solid rgba(255,255,255,0.08)',
       }}>
-        <BackButton onClick={onBack} />
-        <span style={{ fontSize: '17px', fontWeight: 600 }}>{t("🗑️ 回收站")}</span>
+        <button
+          onClick={onBack}
+          style={{
+            background: 'none', border: 'none',
+            color: 'rgba(255,255,255,0.7)', fontSize: '20px',
+            cursor: 'pointer', padding: '4px',
+          }}
+        >
+          ←
+        </button>
+        <span style={{ fontSize: '17px', fontWeight: 600 }}>🗑️ 回收站</span>
         <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)', marginLeft: 'auto' }}>
-          {t("删除后30天自动清除")}
+          删除后30天自动清除
         </span>
       </div>
 
@@ -82,7 +89,7 @@ export default function RecycleBinPage({ onBack }) {
       <div style={{ padding: '12px 16px' }}>
         {loading && (
           <div style={{ textAlign: 'center', padding: '40px 0', color: 'rgba(255,255,255,0.5)' }}>
-            {t("加载中...")}
+            加载中...
           </div>
         )}
 
@@ -98,8 +105,8 @@ export default function RecycleBinPage({ onBack }) {
             color: 'rgba(255,255,255,0.4)',
           }}>
             <div style={{ fontSize: '48px', marginBottom: '12px' }}>🗑️</div>
-            <div style={{ fontSize: '15px' }}>{t("回收站为空")}</div>
-            <div style={{ fontSize: '12px', marginTop: '8px' }}>{t("删除的内容会在这里保留30天")}</div>
+            <div style={{ fontSize: '15px' }}>回收站为空</div>
+            <div style={{ fontSize: '12px', marginTop: '8px' }}>删除的内容会在这里保留30天</div>
           </div>
         )}
 
@@ -142,7 +149,7 @@ export default function RecycleBinPage({ onBack }) {
                     fontSize: '10px',
                     color: remaining <= 3 ? '#ff6b6b' : 'rgba(255,255,255,0.35)',
                   }}>
-                    {remaining > 0 ? `${remaining}天后清除` : t("即将清除")}
+                    {remaining > 0 ? `${remaining}天后清除` : '即将清除'}
                   </span>
                 </div>
                 <div style={{
@@ -180,7 +187,7 @@ export default function RecycleBinPage({ onBack }) {
                   opacity: isRestoring ? 0.5 : 1,
                 }}
               >
-                {isRestoring ? '⏳' : t("♻️ 恢复")}
+                {isRestoring ? '⏳' : '♻️ 恢复'}
               </button>
             </div>
           )

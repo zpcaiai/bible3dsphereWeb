@@ -1,4 +1,4 @@
-import { getRuntimeLang } from './i18n/runtime'
+import { getCached, setCached, getManyCached, setManyCached } from './translationCache'
 const configuredApiBase = import.meta.env.VITE_API_BASE?.trim()
 
 function resolveDefaultApiBase() {
@@ -11,9 +11,6 @@ function resolveDefaultApiBase() {
     return '/api'  // 本地开发使用 Vite proxy
   }
 
-  // holiness.uk 独立前端 → 指向 HF Space 后端
-  if (hostname === 'holiness.uk' || hostname === 'www.holiness.uk') return 'https://stephenzao-biblesphere.hf.space/api'
-
   // Hugging Space / Netlify / Render：后端和前端同域名，使用相对路径
   if (hostname.includes('hf.space') || hostname.includes('netlify.app') || hostname.includes('onrender.com')) {
     return '/api'
@@ -24,79 +21,21 @@ function resolveDefaultApiBase() {
 
 export const API_BASE = configuredApiBase || resolveDefaultApiBase()
 
-// 写/AI 请求统一带当前语言，供后端按 X-Lang 生成对应语言
-export function langHeaders(json = true) {
-  return { ...(json ? { 'Content-Type': 'application/json' } : {}), 'X-Lang': getRuntimeLang() }
-}
-
-function assertJsonResponse(response, message) {
-  const contentType = response.headers?.get?.('content-type') || ''
-  if (contentType && !contentType.includes('application/json')) {
-    throw new Error(message)
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// 轻量 SWR 缓存：内存去重 + localStorage 持久化。
-// 命中缓存立即返回（秒出），过期则后台静默刷新，下次进入即为最新——
-// 后端每个只读请求约 1.3s，缓存后各 tab 重复进入几乎零等待。
-// ─────────────────────────────────────────────────────────────────────────────
-const _swrMem = new Map()        // key -> { data, ts }
-const _swrInflight = new Map()   // key -> Promise
-function _swrLsGet(key) {
-  try { const r = localStorage.getItem('swr:' + key); return r ? JSON.parse(r) : null } catch { return null }
-}
-function _swrLsSet(key, data) {
-  try { localStorage.setItem('swr:' + key, JSON.stringify({ data, ts: Date.now() })) } catch { /* 配额满则忽略 */ }
-}
-function _swrRevalidate(key, fetcher) {
-  if (_swrInflight.has(key)) return _swrInflight.get(key)
-  const p = Promise.resolve().then(fetcher)
-    .then((data) => { const e = { data, ts: Date.now() }; _swrMem.set(key, e); _swrLsSet(key, data); _swrInflight.delete(key); return data })
-    .catch((err) => { _swrInflight.delete(key); throw err })
-  _swrInflight.set(key, p)
-  return p
-}
-export async function swr(key, fetcher, ttlMs = 5 * 60 * 1000) {
-  if (import.meta.env.MODE === 'test') {
-    return fetcher()
-  }
-  const entry = _swrMem.get(key) || _swrLsGet(key)
-  if (entry && typeof entry.ts === 'number') {
-    const fresh = (Date.now() - entry.ts) < ttlMs
-    if (!fresh) _swrRevalidate(key, fetcher).catch(() => {}) // 后台刷新，不阻塞
-    return entry.data
-  }
-  return _swrRevalidate(key, fetcher) // 无缓存 → 等首次
-}
-// 退出登录时调用，清掉用户相关缓存
-export function clearSwrCache() {
-  _swrMem.clear(); _swrInflight.clear()
-  try { Object.keys(localStorage).filter(k => k.startsWith('swr:')).forEach(k => localStorage.removeItem(k)) } catch { /* ignore */ }
-}
-
-async function _fetchLayoutRaw() {
+export async function fetchLayout() {
   console.log('[api] fetchLayout')
   try {
     const response = await fetch(`${API_BASE}/layout`)
     if (!response.ok) throw new Error('Failed to fetch layout')
-    assertJsonResponse(response, 'Layout API did not return JSON')
     const data = await response.json()
     console.log(`[api] fetchLayout ok: ${data.count} items`)
     return data
   } catch (err) {
     console.log('[api] fetchLayout api failed, fallback to static json', err.message)
-    try {
-      const response = await fetch('/emotion_sphere_layout.json')
-      if (!response.ok) throw new Error('Failed to fetch layout (static fallback)')
-      assertJsonResponse(response, 'Static layout did not return JSON')
-      const items = await response.json()
-      console.log(`[api] fetchLayout static ok: ${items.length} items`)
-      return { items, count: items.length }
-    } catch (fallbackErr) {
-      console.log('[api] fetchLayout static fallback unavailable, returning empty layout', fallbackErr.message)
-      return { items: [], count: 0, offline: true }
-    }
+    const response = await fetch('/emotion_sphere_layout.json')
+    if (!response.ok) throw new Error('Failed to fetch layout (static fallback)')
+    const items = await response.json()
+    console.log(`[api] fetchLayout static ok: ${items.length} items`)
+    return { items, count: items.length }
   }
 }
 
@@ -173,7 +112,7 @@ export async function runQuery(payload) {
   console.log(`[api] runQuery query=${payload.query?.slice(0, 60)} rerank=${payload.enableRerank}`)
   const response = await fetch(`${API_BASE}/query`, {
     method: 'POST',
-    headers: langHeaders(),
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
   })
   const contentType = response.headers.get('content-type') || ''
@@ -200,7 +139,7 @@ export async function fetchGuidance(query) {
   console.log(`[api] fetchGuidance query=${query?.slice(0, 60)}`)
   const response = await fetch(`${API_BASE}/guidance`, {
     method: 'POST',
-    headers: langHeaders(),
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ query }),
   })
   const contentType = response.headers.get('content-type') || ''
@@ -217,7 +156,7 @@ export async function fetchSermon(query) {
   console.log(`[api] fetchSermon query=${query?.slice(0, 60)}`)
   const response = await fetch(`${API_BASE}/sermon`, {
     method: 'POST',
-    headers: langHeaders(),
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ query }),
   })
   const contentType = response.headers.get('content-type') || ''
@@ -230,7 +169,7 @@ export async function fetchSermon(query) {
   return data
 }
 
-async function _fetchDailySnapshotRaw(token) {
+export async function fetchDailySnapshot(token) {
   const response = await fetch(`${API_BASE}/daily-snapshot`, {
     headers: token ? { 'Authorization': `Bearer ${token}` } : {},
   })
@@ -239,7 +178,7 @@ async function _fetchDailySnapshotRaw(token) {
   return data.ok ? data : null
 }
 
-async function _fetchEmotionTrajectoryRaw(token, limit = 30) {
+export async function fetchEmotionTrajectory(token, limit = 30) {
   const response = await fetch(`${API_BASE}/user/emotion-trajectory?limit=${limit}`, {
     headers: token ? { 'Authorization': `Bearer ${token}` } : {},
   })
@@ -248,7 +187,7 @@ async function _fetchEmotionTrajectoryRaw(token, limit = 30) {
   return data.ok ? data : null
 }
 
-async function _fetchCommunityHeatmapRaw(windowHours = 24, topN = 8) {
+export async function fetchCommunityHeatmap(windowHours = 24, topN = 8) {
   try {
     const params = new URLSearchParams({ window_hours: windowHours, top_n: topN })
     const res = await fetch(`${API_BASE}/community/emotion-heatmap?${params}`)
@@ -263,7 +202,7 @@ export async function fetchMeditationQuestions(reference, text) {
   console.log(`[api] fetchMeditationQuestions ref=${reference}`)
   const response = await fetch(`${API_BASE}/meditation-questions`, {
     method: 'POST',
-    headers: langHeaders(),
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ reference, text }),
   })
   const contentType = response.headers.get('content-type') || ''
@@ -386,6 +325,10 @@ export async function fetchReadingProgress(token) {
 }
 
 export async function fetchTranslate(text, targetLang = 'en') {
+  // 先查本地内容寻址缓存：命中即时返回，无网络往返。
+  const cachedHit = getCached(text, targetLang)
+  if (cachedHit !== undefined) return cachedHit
+
   console.log(`[api] fetchTranslate target=${targetLang} text=${text?.slice(0, 60)}`)
   const response = await fetch(`${API_BASE}/translate`, {
     method: 'POST',
@@ -398,50 +341,52 @@ export async function fetchTranslate(text, targetLang = 'en') {
   }
   const data = await response.json()
   if (!response.ok) throw new Error(data.error || 'Translation failed')
-  const out = data.translation ?? data.text ?? ''
-  console.log(`[api] fetchTranslate ok len=${out?.length}`)
-  return out
+  console.log(`[api] fetchTranslate ok len=${data.translation?.length}`)
+  setCached(text, targetLang, data.translation)
+  return data.translation
 }
 
-// 批量按需机翻：texts[] → translations[]（与输入等长，失败项回退原文）。
-// 走 /api/translate-batch（逐条命中 translations_cache），后端不可用时回退逐条 /api/translate。
-export async function translateTexts(texts, targetLang = 'en') {
-  const list = Array.isArray(texts) ? texts.map((s) => (s == null ? '' : String(s))) : []
+// 批量翻译：仅把"本地未命中"的文本发往后端 /translate-batch，
+// 返回结果按原顺序对齐（失败项回退原文），并写回本地缓存。
+// 内容寻址缓存保证：任一文本变化即视为新键，自动重新翻译，永不返回过期译文。
+export async function fetchTranslateBatch(texts, targetLang = 'en') {
+  const list = (Array.isArray(texts) ? texts : []).map((t) => String(t ?? ''))
   if (list.length === 0) return []
-  // 分块（每块 <=50）后并发，避免后端单次批量上限并提升大导出可靠性
-  if (list.length > 50) {
-    const chunks = []
-    for (let i = 0; i < list.length; i += 50) chunks.push(list.slice(i, i + 50))
-    const parts = await Promise.all(chunks.map((c) => translateTexts(c, targetLang)))
-    return parts.flat()
-  }
-  try {
-    const response = await fetch(`${API_BASE}/translate-batch`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ texts: list, target_lang: targetLang }),
-    })
-    const contentType = response.headers.get('content-type') || ''
-    if (response.ok && contentType.includes('application/json')) {
-      const data = await response.json()
-      if (data && Array.isArray(data.translations) && data.translations.length === list.length) {
-        return data.translations
+  const { hits, misses } = getManyCached(list, targetLang)
+  const fresh = {}
+  if (misses.length > 0) {
+    try {
+      const response = await fetch(`${API_BASE}/translate-batch`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ texts: misses, target_lang: targetLang }),
+      })
+      if (response.ok) {
+        const data = await response.json()
+        const arr = Array.isArray(data.translations) ? data.translations : []
+        misses.forEach((m, i) => {
+          const tr = arr[i]
+          if (tr && tr !== m) fresh[m] = tr
+        })
+        if (Object.keys(fresh).length) setManyCached(fresh, targetLang)
       }
+    } catch (err) {
+      console.warn('[api] fetchTranslateBatch failed:', err?.message || err)
     }
-  } catch { /* fall through to per-item */ }
-  // 回退：逐条翻译（并发）
-  try {
-    return await Promise.all(list.map((s) => fetchTranslate(s, targetLang).catch(() => s)))
-  } catch {
-    return list
   }
+  // 按原顺序组装：空串/未译回退原文。
+  return list.map((raw) => {
+    const t = raw.trim()
+    if (!t) return raw
+    return hits[t] ?? fresh[t] ?? raw
+  })
 }
 
 export async function fetchFaithQA(question) {
   console.log(`[api] fetchFaithQA question=${question?.slice(0, 60)}`)
   const response = await fetch(`${API_BASE}/faith-qa`, {
     method: 'POST',
-    headers: langHeaders(),
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ question }),
   })
   const contentType = response.headers.get('content-type') || ''
@@ -458,7 +403,7 @@ export async function fetchVersePrayer(reference, text) {
   console.log(`[api] fetchVersePrayer ref=${reference}`)
   const response = await fetch(`${API_BASE}/verse-prayer`, {
     method: 'POST',
-    headers: langHeaders(),
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ reference, text }),
   })
   const contentType = response.headers.get('content-type') || ''
@@ -475,7 +420,7 @@ export async function fetchBiblicalExample(query) {
   console.log(`[api] fetchBiblicalExample query=${query?.slice(0, 60)}`)
   const response = await fetch(`${API_BASE}/biblical-example`, {
     method: 'POST',
-    headers: langHeaders(),
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ query }),
   })
   const contentType = response.headers.get('content-type') || ''
@@ -964,8 +909,8 @@ export async function updateUserProfile(payload, token) {
 
 // ── Google Cloud Text-to-Speech ─────────────────────────────────
 export async function fetchScripture(ref) {
-  // ref e.g. "以赛亚书40:3" or "创世记1"; X-Lang=en → ESV English text
-  const r = await fetch(`${API_BASE}/scripture?ref=${encodeURIComponent(ref)}`, { headers: langHeaders(false) })
+  // ref e.g. "以赛亚书40:3" or "创世记1"
+  const r = await fetch(`${API_BASE}/scripture?ref=${encodeURIComponent(ref)}`)
   if (!r.ok) throw new Error(`scripture ${r.status}`)
   return r.json()  // {ok, ref, verses:[{verse,text},...]}
 }
@@ -1014,7 +959,7 @@ export async function fetchSharedNotes(token = null, page = 1, limit = 20) {
 
 export async function fetchBibleStudy(book, chapter, verses, token = null) {
   console.log(`[api] fetchBibleStudy ${book} ${chapter}`)
-  const headers = langHeaders(true)   // X-Lang=en → English study
+  const headers = { 'Content-Type': 'application/json' }
   if (token) headers['Authorization'] = `Bearer ${token}`
   const response = await fetch(`${API_BASE}/bible/study`, {
     method: 'POST',
@@ -1362,7 +1307,7 @@ export async function fetchSundaySchoolVideos() {
   console.log('[api] fetchSundaySchoolVideos')
   const response = await fetch(`${API_BASE}/sunday-school/videos`)
   if (!response.ok) throw new Error(`Failed to load videos: ${response.status}`)
-  return response.json()  // { ok, videos: [{id, alias, title, filename, teacher, scripture, description, video_url, thumbnail_url, duration_sec, modified_ts}...] }
+  return response.json()  // { ok, videos: [{id, title, teacher, scripture, description, video_url, thumbnail_url, duration_sec}...] }
 }
 
 // ── Seekers Class Courses (慕道班课程：文字/PPT/视频) ──────────────────────────
@@ -1998,48 +1943,6 @@ export async function leaveChurch(token) {
   return data
 }
 
-
-// ── 带缓存的只读接口（包裹上面的 _*Raw 实现，所有 tab 通用）──────────────────
-export function fetchLayout() {
-  return swr('layout', _fetchLayoutRaw, 30 * 60 * 1000)
-}
-export function fetchDailySnapshot(token) {
-  return swr('daily-snapshot:' + (token || 'anon'), () => _fetchDailySnapshotRaw(token), 90 * 1000)
-}
-export function fetchEmotionTrajectory(token, limit = 30) {
-  return swr('emotion-trajectory:' + (token || 'anon') + ':' + limit, () => _fetchEmotionTrajectoryRaw(token, limit), 90 * 1000)
-}
-export function fetchCommunityHeatmap(windowHours = 24, topN = 8) {
-  return swr('heatmap:' + windowHours + ':' + topN, () => _fetchCommunityHeatmapRaw(windowHours, topN), 3 * 60 * 1000)
-}
-
-// 首屏聚合：layout + ai_status + history 一次取回（替代 3 次跨境往返）。
-// 失败时返回 null，调用方回退到单接口。
-export async function translateText(text, target) {
-  const body = JSON.stringify({ text, target: target || (typeof window !== 'undefined' ? undefined : 'en') })
-  try {
-    const res = await fetch(`${API_BASE}/translate`, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' }, body,
-    })
-    if (!res.ok) return null
-    const d = await res.json()
-    return d && d.ok ? d.text : null
-  } catch {
-    return null
-  }
-}
-
-export async function fetchHomeBootstrap() {
-  try {
-    const res = await fetch(`${API_BASE}/home-bootstrap`)
-    if (!res.ok) return null
-    assertJsonResponse(res, 'Home bootstrap did not return JSON')
-    return await res.json()
-  } catch {
-    return null
-  }
-}
-
 // ─────────────────────────────────────────────────────────────────────────────
 // 背经里程碑 / Memory milestones (1/10/30/50/100)
 // ─────────────────────────────────────────────────────────────────────────────
@@ -2104,38 +2007,4 @@ export async function fetchGratitudeReview(days = 7, token) {
   const res = await fetch(`${API_BASE}/gratitude/review?days=${days}`, { headers: hubHeaders(token) })
   if (!res.ok) throw new Error('加载恩典回顾失败')
   return res.json()  // {ok, days, total, active_days, by_day:[{day, entries:[{id,content,created_at}]}], verse}
-}
-
-// ── 代祷分享链接 ─────────────────────────────────────────────────────────────
-export async function sharePrayer(prayerId, token) {
-  const headers = {}
-  if (token) headers['Authorization'] = `Bearer ${token}`
-  const response = await fetch(`${API_BASE}/prayers/${prayerId}/share`, { method: 'POST', headers })
-  const data = await response.json()
-  if (!response.ok) throw new Error(data.detail || data.error || 'Share failed')
-  return data
-}
-
-export async function fetchSharedPrayer(shareToken) {
-  const response = await fetch(`${API_BASE}/prayer-share/${encodeURIComponent(shareToken)}`)
-  const data = await response.json()
-  if (!response.ok) throw new Error(data.detail || data.error || 'Not found')
-  return data
-}
-
-export async function amenSharedPrayer(shareToken) {
-  const response = await fetch(`${API_BASE}/prayer-share/${encodeURIComponent(shareToken)}/amen`, { method: 'POST' })
-  const data = await response.json()
-  if (!response.ok) throw new Error(data.detail || data.error || 'Amen failed')
-  return data
-}
-
-// ── 个人数据全局搜索 ─────────────────────────────────────────────────────────
-export async function searchPersonal(q, token) {
-  const headers = {}
-  if (token) headers['Authorization'] = `Bearer ${token}`
-  const response = await fetch(`${API_BASE}/personal-search?q=${encodeURIComponent(q)}`, { headers })
-  const data = await response.json()
-  if (!response.ok) throw new Error(data.detail || data.error || 'Search failed')
-  return data
 }

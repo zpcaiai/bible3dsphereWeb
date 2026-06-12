@@ -1,14 +1,10 @@
-import { pickMimeType, contentTypeFor, AUDIO_CONSTRAINTS } from './hooks/recorderUtils'
 import { useEffect, useRef, useState } from 'react'
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
 import { amenEvangelismPrayer, deleteEvangelismPrayer, fetchEvangelismPrayers, restoreEvangelismPrayer, submitEvangelismPrayer, updateEvangelismPrayer, runQuery, fetchSeekersClassCourses } from './api'
 import usePullToRefresh from './hooks/usePullToRefresh'
 import { escapeHtml, escapeHtmlWithBr } from './sanitize'
-import BibleMapsPage from './BibleMapsPage'
-import { t } from './i18n/runtime'
-import { translateForExport, translateElementText } from './exportI18n'
-import { AutoText } from './autoTranslate.jsx'
+import BibleMapPage from './BibleMapPage'
 
 // Deepgram API Key for voice input - 支持从环境变量读取
 const DEEPGRAM_API_KEY = import.meta.env.VITE_DEEPGRAM_API_KEY || 'a87cbb2d1ec9b07a456fb55319a104731924b12f'
@@ -25,7 +21,7 @@ function saveAmened(set) {
 
 function timeAgo(ts) {
   const diff = Math.floor(Date.now() / 1000 - ts)
-  if (diff < 60) return t("刚刚")
+  if (diff < 60) return '刚刚'
   if (diff < 3600) return `${Math.floor(diff / 60)} 分钟前`
   if (diff < 86400) return `${Math.floor(diff / 3600)} 小时前`
   if (diff < 86400 * 7) return `${Math.floor(diff / 86400)} 天前`
@@ -62,7 +58,7 @@ function formatDateTime(ts) {
   return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日 ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`
 }
 
-async function exportAllPrayersToTxt(items) {
+function exportAllPrayersToTxt(items) {
   if (!items || items.length === 0) return
   let content = `属灵星球 - 传FY祷告墙\n`
   content += `导出时间：${new Date().toLocaleString('zh-CN')}\n`
@@ -80,7 +76,6 @@ async function exportAllPrayersToTxt(items) {
     }
   })
   
-  content = await translateForExport(content)
   const blob = new Blob([content], { type: 'text/plain;charset=utf-8' })
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
@@ -105,7 +100,6 @@ async function exportAllPrayersToPdf(items) {
 
   async function addBlock(html) {
     el.innerHTML = html
-    await translateElementText(el)
     const canvas = await html2canvas(el, { scale: 2, useCORS: true, logging: false, backgroundColor: '#0e1726' })
     const imgH = (canvas.height / canvas.width) * cw
     if (curY + imgH > PH - 10 && curY > M + 5) { pdf.addPage(); pdf.setFillColor(14, 23, 38); pdf.rect(0, 0, PW, PH, 'F'); curY = M }
@@ -141,7 +135,7 @@ async function exportAllPrayersToPdf(items) {
       pdf.text('https://holiness.uk/', PW / 2, PH - 4, { align: 'center' })
     }
     pdf.save(`传FY祷告墙_${new Date().getFullYear()}${String(new Date().getMonth()+1).padStart(2,'0')}${String(new Date().getDate()).padStart(2,'0')}.pdf`)
-  } catch (err) { console.error('PDF generation failed:', err); alert(t("PDF 生成失败，请重试")) }
+  } catch (err) { console.error('PDF generation failed:', err); alert('PDF 生成失败，请重试') }
   finally { document.body.removeChild(el) }
 }
 
@@ -169,58 +163,12 @@ function fmtSeekersDate(ts) {
 }
 
 const SEEKERS_META = {
-  video: { emoji: '🎬', label: t("视频"), color: 'rgba(90,200,250,0.85)' },
+  video: { emoji: '🎬', label: '视频', color: 'rgba(90,200,250,0.85)' },
   ppt:   { emoji: '📊', label: 'PPT',  color: 'rgba(255,179,64,0.9)' },
-  text:  { emoji: '📄', label: t("文字"), color: 'rgba(120,220,160,0.9)' },
+  text:  { emoji: '📄', label: '文字', color: 'rgba(120,220,160,0.9)' },
 }
 
 // 慕道班视频课程改为 R2 (cdn.holiness.uk/seekers-class/) 动态列表，后端按固定课程顺序排列
-
-// 每个视频课程配套课件 PPT（R2 ppt/ 目录），手风琴式展开、Office Online 在线查看
-const SEEKERS_PPT_BASE = 'https://cdn.holiness.uk/ppt/'
-const SEEKERS_PPT_KEYWORDS = ["认识圣经", "认识创造", "认识罪", "认识耶稣", "认识洗礼"]
-const pptUrlFor = kw => `${SEEKERS_PPT_BASE}${encodeURIComponent(kw)}.pptx`
-const pptKeywordFor = filename => SEEKERS_PPT_KEYWORDS.find(kw => (filename || '').includes(kw)) || null
-
-function SeekersPptAccordion({ kw, isOpen, onToggle }) {
-  const pptUrl = pptUrlFor(kw)
-  const viewerUrl = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(pptUrl)}`
-  return (
-    <div style={{ borderTop: '1px solid rgba(255,255,255,0.07)' }}>
-      <div
-        onClick={onToggle}
-        style={{
-          display: 'flex', alignItems: 'center', gap: 10, padding: '11px 14px', cursor: 'pointer',
-          background: isOpen ? 'rgba(255,179,64,0.08)' : 'transparent', transition: 'background 0.2s',
-        }}
-      >
-        <span style={{ fontSize: 15 }}>📊</span>
-        <span style={{ flex: 1, fontSize: 13, fontWeight: 600, color: 'rgba(255,179,64,0.92)' }}>
-          {t("课件 PPT ·")} {kw}
-        </span>
-        <a
-          href={pptUrl} target="_blank" rel="noopener noreferrer"
-          onClick={e => e.stopPropagation()}
-          style={{ fontSize: 11.5, color: 'rgba(255,255,255,0.45)', textDecoration: 'none', padding: '2px 8px', border: '1px solid rgba(255,255,255,0.14)', borderRadius: 6 }}
-        >{t("⬇ 下载")}</a>
-        <span style={{
-          fontSize: 12, color: 'rgba(255,179,64,0.8)',
-          transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.25s',
-        }}>▼</span>
-      </div>
-      <div style={{ maxHeight: isOpen ? 430 : 0, overflow: 'hidden', transition: 'max-height 0.35s ease' }}>
-        {isOpen && (
-          <iframe
-            src={viewerUrl}
-            title={`${kw} 课件PPT`}
-            allowFullScreen
-            style={{ width: '100%', height: 420, border: 'none', display: 'block', background: '#0d0d20' }}
-          />
-        )}
-      </div>
-    </div>
-  )
-}
 
 const SEEKERS_SHARE_URL = 'https://holiness.uk/seekers'
 
@@ -228,7 +176,7 @@ function SeekersShareButton() {
   const [copied, setCopied] = useState(false)
   const share = async () => {
     if (navigator.share) {
-      try { await navigator.share({ title: t("慕道班课程"), url: SEEKERS_SHARE_URL }); return } catch (e) {
+      try { await navigator.share({ title: '慕道班课程', url: SEEKERS_SHARE_URL }); return } catch (e) {
         if (e && e.name === 'AbortError') return
       }
     }
@@ -236,7 +184,7 @@ function SeekersShareButton() {
       await navigator.clipboard.writeText(SEEKERS_SHARE_URL)
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
-    } catch { window.prompt(t("复制链接分享给慕道朋友："), SEEKERS_SHARE_URL) }
+    } catch { window.prompt('复制链接分享给慕道朋友：', SEEKERS_SHARE_URL) }
   }
   return (
     <button type="button" onClick={share} style={{
@@ -245,7 +193,7 @@ function SeekersShareButton() {
       color: copied ? 'rgba(120,220,160,0.95)' : 'rgba(90,200,250,0.95)',
       borderRadius: 999, padding: '5px 14px', fontSize: 12.5, cursor: 'pointer',
     }}>
-      {copied ? t("✅ 已复制链接") : t("🔗 分享本页")}
+      {copied ? '✅ 已复制链接' : '🔗 分享本页'}
     </button>
   )
 }
@@ -254,12 +202,11 @@ export function SeekersClassView() {
   const [courses, setCourses] = useState(null)
   const [err, setErr] = useState('')
   const [playing, setPlaying] = useState(null)   // url of currently playing video
-  const [openPpt, setOpenPpt] = useState(null)   // 当前展开的课件PPT关键字（手风琴：同时只开一个）
 
   useEffect(() => {
     fetchSeekersClassCourses()
       .then(d => setCourses(d.courses || []))
-      .catch(() => setErr(t("课程加载失败，请稍后重试")))
+      .catch(() => setErr('课程加载失败，请稍后重试'))
   }, [])
 
   if (err) return (
@@ -270,7 +217,7 @@ export function SeekersClassView() {
 
   if (!courses) return (
     <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'rgba(255,255,255,0.3)', fontSize: 14 }}>
-      {t("加载中…")}
+      加载中…
     </div>
   )
 
@@ -279,9 +226,9 @@ export function SeekersClassView() {
   if (allCourses.length === 0) return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 32, gap: 12 }}>
       <div style={{ fontSize: 44 }}>📚</div>
-      <div style={{ fontSize: 16, color: 'rgba(255,255,255,0.7)', fontWeight: 600 }}>{t("暂无慕道班课程")}</div>
+      <div style={{ fontSize: 16, color: 'rgba(255,255,255,0.7)', fontWeight: 600 }}>暂无慕道班课程</div>
       <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.35)', textAlign: 'center', lineHeight: 1.7 }}>
-        {t("课程文件（文字 / PPT / 视频）上传到")}<br />{t("cdn.holiness.uk/seekers-class/ 后将自动显示")}
+        课程文件（文字 / PPT / 视频）上传到<br />cdn.holiness.uk/seekers-class/ 后将自动显示
       </div>
     </div>
   )
@@ -361,7 +308,7 @@ export function SeekersClassView() {
                 }}>{meta.emoji}</div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontSize: 13, fontWeight: 600, color: meta.color, marginBottom: 2 }}>
-                    {meta.label} {t("· 点击打开")}
+                    {meta.label} · 点击打开
                   </div>
                   <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {c.filename}
@@ -382,7 +329,7 @@ export function SeekersClassView() {
               }}>{meta.emoji} {meta.label}</div>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontSize: 14, fontWeight: 600, color: 'rgba(255,255,255,0.92)', lineHeight: 1.4, marginBottom: 3 }}>
-                  {c.title || c.filename || t("未命名")}
+                  {c.title || c.filename || '未命名'}
                 </div>
                 <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)' }}>
                   {c.filename}
@@ -396,15 +343,6 @@ export function SeekersClassView() {
                 >✕</button>
               )}
             </div>
-
-            {/* 配套课件 PPT — 手风琴展开，Office Online 在线查看 */}
-            {isVideo && pptKeywordFor(c.filename) && (
-              <SeekersPptAccordion
-                kw={pptKeywordFor(c.filename)}
-                isOpen={openPpt === pptKeywordFor(c.filename)}
-                onToggle={() => setOpenPpt(openPpt === pptKeywordFor(c.filename) ? null : pptKeywordFor(c.filename))}
-              />
-            )}
           </div>
         )
       })}
@@ -412,7 +350,7 @@ export function SeekersClassView() {
   )
 }
 
-export default function EvangelismPage({ user, token, onBack, onPrayerWall, onOpenPanel }) {
+export default function EvangelismPage({ user, token, onBack, onPrayerWall }) {
   const [items, setItems] = useState([])
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(true)
@@ -437,7 +375,6 @@ export default function EvangelismPage({ user, token, onBack, onPrayerWall, onOp
   const [recordingError, setRecordingError] = useState(null)
   const [isPolishing, setIsPolishing] = useState(false)
   const mediaRecorderRef = useRef(null)
-  const cancelStartRef = useRef(false)
   const audioChunksRef = useRef([])
 
   async function load(replace = true) {
@@ -556,20 +493,14 @@ export default function EvangelismPage({ user, token, onBack, onPrayerWall, onOp
     try {
       setRecordingError(null)
       audioChunksRef.current = []
-      let startedAt = 0
-      cancelStartRef.current = false
 
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        setRecordingError(t("语音功能需要 HTTPS 环境，请通过 https:// 访问本页面"))
+        setRecordingError('语音功能需要 HTTPS 环境，请通过 https:// 访问本页面')
         return
       }
 
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: AUDIO_CONSTRAINTS })
-      if (cancelStartRef.current) { stream.getTracks().forEach(tr => tr.stop()); setIsRecording(false); return }
-      const _mt = pickMimeType()
-      const mediaRecorder = _mt
-        ? new MediaRecorder(stream, { mimeType: _mt })
-        : new MediaRecorder(stream)
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+      const mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' })
 
       mediaRecorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
@@ -578,34 +509,28 @@ export default function EvangelismPage({ user, token, onBack, onPrayerWall, onOp
       }
 
       mediaRecorder.onstop = async () => {
-        const _tooShort = Date.now() - startedAt < 1000
+        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' })
+        await transcribeAudio(audioBlob, onTranscript)
+
         // 停止所有音轨
         stream.getTracks().forEach(track => track.stop())
-        if (_tooShort) { setRecordingError(t("说话时间太短，请按住至少 1 秒")); return }
-        const _mime = mediaRecorder.mimeType || 'audio/webm'
-        const audioBlob = new Blob(audioChunksRef.current, { type: _mime })
-        await transcribeAudio(audioBlob, onTranscript)
       }
 
       mediaRecorderRef.current = mediaRecorder
       mediaRecorder.start()
-      startedAt = Date.now()
       setIsRecording(true)
     } catch (err) {
       console.error('录音启动失败:', err)
-      setRecordingError(t("无法访问麦克风，请检查权限设置"))
+      setRecordingError('无法访问麦克风，请检查权限设置')
     }
   }
 
   // 停止录音
   function stopRecording() {
-    const mr = mediaRecorderRef.current
-    if (mr && mr.state !== 'inactive') {
-      mr.stop()
-    } else {
-      cancelStartRef.current = true // 快速点按：录音尚未开始 → 取消
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop()
+      setIsRecording(false)
     }
-    setIsRecording(false)
   }
 
   // 检测文本语言（中文或英文）
@@ -635,14 +560,14 @@ export default function EvangelismPage({ user, token, onBack, onPrayerWall, onOp
   // 使用 Deepgram 进行语音识别（支持多语言自动检测）
   async function transcribeAudio(audioBlob, onTranscript) {
     try {
-      setRecordingError(t("正在识别语音..."))
+      setRecordingError('正在识别语音...')
 
       // 使用 Nova-2 多语言模型，自动检测语言
-      const response = await fetch('https://api.deepgram.com/v1/listen?model=nova-2&detect_language=true&punctuate=true&paragraphs=true&smart_format=true', {
+      const response = await fetch('https://api.deepgram.com/v1/listen?model=nova-2&punctuate=true&paragraphs=true&smart_format=true', {
         method: 'POST',
         headers: {
           'Authorization': `Token ${DEEPGRAM_API_KEY}`,
-          'Content-Type': contentTypeFor(audioBlob.type),
+          'Content-Type': 'audio/webm',
         },
         body: audioBlob,
       })
@@ -666,12 +591,12 @@ export default function EvangelismPage({ user, token, onBack, onPrayerWall, onOp
         let bilingualText = transcript.trim()
         if (textLang === 'zh') {
           // 中文转英文
-          setRecordingError(t("正在翻译成英文..."))
+          setRecordingError('正在翻译成英文...')
           const englishText = await translateText(transcript.trim(), 'en')
           bilingualText = `${transcript.trim()}\n\n[English] ${englishText}`
         } else if (textLang === 'en') {
           // 英文转中文
-          setRecordingError(t("正在翻译成中文..."))
+          setRecordingError('正在翻译成中文...')
           const chineseText = await translateText(transcript.trim(), 'zh')
           bilingualText = `[中文] ${chineseText}\n\n${transcript.trim()}`
         }
@@ -679,11 +604,11 @@ export default function EvangelismPage({ user, token, onBack, onPrayerWall, onOp
         onTranscript(bilingualText)
         setRecordingError(null)
       } else {
-        setRecordingError(t("没听清，请离麦克风近一点、稍大声重说一次"))
+        setRecordingError('未能识别到语音内容，请重试')
       }
     } catch (err) {
       console.error('语音识别失败:', err)
-      setRecordingError(err.message || t("语音识别失败，请检查网络连接"))
+      setRecordingError(err.message || '语音识别失败，请检查网络连接')
     }
   }
 
@@ -703,7 +628,7 @@ export default function EvangelismPage({ user, token, onBack, onPrayerWall, onOp
       onPolished(polished)
     } catch (err) {
       console.error('润色失败:', err)
-      setRecordingError(t("文字润色失败，请检查网络连接"))
+      setRecordingError('文字润色失败，请检查网络连接')
     } finally {
       setIsPolishing(false)
     }
@@ -724,14 +649,14 @@ export default function EvangelismPage({ user, token, onBack, onPrayerWall, onOp
     <div className="pw-page">
       {/* Header */}
       <header className="pw-header">
-        <button className="checkin-back-btn" onClick={onBack} aria-label={t("返回")}>
+        <button className="checkin-back-btn" onClick={onBack} aria-label="返回">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="15 18 9 12 15 6" />
           </svg>
         </button>
         <div className="pw-header-center">
-          <div className="pw-title">{subTab === 'map' ? t("🗺️ 圣经地图") : subTab === 'seekers' ? t("📚 慕道班") : t("🌍 传FY")}</div>
-          <div className="pw-subtitle">{subTab === 'map' ? t("圣经世界地理与宣教足迹") : subTab === 'seekers' ? t("慕道班课程 · 文字 / PPT / 视频") : (total > 0 ? `共 ${total} 条祷告` : t("为福音传遍天下祷告"))}</div>
+          <div className="pw-title">{subTab === 'map' ? '🗺️ 圣经地图' : subTab === 'seekers' ? '📚 慕道班' : '🌍 传FY'}</div>
+          <div className="pw-subtitle">{subTab === 'map' ? '圣经世界地理与宣教足迹' : subTab === 'seekers' ? '慕道班课程 · 文字 / PPT / 视频' : (total > 0 ? `共 ${total} 条祷告` : '为福音传遍天下祷告')}</div>
         </div>
         {subTab === 'fy' && onPrayerWall && (
           <button
@@ -742,14 +667,14 @@ export default function EvangelismPage({ user, token, onBack, onPrayerWall, onOp
               padding: '5px 12px', cursor: 'pointer', whiteSpace: 'nowrap',
             }}
           >
-            {t("🙏 代祷墙")}
+            🙏 代祷墙
           </button>
         )}
         {subTab === 'fy' && (
         <button
           className="pw-compose-btn"
           onClick={() => setShowCompose(true)}
-          title={t("提交传FY祷告")}
+          title="提交传FY祷告"
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M12 5v14M5 12h14" />
@@ -764,32 +689,32 @@ export default function EvangelismPage({ user, token, onBack, onPrayerWall, onOp
           className={`ev-subtab ${subTab === 'fy' ? 'active' : ''}`}
           onClick={() => setSubTab('fy')}
         >
-          {t("🌍 传FY")}
+          🌍 传FY
         </button>
         <button
           className={`ev-subtab ${subTab === 'map' ? 'active' : ''}`}
           onClick={() => setSubTab('map')}
         >
-          {t("🗺️ 圣经地图")}
+          🗺️ 圣经地图
         </button>
         <button
           className={`ev-subtab ${subTab === 'seekers' ? 'active' : ''}`}
           onClick={() => setSubTab('seekers')}
         >
-          {t("📚 慕道班")}
+          📚 慕道班
         </button>
       </div>
 
       {/* Success toast */}
       {submitDone && (
-        <div className="pw-toast">{t("✅ 祷告已提交，愿福音广传")}</div>
+        <div className="pw-toast">✅ 祷告已提交，愿福音广传</div>
       )}
 
       {/* Compose Overlay */}
       {showCompose && (
         <div className="pw-compose-overlay" onClick={(e) => { if (e.target === e.currentTarget) setShowCompose(false) }}>
           <div className="pw-compose-sheet glass">
-            <div className="pw-compose-title">{t("🌍 提交传FY祷告")}</div>
+            <div className="pw-compose-title">🌍 提交传FY祷告</div>
 
             {/* Current User Info */}
             <div style={{
@@ -825,7 +750,7 @@ export default function EvangelismPage({ user, token, onBack, onPrayerWall, onOp
                   color: '#fff',
                   fontWeight: 600,
                 }}>
-                  {user?.nickname?.[0] || t("弟")}
+                  {user?.nickname?.[0] || '弟'}
                 </div>
               )}
               <div style={{ flex: 1 }}>
@@ -834,13 +759,13 @@ export default function EvangelismPage({ user, token, onBack, onPrayerWall, onOp
                   color: 'rgba(255,255,255,0.9)',
                   fontWeight: 600,
                 }}>
-                  {user?.nickname || t("弟兄/姐妹")}
+                  {user?.nickname || '弟兄/姐妹'}
                 </div>
                 <div style={{
                   fontSize: '11px',
                   color: 'rgba(255,255,255,0.4)',
                 }}>
-                  {`以${user?.nickname || t("我")}的名义提交祷告`}
+                  {`以${user?.nickname || '我'}的名义提交祷告`}
                 </div>
               </div>
             </div>
@@ -849,7 +774,7 @@ export default function EvangelismPage({ user, token, onBack, onPrayerWall, onOp
               <textarea
                 ref={textareaRef}
                 className="pw-compose-textarea"
-                placeholder={t("为传福音祷告...（例如：为家人信主祷告、为福音事工祷告、为宣教士祷告等）")}
+                placeholder="为传福音祷告...（例如：为家人信主祷告、为福音事工祷告、为宣教士祷告等）"
                 value={draft}
                 onChange={(e) => setDraft(e.target.value.slice(0, 500))}
                 rows={5}
@@ -858,11 +783,7 @@ export default function EvangelismPage({ user, token, onBack, onPrayerWall, onOp
               {/* 语音输入按钮 */}
               <button
                 type="button"
-                onMouseDown={() => startRecording((text) => setDraft(prev => prev ? `${prev} ${text}` : text))}
-                onMouseUp={stopRecording}
-                onMouseLeave={() => { if (isRecording) stopRecording() }}
-                onTouchStart={(e) => { e.preventDefault(); startRecording((text) => setDraft(prev => prev ? `${prev} ${text}` : text)) }}
-                onTouchEnd={(e) => { e.preventDefault(); stopRecording() }}
+                onClick={isRecording ? stopRecording : () => startRecording((text) => setDraft(prev => prev ? `${prev} ${text}` : text))}
                 disabled={submitting}
                 style={{
                   position: 'absolute',
@@ -889,7 +810,7 @@ export default function EvangelismPage({ user, token, onBack, onPrayerWall, onOp
                   transition: 'all 0.2s ease',
                   zIndex: 10,
                 }}
-                title={isRecording ? t("松开发送") : t("按住说话")}
+                title={isRecording ? '点击停止录音' : '点击开始语音输入'}
               >
                 {isRecording ? '🔴' : '🎤'}
               </button>
@@ -920,7 +841,7 @@ export default function EvangelismPage({ user, token, onBack, onPrayerWall, onOp
                   transition: 'all 0.2s ease',
                   zIndex: 10,
                 }}
-                title={t("润色文字")}
+                title="润色文字"
               >
                 {isPolishing ? '✨' : '✏️'}
               </button>
@@ -942,7 +863,7 @@ export default function EvangelismPage({ user, token, onBack, onPrayerWall, onOp
             <div className="pw-compose-actions">
               <button className="pw-cancel-btn" onClick={() => setShowCompose(false)}>
                 <span style={{ fontSize: '16px', marginRight: '4px' }}>✕</span>
-                {t("取消")}
+                取消
               </button>
               <button
                 className="primary-btn"
@@ -953,12 +874,12 @@ export default function EvangelismPage({ user, token, onBack, onPrayerWall, onOp
                 {submitting ? (
                   <>
                     <span className="spinner" style={{ width: '16px', height: '16px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%', animation: 'spin 1s linear infinite', display: 'inline-block' }} />
-                    {t("提交中…")}
+                    提交中…
                   </>
                 ) : (
                   <>
                     <span>🌍</span>
-                    {t("提交")}
+                    提交
                   </>
                 )}
               </button>
@@ -994,10 +915,10 @@ export default function EvangelismPage({ user, token, onBack, onPrayerWall, onOp
           }}>
             <div style={{ fontSize: '40px', marginBottom: '12px' }}>⚠️</div>
             <div style={{ fontSize: '17px', fontWeight: 600, color: 'rgba(255,255,255,0.95)', marginBottom: '8px' }}>
-              {t("确定要删除这条祷告吗？")}
+              确定要删除这条祷告吗？
             </div>
             <div style={{ fontSize: '14px', color: 'rgba(255,255,255,0.6)', marginBottom: '20px' }}>
-              {t("删除后无法恢复，请谨慎操作")}
+              删除后无法恢复，请谨慎操作
             </div>
             <div style={{ display: 'flex', gap: '12px' }}>
               <button
@@ -1018,7 +939,7 @@ export default function EvangelismPage({ user, token, onBack, onPrayerWall, onOp
                 }}
               >
                 <span>✕</span>
-                {t("取消")}
+                取消
               </button>
               <button
                 onClick={handleDelete}
@@ -1039,7 +960,7 @@ export default function EvangelismPage({ user, token, onBack, onPrayerWall, onOp
                 }}
               >
                 <span>🗑️</span>
-                {t("删除")}
+                删除
               </button>
             </div>
           </div>
@@ -1051,11 +972,11 @@ export default function EvangelismPage({ user, token, onBack, onPrayerWall, onOp
       <div className="pw-list" ref={listRef} style={{ position: 'relative' }}>
         <div style={indicatorStyle}>{indicatorText}</div>
         {loading ? (
-          <div className="pw-loading">{t("加载中...")}</div>
+          <div className="pw-loading">加载中...</div>
         ) : error ? (
           <div className="pw-error">{error}</div>
         ) : items.length === 0 ? (
-          <div className="pw-empty">{t("还没有人提交传FY祷告")}<br />{t("点击右上角 + 开始祷告")}</div>
+          <div className="pw-empty">还没有人提交传FY祷告<br />点击右上角 + 开始祷告</div>
         ) : (
           <>
             {sortedWeeks.map(week => (
@@ -1080,7 +1001,7 @@ export default function EvangelismPage({ user, token, onBack, onPrayerWall, onOp
                               padding: '2px 6px',
                               borderRadius: '4px'
                             }}>
-                              {t("已删除")}
+                              已删除
                             </span>
                           )}
                         </div>
@@ -1093,7 +1014,7 @@ export default function EvangelismPage({ user, token, onBack, onPrayerWall, onOp
                             <>
                                 <button
                                   onClick={() => startEdit(prayer)}
-                                  title={t("编辑")}
+                                  title="编辑"
                                   style={{
                                     padding: '6px',
                                     background: 'rgba(255,255,255,0.08)',
@@ -1113,7 +1034,7 @@ export default function EvangelismPage({ user, token, onBack, onPrayerWall, onOp
                                 </button>
                                 <button
                                   onClick={() => confirmDelete(prayer.id)}
-                                  title={t("删除")}
+                                  title="删除"
                                   style={{
                                     padding: '6px',
                                     background: 'rgba(239,68,68,0.15)',
@@ -1137,7 +1058,7 @@ export default function EvangelismPage({ user, token, onBack, onPrayerWall, onOp
                               {user.email === 'zpclord@sina.com' && (
                                 <button
                                   onClick={() => handleRestore(prayer.id)}
-                                  title={t("恢复")}
+                                  title="恢复"
                                   style={{
                                     padding: '6px',
                                     background: 'rgba(34,197,94,0.15)',
@@ -1192,11 +1113,7 @@ export default function EvangelismPage({ user, token, onBack, onPrayerWall, onOp
                           {/* 语音输入按钮 */}
                           <button
                             type="button"
-                            onMouseDown={() => startRecording((text) => setEditDraft(prev => prev ? `${prev} ${text}` : text))}
-                            onMouseUp={stopRecording}
-                            onMouseLeave={() => { if (isRecording) stopRecording() }}
-                            onTouchStart={(e) => { e.preventDefault(); startRecording((text) => setEditDraft(prev => prev ? `${prev} ${text}` : text)) }}
-                            onTouchEnd={(e) => { e.preventDefault(); stopRecording() }}
+                            onClick={isRecording ? stopRecording : () => startRecording((text) => setEditDraft(prev => prev ? `${prev} ${text}` : text))}
                             disabled={submitting}
                             style={{
                               position: 'absolute',
@@ -1223,7 +1140,7 @@ export default function EvangelismPage({ user, token, onBack, onPrayerWall, onOp
                               transition: 'all 0.2s ease',
                               zIndex: 10,
                             }}
-                            title={isRecording ? t("松开发送") : t("按住说话")}
+                            title={isRecording ? '点击停止录音' : '点击开始语音输入'}
                           >
                             {isRecording ? '🔴' : '🎤'}
                           </button>
@@ -1254,7 +1171,7 @@ export default function EvangelismPage({ user, token, onBack, onPrayerWall, onOp
                               transition: 'all 0.2s ease',
                               zIndex: 10,
                             }}
-                            title={t("润色文字")}
+                            title="润色文字"
                           >
                             {isPolishing ? '✨' : '✏️'}
                           </button>
@@ -1288,7 +1205,7 @@ export default function EvangelismPage({ user, token, onBack, onPrayerWall, onOp
                             }}
                           >
                             <span>✕</span>
-                            {t("取消")}
+                            取消
                           </button>
                           <button
                             onClick={handleUpdate}
@@ -1308,12 +1225,12 @@ export default function EvangelismPage({ user, token, onBack, onPrayerWall, onOp
                             }}
                           >
                             <span>💾</span>
-                            {t("保存")}
+                            保存
                           </button>
                         </div>
                       </div>
                     ) : (
-                      <div className="pw-card-content" style={{ whiteSpace: 'pre-wrap', lineHeight: '1.7' }}><AutoText>{prayer.content}</AutoText></div>
+                      <div className="pw-card-content" style={{ whiteSpace: 'pre-wrap', lineHeight: '1.7' }}>{prayer.content}</div>
                     )}
                   </div>
                 ))}
@@ -1329,12 +1246,12 @@ export default function EvangelismPage({ user, token, onBack, onPrayerWall, onOp
                   {loadingMore ? (
                     <>
                       <span className="spinner" style={{ width: '14px', height: '14px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%', animation: 'spin 1s linear infinite', display: 'inline-block' }} />
-                      {t("加载中…")}
+                      加载中…
                     </>
                   ) : (
                     <>
                       <span>↓</span>
-                      {t("加载更多 (")}{total - items.length})
+                      加载更多 ({total - items.length})
                     </>
                   )}
                 </button>
@@ -1345,18 +1262,36 @@ export default function EvangelismPage({ user, token, onBack, onPrayerWall, onOp
       </div>
       )}
 
-      {/* 圣经地图：首页与宣教 tab 共用统一地图目录 */}
-      {subTab === 'map' && (
-        <BibleMapsPage
-          embedded
-          onOpenAtlas={onOpenPanel ? () => onOpenPanel('bible-atlas') : undefined}
-        />
-      )}
+      {/* 圣经地图：出埃及/保罗/耶路撒冷/支派与王国 */}
+      {subTab === 'map' && <BibleMapPage />}
 
       {/* 慕道班课程列表 */}
       {subTab === 'seekers' && <SeekersClassView />}
 
-      {/* 导出已统一收口到首页「📦 数据导出」 */}
+      {/* Export Bar */}
+      {subTab === 'fy' && !loading && !error && items.length > 0 && (
+        <div className="sj-export-bar">
+          <button className="sj-export-btn-bottom" onClick={() => exportAllPrayersToTxt(items)} title="导出TXT">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+              <polyline points="10 9 9 9 8 9"/>
+            </svg>
+            TXT
+          </button>
+          <button className="sj-export-btn-bottom" onClick={e => window.busyBtn(e, () => exportAllPrayersToPdf(items), "生成 PDF 中…", "✅ PDF 已导出")} title="导出PDF">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <path d="M9 15l3 3 3-3"/>
+              <path d="M12 18V9"/>
+            </svg>
+            PDF
+          </button>
+        </div>
+      )}
     </div>
   )
 }

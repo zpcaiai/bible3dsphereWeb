@@ -1,15 +1,10 @@
 import { seedTribes, seedEmpires } from './seed-territories'
 import { seedProphecies } from './seed-prophecies'
 import { seedCampaigns } from './seed-campaigns'
-import { seedEvents } from './seed-events'
-import { seedPeople } from './seed-people'
 import type { BibleGraph, GraphEdge, GraphNeighbors, GraphNode } from '../domain/types'
 
 function nationId(name: string): string {
   return `nation-${name.toLowerCase()}`
-}
-function placeId(name: string): string {
-  return `place-${name.toLowerCase().replace(/[^a-z0-9\u4e00-\u9fff]+/gi, '-').replace(/^-|-$/g, '')}`
 }
 
 const nodes: GraphNode[] = []
@@ -40,28 +35,6 @@ for (const c of seedCampaigns) {
     addNode({ id: cid, label: c.commanderZh, kind: 'commander' })
     edges.push({ source: c.id, target: cid, type: 'LED_BY' })
   }
-}
-
-// 人物 → 地点（抽取每个人物旅程的关键站点，避免图谱只有少量静态边）
-for (const p of seedPeople) {
-  addNode({ id: `person-${p.id}`, label: p.personZh, kind: 'person' })
-  for (const s of p.stops) {
-    const pid = placeId(s.name)
-    addNode({ id: pid, label: s.nameZh, kind: 'place' })
-    edges.push({ source: `person-${p.id}`, target: pid, type: 'TRAVELED_TO' })
-  }
-}
-
-// 士师事件 → 地点 / 士师人物
-for (const e of seedEvents) {
-  addNode({ id: e.id, label: e.titleZh, kind: 'event' })
-  if (e.locationName) {
-    const pid = placeId(e.locationName)
-    addNode({ id: pid, label: e.locationName, kind: 'place' })
-    edges.push({ source: e.id, target: pid, type: 'HAPPENED_AT' })
-  }
-  addNode({ id: `person-${e.id}`, label: e.titleZh, kind: 'person' })
-  edges.push({ source: e.id, target: `person-${e.id}`, type: 'FEATURES' })
 }
 
 // 帝国征服（教学示意）

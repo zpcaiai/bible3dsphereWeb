@@ -1,26 +1,3 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@media (max-width: 380px) {
-  .bm-detail-panel,
-  .bm-ai-panel {
-    padding: 0.75rem !important;
-  }
-  .bm-detail-panel h3,
-  .bm-ai-panel h3 {
-    font-size: 0.92rem !important;
-    line-height: 1.25 !important;
-  }
-  .bm-detail-panel p,
-  .bm-ai-panel p,
-  .bm-detail-panel li,
-  .bm-ai-panel button {
-    font-size: 0.78rem !important;
-    line-height: 1.45 !important;
-  }
-  .bm-detail-panel ol {
-    max-height: 42dvh;
-    overflow-y: auto;
-  }
-}

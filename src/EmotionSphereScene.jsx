@@ -5,7 +5,6 @@ import { Billboard, Html, OrbitControls, Stars, Text } from '@react-three/drei'
 import * as THREE from 'three'
 import { useEmotionStore } from './store'
 import TranslatableParagraph from './TranslatableParagraph'
-import { t, featureLabel, localizeEmotionName } from './i18n/runtime'
 
 const SPHERE_RADIUS = 4.18
 // Generate a visually distinct color for each of the 171 points
@@ -43,7 +42,7 @@ class SceneErrorBoundary extends Component {
         }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
             <span style={{ fontSize: 13, color: 'rgba(255,150,150,0.8)', fontWeight: 600 }}>
-              {t("⚠️ 3D 星球暂时无法渲染")}
+              ⚠️ 3D 星球暂时无法渲染
             </span>
             <button
               onClick={this.handleRetry}
@@ -53,11 +52,11 @@ class SceneErrorBoundary extends Component {
                 borderRadius: 20, color: 'rgba(255,255,255,0.7)', cursor: 'pointer',
               }}
             >
-              {t("重试 3D")}
+              重试 3D
             </button>
           </div>
           {/* 2D 情感节点列表降级视图 */}
-          <div style={{ fontSize: 12, color: 'rgba(180,180,255,0.6)', marginBottom: 10 }}>{t("以下是情感节点列表（2D 降级模式）：")}</div>
+          <div style={{ fontSize: 12, color: 'rgba(180,180,255,0.6)', marginBottom: 10 }}>以下是情感节点列表（2D 降级模式）：</div>
           <div style={{
             display: 'flex', flexWrap: 'wrap', gap: '6px',
             maxHeight: 200, overflowY: 'auto',
@@ -73,7 +72,7 @@ class SceneErrorBoundary extends Component {
                   whiteSpace: 'nowrap',
                 }}
               >
-                {featureLabel(item) || item.description?.slice(0, 18) || item.feature_key}
+                {item.label || item.description?.slice(0, 18) || item.feature_key}
               </button>
             ))}
           </div>
@@ -200,8 +199,10 @@ function InstancedPoints({ items, onHover, onSelect, selectedKey, hoveredKey }) 
 }
 
 function itemLabel(item) {
-  // EN 模式只显示英文情绪向量；ZH 模式显示「中文(English)」
-  return featureLabel(item, { withEn: true })
+  const zh = item.zh_label || ''
+  const en = item.short_en || item.source_keyword || ''
+  if (zh && en) return `${zh}(${en})`
+  return zh || en || ''
 }
 
 // ─── All Point Labels — 3D Text, always visible, uniform sphere coverage ──────
@@ -276,21 +277,21 @@ function VersePopover3D({
         <div className="vp-header">
           <span className="vp-key">
             {feature.zh_label
-              ? <>{featureLabel(feature)} <small style={{opacity:0.5, fontWeight:400}}>#{feature.feature_id}</small></>
+              ? <>{feature.zh_label} <small style={{opacity:0.5, fontWeight:400}}>#{feature.feature_id}</small></>
               : `${feature.layer}:${feature.feature_id}`}
           </span>
         </div>
         {isLoading && (
-          <div className="vp-loading">{t("沈思中…")}</div>
+          <div className="vp-loading">沈思中…</div>
         )}
 
         {sphereGuidance && (
           <div className="vp-section">
-            <div className="vp-section-title">{t("灵魂处境")}</div>
+            <div className="vp-section-title">灵魂处境</div>
             {sphereGuidance.core_emotions?.length > 0 && (
               <div className="vp-emotion-tags">
                 {sphereGuidance.core_emotions.map((e) => (
-                  <span key={e} className="vp-emotion-tag">{localizeEmotionName(e)}</span>
+                  <span key={e} className="vp-emotion-tag">{e}</span>
                 ))}
               </div>
             )}
@@ -298,15 +299,11 @@ function VersePopover3D({
               <TranslatableParagraph className="vp-body">{sphereGuidance.psychological_assessment}</TranslatableParagraph>
             )}
             {sphereGuidance.core_need && (
-              <TranslatableParagraph className="vp-core-need">{sphereGuidance.core_need}</TranslatableParagraph>
+              <div className="vp-core-need">{sphereGuidance.core_need}</div>
             )}
             {sphereGuidance.coping_suggestions?.length > 0 && (
               <ul className="vp-tips">
-                {sphereGuidance.coping_suggestions.map((s, i) => (
-                  <li key={i}>
-                    <TranslatableParagraph>{s}</TranslatableParagraph>
-                  </li>
-                ))}
+                {sphereGuidance.coping_suggestions.map((s, i) => <li key={i}>{s}</li>)}
               </ul>
             )}
             {sphereGuidance.spiritual_guidance && (
@@ -318,7 +315,7 @@ function VersePopover3D({
         {sphereBiblicalExample && (
           <div className="vp-section">
             <div className="vp-divider" />
-            <div className="vp-section-title">{t("圣经榜样")}</div>
+            <div className="vp-section-title">圣经榜样</div>
             <div className="vp-person-row">
               <strong>{sphereBiblicalExample.person}</strong>
               {sphereBiblicalExample.era && <span className="vp-era">{sphereBiblicalExample.era}</span>}
@@ -337,7 +334,7 @@ function VersePopover3D({
         {verses.length > 0 && (
           <div className="vp-section">
             <div className="vp-divider" />
-            <div className="vp-section-title vp-section-title-meditation">{t("默想经文")}</div>
+            <div className="vp-section-title vp-section-title-meditation">默想经文</div>
             <div className="vp-verses">
               {verses.map((v, vi) => (
                 <div key={v.pk_id ?? vi} className="vp-verse-wrapper">
@@ -353,9 +350,9 @@ function VersePopover3D({
                   </div>
                   {expandedVerseId === v.pk_id && (
                     <div className="vp-prayer-block">
-                      <div className="vp-prayer-label">{t("🙏 经文祷告")}</div>
+                      <div className="vp-prayer-label">🙏 经文祷告</div>
                       {versePrayerLoading === v.pk_id ? (
-                        <div className="vp-prayer-loading">{t("✨ 正在生成祷告...")}</div>
+                        <div className="vp-prayer-loading">✨ 正在生成祷告...</div>
                       ) : versePrayers?.[v.pk_id] ? (
                         <TranslatableParagraph className="vp-prayer-text">{versePrayers[v.pk_id]}</TranslatableParagraph>
                       ) : null}

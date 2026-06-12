@@ -1,4 +1,3 @@
-import { t } from './i18n/runtime'
 // MapScenes.jsx — 内联 SVG 插图场景库（离线、零依赖）
 // 每个地点据 point.scene 或关键词自动匹配一幅主题插图。
 // 用法：<MapScene scene={resolveScene(point, mapId)} color="#e8b04b" />
@@ -30,7 +29,7 @@ export function resolveScene(point, mapId) {
   if (mapId === 'seven-churches') return 'lampstand'
   const hay = [
     point?.name_zh || '',
-    point?.altar ? t("筑坛") : '',
+    point?.altar ? '筑坛' : '',
     point?.promise || '',
     ...(point?.events || []).flatMap(e => [e.title || '', e.summary || '']),
   ].join(' ')
@@ -39,10 +38,10 @@ export function resolveScene(point, mapId) {
 }
 
 export const SCENE_LABEL = {
-  altar: t("筑坛献祭"), temple: t("圣殿"), tablets: t("律法之约"), crown: t("君王"), scroll: t("书信"),
-  bush: t("荆棘火焰"), star: t("伯利恒之星"), cross: t("十字架"), tomb: t("空坟复活"), walls: t("城邑征战"),
-  sea: t("分海开路"), fire: t("云柱火柱"), serpent: t("铜蛇"), lampstand: t("七金灯台"), boat: t("航海宣教"),
-  well: t("活水之井"), manna: t("天降吗哪"), mountain: t("高山"), journey: t("旅程足迹"),
+  altar: '筑坛献祭', temple: '圣殿', tablets: '律法之约', crown: '君王', scroll: '书信',
+  bush: '荆棘火焰', star: '伯利恒之星', cross: '十字架', tomb: '空坟复活', walls: '城邑征战',
+  sea: '分海开路', fire: '云柱火柱', serpent: '铜蛇', lampstand: '七金灯台', boat: '航海宣教',
+  well: '活水之井', manna: '天降吗哪', mountain: '高山', journey: '旅程足迹',
 }
 
 // 每个场景：返回 <g> 内的图形。统一 viewBox 0 0 120 120，主色用 currentColor 由外层 stroke/fill 控制。

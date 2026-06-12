@@ -1,19 +1,14 @@
 /**
  * Tests for src/store.js — Zustand global state.
  */
-import { describe, it, expect, beforeEach, afterEach } from 'vitest'
-import { defaultLanguageFilter, useEmotionStore } from '../store'
-import { setRuntimeLang } from '../i18n/runtime'
+import { describe, it, expect, beforeEach } from 'vitest'
+import { useEmotionStore } from '../store'
 
 // Helper: read state snapshot without hooks (Zustand exposes .getState())
 const getState = () => useEmotionStore.getState()
 const setState = (fn) => useEmotionStore.setState(fn)
 
 describe('useEmotionStore — initial state', () => {
-  afterEach(() => {
-    setRuntimeLang('zh')
-  })
-
   it('starts with empty layout and history arrays', () => {
     const state = getState()
     expect(Array.isArray(state.layoutItems)).toBe(true)
@@ -24,14 +19,8 @@ describe('useEmotionStore — initial state', () => {
     expect(getState().selectedFeature).toBeNull()
   })
 
-  it('uses CUV as the default language filter in ZH mode', () => {
-    setRuntimeLang('zh')
-    expect(defaultLanguageFilter()).toBe('cuv')
-  })
-
-  it('uses ESV as the default language filter in EN mode', () => {
-    setRuntimeLang('en')
-    expect(defaultLanguageFilter()).toBe('esv')
+  it('starts with default language filter "cuv"', () => {
+    expect(getState().languageFilter).toBe('cuv')
   })
 
   it('starts with loading=false and empty error', () => {

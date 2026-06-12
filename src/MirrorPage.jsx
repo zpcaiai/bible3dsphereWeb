@@ -1,108 +1,43 @@
 import { useState, useMemo, useCallback, useRef } from 'react'
-import BackButton from './BackButton'
 import { useGlobalAudio, TTSButton as _TTSBtn, TTSFullBar as _TTSFullBar } from './useGlobalAudio.jsx'
 import { MIRROR_CHARACTERS, MIRROR_THEMES } from './mirrorData'
-import { emotionZhKey, getRuntimeLang, t } from './i18n/runtime'
-import { useAutoTranslate, requestTranslation } from './autoTranslate.jsx'
 import { saveJournal } from './api'
 import BibleMap from './BibleMap'
 import { CHARACTER_JOURNEYS, buildCharacterMapConfig } from './data/characterJourneys'
 
-const ERAS = ["全部", "族长时代", "出埃及时代", "士师时代", "进入迦南时代", "王国时代", "被掳归回时代", "新约时代", "教会时代"]
-const ROLES = ["全部", "主&救主", "族长", "君王", "先知", "祭司", "女性", "使徒", "其他"]
-const TYPES = ["全部", "正面榜样", "警戒为主", "混合型"]
-const TYPO_FILTER = ["全部", "有预表", "强预表", "中等预表", "弱预表/影子", "反衬预表"]
+const ERAS = ['全部', '族长时代', '出埃及时代', '士师时代', '进入迦南时代', '王国时代', '被掳归回时代', '新约时代', '教会时代']
+const ROLES = ['全部', '主&救主', '族长', '君王', '先知', '祭司', '女性', '使徒', '其他']
+const TYPES = ['全部', '正面榜样', '警戒为主', '混合型']
+const TYPO_FILTER = ['全部', '有预表', '强预表', '中等预表', '弱预表/影子', '反衬预表']
 const MOTIF_DEF = {
-  '最后的亚当·新人类元首': { id: 'last_adam', names: ["亚当","塞特","挪亚","闪","亚伯拉罕"] },
-  '女人的后裔·应许谱系': { id: 'seed_woman', names: ["夏娃","塞特","闪","亚伯拉罕","以撒","雅各","犹大","法勒斯","大卫","所罗巴伯"] },
-  '应许之子': { id: 'promised_son', names: ["以撒","雅各","犹大","法勒斯","大卫"] },
-  '受苦义人': { id: 'suffering_righteous', names: ["亚伯","约瑟","大卫","约伯","耶利米","拿伯","但以理","以赛亚"] },
-  '代替者': { id: 'substitute', names: ["以撒","犹大","波阿斯","摩西"] },
-  '先知': { id: 'prophet', names: ["摩西","撒母耳","以利亚","以利沙","以赛亚","耶利米","以西结","但以理","约拿"] },
-  '祭司': { id: 'priest', names: ["麦基洗德","亚伦","非尼哈","撒督","以斯拉","约书亚大祭司"] },
-  '君王': { id: 'king', names: ["麦基洗德","犹大","大卫","所罗门","希西家","约西亚","所罗巴伯","古列"] },
-  '牧者': { id: 'shepherd', names: ["雅各","摩西","大卫","阿摩司","以西结"] },
-  '拯救者': { id: 'savior', names: ["挪亚","摩西","约书亚","波阿斯","以斯帖","末底改","尼希米"] },
-  '圣殿与建造者': { id: 'temple_builder', names: ["比撒列","所罗门","所罗巴伯","以斯拉","尼希米","哈该","撒迦利亚"] },
-  '新郎': { id: 'bridegroom', names: ["亚当","以撒","波阿斯","何西阿","所罗门"] },
-  '亲属救赎者': { id: null, names: ["波阿斯"] },
-  '士师拯救者': { id: null, names: ["俄陀聂","以笏","底波拉","基甸","耶弗他","参孙"] },
-  '外邦蒙恩线索': { id: null, names: ["喇合","路得","撒勒法寡妇","乃缦","约拿"] },
-  '被掳归回重建者': { id: null, names: ["古列","所罗巴伯","以斯拉","尼希米"] },
-  '反面衬托': { id: null, negative: true, names: ["该隐","法老","可拉","巴兰","扫罗","耶罗波安","亚哈","耶洗别","哈曼"] },
+  '最后的亚当·新人类元首': { id: 'last_adam', names: ['亚当','塞特','挪亚','闪','亚伯拉罕'] },
+  '女人的后裔·应许谱系': { id: 'seed_woman', names: ['夏娃','塞特','闪','亚伯拉罕','以撒','雅各','犹大','法勒斯','大卫','所罗巴伯'] },
+  '应许之子': { id: 'promised_son', names: ['以撒','雅各','犹大','法勒斯','大卫'] },
+  '受苦义人': { id: 'suffering_righteous', names: ['亚伯','约瑟','大卫','约伯','耶利米','拿伯','但以理','以赛亚'] },
+  '代替者': { id: 'substitute', names: ['以撒','犹大','波阿斯','摩西'] },
+  '先知': { id: 'prophet', names: ['摩西','撒母耳','以利亚','以利沙','以赛亚','耶利米','以西结','但以理','约拿'] },
+  '祭司': { id: 'priest', names: ['麦基洗德','亚伦','非尼哈','撒督','以斯拉','约书亚大祭司'] },
+  '君王': { id: 'king', names: ['麦基洗德','犹大','大卫','所罗门','希西家','约西亚','所罗巴伯','古列'] },
+  '牧者': { id: 'shepherd', names: ['雅各','摩西','大卫','阿摩司','以西结'] },
+  '拯救者': { id: 'savior', names: ['挪亚','摩西','约书亚','波阿斯','以斯帖','末底改','尼希米'] },
+  '圣殿与建造者': { id: 'temple_builder', names: ['比撒列','所罗门','所罗巴伯','以斯拉','尼希米','哈该','撒迦利亚'] },
+  '新郎': { id: 'bridegroom', names: ['亚当','以撒','波阿斯','何西阿','所罗门'] },
+  '亲属救赎者': { id: null, names: ['波阿斯'] },
+  '士师拯救者': { id: null, names: ['俄陀聂','以笏','底波拉','基甸','耶弗他','参孙'] },
+  '外邦蒙恩线索': { id: null, names: ['喇合','路得','撒勒法寡妇','乃缦','约拿'] },
+  '被掳归回重建者': { id: null, names: ['古列','所罗巴伯','以斯拉','尼希米'] },
+  '反面衬托': { id: null, negative: true, names: ['该隐','法老','可拉','巴兰','扫罗','耶罗波安','亚哈','耶洗别','哈曼'] },
 }
-const MOTIF_FILTER = ["全部", ...Object.keys(MOTIF_DEF)]
-const MOTIF_FILTER_EN = {
-  '最后的亚当·新人类元首': 'Last Adam · head of new humanity',
-  '女人的后裔·应许谱系': "Woman's seed · promise line",
-  '应许之子': 'Child of promise',
-  '受苦义人': 'Suffering righteous one',
-  '代替者': 'Substitute',
-  '先知': 'Prophet',
-  '祭司': 'Priest',
-  '君王': 'King',
-  '牧者': 'Shepherd',
-  '拯救者': 'Savior',
-  '圣殿与建造者': 'Temple and builders',
-  '新郎': 'Bridegroom',
-  '亲属救赎者': 'Kinsman redeemer',
-  '士师拯救者': 'Judge-deliverers',
-  '外邦蒙恩线索': 'Gentiles receiving grace',
-  '被掳归回重建者': 'Exile-return rebuilders',
-  '反面衬托': 'Negative foil',
-}
+const MOTIF_FILTER = ['全部', ...Object.keys(MOTIF_DEF)]
 const TYPO_COLOR = { '极强预表': '#ffd60a', '强预表': '#ff9f0a', '中等预表': '#5ac8fa', '弱预表': '#98989d', '反面预表': '#ff6b6b' }
-const STRENGTH_LABEL = { explicit_nt: "新约明确指认", strong_canonical: "正典强预表", office_typology: "职分预表", narrative_pattern: "叙事结构预表", genealogical: "谱系性预表", weak_devotional: "灵修性影子", negative_contrast: "反面衬托" }
-const MOTIF_LABEL = { last_adam: "末后的亚当", seed_woman: "女人后裔·谱系", promised_son: "应许之子", suffering_righteous: "受苦义人", substitute: "代替者", prophet: "先知", priest: "祭司", king: "君王", shepherd: "牧者", savior: "拯救者", temple_builder: "圣殿建造者", bridegroom: "新郎" }
+const STRENGTH_LABEL = { explicit_nt: '新约明确指认', strong_canonical: '正典强预表', office_typology: '职分预表', narrative_pattern: '叙事结构预表', genealogical: '谱系性预表', weak_devotional: '灵修性影子', negative_contrast: '反面衬托' }
+const MOTIF_LABEL = { last_adam: '末后的亚当', seed_woman: '女人后裔·谱系', promised_son: '应许之子', suffering_righteous: '受苦义人', substitute: '代替者', prophet: '先知', priest: '祭司', king: '君王', shepherd: '牧者', savior: '拯救者', temple_builder: '圣殿建造者', bridegroom: '新郎' }
 
 const typeColor = { '正面榜样': '#34c759', '警戒为主': '#ff3b30', '混合型': '#ff9500' }
 const eraColor = {
   '族长时代': '#8e44ad', '出埃及时代': '#2980b9', '士师时代': '#16a085',
   '进入迦南时代': '#27ae60', '王国时代': '#d35400', '被掳归回时代': '#c0392b', '新约时代': '#1abc9c',
   '教会时代': '#7c5cff'
-}
-
-function hasChinese(text) {
-  return /[\u4e00-\u9fff]/.test(String(text || ''))
-}
-
-function mirrorText(value, fallback = '') {
-  const translated = t(value)
-  if (getRuntimeLang() === 'en' && translated === value && hasChinese(value)) {
-    return MOTIF_FILTER_EN[value] || fallback || ''
-  }
-  return translated
-}
-
-function characterName(char) {
-  return getRuntimeLang() === 'en' ? (char.en || char.name) : char.name
-}
-
-function characterSecondaryName(char) {
-  return getRuntimeLang() === 'en' ? char.name : char.en
-}
-
-// 收集某人物详情页全部可机翻文本（约15-20条），供「防抖单卡预热」用。
-function collectCharTexts(char) {
-  if (!char) return []
-  const out = []
-  const push = (v) => { if (typeof v === 'string' && v.trim()) out.push(v) }
-  push(char.lesson); push(char.summary); push(char.witness); push(char.prayer)
-  if (char.typology) push(char.typology.summary)
-  ;(char.follow || []).forEach(push)
-  ;(char.caution || []).forEach(push)
-  ;(char.applications || []).forEach(push)
-  ;(char.works || []).forEach(g => { push(g.group); (g.items || []).forEach(push) })
-  if (char.type === "警戒") {
-    push(`以${char.name}为警戒，今天我立志：`)
-    push(`例：不像${char.name}那样，当面对试探时，我要警醒祷告，远离罪...`)
-  } else {
-    push(char.type === "混合"
-      ? `效法${char.name}的长处、以其失败为警戒，今天我立志：`
-      : `效法${char.name}，今天我立志：`)
-    push(`例：像${char.name}一样，当面对恐惧时，我要先求问神，再行动...`)
-  }
-  return out
 }
 
 const BOOK_MAP = {
@@ -119,40 +54,6 @@ const BOOK_MAP = {
   '约三':'3jn','犹':'jud','启':'rev'
 }
 
-// 全名 + 别名 → 代码：补充缩写表，修复 Read-through 打开 bible「无法识别书卷名」
-// （数据里混有全名如「马太福音/诗篇/使徒行传」及带前缀引用如「持守：赛」「用约一」「主，弥迦」）
-const BOOK_NAME_TO_CODE = {
-  ...BOOK_MAP,
-  '创世记':'gen','出埃及记':'exo','利未记':'lev','民数记':'num','申命记':'deu',
-  '约书亚记':'jos','士师记':'jdg','路得记':'rut','撒母耳记上':'1sa','撒母耳记下':'2sa',
-  '列王纪上':'1ki','列王纪下':'2ki','历代志上':'1ch','历代志下':'2ch','以斯拉记':'ezr',
-  '尼希米记':'neh','以斯帖记':'est','约伯记':'job','诗篇':'psa','箴言':'pro','传道书':'ecc',
-  '雅歌':'sng','以赛亚书':'isa','耶利米书':'jer','耶利米哀歌':'lam','哀歌':'lam','以西结书':'eze',
-  '但以理书':'dan','何西阿书':'hos','约珥书':'joe','阿摩司书':'amo','俄巴底亚书':'oba',
-  '约拿书':'jon','弥迦书':'mic','弥迦':'mic','那鸿书':'nah','哈巴谷书':'hab','西番雅书':'zep',
-  '哈该书':'hag','撒迦利亚书':'zec','玛拉基书':'mal',
-  '马太福音':'mat','马可福音':'mrk','路加福音':'luk','约翰福音':'jhn','使徒行传':'act',
-  '罗马书':'rom','哥林多前书':'1co','哥林多后书':'2co','加拉太书':'gal','以弗所书':'eph',
-  '腓立比书':'php','歌罗西书':'col','帖撒罗尼迦前书':'1th','帖撒罗尼迦后书':'2th',
-  '提摩太前书':'1ti','提摩太后书':'2ti','提多书':'tit','腓利门书':'phm','希伯来书':'heb',
-  '雅各书':'jas','彼得前书':'1pe','彼得后书':'2pe',
-  '约翰一书':'1jn','约翰二书':'2jn','约翰三书':'3jn','约翰壹书':'1jn','约翰贰书':'2jn','约翰叁书':'3jn',
-  '犹大书':'jud','启示录':'rev',
-}
-// 长键优先，便于「最长结尾匹配」正确区分 约一/约、撒上/撒 等
-const BOOK_KEYS_DESC = Object.keys(BOOK_NAME_TO_CODE).sort((a, b) => b.length - a.length)
-
-// 健壮解析书卷码：先精确，再「该书卷名部分以之结尾的最长已知书卷名」(剥离前缀杂字)
-function resolveBookCode(bookPart) {
-  if (!bookPart) return null
-  const sBook = String(bookPart).replace(/\s/g, '')
-  if (BOOK_NAME_TO_CODE[sBook]) return BOOK_NAME_TO_CODE[sBook]
-  for (const k of BOOK_KEYS_DESC) {
-    if (sBook.endsWith(k)) return BOOK_NAME_TO_CODE[k]
-  }
-  return null
-}
-
 function toWdBibleUrl(ref) {
   const cleaned = ref.trim()
   const match = cleaned.match(/^([^\d]+)(\d+)(?:[:：](\d+)(?:[–\-](\d+))?)?/)
@@ -160,7 +61,7 @@ function toWdBibleUrl(ref) {
   const bookZh = match[1].trim()
   const chapter = match[2]
   const verse = match[3]
-  const bookCode = resolveBookCode(bookZh)
+  const bookCode = BOOK_MAP[bookZh]
   if (!bookCode) return `https://wd.bible/bible`
   if (verse) return `https://wd.bible/verse/${bookCode}.${chapter}.${verse}.cunps`
   return `https://wd.bible/${bookCode}.${chapter}.cunps`
@@ -173,7 +74,7 @@ function toVerseProxyUrl(ref) {
   const bookZh = match[1].trim()
   const chapter = match[2]
   const verse = match[3]
-  const bookCode = resolveBookCode(bookZh)
+  const bookCode = BOOK_MAP[bookZh]
   if (!bookCode || !verse) return null
   return `/wdbible/verse/${bookCode}.${chapter}.${verse}.cunps`
 }
@@ -228,20 +129,7 @@ function CharacterAvatar({ name, en, size = 56 }) {
 }
 
 function CharacterCard({ char, onClick }) {
-  useAutoTranslate([])
-  const prewarmTimer = useRef(null)
-  // 防抖单卡预热：指针在某卡停留 >200ms 才翻译这一张详情(约15-20条)，离开即取消。
-  // 绝不在 grid 扫动/滚动时批量触发——避免一次性灌爆 /api/translate-batch(上次全EN崩的原因)。
-  const schedulePrewarm = () => {
-    if (getRuntimeLang() !== 'en') return
-    clearTimeout(prewarmTimer.current)
-    prewarmTimer.current = setTimeout(() => {
-      collectCharTexts(char).forEach(requestTranslation)
-    }, 200)
-  }
-  const cancelPrewarm = () => clearTimeout(prewarmTimer.current)
-  const typeTag = char.tags.find(tag => ["正面榜样","警戒为主","混合型"].includes(tag)) || char.type
-  const lessonText = char.lesson ? t(char.lesson) : ""
+  const typeTag = char.tags.find(t => ['正面榜样','警戒为主','混合型'].includes(t)) || char.type
   return (
     <div onClick={() => onClick(char)} style={{
       background: 'rgba(255,255,255,0.06)', borderRadius: 14,
@@ -249,37 +137,35 @@ function CharacterCard({ char, onClick }) {
       display: 'flex', flexDirection: 'column', gap: 10,
       border: '1px solid rgba(255,255,255,0.08)'
     }}
-      onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.11)'; schedulePrewarm() }}
-      onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; cancelPrewarm() }}
+      onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.11)'}
+      onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.06)'}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
         <CharacterAvatar name={char.name} en={char.en} />
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontWeight: 700, fontSize: 16, color: '#fff' }}>{characterName(char)}</div>
-          <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)', marginTop: 2 }}>{characterSecondaryName(char)}</div>
+          <div style={{ fontWeight: 700, fontSize: 16, color: '#fff' }}>{char.name}</div>
+          <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)', marginTop: 2 }}>{char.en}</div>
         </div>
       </div>
-      {lessonText && (
-        <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', lineHeight: 1.5 }}>
-          {lessonText}
-        </div>
-      )}
+      <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', lineHeight: 1.5 }}>
+        「{char.lesson}」
+      </div>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
         <span style={{ fontSize: 11, padding: '2px 8px', borderRadius: 20,
           background: (eraColor[char.era] || '#555') + '33',
           color: eraColor[char.era] || '#aaa', border: `1px solid ${eraColor[char.era] || '#555'}55` }}>
-          {mirrorText(char.era)}
+          {char.era}
         </span>
         <span style={{ fontSize: 11, padding: '2px 8px', borderRadius: 20,
           background: (typeColor[typeTag] || '#888') + '22',
           color: typeColor[typeTag] || '#aaa', border: `1px solid ${typeColor[typeTag] || '#888'}44` }}>
-          {mirrorText(typeTag)}
+          {typeTag}
         </span>
         {char.kingdom && (
           <span style={{ fontSize: 11, padding: '2px 8px', borderRadius: 20,
             background: 'rgba(255,214,10,0.12)', color: '#ffd60a',
             border: '1px solid rgba(255,214,10,0.3)' }}>
-            {mirrorText(char.kingdom)}
+            {char.kingdom}
           </span>
         )}
         {char.typology && (
@@ -287,7 +173,7 @@ function CharacterCard({ char, onClick }) {
             background: (TYPO_COLOR[char.typology.level] || '#888') + '22',
             color: TYPO_COLOR[char.typology.level] || '#aaa',
             border: `1px solid ${TYPO_COLOR[char.typology.level] || '#888'}44` }}>
-            ✝ {mirrorText(char.typology.level)}
+            ✝ {char.typology.level}
           </span>
         )}
       </div>
@@ -302,7 +188,7 @@ function BulletList({ items, color }) {
       {items.map((item, i) => (
         <li key={i} style={{ display: 'flex', gap: 8, marginBottom: 8, alignItems: 'flex-start' }}>
           <span style={{ color: color || '#fff', flexShrink: 0, marginTop: 2 }}>•</span>
-          <span style={{ color: 'rgba(255,255,255,0.78)', fontSize: 14, lineHeight: 1.65 }}>{t(item)}</span>
+          <span style={{ color: 'rgba(255,255,255,0.78)', fontSize: 14, lineHeight: 1.65 }}>{item}</span>
         </li>
       ))}
     </ul>
@@ -314,7 +200,6 @@ function ScriptureChip({ scripture: refStr, color = '#5ac8fa', bg = 'rgba(0,122,
   const [loading, setLoading] = useState(false)
   const [expanded, setExpanded] = useState(false)
   const [open, setOpen] = useState(false)
-  useAutoTranslate([])
 
   const handleClick = useCallback(async (e) => {
     e.preventDefault()
@@ -347,24 +232,24 @@ function ScriptureChip({ scripture: refStr, color = '#5ac8fa', bg = 'rgba(0,122,
           fontSize: 13, color: 'rgba(255,255,255,0.88)', lineHeight: 1.75,
           maxWidth: 480 }}>
           {loading ? (
-            <span style={{ color: 'rgba(255,255,255,0.4)' }}>{t("加载中…")}</span>
+            <span style={{ color: 'rgba(255,255,255,0.4)' }}>加载中…</span>
           ) : text ? (
             <>
               <span>{displayText}</span>
               {isLong && (
                 <span onClick={() => setExpanded(e => !e)}
                   style={{ color, cursor: 'pointer', marginLeft: 6, fontSize: 12 }}>
-                  {expanded ? t("收起") : t("展开")}
+                  {expanded ? '收起' : '展开'}
                 </span>
               )}
               <a href={toWdBibleUrl(refStr)} target="_blank" rel="noopener noreferrer"
                 style={{ display: 'block', marginTop: 6, fontSize: 11,
                   color: 'rgba(255,255,255,0.35)', textDecoration: 'none' }}>
-                {t("新标点和合本 · 在 wd.bible 查看 ↗")}
+                新标点和合本 · 在 wd.bible 查看 ↗
               </a>
             </>
           ) : (
-            <span style={{ color: 'rgba(255,255,255,0.4)' }}>{t("点击上方链接在 wd.bible 查看 ↗")}</span>
+            <span style={{ color: 'rgba(255,255,255,0.4)' }}>点击上方链接在 wd.bible 查看 ↗</span>
           )}
         </div>
       )}
@@ -383,8 +268,6 @@ function ScriptureChipList({ refs, color, bg, border }) {
 
 function CollapsibleText({ text, limit = 100, color }) {
   const [expanded, setExpanded] = useState(false)
-  useAutoTranslate([])
-  text = t(text)
   const isLong = text && text.length > limit
   const displayed = isLong && !expanded ? text.slice(0, limit) + '…' : text
   return (
@@ -393,7 +276,7 @@ function CollapsibleText({ text, limit = 100, color }) {
       {isLong && (
         <span onClick={() => setExpanded(e => !e)}
           style={{ color: '#5ac8fa', cursor: 'pointer', marginLeft: 4, fontSize: 12, userSelect: 'none' }}>
-          {expanded ? t("收起") : t("展开")}
+          {expanded ? '收起' : '展开'}
         </span>
       )}
     </span>
@@ -430,7 +313,6 @@ function CharacterDetail({ char, onBack, user, token }) {
   const [commitmentSaved, setCommitmentSaved] = useState(false)
   const [showMap, setShowMap] = useState(false)
   const journey = CHARACTER_JOURNEYS[char.name]
-  useAutoTranslate([])
 
   async function handleSaveCommitment() {
     if (!commitment.trim() || !user) return
@@ -439,7 +321,7 @@ function CharacterDetail({ char, onBack, user, token }) {
       const today = new Date().toISOString().slice(0, 10)
       await saveJournal({
         date: today,
-        title: char.type === "警戒" ? `以${char.name}为警戒的立志` : char.type === "混合" ? `从${char.name}身上学习的立志` : `效法${char.name}的立志`,
+        title: char.type === '警戒' ? `以${char.name}为警戒的立志` : char.type === '混合' ? `从${char.name}身上学习的立志` : `效法${char.name}的立志`,
         scripture: char.scriptures?.slice(0, 2).join('；') || '',
         observation: `圣经人物：${char.name}（${char.en}）\n\n${char.summary || ''}`,
         reflection: char.lesson || '',
@@ -458,27 +340,30 @@ function CharacterDetail({ char, onBack, user, token }) {
   }
   return (
     <div style={{ padding: '0 0 40px' }}>
-      <BackButton onClick={onBack} style={{ marginBottom: 24 }} />
+      <button onClick={onBack} style={{
+        background: 'rgba(255,255,255,0.1)', border: 'none', borderRadius: 8,
+        color: '#fff', padding: '8px 16px', cursor: 'pointer', fontSize: 14, marginBottom: 24
+      }}>← 返回列表</button>
 
       {/* TTS */}
-      <_TTSFullBar buildText={() => buildCharSpeechText(char)} label={t("整体朗读")} />
+      <_TTSFullBar buildText={() => buildCharSpeechText(char)} label="整体朗读" />
 
       {/* Header */}
       <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap', marginBottom: 28, alignItems: 'center' }}>
         <CharacterAvatar name={char.name} en={char.en} size={80} />
         <div>
-          <h2 style={{ margin: 0, fontSize: 26, color: '#fff' }}>{characterName(char)}</h2>
-          <div style={{ color: 'rgba(255,255,255,0.45)', fontSize: 14, marginTop: 2 }}>{characterSecondaryName(char)}</div>
+          <h2 style={{ margin: 0, fontSize: 26, color: '#fff' }}>{char.name}</h2>
+          <div style={{ color: 'rgba(255,255,255,0.45)', fontSize: 14, marginTop: 2 }}>{char.en}</div>
           <div style={{ display: 'flex', gap: 8, marginTop: 10, flexWrap: 'wrap' }}>
-            {char.tags.map(tag => (
-              <span key={tag} style={{ fontSize: 11, padding: '2px 10px', borderRadius: 20,
-                background: (typeColor[tag] || eraColor[char.era] || '#555') + '33',
-                color: typeColor[tag] || eraColor[char.era] || '#ccc',
-                border: `1px solid ${typeColor[tag] || eraColor[char.era] || '#555'}55` }}>{mirrorText(tag)}</span>
+            {char.tags.map(t => (
+              <span key={t} style={{ fontSize: 11, padding: '2px 10px', borderRadius: 20,
+                background: (typeColor[t] || eraColor[char.era] || '#555') + '33',
+                color: typeColor[t] || eraColor[char.era] || '#ccc',
+                border: `1px solid ${typeColor[t] || eraColor[char.era] || '#555'}55` }}>{t}</span>
             ))}
             <span style={{ fontSize: 11, padding: '2px 10px', borderRadius: 20,
               background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.4)' }}>
-              {mirrorText(char.era)} · {char.ref}
+              {char.era} · {char.ref}
             </span>
           </div>
         </div>
@@ -487,15 +372,15 @@ function CharacterDetail({ char, onBack, user, token }) {
       {/* 1. 人物简介 */}
       <div style={sectionStyle}>
         <div style={{ ...sectionTitle, display: 'flex', alignItems: 'center', gap: 6 }}>
-          {t("📖 人物简介")} <_TTSBtn text={`人物简介：${char.summary}`} />
+          📖 人物简介 <_TTSBtn text={`人物简介：${char.summary}`} />
         </div>
-        <div style={{ color: 'rgba(255,255,255,0.75)', fontSize: 14, lineHeight: 1.7 }}>{t(char.summary)}</div>
+        <div style={{ color: 'rgba(255,255,255,0.75)', fontSize: 14, lineHeight: 1.7 }}>{char.summary}</div>
       </div>
 
       {/* 2. 信靠神的核心见证 */}
       {char.witness && (
         <div style={{ ...sectionStyle, borderLeft: '3px solid #ffd60a', background: 'rgba(255,214,10,0.06)' }}>
-          <div style={{ ...sectionTitle, color: '#ffd60a', display: 'flex', alignItems: 'center', gap: 6 }}>{t("⭐ 信靠神的核心见证")} <_TTSBtn text={`信靠神的核心见证：${char.witness}`} /></div>
+          <div style={{ ...sectionTitle, color: '#ffd60a', display: 'flex', alignItems: 'center', gap: 6 }}>⭐ 信靠神的核心见证 <_TTSBtn text={`信靠神的核心见证：${char.witness}`} /></div>
           <CollapsibleText text={char.witness} limit={100} color="rgba(255,255,255,0.82)" />
         </div>
       )}
@@ -504,16 +389,16 @@ function CharacterDetail({ char, onBack, user, token }) {
       {char.typology && (
         <div style={{ ...sectionStyle, background: 'rgba(255,214,10,0.05)', border: '1px solid rgba(255,214,10,0.18)' }}>
           <div style={{ ...sectionTitle, color: '#e8b04b', display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-            {t("✝️ 基督预表")}
+            ✝️ 基督预表
             <span style={{ fontSize: 11, padding: '2px 8px', borderRadius: 20,
               background: (TYPO_COLOR[char.typology.level] || '#888') + '26',
               color: TYPO_COLOR[char.typology.level] || '#aaa',
               border: `1px solid ${TYPO_COLOR[char.typology.level] || '#888'}55`, fontWeight: 600 }}>
-              {mirrorText(char.typology.level)}
+              {char.typology.level}
             </span>
             {char.typology.strength && (
               <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.45)', fontWeight: 400 }}>
-                {mirrorText(STRENGTH_LABEL[char.typology.strength] || char.typology.strength)}
+                {STRENGTH_LABEL[char.typology.strength] || char.typology.strength}
               </span>
             )}
             <_TTSBtn text={`基督预表：${char.typology.summary}`} />
@@ -524,7 +409,7 @@ function CharacterDetail({ char, onBack, user, token }) {
                 <span key={m} style={{ fontSize: 11, padding: '2px 8px', borderRadius: 20,
                   background: 'rgba(192,132,252,0.13)', color: '#c084fc',
                   border: '1px solid rgba(192,132,252,0.35)' }}>
-                  {mirrorText(MOTIF_LABEL[m] || m)}
+                  {MOTIF_LABEL[m] || m}
                 </span>
               ))}
             </div>
@@ -541,15 +426,15 @@ function CharacterDetail({ char, onBack, user, token }) {
       {/* 三一真神的作为（按位格分组；此条不列效法点）*/}
       {Array.isArray(char.works) && char.works.length > 0 && (
         <div style={{ ...sectionStyle, borderLeft: '3px solid #c084fc', background: 'rgba(192,132,252,0.06)' }}>
-          <div style={{ ...sectionTitle, color: '#c084fc', display: 'flex', alignItems: 'center', gap: 6 }}>{t("✨ 三一真神的作为")} <_TTSBtn text={char.works.map(g => `${g.group}。${g.items.join('。')}`).join('。')} /></div>
+          <div style={{ ...sectionTitle, color: '#c084fc', display: 'flex', alignItems: 'center', gap: 6 }}>✨ 三一真神的作为 <_TTSBtn text={char.works.map(g => `${g.group}。${g.items.join('。')}`).join('。')} /></div>
           {char.works.map((g, gi) => (
             <div key={gi} style={{ marginBottom: gi < char.works.length - 1 ? 16 : 0 }}>
-              <div style={{ fontSize: 14, fontWeight: 700, color: '#c084fc', margin: '4px 0 8px' }}>{t(g.group)}</div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: '#c084fc', margin: '4px 0 8px' }}>{g.group}</div>
               <ul style={{ margin: 0, padding: '0 0 0 4px', listStyle: 'none' }}>
                 {g.items.map((item, ii) => (
                   <li key={ii} style={{ display: 'flex', gap: 8, marginBottom: 8, alignItems: 'flex-start' }}>
                     <span style={{ color: '#c084fc', flexShrink: 0, marginTop: 2 }}>•</span>
-                    <span style={{ color: 'rgba(255,255,255,0.82)', fontSize: 14, lineHeight: 1.7 }}>{t(item)}</span>
+                    <span style={{ color: 'rgba(255,255,255,0.82)', fontSize: 14, lineHeight: 1.7 }}>{item}</span>
                   </li>
                 ))}
               </ul>
@@ -561,7 +446,7 @@ function CharacterDetail({ char, onBack, user, token }) {
       {/* 3. 可效法的点 */}
       {char.follow && char.follow.length > 0 && (
         <div style={sectionStyle}>
-          <div style={{ ...sectionTitle, color: '#34c759', display: 'flex', alignItems: 'center', gap: 6 }}>{t("✅ 可效法的点")} <_TTSBtn text={char.follow?.join('。')} /></div>
+          <div style={{ ...sectionTitle, color: '#34c759', display: 'flex', alignItems: 'center', gap: 6 }}>✅ 可效法的点 <_TTSBtn text={char.follow?.join('。')} /></div>
           <ul style={{ margin: 0, padding: '0 0 0 4px', listStyle: 'none' }}>
             {char.follow.map((item, i) => {
               const refForItem = char.scriptures && char.scriptures[i]
@@ -569,7 +454,7 @@ function CharacterDetail({ char, onBack, user, token }) {
                 <li key={i} style={{ display: 'flex', gap: 8, marginBottom: 12, alignItems: 'flex-start', flexWrap: 'wrap' }}>
                   <span style={{ color: '#34c759', flexShrink: 0, marginTop: 2 }}>•</span>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 6, flex: 1 }}>
-                    <span style={{ color: 'rgba(255,255,255,0.85)', fontSize: 14, lineHeight: 1.65 }}>{t(item)}</span>
+                    <span style={{ color: 'rgba(255,255,255,0.85)', fontSize: 14, lineHeight: 1.65 }}>{item}</span>
                     {refForItem && (
                       <ScriptureChip scripture={refForItem}
                         color="#34c759" bg="rgba(52,199,89,0.12)" border="rgba(52,199,89,0.3)" />
@@ -585,7 +470,7 @@ function CharacterDetail({ char, onBack, user, token }) {
       {/* 4. 需要警戒的点 */}
       {char.caution && char.caution.length > 0 && (
         <div style={{ ...sectionStyle, background: 'rgba(255,59,48,0.06)' }}>
-          <div style={{ ...sectionTitle, color: '#ff6b6b', display: 'flex', alignItems: 'center', gap: 6 }}>{t("⚠️ 需要警戒的点")} <_TTSBtn text={char.caution?.join('。')} /></div>
+          <div style={{ ...sectionTitle, color: '#ff6b6b', display: 'flex', alignItems: 'center', gap: 6 }}>⚠️ 需要警戒的点 <_TTSBtn text={char.caution?.join('。')} /></div>
           <ul style={{ margin: 0, padding: '0 0 0 4px', listStyle: 'none' }}>
             {char.caution.map((item, i) => {
               const refForItem = char.scriptures && char.scriptures[(char.follow?.length || 0) + i]
@@ -593,7 +478,7 @@ function CharacterDetail({ char, onBack, user, token }) {
                 <li key={i} style={{ display: 'flex', gap: 8, marginBottom: 12, alignItems: 'flex-start', flexWrap: 'wrap' }}>
                   <span style={{ color: '#ff6b6b', flexShrink: 0, marginTop: 2 }}>•</span>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 6, flex: 1 }}>
-                    <span style={{ color: 'rgba(255,255,255,0.78)', fontSize: 14, lineHeight: 1.65 }}>{t(item)}</span>
+                    <span style={{ color: 'rgba(255,255,255,0.78)', fontSize: 14, lineHeight: 1.65 }}>{item}</span>
                     {refForItem && (
                       <ScriptureChip scripture={refForItem}
                         color="#ff6b6b" bg="rgba(255,59,48,0.12)" border="rgba(255,59,48,0.3)" />
@@ -609,14 +494,14 @@ function CharacterDetail({ char, onBack, user, token }) {
       {/* 5. 今日实际应用 */}
       {char.applications && char.applications.length > 0 && (
         <div style={{ ...sectionStyle, background: 'rgba(90,200,250,0.06)' }}>
-          <div style={{ ...sectionTitle, color: '#5ac8fa', display: 'flex', alignItems: 'center', gap: 6 }}>{t("🌱 今日实际应用")} <_TTSBtn text={char.applications?.join('。')} /></div>
+          <div style={{ ...sectionTitle, color: '#5ac8fa', display: 'flex', alignItems: 'center', gap: 6 }}>🌱 今日实际应用 <_TTSBtn text={char.applications?.join('。')} /></div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {char.applications.map((app, i) => (
               <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
                 <span style={{ width: 22, height: 22, borderRadius: '50%', background: 'rgba(90,200,250,0.25)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   fontSize: 11, fontWeight: 700, color: '#5ac8fa', flexShrink: 0, marginTop: 1 }}>{i+1}</span>
-                <span style={{ color: 'rgba(255,255,255,0.78)', fontSize: 14, lineHeight: 1.65 }}>{t(app)}</span>
+                <span style={{ color: 'rgba(255,255,255,0.78)', fontSize: 14, lineHeight: 1.65 }}>{app}</span>
               </div>
             ))}
           </div>
@@ -626,7 +511,7 @@ function CharacterDetail({ char, onBack, user, token }) {
       {/* 6. 相关经文 */}
       {char.scriptures && char.scriptures.length > 0 && (
         <div style={sectionStyle}>
-          <div style={{ ...sectionTitle, color: '#5ac8fa' }}>{t("📜 相关经文（点击展开和合本）")}</div>
+          <div style={{ ...sectionTitle, color: '#5ac8fa' }}>📜 相关经文（点击展开和合本）</div>
           <ScriptureChipList refs={char.scriptures} />
         </div>
       )}
@@ -634,13 +519,13 @@ function CharacterDetail({ char, onBack, user, token }) {
       {/* 生平活动轨迹地图 */}
       {journey && journey.stops && journey.stops.length > 0 && (
         <div style={sectionStyle}>
-          <div style={{ ...sectionTitle, color: '#e8b04b' }}>{t("🗺️ 生平活动轨迹")}</div>
+          <div style={{ ...sectionTitle, color: '#e8b04b' }}>🗺️ 生平活动轨迹</div>
           <button onClick={() => setShowMap(true)}
             style={{ width: '100%', padding: '13px 12px', background: 'rgba(232,176,75,0.13)',
               border: '1px solid rgba(232,176,75,0.42)', borderRadius: 10, color: '#e8b04b',
               fontSize: 14, fontWeight: 700, cursor: 'pointer', display: 'flex',
               alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-            {t("🗺️ 点开地图 · 跟随")}{characterName(char)}{t("的脚踪（")}{journey.stops.length}{t("站）")}
+            🗺️ 点开地图 · 跟随{char.name}的脚踪（{journey.stops.length}站）
           </button>
         </div>
       )}
@@ -653,25 +538,25 @@ function CharacterDetail({ char, onBack, user, token }) {
 
       {/* 7. 祷告指引 */}
       <div style={{ ...sectionStyle, background: 'rgba(0,122,255,0.06)' }}>
-        <div style={{ ...sectionTitle, color: '#007aff', display: 'flex', alignItems: 'center', gap: 6 }}>{t("🙏 祷告指引")} <_TTSBtn text={`祷告指引：${char.prayer}`} /></div>
+        <div style={{ ...sectionTitle, color: '#007aff', display: 'flex', alignItems: 'center', gap: 6 }}>🙏 祷告指引 <_TTSBtn text={`祷告指引：${char.prayer}`} /></div>
         <div style={{ ...quoteStyle, borderLeftColor: '#007aff', background: 'rgba(0,122,255,0.05)',
           padding: '12px 14px', borderRadius: '0 8px 8px 0' }}>
-          {t(char.prayer)}
+          {char.prayer}
         </div>
       </div>
 
       {/* 8. 立志输入框 */}
       <div style={{ ...sectionStyle, background: 'rgba(52,199,89,0.05)', border: '1px solid rgba(52,199,89,0.2)' }}>
-        <div style={{ ...sectionTitle, color: '#34c759' }}>{t("✍️ 我的立志")}</div>
+        <div style={{ ...sectionTitle, color: '#34c759' }}>✍️ 我的立志</div>
         <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', marginBottom: 10 }}>
-          {char.type === "警戒" ? t(`以${char.name}为警戒，今天我立志：`)
-            : char.type === "混合" ? t(`效法${char.name}的长处、以其失败为警戒，今天我立志：`)
-            : t(`效法${char.name}，今天我立志：`)}
+          {char.type === '警戒' ? `以${char.name}为警戒，今天我立志：`
+            : char.type === '混合' ? `效法${char.name}的长处、以其失败为警戒，今天我立志：`
+            : `效法${char.name}，今天我立志：`}
         </div>
         <textarea
           value={commitment}
           onChange={e => setCommitment(e.target.value)}
-          placeholder={char.type === "警戒" ? t(`例：不像${char.name}那样，当面对试探时，我要警醒祷告，远离罪...`) : t(`例：像${char.name}一样，当面对恐惧时，我要先求问神，再行动...`)}
+          placeholder={char.type === '警戒' ? `例：不像${char.name}那样，当面对试探时，我要警醒祷告，远离罪...` : `例：像${char.name}一样，当面对恐惧时，我要先求问神，再行动...`}
           style={{
             width: '100%', minHeight: 80, background: 'rgba(255,255,255,0.07)',
             border: '1px solid rgba(52,199,89,0.3)', borderRadius: 8, color: '#fff',
@@ -680,7 +565,7 @@ function CharacterDetail({ char, onBack, user, token }) {
           }}
         />
         <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 10, gap: 8, alignItems: 'center' }}>
-          {commitmentSaved && <span style={{ fontSize: 12, color: '#34c759' }}>{t("✅ 已存入灵修日记")}</span>}
+          {commitmentSaved && <span style={{ fontSize: 12, color: '#34c759' }}>✅ 已存入灵修日记</span>}
           {user ? (
             <button
               onClick={handleSaveCommitment}
@@ -691,10 +576,10 @@ function CharacterDetail({ char, onBack, user, token }) {
                 padding: '7px 16px', cursor: 'pointer',
               }}
             >
-              {savingCommitment ? t("保存中...") : t("📔 存入灵修日记")}
+              {savingCommitment ? '保存中...' : '📔 存入灵修日记'}
             </button>
           ) : (
-            <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)' }}>{t("登录后可保存立志")}</span>
+            <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)' }}>登录后可保存立志</span>
           )}
         </div>
       </div>
@@ -716,39 +601,41 @@ function Section({ title, children }) {
 }
 
 function ThemeDetail({ theme, characters, onBack, onCharClick }) {
-  useAutoTranslate([])
   const themeChars = characters.filter(c => theme.characterIds.includes(c.id))
   return (
     <div style={{ padding: '0 0 40px' }}>
-      <BackButton onClick={onBack} style={{ marginBottom: 24 }} />
+      <button onClick={onBack} style={{
+        background: 'rgba(255,255,255,0.1)', border: 'none', borderRadius: 8,
+        color: '#fff', padding: '8px 16px', cursor: 'pointer', fontSize: 14, marginBottom: 24
+      }}>← 返回主题</button>
 
       <div style={{ textAlign: 'center', marginBottom: 28 }}>
         <div style={{ fontSize: 48, marginBottom: 8 }}>{theme.emoji}</div>
-        <h2 style={{ margin: 0, fontSize: 26, color: '#fff' }}>{t(theme.title)}</h2>
+        <h2 style={{ margin: 0, fontSize: 26, color: '#fff' }}>{theme.title}</h2>
         <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 13, marginTop: 8, fontStyle: 'italic' }}>
-          {t(theme.scripture)}
+          {theme.scripture}
         </div>
       </div>
 
-      <Section title={t("导言")}>{t(theme.intro)}</Section>
+      <Section title="导言">{theme.intro}</Section>
 
       <div style={{ marginBottom: 20 }}>
-        <div style={{ fontWeight: 700, fontSize: 15, color: '#fff', marginBottom: 12 }}>{t("相关人物")}</div>
+        <div style={{ fontWeight: 700, fontSize: 15, color: '#fff', marginBottom: 12 }}>相关人物</div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(180px,1fr))', gap: 12 }}>
           {themeChars.map(c => <CharacterCard key={c.id} char={c} onClick={onCharClick} />)}
         </div>
       </div>
 
-      <Section title={t("📌 主题总结")}>{t(theme.summary)}</Section>
+      <Section title="📌 主题总结">{theme.summary}</Section>
 
       <div style={sectionStyle}>
-        <div style={sectionTitle}>{t("🔑 如何应用")}</div>
+        <div style={sectionTitle}>🔑 如何应用</div>
         {theme.howToApply.map((step, i) => (
           <div key={i} style={{ display: 'flex', gap: 10, marginBottom: 10 }}>
             <span style={{ width: 22, height: 22, borderRadius: '50%', background: '#007aff',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontSize: 12, fontWeight: 700, color: '#fff', flexShrink: 0 }}>{i+1}</span>
-            <span style={{ color: 'rgba(255,255,255,0.75)', fontSize: 14, lineHeight: 1.6 }}>{t(step)}</span>
+            <span style={{ color: 'rgba(255,255,255,0.75)', fontSize: 14, lineHeight: 1.6 }}>{step}</span>
           </div>
         ))}
       </div>
@@ -761,16 +648,16 @@ export default function MirrorPage({ user, token, guidance, onBack }) {
   const [selectedChar, setSelectedChar] = useState(null)
   const [selectedTheme, setSelectedTheme] = useState(null)
   const [search, setSearch] = useState('')
-  const [filterEra, setFilterEra] = useState("全部")
-  const [filterRole, setFilterRole] = useState("全部")
-  const [filterType, setFilterType] = useState("全部")
-  const [filterTypo, setFilterTypo] = useState("全部")
-  const [filterMotif, setFilterMotif] = useState("全部")
+  const [filterEra, setFilterEra] = useState('全部')
+  const [filterRole, setFilterRole] = useState('全部')
+  const [filterType, setFilterType] = useState('全部')
+  const [filterTypo, setFilterTypo] = useState('全部')
+  const [filterMotif, setFilterMotif] = useState('全部')
   const [sort, setSort] = useState('era')
   const [sidebarOpen, setSidebarOpen] = useState(true)
-  const [filterKingdom, setFilterKingdom] = useState("全部")
+  const [filterKingdom, setFilterKingdom] = useState('全部')
 
-  const KINGDOMS = ["全部", "统一王国", "南国犹大", "北国以色列", "外邦君王"]
+  const KINGDOMS = ['全部', '统一王国', '南国犹大', '北国以色列', '外邦君王']
   // Succession order IDs for kings
   const KING_ORDER = [
     24,25,29,158, // 统一王国
@@ -795,26 +682,26 @@ export default function MirrorPage({ user, token, guidance, onBack }) {
         (c.tags || []).some(t => t.includes(q))
       )
     }
-    if (filterEra !== "全部") list = list.filter(c => c.era === filterEra)
-    if (filterRole !== "全部") list = list.filter(c => c.role === filterRole)
-    if (filterType !== "全部") list = list.filter(c => c.tags.includes(filterType))
-    if (filterTypo !== "全部") {
-      if (filterTypo === "有预表") list = list.filter(c => c.typology)
-      else if (filterTypo === "强预表") list = list.filter(c => c.typology && (c.typology.level === "强预表" || c.typology.level === "极强预表"))
-      else if (filterTypo === "弱预表/影子") list = list.filter(c => c.typology && c.typology.level === "弱预表")
-      else if (filterTypo === "反衬预表") list = list.filter(c => c.typology && c.typology.level === "反面预表")
+    if (filterEra !== '全部') list = list.filter(c => c.era === filterEra)
+    if (filterRole !== '全部') list = list.filter(c => c.role === filterRole)
+    if (filterType !== '全部') list = list.filter(c => c.tags.includes(filterType))
+    if (filterTypo !== '全部') {
+      if (filterTypo === '有预表') list = list.filter(c => c.typology)
+      else if (filterTypo === '强预表') list = list.filter(c => c.typology && (c.typology.level === '强预表' || c.typology.level === '极强预表'))
+      else if (filterTypo === '弱预表/影子') list = list.filter(c => c.typology && c.typology.level === '弱预表')
+      else if (filterTypo === '反衬预表') list = list.filter(c => c.typology && c.typology.level === '反面预表')
       else list = list.filter(c => c.typology && c.typology.level === filterTypo)
     }
-    if (filterMotif !== "全部") {
+    if (filterMotif !== '全部') {
       const def = MOTIF_DEF[filterMotif]
       if (def) list = list.filter(c =>
         (def.id && ((c.typology && c.typology.motifs) || []).includes(def.id)) ||
         def.names.includes(c.name) ||
         (def.negative && c.typology && c.typology.strength === 'negative_contrast'))
     }
-    if (filterRole === "君王" && filterKingdom !== "全部") list = list.filter(c => c.kingdom === filterKingdom)
-    const eraOrder = ["族长时代","出埃及时代","士师时代","进入迦南时代","王国时代","被掳归回时代","新约时代"]
-    if (filterRole === "君王") {
+    if (filterRole === '君王' && filterKingdom !== '全部') list = list.filter(c => c.kingdom === filterKingdom)
+    const eraOrder = ['族长时代','出埃及时代','士师时代','进入迦南时代','王国时代','被掳归回时代','新约时代']
+    if (filterRole === '君王') {
       list.sort((a, b) => {
         const ai = KING_ORDER.indexOf(a.id), bi = KING_ORDER.indexOf(b.id)
         if (ai === -1 && bi === -1) return 0
@@ -846,20 +733,18 @@ export default function MirrorPage({ user, token, guidance, onBack }) {
     if (!guidance) return []
     const emotions = guidance.core_emotions || []
     const tagMap = {
-      '焦虑': ["信心", "平安"], '恐惧': ["信心", "勇气"], '悲伤': ["盼望", "安慰"],
-      '愤怒': ["饶恕", "谦卑"], '孤独': ["信靠", "同行"], '迷茫': ["智慧", "引导"],
-      '内疚': ["恩典", "饶恕", "悔改"], '绝望': ["盼望", "拯救"], '感恩': ["赞美", "信靠"],
+      '焦虑': ['信心', '平安'], '恐惧': ['信心', '勇气'], '悲伤': ['盼望', '安慰'],
+      '愤怒': ['饶恕', '谦卑'], '孤独': ['信靠', '同行'], '迷茫': ['智慧', '引导'],
+      '内疚': ['恩典', '饶恕', '悔改'], '绝望': ['盼望', '拯救'], '感恩': ['赞美', '信靠'],
     }
     const wantedTags = new Set()
-    emotions.forEach(e => (tagMap[emotionZhKey(e)] || []).forEach(t => wantedTags.add(t)))
+    emotions.forEach(e => (tagMap[e] || []).forEach(t => wantedTags.add(t)))
     if (wantedTags.size === 0) return []
     return MIRROR_CHARACTERS
-      .filter(c => c.tags.some(t => wantedTags.has(t)) && c.type !== "警戒为主")
+      .filter(c => c.tags.some(t => wantedTags.has(t)) && c.type !== '警戒为主')
       .sort((a, b) => b.tags.filter(t => wantedTags.has(t)).length - a.tags.filter(t => wantedTags.has(t)).length)
       .slice(0, 3)
   }, [guidance])
-
-  useAutoTranslate([])
 
   if (view === 'character' && selectedChar) {
     return (
@@ -886,12 +771,15 @@ export default function MirrorPage({ user, token, guidance, onBack }) {
     return (
       <div style={{ padding: '20px 16px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24 }}>
-          <BackButton onClick={() => setView('list')} />
-          <h2 style={{ margin: 0, fontSize: 20, color: '#fff' }}>{t("主题合集")}</h2>
+          <button onClick={() => setView('list')} style={{
+            background: 'rgba(255,255,255,0.1)', border: 'none', borderRadius: 8,
+            color: '#fff', padding: '8px 16px', cursor: 'pointer', fontSize: 14
+          }}>← 人物列表</button>
+          <h2 style={{ margin: 0, fontSize: 20, color: '#fff' }}>主题合集</h2>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(240px,1fr))', gap: 14 }}>
-          {MIRROR_THEMES.map(theme => (
-            <div key={theme.id} onClick={() => openTheme(theme)} style={{
+          {MIRROR_THEMES.map(t => (
+            <div key={t.id} onClick={() => openTheme(t)} style={{
               background: 'rgba(255,255,255,0.06)', borderRadius: 14, padding: '18px',
               cursor: 'pointer', border: '1px solid rgba(255,255,255,0.08)',
               transition: 'background .15s'
@@ -899,11 +787,11 @@ export default function MirrorPage({ user, token, guidance, onBack }) {
               onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.11)'}
               onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.06)'}
             >
-              <div style={{ fontSize: 32, marginBottom: 8 }}>{theme.emoji}</div>
-              <div style={{ fontWeight: 700, fontSize: 16, color: '#fff', marginBottom: 6 }}>{t(theme.title)}</div>
-              <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)', lineHeight: 1.5 }}>{t(theme.intro).slice(0, 60)}…</div>
+              <div style={{ fontSize: 32, marginBottom: 8 }}>{t.emoji}</div>
+              <div style={{ fontWeight: 700, fontSize: 16, color: '#fff', marginBottom: 6 }}>{t.title}</div>
+              <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)', lineHeight: 1.5 }}>{t.intro.slice(0, 60)}…</div>
               <div style={{ marginTop: 10, fontSize: 11, color: 'rgba(255,255,255,0.3)' }}>
-                {theme.characterIds.length} {t("位人物")}
+                {t.characterIds.length} 位人物
               </div>
             </div>
           ))}
@@ -927,22 +815,22 @@ export default function MirrorPage({ user, token, guidance, onBack }) {
           background: 'none', border: 'none', color: 'rgba(255,255,255,0.5)',
           cursor: 'pointer', fontSize: 14, marginBottom: sidebarOpen ? 12 : 0, padding: 0,
           whiteSpace: 'nowrap'
-        }}>{sidebarOpen ? t("◀ 筛选") : <span style={{ writingMode: 'vertical-rl', letterSpacing: 2, fontSize: 12 }}>{t("筛选")}</span>}</button>
+        }}>{sidebarOpen ? '◀ 筛选' : <span style={{ writingMode: 'vertical-rl', letterSpacing: 2, fontSize: 12 }}>筛选</span>}</button>
         {sidebarOpen && (
           <>
-            <FilterGroup label={t("时代")} value={filterEra} options={ERAS} onChange={setFilterEra} />
-            <FilterGroup label={t("身份")} value={filterRole} options={ROLES} onChange={v => { setFilterRole(v); setFilterKingdom("全部") }} />
-            {filterRole === "君王" && (
-              <FilterGroup label={t("王国")} value={filterKingdom} options={KINGDOMS} onChange={setFilterKingdom} />
+            <FilterGroup label="时代" value={filterEra} options={ERAS} onChange={setFilterEra} />
+            <FilterGroup label="身份" value={filterRole} options={ROLES} onChange={v => { setFilterRole(v); setFilterKingdom('全部') }} />
+            {filterRole === '君王' && (
+              <FilterGroup label="王国" value={filterKingdom} options={KINGDOMS} onChange={setFilterKingdom} />
             )}
-            <FilterGroup label={t("类型")} value={filterType} options={TYPES} onChange={setFilterType} />
-            <FilterGroup label={t("预表强度")} value={filterTypo} options={TYPO_FILTER} onChange={setFilterTypo} />
-            <FilterGroup label={t("预表母题/类别 · 基督是")} value={filterMotif} options={MOTIF_FILTER} onChange={setFilterMotif} />
-            <button onClick={() => { setFilterEra("全部"); setFilterRole("全部"); setFilterType("全部"); setFilterTypo("全部"); setFilterMotif("全部"); setFilterKingdom("全部"); setSearch('') }}
+            <FilterGroup label="类型" value={filterType} options={TYPES} onChange={setFilterType} />
+            <FilterGroup label="预表强度" value={filterTypo} options={TYPO_FILTER} onChange={setFilterTypo} />
+            <FilterGroup label="预表母题/类别 · 基督是" value={filterMotif} options={MOTIF_FILTER} onChange={setFilterMotif} />
+            <button onClick={() => { setFilterEra('全部'); setFilterRole('全部'); setFilterType('全部'); setFilterTypo('全部'); setFilterMotif('全部'); setFilterKingdom('全部'); setSearch('') }}
               style={{ width: '100%', marginTop: 8, padding: '6px 8px', borderRadius: 8, border: 'none',
                 background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.5)', cursor: 'pointer', fontSize: 12,
                 whiteSpace: 'nowrap' }}>
-              {t("重置筛选")}
+              重置筛选
             </button>
           </>
         )}
@@ -954,7 +842,7 @@ export default function MirrorPage({ user, token, guidance, onBack }) {
         <div style={{ display: 'flex', gap: 10, marginBottom: 16, flexWrap: 'wrap', alignItems: 'center' }}>
           <input
             value={search} onChange={e => setSearch(e.target.value)}
-            placeholder={t("搜索人物")}
+            placeholder="搜索人物"
             style={{ flex: 1, minWidth: 160, padding: '8px 12px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.15)',
               background: 'rgba(255,255,255,0.08)', color: '#fff', fontSize: 14, outline: 'none' }}
           />
@@ -962,13 +850,13 @@ export default function MirrorPage({ user, token, guidance, onBack }) {
             padding: '8px 10px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.15)',
             background: 'rgba(30,30,40,0.9)', color: '#fff', fontSize: 13, cursor: 'pointer'
           }}>
-            <option value="era">{t("按年代")}</option>
-            <option value="name">{t("按名字")}</option>
+            <option value="era">按年代</option>
+            <option value="name">按名字</option>
           </select>
           <button onClick={() => setView('themes')} style={{
             padding: '8px 14px', borderRadius: 8, border: 'none',
             background: '#007aff', color: '#fff', fontSize: 13, cursor: 'pointer', fontWeight: 600
-          }}>{t("主题合集 ✨")}</button>
+          }}>主题合集 ✨</button>
         </div>
 
         {recommendedChars.length > 0 && (
@@ -978,7 +866,7 @@ export default function MirrorPage({ user, token, guidance, onBack }) {
             border: '1px solid rgba(88,86,214,0.35)', borderRadius: 12,
           }}>
             <div style={{ fontSize: 12, fontWeight: 700, color: '#c4b5fd', marginBottom: 10, letterSpacing: '0.05em' }}>
-              {t("✨ 根据你的情绪，推荐认识这几位圣经人物")}
+              ✨ 根据你的情绪，推荐认识这几位圣经人物
             </div>
             <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
               {recommendedChars.map(c => (
@@ -987,7 +875,7 @@ export default function MirrorPage({ user, token, guidance, onBack }) {
                   borderRadius: 20, padding: '5px 14px', color: '#e0d4ff', fontSize: 13,
                   cursor: 'pointer', fontWeight: 600,
                 }}>
-                  {getRuntimeLang() === 'en' ? (c.en || c.name) : c.name} <span style={{ fontSize: 11, opacity: 0.6, fontWeight: 400 }}>{getRuntimeLang() === 'en' ? c.name : c.en}</span>
+                  {c.name} <span style={{ fontSize: 11, opacity: 0.6, fontWeight: 400 }}>{c.en}</span>
                 </button>
               ))}
             </div>
@@ -995,7 +883,7 @@ export default function MirrorPage({ user, token, guidance, onBack }) {
         )}
 
         <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)', marginBottom: 12 }}>
-          {t("共")} {filtered.length} {t("位人物")}
+          共 {filtered.length} 位人物
         </div>
 
         <div style={{
@@ -1022,8 +910,9 @@ function FilterGroup({ label, value, options, onChange }) {
           color: value === o ? '#fff' : 'rgba(255,255,255,0.5)',
           background: value === o ? 'rgba(0,122,255,0.3)' : 'transparent',
           marginBottom: 2, whiteSpace: 'nowrap'
-        }}>{mirrorText(o, o)}</div>
+        }}>{o}</div>
       ))}
     </div>
   )
 }
+

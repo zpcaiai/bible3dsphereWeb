@@ -1,8 +1,6 @@
 import { useRef, useState } from 'react'
 import { fetchTranslate } from './api'
-import { t } from './i18n/runtime'
-
-const _translationCache = new Map()
+import { getCached } from './translationCache'
 
 export default function TranslatableParagraph({ children, className, style }) {
   const [translation, setTranslation] = useState(null)
@@ -47,15 +45,16 @@ export default function TranslatableParagraph({ children, className, style }) {
   async function doTranslate() {
     hideMenu()
     if (!text.trim() || translating) return
-    if (_translationCache.has(text)) {
-      setTranslation(_translationCache.get(text))
+    const cachedHit = getCached(text, 'en')
+    if (cachedHit !== undefined) {
+      setTranslation(cachedHit)
       return
     }
     setTranslating(true)
     setTranslation(null)
     try {
+      // fetchTranslate 内部已做内容寻址缓存读写，命中即时返回。
       const result = await fetchTranslate(text, 'en')
-      _translationCache.set(text, result)
       setTranslation(result)
     } catch (err) {
       setTranslation(`[Translation failed: ${err.message}]`)
@@ -125,13 +124,13 @@ export default function TranslatableParagraph({ children, className, style }) {
           padding: '4px 10px', borderRadius: '6px', pointerEvents: 'none',
           whiteSpace: 'nowrap', zIndex: 9999,
         }}>
-          {t("已复制 ✓")}
+          已复制 ✓
         </span>
       )}
 
       {translating && (
         <p className={className} style={{ ...style, opacity: 0.5, fontStyle: 'italic', textIndent: '2em' }}>
-          {t("正在翻译...")}
+          正在翻译...
         </p>
       )}
 
@@ -169,7 +168,7 @@ export default function TranslatableParagraph({ children, className, style }) {
               padding: '0',
               verticalAlign: 'middle',
             }}
-            title={t("关闭译文")}
+            title="关闭译文"
           >
             ✕
           </button>
@@ -197,17 +196,17 @@ export default function TranslatableParagraph({ children, className, style }) {
             }}
           >
             <button onClick={() => doCopy(text)} style={menuBtnStyle}>
-              {t("📋 复制原文")}
+              📋 复制原文
             </button>
             <div style={dividerStyle} />
             <button onClick={doTranslate} style={menuBtnStyle}>
-              {t("🌐 转为英文")}
+              🌐 转为英文
             </button>
             {translation && (
               <>
                 <div style={dividerStyle} />
                 <button onClick={() => doCopy(translation)} style={menuBtnStyle}>
-                  {t("📋 复制译文")}
+                  📋 复制译文
                 </button>
               </>
             )}

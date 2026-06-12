@@ -23,7 +23,6 @@ class RealtimeStore {
     this.onlineFriends = new Set()
     this.incomingCall = null   // { from, room, name }
     this.activeCall = null     // { creds, title, outgoing, peer }
-    this.missedPeer = null     // { email, name } 未接来电留言入口
 
     this.msgListeners = new Set()
     this.stateListeners = new Set()
@@ -37,7 +36,6 @@ class RealtimeStore {
     this.enabled = wantEnabled
     if (!wantEnabled) { this.stop(); return }
     this.closedByUs = false
-    this.attempts = 0
     this._connect()
   }
 
@@ -71,9 +69,6 @@ class RealtimeStore {
 
   _scheduleReconnect() {
     this.attempts += 1
-    // 连续失败上限：握手被拒(如token已失效,服务器403)时停止无限重连刷屏；
-    // 重新登录会调用 start() 重置计数恢复连接
-    if (this.attempts > 10) { this._setState({ connected: false }); return }
     const delay = Math.min(15000, 1000 * 2 ** Math.min(this.attempts, 4))
     this.reconnectTimer = setTimeout(() => this._connect(), delay)
   }
@@ -93,15 +88,11 @@ class RealtimeStore {
       case 'call_invite': {
         if (this.activeCall) { this.send({ type: 'call_decline', to: msg.from, room: msg.room }); break }
         const name = shortName(msg.from, this._friendNickname?.(msg.from))
-        this._setState({ incomingCall: { from: msg.from, room: msg.room, name, video: !!msg.video } })
+        this._setState({ incomingCall: { from: msg.from, room: msg.room, name } })
         break
       }
       case 'call_decline':
-        if (this.activeCall?.outgoing) {
-          toast('对方未接听')
-          // 未接来电 → 提供留言入口（语音转写为文字，经聊天送达）
-          this._setState({ activeCall: null, missedPeer: { email: this.activeCall.peer, name: this.activeCall.title } })
-        }
+        if (this.activeCall?.outgoing) { toast('对方未接听'); this._setState({ activeCall: null }) }
         if (this.incomingCall && this.incomingCall.from === msg.from) this._setState({ incomingCall: null })
         break
       default:
@@ -123,21 +114,19 @@ class RealtimeStore {
   }
 
   // ---- call controls ----
-  // opts.video=true 发起视频通话（双方进房即开摄像头；随时可关，关掉就回到纯语音）
-  async startDirectCall(friend, opts = {}) {
+  async startDirectCall(friend) {
     if (!friend) return
     if (this.activeCall) { toast('通话进行中'); return }
-    const video = !!opts.video
     const enabled = await fetchVoiceEnabled()
     if (!enabled) { toast('语音通话尚未配置（需管理员设置 LiveKit）'); return }
     if (friend.online === false) { toast('对方当前不在线'); return }
     try {
       const creds = await fetchDirectVoiceToken(friend.email)
       this.send({
-        type: 'call_invite', to: friend.email, room: creds.room, video,
-        title: `${shortName(this.user?.email, this.user?.nickname)} 邀请你${video ? '视频' : '语音'}通话`,
+        type: 'call_invite', to: friend.email, room: creds.room,
+        title: `${shortName(this.user?.email, this.user?.nickname)} 邀请你语音通话`,
       })
-      this._setState({ activeCall: { creds, title: shortName(friend.email, friend.nickname), outgoing: true, peer: friend.email, video } })
+      this._setState({ activeCall: { creds, title: shortName(friend.email, friend.nickname), outgoing: true, peer: friend.email } })
     } catch (e) { toast(e.message || '发起通话失败') }
   }
 
@@ -147,7 +136,7 @@ class RealtimeStore {
     this._setState({ incomingCall: null })
     try {
       const creds = await fetchDirectVoiceToken(ic.from, ic.room)
-      this._setState({ activeCall: { creds, title: ic.name, outgoing: false, peer: ic.from, video: !!ic.video } })
+      this._setState({ activeCall: { creds, title: ic.name, outgoing: false, peer: ic.from } })
     } catch (e) { toast(e.message || '接听失败') }
   }
 
@@ -168,15 +157,12 @@ class RealtimeStore {
   // ---- pub/sub ----
   subscribe(cb) { this.msgListeners.add(cb); return () => this.msgListeners.delete(cb) }
   subscribeState(cb) { this.stateListeners.add(cb); return () => this.stateListeners.delete(cb) }
-  clearMissed() { this._setState({ missedPeer: null }) }
-
   getState() {
     return {
       connected: this.connected,
       onlineFriends: this.onlineFriends,
       incomingCall: this.incomingCall,
       activeCall: this.activeCall,
-      missedPeer: this.missedPeer,
     }
   }
   _setState(patch) {

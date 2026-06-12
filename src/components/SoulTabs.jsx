@@ -1,4 +1,3 @@
-import { t } from '../i18n/runtime'
 /**
  * SoulTabs - 心迹 Tab 导航组件
  *
@@ -9,10 +8,10 @@ import { t } from '../i18n/runtime'
 
 export default function SoulTabs({ activeTab, onTabChange }) {
   const tabs = [
-    { key: 'dashboard',   label: t("今日心镜"), emoji: '🪞' },
-    { key: 'personality', label: t("属灵品格"), emoji: '🔮' },
-    { key: 'habits',      label: t("灵修操练"), emoji: '🌱' },
-    { key: 'new',         label: t("决策支持"), emoji: '⚖️' },
+    { key: 'dashboard',   label: '今日心镜', emoji: '🪞' },
+    { key: 'personality', label: '人格塑造', emoji: '🔮' },
+    { key: 'habits',      label: '灵修操练', emoji: '🌱' },
+    { key: 'new',         label: '决策支持', emoji: '⚖️' },
   ]
 
   return (

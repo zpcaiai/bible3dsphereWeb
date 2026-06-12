@@ -1,11 +1,4 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-import BackButton from './BackButton'
-import VideoTile from './realtime/VideoTile'
-import NotesButton from './realtime/NotesButton'
-import MinutesModal from './realtime/MinutesModal'
-import MeetingScheduleModal from './MeetingScheduleModal'
-import { stopNotes, hasNotes, setLineSink, addRemoteLine } from './realtime/callNotes'
-import { t } from './i18n/runtime'
 import {
   fetchVoiceConfig, fetchVoiceGroups, createVoiceGroup,
   joinVoiceGroup, fetchVoiceToken, leaveVoiceGroup,
@@ -47,39 +40,24 @@ export default function VoiceRoomPage({ user, token, onBack }) {
     refresh()
   }, [token, refresh])
 
-  const [minutesFor, setMinutesFor] = useState(null)
-  const [scheduleFor, setScheduleFor] = useState(null)
   const enterCall = (group) => { setActiveGroup(group); setView('call') }
-  const exitCall = (groupName) => {
-    stopNotes()
-    if (hasNotes()) setMinutesFor(groupName || activeGroup?.name || '')
-    setView('list'); setActiveGroup(null); refresh()
-  }
+  const exitCall = () => { setView('list'); setActiveGroup(null); refresh() }
 
   return (
     <div style={S.page}>
       <header style={S.header}>
-        <BackButton onClick={onBack} />
-        <span style={S.title}>{t("🎙 语音 · 视频通话")}</span>
+        <button onClick={onBack} style={S.backBtn}>← 返回</button>
+        <span style={S.title}>🎙 语音通话</span>
         <span style={{ width: 56 }} />
       </header>
 
       {view === 'call' && activeGroup ? (
-        <CallScreen group={activeGroup} user={user} token={token} onLeave={() => exitCall(activeGroup.name)} />
+        <CallScreen group={activeGroup} user={user} token={token} onLeave={exitCall} />
       ) : (
         <GroupList
           enabled={enabled} groups={groups} loading={loading}
           token={token} onRefresh={refresh} onEnter={enterCall}
-          onSchedule={(g) => setScheduleFor(g)}
         />
-      )}
-
-      {minutesFor !== null && (
-        <MinutesModal title={minutesFor} onClose={() => setMinutesFor(null)} />
-      )}
-
-      {scheduleFor && (
-        <MeetingScheduleModal group={scheduleFor} token={token} onClose={() => setScheduleFor(null)} />
       )}
     </div>
   )
@@ -88,98 +66,97 @@ export default function VoiceRoomPage({ user, token, onBack }) {
 // ─────────────────────────────────────────────────────────────────────────────
 // 群列表 + 建群 + 加群
 // ─────────────────────────────────────────────────────────────────────────────
-function GroupList({ enabled, groups, loading, token, onRefresh, onEnter, onSchedule }) {
+function GroupList({ enabled, groups, loading, token, onRefresh, onEnter }) {
   const [newName, setNewName] = useState('')
   const [code, setCode] = useState('')
   const [creating, setCreating] = useState(false)
   const [joining, setJoining] = useState(false)
 
   const doCreate = async () => {
-    const name = newName.trim() || t("语音祷告群")
+    const name = newName.trim() || '语音祷告群'
     setCreating(true)
     try {
       const { group } = await createVoiceGroup(name, token)
-      toast(t("建群成功，邀请码 ") + group.join_code, 'success')
+      toast('建群成功，邀请码 ' + group.join_code, 'success')
       setNewName('')
       await onRefresh()
-    } catch (e) { toast(e.message || t("建群失败"), 'error') }
+    } catch (e) { toast(e.message || '建群失败', 'error') }
     finally { setCreating(false) }
   }
 
   const doJoin = async () => {
     const c = code.trim()
-    if (!c) return toast(t("请输入邀请码"), 'error')
+    if (!c) return toast('请输入邀请码', 'error')
     setJoining(true)
     try {
       const { group, already_member } = await joinVoiceGroup(c, token)
-      toast(already_member ? t("你已在该群中") : `已加入「${group.name}」`, 'success')
+      toast(already_member ? '你已在该群中' : `已加入「${group.name}」`, 'success')
       setCode('')
       await onRefresh()
-    } catch (e) { toast(e.message || t("加入失败"), 'error') }
+    } catch (e) { toast(e.message || '加入失败', 'error') }
     finally { setJoining(false) }
   }
 
   const copyCode = (c) => {
-    navigator.clipboard?.writeText(c).then(() => toast(t("邀请码已复制"), 'success')).catch(() => {})
+    navigator.clipboard?.writeText(c).then(() => toast('邀请码已复制', 'success')).catch(() => {})
   }
 
   return (
     <div style={S.scroll}>
       {!enabled && (
         <div style={S.warnBox}>
-          {t("⚠️ 语音服务尚未配置。管理员需在后端设置")} <code>LIVEKIT_URL / LIVEKIT_API_KEY / LIVEKIT_API_SECRET</code>
-          {t("（免费注册 livekit.cloud 即可）。配置后即可发起 Zoom 级群语音通话。")}
+          ⚠️ 语音服务尚未配置。管理员需在后端设置 <code>LIVEKIT_URL / LIVEKIT_API_KEY / LIVEKIT_API_SECRET</code>
+          （免费注册 livekit.cloud 即可）。配置后即可发起 Zoom 级群语音通话。
         </div>
       )}
 
       {/* 建群 / 加群 */}
       <section style={S.card}>
-        <div style={S.cardTitle}>{t("发起 / 加入")}</div>
+        <div style={S.cardTitle}>发起 / 加入</div>
         <div style={S.row}>
           <input
             style={S.input} value={newName} maxLength={40}
-            placeholder={t("群名称，如「周三晚祷告会」")}
+            placeholder="群名称，如「周三晚祷告会」"
             onChange={e => setNewName(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && doCreate()}
           />
           <button style={S.primaryBtn} disabled={creating} onClick={doCreate}>
-            {creating ? t("建群中…") : t("＋ 建群")}
+            {creating ? '建群中…' : '＋ 建群'}
           </button>
         </div>
         <div style={S.row}>
           <input
             style={{ ...S.input, letterSpacing: 2, textTransform: 'uppercase' }}
-            value={code} maxLength={12} placeholder={t("输入邀请码加入他人的群")}
+            value={code} maxLength={12} placeholder="输入邀请码加入他人的群"
             onChange={e => setCode(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && doJoin()}
           />
           <button style={S.ghostBtn} disabled={joining} onClick={doJoin}>
-            {joining ? t("加入中…") : t("加入")}
+            {joining ? '加入中…' : '加入'}
           </button>
         </div>
       </section>
 
       {/* 我的群 */}
-      <div style={S.sectionLabel}>{t("我的语音群")}</div>
+      <div style={S.sectionLabel}>我的语音群</div>
       {loading ? (
-        <div style={S.muted}>{t("加载中…")}</div>
+        <div style={S.muted}>加载中…</div>
       ) : groups.length === 0 ? (
-        <div style={S.empty}>{t("还没有语音群。建一个群，把邀请码发给弟兄姐妹，一起开声祷告。")}</div>
+        <div style={S.empty}>还没有语音群。建一个群，把邀请码发给弟兄姐妹，一起开声祷告。</div>
       ) : (
         groups.map(g => (
           <div key={g.id} style={S.groupRow}>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={S.groupName}>
-                {g.name} {g.is_owner && <span style={S.ownerTag}>{t("群主")}</span>}
+                {g.name} {g.is_owner && <span style={S.ownerTag}>群主</span>}
               </div>
               <div style={S.groupMeta}>
-                {g.member_count}/{g.max_members} {t("人 · 邀请码")}{' '}
+                {g.member_count}/{g.max_members} 人 · 邀请码{' '}
                 <span style={S.codeChip} onClick={() => copyCode(g.join_code)}>{g.join_code} 📋</span>
               </div>
             </div>
-            <button style={S.ghostBtn} onClick={() => onSchedule(g)} title={t('聚会排期与提醒')}>📅</button>
             <button style={S.callBtn} onClick={() => onEnter(g)} disabled={!enabled}>
-              {t("📞 进入")}
+              📞 进入
             </button>
           </div>
         ))
@@ -194,10 +171,8 @@ function GroupList({ enabled, groups, loading, token, onRefresh, onEnter, onSche
 function CallScreen({ group, user, token, onLeave }) {
   const [status, setStatus] = useState('connecting')   // connecting | live | error
   const [errMsg, setErrMsg] = useState('')
-  const [participants, setParticipants] = useState([]) // {sid, identity, name, isLocal, speaking, muted, videoTrack}
+  const [participants, setParticipants] = useState([]) // {sid, identity, name, isLocal, speaking, muted}
   const [micOn, setMicOn] = useState(true)
-  const [camOn, setCamOn] = useState(false)
-  const [shareOn, setShareOn] = useState(false)
   const [denoise, setDenoise] = useState(false)
   const [encrypted, setEncrypted] = useState(false)   // E2EE 是否已生效
   const [keyPanel, setKeyPanel] = useState(false)
@@ -209,16 +184,6 @@ function CallScreen({ group, user, token, onLeave }) {
   const krispRef = useRef(null)
   const e2eeWorkerRef = useRef(null)
 
-  // 按来源取参与者当前可渲染的视频轨（'camera' 摄像头 / 'screen_share' 屏幕共享）
-  const videoTrackOf = (p, source) => {
-    for (const pub of p.videoTrackPublications.values()) {
-      if (pub.source !== source) continue
-      const track = pub.track || pub.videoTrack
-      if (track && !pub.isMuted) return track
-    }
-    return null
-  }
-
   // 把房间参与者状态同步到 React
   const sync = useCallback(() => {
     const room = roomRef.current
@@ -227,27 +192,21 @@ function CallScreen({ group, user, token, onLeave }) {
     const speakers = new Set(room.activeSpeakers?.map(p => p.sid) || [])
     const list = [{
       sid: lp.sid, identity: lp.identity,
-      name: (lp.name || user?.nickname || t("我")) + t("（我）"),
+      name: (lp.name || user?.nickname || '我') + '（我）',
       isLocal: true, speaking: speakers.has(lp.sid),
       muted: !lp.isMicrophoneEnabled,
-      videoTrack: lp.isCameraEnabled ? videoTrackOf(lp, 'camera') : null,
-      screenTrack: videoTrackOf(lp, 'screen_share'),
     }]
     room.remoteParticipants.forEach(p => {
       list.push({
         sid: p.sid, identity: p.identity,
-        name: p.name || p.identity?.split('@')[0] || t("弟兄姐妹"),
+        name: p.name || p.identity?.split('@')[0] || '弟兄姐妹',
         isLocal: false, speaking: speakers.has(p.sid),
         muted: !p.audioTrackPublications.size
           ? false
           : ![...p.audioTrackPublications.values()].some(pub => !pub.isMuted),
-        videoTrack: videoTrackOf(p, 'camera'),
-        screenTrack: videoTrackOf(p, 'screen_share'),
       })
     })
     setParticipants(list)
-    // 浏览器自带"停止共享"按钮会直接停轨：以房间实际状态回写按钮态
-    setShareOn(!!lp.isScreenShareEnabled)
   }, [user])
 
   useEffect(() => {
@@ -259,7 +218,7 @@ function CallScreen({ group, user, token, onLeave }) {
       try {
         LK = await import('livekit-client')
       } catch (e) {
-        setStatus('error'); setErrMsg(t("语音组件加载失败")); return
+        setStatus('error'); setErrMsg('语音组件加载失败'); return
       }
       const { Room, RoomEvent, Track } = LK
 
@@ -267,13 +226,13 @@ function CallScreen({ group, user, token, onLeave }) {
       try {
         creds = await fetchVoiceToken(group.id, token)
       } catch (e) {
-        if (!cancelled) { setStatus('error'); setErrMsg(e.message || t("获取通话凭证失败")) }
+        if (!cancelled) { setStatus('error'); setErrMsg(e.message || '获取通话凭证失败') }
         return
       }
       if (cancelled) return
 
-      // 端到端加密：优先用后端下发的房间密钥（LIVEKIT_E2EE=1），否则用本地口令
-      const e2eePass = creds.e2ee_key || e2eeKeyFor(group.id)
+      // 端到端加密（可选）：有本地口令时启用，密钥本地派生，服务器只转发密文
+      const e2eePass = e2eeKeyFor(group.id)
       let keyProvider = null
       if (e2eePass) {
         try {
@@ -283,7 +242,7 @@ function CallScreen({ group, user, token, onLeave }) {
       }
 
       room = new Room({
-        adaptiveStream: true, // 视频按瓦片实际尺寸自适应码率（群里人多时省带宽）
+        adaptiveStream: false,
         dynacast: true,
         // Zoom 级采集：浏览器原生回声消除 / 降噪 / 自动增益
         audioCaptureDefaults: {
@@ -291,8 +250,6 @@ function CallScreen({ group, user, token, onLeave }) {
           noiseSuppression: true,
           autoGainControl: true,
         },
-        // 群视频：540p/24fps 起步，dynacast+simulcast 按订阅端自动升降
-        videoCaptureDefaults: { resolution: { width: 960, height: 540, frameRate: 24 } },
         // Opus + RED(冗余抗丢包) + DTX(静音不发包)，语音码率上调
         publishDefaults: {
           dtx: true,
@@ -311,7 +268,7 @@ function CallScreen({ group, user, token, onLeave }) {
           if (!cancelled) setEncrypted(true)
         } catch (err) {
           console.error('E2EE 启用失败', err)
-          if (!cancelled) { setEncrypted(false); toast(t("此浏览器不支持端到端加密，已降级为传输加密"), 'info') }
+          if (!cancelled) { setEncrypted(false); toast('此浏览器不支持端到端加密，已降级为传输加密', 'info') }
         }
       } else if (!cancelled) {
         setEncrypted(false)
@@ -325,8 +282,7 @@ function CallScreen({ group, user, token, onLeave }) {
         .on(RoomEvent.TrackMuted, onChange)
         .on(RoomEvent.TrackUnmuted, onChange)
         .on(RoomEvent.LocalTrackPublished, onChange)
-        .on(RoomEvent.LocalTrackUnpublished, onChange)
-        .on(RoomEvent.Disconnected, () => { if (!cancelled) { setStatus('error'); setErrMsg(t("通话已断开")) } })
+        .on(RoomEvent.Disconnected, () => { if (!cancelled) { setStatus('error'); setErrMsg('通话已断开') } })
         .on(RoomEvent.TrackSubscribed, (track, pub, participant) => {
           if (track.kind === Track.Kind.Audio && audioBin.current) {
             const el = track.attach()
@@ -336,37 +292,19 @@ function CallScreen({ group, user, token, onLeave }) {
           }
           onChange()
         })
-        .on(RoomEvent.TrackUnsubscribed, (track, pub) => {
-          // 视频轨由 VideoTile 自行 detach；这里只清理隐藏的音频元素
-          if (pub?.kind !== 'video') track.detach().forEach(el => el.remove())
+        .on(RoomEvent.TrackUnsubscribed, (track) => {
+          track.detach().forEach(el => el.remove())
           onChange()
-        })
-        // 祷告会聚合：接收别人广播的转写行（带名字），拼成全房间共同记录
-        .on(RoomEvent.DataReceived, (payload) => {
-          try {
-            const m = JSON.parse(new TextDecoder().decode(payload))
-            if (m && m.k === 'pn') addRemoteLine(m.name, m.text)
-          } catch { /* 非本功能数据，忽略 */ }
         })
 
       try {
         await room.connect(creds.url, creds.token)
         await room.localParticipant.setMicrophoneEnabled(true)
-        // 自己的转写行实时广播给全房间（reliable 数据通道）
-        const enc = new TextEncoder()
-        setLineSink((line) => {
-          try {
-            room.localParticipant.publishData(
-              enc.encode(JSON.stringify({ k: 'pn', name: line.name, text: line.text })),
-              { reliable: true },
-            )
-          } catch { /* noop */ }
-        })
         if (!cancelled) { setStatus('live'); setMicOn(true); sync() }
       } catch (e) {
         if (!cancelled) {
           setStatus('error')
-          setErrMsg(/permission|NotAllowed/i.test(String(e)) ? t("麦克风权限被拒绝，请在浏览器允许麦克风") : (e.message || t("连接失败")))
+          setErrMsg(/permission|NotAllowed/i.test(String(e)) ? '麦克风权限被拒绝，请在浏览器允许麦克风' : (e.message || '连接失败'))
         }
       }
     }
@@ -374,7 +312,6 @@ function CallScreen({ group, user, token, onLeave }) {
     start()
     return () => {
       cancelled = true
-      setLineSink(null)
       try { krispRef.current?.dispose?.() } catch {}
       try { e2eeWorkerRef.current?.terminate?.() } catch {}
       e2eeWorkerRef.current = null
@@ -392,35 +329,6 @@ function CallScreen({ group, user, token, onLeave }) {
     setMicOn(next); sync()
   }
 
-  const toggleCam = async () => {
-    const room = roomRef.current
-    if (!room) return
-    const next = !camOn
-    try {
-      await room.localParticipant.setCameraEnabled(next)
-      setCamOn(next); sync()
-    } catch (e) {
-      toast(/permission|NotAllowed/i.test(String(e)) ? t("摄像头权限被拒绝，请在浏览器允许摄像头") : (e.message || t("摄像头开启失败")), 'error')
-    }
-  }
-
-  const toggleShare = async () => {
-    const room = roomRef.current
-    if (!room) return
-    if (!shareOn && !navigator.mediaDevices?.getDisplayMedia) {
-      toast(t("此设备/浏览器不支持屏幕共享"), 'info'); return
-    }
-    try {
-      await room.localParticipant.setScreenShareEnabled(!shareOn)
-      sync()
-    } catch (e) {
-      // 用户在系统选择器里点了取消 → NotAllowed，静默忽略
-      if (!/NotAllowed|Permission|cancel|Abort/i.test(String(e))) {
-        toast(e.message || t("屏幕共享开启失败"), 'error')
-      }
-    }
-  }
-
   // 可选：Krisp AI 降噪（需 LiveKit Cloud；失败则静默回退到原生降噪）
   const toggleDenoise = async () => {
     const room = roomRef.current
@@ -434,10 +342,10 @@ function CallScreen({ group, user, token, onLeave }) {
         krispRef.current = KrispNoiseFilter()
         await track.setProcessor(krispRef.current)
         setDenoise(true)
-        toast(t("AI 降噪已开启"), 'success')
+        toast('AI 降噪已开启', 'success')
       } catch (e) {
         console.error(e)
-        toast(t("AI 降噪不可用（已使用浏览器原生降噪）"), 'info')
+        toast('AI 降噪不可用（已使用浏览器原生降噪）', 'info')
       }
     } else {
       try {
@@ -445,7 +353,7 @@ function CallScreen({ group, user, token, onLeave }) {
         await pub?.track?.stopProcessor?.()
       } catch {}
       setDenoise(false)
-      toast(t("AI 降噪已关闭"), 'info')
+      toast('AI 降噪已关闭', 'info')
     }
   }
 
@@ -456,7 +364,7 @@ function CallScreen({ group, user, token, onLeave }) {
     setE2eeKeyFor(group.id, keyDraft.trim())
     setKeyPanel(false)
     setReconnectN(n => n + 1)   // 重连以应用新加密口令
-    toast(keyDraft.trim() ? t("已设置加密口令，正在以端到端加密重连…") : t("已关闭端到端加密"), 'info')
+    toast(keyDraft.trim() ? '已设置加密口令，正在以端到端加密重连…' : '已关闭端到端加密', 'info')
   }
 
   return (
@@ -466,17 +374,17 @@ function CallScreen({ group, user, token, onLeave }) {
       <div style={S.callHead}>
         <div style={S.callName}>{group.name}</div>
         <div style={S.callStatus}>
-          {status === 'connecting' && <span style={{ color: '#f0ad4e' }}>{t("● 连接中…")}</span>}
-          {status === 'live' && <span style={{ color: ACCENT }}>{t("● 通话中 ·")} {participants.length} {t("人在线")}</span>}
-          {status === 'error' && <span style={{ color: '#ff6b6b' }}>● {errMsg || t("连接失败")}</span>}
+          {status === 'connecting' && <span style={{ color: '#f0ad4e' }}>● 连接中…</span>}
+          {status === 'live' && <span style={{ color: ACCENT }}>● 通话中 · {participants.length} 人在线</span>}
+          {status === 'error' && <span style={{ color: '#ff6b6b' }}>● {errMsg || '连接失败'}</span>}
         </div>
         <div style={S.e2eeBar}>
           {encrypted ? (
-            <span style={{ color: ACCENT }}>{t("🔒 端到端加密已开 · 服务器也听不到")}
-              <b onClick={openKey} style={S.e2eeAction}>{t("更改口令")}</b></span>
+            <span style={{ color: ACCENT }}>🔒 端到端加密已开 · 服务器也听不到
+              <b onClick={openKey} style={S.e2eeAction}>更改口令</b></span>
           ) : (
-            <span style={{ color: 'rgba(255,255,255,0.5)' }}>{t("🔓 仅链路加密（服务器可解）·")}
-              <b onClick={openKey} style={{ ...S.e2eeAction, color: '#f0ad4e' }}>{t("设置加密口令")}</b></span>
+            <span style={{ color: 'rgba(255,255,255,0.5)' }}>🔓 仅链路加密（服务器可解）·
+              <b onClick={openKey} style={{ ...S.e2eeAction, color: '#f0ad4e' }}>设置加密口令</b></span>
           )}
         </div>
       </div>
@@ -484,98 +392,59 @@ function CallScreen({ group, user, token, onLeave }) {
       {keyPanel && (
         <div style={S.keyOverlay} onClick={() => setKeyPanel(false)}>
           <div style={S.keyCard} onClick={e => e.stopPropagation()}>
-            <div style={S.keyTitle}>{t("🔐 端到端加密口令")}</div>
+            <div style={S.keyTitle}>🔐 端到端加密口令</div>
             <div style={S.keyHint}>
-              {t("群内所有人填")} <b>{t("同一个口令")}</b> {t("才能互相听见。口令只存在你本机、由本地派生密钥，")}
-              <b>{t("绝不上送服务器")}</b>{t("——LiveKit 与后端都拿到的是密文。请通过当面/Signal 等\n              安全渠道私下约定，不要发在本群邀请码或微信里。")}
+              群内所有人填 <b>同一个口令</b> 才能互相听见。口令只存在你本机、由本地派生密钥，
+              <b>绝不上送服务器</b>——LiveKit 与后端都拿到的是密文。请通过当面/Signal 等
+              安全渠道私下约定，不要发在本群邀请码或微信里。
             </div>
             <input
               style={S.keyInput} value={keyDraft} type="text" autoFocus
-              placeholder={t("输入共享口令（留空=关闭加密）")}
+              placeholder="输入共享口令（留空=关闭加密）"
               onChange={e => setKeyDraft(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && saveKey()}
             />
             <div style={S.keyBtns}>
-              <button style={S.ghostBtn} onClick={() => setKeyPanel(false)}>{t("取消")}</button>
-              <button style={S.primaryBtn} onClick={saveKey}>{t("保存并重连")}</button>
+              <button style={S.ghostBtn} onClick={() => setKeyPanel(false)}>取消</button>
+              <button style={S.primaryBtn} onClick={saveKey}>保存并重连</button>
             </div>
           </div>
         </div>
       )}
 
-      {/* 屏幕共享大舞台：有人在共享时置顶展示，内容不裁切 */}
-      {(() => {
-        const sharer = participants.find(p => p.screenTrack)
-        return sharer ? (
-          <div style={S.stage}>
-            <VideoTile track={sharer.screenTrack} style={{ objectFit: 'contain' }} />
-            <div style={S.videoName}>🖥 {sharer.name} {t("正在共享屏幕")}</div>
-          </div>
-        ) : null
-      })()}
-
-      <div style={{
-        ...S.tiles,
-        // 任何人开了摄像头 → 切到大瓦片网格，画面优先；有共享舞台时瓦片区压缩
-        ...(participants.some(p => p.videoTrack)
-          ? { gridTemplateColumns: 'repeat(auto-fit, minmax(min(240px, 100%), 1fr))' }
-          : {}),
-        ...(participants.some(p => p.screenTrack) ? { flex: '0 0 auto', maxHeight: 180, alignContent: 'start' } : {}),
-      }}>
+      <div style={S.tiles}>
         {participants.map(p => (
           <div key={p.sid} style={{
             ...S.tile,
-            ...(p.videoTrack ? S.tileVideo : {}),
             boxShadow: p.speaking ? `0 0 0 3px ${ACCENT}, 0 0 22px rgba(52,199,89,0.55)` : 'none',
             borderColor: p.speaking ? ACCENT : 'rgba(255,255,255,0.12)',
           }}>
-            {p.videoTrack ? (
-              <>
-                <VideoTile track={p.videoTrack} mirror={p.isLocal} />
-                <div style={S.videoName}>{p.muted ? '🔇 ' : ''}{p.name}</div>
-              </>
-            ) : (
-              <>
-                <div style={{ ...S.avatar, background: p.isLocal ? 'rgba(52,199,89,0.18)' : 'rgba(255,255,255,0.08)' }}>
-                  {p.muted ? '🔇' : (p.speaking ? '🔊' : '🎙')}
-                </div>
-                <div style={S.tileName}>{p.name}</div>
-                {p.muted && <div style={S.mutedTag}>{t("已静音")}</div>}
-              </>
-            )}
+            <div style={{ ...S.avatar, background: p.isLocal ? 'rgba(52,199,89,0.18)' : 'rgba(255,255,255,0.08)' }}>
+              {p.muted ? '🔇' : (p.speaking ? '🔊' : '🎙')}
+            </div>
+            <div style={S.tileName}>{p.name}</div>
+            {p.muted && <div style={S.mutedTag}>已静音</div>}
           </div>
         ))}
         {status === 'live' && participants.length === 1 && (
-          <div style={S.waitHint}>{t("等待其他人加入…把邀请码")} <b>{group.join_code}</b> {t("发给他们")}</div>
+          <div style={S.waitHint}>等待其他人加入…把邀请码 <b>{group.join_code}</b> 发给他们</div>
         )}
       </div>
 
       <div style={S.controls}>
         <button onClick={toggleMic} style={{ ...S.ctrlBtn, background: micOn ? 'rgba(255,255,255,0.1)' : '#ff6b6b' }}
           disabled={status !== 'live'}>
-          <div style={S.ctrlIcon}>{micOn ? '🎙' : '🔇'}</div>
-          <div style={S.ctrlLabel}>{micOn ? t("静音") : t("取消静音")}</div>
-        </button>
-        <button onClick={toggleCam} style={{ ...S.ctrlBtn, background: camOn ? 'rgba(52,199,89,0.25)' : 'rgba(255,255,255,0.1)' }}
-          disabled={status !== 'live'}>
-          <div style={S.ctrlIcon}>{camOn ? '📹' : '📷'}</div>
-          <div style={S.ctrlLabel}>{camOn ? t("关闭摄像头") : t("开启摄像头")}</div>
-        </button>
-        <button onClick={toggleShare} style={{ ...S.ctrlBtn, background: shareOn ? 'rgba(56,189,248,0.28)' : 'rgba(255,255,255,0.1)' }}
-          disabled={status !== 'live'}>
-          <div style={S.ctrlIcon}>🖥</div>
-          <div style={S.ctrlLabel}>{shareOn ? t("停止共享") : t("共享屏幕")}</div>
+          <div style={{ fontSize: 'calc(1.5vw + 1.4vh)' }}>{micOn ? '🎙' : '🔇'}</div>
+          <div style={S.ctrlLabel}>{micOn ? '静音' : '取消静音'}</div>
         </button>
         <button onClick={toggleDenoise} style={{ ...S.ctrlBtn, background: denoise ? 'rgba(52,199,89,0.25)' : 'rgba(255,255,255,0.1)' }}
           disabled={status !== 'live'}>
-          <div style={S.ctrlIcon}>✨</div>
-          <div style={S.ctrlLabel}>{denoise ? t("AI降噪开") : t("AI降噪")}</div>
+          <div style={{ fontSize: 'calc(1.5vw + 1.4vh)' }}>✨</div>
+          <div style={S.ctrlLabel}>{denoise ? 'AI降噪开' : 'AI降噪'}</div>
         </button>
-        <NotesButton disabled={status !== 'live'} style={S.ctrlBtn} iconStyle={S.ctrlIcon} labelStyle={S.ctrlLabel}
-          selfName={user?.nickname || (user?.email || '').split('@')[0] || t('弟兄姐妹')} />
         <button onClick={hangUp} style={{ ...S.ctrlBtn, background: '#ff3b30' }}>
-          <div style={S.ctrlIcon}>📴</div>
-          <div style={S.ctrlLabel}>{t("挂断")}</div>
+          <div style={{ fontSize: 'calc(1.5vw + 1.4vh)' }}>📴</div>
+          <div style={S.ctrlLabel}>挂断</div>
         </button>
       </div>
     </div>
@@ -583,9 +452,9 @@ function CallScreen({ group, user, token, onLeave }) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-const CALL_CTRL_SIZE = 'clamp(42px, 11vw, 48px)'
-const CALL_CTRL_GAP = 'clamp(4px, 1.6vw, 10px)'
-const CALL_CTRL_SHIFT = 'calc(clamp(42px, 11vw, 48px) / -2)'
+const CALL_CTRL_SIZE = 'calc(2vw + 1.8vh)'
+const CALL_CTRL_GAP = 'calc(0.5vw + 0.5vh)'
+const CALL_CTRL_SHIFT = 'calc((2vw + 1.8vh) * -1.5)'
 
 const S = {
   page: { position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', background: '#0d1117', color: '#fff', fontFamily: 'inherit' },
@@ -624,47 +493,11 @@ const S = {
   keyBtns: { display: 'flex', gap: 10, justifyContent: 'flex-end' },
   tiles: { flex: 1, overflowY: 'auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(110px, 1fr))', gap: 12, padding: 16, alignContent: 'start' },
   tile: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 16, padding: '16px 8px', transition: 'box-shadow 0.12s, border-color 0.12s' },
-  tileVideo: { position: 'relative', padding: 0, aspectRatio: '4 / 3', overflow: 'hidden', justifyContent: 'stretch' },
-  stage: { position: 'relative', flex: 1, minHeight: 200, margin: '12px 16px 0', borderRadius: 14, overflow: 'hidden', background: '#000', border: '1px solid rgba(255,255,255,0.14)' },
-  videoName: { position: 'absolute', left: 8, bottom: 8, maxWidth: 'calc(100% - 16px)', fontSize: 11.5, color: '#fff', padding: '3px 8px', borderRadius: 8, background: 'rgba(0,0,0,0.55)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' },
   avatar: { width: 56, height: 56, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 26 },
   tileName: { fontSize: 12, color: 'rgba(255,255,255,0.85)', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' },
   mutedTag: { fontSize: 10, color: 'rgba(255,255,255,0.4)' },
   waitHint: { gridColumn: '1 / -1', textAlign: 'center', color: 'rgba(255,255,255,0.45)', fontSize: 13, lineHeight: 1.7, padding: 12 },
-  controls: {
-    display: 'flex',
-    justifyContent: 'center',
-    flexWrap: 'nowrap',
-    gap: CALL_CTRL_GAP,
-    padding: '6px 12px calc(14px + env(safe-area-inset-bottom))',
-    borderTop: '1px solid rgba(255,255,255,0.08)',
-    flexShrink: 0,
-    transform: `translateY(${CALL_CTRL_SHIFT})`,
-    marginBottom: CALL_CTRL_SHIFT,
-  },
-  ctrlBtn: {
-    width: CALL_CTRL_SIZE,
-    minWidth: CALL_CTRL_SIZE,
-    minHeight: CALL_CTRL_SIZE,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 2,
-    border: 'none',
-    borderRadius: 'clamp(9px, 2.6vw, 12px)',
-    padding: '4px 3px',
-    color: '#fff',
-    cursor: 'pointer',
-    boxSizing: 'border-box',
-  },
-  ctrlIcon: { fontSize: 'clamp(13px, 3.6vw, 16px)', lineHeight: 1 },
-  ctrlLabel: {
-    fontSize: 'clamp(7.5px, 2.2vw, 9px)',
-    lineHeight: 1.05,
-    maxWidth: '100%',
-    whiteSpace: 'nowrap',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-  },
+  controls: { display: 'flex', justifyContent: 'center', gap: CALL_CTRL_GAP, padding: 'calc(0.3vw + 0.3vh) calc(0.45vw + 0.4vh)', borderTop: '1px solid rgba(255,255,255,0.08)', flexShrink: 0, transform: `translateY(${CALL_CTRL_SHIFT})`, marginBottom: CALL_CTRL_SHIFT },
+  ctrlBtn: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, border: 'none', borderRadius: 14, padding: 'calc(0.3vw + 0.3vh) calc(0.45vw + 0.4vh)', color: '#fff', cursor: 'pointer', width: CALL_CTRL_SIZE, minWidth: CALL_CTRL_SIZE, minHeight: CALL_CTRL_SIZE },
+  ctrlLabel: { fontSize: 'calc(1vw + 0.9vh)' },
 }

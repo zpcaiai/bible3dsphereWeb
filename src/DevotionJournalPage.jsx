@@ -5,9 +5,6 @@ import { deleteJournal, fetchJournals, saveJournal } from './api'
 import usePullToRefresh from './hooks/usePullToRefresh'
 import { escapeHtml, escapeHtmlWithBr } from './sanitize'
 import EmojiTextarea from './EmojiTextarea'
-import { t } from './i18n/runtime'
-import { translateForExport, translateElementText } from './exportI18n'
-import { AutoText } from './autoTranslate.jsx'
 
 // 读取旧的 localStorage 灵修笔记（来自 ChatPage / DevotionNotePage）
 function getLegacyLocalJournals() {
@@ -34,22 +31,22 @@ function getLegacyLocalJournals() {
 }
 
 const MOODS = [
-  { emoji: '🌟', label: t("感恩") },
-  { emoji: '🕊️', label: t("平安") },
-  { emoji: '🙏', label: t("渴慕") },
-  { emoji: '💪', label: t("刚强") },
-  { emoji: '😔', label: t("软弱") },
-  { emoji: '😢', label: t("哀恸") },
-  { emoji: '🌧️', label: t("挣扎") },
-  { emoji: '🔥', label: t("复兴") },
+  { emoji: '🌟', label: '感恩' },
+  { emoji: '🕊️', label: '平安' },
+  { emoji: '🙏', label: '渴慕' },
+  { emoji: '💪', label: '刚强' },
+  { emoji: '😔', label: '软弱' },
+  { emoji: '😢', label: '哀恸' },
+  { emoji: '🌧️', label: '挣扎' },
+  { emoji: '🔥', label: '复兴' },
 ]
 
 const FIELDS = [
-  { key: 'scripture',    label: t("📖 今日经文"), placeholder: t("记录今天读到的经文…"), rows: 3 },
-  { key: 'observation',  label: t("🔍 观察默想"), placeholder: t("这段经文说了什么？有什么让你印象深刻？"), rows: 4 },
-  { key: 'reflection',   label: t("💭 灵修反思"), placeholder: t("这段经文对你说什么？神在其中给你什么光照？"), rows: 4 },
-  { key: 'application',  label: t("🌱 行道应用"), placeholder: t("你今天打算如何将这段话活出来？"), rows: 3 },
-  { key: 'prayer',       label: t("🙏 祷告记录"), placeholder: t("写下你今天的祷告…"), rows: 4 },
+  { key: 'scripture',    label: '📖 今日经文', placeholder: '记录今天读到的经文…', rows: 3 },
+  { key: 'observation',  label: '🔍 观察默想', placeholder: '这段经文说了什么？有什么让你印象深刻？', rows: 4 },
+  { key: 'reflection',   label: '💭 灵修反思', placeholder: '这段经文对你说什么？神在其中给你什么光照？', rows: 4 },
+  { key: 'application',  label: '🌱 行道应用', placeholder: '你今天打算如何将这段话活出来？', rows: 3 },
+  { key: 'prayer',       label: '🙏 祷告记录', placeholder: '写下你今天的祷告…', rows: 4 },
 ]
 
 function today() {
@@ -75,7 +72,7 @@ const EMPTY_FORM = { date: today(), title: '', scripture: '', observation: '', r
 // ── List Card ────────────────────────────────────────────────
 function JournalCard({ journal, onOpen, onEdit, onDelete }) {
   const mood = MOODS.find(m => m.label === journal.mood)
-  const preview = journal.observation || journal.reflection || journal.scripture || t("（空白）")
+  const preview = journal.observation || journal.reflection || journal.scripture || '（空白）'
 
   const btnStyle = {
     padding: '6px',
@@ -104,14 +101,14 @@ function JournalCard({ journal, onOpen, onEdit, onDelete }) {
         <div className="dj-card-date">{formatDate(journal.date)}</div>
         <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
           {mood && <span className="dj-card-mood">{mood.emoji} {mood.label}</span>}
-          <button onClick={e => { e.stopPropagation(); onEdit(journal) }} title={t("编辑")} style={btnStyle}>✏️</button>
-          <button onClick={e => { e.stopPropagation(); onDelete(journal) }} title={t("删除")} style={delBtnStyle}>🗑️</button>
+          <button onClick={e => { e.stopPropagation(); onEdit(journal) }} title="编辑" style={btnStyle}>✏️</button>
+          <button onClick={e => { e.stopPropagation(); onDelete(journal) }} title="删除" style={delBtnStyle}>🗑️</button>
         </div>
       </div>
-      {journal.title && <div className="dj-card-title"><AutoText>{journal.title}</AutoText></div>}
+      {journal.title && <div className="dj-card-title">{journal.title}</div>}
       <div className="dj-card-preview" style={{ whiteSpace: 'pre-wrap', lineHeight: '1.6', WebkitLineClamp: 'none', maxHeight: 'none', overflow: 'visible' }}>{preview}</div>
       <div className="dj-card-footer">
-        <span className="dj-card-time">{t("更新于")} {timeAgo(journal.updated_at)}</span>
+        <span className="dj-card-time">更新于 {timeAgo(journal.updated_at)}</span>
       </div>
     </div>
   )
@@ -164,7 +161,7 @@ function JournalEditor({ initial, token, onSaved, onCancel }) {
           </svg>
         </button>
         <div className="dj-editor-hcenter">
-          <div className="dj-editor-htitle">{isNew ? t("新建灵修日记") : t("编辑灵修日记")}</div>
+          <div className="dj-editor-htitle">{isNew ? '新建灵修日记' : '编辑灵修日记'}</div>
           <div className="dj-editor-hdate">{formatDate(form.date)}</div>
         </div>
         <button
@@ -179,7 +176,7 @@ function JournalEditor({ initial, token, onSaved, onCancel }) {
       <div className="dj-editor-body">
         {/* Date picker */}
         <div className="dj-field">
-          <label className="dj-field-label">{t("📅 日期")}</label>
+          <label className="dj-field-label">📅 日期</label>
           <input
             type="date"
             className="dj-date-input"
@@ -190,11 +187,11 @@ function JournalEditor({ initial, token, onSaved, onCancel }) {
 
         {/* Title */}
         <div className="dj-field">
-          <label className="dj-field-label">{t("✏️ 标题（选填）")}</label>
+          <label className="dj-field-label">✏️ 标题（选填）</label>
           <input
             type="text"
             className="dj-text-input"
-            placeholder={t("今天的主题是…")}
+            placeholder="今天的主题是…"
             value={form.title || ''}
             onChange={e => set('title', e.target.value)}
             maxLength={200}
@@ -203,7 +200,7 @@ function JournalEditor({ initial, token, onSaved, onCancel }) {
 
         {/* Mood */}
         <div className="dj-field">
-          <label className="dj-field-label">{t("💝 今日心情")}</label>
+          <label className="dj-field-label">💝 今日心情</label>
           <div className="dj-mood-grid">
             {MOODS.map(m => (
               <button
@@ -249,7 +246,7 @@ function JournalEditor({ initial, token, onSaved, onCancel }) {
           disabled={saving}
           onClick={() => doSave()}
         >
-          {saving ? t("⏳ 保存中…") : t("💾 保存")}
+          {saving ? '⏳ 保存中…' : '💾 保存'}
         </button>
       </div>
     </div>
@@ -263,14 +260,14 @@ function formatDateTime(ts) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`
 }
 
-async function exportJournalToTxt(journal) {
+function exportJournalToTxt(journal) {
   if (!journal) return
   let content = `属灵星球 - 灵修日记\n`
   content += `日期：${formatDate(journal.date)}\n`
   if (journal.mood) content += `心情：${journal.mood}\n`
   if (journal.title) content += `标题：${journal.title}\n`
   content += `\n━━━━━━━━━━━━━━━━━━━━━━━\n  今日经文\n━━━━━━━━━━━━━━━━━━━━━━━\n\n`
-  content += `${journal.scripture || t("未记录")}\n\n`
+  content += `${journal.scripture || '未记录'}\n\n`
   
   if (journal.observation) {
     content += `━━━━━━━━━━━━━━━━━━━━━━━\n  观察默想\n━━━━━━━━━━━━━━━━━━━━━━━\n\n`
@@ -289,12 +286,11 @@ async function exportJournalToTxt(journal) {
     content += `${journal.prayer}\n\n`
   }
   
-  content = await translateForExport(content)
   const blob = new Blob([content], { type: 'text/plain;charset=utf-8' })
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
   a.href = url
-  const title = (journal.title || journal.scripture || t("灵修日记")).replace(/[\\/:*?"<>|]/g, '').slice(0, 20)
+  const title = (journal.title || journal.scripture || '灵修日记').replace(/[\\/:*?"<>|]/g, '').slice(0, 20)
   a.download = `${title}_${new Date().getFullYear()}${String(new Date().getMonth()+1).padStart(2,'0')}${String(new Date().getDate()).padStart(2,'0')}.txt`
   a.click()
   URL.revokeObjectURL(url)
@@ -315,7 +311,6 @@ async function exportJournalToPdf(journal) {
 
   async function addBlock(html) {
     el.innerHTML = html
-    await translateElementText(el)
     const canvas = await html2canvas(el, { scale: 2, useCORS: true, logging: false, backgroundColor: '#0e1726' })
     const imgH = (canvas.height / canvas.width) * cw
     if (curY + imgH > PH - 10 && curY > M + 5) { pdf.addPage(); pdf.setFillColor(14, 23, 38); pdf.rect(0, 0, PW, PH, 'F'); curY = M }
@@ -334,7 +329,7 @@ async function exportJournalToPdf(journal) {
     await addBlock(`
       <div style="margin:6px 0;">
         <div style="font-size:14px;font-weight:bold;color:#444;margin-bottom:5px;border-bottom:1px solid #2e3c52;padding-bottom:3px;">📖 今日经文</div>
-        <div style="font-size:14px;color:#f0f0f0;font-weight:500;margin:5px 0;white-space:pre-wrap;">${escapeHtml(journal.scripture) || t("未记录")}</div>
+        <div style="font-size:14px;color:#f0f0f0;font-weight:500;margin:5px 0;white-space:pre-wrap;">${escapeHtml(journal.scripture) || '未记录'}</div>
       </div>
     `)
     if (journal.observation) {
@@ -374,9 +369,9 @@ async function exportJournalToPdf(journal) {
       pdf.setPage(p); pdf.setFontSize(9); pdf.setTextColor(180, 180, 180)
       pdf.text('https://holiness.uk/', PW / 2, PH - 4, { align: 'center' })
     }
-    const title = (journal.title || journal.scripture || t("灵修日记")).replace(/[\\/:*?"<>|]/g, '').slice(0, 20)
+    const title = (journal.title || journal.scripture || '灵修日记').replace(/[\\/:*?"<>|]/g, '').slice(0, 20)
     pdf.save(`${title}_${new Date().getFullYear()}${String(new Date().getMonth()+1).padStart(2,'0')}${String(new Date().getDate()).padStart(2,'0')}.pdf`)
-  } catch (err) { console.error('PDF generation failed:', err); alert(t("PDF 生成失败，请重试")) }
+  } catch (err) { console.error('PDF generation failed:', err); alert('PDF 生成失败，请重试') }
   finally { document.body.removeChild(el) }
 }
 
@@ -393,7 +388,7 @@ function JournalDetail({ journal, onEdit, onBack }) {
           </svg>
         </button>
         <div className="dj-editor-hcenter">
-          <div className="dj-editor-htitle"><AutoText text={journal.title || t("灵修日记")} /></div>
+          <div className="dj-editor-htitle">{journal.title || '灵修日记'}</div>
           <div className="dj-editor-hdate">{formatDate(journal.date)}</div>
         </div>
         <button className="dj-save-btn" onClick={onEdit}>✏️</button>
@@ -409,38 +404,37 @@ function JournalDetail({ journal, onEdit, onBack }) {
         {sections.map(f => (
           <div key={f.key} className="dj-detail-section glass">
             <div className="dj-detail-section-title">{f.label}</div>
-            <div className="dj-detail-section-content" style={{ whiteSpace: 'pre-wrap' }}><AutoText>{journal[f.key]}</AutoText></div>
+            <div className="dj-detail-section-content" style={{ whiteSpace: 'pre-wrap' }}>{journal[f.key]}</div>
           </div>
         ))}
 
         {sections.length === 0 && (
           <div className="dj-empty" style={{ marginTop: 40 }}>
             <div className="dj-empty-icon">📝</div>
-            <div>{t("这篇日记还没有内容")}</div>
-            <button className="primary-btn" style={{ maxWidth: 160, marginTop: 16 }} onClick={onEdit}>{t("✏️ 填写")}</button>
+            <div>这篇日记还没有内容</div>
+            <button className="primary-btn" style={{ maxWidth: 160, marginTop: 16 }} onClick={onEdit}>✏️ 填写</button>
           </div>
         )}
 
         <div className="dj-detail-footer">
-          {t("最后更新于")} {timeAgo(journal.updated_at)}
+          最后更新于 {timeAgo(journal.updated_at)}
         </div>
       </div>
     </div>
   )
 }
 
-async function exportAllJournalsToTxt(journals) {
+function exportAllJournalsToTxt(journals) {
   if (!journals || journals.length === 0) return
   let content = `属灵星球 - 灵修日记汇总\n共 ${journals.length} 篇\n\n`
   journals.forEach((journal, i) => {
-    content += `${'═'.repeat(40)}\n第 ${i + 1} 篇：${journal.title || t("灵修日记")}\n日期：${formatDate(journal.date)}\n${'─'.repeat(40)}\n`
+    content += `${'═'.repeat(40)}\n第 ${i + 1} 篇：${journal.title || '灵修日记'}\n日期：${formatDate(journal.date)}\n${'─'.repeat(40)}\n`
     if (journal.scripture) content += `📖 今日经文\n${journal.scripture}\n\n`
     if (journal.observation) content += `🔍 观察默想\n${journal.observation}\n\n`
     if (journal.reflection) content += `💭 灵修反思\n${journal.reflection}\n\n`
     if (journal.application) content += `✅ 行道应用\n${journal.application}\n\n`
     if (journal.prayer) content += `🙏 祷告记录\n${journal.prayer}\n\n`
   })
-  content = await translateForExport(content)
   const blob = new Blob([content], { type: 'text/plain;charset=utf-8' })
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
@@ -467,7 +461,6 @@ async function exportAllJournalsToPdf(journals) {
 
   async function addBlock(html) {
     el.innerHTML = html
-    await translateElementText(el)
     const canvas = await html2canvas(el, { scale: 2, useCORS: true, logging: false, backgroundColor: '#0e1726' })
     const imgH = (canvas.height / canvas.width) * cw
     if (curY + imgH > PH - 10 && curY > M + 5) { pdf.addPage(); pdf.setFillColor(14, 23, 38); pdf.rect(0, 0, PW, PH, 'F'); curY = M }
@@ -484,7 +477,7 @@ async function exportAllJournalsToPdf(journals) {
     `)
     for (let i = 0; i < journals.length; i++) {
       const j = journals[i]
-      let html = `<div style="margin:6px 0;border-top:1px solid #2e3c52;padding-top:10px;"><h2 style="color:#f0f0f0;font-size:15px;margin:0 0 4px 0;">${i+1}. ${escapeHtml(j.title||t("灵修日记"))} <span style="color:#9a9a9a;font-size:12px;">${formatDate(j.date)}</span></h2>`
+      let html = `<div style="margin:6px 0;border-top:1px solid #2e3c52;padding-top:10px;"><h2 style="color:#f0f0f0;font-size:15px;margin:0 0 4px 0;">${i+1}. ${escapeHtml(j.title||'灵修日记')} <span style="color:#9a9a9a;font-size:12px;">${formatDate(j.date)}</span></h2>`
       if (j.scripture) html += `<p style="color:#007aff;font-size:13px;margin:3px 0;">${escapeHtml(j.scripture)}</p>`
       if (j.reflection) html += `<p style="color:#444;font-size:13px;margin:3px 0;">${escapeHtml(j.reflection)}</p>`
       html += `</div>`
@@ -496,7 +489,7 @@ async function exportAllJournalsToPdf(journals) {
       pdf.text('https://holiness.uk/', PW / 2, PH - 4, { align: 'center' })
     }
     pdf.save(`灵修日记汇总_${new Date().toISOString().slice(0,10)}.pdf`)
-  } catch(err) { console.error('PDF生成失败', err); alert(t("PDF 生成失败，请重试")) }
+  } catch(err) { console.error('PDF生成失败', err); alert('PDF 生成失败，请重试') }
   finally { document.body.removeChild(el) }
 }
 
@@ -622,14 +615,14 @@ export default function DevotionJournalPage({ user, token, onBack, contained = f
             </svg>
           </button>
           <div className="dj-header-center">
-            <div className="dj-page-title">{t("📔 灵修日记")}</div>
+            <div className="dj-page-title">📔 灵修日记</div>
           </div>
           <div style={{ width: 32 }} />
         </header>
         <div className="dj-empty" style={{ flex: 1 }}>
           <div className="dj-empty-icon">🔒</div>
-          <div className="dj-empty-title">{t("请先登录")}</div>
-          <div className="dj-empty-sub">{t("灵修日记需要登录后才能使用")}</div>
+          <div className="dj-empty-title">请先登录</div>
+          <div className="dj-empty-sub">灵修日记需要登录后才能使用</div>
         </div>
       </div>
     )
@@ -639,19 +632,19 @@ export default function DevotionJournalPage({ user, token, onBack, contained = f
   const deleteDialog = deleteTarget && (
     <div className="dj-overlay" onClick={() => setDeleteTarget(null)}>
       <div className="dj-dialog glass" onClick={e => e.stopPropagation()}>
-        <div className="dj-dialog-title" style={{ textAlign: 'center', fontSize: '18px' }}>{t("⚠️ 确定要删除这条日记吗？")}</div>
+        <div className="dj-dialog-title" style={{ textAlign: 'center', fontSize: '18px' }}>⚠️ 确定要删除这条日记吗？</div>
         <div className="dj-dialog-body" style={{ textAlign: 'center', color: 'rgba(255,255,255,0.6)' }}>
-          {t("删除")} <strong>{formatDate(deleteTarget.date)}</strong> {t("的日记")}<br />
-          {t("删除后无法恢复，请谨慎操作")}
+          删除 <strong>{formatDate(deleteTarget.date)}</strong> 的日记<br />
+          删除后无法恢复，请谨慎操作
         </div>
         <div className="dj-dialog-actions">
-          <button className="pw-cancel-btn" onClick={() => setDeleteTarget(null)}>{t("取消")}</button>
+          <button className="pw-cancel-btn" onClick={() => setDeleteTarget(null)}>取消</button>
           <button
             className="dj-del-confirm-btn"
             disabled={deleting}
             onClick={confirmDelete}
           >
-            {deleting ? t("删除中…") : t("确认删除")}
+            {deleting ? '删除中…' : '确认删除'}
           </button>
         </div>
       </div>
@@ -703,10 +696,10 @@ export default function DevotionJournalPage({ user, token, onBack, contained = f
           </svg>
         </button>
         <div className="dj-header-center">
-          <div className="dj-page-title">{t("📔 灵修日记")}</div>
-          <div className="dj-page-sub">{total > 0 ? `共 ${total} 篇` : t("每日与神同行")}</div>
+          <div className="dj-page-title">📔 灵修日记</div>
+          <div className="dj-page-sub">{total > 0 ? `共 ${total} 篇` : '每日与神同行'}</div>
         </div>
-        <button className="pw-compose-btn" onClick={openNew} title={t("新建")}>
+        <button className="pw-compose-btn" onClick={openNew} title="新建">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M12 5v14M5 12h14" />
           </svg>
@@ -720,15 +713,15 @@ export default function DevotionJournalPage({ user, token, onBack, contained = f
         {loading ? (
           <div className="pw-loading">
             <div className="pw-loading-dots"><span /><span /><span /></div>
-            <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: 13, marginTop: 12 }}>{t("加载中…")}</div>
+            <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: 13, marginTop: 12 }}>加载中…</div>
           </div>
         ) : journals.length === 0 ? (
           <div className="dj-empty">
             <div className="dj-empty-icon">📔</div>
-            <div className="dj-empty-title">{t("还没有日记")}</div>
-            <div className="dj-empty-sub">{t("每天与神同行，记录灵命成长")}</div>
+            <div className="dj-empty-title">还没有日记</div>
+            <div className="dj-empty-sub">每天与神同行，记录灵命成长</div>
             <button className="primary-btn" style={{ maxWidth: 200, marginTop: 20 }} onClick={openNew}>
-              {t("✏️ 开始写")}
+              ✏️ 开始写
             </button>
           </div>
         ) : (
@@ -737,7 +730,7 @@ export default function DevotionJournalPage({ user, token, onBack, contained = f
             {!journals.find(j => j.date === today()) && (
               <button className="dj-today-btn glass" onClick={openNew}>
                 <span className="dj-today-icon">✨</span>
-                <span className="dj-today-text">{t("记录今天的灵修 —")} {formatDate(today())}</span>
+                <span className="dj-today-text">记录今天的灵修 — {formatDate(today())}</span>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="9 18 15 12 9 6" />
                 </svg>
@@ -756,16 +749,39 @@ export default function DevotionJournalPage({ user, token, onBack, contained = f
 
             {journals.length < total && (
               <button className="pw-load-more" onClick={() => load(false)}>
-                {t("⬇️ 加载更多 (")}{total - journals.length})
+                ⬇️ 加载更多 ({total - journals.length})
               </button>
             )}
 
-            <div className="pw-footer-tip">{t("诗篇 119:105 · 你的话是我脚前的灯，是我路上的光")}</div>
+            <div className="pw-footer-tip">诗篇 119:105 · 你的话是我脚前的灯，是我路上的光</div>
           </>
         )}
       </div>
 
-      {/* 导出已统一收口到首页「📦 数据导出」 */}
+      {/* Export Bar */}
+      {!loading && journals.length > 0 && (
+        <div className="sj-export-bar">
+          <button className="sj-export-btn-bottom" onClick={e => window.busyBtn(e, () => exportAllJournalsToTxt(journals), "导出 TXT 中…", "✅ TXT 已导出")} title="导出TXT">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+              <polyline points="10 9 9 9 8 9"/>
+            </svg>
+            TXT
+          </button>
+          <button className="sj-export-btn-bottom" onClick={e => window.busyBtn(e, () => exportAllJournalsToPdf(journals), "生成 PDF 中…", "✅ PDF 已导出")} title="导出PDF">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <path d="M9 15l3 3 3-3"/>
+              <path d="M12 18V9"/>
+            </svg>
+            PDF
+          </button>
+        </div>
+      )}
     </div>
   )
 }

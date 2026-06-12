@@ -8,43 +8,41 @@
  *     · 若同时提供 chapters（文字），则也显示文字 + TTS 语音朗读。
  */
 import { useState, useRef, useEffect, lazy, Suspense } from 'react'
-import BackButton from './BackButton'
 import { TTSFullBar, TTSButton } from './useGlobalAudio.jsx'
 import DailyDevotionPage from './DailyDevotionPage.jsx'
 import { API_BASE } from './api.js'
 import { getToken } from './auth.js'
-import { t } from './i18n/runtime'
 
 // ── 书库（可扩展）──────────────────────────────────────────────────────────────
 export const BOOKS = [
   {
     id: 'daily',
-    title: t("晨恩日新"),
-    subtitle: t("福音灵修日引 · 全年 365 篇"),
-    author: t("保罗·区普（Paul David Tripp）"),
+    title: '晨恩日新',
+    subtitle: '福音灵修日引 · 全年 365 篇',
+    author: '保罗·区普（Paul David Tripp）',
     emoji: '🌅',
     color: '#34c759',
     kind: 'epub', epub: '/book/daily.epub',   // 全文 EPUB；日历版仍在「灵修」tab(DailyDevotionPage)
-    blurb: t("保罗·区普的福音灵修日引，全年 365 篇，以基督的福音浇灌每个清晨。可在应用内翻页阅读全文并逐页语音朗读。（按日历逐日阅读的版本在「灵修」tab。）"),
+    blurb: '保罗·区普的福音灵修日引，全年 365 篇，以基督的福音浇灌每个清晨。可在应用内翻页阅读全文并逐页语音朗读。（按日历逐日阅读的版本在「灵修」tab。）',
   },
-  { id: 'pilgrim', title: t("天路历程"), subtitle: t("基督徒的属灵旅程"), author: t("约翰·班扬（John Bunyan, 1678）"), emoji: '🧭', color: '#5ac8fa', kind: 'epub', epub: '/book/pilgrim.epub', blurb: t("仅次于圣经流传最广的属灵寓言：背负罪担的「基督徒」逃离将亡城、奔向天城的旅程。可在应用内翻页阅读原著全文，并逐页语音朗读。") },
-  { id: 'imitation', title: t("效法基督"), subtitle: t("内在生命与谦卑舍己"), author: t("托马斯·肯培（Thomas à Kempis, 约15世纪）"), emoji: '🕊️', color: '#c084fc', kind: 'epub', epub: '/book/imitation.epub', blurb: t("仅次于圣经流传最广的灵修经典，四卷劝人离弃虚浮、注重内在生命、谦卑效法基督。可在应用内翻页阅读全文并逐页语音朗读。") },
-  { id: 'owen-mortif', title: t("治死信徒身上的罪"), subtitle: t("靠圣灵天天治死罪"), author: t("约翰·欧文（John Owen, Mortification of Sin）"), emoji: '⚔️', color: '#f97316', kind: 'epub', epub: '/book/owen-mortif.epub', blurb: t("欧文论成圣最实际的一本书——「你若不天天治死罪，罪必天天害你」。可在应用内翻页阅读全文并逐页语音朗读。") },
-  { id: 'baxter-rest', title: t("圣徒永恒的安息"), subtitle: t("默想天家，以永恒坚固今生"), author: t("理查德·巴克斯特（Richard Baxter, The Saints’ Everlasting Rest）"), emoji: '🌅', color: '#34d399', kind: 'epub', epub: '/book/baxter-rest.epub', blurb: t("巴克斯特在病重将死时写成的默想巨著，引导信徒操练默想天家的永恒安息。可在应用内翻页阅读全文并逐页语音朗读。") },
-  { id: 'law-seriouscall', title: t("敬虔与圣洁生活的严肃呼召"), subtitle: t("让信仰贯穿全部的生活"), author: t("威廉·罗（William Law, A Serious Call to a Devout and Holy Life）"), emoji: '📯', color: '#60a5fa', kind: 'epub', epub: '/book/law-seriouscall.epub', blurb: t("威廉·罗向「挂名的」基督徒发出的严肃呼召，深深影响了卫斯理等人。可在应用内翻页阅读全文并逐页语音朗读。") },
-  { id: 'presence', title: t("与神同在"), subtitle: t("在日常中时刻亲近神"), author: t("劳伦斯弟兄（Brother Lawrence）"), emoji: '🙏', color: '#34c759', kind: 'epub', epub: '/book/presence.epub', blurb: t("修道院厨役劳伦斯弟兄的谈话与书信，教人在最平凡的日常中时刻操练与神同在。可在应用内翻页阅读全文并逐页语音朗读。") },
-  { id: 'purpose', title: t("标杆人生"), subtitle: t("明白神所定的人生目的"), author: t("瑞克·华伦（Rick Warren, The Purpose Driven Life）"), emoji: '🎯', color: '#06b6d4', kind: 'epub', epub: '/book/purpose.epub', blurb: t("以四十天带你思考「我为什么活着」，发现并活出神所定的五个人生目的。可在应用内翻页阅读全文并逐页语音朗读。") },
-  { id: 'mere', title: t("返璞归真"), subtitle: t("理性说明信仰，也滋养心灵"), author: t("C.S. 路易斯（C.S. Lewis, Mere Christianity）"), emoji: '💡', color: '#818cf8', kind: 'epub', epub: '/book/mere.epub', blurb: t("路易斯由广播讲稿整理，向怀疑者理性阐明信仰根基的通俗护教经典。可在应用内翻页阅读全文并逐页语音朗读。") },
-  { id: 'whitney', title: t("操练敬虔（基督教要义每日灵修）"), subtitle: t("每日操练亲近神的属灵生活"), author: t("吕沛渊"), emoji: '🏋️', color: '#fb7185', kind: 'epub', epub: '/book/whitney.epub', blurb: t("以《基督教要义》为线索的每日灵修，逐日操练读经、祷告与亲近神的属灵生活。可在应用内翻页阅读全文并逐页语音朗读。") },
-  { id: 'screwtape', title: t("魔鬼家书"), subtitle: t("从反面视角识破试探"), author: t("C.S. 路易斯（C.S. Lewis, The Screwtape Letters）"), emoji: '😈', color: '#ef4444', kind: 'epub', epub: '/book/screwtape.epub', blurb: t("路易斯以资深魔鬼写给小魔鬼的书信，从反面揭露人受试探、偏离神的种种诡计。可在应用内翻页阅读全文并逐页语音朗读。") },
-  { id: 'depression', title: t("灵性低潮"), subtitle: t("灵里消沉的成因与医治"), author: t("钟马田（Martyn Lloyd-Jones, Spiritual Depression）"), emoji: '🌧️', color: '#94a3b8', kind: 'epub', epub: '/book/depression.epub', blurb: t("钟马田面对基督徒灵里沮丧消沉的讲道集，逐一诊断成因、以福音给出医治。可在应用内翻页阅读全文并逐页语音朗读。") },
+  { id: 'pilgrim', title: '天路历程', subtitle: '基督徒的属灵旅程', author: '约翰·班扬（John Bunyan, 1678）', emoji: '🧭', color: '#5ac8fa', kind: 'epub', epub: '/book/pilgrim.epub', blurb: '仅次于圣经流传最广的属灵寓言：背负罪担的「基督徒」逃离将亡城、奔向天城的旅程。可在应用内翻页阅读原著全文，并逐页语音朗读。' },
+  { id: 'imitation', title: '效法基督', subtitle: '内在生命与谦卑舍己', author: '托马斯·肯培（Thomas à Kempis, 约15世纪）', emoji: '🕊️', color: '#c084fc', kind: 'epub', epub: '/book/imitation.epub', blurb: '仅次于圣经流传最广的灵修经典，四卷劝人离弃虚浮、注重内在生命、谦卑效法基督。可在应用内翻页阅读全文并逐页语音朗读。' },
+  { id: 'owen-mortif', title: '治死信徒身上的罪', subtitle: '靠圣灵天天治死罪', author: '约翰·欧文（John Owen, Mortification of Sin）', emoji: '⚔️', color: '#f97316', kind: 'epub', epub: '/book/owen-mortif.epub', blurb: '欧文论成圣最实际的一本书——「你若不天天治死罪，罪必天天害你」。可在应用内翻页阅读全文并逐页语音朗读。' },
+  { id: 'baxter-rest', title: '圣徒永恒的安息', subtitle: '默想天家，以永恒坚固今生', author: '理查德·巴克斯特（Richard Baxter, The Saints’ Everlasting Rest）', emoji: '🌅', color: '#34d399', kind: 'epub', epub: '/book/baxter-rest.epub', blurb: '巴克斯特在病重将死时写成的默想巨著，引导信徒操练默想天家的永恒安息。可在应用内翻页阅读全文并逐页语音朗读。' },
+  { id: 'law-seriouscall', title: '敬虔与圣洁生活的严肃呼召', subtitle: '让信仰贯穿全部的生活', author: '威廉·罗（William Law, A Serious Call to a Devout and Holy Life）', emoji: '📯', color: '#60a5fa', kind: 'epub', epub: '/book/law-seriouscall.epub', blurb: '威廉·罗向「挂名的」基督徒发出的严肃呼召，深深影响了卫斯理等人。可在应用内翻页阅读全文并逐页语音朗读。' },
+  { id: 'presence', title: '与神同在', subtitle: '在日常中时刻亲近神', author: '劳伦斯弟兄（Brother Lawrence）', emoji: '🙏', color: '#34c759', kind: 'epub', epub: '/book/presence.epub', blurb: '修道院厨役劳伦斯弟兄的谈话与书信，教人在最平凡的日常中时刻操练与神同在。可在应用内翻页阅读全文并逐页语音朗读。' },
+  { id: 'purpose', title: '标杆人生', subtitle: '明白神所定的人生目的', author: '瑞克·华伦（Rick Warren, The Purpose Driven Life）', emoji: '🎯', color: '#06b6d4', kind: 'epub', epub: '/book/purpose.epub', blurb: '以四十天带你思考「我为什么活着」，发现并活出神所定的五个人生目的。可在应用内翻页阅读全文并逐页语音朗读。' },
+  { id: 'mere', title: '返璞归真', subtitle: '理性说明信仰，也滋养心灵', author: 'C.S. 路易斯（C.S. Lewis, Mere Christianity）', emoji: '💡', color: '#818cf8', kind: 'epub', epub: '/book/mere.epub', blurb: '路易斯由广播讲稿整理，向怀疑者理性阐明信仰根基的通俗护教经典。可在应用内翻页阅读全文并逐页语音朗读。' },
+  { id: 'whitney', title: '操练敬虔（基督教要义每日灵修）', subtitle: '每日操练亲近神的属灵生活', author: '吕沛渊', emoji: '🏋️', color: '#fb7185', kind: 'epub', epub: '/book/whitney.epub', blurb: '以《基督教要义》为线索的每日灵修，逐日操练读经、祷告与亲近神的属灵生活。可在应用内翻页阅读全文并逐页语音朗读。' },
+  { id: 'screwtape', title: '魔鬼家书', subtitle: '从反面视角识破试探', author: 'C.S. 路易斯（C.S. Lewis, The Screwtape Letters）', emoji: '😈', color: '#ef4444', kind: 'epub', epub: '/book/screwtape.epub', blurb: '路易斯以资深魔鬼写给小魔鬼的书信，从反面揭露人受试探、偏离神的种种诡计。可在应用内翻页阅读全文并逐页语音朗读。' },
+  { id: 'depression', title: '灵性低潮', subtitle: '灵里消沉的成因与医治', author: '钟马田（Martyn Lloyd-Jones, Spiritual Depression）', emoji: '🌧️', color: '#94a3b8', kind: 'epub', epub: '/book/depression.epub', blurb: '钟马田面对基督徒灵里沮丧消沉的讲道集，逐一诊断成因、以福音给出医治。可在应用内翻页阅读全文并逐页语音朗读。' },
   {
-    id: 'bruised', title: t("压伤的芦苇"), subtitle: t("温柔安慰受伤将残的灵魂"), author: t("理查德·西布斯（Richard Sibbes, The Bruised Reed）"),
+    id: 'bruised', title: '压伤的芦苇', subtitle: '温柔安慰受伤将残的灵魂', author: '理查德·西布斯（Richard Sibbes, The Bruised Reed）',
     emoji: '🌾', color: '#a3e635', kind: 'epub', epub: '/book/bruised-reeds.epub',
-    blurb: t("清教徒西布斯（人称「天上的医生」）的安慰经典，本于「压伤的芦苇，他不折断；将残的灯火，他不吹灭」（赛42:3），以极温柔的笔触安慰软弱、将残、几乎要放弃的灵魂。可在应用内翻页阅读全文并逐页语音朗读。"),
+    blurb: '清教徒西布斯（人称「天上的医生」）的安慰经典，本于「压伤的芦苇，他不折断；将残的灯火，他不吹灭」（赛42:3），以极温柔的笔触安慰软弱、将残、几乎要放弃的灵魂。可在应用内翻页阅读全文并逐页语音朗读。',
   },
-  { id: 'seeking', title: t("在清真寺寻找，十字架下寻见"), subtitle: t("一位穆斯林青年寻见基督的真实历程"), author: t("纳比·库雷希（Nabeel Qureshi, Seeking Allah, Finding Jesus）"), emoji: '🕌', color: '#22d3ee', kind: 'epub', epub: '/book/seeking-allah.epub', blurb: t("虔诚的穆斯林青年库雷希，历经多年理性查考与内心挣扎，最终在十字架下寻见耶稣的自传见证。可在应用内翻页阅读全文并逐页语音朗读。") },
-  { id: 'kingscross', title: t("十架君王"), subtitle: t("理解耶稣的生与死"), author: t("提摩太·凯勒（Timothy Keller, King’s Cross）"), emoji: '👑', color: '#fbbf24', kind: 'epub', epub: '/book/kingscross.epub', blurb: t("凯勒以马可福音默想耶稣生平，展现这位「钉十架的君王」如何重新定义王权、得胜与拯救。可在应用内翻页阅读全文并逐页语音朗读。") },
+  { id: 'seeking', title: '在清真寺寻找，十字架下寻见', subtitle: '一位穆斯林青年寻见基督的真实历程', author: '纳比·库雷希（Nabeel Qureshi, Seeking Allah, Finding Jesus）', emoji: '🕌', color: '#22d3ee', kind: 'epub', epub: '/book/seeking-allah.epub', blurb: '虔诚的穆斯林青年库雷希，历经多年理性查考与内心挣扎，最终在十字架下寻见耶稣的自传见证。可在应用内翻页阅读全文并逐页语音朗读。' },
+  { id: 'kingscross', title: '十架君王', subtitle: '理解耶稣的生与死', author: '提摩太·凯勒（Timothy Keller, King’s Cross）', emoji: '👑', color: '#fbbf24', kind: 'epub', epub: '/book/kingscross.epub', blurb: '凯勒以马可福音默想耶稣生平，展现这位「钉十架的君王」如何重新定义王权、得胜与拯救。可在应用内翻页阅读全文并逐页语音朗读。' },
 ]
 
 // ── 一本 PDF 书的阅读器（PDF + 可选文字 + TTS）────────────────────────────────
@@ -55,10 +53,10 @@ function PdfBookReader({ book, onBack }) {
   return (
     <div style={S.page}>
       <header style={S.header}>
-        <BackButton onClick={onBack} ariaLabel={t("返回书库")} />
+        <button onClick={onBack} style={S.back} aria-label="返回书库">‹ 返回书库</button>
         <div style={{ flex: 1 }}>
-          <div style={S.hTitle}>{book.emoji} {t(book.title)}</div>
-          <div style={S.hSub}>{t(book.author)}</div>
+          <div style={S.hTitle}>{book.emoji} {book.title}</div>
+          <div style={S.hSub}>{book.author}</div>
         </div>
         {book.pdf && (
           <a href={book.pdf} target="_blank" rel="noopener noreferrer" style={S.pdfBtn}>📄 PDF</a>
@@ -78,7 +76,7 @@ function PdfBookReader({ book, onBack }) {
               ))}
             </div>
           )}
-          <TTSFullBar buildText={() => `${cur?.title || book.title}。${cur?.text || ''}`} label={t("全文朗读")} />
+          <TTSFullBar buildText={() => `${cur?.title || book.title}。${cur?.text || ''}`} label="全文朗读" />
           <div style={S.chapTitle}>{cur?.title}</div>
           <div style={S.bodyText}>{cur?.text}</div>
         </div>
@@ -88,12 +86,12 @@ function PdfBookReader({ book, onBack }) {
           <iframe title={book.title} src={book.pdf}
             style={{ width: '100%', height: '78vh', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 12, background: '#fff' }} />
           <div style={{ textAlign: 'center', marginTop: 10 }}>
-            <a href={book.pdf} target="_blank" rel="noopener noreferrer" style={S.pdfBtnWide}>{t("在新窗口打开 / 下载 PDF")}</a>
+            <a href={book.pdf} target="_blank" rel="noopener noreferrer" style={S.pdfBtnWide}>在新窗口打开 / 下载 PDF</a>
           </div>
         </div>
       ) : (
         <div style={{ padding: 40, textAlign: 'center', color: 'rgba(255,255,255,0.5)' }}>
-          {t("这本书的内容还未添加。把 PDF 放到")} <code>public/book/</code> {t("并在 BOOKS 里配置即可。")}
+          这本书的内容还未添加。把 PDF 放到 <code>public/book/</code> 并在 BOOKS 里配置即可。
         </div>
       )}
     </div>
@@ -118,7 +116,7 @@ function loadEpubLib() {
   const inject = (src) => new Promise((resolve, reject) => {
     const s = document.createElement('script')
     s.src = src; s.async = true
-    s.onload = resolve; s.onerror = () => reject(new Error(t("加载失败: ") + src))
+    s.onload = resolve; s.onerror = () => reject(new Error('加载失败: ' + src))
     document.head.appendChild(s)
   })
   const injectAny = (srcs) => srcs.reduce((p, src) => p.catch(() => inject(src)), Promise.reject(new Error('no source')))
@@ -245,7 +243,7 @@ function EpubReader({ book, onBack }) {
   return (
     <div style={{ ...S.page, height: '100%' }}>
       <header style={S.header}>
-        <BackButton onClick={onBack} ariaLabel={t("返回书库")} />
+        <button onClick={onBack} style={S.back} aria-label="返回书库">‹ 返回书库</button>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ ...S.hTitle, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{book.emoji} {book.title}</div>
           <div style={S.hSub}>{book.author}{progress ? ` · ${progress}%` : ''}</div>
@@ -256,21 +254,21 @@ function EpubReader({ book, onBack }) {
       {status === 'error' ? (
         <div style={{ padding: 32, textAlign: 'center', color: 'rgba(255,255,255,0.6)', lineHeight: 1.9 }}>
           <div style={{ fontSize: 40, marginBottom: 10 }}>📕</div>
-          <div style={{ fontWeight: 600, color: '#fff', marginBottom: 8 }}>{t("暂时无法加载《")}{book.title}》</div>
+          <div style={{ fontWeight: 600, color: '#fff', marginBottom: 8 }}>暂时无法加载《{book.title}》</div>
           <div style={{ fontSize: 13 }}>
-            {t("已尝试加载：")}<br /><code style={{ wordBreak: 'break-all' }}>{srcUrl || book.epub}</code>
+            已尝试加载：<br /><code style={{ wordBreak: 'break-all' }}>{srcUrl || book.epub}</code>
           </div>
           <div style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.45)', marginTop: 10 }}>
-            {t("请确认该 EPUB 已上传到")} <code>cdn.holiness.uk/ebook/</code>{t("，且 CDN 已开启跨域访问（CORS）。")}
+            请确认该 EPUB 已上传到 <code>cdn.holiness.uk/ebook/</code>，且 CDN 已开启跨域访问（CORS）。
           </div>
-          <button onClick={onBack} style={{ ...S.pdfBtnWide, marginTop: 18 }}>{t("‹ 返回书库")}</button>
+          <button onClick={onBack} style={{ ...S.pdfBtnWide, marginTop: 18 }}>‹ 返回书库</button>
         </div>
       ) : (
         <>
           <div style={{ flex: 1, minHeight: 0, position: 'relative', margin: '0 6px' }} onTouchStart={onAreaTouchStart} onTouchEnd={onAreaTouchEnd}>
             <div ref={viewerRef} style={{ position: 'absolute', inset: 0 }} />
             {status === 'loading' && (
-              <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'rgba(255,255,255,0.5)' }}>{t("载入中…")}</div>
+              <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'rgba(255,255,255,0.5)' }}>载入中…</div>
             )}
           </div>
           {/* 进度滚动条：拖动按百分比跳转 */}
@@ -281,16 +279,16 @@ function EpubReader({ book, onBack }) {
               disabled={!locReady}
               onChange={(e) => seekTo(parseFloat(e.target.value))}
               style={{ width: '100%', accentColor: '#5ac8fa', opacity: locReady ? 1 : 0.4 }}
-              aria-label={t("阅读进度")}
+              aria-label="阅读进度"
             />
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: 'rgba(255,255,255,0.4)', marginTop: 2 }}>
               <span>{progress}%</span>
-              <span>{locReady ? t("拖动跳转 · 左右滑动翻页") : t("正在建立页码索引…")}</span>
+              <span>{locReady ? '拖动跳转 · 左右滑动翻页' : '正在建立页码索引…'}</span>
             </div>
           </div>
           <div style={{ display: 'flex', gap: 10, padding: '10px 16px 16px', flexShrink: 0 }}>
-            <button onClick={prev} style={S.navBtn}>{t("‹ 上一页")}</button>
-            <button onClick={next} style={S.navBtn}>{t("下一页 ›")}</button>
+            <button onClick={prev} style={S.navBtn}>‹ 上一页</button>
+            <button onClick={next} style={S.navBtn}>下一页 ›</button>
           </div>
         </>
       )}
@@ -332,7 +330,7 @@ export default function SpiritualBooksPage({ onBack }) {
   }, [])
 
   const saveMark = (bookId, patch) => {
-    if (!token) { window.showToast && window.showToast(t("登录后可标记想读/已读和评分"), 'info'); return }
+    if (!token) { window.showToast && window.showToast('登录后可标记想读/已读和评分', 'info'); return }
     const cur = marks[bookId] || {}
     const next = {
       status: patch.status !== undefined ? patch.status : (cur.status || ''),
@@ -352,7 +350,7 @@ export default function SpiritualBooksPage({ onBack }) {
     if (navigator.share) { navigator.share(data).catch(() => {}) }
     else if (navigator.clipboard) {
       navigator.clipboard.writeText(`${data.text} ${url}`)
-      window.showToast && window.showToast(t("分享链接已复制"), 'success')
+      window.showToast && window.showToast('分享链接已复制', 'success')
     }
   }
 
@@ -371,10 +369,10 @@ export default function SpiritualBooksPage({ onBack }) {
   return (
     <div style={S.page}>
       <header style={S.header}>
-        {onBack && <BackButton onClick={onBack} />}
+        {onBack && <button onClick={onBack} style={S.back} aria-label="返回">‹</button>}
         <div style={{ flex: 1 }}>
-          <div style={S.hTitle}>{t("📚 属灵书籍")}</div>
-          <div style={S.hSub}>{t("点开一本书，阅读全文并可语音朗读")}</div>
+          <div style={S.hTitle}>📚 属灵书籍</div>
+          <div style={S.hSub}>点开一本书，阅读全文并可语音朗读</div>
         </div>
       </header>
 
@@ -391,8 +389,8 @@ export default function SpiritualBooksPage({ onBack }) {
               <div style={S.cardAuthor}>{b.author}</div>
               {b.blurb && <div style={S.cardBlurb}>{b.blurb}</div>}
               <div style={S.cardCta}>
-                <span style={{ color: b.color }}>{t("📖 阅读")}</span>
-                <span style={{ color: b.color }}>{t("🔊 朗读")}</span>
+                <span style={{ color: b.color }}>📖 阅读</span>
+                <span style={{ color: b.color }}>🔊 朗读</span>
                 {b.pdf && <span style={{ color: 'rgba(255,255,255,0.45)' }}>📄 PDF</span>}
               </div>
               {/* 评分 / 想读 / 已读 / 分享 */}
@@ -407,17 +405,17 @@ export default function SpiritualBooksPage({ onBack }) {
                   ))}
                 </span>
                 {stats[b.id]?.rating_count > 0 && (
-                  <span style={MARK_S.stat}>{stats[b.id].avg_rating}{t("分·")}{stats[b.id].rating_count}{t("人")}</span>
+                  <span style={MARK_S.stat}>{stats[b.id].avg_rating}分·{stats[b.id].rating_count}人</span>
                 )}
                 <span onClick={() => saveMark(b.id, { status: marks[b.id]?.status === 'want' ? '' : 'want' })}
                   style={{ ...MARK_S.btn, ...(marks[b.id]?.status === 'want' ? MARK_S.on : {}) }}>
-                  {t("🔖 想读")}{stats[b.id]?.want ? ` ${stats[b.id].want}` : ''}
+                  🔖 想读{stats[b.id]?.want ? ` ${stats[b.id].want}` : ''}
                 </span>
                 <span onClick={() => saveMark(b.id, { status: marks[b.id]?.status === 'read' ? '' : 'read' })}
                   style={{ ...MARK_S.btn, ...(marks[b.id]?.status === 'read' ? MARK_S.on : {}) }}>
-                  {t("✅ 已读")}{stats[b.id]?.read_cnt ? ` ${stats[b.id].read_cnt}` : ''}
+                  ✅ 已读{stats[b.id]?.read_cnt ? ` ${stats[b.id].read_cnt}` : ''}
                 </span>
-                <span onClick={() => shareBook(b)} style={MARK_S.btn}>{t("↗ 分享")}</span>
+                <span onClick={() => shareBook(b)} style={MARK_S.btn}>↗ 分享</span>
               </div>
             </div>
           </div>
@@ -425,7 +423,7 @@ export default function SpiritualBooksPage({ onBack }) {
       </div>
 
       <div style={S.note}>
-        {t("想加新书？把 PDF 放进")} <code>emotion-sphere-ui/public/book/</code>{t("，在")} <code>SpiritualBooksPage.jsx</code> {t("的 BOOKS 里加一条即可（可只放 PDF，也可附文字以支持语音朗读）。")}
+        想加新书？把 PDF 放进 <code>emotion-sphere-ui/public/book/</code>，在 <code>SpiritualBooksPage.jsx</code> 的 BOOKS 里加一条即可（可只放 PDF，也可附文字以支持语音朗读）。
       </div>
     </div>
   )

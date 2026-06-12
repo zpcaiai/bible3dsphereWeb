@@ -12,34 +12,33 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { fetchTTS, translateText } from './api'
-import { t, getRuntimeLang } from './i18n/runtime'
+import { fetchTTS } from './api'
 
 // ── Bible reference expansion ────────────────────────────────────────────────
 // Expands abbreviated references like "太 六 10" → "马太福音6章10节" before TTS.
 const _BOOK_ABBR = {
   // ── 多字简写（优先匹配，放前面）────────────────────────────────────────
-  '撒上':t("撒母耳记上"), '撒下':t("撒母耳记下"),
-  '王上':t("列王纪上"),   '王下':t("列王纪下"),
-  '代上':t("历代志上"),   '代下':t("历代志下"),
-  '林前':t("哥林多前书"), '林后':t("哥林多后书"),
-  '帖前':t("帖撒罗尼迦前书"), '帖后':t("帖撒罗尼迦后书"),
-  '提前':t("提摩太前书"), '提后':t("提摩太后书"),
-  '彼前':t("彼得前书"),   '彼后':t("彼得后书"),
-  '约壹':t("约翰一书"),   '约贰':t("约翰二书"), '约叁':t("约翰三书"),
+  '撒上':'撒母耳记上', '撒下':'撒母耳记下',
+  '王上':'列王纪上',   '王下':'列王纪下',
+  '代上':'历代志上',   '代下':'历代志下',
+  '林前':'哥林多前书', '林后':'哥林多后书',
+  '帖前':'帖撒罗尼迦前书', '帖后':'帖撒罗尼迦后书',
+  '提前':'提摩太前书', '提后':'提摩太后书',
+  '彼前':'彼得前书',   '彼后':'彼得后书',
+  '约壹':'约翰一书',   '约贰':'约翰二书', '约叁':'约翰三书',
   // ── 单字简写 ─────────────────────────────────────────────────────────
-  '创':t("创世记"), '出':t("出埃及记"), '利':t("利未记"), '民':t("民数记"), '申':t("申命记"),
-  '书':t("约书亚记"), '士':t("士师记"), '得':t("路得记"),
-  '拉':t("以斯拉记"), '尼':t("尼希米记"), '斯':t("以斯帖记"), '伯':t("约伯记"),
-  '诗':t("诗篇"), '箴':t("箴言"), '传':t("传道书"), '歌':t("雅歌"),
-  '赛':t("以赛亚书"), '耶':t("耶利米书"), '哀':t("耶利米哀歌"), '结':t("以西结书"), '但':t("但以理书"),
-  '何':t("何西阿书"), '珥':t("约珥书"), '摩':t("阿摩司书"), '俄':t("俄巴底亚书"), '拿':t("约拿书"),
-  '弥':t("弥迦书"), '鸿':t("那鸿书"), '哈':t("哈巴谷书"), '番':t("西番雅书"), '该':t("哈该书"),
-  '亚':t("撒迦利亚书"), '玛':t("玛拉基书"),
-  '太':t("马太福音"), '可':t("马可福音"), '路':t("路加福音"), '约':t("约翰福音"), '徒':t("使徒行传"),
-  '罗':t("罗马书"), '加':t("加拉太书"), '弗':t("以弗所书"), '腓':t("腓立比书"),
-  '西':t("歌罗西书"), '多':t("提多书"), '门':t("腓利门书"),
-  '来':t("希伯来书"), '雅':t("雅各书"), '犹':t("犹大书"), '启':t("启示录"),
+  '创':'创世记', '出':'出埃及记', '利':'利未记', '民':'民数记', '申':'申命记',
+  '书':'约书亚记', '士':'士师记', '得':'路得记',
+  '拉':'以斯拉记', '尼':'尼希米记', '斯':'以斯帖记', '伯':'约伯记',
+  '诗':'诗篇', '箴':'箴言', '传':'传道书', '歌':'雅歌',
+  '赛':'以赛亚书', '耶':'耶利米书', '哀':'耶利米哀歌', '结':'以西结书', '但':'但以理书',
+  '何':'何西阿书', '珥':'约珥书', '摩':'阿摩司书', '俄':'俄巴底亚书', '拿':'约拿书',
+  '弥':'弥迦书', '鸿':'那鸿书', '哈':'哈巴谷书', '番':'西番雅书', '该':'哈该书',
+  '亚':'撒迦利亚书', '玛':'玛拉基书',
+  '太':'马太福音', '可':'马可福音', '路':'路加福音', '约':'约翰福音', '徒':'使徒行传',
+  '罗':'罗马书', '加':'加拉太书', '弗':'以弗所书', '腓':'腓立比书',
+  '西':'歌罗西书', '多':'提多书', '门':'腓利门书',
+  '来':'希伯来书', '雅':'雅各书', '犹':'犹大书', '启':'启示录',
 }
 
 // Chinese numeral → Arabic integer
@@ -65,7 +64,7 @@ const _ABBR_PAT = Object.keys(_BOOK_ABBR)
   .sort((a, b) => b.length - a.length)
   .map(a => a.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
   .join('|')
-const _NUM = t("[零一二三四五六七八九十百千\\d]+")
+const _NUM = '[零一二三四五六七八九十百千\\d]+'
 // Matches: <abbr> <space?> <chapter> <space?> [章/:] <space?> <verse?> [节?]
 const _BIBLE_RE = new RegExp(
   `(${_ABBR_PAT})\\s*(${_NUM})\\s*[章篇卷:：]?\\s*(${_NUM})?\\s*节?`,
@@ -100,7 +99,6 @@ const _singleton = {
   audioEl: null,         // current HTMLAudioElement (Google/Edge TTS)
   audioUrl: null,        // current object URL (to revoke on cleanup)
   stopListeners: new Set(), // registered () => void callbacks
-  ownerSetState: null,   // 当前播放发起者的 setTtsState（锁屏控制回写 UI 状态）
   speakGen: 0,           // monotonically increasing — each speak() call gets its own gen;
                          // stale in-flight fetches that don't match the current gen are discarded
 }
@@ -122,44 +120,6 @@ function _globalStop() {
   }
   // Notify every hook instance to reset its local state
   _singleton.stopListeners.forEach(fn => fn())
-  _clearMediaSession()
-}
-
-// ── Media Session（锁屏/耳机控制）────────────────────────────────────────────
-// 听经模式核心：播放时在系统层注册元数据与控制器，
-// 锁屏可见「书卷 章」并可播放/暂停/上一章/下一章。
-function _setMediaSession(title, { onPrev, onNext } = {}) {
-  if (typeof navigator === 'undefined' || !('mediaSession' in navigator)) return
-  const ms = navigator.mediaSession
-  try {
-    ms.metadata = new MediaMetadata({
-      title: title || t("属灵星球"),
-      artist: t("属灵星球"),
-      album: t("听经模式"),
-    })
-  } catch (_) { /* ignore */ }
-  const safeSet = (action, fn) => { try { ms.setActionHandler(action, fn) } catch (_) { /* unsupported action */ } }
-  safeSet('play', () => {
-    if (_singleton.audioEl) { _singleton.audioEl.play(); _singleton.ownerSetState?.('playing') }
-    try { ms.playbackState = 'playing' } catch (_) {}
-  })
-  safeSet('pause', () => {
-    if (_singleton.audioEl) { _singleton.audioEl.pause(); _singleton.ownerSetState?.('paused') }
-    try { ms.playbackState = 'paused' } catch (_) {}
-  })
-  safeSet('stop', () => _globalStop())
-  safeSet('previoustrack', onPrev || null)
-  safeSet('nexttrack', onNext || null)
-  try { ms.playbackState = 'playing' } catch (_) {}
-}
-
-function _clearMediaSession() {
-  if (typeof navigator === 'undefined' || !('mediaSession' in navigator)) return
-  const ms = navigator.mediaSession
-  for (const a of ['play', 'pause', 'stop', 'previoustrack', 'nexttrack']) {
-    try { ms.setActionHandler(a, null) } catch (_) { /* ignore */ }
-  }
-  try { ms.playbackState = 'none'; ms.metadata = null } catch (_) { /* ignore */ }
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -190,11 +150,9 @@ export function useGlobalAudio() {
       if (_singleton.audioEl.paused) {
         _singleton.audioEl.play()
         setTtsState('playing')
-        try { navigator.mediaSession.playbackState = 'playing' } catch (_) { /* ignore */ }
       } else {
         _singleton.audioEl.pause()
         setTtsState('paused')
-        try { navigator.mediaSession.playbackState = 'paused' } catch (_) { /* ignore */ }
       }
     } else if (window.speechSynthesis) {
       if (window.speechSynthesis.paused) {
@@ -209,6 +167,8 @@ export function useGlobalAudio() {
 
   const speak = useCallback(async (rawText) => {
     if (!rawText?.trim()) return
+    const text = _expandBibleRefs(rawText)
+
     // Stop whatever is currently playing globally, then claim a new generation
     // so any previous in-flight fetchTTS() call is silently discarded when it resolves.
     _globalStop()
@@ -217,20 +177,9 @@ export function useGlobalAudio() {
     if (!isMountedRef.current) return
     setTtsState('loading')
 
-    // EN 模式：先把中文机翻成英文再朗读，与画面保持一致
-    const enMode = getRuntimeLang() === 'en'
-    let srcText = rawText
-    if (enMode && /[一-鿿]/.test(srcText)) {
-      try { const tr = await translateText(srcText, 'en'); if (tr) srcText = tr } catch { /* 失败保留中文 */ }
-      if (_singleton.speakGen !== myGen || !isMountedRef.current) return
-    }
-    const text = _expandBibleRefs(srcText)
-
     // ── Try backend TTS (edge-tts / Google) ──────────────────────────
     try {
-      const blob = enMode
-        ? await fetchTTS(text, 'en-US', 'en-US-AriaNeural')
-        : await fetchTTS(text, 'zh-CN', 'zh-CN-XiaoxiaoNeural')
+      const blob = await fetchTTS(text, 'zh-CN', 'zh-CN-XiaoxiaoNeural')
       // If speak() was called again while we were fetching, bail out immediately
       // so we never create a second audio element.
       if (_singleton.speakGen !== myGen || !isMountedRef.current) return
@@ -258,8 +207,6 @@ export function useGlobalAudio() {
       }
 
       await audio.play()
-      _singleton.ownerSetState = (st) => { if (isMountedRef.current) setTtsState(st) }
-      _setMediaSession(text.slice(0, 36))
       if (isMountedRef.current) setTtsState('playing')
       return
     } catch (_backendErr) {
@@ -274,20 +221,17 @@ export function useGlobalAudio() {
 
     window.speechSynthesis.cancel()
     const utter = new SpeechSynthesisUtterance(text)
-    utter.lang = enMode ? 'en-US' : 'zh-CN'
+    utter.lang = 'zh-CN'
     utter.rate = 0.9
     utter.pitch = 1.05
 
-    // Prefer a matching neural voice for the active language
+    // Prefer Xiaoxiao or any zh-CN neural voice
     const voices = window.speechSynthesis.getVoices()
-    const pickVoice = enMode
-      ? (voices.find(v => /aria|jenny|guy/i.test(v.name) && v.lang?.startsWith('en')) ||
-         voices.find(v => v.lang === 'en-US') ||
-         voices.find(v => v.lang?.startsWith('en')))
-      : (voices.find(v => /xiaoxiao/i.test(v.name)) ||
-         voices.find(v => v.lang === 'zh-CN') ||
-         voices.find(v => v.lang?.startsWith('zh')))
-    if (pickVoice) utter.voice = pickVoice
+    const zhVoice =
+      voices.find(v => /xiaoxiao/i.test(v.name)) ||
+      voices.find(v => v.lang === 'zh-CN') ||
+      voices.find(v => v.lang.startsWith('zh'))
+    if (zhVoice) utter.voice = zhVoice
 
     utter.onend = () => { if (isMountedRef.current) setTtsState('idle') }
     utter.onerror = () => { if (isMountedRef.current) setTtsState('idle') }
@@ -296,58 +240,7 @@ export function useGlobalAudio() {
     if (isMountedRef.current) setTtsState('playing')
   }, [])
 
-  // ── speakSequence：听经模式连播 ───────────────────────────────────────────
-  // 把长内容切成若干段（如整章经文按 ~480 字分块），逐段 TTS 连续播放；
-  // 播放当前段时预取下一段，段间无停顿感。支持 Media Session 上/下一章与连播回调。
-  const speakSequence = useCallback(async (chunks, opts = {}) => {
-    const { title, onPrev, onNext, onEnd } = opts
-    const list = (chunks || []).map((c) => String(c || '').trim()).filter(Boolean)
-    if (!list.length) return
-    _globalStop()
-    const myGen = ++_singleton.speakGen
-    if (!isMountedRef.current) return
-    setTtsState('loading')
-    _singleton.ownerSetState = (st) => { if (isMountedRef.current) setTtsState(st) }
-
-    const enMode = getRuntimeLang() === 'en'
-    const lang = enMode ? 'en-US' : 'zh-CN'
-    const voiceName = enMode ? 'en-US-AriaNeural' : 'zh-CN-XiaoxiaoNeural'
-    const fetchChunkUrl = (i) => fetchTTS(_expandBibleRefs(list[i]), lang, voiceName).then((b) => URL.createObjectURL(b))
-
-    const playUrl = (url) => new Promise((resolve) => {
-      const audio = new Audio(url)
-      _singleton.audioEl = audio
-      _singleton.audioUrl = url
-      const cleanup = () => {
-        if (_singleton.audioEl === audio) { _singleton.audioEl = null; _singleton.audioUrl = null }
-        try { URL.revokeObjectURL(url) } catch (_) { /* ignore */ }
-      }
-      audio.onended = () => { cleanup(); resolve(true) }
-      audio.onerror = () => { cleanup(); resolve(false) }
-      audio.play().then(() => {
-        if (_singleton.speakGen === myGen && isMountedRef.current) setTtsState('playing')
-      }).catch(() => { cleanup(); resolve(false) })
-    })
-
-    _setMediaSession(title, { onPrev, onNext })
-
-    let nextPromise = fetchChunkUrl(0)
-    for (let i = 0; i < list.length; i++) {
-      let url = null
-      try { url = await nextPromise } catch (_) { break }
-      if (_singleton.speakGen !== myGen) { if (url) { try { URL.revokeObjectURL(url) } catch (_) {} } return }
-      if (i + 1 < list.length) nextPromise = fetchChunkUrl(i + 1)
-      const ended = await playUrl(url)
-      if (_singleton.speakGen !== myGen) return
-      if (!ended) break
-    }
-    if (_singleton.speakGen !== myGen) return
-    if (isMountedRef.current) setTtsState('idle')
-    _clearMediaSession()
-    onEnd?.()
-  }, [])
-
-  return { ttsState, speak, stop, togglePause, speakSequence }
+  return { ttsState, speak, stop, togglePause }
 }
 
 // ── Shared TTS UI components ─────────────────────────────────────────────────
@@ -374,7 +267,7 @@ export function TTSButton({ text, style }) {
     <button
       type="button"
       onClick={handleClick}
-      title={isActive ? t("停止") : t("朗读")}
+      title={isActive ? '停止' : '朗读'}
       style={{
         background: 'none',
         border: 'none',
@@ -398,7 +291,7 @@ export function TTSButton({ text, style }) {
  * TTSFullBar — full-width play bar for reading a long piece of content.
  * Props: buildText (fn → string), label (optional string)
  */
-export function TTSFullBar({ buildText, label = t("全文朗读") }) {
+export function TTSFullBar({ buildText, label = '全文朗读' }) {
   const { ttsState, speak, stop } = useGlobalAudio()
 
   const isIdle = ttsState === 'idle'
@@ -445,7 +338,7 @@ export function TTSFullBar({ buildText, label = t("全文朗读") }) {
         }}
       >
         {isLoading ? '⏳' : isActive ? '🔄' : '🔊'}
-        <span>{isLoading ? t("加载中...") : isActive ? t("重新播放") : label}</span>
+        <span>{isLoading ? '加载中...' : isActive ? '重新播放' : label}</span>
       </button>
 
       {(isPlaying || isPaused || isLoading) && (
@@ -462,13 +355,13 @@ export function TTSFullBar({ buildText, label = t("全文朗读") }) {
             cursor: 'pointer',
           }}
         >
-          {t("⏹ 停止")}
+          ⏹ 停止
         </button>
       )}
 
       {isIdle && (
         <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)', marginLeft: 4 }}>
-          {t("小晓语音 · XiaoxiaoNeural")}
+          小晓语音 · XiaoxiaoNeural
         </span>
       )}
     </div>
