@@ -261,45 +261,29 @@ export default function LiveKitCall({ url, token, title, selfName, outgoing, onL
         </div>
 
         <div className="communion-call-actions">
-          <div className="communion-call-row">
-            <button className="communion-call-ctrl" onClick={toggleMic} disabled={status !== 'live'}
-              style={{ background: micOn ? 'rgba(255,255,255,.12)' : '#ff6b6b' }}>
-              <div className="communion-call-ctrl-icon">{micOn ? '🎙' : '🔇'}</div>
-              <div className="communion-call-ctrl-label">{micOn ? t("静音") : t("取消静音")}</div>
-            </button>
-            <button className="communion-call-ctrl" onClick={toggleCam} disabled={status !== 'live'}
-              style={{ background: camOn ? 'rgba(52,199,89,.25)' : 'rgba(255,255,255,.12)' }}>
-              <div className="communion-call-ctrl-icon">{camOn ? '📹' : '📷'}</div>
-              <div className="communion-call-ctrl-label">{camOn ? t("关闭摄像头") : t("开启摄像头")}</div>
-            </button>
-            <button className="communion-call-ctrl" onClick={hangUp} style={{ background: '#ff3b30' }}>
-              <div className="communion-call-ctrl-icon">📴</div>
-              <div className="communion-call-ctrl-label">{t("挂断")}</div>
-            </button>
-          </div>
-          <div className="communion-call-row">
-            <button className="communion-call-ctrl" onClick={toggleShare} disabled={status !== 'live'}
-              style={{ background: shareOn ? 'rgba(56,189,248,.28)' : 'rgba(255,255,255,.12)' }}>
-              <div className="communion-call-ctrl-icon">🖥</div>
-              <div className="communion-call-ctrl-label">{shareOn ? t("停止共享") : t("共享屏幕")}</div>
-            </button>
-            <button className="communion-call-ctrl" onClick={toggleDenoise} disabled={status !== 'live'}
-              style={{ background: denoise ? 'rgba(52,199,89,.25)' : 'rgba(255,255,255,.12)' }}>
-              <div className="communion-call-ctrl-icon">✨</div>
-              <div className="communion-call-ctrl-label">{denoise ? t("AI降噪开") : t("AI降噪")}</div>
-            </button>
-            <NotesButton className="communion-call-ctrl" disabled={status !== 'live'}
-              iconStyle={{ fontSize: 'calc(1.5vw + 1.4vh)', lineHeight: 1 }}
-              labelStyle={{
-                fontSize: 'calc(1vw + 0.9vh)',
-                lineHeight: 1.05,
-                maxWidth: '100%',
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-              }}
-              selfName={selfName || ''} />
-          </div>
+          <button className="communion-call-ctrl" onClick={toggleMic} disabled={status !== 'live'}
+            style={{ background: micOn ? 'rgba(255,255,255,.12)' : '#ff6b6b' }}>
+            <div className="communion-call-ctrl-icon">{micOn ? '🎙' : '🔇'}</div>
+          </button>
+          <button className="communion-call-ctrl" onClick={toggleCam} disabled={status !== 'live'}
+            style={{ background: camOn ? 'rgba(52,199,89,.25)' : 'rgba(255,255,255,.12)' }}>
+            <div className="communion-call-ctrl-icon">{camOn ? '📹' : '📷'}</div>
+          </button>
+          <button className="communion-call-ctrl" onClick={toggleShare} disabled={status !== 'live'}
+            style={{ background: shareOn ? 'rgba(56,189,248,.28)' : 'rgba(255,255,255,.12)' }}>
+            <div className="communion-call-ctrl-icon">🖥</div>
+          </button>
+          <button className="communion-call-ctrl" onClick={toggleDenoise} disabled={status !== 'live'}
+            style={{ background: denoise ? 'rgba(52,199,89,.25)' : 'rgba(255,255,255,.12)' }}>
+            <div className="communion-call-ctrl-icon">✨</div>
+          </button>
+          <NotesButton className="communion-call-ctrl" disabled={status !== 'live'}
+            iconStyle={{ fontSize: 'calc(1.5vw + 1.4vh)', lineHeight: 1 }}
+            labelStyle={{ display: 'none' }}
+            selfName={selfName || ''} />
+          <button className="communion-call-ctrl" onClick={hangUp} style={{ background: '#ff3b30' }}>
+            <div className="communion-call-ctrl-icon">📴</div>
+          </button>
         </div>
       </div>
     </div>

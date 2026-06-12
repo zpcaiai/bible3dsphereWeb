@@ -4741,15 +4741,12 @@ canvas {
 .jeru-part-dims { font-size: 12.5px; color: #9ad0ff; margin: 2px 0 6px; }
 
 .communion-call-actions {
-  --call-ctrl-size: calc(9vw + 8.1vh);
-  --call-ctrl-gap: calc(2.25vw + 2.25vh);
-  display: flex; flex-direction: column; align-items: center;
+  --call-ctrl-size: calc(3vw + 2.7vh);
+  --call-ctrl-gap: calc(0.75vw + 0.75vh);
+  display: flex; justify-content: center; flex-wrap: nowrap;
   gap: var(--call-ctrl-gap);
   position: relative;
   top: calc(var(--call-ctrl-size) * -3.5);
-}
-.communion-call-row {
-  display: flex; justify-content: center; gap: var(--call-ctrl-gap);
 }
 .communion-call-ctrl {
   width: var(--call-ctrl-size); min-width: var(--call-ctrl-size); min-height: var(--call-ctrl-size);

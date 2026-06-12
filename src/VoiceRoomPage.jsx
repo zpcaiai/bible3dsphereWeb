@@ -463,47 +463,38 @@ function CallScreen({ group, user, token, onLeave }) {
       </div>
 
       <div style={S.controls}>
-        <div style={S.ctrlRow}>
-          <button onClick={toggleMic} style={{ ...S.ctrlBtn, background: micOn ? 'rgba(255,255,255,0.1)' : '#ff6b6b' }}
-            disabled={status !== 'live'}>
-            <div style={{ fontSize: 'calc(1.5vw + 1.4vh)' }}>{micOn ? '🎙' : '🔇'}</div>
-            <div style={S.ctrlLabel}>{micOn ? '静音' : '取消静音'}</div>
-          </button>
-          <button onClick={toggleCam} style={{ ...S.ctrlBtn, background: camOn ? 'rgba(52,199,89,0.25)' : 'rgba(255,255,255,0.1)' }}
-            disabled={status !== 'live'}>
-            <div style={{ fontSize: 'calc(1.5vw + 1.4vh)' }}>{camOn ? '📹' : '📷'}</div>
-            <div style={S.ctrlLabel}>{camOn ? '关闭摄像头' : '开启摄像头'}</div>
-          </button>
-          <button onClick={hangUp} style={{ ...S.ctrlBtn, background: '#ff3b30' }}>
-            <div style={{ fontSize: 'calc(1.5vw + 1.4vh)' }}>📴</div>
-            <div style={S.ctrlLabel}>挂断</div>
-          </button>
-        </div>
-        <div style={S.ctrlRow}>
-          <button onClick={toggleShare} style={{ ...S.ctrlBtn, background: shareOn ? 'rgba(56,189,248,0.28)' : 'rgba(255,255,255,0.1)' }}
-            disabled={status !== 'live'}>
-            <div style={{ fontSize: 'calc(1.5vw + 1.4vh)' }}>🖥</div>
-            <div style={S.ctrlLabel}>{shareOn ? '停止共享' : '共享屏幕'}</div>
-          </button>
-          <button onClick={toggleDenoise} style={{ ...S.ctrlBtn, background: denoise ? 'rgba(52,199,89,0.25)' : 'rgba(255,255,255,0.1)' }}
-            disabled={status !== 'live'}>
-            <div style={{ fontSize: 'calc(1.5vw + 1.4vh)' }}>✨</div>
-            <div style={S.ctrlLabel}>{denoise ? 'AI降噪开' : 'AI降噪'}</div>
-          </button>
-          <NotesButton disabled={status !== 'live'} style={S.ctrlBtn}
-            iconStyle={{ fontSize: 'calc(1.5vw + 1.4vh)', lineHeight: 1 }}
-            labelStyle={{ fontSize: 'calc(1vw + 0.9vh)', lineHeight: 1.05, maxWidth: '100%', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
-            selfName={user?.nickname || (user?.email || '').split('@')[0] || '弟兄姐妹'} />
-        </div>
+        <button onClick={toggleMic} style={{ ...S.ctrlBtn, background: micOn ? 'rgba(255,255,255,0.1)' : '#ff6b6b' }}
+          disabled={status !== 'live'}>
+          <div style={{ fontSize: 'calc(1.5vw + 1.4vh)' }}>{micOn ? '🎙' : '🔇'}</div>
+        </button>
+        <button onClick={toggleCam} style={{ ...S.ctrlBtn, background: camOn ? 'rgba(52,199,89,0.25)' : 'rgba(255,255,255,0.1)' }}
+          disabled={status !== 'live'}>
+          <div style={{ fontSize: 'calc(1.5vw + 1.4vh)' }}>{camOn ? '📹' : '📷'}</div>
+        </button>
+        <button onClick={toggleShare} style={{ ...S.ctrlBtn, background: shareOn ? 'rgba(56,189,248,0.28)' : 'rgba(255,255,255,0.1)' }}
+          disabled={status !== 'live'}>
+          <div style={{ fontSize: 'calc(1.5vw + 1.4vh)' }}>🖥</div>
+        </button>
+        <button onClick={toggleDenoise} style={{ ...S.ctrlBtn, background: denoise ? 'rgba(52,199,89,0.25)' : 'rgba(255,255,255,0.1)' }}
+          disabled={status !== 'live'}>
+          <div style={{ fontSize: 'calc(1.5vw + 1.4vh)' }}>✨</div>
+        </button>
+        <NotesButton disabled={status !== 'live'} style={S.ctrlBtn}
+          iconStyle={{ fontSize: 'calc(1.5vw + 1.4vh)', lineHeight: 1 }}
+          labelStyle={{ display: 'none' }}
+          selfName={user?.nickname || (user?.email || '').split('@')[0] || '弟兄姐妹'} />
+        <button onClick={hangUp} style={{ ...S.ctrlBtn, background: '#ff3b30' }}>
+          <div style={{ fontSize: 'calc(1.5vw + 1.4vh)' }}>📴</div>
+        </button>
       </div>
     </div>
   )
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-const CALL_CTRL_SIZE = 'calc(9vw + 8.1vh)'
-const CALL_CTRL_GAP = 'calc(2.25vw + 2.25vh)'
-const CALL_CTRL_SHIFT = 'calc((9vw + 8.1vh) * -3.5)'
+const CALL_CTRL_SIZE = 'calc(3vw + 2.7vh)'
+const CALL_CTRL_GAP = 'calc(0.75vw + 0.75vh)'
+const CALL_CTRL_SHIFT = 'calc((3vw + 2.7vh) * -3.5)'
 
 const S = {
   page: { position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', background: '#0d1117', color: '#fff', fontFamily: 'inherit' },
@@ -546,8 +537,6 @@ const S = {
   tileName: { fontSize: 12, color: 'rgba(255,255,255,0.85)', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' },
   mutedTag: { fontSize: 10, color: 'rgba(255,255,255,0.4)' },
   waitHint: { gridColumn: '1 / -1', textAlign: 'center', color: 'rgba(255,255,255,0.45)', fontSize: 13, lineHeight: 1.7, padding: 12 },
-  controls: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: CALL_CTRL_GAP, padding: 'calc(0.3vw + 0.3vh) calc(0.45vw + 0.4vh)', flexShrink: 0, position: 'relative', top: CALL_CTRL_SHIFT },
-  ctrlRow: { display: 'flex', justifyContent: 'center', gap: CALL_CTRL_GAP },
-  ctrlBtn: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, border: 'none', borderRadius: 'calc(0.6vw + 0.5vh)', padding: 'calc(0.15vw + 0.15vh) calc(0.22vw + 0.2vh)', color: '#fff', cursor: 'pointer', width: CALL_CTRL_SIZE, minWidth: CALL_CTRL_SIZE, minHeight: CALL_CTRL_SIZE },
-  ctrlLabel: { fontSize: 'calc(1vw + 0.9vh)' },
+  controls: { display: 'flex', justifyContent: 'center', gap: CALL_CTRL_GAP, padding: 'calc(0.3vw + 0.3vh) calc(0.45vw + 0.4vh)', flexShrink: 0, position: 'relative', top: CALL_CTRL_SHIFT },
+  ctrlBtn: { display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', borderRadius: 'calc(0.6vw + 0.5vh)', padding: 'calc(0.15vw + 0.15vh) calc(0.22vw + 0.2vh)', color: '#fff', cursor: 'pointer', width: CALL_CTRL_SIZE, minWidth: CALL_CTRL_SIZE, minHeight: CALL_CTRL_SIZE },
 }
