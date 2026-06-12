@@ -224,6 +224,7 @@ function AllPointLabels({ items, hoveredKey, selectedKey, onHover, onSelect }) {
     return (
       <Billboard key={item.feature_key} position={pos.toArray()} follow={true}>
         <Text
+          font={null}
           fontSize={fontSize}
           color={color}
           anchorX="center"
