@@ -1,4 +1,4 @@
-// characterJourneys.js — 231位圣经人物生平活动轨迹。
+// characterJourneys.js — 389位圣经人物生平活动轨迹。
 // 每位: { stops: [{ place, ref, event }] }，place 须在 bibleGazetteer 中有坐标。
 // 单地点人物：1站，event 标注「主要事奉地/出生地」。
 import GAZETTEER from './bibleGazetteer'
@@ -900,6 +900,468 @@ export function buildCharacterMapConfig(char, journey) {
       scene: SCENE_BY_ROLE[char.role] || 'journey',
     }],
   }
-}
+,
+  '亚他利雅': { stops: [
+    { place: '耶路撒冷', ref: '王下11;代下22-23', event: '犹大女王，篡位六年，杀害王室后裔，终被耶何耶大推翻' }
+  ]},
+  '三位一体真神': { stops: [
+    { place: '耶路撒冷', ref: '创1；太28:19；林后13:14', event: '主要事奉地/活动地——三位一体真神的事迹见创1；太28:19；林后13:14' }
+  ]},
+  'Polycarp 坡旅甲': { stops: [
+    { place: '罗马', ref: '约69–155年·士每拿主教', event: '主要事奉地/活动地——Polycarp 坡旅甲的事迹见约69–155年·士每拿主教' }
+  ]},
+  'Ignatius of Antioch 伊格那丢': { stops: [
+    { place: '罗马', ref: '约35–108年·安提阿主教', event: '主要事奉地/活动地——Ignatius of Antioch 伊格那丢的事迹见约35–108年·安提阿主教' }
+  ]},
+  'Justin Martyr 游斯丁': { stops: [
+    { place: '罗马', ref: '约100–165年·护教士', event: '主要事奉地/活动地——Justin Martyr 游斯丁的事迹见约100–165年·护教士' }
+  ]},
+  'Jan Hus 扬·胡斯': { stops: [
+    { place: '罗马', ref: '约1369–1415年·改革先驱', event: '主要事奉地/活动地——Jan Hus 扬·胡斯的事迹见约1369–1415年·改革先驱' }
+  ]},
+  'William Tyndale 威廉·丁道尔': { stops: [
+    { place: '罗马', ref: '约1494–1536年·圣经翻译家', event: '主要事奉地/活动地——William Tyndale 威廉·丁道尔的事迹见约1494–1536年·圣经翻译家' }
+  ]},
+  'Jim Elliot 吉姆·艾略特': { stops: [
+    { place: '罗马', ref: '1927–1956年·宣教士殉道者', event: '主要事奉地/活动地——Jim Elliot 吉姆·艾略特的事迹见1927–1956年·宣教士殉道者' }
+  ]},
+  'Richard Wurmbrand 理查德·沃姆布兰德': { stops: [
+    { place: '罗马', ref: '1909–2001年·受逼迫教会牧者', event: '主要事奉地/活动地——Richard Wurmbrand 理查德·沃姆布兰德的事迹见1909–2001年·受逼迫教会牧者' }
+  ]},
+  'Irenaeus 爱任纽': { stops: [
+    { place: '罗马', ref: '约130–202年·里昂主教', event: '主要事奉地/活动地——Irenaeus 爱任纽的事迹见约130–202年·里昂主教' }
+  ]},
+  'Athanasius 亚他那修': { stops: [
+    { place: '罗马', ref: '约296–373年·亚历山大主教', event: '主要事奉地/活动地——Athanasius 亚他那修的事迹见约296–373年·亚历山大主教' }
+  ]},
+  'Augustine of Hippo 奥古斯丁': { stops: [
+    { place: '罗马', ref: '354–430年·希波主教', event: '主要事奉地/活动地——Augustine of Hippo 奥古斯丁的事迹见354–430年·希波主教' }
+  ]},
+  'Anselm 安瑟伦': { stops: [
+    { place: '罗马', ref: '1033–1109年·坎特伯雷大主教', event: '主要事奉地/活动地——Anselm 安瑟伦的事迹见1033–1109年·坎特伯雷大主教' }
+  ]},
+  'Thomas Aquinas 托马斯·阿奎那': { stops: [
+    { place: '罗马', ref: '1225–1274年·神学家', event: '主要事奉地/活动地——Thomas Aquinas 托马斯·阿奎那的事迹见1225–1274年·神学家' }
+  ]},
+  'Blaise Pascal 布莱士·帕斯卡': { stops: [
+    { place: '罗马', ref: '1623–1662年·科学家神学家', event: '主要事奉地/活动地——Blaise Pascal 布莱士·帕斯卡的事迹见1623–1662年·科学家神学家' }
+  ]},
+  'C.S. Lewis C.S.路易斯': { stops: [
+    { place: '罗马', ref: '1898–1963年·作家护教家', event: '主要事奉地/活动地——C.S. Lewis C.S.路易斯的事迹见1898–1963年·作家护教家' }
+  ]},
+  'Martin Luther 马丁·路德': { stops: [
+    { place: '罗马', ref: '1483–1546年·宗教改革之父', event: '主要事奉地/活动地——Martin Luther 马丁·路德的事迹见1483–1546年·宗教改革之父' }
+  ]},
+  'John Calvin 约翰·加尔文': { stops: [
+    { place: '罗马', ref: '1509–1564年·改革宗奠基者', event: '主要事奉地/活动地——John Calvin 约翰·加尔文的事迹见1509–1564年·改革宗奠基者' }
+  ]},
+  'Huldrych Zwingli 乌尔里希·慈运理': { stops: [
+    { place: '罗马', ref: '1484–1531年·苏黎世改革家', event: '主要事奉地/活动地——Huldrych Zwingli 乌尔里希·慈运理的事迹见1484–1531年·苏黎世改革家' }
+  ]},
+  'John Knox 约翰·诺克斯': { stops: [
+    { place: '罗马', ref: '约1514–1572年·苏格兰改革家', event: '主要事奉地/活动地——John Knox 约翰·诺克斯的事迹见约1514–1572年·苏格兰改革家' }
+  ]},
+  'Martin Bucer 马丁·布策': { stops: [
+    { place: '罗马', ref: '1491–1551年·斯特拉斯堡改革家', event: '主要事奉地/活动地——Martin Bucer 马丁·布策的事迹见1491–1551年·斯特拉斯堡改革家' }
+  ]},
+  'Heinrich Bullinger 海因里希·布林格': { stops: [
+    { place: '罗马', ref: '1504–1575年·苏黎世改革家', event: '主要事奉地/活动地——Heinrich Bullinger 海因里希·布林格的事迹见1504–1575年·苏黎世改革家' }
+  ]},
+  'Benedict of Nursia 本笃': { stops: [
+    { place: '罗马', ref: '约480–547年·修道主义之父', event: '主要事奉地/活动地——Benedict of Nursia 本笃的事迹见约480–547年·修道主义之父' }
+  ]},
+  'Bernard of Clairvaux 克莱尔沃的伯尔纳': { stops: [
+    { place: '罗马', ref: '1090–1153年·熙笃会属灵导师', event: '主要事奉地/活动地——Bernard of Clairvaux 克莱尔沃的伯尔纳的事迹见1090–1153年·熙笃会属灵导师' }
+  ]},
+  'Francis of Assisi 亚西西的方济各': { stops: [
+    { place: '罗马', ref: '约1181–1226年·属灵导师', event: '主要事奉地/活动地——Francis of Assisi 亚西西的方济各的事迹见约1181–1226年·属灵导师' }
+  ]},
+  'Thomas à Kempis 托马斯·肯培': { stops: [
+    { place: '罗马', ref: '约1380–1471年·灵修作家', event: '主要事奉地/活动地——Thomas à Kempis 托马斯·肯培的事迹见约1380–1471年·灵修作家' }
+  ]},
+  'Brother Lawrence 劳伦斯弟兄': { stops: [
+    { place: '罗马', ref: '约1614–1691年·修道院厨役', event: '主要事奉地/活动地——Brother Lawrence 劳伦斯弟兄的事迹见约1614–1691年·修道院厨役' }
+  ]},
+  'John Owen 约翰·欧文': { stops: [
+    { place: '罗马', ref: '1616–1683年·清教徒神学家', event: '主要事奉地/活动地——John Owen 约翰·欧文的事迹见1616–1683年·清教徒神学家' }
+  ]},
+  'Richard Baxter 理查德·巴克斯特': { stops: [
+    { place: '罗马', ref: '1615–1691年·清教徒牧者', event: '主要事奉地/活动地——Richard Baxter 理查德·巴克斯特的事迹见1615–1691年·清教徒牧者' }
+  ]},
+  'John Bunyan 约翰·班扬': { stops: [
+    { place: '罗马', ref: '1628–1688年·《天路历程》作者', event: '主要事奉地/活动地——John Bunyan 约翰·班扬的事迹见1628–1688年·《天路历程》作者' }
+  ]},
+  'Jonathan Edwards 乔纳森·爱德华兹': { stops: [
+    { place: '罗马', ref: '1703–1758年·大觉醒领袖', event: '主要事奉地/活动地——Jonathan Edwards 乔纳森·爱德华兹的事迹见1703–1758年·大觉醒领袖' }
+  ]},
+  'John Wesley 约翰·卫斯理': { stops: [
+    { place: '罗马', ref: '1703–1791年·循道运动创始人', event: '主要事奉地/活动地——John Wesley 约翰·卫斯理的事迹见1703–1791年·循道运动创始人' }
+  ]},
+  'William Carey 威廉·克里': { stops: [
+    { place: '罗马', ref: '1761–1834年·近代宣教之父', event: '主要事奉地/活动地——William Carey 威廉·克里的事迹见1761–1834年·近代宣教之父' }
+  ]},
+  'Adoniram Judson 阿多尼拉姆·贾德森': { stops: [
+    { place: '罗马', ref: '1788–1850年·缅甸宣教士', event: '主要事奉地/活动地——Adoniram Judson 阿多尼拉姆·贾德森的事迹见1788–1850年·缅甸宣教士' }
+  ]},
+  'Hudson Taylor 戴德生': { stops: [
+    { place: '罗马', ref: '1832–1905年·中国内地会创办人', event: '主要事奉地/活动地——Hudson Taylor 戴德生的事迹见1832–1905年·中国内地会创办人' }
+  ]},
+  'George Müller 乔治·慕勒': { stops: [
+    { place: '罗马', ref: '1805–1898年·孤儿院与信心之父', event: '主要事奉地/活动地——George Müller 乔治·慕勒的事迹见1805–1898年·孤儿院与信心之父' }
+  ]},
+  'David Livingstone 大卫·李文斯顿': { stops: [
+    { place: '罗马', ref: '1813–1873年·非洲宣教探险家', event: '主要事奉地/活动地——David Livingstone 大卫·李文斯顿的事迹见1813–1873年·非洲宣教探险家' }
+  ]},
+  'Amy Carmichael 艾米·卡迈克尔': { stops: [
+    { place: '罗马', ref: '1867–1951年·印度宣教士', event: '主要事奉地/活动地——Amy Carmichael 艾米·卡迈克尔的事迹见1867–1951年·印度宣教士' }
+  ]},
+  'Cameron Townsend 卡梅伦·汤森': { stops: [
+    { place: '罗马', ref: '1896–1982年·圣经翻译宣教士', event: '主要事奉地/活动地——Cameron Townsend 卡梅伦·汤森的事迹见1896–1982年·圣经翻译宣教士' }
+  ]},
+  '倪柝声': { stops: [
+    { place: '福州', ref: '1903-1972', event: '中国教会领袖，创办地方教会，写作《属灵人》等' }
+  ]},
+  '宋尚节': { stops: [
+    { place: '北京', ref: '1901-1944', event: '中国布道家，化学博士弃职传道，被誉为「中国的慕迪」' }
+  ]},
+  '王明道': { stops: [
+    { place: '罗马', ref: '1900–1991年·中国家庭教会先驱', event: '主要事奉地/活动地——王明道的事迹见1900–1991年·中国家庭教会先驱' }
+  ]},
+  '赵世光': { stops: [
+    { place: '罗马', ref: '1908–1973年·灵粮堂创办人', event: '主要事奉地/活动地——赵世光的事迹见1908–1973年·灵粮堂创办人' }
+  ]},
+  '林献羔': { stops: [
+    { place: '北京', ref: '1924-2013', event: '中国家庭教会领袖，为主坐监多年，忠诚至死' }
+  ]},
+  '袁相忱': { stops: [
+    { place: '罗马', ref: '1914–2005年·北京家庭教会牧者', event: '主要事奉地/活动地——袁相忱的事迹见1914–2005年·北京家庭教会牧者' }
+  ]},
+  'John Wycliffe 约翰·威克里夫': { stops: [
+    { place: '罗马', ref: '约1328–1384年·宗教改革晨星', event: '主要事奉地/活动地——John Wycliffe 约翰·威克里夫的事迹见约1328–1384年·宗教改革晨星' }
+  ]},
+  'George Whitefield 乔治·怀特菲尔德': { stops: [
+    { place: '罗马', ref: '1714–1770年·大觉醒布道家', event: '主要事奉地/活动地——George Whitefield 乔治·怀特菲尔德的事迹见1714–1770年·大觉醒布道家' }
+  ]},
+  'Charles Spurgeon 司布真': { stops: [
+    { place: '罗马', ref: '1834–1892年·讲道王子', event: '主要事奉地/活动地——Charles Spurgeon 司布真的事迹见1834–1892年·讲道王子' }
+  ]},
+  'Martyn Lloyd-Jones 劳埃德-琼斯': { stops: [
+    { place: '罗马', ref: '1899–1981年·伦敦威斯敏斯特牧师', event: '主要事奉地/活动地——Martyn Lloyd-Jones 劳埃德-琼斯的事迹见1899–1981年·伦敦威斯敏斯特牧师' }
+  ]},
+  'John Stott 约翰·斯托得': { stops: [
+    { place: '罗马', ref: '1921–2011年·福音派领袖', event: '主要事奉地/活动地——John Stott 约翰·斯托得的事迹见1921–2011年·福音派领袖' }
+  ]},
+  'Billy Graham 葛培理': { stops: [
+    { place: '罗马', ref: '1918–2018年·二十世纪布道家', event: '主要事奉地/活动地——Billy Graham 葛培理的事迹见1918–2018年·二十世纪布道家' }
+  ]},
+  'Timothy Keller 提摩太·凯勒': { stops: [
+    { place: '罗马', ref: '1950–2023年·城市宣教牧者', event: '主要事奉地/活动地——Timothy Keller 提摩太·凯勒的事迹见1950–2023年·城市宣教牧者' }
+  ]},
+  'Sabellianism / Modalism 撒伯流主义（形态论）': { stops: [
+    { place: '罗马', ref: '3世纪·代表：撒伯流', event: '主要事奉地/活动地——Sabellianism / Modalism 撒伯流主义（形态论）的事迹见3世纪·代表：撒伯流' }
+  ]},
+  'Arianism 阿里乌主义': { stops: [
+    { place: '罗马', ref: '4世纪·代表：阿里乌（反对者：亚他那修）', event: '主要事奉地/活动地——Arianism 阿里乌主义的事迹见4世纪·代表：阿里乌（反对者：亚他那修）' }
+  ]},
+  'Socinianism 索西努主义': { stops: [
+    { place: '罗马', ref: '16世纪·代表：法乌斯托·索西努', event: '主要事奉地/活动地——Socinianism 索西努主义的事迹见16世纪·代表：法乌斯托·索西努' }
+  ]},
+  'Docetism 幻影说': { stops: [
+    { place: '罗马', ref: '1-2世纪·诺斯底色彩', event: '主要事奉地/活动地——Docetism 幻影说的事迹见1-2世纪·诺斯底色彩' }
+  ]},
+  'Gnosticism 诺斯底主义': { stops: [
+    { place: '罗马', ref: '2世纪·代表：瓦伦廷努、巴西利德（反对者：爱任纽）', event: '主要事奉地/活动地——Gnosticism 诺斯底主义的事迹见2世纪·代表：瓦伦廷努、巴西利德（反对者：爱任纽）' }
+  ]},
+  'Nestorianism 聂斯托利主义': { stops: [
+    { place: '罗马', ref: '5世纪·代表：聂斯托利', event: '主要事奉地/活动地——Nestorianism 聂斯托利主义的事迹见5世纪·代表：聂斯托利' }
+  ]},
+  'Eutychianism / Monophysitism 优提克主义（基督一性论）': { stops: [
+    { place: '罗马', ref: '5世纪·代表：优提克', event: '主要事奉地/活动地——Eutychianism / Monophysitism 优提克主义（基督一性论）的事迹见5世纪·代表：优提克' }
+  ]},
+  'Pelagianism 伯拉纠主义': { stops: [
+    { place: '罗马', ref: '5世纪·代表：伯拉纠（反对者：奥古斯丁）', event: '主要事奉地/活动地——Pelagianism 伯拉纠主义的事迹见5世纪·代表：伯拉纠（反对者：奥古斯丁）' }
+  ]},
+  'Semi-Pelagianism 半伯拉纠主义': { stops: [
+    { place: '罗马', ref: '5-6世纪', event: '主要事奉地/活动地——Semi-Pelagianism 半伯拉纠主义的事迹见5-6世纪' }
+  ]},
+  'Montanism 孟他努主义': { stops: [
+    { place: '罗马', ref: '2世纪·代表：孟他努', event: '主要事奉地/活动地——Montanism 孟他努主义的事迹见2世纪·代表：孟他努' }
+  ]},
+  'Extreme Mysticism 极端神秘主义': { stops: [
+    { place: '罗马', ref: '历代·多有代表', event: '主要事奉地/活动地——Extreme Mysticism 极端神秘主义的事迹见历代·多有代表' }
+  ]},
+  'Thomas Müntzer 托马斯·闵采尔（千禧年狂热）': { stops: [
+    { place: '罗马', ref: '约1489–1525年', event: '主要事奉地/活动地——Thomas Müntzer 托马斯·闵采尔（千禧年狂热）的事迹见约1489–1525年' }
+  ]},
+  'William Miller 威廉·米勒（日期预测）': { stops: [
+    { place: '罗马', ref: '1782–1849年', event: '主要事奉地/活动地——William Miller 威廉·米勒（日期预测）的事迹见1782–1849年' }
+  ]},
+  'Indulgences & Papal Corruption 教权腐败与赎罪券体系': { stops: [
+    { place: '罗马', ref: '中世纪·特策尔/利奥十世/亚历山大六世/英诺森三世', event: '主要事奉地/活动地——Indulgences & Papal Corruption 教权腐败与赎罪券体系的事迹见中世纪·特策尔/利奥十世/亚历山大六世/英诺森三世' }
+  ]},
+  'Mormonism 摩门教（后期圣徒教会）': { stops: [
+    { place: '罗马', ref: '1830年起·创始人：约瑟·斯密', event: '主要事奉地/活动地——Mormonism 摩门教（后期圣徒教会）的事迹见1830年起·创始人：约瑟·斯密' }
+  ]},
+  'Jehovah's Witnesses 耶和华见证人（守望台）': { stops: [
+    { place: '罗马', ref: '1879年起·创始人：查尔斯·泰兹·罗素', event: '主要事奉地/活动地——Jehovah's Witnesses 耶和华见证人（守望台）的事迹见1879年起·创始人：查尔斯·泰兹·罗素' }
+  ]},
+  'Christian Science 基督教科学派': { stops: [
+    { place: '罗马', ref: '1879年·创始人：玛丽·贝克·艾迪', event: '主要事奉地/活动地——Christian Science 基督教科学派的事迹见1879年·创始人：玛丽·贝克·艾迪' }
+  ]},
+  'Unification Church 统一教': { stops: [
+    { place: '罗马', ref: '1954年起·创始人：文鲜明', event: '主要事奉地/活动地——Unification Church 统一教的事迹见1954年起·创始人：文鲜明' }
+  ]},
+  'Prosperity Gospel 成功神学（财富福音）': { stops: [
+    { place: '罗马', ref: '20世纪·常被讨论：哈金、科普兰', event: '主要事奉地/活动地——Prosperity Gospel 成功神学（财富福音）的事迹见20世纪·常被讨论：哈金、科普兰' }
+  ]},
+  'New Apostolic Reformation 新使徒改革运动（NAR）': { stops: [
+    { place: '罗马', ref: '20世纪末·代表：彼得·瓦格纳', event: '主要事奉地/活动地——New Apostolic Reformation 新使徒改革运动（NAR）的事迹见20世纪末·代表：彼得·瓦格纳' }
+  ]},
+  'Peoples Temple 人民圣殿教': { stops: [
+    { place: '罗马', ref: '1955–1978年·领袖：吉姆·琼斯', event: '主要事奉地/活动地——Peoples Temple 人民圣殿教的事迹见1955–1978年·领袖：吉姆·琼斯' }
+  ]},
+  'Branch Davidians 大卫教派': { stops: [
+    { place: '罗马', ref: '1993年·领袖：大卫·考雷什', event: '主要事奉地/活动地——Branch Davidians 大卫教派的事迹见1993年·领袖：大卫·考雷什' }
+  ]},
+  'Ten Patterns of Heresy 异端的十种常见模式': { stops: [
+    { place: '罗马', ref: '识别框架·历代', event: '主要事奉地/活动地——Ten Patterns of Heresy 异端的十种常见模式的事迹见识别框架·历代' }
+  ]},
+  'William Perkins 威廉·帕金斯': { stops: [
+    { place: '罗马', ref: '1558–1602年·剑桥神学家', event: '主要事奉地/活动地——William Perkins 威廉·帕金斯的事迹见1558–1602年·剑桥神学家' }
+  ]},
+  'Richard Sibbes 理查德·西布斯': { stops: [
+    { place: '罗马', ref: '1577–1635年·伦敦讲道家', event: '主要事奉地/活动地——Richard Sibbes 理查德·西布斯的事迹见1577–1635年·伦敦讲道家' }
+  ]},
+  'Thomas Watson 托马斯·沃森': { stops: [
+    { place: '罗马', ref: '1620–1686年·伦敦讲道家', event: '主要事奉地/活动地——Thomas Watson 托马斯·沃森的事迹见1620–1686年·伦敦讲道家' }
+  ]},
+  'Thomas Goodwin 托马斯·古德温': { stops: [
+    { place: '罗马', ref: '1600–1680年·牛津神学家', event: '主要事奉地/活动地——Thomas Goodwin 托马斯·古德温的事迹见1600–1680年·牛津神学家' }
+  ]},
+  'John Flavel 约翰·弗拉维': { stops: [
+    { place: '罗马', ref: '1627–1691年·达特茅斯牧者', event: '主要事奉地/活动地——John Flavel 约翰·弗拉维的事迹见1627–1691年·达特茅斯牧者' }
+  ]},
+  'Stephen Charnock 斯蒂芬·恰诺克': { stops: [
+    { place: '罗马', ref: '1628–1680年·伦敦神学家', event: '主要事奉地/活动地——Stephen Charnock 斯蒂芬·恰诺克的事迹见1628–1680年·伦敦神学家' }
+  ]},
+  'William Gurnall 威廉·格纳尔': { stops: [
+    { place: '罗马', ref: '1616–1679年·拉文纳姆牧者', event: '主要事奉地/活动地——William Gurnall 威廉·格纳尔的事迹见1616–1679年·拉文纳姆牧者' }
+  ]},
+  'Charles Wesley 查尔斯·卫斯理': { stops: [
+    { place: '罗马', ref: '1707–1788年·圣诗作者', event: '主要事奉地/活动地——Charles Wesley 查尔斯·卫斯理的事迹见1707–1788年·圣诗作者' }
+  ]},
+  'Howell Harris 豪厄尔·哈里斯': { stops: [
+    { place: '罗马', ref: '1714–1773年·威尔士复兴领袖', event: '主要事奉地/活动地——Howell Harris 豪厄尔·哈里斯的事迹见1714–1773年·威尔士复兴领袖' }
+  ]},
+  'William Romaine 威廉·罗曼': { stops: [
+    { place: '罗马', ref: '1714–1795年·伦敦福音派牧者', event: '主要事奉地/活动地——William Romaine 威廉·罗曼的事迹见1714–1795年·伦敦福音派牧者' }
+  ]},
+  'Robert Morrison 马礼逊': { stops: [
+    { place: '罗马', ref: '1782–1834年·首位来华新教宣教士', event: '主要事奉地/活动地——Robert Morrison 马礼逊的事迹见1782–1834年·首位来华新教宣教士' }
+  ]},
+  'William Milne 米怜': { stops: [
+    { place: '罗马', ref: '1785–1822年·马六甲宣教士', event: '主要事奉地/活动地——William Milne 米怜的事迹见1785–1822年·马六甲宣教士' }
+  ]},
+  'James Legge 理雅各': { stops: [
+    { place: '罗马', ref: '1815–1897年·宣教士兼汉学家', event: '主要事奉地/活动地——James Legge 理雅各的事迹见1815–1897年·宣教士兼汉学家' }
+  ]},
+  'Samuel Pollard 伯格理': { stops: [
+    { place: '罗马', ref: '1864–1915年·苗族宣教士', event: '主要事奉地/活动地——Samuel Pollard 伯格理的事迹见1864–1915年·苗族宣教士' }
+  ]},
+  'Lottie Moon 洛蒂·穆恩': { stops: [
+    { place: '罗马', ref: '1840–1912年·山东宣教士', event: '主要事奉地/活动地——Lottie Moon 洛蒂·穆恩的事迹见1840–1912年·山东宣教士' }
+  ]},
+  'C.T. Studd 司徒德': { stops: [
+    { place: '罗马', ref: '1860–1931年·跨洲宣教士', event: '主要事奉地/活动地——C.T. Studd 司徒德的事迹见1860–1931年·跨洲宣教士' }
+  ]},
+  'John & Betty Stam 施达能夫妇': { stops: [
+    { place: '罗马', ref: '1907–1934 / 1906–1934年·安徽殉道者', event: '主要事奉地/活动地——John & Betty Stam 施达能夫妇的事迹见1907–1934 / 1906–1934年·安徽殉道者' }
+  ]},
+  'Eric Liddell 李爱锐': { stops: [
+    { place: '罗马', ref: '1902–1945年·奥运冠军宣教士', event: '主要事奉地/活动地——Eric Liddell 李爱锐的事迹见1902–1945年·奥运冠军宣教士' }
+  ]},
+  'Mary Slessor 玛丽·斯莱瑟': { stops: [
+    { place: '罗马', ref: '1848–1915年·尼日利亚宣教士', event: '主要事奉地/活动地——Mary Slessor 玛丽·斯莱瑟的事迹见1848–1915年·尼日利亚宣教士' }
+  ]},
+  'Robert Moffat 罗伯特·莫法特': { stops: [
+    { place: '罗马', ref: '1795–1883年·南非宣教士', event: '主要事奉地/活动地——Robert Moffat 罗伯特·莫法特的事迹见1795–1883年·南非宣教士' }
+  ]},
+  'Alexander Mackay 亚历山大·麦凯': { stops: [
+    { place: '罗马', ref: '1849–1890年·乌干达宣教士', event: '主要事奉地/活动地——Alexander Mackay 亚历山大·麦凯的事迹见1849–1890年·乌干达宣教士' }
+  ]},
+  'George Grenfell 乔治·格伦费尔': { stops: [
+    { place: '罗马', ref: '1849–1906年·刚果宣教士', event: '主要事奉地/活动地——George Grenfell 乔治·格伦费尔的事迹见1849–1906年·刚果宣教士' }
+  ]},
+  'David Brainerd 大卫·布雷纳德': { stops: [
+    { place: '罗马', ref: '1718–1747年·北美原住民宣教士', event: '主要事奉地/活动地——David Brainerd 大卫·布雷纳德的事迹见1718–1747年·北美原住民宣教士' }
+  ]},
+  'Bruce Olson 布鲁斯·奥尔森': { stops: [
+    { place: '罗马', ref: '1941年生·哥伦比亚宣教士', event: '主要事奉地/活动地——Bruce Olson 布鲁斯·奥尔森的事迹见1941年生·哥伦比亚宣教士' }
+  ]},
+  'John Smith 约翰·史密斯': { stops: [
+    { place: '罗马', ref: '1790–1824年·圭亚那殉道者', event: '主要事奉地/活动地——John Smith 约翰·史密斯的事迹见1790–1824年·圭亚那殉道者' }
+  ]},
+  'Luis Palau 路易斯·帕劳': { stops: [
+    { place: '罗马', ref: '1934–2021年·拉美布道家', event: '主要事奉地/活动地——Luis Palau 路易斯·帕劳的事迹见1934–2021年·拉美布道家' }
+  ]},
+  'Bartolomé de las Casas 巴托洛梅·德拉斯·卡萨斯': { stops: [
+    { place: '罗马', ref: '1484–1566年·原住民权益捍卫者', event: '主要事奉地/活动地——Bartolomé de las Casas 巴托洛梅·德拉斯·卡萨斯的事迹见1484–1566年·原住民权益捍卫者' }
+  ]},
+  'Andrew Fuller 安德鲁·富勒': { stops: [
+    { place: '罗马', ref: '1754–1815年·宣教差会奠基者', event: '主要事奉地/活动地——Andrew Fuller 安德鲁·富勒的事迹见1754–1815年·宣教差会奠基者' }
+  ]},
+  '以挪士': { stops: [
+    { place: '伊甸园', ref: '创4:26', event: '塞特之子，开始求告耶和华的名' }
+  ]},
+  '以诺': { stops: [
+    { place: '伊甸园', ref: '创5:21-24', event: '与神同行三百年，被神取去不经过死' }
+  ]},
+  '拉麦（挪亚之父）': { stops: [
+    { place: '伊甸园', ref: '创5:28-31', event: '挪亚之父，预言挪亚将安慰人类' }
+  ]},
+  '闪': { stops: [
+    { place: '希伯仑', ref: '创9:26-27', event: '主要事奉地/活动地——闪的事迹见创9:26-27' }
+  ]},
+  '麦基洗德': { stops: [
+    { place: '希伯仑', ref: '创14:18-20', event: '主要事奉地/活动地——麦基洗德的事迹见创14:18-20' }
+  ]},
+  '以利以谢': { stops: [
+    { place: '大马士革', ref: '创15', event: '亚伯拉罕管家，若生子撒拉无出则继承，预表外邦人蒙恩' }
+  ]},
+  '便雅悯': { stops: [
+    { place: '耶路撒冷', ref: '创35;42-45', event: '雅各幼子，约瑟之弟，以色列十二支派之一' }
+  ]},
+  '他玛': { stops: [
+    { place: '希伯仑', ref: '创38;太1', event: '犹大儿媳，因公公不公而设局，生法勒斯，入弥赛亚家谱' }
+  ]},
+  '法勒斯': { stops: [
+    { place: '伯利恒', ref: '创38;太1', event: '犹大与塔玛之子，孪生长子，入弥赛亚家谱' }
+  ]},
+  '亚何利亚伯': { stops: [
+    { place: '西奈山', ref: '出31;35;38', event: '但支派巧匠，与比撒列同工建造会幕圣器' }
+  ]},
+  '户珥': { stops: [
+    { place: '西奈山', ref: '出17;24;35', event: '摩西亚伦助手，搀扶摩西举手，参与建造会幕' }
+  ]},
+  '巴兰': { stops: [
+    { place: '毗珥', ref: '民22-24;31', event: '外邦先知，受雇咒诅以色列却祝福，终因引诱犯罪被杀' }
+  ]},
+  '亚比米勒': { stops: [
+    { place: '示剑', ref: '士9', event: '基甸之子，弑兄弟称王，被妇人的磨石砸死' }
+  ]},
+  '玛挪亚': { stops: [
+    { place: '示剑', ref: '士13', event: '主要事奉地/活动地——玛挪亚的事迹见士13' }
+  ]},
+  '俄备得': { stops: [
+    { place: '伯利恒', ref: '得4', event: '波阿斯与路得之子，大卫之祖父' }
+  ]},
+  '歌利亚': { stops: [
+    { place: '以拉谷', ref: '撒上17', event: '非利士巨人，被大卫以投石击杀，倒在以拉谷' }
+  ]},
+  '拿八': { stops: [
+    { place: '迦密', ref: '撒上25', event: '迦密富户，刻薄吝啬，拒绝供应大卫，被神击打而死' }
+  ]},
+  '乌撒': { stops: [
+    { place: '耶路撒冷', ref: '撒下6;代上13', event: '触碰约柜被神击杀，警示不可轻慢神圣洁' }
+  ]},
+  '俄别以东': { stops: [
+    { place: '耶路撒冷', ref: '撒下6;代上13;15', event: '利未人，约柜停其家三月得大福，后代为圣殿乐师' }
+  ]},
+  '米非波设': { stops: [
+    { place: '耶路撒冷', ref: '撒下9', event: '主要事奉地/活动地——米非波设的事迹见撒下9' }
+  ]},
+  '拿单': { stops: [
+    { place: '耶路撒冷', ref: '撒下7;12;王上1', event: '先知拿单，责备大卫，膏立所罗门，忠诚勇敢' }
+  ]},
+  '乌利亚': { stops: [
+    { place: '耶路撒冷', ref: '撒下11', event: '赫人乌利亚，大卫勇士，因大卫奸淫拔示 Bathsheba 而被谋害' }
+  ]},
+  '以太': { stops: [
+    { place: '耶路撒冷', ref: '撒下15-18', event: '大卫勇士，忠诚从大卫过约旦河，押沙龙叛乱中坚守' }
+  ]},
+  '户筛': { stops: [
+    { place: '耶路撒冷', ref: '撒下15-17', event: '大卫谋士，假装背叛打入押沙龙内部，破坏亚希多弗计谋' }
+  ]},
+  '户兰': { stops: [
+    { place: '推罗', ref: '王上7;代下2-4', event: '推罗巧匠，为所罗门圣殿制造铜器，半犹太血统' }
+  ]},
+  '撒勒法寡妇': { stops: [
+    { place: '撒勒法', ref: '王上17', event: '西顿寡妇，供养以利亚，儿子复活，信心的外邦人' }
+  ]},
+  '乃缦': { stops: [
+    { place: '大马士革', ref: '王下5', event: '亚兰元帅，大麻风得洁净，唯独认识真神的外邦人' }
+  ]},
+  '基哈西': { stops: [
+    { place: '撒玛利亚城', ref: '王下5;8', event: '以利沙仆人，贪财患大麻风，欺骗先知' }
+  ]},
+  '巴录': { stops: [
+    { place: '耶路撒冷', ref: '耶32;36;45', event: '耶利米文士，记录先知书卷，承受逼迫仍忠心' }
+  ]},
+  '以伯米勒': { stops: [
+    { place: '耶路撒冷', ref: '耶38', event: '古实太监，拯救耶利米出淤泥坑，得神应许保全性命' }
+  ]},
+  '沙得拉': { stops: [
+    { place: '巴比伦', ref: '但3', event: '即哈拿尼雅，与米沙、亚伯尼歌同入火窑，敬拜真神' }
+  ]},
+  '米煞': { stops: [
+    { place: '耶路撒冷', ref: '但3', event: '主要事奉地/活动地——米煞的事迹见但3' }
+  ]},
+  '亚伯尼歌': { stops: [
+    { place: '巴比伦', ref: '但3', event: '即亚撒利雅，火窑中得拯救，不屈膝拜偶像' }
+  ]},
+  '伯沙撒': { stops: [
+    { place: '巴比伦', ref: '但5', event: '巴比伦末代王，宴饮亵渎圣殿器皿，当夜国亡' }
+  ]},
+  '歌篾': { stops: [
+    { place: '撒玛利亚城', ref: '何1-3', event: '先知何西阿之妻，象征以色列淫乱不忠，后被赎回' }
+  ]},
+  '大利乌': { stops: [
+    { place: '波斯', ref: '拉4-6;该1;亚1', event: '波斯王大流士，批准圣殿重建，受先知哈该、撒迦利亚影响' }
+  ]},
+  '亚达薛西': { stops: [
+    { place: '波斯', ref: '拉7;尼2', event: '波斯王亚达薛西，允准以斯拉、尼希米归回重建' }
+  ]},
+  '以利亚实': { stops: [
+    { place: '耶路撒冷', ref: '尼3;13', event: '大祭司，带领重建城墙与圣殿，后被参巴拉联姻玷污' }
+  ]},
+  '多比雅': { stops: [
+    { place: '撒玛利亚城', ref: '尼2-6;13', event: '亚扪人，参巴拉同党，阴谋破坏，后代与祭司联姻' }
+  ]},
+  '参巴拉': { stops: [
+    { place: '撒玛利亚城', ref: '尼2-6;13', event: '撒玛利亚省长，阻挠尼希米建城，阴谋败露' }
+  ]},
+  '基善': { stops: [
+    { place: '耶路撒冷', ref: '尼6', event: '阿拉伯人，参巴拉同党，假意邀请谋害尼希米' }
+  ]},
+  '哈曼': { stops: [
+    { place: '波斯', ref: '斯3-7', event: '亚甲族人，谋害犹太人，终被悬挂在自己所立的木架上' }
+  ]},
+  '约书亚大祭司': { stops: [
+    { place: '耶路撒冷', ref: '亚3', event: '主要事奉地/活动地——约书亚大祭司的事迹见亚3' }
+  ]},
+  '夏甲': { stops: [
+    { place: '别是巴', ref: '创16;21', event: '撒拉使女，生以实玛利，被逐后在旷野蒙神看顾' }
+  ]},
+  '拉麦（该隐后裔）': { stops: [
+    { place: '伊甸园', ref: '创4:19-24', event: '该隐后裔，多妻并傲慢自夸复仇' }
+  ]},
+  '宁录': { stops: [
+    { place: '巴比伦', ref: '创10:8-12', event: '地上英雄之首，在耶和华面前为猎户，建造巴别等城' }
+  ]},
+  '以实玛利': { stops: [
+    { place: '别是巴', ref: '创16;21', event: '亚伯拉罕与夏甲之子，旷野中的弓箭手，十二族之父' }
+  ]},
+  '可拉': { stops: [
+    { place: '旷野', ref: '民16', event: '利未人，聚集二百五十首领叛乱，被地吞灭' }
+  ]},
+  '大坍与亚比兰': { stops: [
+    { place: '旷野', ref: '民16', event: '利未支派叛乱领袖，地开口吞灭，抗拒摩西亚伦' }
+  ]},
+  '亚甲': { stops: [
+    { place: '撒玛利亚城', ref: '撒上15', event: '亚玛力王，扫罗违命不杀，被撒母耳处死' }
+  ]},
+  '拿伯': { stops: [
+    { place: '耶斯列', ref: '王上21', event: '耶斯列葡萄园主，因拒绝卖给亚哈而被耶洗别谋害' }
+  ]}}
 
 export default CHARACTER_JOURNEYS
