@@ -10,6 +10,7 @@
 
 import { useState, useEffect } from 'react'
 import SinPatternLibrary from './features/spiritual-formation/components/SinPatternLibrary'
+import './features/spiritual-formation/app/spiritual-formation.css'
 import { API_BASE } from './api'
 import { getToken } from './auth'
 
@@ -419,26 +420,85 @@ export default function HabitsPage({ user, token: propToken, embedded = false, o
         </div>
       )}
 
-      {/* ── 罪的模式库 ── */}
-      <div style={{ padding: '16px 16px 20px' }}>
-        <button
-          onClick={() => setShowLibrary(v => !v)}
-          style={{
-            width: '100%', textAlign: 'left', padding: '12px 14px',
-            borderRadius: 10, border: '1px solid rgba(255,149,0,0.3)',
-            background: 'rgba(255,149,0,0.08)', color: '#ffd699',
-            cursor: 'pointer', fontSize: 14, fontWeight: 600,
-            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          }}
-        >
-          <span>🔍 罪的模式库 — 在神的光中审视内心模式</span>
-          <span>{showLibrary ? '▲' : '▼'}</span>
-        </button>
-        {showLibrary && (
-          <div style={{ marginTop: 8 }}>
-            <SinPatternLibrary />
+      {/* ── 罪的模式库 (内心省察辅助工具) ── */}
+      <div style={{ padding: '24px 16px 40px' }}>
+        <div style={{
+          background: 'linear-gradient(135deg, rgba(255,149,0,0.06) 0%, rgba(255,87,34,0.02) 100%)',
+          border: '1px solid rgba(255,149,0,0.15)',
+          borderRadius: 16,
+          padding: '18px',
+          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
+          transition: 'all 0.3s ease',
+        }}>
+          <div style={{ display: 'flex', gap: '14px', alignItems: 'flex-start' }}>
+            <div style={{
+              fontSize: '22px',
+              padding: '10px',
+              background: 'rgba(255,149,0,0.1)',
+              borderRadius: '12px',
+              color: '#ff9500',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+              boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.1)',
+            }}>
+              🔍
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <h3 style={{
+                margin: '0 0 4px 0',
+                fontSize: '15px',
+                fontWeight: 700,
+                color: '#ffd699',
+                letterSpacing: '0.3px'
+              }}>
+                罪的模式库
+              </h3>
+              <p style={{
+                margin: 0,
+                fontSize: '12px',
+                color: 'rgba(255, 255, 255, 0.55)',
+                lineHeight: '1.55',
+              }}>
+                在神的光中审视内心模式。查看圣经中关于内心隐而未现之罪的13种典型模式，助你在祷告与默想中对照反省、认罪悔改并活出基督的新生命。
+              </p>
+            </div>
           </div>
-        )}
+
+          <div style={{ marginTop: '14px', display: 'flex', justifyContent: 'flex-end' }}>
+            <button
+              onClick={() => setShowLibrary(v => !v)}
+              style={{
+                background: showLibrary ? 'rgba(255,149,0,0.18)' : 'rgba(255,255,255,0.05)',
+                border: showLibrary ? '1px solid rgba(255,149,0,0.35)' : '1px solid rgba(255,255,255,0.1)',
+                color: showLibrary ? '#ffd699' : 'rgba(255, 255, 255, 0.85)',
+                padding: '6px 14px',
+                borderRadius: '8px',
+                fontSize: '12px',
+                fontWeight: 600,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                transition: 'all 0.2s',
+                outline: 'none',
+              }}
+            >
+              <span>{showLibrary ? '收起模式库 ▲' : '展开模式库 ▼'}</span>
+            </button>
+          </div>
+
+          {showLibrary && (
+            <div style={{ 
+              marginTop: '16px', 
+              paddingTop: '16px', 
+              borderTop: '1px solid rgba(255,255,255,0.08)'
+            }}>
+              <SinPatternLibrary />
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )

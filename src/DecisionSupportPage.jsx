@@ -3,7 +3,6 @@ import { API_BASE, fetchFormationProfile } from './api'
 import { getToken } from './auth'
 import HabitsPage from './HabitsPage'
 import PersonalityPage from './PersonalityPage'
-import SinPatternLibrary from './features/spiritual-formation/components/SinPatternLibrary'
 import SoulTabs from './components/SoulTabs'
 import SoulDashboard from './components/SoulDashboard'
 
@@ -260,7 +259,6 @@ const spiritualPrinciples = [
 export default function DecisionSupportPage({ user, onBack, embedded = false, onNeedLogin }) {
   const [renderError, setRenderError] = useState(null)
   const [activeTab, setActiveTab] = useState('personality') // new, history, principles
-  const [showLibrary, setShowLibrary] = useState(false)
   const [loading, setLoading] = useState(false)
   const [decisions, setDecisions] = useState([])
   const [selectedDecision, setSelectedDecision] = useState(null)
@@ -1716,28 +1714,6 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
 
   const content = (
     <>
-      {/* 罪的模式库入口 */}
-      <div style={{ margin: '0 16px 12px' }}>
-        <button
-          onClick={() => setShowLibrary(v => !v)}
-          style={{
-            width: '100%', textAlign: 'left', padding: '12px 14px',
-            borderRadius: 10, border: '1px solid rgba(255,149,0,0.3)',
-            background: 'rgba(255,149,0,0.08)', color: '#ffd699',
-            cursor: 'pointer', fontSize: 14, fontWeight: 600,
-            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          }}
-        >
-          <span>🔍 罪的模式库 — 在神的光中审视内心模式</span>
-          <span>{showLibrary ? '▲' : '▼'}</span>
-        </button>
-        {showLibrary && (
-          <div style={{ marginTop: 8 }}>
-            <SinPatternLibrary />
-          </div>
-        )}
-      </div>
-
       {/* 标签导航 */}
       <SoulTabs activeTab={activeTab} onTabChange={(tab) => {
         setActiveTab(tab)
