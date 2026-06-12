@@ -1,3 +1,5 @@
+import { catmullRomPath } from '../map/arc'
+import { t } from '../i18n/runtime'
 // 出埃及与旷野漂流 — 民数记33章 42个安营站点
 // GeoJSON FeatureCollection。geometry 坐标为 [lng, lat]（GeoJSON 标准）。
 //
@@ -130,9 +132,9 @@ export const exodusRoute = {
 }
 
 export const confidenceMeta = {
-  identified:  { label: '考古较确定', color: '#4ade80' },
-  approximate: { label: '传统推定',   color: '#fbbf24' },
-  unknown:     { label: '地点失考',   color: '#94a3b8' },
+  identified:  { label: t('考古较确定'), color: '#4ade80' },
+  approximate: { label: t('传统推定'),   color: '#fbbf24' },
+  unknown:     { label: t('地点失考'),   color: '#94a3b8' },
 }
 
 // 路线假说变体（供地图选择器使用）
@@ -143,10 +145,11 @@ export const routeHypotheses = [
     short: '南方路线',
     color: '#f59e0b',
     description: '经苦海→西奈半岛南端（传统说法，公元前1446年或1260年），民数记33章站点依此假说排列。',
-    route: exodusStations.features
+    // 站点直连是生硬折线 → Catmull-Rom 平滑穿过每一站（旷野迁徙的自然弧线）
+    route: catmullRomPath(exodusStations.features
       .slice()
       .sort((a, b) => a.properties.order - b.properties.order)
-      .map(f => f.geometry.coordinates),
+      .map(f => f.geometry.coordinates)),
   },
   {
     id: 'northern',
@@ -154,9 +157,10 @@ export const routeHypotheses = [
     short: '北方路线',
     color: '#6366f1',
     description: '经腓力士地海滨大道向北进迦南（神明确拒绝此路线，出13:17），学术上仍存争议。',
-    route: exodusStations.features
+    // 站点直连是生硬折线 → Catmull-Rom 平滑穿过每一站（旷野迁徙的自然弧线）
+    route: catmullRomPath(exodusStations.features
       .slice()
       .sort((a, b) => a.properties.order - b.properties.order)
-      .map(f => f.geometry.coordinates),
+      .map(f => f.geometry.coordinates)),
   },
 ]
