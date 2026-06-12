@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
+import BackButton from './BackButton'
 import NotesButton from './realtime/NotesButton'
 import {
   fetchVoiceConfig, fetchVoiceGroups, createVoiceGroup,
@@ -47,7 +48,7 @@ export default function VoiceRoomPage({ user, token, onBack }) {
   return (
     <div style={S.page}>
       <header style={S.header}>
-        <button onClick={onBack} style={S.backBtn}>← 返回</button>
+        <BackButton onClick={onBack} size={40} />
         <span style={S.title}>🎙 语音通话</span>
         <span style={{ width: 56 }} />
       </header>
@@ -492,9 +493,9 @@ function CallScreen({ group, user, token, onLeave }) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-const CALL_CTRL_SIZE = 'calc(3vw + 2.7vh)'
-const CALL_CTRL_GAP = 'calc(0.75vw + 0.75vh)'
-const CALL_CTRL_SHIFT = 'calc((3vw + 2.7vh) * -3.5)'
+const CALL_CTRL_SIZE = 'calc(4.5vw + 4.05vh)'
+const CALL_CTRL_GAP = 'calc(1.125vw + 1.125vh)'
+const CALL_CTRL_SHIFT = 'calc((4.5vw + 4.05vh) * -3.5)'
 
 const S = {
   page: { position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', background: '#0d1117', color: '#fff', fontFamily: 'inherit' },

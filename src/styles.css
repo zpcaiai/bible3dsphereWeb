@@ -4741,8 +4741,8 @@ canvas {
 .jeru-part-dims { font-size: 12.5px; color: #9ad0ff; margin: 2px 0 6px; }
 
 .communion-call-actions {
-  --call-ctrl-size: calc(3vw + 2.7vh);
-  --call-ctrl-gap: calc(0.75vw + 0.75vh);
+  --call-ctrl-size: calc(4.5vw + 4.05vh);
+  --call-ctrl-gap: calc(1.125vw + 1.125vh);
   display: flex; justify-content: center; flex-wrap: nowrap;
   gap: var(--call-ctrl-gap);
   position: relative;
