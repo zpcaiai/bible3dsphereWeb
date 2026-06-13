@@ -11,6 +11,7 @@
 import { useState, useEffect } from 'react'
 import { API_BASE } from './api'
 import { getToken } from './auth'
+import SinPatternLibrary from './features/spiritual-formation/components/SinPatternLibrary'
 
 // ── 8 个预设灵修习惯 ──────────────────────────────────────────────────────────
 const PRESET_HABITS = [
@@ -43,7 +44,7 @@ async function apiPost(path, body, token) {
 }
 
 // ── Main component ────────────────────────────────────────────────────────────
-export default function HabitsPage({ user, token: propToken, embedded = false, onNeedLogin, onNavigateToLibrary }) {
+export default function HabitsPage({ user, token: propToken, embedded = false, onNeedLogin }) {
   const [habits, setHabits]         = useState([])
   const [todayLogs, setTodayLogs]   = useState({})       // habitId → { done, note }
   const [streak, setStreak]         = useState(0)
@@ -54,6 +55,7 @@ export default function HabitsPage({ user, token: propToken, embedded = false, o
   const [saving, setSaving]         = useState({})       // habitId → bool
   const [addingPreset, setAddingPreset] = useState(null)
   const [customName, setCustomName]     = useState('')
+  const [showSinPatternLibrary, setShowSinPatternLibrary] = useState(false)
 
   const token = propToken || getToken()
   const uid   = user?.id || user?.userId
@@ -418,75 +420,84 @@ export default function HabitsPage({ user, token: propToken, embedded = false, o
       )}
 
       {/* ── 罪的模式库 (内心省察辅助工具) ── */}
-      <div style={{ padding: '24px 16px 40px' }}>
+      <div style={{ padding: '24px 16px 12px' }}>
         <div style={{
-          background: 'linear-gradient(135deg, rgba(255,149,0,0.06) 0%, rgba(255,87,34,0.02) 100%)',
-          border: '1px solid rgba(255,149,0,0.15)',
-          borderRadius: 16,
-          padding: '18px',
-          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
-          transition: 'all 0.3s ease',
+          display: 'grid',
+          gridTemplateColumns: 'auto minmax(0, 1fr) auto',
+          gap: 14,
+          alignItems: 'center',
+          background: 'linear-gradient(135deg, rgba(255,149,0,0.10), rgba(90,200,250,0.05))',
+          border: '1px solid rgba(255,149,0,0.18)',
+          borderRadius: 14,
+          padding: 16,
+          boxShadow: '0 8px 26px rgba(0, 0, 0, 0.18)',
         }}>
-          <div style={{ display: 'flex', gap: '14px', alignItems: 'flex-start' }}>
-            <div style={{
-              fontSize: '22px',
-              padding: '10px',
-              background: 'rgba(255,149,0,0.1)',
-              borderRadius: '12px',
-              color: '#ff9500',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0,
-              boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.1)',
-            }}>
-              🔍
-            </div>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <h3 style={{
-                margin: '0 0 4px 0',
-                fontSize: '15px',
-                fontWeight: 700,
-                color: '#ffd699',
-                letterSpacing: '0.3px'
-              }}>
+          <div style={{
+            width: 42,
+            height: 42,
+            borderRadius: 12,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: 'rgba(255,149,0,0.14)',
+            color: '#ffb340',
+            fontSize: 21,
+            boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.12)',
+          }}>
+            🔍
+          </div>
+          <div style={{ minWidth: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 4 }}>
+              <h3 style={{ margin: 0, fontSize: 15, fontWeight: 800, color: '#ffd699', letterSpacing: 0 }}>
                 罪的模式库
               </h3>
-              <p style={{
-                margin: 0,
-                fontSize: '12px',
-                color: 'rgba(255, 255, 255, 0.55)',
-                lineHeight: '1.55',
+              <span style={{
+                fontSize: 10,
+                fontWeight: 800,
+                color: 'rgba(255,214,153,0.82)',
+                background: 'rgba(255,149,0,0.13)',
+                border: '1px solid rgba(255,149,0,0.22)',
+                borderRadius: 999,
+                padding: '2px 7px',
               }}>
-                在神的光中审视内心模式。查看圣经中关于内心隐而未现之罪的13种典型模式，助你在祷告与默想中对照反省、认罪悔改并活出基督的新生命。
-              </p>
+                13 种模式
+              </span>
             </div>
+            <p style={{
+              margin: 0,
+              fontSize: 12,
+              color: 'rgba(255, 255, 255, 0.62)',
+              lineHeight: 1.6,
+              maxWidth: 560,
+            }}>
+              在神的光中审视内心模式：识别核心谎言、对照福音真理，并连接到具体悔改与新人操练。
+            </p>
           </div>
-
-          <div style={{ marginTop: '14px', display: 'flex', justifyContent: 'flex-end' }}>
-            <button
-              onClick={() => onNavigateToLibrary?.()}
-              style={{
-                background: 'rgba(255,149,0,0.18)',
-                border: '1px solid rgba(255,149,0,0.35)',
-                color: '#ffd699',
-                padding: '7px 16px',
-                borderRadius: '8px',
-                fontSize: '12px',
-                fontWeight: 600,
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                transition: 'all 0.2s',
-                outline: 'none',
-              }}
-            >
-              <span>查看罪的模式库 →</span>
-            </button>
-          </div>
+          <button
+            onClick={() => setShowSinPatternLibrary((value) => !value)}
+            style={{
+              background: showSinPatternLibrary ? 'rgba(255,255,255,0.08)' : 'rgba(255,149,0,0.18)',
+              border: showSinPatternLibrary ? '1px solid rgba(255,255,255,0.14)' : '1px solid rgba(255,149,0,0.35)',
+              color: showSinPatternLibrary ? 'rgba(255,255,255,0.76)' : '#ffd699',
+              padding: '8px 13px',
+              borderRadius: 8,
+              fontSize: 12,
+              fontWeight: 800,
+              cursor: 'pointer',
+              whiteSpace: 'nowrap',
+              outline: 'none',
+            }}
+          >
+            {showSinPatternLibrary ? '收起' : '查看'} →
+          </button>
         </div>
       </div>
+
+      {showSinPatternLibrary && (
+        <div style={{ padding: '0 16px 40px' }}>
+          <SinPatternLibrary variant="embedded" />
+        </div>
+      )}
     </div>
   )
 }

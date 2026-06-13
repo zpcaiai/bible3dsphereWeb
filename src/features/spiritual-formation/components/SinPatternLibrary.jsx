@@ -18,9 +18,10 @@ const CATEGORIES = [
   { key: 'spiritual', label: '属灵生命' },
 ]
 
-export default function SinPatternLibrary() {
+export default function SinPatternLibrary({ variant = 'full' }) {
   const [searchQuery, setSearchQuery] = useState('')
   const [activeCategory, setActiveCategory] = useState('all')
+  const isEmbedded = variant === 'embedded'
 
   // Filter patterns based on search and category
   const filteredPatterns = sinPatterns.filter(rawPattern => {
@@ -57,21 +58,21 @@ export default function SinPatternLibrary() {
   }
 
   return (
-    <section 
-      className="sf-section" 
+    <section
+      className={`sf-section sf-library-section${isEmbedded ? ' is-embedded' : ''}`}
       style={{ 
-        padding: '20px 16px 60px 16px',
+        padding: isEmbedded ? '0 0 20px' : '20px 16px 60px',
         boxSizing: 'border-box'
       }}
     >
       
       {/* ── 头部卡片与牧养提示 ── */}
-      <div style={{
+      <div className="sf-library-intro" style={{
         background: 'linear-gradient(135deg, rgba(255,149,0,0.08) 0%, rgba(90,200,250,0.03) 100%)',
         border: '1px solid rgba(255,255,255,0.08)',
         borderRadius: '16px',
-        padding: '20px',
-        marginBottom: '20px',
+        padding: isEmbedded ? '16px' : '20px',
+        marginBottom: isEmbedded ? '14px' : '20px',
         boxShadow: '0 4px 24px rgba(0,0,0,0.2)'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
@@ -98,11 +99,11 @@ export default function SinPatternLibrary() {
       </div>
 
       {/* ── 搜索与过滤栏 ── */}
-      <div style={{
+      <div className="sf-library-controls" style={{
         display: 'flex',
         flexDirection: 'column',
         gap: '12px',
-        marginBottom: '20px'
+        marginBottom: isEmbedded ? '14px' : '20px'
       }}>
         {/* 搜索框 */}
         <div style={{ position: 'relative', width: '100%' }}>
@@ -149,7 +150,7 @@ export default function SinPatternLibrary() {
         </div>
 
         {/* 分类过滤器 */}
-        <div style={{
+        <div className="sf-library-category-row" style={{
           display: 'flex',
           gap: '6px',
           overflowX: 'auto',
@@ -210,11 +211,7 @@ export default function SinPatternLibrary() {
           <div style={{ fontSize: '13px' }}>没有找到符合条件的罪之模式，换个词试试？</div>
         </div>
       ) : (
-        <div className="sf-pattern-grid" style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr',
-          gap: '14px',
-        }}>
+        <div className="sf-pattern-grid sf-pattern-library-grid">
           {filteredPatterns.map((pattern) => (
             <SinPatternCard key={pattern.id} pattern={pattern} />
           ))}

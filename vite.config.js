@@ -38,6 +38,17 @@ export default defineConfig({
       output: {
         manualChunks: {
           'three': ['three', '@react-three/fiber', '@react-three/drei'],
+          'deck-luma': [
+            '@deck.gl/core',
+            '@deck.gl/layers',
+            '@deck.gl/mapbox',
+            '@luma.gl/core',
+            '@luma.gl/engine',
+            '@luma.gl/shadertools',
+            '@luma.gl/webgl',
+            '@math.gl/core',
+            '@math.gl/web-mercator',
+          ],
           'pdf': ['jspdf', 'html2canvas'],
           'krisp': ['@livekit/krisp-noise-filter'],
         },

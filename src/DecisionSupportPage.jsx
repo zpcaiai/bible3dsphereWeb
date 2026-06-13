@@ -5,7 +5,6 @@ import HabitsPage from './HabitsPage'
 import PersonalityPage from './PersonalityPage'
 import SoulTabs from './components/SoulTabs'
 import SoulDashboard from './components/SoulDashboard'
-import SinPatternLibrary from './features/spiritual-formation/components/SinPatternLibrary'
 
 const sfdsUrl = (path) => `${API_BASE}/sfds${path}`
 const MVFE_BASE = API_BASE + '/mvfe'
@@ -1728,9 +1727,8 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
       <div style={{ paddingBottom: embedded ? '0' : '80px' }}>
         {activeTab === 'dashboard' && <SoulDashboard user={user} />}
         {activeTab === 'personality' && <PersonalityPage user={user} embedded={true} onSyncToHabits={() => setActiveTab('habits')} />}
-        {activeTab === 'habits' && <HabitsPage user={user} token={getToken()} embedded={true} onNeedLogin={onNeedLogin} onNavigateToLibrary={() => setActiveTab('library')} />}
-        {activeTab === 'library' && <SinPatternLibrary />}
-        {activeTab !== 'dashboard' && activeTab !== 'personality' && activeTab !== 'habits' && activeTab !== 'library' && (
+        {activeTab === 'habits' && <HabitsPage user={user} token={getToken()} embedded={true} onNeedLogin={onNeedLogin} />}
+        {activeTab !== 'dashboard' && activeTab !== 'personality' && activeTab !== 'habits' && (
           analysisResult ? renderAnalysisResult() : (
             <>
               {activeTab === 'new' && renderNewDecisionForm()}
