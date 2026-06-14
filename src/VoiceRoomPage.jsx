@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import BackButton from './BackButton'
 import NotesButton from './realtime/NotesButton'
+import VideoTile from './realtime/VideoTile'
 import {
   VOICE_AUDIO_CAPTURE_DEFAULTS,
   VOICE_VIDEO_CAPTURE_DEFAULTS,
@@ -19,6 +20,17 @@ import {
 } from './api'
 
 const ACCENT = '#34c759'
+
+// 按来源取参与者当前可渲染的视频轨（'camera' 摄像头 / 'screen_share' 屏幕共享）
+function videoTrackOf(p, source) {
+  if (!p) return null
+  for (const pub of p.videoTrackPublications.values()) {
+    if (pub.source !== source) continue
+    const track = pub.track || pub.videoTrack
+    if (track && !pub.isMuted) return track
+  }
+  return null
+}
 const toast = (m, t = 'info') => window.showToast?.(m, t)
 
 // 端到端加密口令：仅存浏览器本地，绝不上送后端/服务器。密钥由口令本地派生，
@@ -215,6 +227,8 @@ function CallScreen({ group, user, token, onLeave }) {
       name: (lp.name || user?.nickname || '我') + '（我）',
       isLocal: true, speaking: speakers.has(lp.sid),
       muted: !lp.isMicrophoneEnabled,
+      videoTrack: lp.isCameraEnabled ? videoTrackOf(lp, 'camera') : null,
+      screenTrack: videoTrackOf(lp, 'screen_share'),
     }]
     room.remoteParticipants.forEach(p => {
       list.push({
@@ -224,6 +238,8 @@ function CallScreen({ group, user, token, onLeave }) {
         muted: !p.audioTrackPublications.size
           ? false
           : ![...p.audioTrackPublications.values()].some(pub => !pub.isMuted),
+        videoTrack: videoTrackOf(p, 'camera'),
+        screenTrack: videoTrackOf(p, 'screen_share'),
       })
     })
     setParticipants(list)
@@ -500,24 +516,47 @@ function CallScreen({ group, user, token, onLeave }) {
         </div>
       )}
 
-      <div style={S.tiles}>
-        {participants.map(p => (
-          <div key={p.sid} style={{
-            ...S.tile,
-            boxShadow: p.speaking ? `0 0 0 3px ${ACCENT}, 0 0 22px rgba(52,199,89,0.55)` : 'none',
-            borderColor: p.speaking ? ACCENT : 'rgba(255,255,255,0.12)',
-          }}>
-            <div style={{ ...S.avatar, background: p.isLocal ? 'rgba(52,199,89,0.18)' : 'rgba(255,255,255,0.08)' }}>
-              {p.muted ? '🔇' : (p.speaking ? '🔊' : '🎙')}
+      {(() => {
+        const sharer = participants.find(p => p.screenTrack)
+        return (
+          <>
+            {sharer && (
+              <div style={S.shareStage}>
+                <VideoTile track={sharer.screenTrack} style={{ objectFit: 'contain' }} />
+                <div style={S.shareName}>🖥 {sharer.name} 正在共享屏幕</div>
+              </div>
+            )}
+            <div style={S.tiles}>
+              {participants.map(p => (
+                <div key={p.sid} style={{
+                  ...S.tile,
+                  ...(p.videoTrack ? S.tileVideo : null),
+                  boxShadow: p.speaking ? `0 0 0 3px ${ACCENT}, 0 0 22px rgba(52,199,89,0.55)` : 'none',
+                  borderColor: p.speaking ? ACCENT : 'rgba(255,255,255,0.12)',
+                }}>
+                  {p.videoTrack ? (
+                    <>
+                      <VideoTile track={p.videoTrack} mirror={p.isLocal} />
+                      <div style={S.tileVideoName}>{p.muted ? '🔇 ' : ''}{p.name}</div>
+                    </>
+                  ) : (
+                    <>
+                      <div style={{ ...S.avatar, background: p.isLocal ? 'rgba(52,199,89,0.18)' : 'rgba(255,255,255,0.08)' }}>
+                        {p.muted ? '🔇' : (p.speaking ? '🔊' : '🎙')}
+                      </div>
+                      <div style={S.tileName}>{p.name}</div>
+                      {p.muted && <div style={S.mutedTag}>已静音</div>}
+                    </>
+                  )}
+                </div>
+              ))}
+              {status === 'live' && participants.length === 1 && !sharer && (
+                <div style={S.waitHint}>等待其他人加入…把邀请码 <b>{group.join_code}</b> 发给他们</div>
+              )}
             </div>
-            <div style={S.tileName}>{p.name}</div>
-            {p.muted && <div style={S.mutedTag}>已静音</div>}
-          </div>
-        ))}
-        {status === 'live' && participants.length === 1 && (
-          <div style={S.waitHint}>等待其他人加入…把邀请码 <b>{group.join_code}</b> 发给他们</div>
-        )}
-      </div>
+          </>
+        )
+      })()}
 
       <div style={S.controls}>
         <button onClick={toggleMic} style={{ ...S.ctrlBtn, background: micOn ? 'rgba(255,255,255,0.1)' : '#ff6b6b' }}
@@ -594,6 +633,10 @@ const S = {
   avatar: { width: 56, height: 56, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 26 },
   tileName: { fontSize: 12, color: 'rgba(255,255,255,0.85)', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' },
   mutedTag: { fontSize: 10, color: 'rgba(255,255,255,0.4)' },
+  tileVideo: { position: 'relative', padding: 0, overflow: 'hidden', aspectRatio: '4 / 3', minHeight: 110, gap: 0 },
+  tileVideoName: { position: 'absolute', left: 6, bottom: 6, fontSize: 11, color: '#fff', background: 'rgba(0,0,0,0.45)', padding: '2px 7px', borderRadius: 8, maxWidth: 'calc(100% - 12px)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' },
+  shareStage: { position: 'relative', margin: '0 16px 12px', borderRadius: 14, overflow: 'hidden', background: '#000', border: '1px solid rgba(255,255,255,0.12)', aspectRatio: '16 / 9', flexShrink: 0 },
+  shareName: { position: 'absolute', left: 8, bottom: 8, fontSize: 12, color: '#fff', background: 'rgba(0,0,0,0.5)', padding: '3px 9px', borderRadius: 8 },
   waitHint: { gridColumn: '1 / -1', textAlign: 'center', color: 'rgba(255,255,255,0.45)', fontSize: 13, lineHeight: 1.7, padding: 12 },
   controls: { display: 'flex', justifyContent: 'center', gap: CALL_CTRL_GAP, padding: 'calc(0.3vw + 0.3vh) calc(0.45vw + 0.4vh)', flexShrink: 0, position: 'relative', top: CALL_CTRL_SHIFT },
   ctrlBtn: { display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', borderRadius: 'calc(0.6vw + 0.5vh)', padding: 'calc(0.15vw + 0.15vh) calc(0.22vw + 0.2vh)', color: '#fff', cursor: 'pointer', width: CALL_CTRL_SIZE, minWidth: CALL_CTRL_SIZE, minHeight: CALL_CTRL_SIZE },
