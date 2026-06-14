@@ -11,6 +11,7 @@ export default function SoulTabs({ activeTab, onTabChange }) {
     { key: 'dashboard',   label: '今日心镜', emoji: '🪞' },
     { key: 'personality', label: '人格塑造', emoji: '🔮' },
     { key: 'habits',      label: '灵修操练', emoji: '🌱' },
+    { key: 'library',     label: '模式库',   emoji: '🔍' },
     { key: 'new',         label: '决策支持', emoji: '⚖️' },
   ]
 
