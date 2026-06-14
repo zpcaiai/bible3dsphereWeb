@@ -48,6 +48,7 @@ const CommunionPage = lazy(() => import('./CommunionPage'))
 const MccheynePage = lazy(() => import('./MccheynePage'))
 const MemoryDeckPage = lazy(() => import('./MemoryDeckPage'))
 const PersonalSearchPage = lazy(() => import('./PersonalSearchPage'))
+const BibleSearchPage = lazy(() => import('./BibleSearchPage'))
 const ExportDataPage = lazy(() => import('./ExportDataPage'))
 const SpiritualFormationPage = lazy(() => import('./features/spiritual-formation/app/SpiritualFormationPage'))
 
@@ -2122,6 +2123,15 @@ function AppContent() {
                     >
                       {faithQaLoading ? '⏳ 思考中...' : '📖 提问'}
                     </button>
+                    {/* 经文搜索：凭印象找经文（语义检索），置于提问按钮之下，同款蓝色 */}
+                    <button
+                      type="button"
+                      className="primary-btn"
+                      style={{ width: '100%', marginTop: '8px' }}
+                      onClick={() => handlePanelSwitch('bible-search')}
+                    >
+                      🔍 经文搜索（凭印象找经文）
+                    </button>
                     {/* 短视频功能已隐藏 */}
                   </div>
                 </form>
@@ -2612,7 +2622,7 @@ function AppContent() {
                 {installMessage ? <div className="install-hint">{installMessage}</div> : null}
                 <div className="quick-action-list" style={{marginTop: '12px'}}>
                   <button className="segment active" type="button"
-                          onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>⬆️ 回顶部
+                          onClick={(e) => { const c = e.currentTarget.closest('.mobile-app-shell'); (c || window).scrollTo({top: 0, behavior: 'smooth'}) }}>⬆️ 回顶部
                   </button>
                 </div>
               </section>
@@ -2900,6 +2910,18 @@ function AppContent() {
           <div className="page-overlay">
             <Suspense fallback={null}>
               <MccheynePage onBack={() => setActivePanel('sphere')} onOpenPanel={(p) => { setActivePanel(p); if (p === 'bible-reading') { try { sessionStorage.setItem('bible-reading-open', JSON.stringify({ book: 'Genesis', chapter: 1 })) } catch {} } }} />
+            </Suspense>
+          </div>
+        )}
+
+        {/* 经文搜索（语义检索） */}
+        {activePanel === 'bible-search' && (
+          <div className="page-overlay">
+            <Suspense fallback={null}>
+              <BibleSearchPage
+                onBack={() => setActivePanel('sphere')}
+                onOpenMap={(panel) => setActivePanel(panel)}
+              />
             </Suspense>
           </div>
         )}
