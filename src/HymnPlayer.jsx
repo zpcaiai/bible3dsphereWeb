@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import TIMINGS from './hymnTimings'
+import { fetchFaithQA } from './api'
 
 // 诗歌音频托管在 Cloudflare R2（不放进 git，避免 HF 对二进制的限制）。
 // 在前端构建环境设置 VITE_HYMN_AUDIO_BASE，例如 https://<你的R2公开域名>/hymns
@@ -234,6 +235,12 @@ export default function HymnPlayer() {
   const [scoreExt, setScoreExt] = useState('svg')  // svg -> png -> '' (占位)
   const audioRef = useRef(null)
 
+  // ── 灵性超越：从软弱光景操练，迈向诗歌所描绘的属灵境界 ──
+  const [transcendOpen, setTranscendOpen] = useState(false)
+  const [transcendLoading, setTranscendLoading] = useState(false)
+  const [transcendError, setTranscendError] = useState(null)
+  const [transcendMap, setTranscendMap] = useState({})   // hymn.id → faith-qa 结果（按诗歌缓存）
+
   const hymn = HYMNS[idx]
 
   useEffect(() => {
@@ -242,9 +249,39 @@ export default function HymnPlayer() {
     setDur(0)
     setAudioErr(false)
     setScoreExt('svg')
+    setTranscendOpen(false)
+    setTranscendError(null)
+    setTranscendLoading(false)
     const a = audioRef.current
     if (a) { a.pause(); a.currentTime = 0 }
   }, [idx])
+
+  // 调用信仰问答后端，按这首诗歌生成「灵性超越」成长路径
+  const fetchTranscend = async () => {
+    setTranscendError(null)
+    setTranscendLoading(true)
+    try {
+      const lyricsText = (hymn.lyrics || []).join('\n\n')
+      const question = `诗歌《${hymn.title}》${hymn.en ? `（${hymn.en}）` : ''}描绘了一种较高的属灵境界。歌词如下：\n${lyricsText}\n\n` +
+        '许多信徒正处在软弱、挣扎、信心不足、容易灰心的生命光景中，离这首诗歌所描绘的属灵状态还有很大距离。' +
+        '请专门为这样软弱的人，设计一条循序渐进的「灵性超越」成长路径：如何从当前的软弱光景起步，靠着主耶稣基督的恩典，' +
+        '借着操练信心、忍耐、顺服、感恩与亲近神等属灵功课，分阶段一步步迈向这首诗歌所描绘的属灵境界。' +
+        '请给出具体、可操作、由浅入深的属灵操练方法与阶段性路径，配合贴切的圣经经文，并给予温柔而有力量的鼓励，' +
+        '让软弱的人看见盼望，相信靠着加给他力量的主凡事都能做。'
+      const data = await fetchFaithQA(question)
+      setTranscendMap((m) => ({ ...m, [hymn.id]: data }))
+    } catch (e) {
+      setTranscendError(String(e?.message || e))
+    } finally {
+      setTranscendLoading(false)
+    }
+  }
+
+  const toggleTranscend = () => {
+    if (transcendOpen) { setTranscendOpen(false); return }
+    setTranscendOpen(true)
+    if (!transcendMap[hymn.id] && !transcendLoading) fetchTranscend()
+  }
 
   const togglePlay = () => {
     const a = audioRef.current
@@ -409,6 +446,106 @@ export default function HymnPlayer() {
           </div>
         ))}
       </div>
+
+      {/* ── 灵性超越 ── */}
+      {(() => {
+        const td = transcendMap[hymn.id]
+        return (
+          <div className="hymn-transcend">
+            <button
+              type="button"
+              className={`hymn-transcend-btn ${transcendOpen ? 'open' : ''}`}
+              onClick={toggleTranscend}
+              aria-expanded={transcendOpen}
+            >
+              <span className="hymn-transcend-btn-icon">✨</span>
+              <span className="hymn-transcend-btn-label">灵性超越</span>
+              <span className="hymn-transcend-btn-sub">从软弱迈向诗歌的属灵境界</span>
+              <span className="hymn-transcend-btn-arrow">{transcendOpen ? '▴' : '▾'}</span>
+            </button>
+
+            {transcendOpen && (
+              <div className="hymn-transcend-body">
+                <p className="hymn-transcend-intro">
+                  《{hymn.title}》唱出的，是一种经过操练才能进入的属灵境界。若你此刻正软弱、挣扎、信心不足，也不要灰心——
+                  靠着加给你力量的主，借着操练信心与忍耐，你同样有盼望一步步走进这首诗歌所描绘的光景。
+                </p>
+
+                {transcendLoading && (
+                  <div className="hymn-transcend-loading">✨ 正在为你预备灵性超越的路径，请稍候…</div>
+                )}
+
+                {transcendError && !transcendLoading && (
+                  <div className="hymn-transcend-error">
+                    <span>路径生成失败：{transcendError}</span>
+                    <button type="button" className="hymn-transcend-retry" onClick={fetchTranscend}>重试</button>
+                  </div>
+                )}
+
+                {td && !transcendLoading && (
+                  <div className="hymn-transcend-result">
+                    {td.question_summary && (
+                      <div className="hymn-transcend-summary">{td.question_summary}</div>
+                    )}
+
+                    {td.nature_analysis && (
+                      <section className="hymn-transcend-section">
+                        <h4>属灵剖析</h4>
+                        <p>{td.nature_analysis}</p>
+                      </section>
+                    )}
+
+                    {td.contextual_analysis && (
+                      <section className="hymn-transcend-section">
+                        <h4>从软弱看见盼望</h4>
+                        <p>{td.contextual_analysis}</p>
+                      </section>
+                    )}
+
+                    {Array.isArray(td.scriptures) && td.scriptures.length > 0 && (
+                      <section className="hymn-transcend-section">
+                        <h4>同行的经文</h4>
+                        {td.scriptures.map((sc, i) => (
+                          <div className="hymn-transcend-verse" key={i}>
+                            <div className="hymn-transcend-verse-ref">{sc.reference}</div>
+                            {sc.text && <div className="hymn-transcend-verse-text">{sc.text}</div>}
+                            {sc.relevance && <div className="hymn-transcend-verse-rel">{sc.relevance}</div>}
+                          </div>
+                        ))}
+                      </section>
+                    )}
+
+                    {td.right_thinking && (
+                      <section className="hymn-transcend-section">
+                        <h4>真理的眼光</h4>
+                        <p>{td.right_thinking}</p>
+                      </section>
+                    )}
+
+                    {Array.isArray(td.action_steps) && td.action_steps.length > 0 && (
+                      <section className="hymn-transcend-section">
+                        <h4>操练路径</h4>
+                        <ol className="hymn-transcend-steps">
+                          {td.action_steps.map((step, i) => (
+                            <li key={i}>{step}</li>
+                          ))}
+                        </ol>
+                      </section>
+                    )}
+
+                    {td.prayer_direction && (
+                      <section className="hymn-transcend-section hymn-transcend-prayer">
+                        <h4>鼓励与祷告</h4>
+                        <p>{td.prayer_direction}</p>
+                      </section>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )
+      })()}
     </div>
   )
 }
