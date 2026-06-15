@@ -3,7 +3,9 @@ import { useEffect, useRef } from 'react'
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import { getMapboxToken, territoriesToFeatureCollection, SOURCE_IDS, LAYER_IDS } from '../lib/mapbox'
-import { featureCollection, feature, point, lineBetween, bboxOf } from '../lib/geojson'
+import { featureCollection, feature, point, lineBetween, bboxOf, lineString } from '../lib/geojson'
+// 行程/战役路线统一用前端二次贝塞尔弧线（全站共用 map/arc，离线生成）。
+import { curvedPath } from '../../../map/arc'
 import { PROPHECY_COLORS } from '../lib/colors'
 import { DEFAULT_CENTER, DEFAULT_ZOOM, JERUSALEM } from '../domain/constants'
 import type {
@@ -158,7 +160,8 @@ export function MapCanvas({
       pointsSrc.setData(EMPTY_FC)
       return
     }
-    routeSrc.setData(featureCollection([feature(campaign.routeGeojson, { id: campaign.id })]))
+    const arcedRoute = lineString(curvedPath(campaign.routeGeojson.coordinates) as GeoJsonPosition[])
+    routeSrc.setData(featureCollection([feature(arcedRoute, { id: campaign.id })]))
     const kindColor: Record<string, string> = { camp: '#22c55e', enemy: '#ef4444', retreat: '#eab308' }
     if (campaign.pointsGeojson) {
       const colored = featureCollection<GeoJsonPoint, { color: string; nameZh: string }>(
@@ -173,8 +176,7 @@ export function MapCanvas({
     } else {
       pointsSrc.setData(EMPTY_FC)
     }
-    const coords = campaign.routeGeojson.coordinates
-    map.fitBounds(bboxOf(coords), { padding: 90, duration: 900 })
+    map.fitBounds(bboxOf(arcedRoute.coordinates), { padding: 90, duration: 900 })
   }, [campaign])
 
   // 战役路线流光动画（deck.gl TripsLayer，可选；未安装则保留上面的 Mapbox line）
@@ -207,7 +209,7 @@ export function MapCanvas({
           TripsLayer: new (p: Record<string, unknown>) => unknown
         }
         if (cancelled || !mapRef.current) return
-        const path = campaign.routeGeojson.coordinates.map((c) => [c[0], c[1]] as [number, number])
+        const path = (curvedPath(campaign.routeGeojson.coordinates) as GeoJsonPosition[]).map((c) => [c[0], c[1]] as [number, number])
         const timestamps = path.map((_, i) => i)
         const maxTime = Math.max(1, path.length - 1)
         const trailLength = 1.4

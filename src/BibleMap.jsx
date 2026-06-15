@@ -3,7 +3,8 @@
 // 扩展：地点插图（MapScenes）、AI 讲解（fetchFaithQA）、人物卡片闭环（config.profile）。
 import { useEffect, useMemo, useRef, useState } from 'react'
 import MapScene, { resolveScene } from './MapScenes'
-import { fetchFaithQA, API_BASE } from './api'
+import { fetchFaithQA } from './api'
+import { curvedSegment } from './map/arc'
 
 const VB_W = 1000
 const VB_H = 720
@@ -50,57 +51,6 @@ function graticule(bounds, project) {
     lines.push({ x1, y1, x2, y2, label: `${lat}°N`, lx: x1 + 4, ly: y1 - 4, horiz: true })
   }
   return lines
-}
-
-// —— 真实路线查询：逐段经后端 /api/route 代理 OpenRouteService ——
-// 与移动端 RoutingApi 行为一致：逐段解析，可路由的段走真实道路/航线，
-// 不可路由的段退化为该段直线；结果按“段+profile”缓存，整段会话复用。
-const _routeCache = new Map() // sig -> [[lng,lat],...] | null(确认不可路由)
-const _routeSig = (a, b, prof) =>
-  `${prof}|${a[0].toFixed(4)},${a[1].toFixed(4)};${b[0].toFixed(4)},${b[1].toFixed(4)}`
-
-function _profileChain(profile) {
-  if (profile === 'sea') return ['sea']
-  return [profile, 'foot-hiking', 'driving-car'].filter((v, i, arr) => arr.indexOf(v) === i)
-}
-
-async function _routeSegment(a, b, profile) {
-  const sig = _routeSig(a, b, profile)
-  if (_routeCache.has(sig)) return _routeCache.get(sig)
-  try {
-    const res = await fetch(`${API_BASE}/route`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ profile, coordinates: [[a[0], a[1]], [b[0], b[1]]] }),
-    })
-    if (!res.ok) { _routeCache.set(sig, null); return null }
-    const data = await res.json()
-    if (!data || data.ok !== true || !Array.isArray(data.geometry) || data.geometry.length < 2) {
-      _routeCache.set(sig, null); return null
-    }
-    const geom = data.geometry.map(pt => [Number(pt[0]), Number(pt[1])]) // [lng,lat]
-    _routeCache.set(sig, geom)
-    return geom
-  } catch {
-    _routeCache.set(sig, null)
-    return null
-  }
-}
-
-async function _routeLeg(a, b, chain) {
-  for (const prof of chain) {
-    const r = await _routeSegment(a, b, prof)
-    if (r && r.length >= 2) return r
-  }
-  return [a, b] // 该段退化为直线
-}
-
-// 解析有序 [lng,lat] 路点 → 每段一条折线（routed 或直线）。
-async function fetchRouteLegs(waypoints, profile) {
-  const chain = _profileChain(profile)
-  return Promise.all(
-    waypoints.slice(0, -1).map((a, i) => _routeLeg(a, waypoints[i + 1], chain))
-  )
 }
 
 // —— AI 讲解（复用 /faith-qa，无需登录）——
@@ -165,26 +115,6 @@ export default function BibleMap({ config, onBack }) {
 
   const [year, setYear] = useState(config.years ? config.years.default : 0)
 
-  // 各路线层的真实路线几何：layerId -> [leg,...]，leg = [[lng,lat],...]
-  const [routedLegs, setRoutedLegs] = useState({})
-  useEffect(() => {
-    if (isTimeline) return
-    let cancelled = false
-    for (const layer of activeLayers) {
-      if (layer.route === false) continue
-      const pts = [...layer.points].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
-      if (pts.length < 2) continue
-      const isSea = layer.scene === 'boat' || layer.scene === 'sea'
-        || config.id === 'paul' || config.id === 'exodus'
-      const profile = isSea ? 'sea' : 'foot-walking'
-      fetchRouteLegs(pts.map(p => [p.lng, p.lat]), profile).then(legs => {
-        if (!cancelled) setRoutedLegs(prev => ({ ...prev, [layer.id]: legs }))
-      })
-    }
-    return () => { cancelled = true }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeLayerIds.join(','), config.id, isTimeline])
-
   const animLayer = activeLayers[0] || config.layers[0]
   const orderedPoints = useMemo(() => {
     return [...(animLayer?.points || [])].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
@@ -226,7 +156,7 @@ export default function BibleMap({ config, onBack }) {
     const [x, y] = project(lng, lat)
     return { x, y }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [playing, progress, animLayer, routedLegs, orderedPoints.length, project])
+  }, [playing, progress, animLayer, orderedPoints.length, project])
 
   const [selected, setSelected] = useState(null)
 
@@ -275,14 +205,12 @@ export default function BibleMap({ config, onBack }) {
     return out
   }
 
-  // 某层分段几何：有真实路线用之，否则站点间直线。
+  // 某层分段几何：每段一条前端二次贝塞尔弧线（航线风格），离线生成。
   function legsFor(layer) {
     const pts = [...layer.points].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
-    const routed = routedLegs[layer.id]
-    if (routed && routed.length === pts.length - 1) return routed
     const legs = []
     for (let i = 0; i < pts.length - 1; i++) {
-      legs.push([[pts[i].lng, pts[i].lat], [pts[i + 1].lng, pts[i + 1].lat]])
+      legs.push(curvedSegment([pts[i].lng, pts[i].lat], [pts[i + 1].lng, pts[i + 1].lat]))
     }
     return legs
   }

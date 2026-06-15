@@ -173,8 +173,8 @@ export default function BibleMapPage({ initialDatasetId = 'exodus', onBack, sing
   const variant = dataset && !dataset.temporal ? (dataset.variants.find((v) => v.id === variantId) || dataset.variants[0]) : null
   const STN = orderedStations(dataset, variant)
   const stationCoords = STN.map((f) => coordsFor(f, variant)).filter(Boolean)
-  // 真实步行/航行路线（/api/route 逐段解析）。未解析完成前 normalizeRoute
-  // 回退为贝塞尔弧线占位；解析成功后整条主路线与进度实线都贴真实路网。
+  // 行程路线：前端二次贝塞尔弧线（resolveJourneyRoute→curvedPath，无后端请求）。
+  // 主路线与进度实线共用同一条弧线，海陆一视同仁、离线即时生成。
   const routeKey = `${dataset?.id || ''}|${variant?.id || ''}`
   const [realRoute, setRealRoute] = useState(null) // {key, coords}
   useEffect(() => {
