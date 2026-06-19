@@ -100,6 +100,7 @@ function AppContent() {
     setSelectedFeatureDetail,
     setSphereGuidance,
     setSpheresBiblicalExample,
+    setSphereLoading,
     setQueryResult,
     setLanguageFilter,
     setTopFeatures,
@@ -693,17 +694,27 @@ function AppContent() {
 
   async function handleVerseTrigger(feature) {
     setSelectedFeature(feature)
+    // 清空旧内容并进入加载态：等「默想经文 + 灵魂处境 + 圣经榜样」全部生成后，一次性显示，避免逐块弹出
+    setSelectedFeatureDetail(null)
     setSphereGuidance(null)
     setSpheresBiblicalExample(null)
+    setSphereLoading(true)
     try {
-      const detail = await fetchFeatureDetail(feature.feature_key)
-      setSelectedFeatureDetail(detail)
       const parts = [feature.explanation, feature.zh_label].filter(Boolean)
       const q = parts.join('，')
-      fetchGuidance(q).then(setSphereGuidance).catch(() => {})
-      fetchBiblicalExample(q).then(setSpheresBiblicalExample).catch(() => {})
+      const [detail, g, be] = await Promise.all([
+        fetchFeatureDetail(feature.feature_key).catch(() => null),
+        fetchGuidance(q).catch(() => null),
+        fetchBiblicalExample(q).catch(() => null),
+      ])
+      // 一次性写入，弹出层内容同时呈现
+      setSelectedFeatureDetail(detail)
+      setSphereGuidance(g)
+      setSpheresBiblicalExample(be)
     } catch (err) {
       setError(String(err.message || err))
+    } finally {
+      setSphereLoading(false)
     }
     // Record emotion selection to MVFE timeline (logged-in users only)
     if (user && feature.zh_label) {

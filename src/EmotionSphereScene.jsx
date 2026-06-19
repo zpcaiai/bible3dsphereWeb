@@ -258,11 +258,12 @@ function VersePopover3D({
 }) {
   const sphereGuidance = useEmotionStore((s) => s.sphereGuidance)
   const sphereBiblicalExample = useEmotionStore((s) => s.sphereBiblicalExample)
+  const sphereLoading = useEmotionStore((s) => s.sphereLoading)
   if (!feature) return null
   const pos = safeNormalizedPos(feature.x, feature.y, feature.z, SPHERE_RADIUS * 1.322)
   if (!pos) return null
   const verses = (detail?.matches?.cuv || []).slice(0, 4)
-  const isLoading = !sphereGuidance && !sphereBiblicalExample
+  const isLoading = sphereLoading
   // Dynamic distance factor and CSS size based on zoom scale
   const distanceFactor = 6 / zoomScale
   const cssWidth = 320 * zoomScale
@@ -286,7 +287,7 @@ function VersePopover3D({
           <div className="vp-loading">沈思中…</div>
         )}
 
-        {sphereGuidance && (
+        {!isLoading && sphereGuidance && (
           <div className="vp-section">
             <div className="vp-section-title">灵魂处境</div>
             {sphereGuidance.core_emotions?.length > 0 && (
@@ -313,7 +314,7 @@ function VersePopover3D({
           </div>
         )}
 
-        {sphereBiblicalExample && (
+        {!isLoading && sphereBiblicalExample && (
           <div className="vp-section">
             <div className="vp-divider" />
             <div className="vp-section-title">圣经榜样</div>
@@ -332,7 +333,7 @@ function VersePopover3D({
           </div>
         )}
 
-        {verses.length > 0 && (
+        {!isLoading && verses.length > 0 && (
           <div className="vp-section">
             <div className="vp-divider" />
             <div className="vp-section-title vp-section-title-meditation">默想经文</div>

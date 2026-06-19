@@ -15,7 +15,6 @@ export const CRISIS_RESOURCES: Record<string, ResourceBlock> = {
       { name: "1995 生命線協談專線", contact: "1995", availability: "24/7", type: "emotional_support", note: "民间团体，各类心理困扰协助" },
       { name: "1980 張老師專線", contact: "1980", availability: "一至六 09:00-21:00 / 日 09:00-17:00", type: "emotional_support", note: "情绪困扰、生活适应" },
       { name: "紧急救护／消防", contact: "119", availability: "24/7", type: "emergency", note: "医疗急症" },
-      { name: "警察", contact: "110", availability: "24/7", type: "emergency", note: "人身安全/家暴/跟踪" },
     ],
   },
   CN: {
@@ -26,7 +25,6 @@ export const CRISIS_RESOURCES: Record<string, ResourceBlock> = {
       { name: "12356 全国统一心理援助热线", contact: "12356", availability: "24/7", type: "mental_health", note: "国家卫健委统一心理援助热线，全国各省已开通" },
       { name: "北京心理危机研究与干预中心", contact: "010-82951332", availability: "24/7", type: "suicide_prevention", note: "固话可拨 800-810-1117" },
       { name: "医疗急救", contact: "120", availability: "24/7", type: "emergency", note: "吞药/出血/昏迷等医疗急症" },
-      { name: "警察", contact: "110", availability: "24/7", type: "emergency", note: "人身安全/家暴/正在发生的危险" },
     ],
   },
   HK: {
