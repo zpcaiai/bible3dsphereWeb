@@ -1,5 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
-import TIMINGS from './hymnTimings'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { fetchFaithQA } from './api'
 
 // 诗歌音频托管在 Cloudflare R2（不放进 git，避免 HF 对二进制的限制）。
@@ -234,6 +233,8 @@ export default function HymnPlayer() {
   const [audioErr, setAudioErr] = useState(false)
   const [scoreExt, setScoreExt] = useState('svg')  // svg -> png -> '' (占位)
   const audioRef = useRef(null)
+  const karaokeRef = useRef(null)
+  const activeLineRef = useRef(null)
 
   // ── 灵性超越：从软弱光景操练，迈向诗歌所描绘的属灵境界 ──
   const [transcendOpen, setTranscendOpen] = useState(false)
@@ -312,11 +313,38 @@ export default function HymnPlayer() {
 
   const pct = dur ? (cur / dur) * 100 : 0
 
-  const kLines = (!hymn.file && TIMINGS[hymn.id] && TIMINGS[hymn.id].lines) || []  // 真实录音与合成版时间轴不匹配，停用逐字高亮
+  // ── KTV 跟唱：把整首歌词按字数均匀铺满音频真实时长，逐字扫过（自适应，无需逐字对齐）──
+  const kData = useMemo(() => {
+    const lines = []
+    let timed = 0
+    for (const stanza of hymn.lyrics || []) {
+      for (const raw of String(stanza).split('\n')) {
+        if (!raw.trim()) continue
+        const chars = Array.from(raw).map((ch) => ({ ch, order: /\s/.test(ch) ? -1 : timed++ }))
+        const orders = chars.filter((c) => c.order >= 0)
+        lines.push({ chars, first: orders.length ? orders[0].order : Infinity })
+      }
+    }
+    return { lines, total: timed }
+  }, [hymn.id])
+
+  const totalChars = kData.total
+  const progress = dur > 0 ? Math.min(1, Math.max(0, cur / dur)) : 0
+  const activeChar = (dur > 0 && totalChars > 0 && (playing || cur > 0))
+    ? Math.min(totalChars - 1, Math.floor(progress * totalChars))
+    : -1
   let activeLine = -1
-  if (playing || cur > 0) {
-    for (let i = 0; i < kLines.length; i++) if (cur >= kLines[i].t) activeLine = i
+  if (activeChar >= 0) {
+    for (let i = 0; i < kData.lines.length; i++) if (activeChar >= kData.lines[i].first) activeLine = i
   }
+
+  // 自动滚动让当前演唱行保持在跟唱框中央（只滚动跟唱框，不影响整页）
+  useEffect(() => {
+    const box = karaokeRef.current, el = activeLineRef.current
+    if (!box || !el || activeLine < 0) return
+    const target = el.offsetTop - (box.clientHeight - el.clientHeight) / 2
+    box.scrollTo({ top: Math.max(0, target), behavior: 'smooth' })
+  }, [activeLine])
 
   return (
     <div className="hymn-page">
@@ -416,21 +444,24 @@ export default function HymnPlayer() {
         <div className="hymn-audio-hint">🎵 音频待添加：把文件放到 <code>public/hymns/{hymn.id}.mp3</code></div>
       )}
 
-      {/* 跟唱(逐行 + 逐字高亮，跟随音频) */}
-      {kLines.length > 0 && (
-        <div className="hymn-karaoke">
-          {kLines.map((ln, i) => (
-            <div key={i} className={`hymn-kline ${i === activeLine ? 'active' : ''}`}>
-              {i === activeLine && ln.syls
-                ? ln.syls.map((sy, j) => {
-                    const next = ln.syls[j + 1]
-                    const sungDone = cur >= (next ? next.t : ln.t + 99)
-                    const singing = cur >= sy.t && !sungDone
-                    return (
-                      <span key={j} className={`hymn-kchar ${sungDone ? 'done' : ''} ${singing ? 'now' : ''}`}>{sy.ch}</span>
-                    )
-                  })
-                : ln.text}
+      {/* 跟唱：KTV 逐字高亮，跟随音频进度 */}
+      {kData.lines.length > 0 && (
+        <div className="hymn-karaoke" ref={karaokeRef}>
+          {kData.lines.map((ln, i) => (
+            <div
+              key={i}
+              ref={i === activeLine ? activeLineRef : null}
+              className={`hymn-kline ${i === activeLine ? 'active' : ''} ${activeLine >= 0 && i < activeLine ? 'sung' : ''}`}
+            >
+              {(() => {
+                let prevDone = false
+                return ln.chars.map((c, j) => {
+                  let done = false, now = false
+                  if (c.order >= 0) { done = c.order < activeChar; now = c.order === activeChar; prevDone = done }
+                  else { done = prevDone }   // 空格继承前一字的状态，使高亮连续
+                  return <span key={j} className={`hymn-kchar ${done ? 'done' : ''} ${now ? 'now' : ''}`}>{c.ch}</span>
+                })
+              })()}
             </div>
           ))}
         </div>

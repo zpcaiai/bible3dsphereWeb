@@ -4204,6 +4204,7 @@ canvas {
 
 /* ===== 诗歌跟唱(逐行高亮) ===== */
 .hymn-karaoke {
+  position: relative;
   margin: 18px 0 6px;
   padding: 16px 18px;
   background: rgba(255, 215, 0, 0.05);
@@ -4212,6 +4213,10 @@ canvas {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  max-height: 240px;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
 }
 .hymn-kline {
   font-size: 17px;
@@ -4237,17 +4242,26 @@ canvas {
   padding-left: 10px;
 }
 
-/* 逐字高亮 */
+/* 已唱过的整行（KTV：上方已唱行保持柔和金色） */
+.hymn-kline.sung {
+  color: rgba(255, 215, 0, 0.5);
+  opacity: 0.85;
+}
+/* 逐字高亮（KTV 扫词）：未唱=暗，已唱=金，正唱=亮白发光 */
 .hymn-kchar {
-  transition: color 0.15s ease, text-shadow 0.15s ease;
+  transition: color 0.12s linear, text-shadow 0.12s linear;
   color: rgba(255, 255, 255, 0.32);
 }
-.hymn-kline.active .hymn-kchar.done {
-  color: rgba(255, 215, 0, 0.65);
+.hymn-kchar.done {
+  color: rgba(255, 215, 0, 0.72);
 }
-.hymn-kline.active .hymn-kchar.now {
+.hymn-kline.sung .hymn-kchar.done {
+  color: rgba(255, 215, 0, 0.5);
+}
+.hymn-kchar.now {
   color: #fff;
-  text-shadow: 0 0 16px rgba(255, 215, 0, 0.85);
+  font-weight: 700;
+  text-shadow: 0 0 16px rgba(255, 215, 0, 0.95), 0 0 30px rgba(255, 179, 64, 0.55);
 }
 
 
