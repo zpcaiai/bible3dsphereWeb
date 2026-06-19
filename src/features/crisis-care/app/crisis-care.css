@@ -1,0 +1,182 @@
+/* Crisis Care (危机守护) — calm, low-stimulation UI.
+   Principle: in crisis, the screen should slow down, not alarm. Soft contrast,
+   generous spacing, one clear action at a time. */
+
+.cc-page {
+  color: #e6edf3;
+  font-size: 14px;
+  line-height: 1.7;
+  padding: 12px 14px 96px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.cc-disclaimer {
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.45);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin: 6px 0 14px;
+}
+
+.cc-tabs {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+}
+.cc-tabs button {
+  flex: 0 0 auto;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.6);
+  border-radius: 999px;
+  padding: 7px 14px;
+  font-size: 12.5px;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.cc-tabs button.active {
+  background: rgba(52, 199, 89, 0.16);
+  color: #34c759;
+  border-color: rgba(52, 199, 89, 0.4);
+  font-weight: 600;
+}
+
+.cc-card {
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+.cc-card h3 { margin: 0 0 8px; font-size: 15px; }
+.cc-card p { margin: 6px 0; color: rgba(255, 255, 255, 0.82); white-space: pre-line; }
+.cc-muted { color: rgba(255, 255, 255, 0.5); font-size: 12.5px; }
+
+.cc-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: none;
+  border-radius: 12px;
+  padding: 11px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  color: #fff;
+  background: rgba(52, 199, 89, 0.9);
+  transition: transform 0.12s, opacity 0.12s;
+}
+.cc-btn:hover { opacity: 0.92; }
+.cc-btn:active { transform: scale(0.98); }
+.cc-btn.secondary { background: rgba(255, 255, 255, 0.1); color: #e6edf3; }
+.cc-btn.ghost { background: transparent; border: 1px solid rgba(255,255,255,0.18); color: #e6edf3; }
+.cc-btn.full { width: 100%; justify-content: center; }
+.cc-btn.danger { background: linear-gradient(135deg, #ff6b5e, #ff453a); }
+
+/* Big help entry button */
+.cc-help-button {
+  position: fixed;
+  right: 16px;
+  bottom: 84px;
+  z-index: 60;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 18px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #ff7a6b, #ff453a);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(255, 69, 58, 0.4);
+}
+.cc-help-button:active { transform: scale(0.97); }
+
+/* risk badges */
+.cc-badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 11.5px; font-weight: 700; }
+.cc-badge.green  { background: rgba(52,199,89,0.18);  color: #34c759; }
+.cc-badge.yellow { background: rgba(255,214,10,0.18);  color: #ffd60a; }
+.cc-badge.orange { background: rgba(255,159,10,0.2);   color: #ff9f0a; }
+.cc-badge.red    { background: rgba(255,69,58,0.22);   color: #ff6b5e; }
+
+/* resources */
+.cc-resource {
+  display: flex; justify-content: space-between; align-items: center; gap: 10px;
+  padding: 12px; border-radius: 12px; margin-bottom: 8px;
+  background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.cc-resource .meta { font-size: 11.5px; color: rgba(255,255,255,0.5); }
+.cc-call {
+  flex: 0 0 auto; text-decoration: none; color: #fff; font-weight: 700;
+  background: rgba(52,199,89,0.9); padding: 9px 14px; border-radius: 10px; font-size: 13px;
+}
+.cc-call.emergency { background: linear-gradient(135deg, #ff7a6b, #ff453a); }
+
+/* yes/no */
+.cc-choice { display: flex; gap: 10px; margin-top: 12px; }
+.cc-choice button { flex: 1; }
+
+/* breathing */
+.cc-breath-wrap { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 8px 0; }
+.cc-breath-circle {
+  width: 150px; height: 150px; border-radius: 50%;
+  background: radial-gradient(circle at 50% 45%, rgba(52,199,89,0.45), rgba(52,199,89,0.08));
+  display: flex; align-items: center; justify-content: center;
+  color: #d7ffe4; font-size: 15px; font-weight: 600;
+  animation: cc-breathe 11s ease-in-out infinite;
+}
+@keyframes cc-breathe {
+  0%   { transform: scale(0.72); }      /* exhale rest */
+  36%  { transform: scale(1.0); }       /* inhale 4s */
+  45%  { transform: scale(1.0); }       /* hold 1s */
+  100% { transform: scale(0.72); }      /* exhale 6s */
+}
+.cc-breath-paused .cc-breath-circle { animation-play-state: paused; }
+
+/* grounding steps */
+.cc-step { padding: 12px; border-radius: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); margin-bottom: 8px; }
+.cc-step.done { opacity: 0.5; }
+.cc-step b { color: #34c759; }
+
+/* list editor */
+.cc-list-item { display: flex; gap: 8px; align-items: center; margin-bottom: 6px; }
+.cc-list-item input, .cc-input, .cc-select, textarea.cc-input {
+  width: 100%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 9px; padding: 9px 11px; color: #e6edf3; font-size: 13.5px; font-family: inherit;
+}
+.cc-list-item button { flex: 0 0 auto; background: transparent; border: none; color: rgba(255,255,255,0.4); cursor: pointer; font-size: 16px; }
+.cc-field { margin-bottom: 10px; }
+.cc-field label { display: block; font-size: 12px; color: rgba(255,255,255,0.6); margin-bottom: 4px; }
+
+/* conviction vs condemnation table */
+.cc-cvc { width: 100%; border-collapse: collapse; font-size: 12.5px; margin-top: 8px; }
+.cc-cvc th, .cc-cvc td { padding: 7px 8px; border-bottom: 1px solid rgba(255,255,255,0.08); text-align: left; vertical-align: top; }
+.cc-cvc th { color: rgba(255,255,255,0.5); font-weight: 600; }
+.cc-cvc .conviction { color: #34c759; }
+.cc-cvc .condemnation { color: #ff9f8a; }
+
+/* timeline */
+.cc-phase { border-left: 2px solid rgba(52,199,89,0.4); padding: 0 0 4px 14px; margin-bottom: 14px; }
+.cc-phase h4 { margin: 0 0 6px; font-size: 14px; }
+.cc-task { display: flex; gap: 8px; align-items: flex-start; margin: 5px 0; font-size: 13px; color: rgba(255,255,255,0.82); }
+.cc-task input { margin-top: 3px; }
+
+.cc-pill-row { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+.cc-pill { font-size: 12px; padding: 5px 10px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); cursor: pointer; color: rgba(255,255,255,0.7); }
+.cc-pill.active { background: rgba(52,199,89,0.16); color: #34c759; border-color: rgba(52,199,89,0.4); }
+
+.cc-banner-red {
+  background: linear-gradient(135deg, rgba(255,69,58,0.16), rgba(255,122,107,0.1));
+  border: 1px solid rgba(255,69,58,0.4); border-radius: 14px; padding: 16px; margin-bottom: 12px;
+}
+.cc-banner-red h3 { color: #ff8a7a; }
+
+.cc-toast { font-size: 12px; color: #34c759; margin-top: 6px; min-height: 16px; }
