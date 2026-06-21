@@ -87,41 +87,9 @@ export function tuneRemoteSubscriptionsForVoice(room, LK, quality) {
   })
 }
 
-export async function protectVoiceOnWeakNetwork({
-  room,
-  LK,
-  quality,
-  autoDegradeRef,
-  setCamOn,
-  setShareOn,
-  notify,
-  message = '网络较弱，已自动暂停视频/屏幕共享，优先保证语音',
-  recoveredMessage = '网络已恢复，可手动重新开启视频或屏幕共享',
-}) {
-  if (!room || !LK || !autoDegradeRef) return
-  const weak = isWeakConnectionQuality(quality)
+export async function protectVoiceOnWeakNetwork({ room, LK, quality }) {
+  // 仅在「接收端」按网络情况调节远端视频订阅质量（节省弱网用户的下行带宽）。
+  // 不再自动关闭本地摄像头/屏幕共享——视频开关完全交给用户：想开就开。
+  if (!room || !LK) return
   tuneRemoteSubscriptionsForVoice(room, LK, quality)
-
-  if (weak && !autoDegradeRef.current) {
-    autoDegradeRef.current = true
-    try {
-      if (room.localParticipant.isScreenShareEnabled) {
-        await room.localParticipant.setScreenShareEnabled(false)
-        setShareOn?.(false)
-      }
-    } catch {}
-    try {
-      if (room.localParticipant.isCameraEnabled) {
-        await room.localParticipant.setCameraEnabled(false)
-        setCamOn?.(false)
-      }
-    } catch {}
-    notify?.(message, 'info')
-    return
-  }
-
-  if (!weak && autoDegradeRef.current) {
-    autoDegradeRef.current = false
-    notify?.(recoveredMessage, 'info')
-  }
 }

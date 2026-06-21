@@ -207,10 +207,6 @@ export default function LiveKitCall({ url, token, title, selfName, outgoing, onL
     if (!room) return
     const next = !camOn
     try {
-      if (next && isWeakConnectionQuality(netQuality)) {
-        window.showToast?.(t("当前网络较弱，先保持语音优先，网络恢复后再开启视频"), 'info')
-        return
-      }
       await room.localParticipant.setCameraEnabled(next, VOICE_VIDEO_CAPTURE_DEFAULTS, VOICE_PUBLISH_DEFAULTS)
       setCamOn(next); sync()
     } catch (e) {
