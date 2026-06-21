@@ -1614,7 +1614,7 @@ function AppContent() {
             <div className="mobile-card-stack">
 
               {/* 圣经地图 / 语音通话 快捷入口（置于今日灵命快照上方）*/}
-              <div style={{ display: 'flex', gap: '8px', margin: '0 0 4px' }}>
+              <div style={{ display: 'flex', gap: '5px', margin: '0 0 4px' }}>
                 {[
                   { icon: '🎙', label: '语音通话', panel: 'voice' },
                   { icon: '💬', label: '圣徒相通', panel: 'communion' },
@@ -1624,14 +1624,14 @@ function AppContent() {
                   <button key={item.panel || item.url}
                     onClick={() => item.url ? window.open(item.url, '_blank', 'noopener,noreferrer') : handlePanelSwitch(item.panel)}
                     style={{
-                      flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
-                      fontSize: '13px', padding: '10px 12px',
+                      flex: 1, minWidth: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 'clamp(3px, 1vw, 6px)',
+                      fontSize: 'clamp(10px, 2.7vw, 13px)', padding: 'clamp(6px, 1.7vw, 9px) clamp(2px, 1vw, 8px)',
                       background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)',
                       borderRadius: '12px', color: 'rgba(255,255,255,0.78)', cursor: 'pointer', fontFamily: 'inherit',
                       whiteSpace: 'nowrap',
                     }}
                   >
-                    <span style={{ fontSize: '16px' }}>{item.icon}</span>{item.label}
+                    <span style={{ fontSize: 'clamp(13px, 3.4vw, 16px)' }}>{item.icon}</span>{item.label}
                   </button>
                 ))}
               </div>
