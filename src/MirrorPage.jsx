@@ -870,7 +870,7 @@ export default function MirrorPage({ user, token, guidance, onBack, initialView 
   }
 
   if (view === 'graph') {
-    return <RelationshipGraphView token={token} onBack={() => setView('list')} />
+    return <RelationshipGraphView token={token} onBack={() => setView('list')} onOpenChar={openChar} />
   }
 
   // Main list view

@@ -8,3 +8,7 @@ public/book/*.epub
 dist/
 .vercel
 .env*
+
+# vite transient config bundles
+vite.config.js.timestamp-*.mjs
+vitest.config.js.timestamp-*.mjs

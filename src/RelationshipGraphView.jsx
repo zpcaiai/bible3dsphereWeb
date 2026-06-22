@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { API_BASE } from './api'
 import { getRuntimeLang } from './i18n/runtime'
+import { MIRROR_CHARACTERS } from './mirrorData'
 
 // 圣经人物关系图谱 —— 无第三方依赖的力导向图（SVG + requestAnimationFrame）
 // 数据来源：GET /api/characters/knowledge-graph
@@ -26,7 +27,19 @@ const NODE_TYPE_LABEL = {
 }
 const colorOf = (t) => NODE_COLORS[t] || '#aeaeb2'
 
-export default function RelationshipGraphView({ token, onBack, initialFocus = '' }) {
+const CARD_BY_NAME = new Map()
+for (const c of MIRROR_CHARACTERS) { if (!CARD_BY_NAME.has(c.name)) CARD_BY_NAME.set(c.name, c) }
+const stripParen = (x) => String(x || '').replace(/[（(][^)）]*[)）]/g, '').trim()
+function resolveCard(node) {
+  if (!node || (node.type && node.type !== 'character')) return null
+  const cands = [node.chineseName, node.name, ...(node.aliases || [])].filter(Boolean)
+  for (const nm of cands) { if (CARD_BY_NAME.has(nm)) return CARD_BY_NAME.get(nm) }
+  const bases = cands.map(stripParen).filter(Boolean)
+  for (const c of MIRROR_CHARACTERS) { if (bases.includes(stripParen(c.name))) return c }
+  return null
+}
+
+export default function RelationshipGraphView({ token, onBack, initialFocus = '', onOpenChar }) {
   const en = getRuntimeLang() === 'en'
   const [raw, setRaw] = useState({ nodes: [], edges: [] })
   const [loading, setLoading] = useState(true)
@@ -221,12 +234,13 @@ export default function RelationshipGraphView({ token, onBack, initialFocus = ''
       if (e.source === selId || e.target === selId) {
         const otherId = e.source === selId ? e.target : e.source
         set.add(otherId)
-        rels.push({ id: e.id, label: (en && e.labelEn) ? e.labelEn : (e.label || e.type), otherName: e.source === selId ? (en && e.targetName ? e.targetName : e.targetName) : (e.sourceName), dir: e.source === selId ? 'out' : 'in' })
+        rels.push({ id: e.id, label: (en && e.labelEn) ? e.labelEn : (e.label || e.type), otherName: e.source === selId ? e.targetName : e.sourceName, otherType: e.source === selId ? e.targetType : e.sourceType, dir: e.source === selId ? 'out' : 'in' })
       }
     }
     return { set, rels }
   }, [selId, raw.edges, en])
 
+  const selCard = selected ? resolveCard(selected) : null
   const v = viewRef.current
   const labelCut = nodes.length > 120 ? 4 : 2
   const nm = (node) => en ? (node.englishName || node.nameEn || node.name) : (node.chineseName || node.name)
@@ -311,7 +325,12 @@ export default function RelationshipGraphView({ token, onBack, initialFocus = ''
             background: 'rgba(20,20,30,0.92)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 12, padding: '12px 14px', backdropFilter: 'blur(8px)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
               <div>
-                <div style={{ fontSize: 16, fontWeight: 700, color: '#fff' }}>{nm(selected)}</div>
+                {selCard && onOpenChar ? (
+                  <div onClick={() => onOpenChar(selCard)} title={en ? 'Open mirror card' : '查看镜鉴卡片'}
+                    style={{ fontSize: 16, fontWeight: 700, color: '#9ecbff', cursor: 'pointer', textDecoration: 'underline', textUnderlineOffset: 3 }}>{nm(selected)}</div>
+                ) : (
+                  <div style={{ fontSize: 16, fontWeight: 700, color: '#fff' }}>{nm(selected)}</div>
+                )}
                 <div style={{ fontSize: 11, color: colorOf(selected.type), marginTop: 2 }}>
                   {(en ? NODE_TYPE_LABEL[selected.type]?.en : NODE_TYPE_LABEL[selected.type]?.zh) || selected.type}
                   {selected.importanceLevel ? ` · ${selected.importanceLevel}` : ''}
@@ -320,16 +339,23 @@ export default function RelationshipGraphView({ token, onBack, initialFocus = ''
               <button onClick={() => setSelected(null)} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.5)', fontSize: 18, cursor: 'pointer', lineHeight: 1 }}>×</button>
             </div>
             {selected.summary && <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.7)', marginTop: 8, lineHeight: 1.5 }}>{String(selected.summary).slice(0, 160)}</div>}
-            <button onClick={() => { setFocusInput(selected.name); submitFocus(selected.name) }} style={{ marginTop: 10, width: '100%', padding: '6px', borderRadius: 8, border: 'none', background: 'rgba(0,122,255,0.25)', color: '#9ecbff', fontSize: 12, cursor: 'pointer' }}>{en ? 'Focus this node' : '以此为中心展开'}</button>
+            {selCard && onOpenChar && (
+              <button onClick={() => onOpenChar(selCard)} style={{ marginTop: 10, width: '100%', padding: '7px', borderRadius: 8, border: 'none', background: 'rgba(52,199,89,0.28)', color: '#7ee2a0', fontSize: 12, cursor: 'pointer', fontWeight: 600 }}>{en ? 'Open mirror card →' : '查看镜鉴卡片 →'}</button>
+            )}
+            <button onClick={() => { setFocusInput(selected.name); submitFocus(selected.name) }} style={{ marginTop: 8, width: '100%', padding: '6px', borderRadius: 8, border: 'none', background: 'rgba(0,122,255,0.25)', color: '#9ecbff', fontSize: 12, cursor: 'pointer' }}>{en ? 'Focus this node' : '以此为中心展开'}</button>
             {adj && adj.rels.length > 0 && (
               <div style={{ marginTop: 10 }}>
                 <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', marginBottom: 5 }}>{en ? 'Relationships' : '关系'} ({adj.rels.length})</div>
-                {adj.rels.slice(0, 40).map((r) => (
+                {adj.rels.slice(0, 40).map((r) => {
+                  const rc = r.otherType === 'character' ? resolveCard({ name: r.otherName, type: 'character' }) : null
+                  return (
                   <div key={r.id} style={{ fontSize: 12, color: 'rgba(255,255,255,0.78)', padding: '3px 0', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
                     <span style={{ color: 'rgba(255,255,255,0.45)' }}>{r.dir === 'out' ? '→ ' : '← '}</span>
-                    <span style={{ color: '#9ecbff' }}>{r.label}</span> · {r.otherName}
+                    <span style={{ color: '#9ecbff' }}>{r.label}</span> · {(rc && onOpenChar)
+                      ? <span onClick={() => onOpenChar(rc)} style={{ cursor: 'pointer', textDecoration: 'underline', textUnderlineOffset: 2 }}>{r.otherName}</span>
+                      : r.otherName}
                   </div>
-                ))}
+                )})}
               </div>
             )}
           </div>
