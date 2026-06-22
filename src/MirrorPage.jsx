@@ -6,6 +6,7 @@ import BibleMap from './BibleMap'
 import { CHARACTER_JOURNEYS, buildCharacterMapConfig } from './data/characterJourneys'
 import { getRuntimeLang } from './i18n/runtime'
 import { useAutoTranslate } from './autoTranslate'
+import RelationshipGraphView from './RelationshipGraphView'
 
 const ERAS = ['全部', '族长时代', '出埃及时代', '士师时代', '进入迦南时代', '王国时代', '被掳归回时代', '新约时代', '教会时代']
 const ROLES = ['全部', '主&救主', '族长', '君王', '先知', '祭司', '女性', '使徒', '其他']
@@ -694,7 +695,7 @@ function ThemeDetail({ theme, characters, onBack, onCharClick }) {
 }
 
 export default function MirrorPage({ user, token, guidance, onBack }) {
-  const [view, setView] = useState('list') // 'list' | 'themes' | 'character' | 'theme'
+  const [view, setView] = useState('list') // 'list' | 'themes' | 'character' | 'theme' | 'graph'
   const [selectedChar, setSelectedChar] = useState(null)
   const [selectedTheme, setSelectedTheme] = useState(null)
   const [search, setSearch] = useState('')
@@ -868,6 +869,10 @@ export default function MirrorPage({ user, token, guidance, onBack }) {
     )
   }
 
+  if (view === 'graph') {
+    return <RelationshipGraphView token={token} onBack={() => setView('list')} />
+  }
+
   // Main list view
   return (
     <div style={{ display: 'flex', gap: 0, minHeight: '100%' }}>
@@ -925,6 +930,10 @@ export default function MirrorPage({ user, token, guidance, onBack }) {
             padding: '8px 14px', borderRadius: 8, border: 'none',
             background: '#007aff', color: '#fff', fontSize: 13, cursor: 'pointer', fontWeight: 600
           }}>主题合集 ✨</button>
+          <button onClick={() => setView('graph')} style={{
+            padding: '8px 14px', borderRadius: 8, border: 'none',
+            background: '#5856d6', color: '#fff', fontSize: 13, cursor: 'pointer', fontWeight: 600
+          }}>关系图谱 🕸</button>
         </div>
 
         {recommendedChars.length > 0 && (
