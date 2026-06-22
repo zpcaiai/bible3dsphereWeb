@@ -40,7 +40,7 @@ function resolveCard(node) {
   return null
 }
 
-export default function RelationshipGraphView({ token, onBack, initialFocus = '', onOpenChar }) {
+export default function RelationshipGraphView({ token, onBack, initialFocus = '', onOpenChar, onFocusChange }) {
   const en = getRuntimeLang() === 'en'
   const [raw, setRaw] = useState({ nodes: [], edges: [] })
   const [loading, setLoading] = useState(true)
@@ -223,7 +223,7 @@ export default function RelationshipGraphView({ token, onBack, initialFocus = ''
     rerender()
   }, [size.w, size.h, rerender])
 
-  const submitFocus = (val) => { setFocus(val.trim()) }
+  const submitFocus = (val) => { const v = val.trim(); setFocus(v); if (onFocusChange) onFocusChange(v) }
 
   const { nodes, edges } = simRef.current
   const selId = selected?.id

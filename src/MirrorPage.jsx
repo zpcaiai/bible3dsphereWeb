@@ -708,6 +708,8 @@ export default function MirrorPage({ user, token, guidance, onBack, initialView 
   const [view, setView] = useState(initialView === 'graph' ? 'graph' : 'list') // 'list' | 'themes' | 'character' | 'theme' | 'graph'
   const [selectedChar, setSelectedChar] = useState(null)
   const [selectedTheme, setSelectedTheme] = useState(null)
+  const [returnView, setReturnView] = useState('list')
+  const [graphFocus, setGraphFocus] = useState('')
   const [search, setSearch] = useState('')
   const [filterEra, setFilterEra] = useState('全部')
   const [filterRole, setFilterRole] = useState('全部')
@@ -800,7 +802,7 @@ export default function MirrorPage({ user, token, guidance, onBack, initialView 
     return list
   }, [search, filterEra, filterRole, filterType, filterTypo, filterMotif, filterKingdom, sort])
 
-  const openChar = (char) => { setSelectedChar(char); setView('character') }
+  const openChar = (char) => { setReturnView(view); setSelectedChar(char); setView('character') }
   const openTheme = (theme) => { setSelectedTheme(theme); setView('theme') }
 
   // 情绪/引导推荐人物
@@ -824,7 +826,7 @@ export default function MirrorPage({ user, token, guidance, onBack, initialView 
   if (view === 'character' && selectedChar) {
     return (
       <div style={{ padding: '20px 16px' }}>
-        <CharacterDetail char={selectedChar} onBack={() => setView('list')} user={user} token={token} />
+        <CharacterDetail char={selectedChar} onBack={() => setView(returnView)} user={user} token={token} />
       </div>
     )
   }
@@ -881,7 +883,7 @@ export default function MirrorPage({ user, token, guidance, onBack, initialView 
   }
 
   if (view === 'graph') {
-    return <RelationshipGraphView token={token} onBack={() => setView('list')} onOpenChar={openChar} />
+    return <RelationshipGraphView token={token} onBack={() => setView('list')} onOpenChar={openChar} initialFocus={graphFocus} onFocusChange={setGraphFocus} />
   }
 
   // Main list view
