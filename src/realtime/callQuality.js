@@ -10,6 +10,7 @@ export const VOICE_AUDIO_CAPTURE_DEFAULTS = {
   echoCancellation: true,
   noiseSuppression: true,
   autoGainControl: true,
+  voiceIsolation: true,   // Chrome 126+ 浏览器级 AI 人声聚焦（类似 Zoom）；不支持的浏览器自动忽略
   channelCount: 1,
   sampleRate: 48000,
 }
@@ -27,9 +28,30 @@ export const VOICE_PUBLISH_DEFAULTS = {
   dtx: true,
   red: true,
   forceStereo: false,
-  audioPreset: { maxBitrate: 28000, priority: 'high' },
+  audioPreset: { maxBitrate: 40000, priority: 'high' },   // 全频带单声道语音：28k→40k，更清晰
   videoEncoding: { maxBitrate: 360000, maxFramerate: 18, priority: 'low' },
   screenShareEncoding: { maxBitrate: 700000, maxFramerate: 8, priority: 'low' },
+  degradationPreference: 'maintain-framerate',
+  simulcast: true,
+}
+
+// 原声·高保真模式（类似 Zoom「原始声音 / Original Sound for Musicians」）：
+// 关闭回声消除/降噪/自动增益与 AI 降噪，立体声 + 高码率，适合诗歌敬拜、乐器、合唱。
+// 代价：更吃带宽、会如实放大环境噪声，建议在安静环境或音乐场景使用。
+export const VOICE_HIFI_AUDIO_CAPTURE = {
+  echoCancellation: false,
+  noiseSuppression: false,
+  autoGainControl: false,
+  voiceIsolation: false,
+  channelCount: 2,
+  sampleRate: 48000,
+}
+
+export const VOICE_HIFI_PUBLISH = {
+  dtx: false,
+  red: true,
+  forceStereo: true,
+  audioPreset: { maxBitrate: 128000, priority: 'high' },
   degradationPreference: 'maintain-framerate',
   simulcast: true,
 }

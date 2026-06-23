@@ -7,6 +7,8 @@ import {
   VOICE_VIDEO_CAPTURE_DEFAULTS,
   VOICE_SCREEN_SHARE_CAPTURE_DEFAULTS,
   VOICE_PUBLISH_DEFAULTS,
+  VOICE_HIFI_AUDIO_CAPTURE,
+  VOICE_HIFI_PUBLISH,
   connectionQualityLabel,
   isWeakConnectionQuality,
   liveKitVoiceRoomOptions,
@@ -202,6 +204,7 @@ function CallScreen({ group, user, token, onLeave }) {
   const [camOn, setCamOn] = useState(false)
   const [shareOn, setShareOn] = useState(false)
   const [denoise, setDenoise] = useState(false)
+  const [hifi, setHifi] = useState(false)
   const [encrypted, setEncrypted] = useState(false)   // E2EE 是否已生效
   const [keyPanel, setKeyPanel] = useState(false)
   const [keyDraft, setKeyDraft] = useState('')
@@ -355,6 +358,16 @@ function CallScreen({ group, user, token, onLeave }) {
       try {
         await room.connect(creds.url, creds.token, { maxRetries: 3, peerConnectionTimeout: 20000, websocketTimeout: 20000 })
         await room.localParticipant.setMicrophoneEnabled(true, VOICE_AUDIO_CAPTURE_DEFAULTS, VOICE_PUBLISH_DEFAULTS)
+        // 默认开启 AI 降噪（Krisp ML，类似 Zoom 背景降噪）——失败则静默回退浏览器原生降噪
+        try {
+          const { KrispNoiseFilter } = await import('@livekit/krisp-noise-filter')
+          const micPub = [...room.localParticipant.audioTrackPublications.values()][0]
+          if (micPub?.track) {
+            krispRef.current = KrispNoiseFilter()
+            await micPub.track.setProcessor(krispRef.current)
+            if (!cancelled) setDenoise(true)
+          }
+        } catch { /* 静默回退到浏览器原生降噪 */ }
         onQualityChange(room.localParticipant.connectionQuality, room.localParticipant)
         if (!cancelled) { setStatus('live'); setMicOn(true); sync() }
       } catch (e) {
@@ -444,6 +457,41 @@ function CallScreen({ group, user, token, onLeave }) {
       } catch {}
       setDenoise(false)
       toast('AI 降噪已关闭', 'info')
+    }
+  }
+
+  // 原声·高保真模式（Zoom「原始声音」）：关 AI 降噪与各项处理，立体声高码率重建音轨
+  const toggleHifi = async () => {
+    const room = roomRef.current
+    if (!room) return
+    const next = !hifi
+    try {
+      // 原声要"原始"：先卸载 AI 降噪处理器
+      try { await [...room.localParticipant.audioTrackPublications.values()][0]?.track?.stopProcessor?.() } catch {}
+      krispRef.current = null
+      // 关麦再以新约束重开，强制用新参数重建音轨
+      await room.localParticipant.setMicrophoneEnabled(false)
+      await room.localParticipant.setMicrophoneEnabled(
+        true,
+        next ? VOICE_HIFI_AUDIO_CAPTURE : VOICE_AUDIO_CAPTURE_DEFAULTS,
+        next ? VOICE_HIFI_PUBLISH : VOICE_PUBLISH_DEFAULTS,
+      )
+      setHifi(next); setMicOn(true)
+      if (next) {
+        setDenoise(false)
+        toast('原声·高保真已开（立体声/高码率，适合诗歌敬拜；安静环境效果最佳）', 'success')
+      } else {
+        // 回标准模式时恢复 AI 降噪
+        try {
+          const { KrispNoiseFilter } = await import('@livekit/krisp-noise-filter')
+          const pub = [...room.localParticipant.audioTrackPublications.values()][0]
+          if (pub?.track) { krispRef.current = KrispNoiseFilter(); await pub.track.setProcessor(krispRef.current); setDenoise(true) }
+        } catch {}
+        toast('已回到标准语音模式', 'info')
+      }
+      sync()
+    } catch (e) {
+      console.error(e); toast('切换原声模式失败', 'error')
     }
   }
 
@@ -568,8 +616,12 @@ function CallScreen({ group, user, token, onLeave }) {
           <div style={{ fontSize: 'calc(1.5vw + 1.4vh)' }}>🖥</div>
         </button>
         <button onClick={toggleDenoise} style={{ ...S.ctrlBtn, background: denoise ? 'rgba(52,199,89,0.25)' : 'rgba(255,255,255,0.1)' }}
-          disabled={status !== 'live'}>
+          disabled={status !== 'live' || hifi} title="AI 降噪（背景噪声抑制）">
           <div style={{ fontSize: 'calc(1.5vw + 1.4vh)' }}>✨</div>
+        </button>
+        <button onClick={toggleHifi} style={{ ...S.ctrlBtn, background: hifi ? 'rgba(255,193,7,0.30)' : 'rgba(255,255,255,0.1)' }}
+          disabled={status !== 'live'} title="原声·高保真（诗歌/乐器，立体声高码率）">
+          <div style={{ fontSize: 'calc(1.5vw + 1.4vh)' }}>🎵</div>
         </button>
         <NotesButton disabled={status !== 'live'} style={S.ctrlBtn}
           iconStyle={{ fontSize: 'calc(1.5vw + 1.4vh)', lineHeight: 1 }}
