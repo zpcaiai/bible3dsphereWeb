@@ -2037,3 +2037,63 @@ export async function fetchGratitudeReview(days = 7, token) {
   if (!res.ok) throw new Error('加载恩典回顾失败')
   return res.json()  // {ok, days, total, active_days, by_day:[{day, entries:[{id,content,created_at}]}], verse}
 }
+
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 恩赐与呼召识别系统 / Gift & Calling OS (/api/gift)
+// ─────────────────────────────────────────────────────────────────────────────
+const _gAuth = (token, json = false) => ({
+  ...(json ? { 'Content-Type': 'application/json' } : {}),
+  ...(token ? { Authorization: `Bearer ${token}` } : {}),
+})
+
+export async function fetchGiftMeta() {
+  const res = await fetch(`${API_BASE}/gift/meta`)
+  if (!res.ok) throw new Error('加载失败'); return res.json()
+}
+
+export async function fetchGiftProfile(token) {
+  const res = await fetch(`${API_BASE}/gift/profile`, { headers: _gAuth(token) })
+  const d = await res.json().catch(() => ({})); if (!res.ok) throw new Error(d.detail || '加载画像失败'); return d
+}
+
+export async function assessGift(payload, token) {
+  const res = await fetch(`${API_BASE}/gift/assess`, {
+    method: 'POST', headers: _gAuth(token, true), body: JSON.stringify(payload),
+  })
+  const d = await res.json().catch(() => ({})); if (!res.ok) throw new Error(d.detail || '评估失败'); return d
+}
+
+export async function fetchGiftHistory(token, limit = 20) {
+  const res = await fetch(`${API_BASE}/gift/history?limit=${limit}`, { headers: _gAuth(token) })
+  if (!res.ok) throw new Error('加载历史失败'); return res.json()
+}
+
+export async function fetchGiftAssessment(id, token) {
+  const res = await fetch(`${API_BASE}/gift/assessment/${id}`, { headers: _gAuth(token) })
+  const d = await res.json().catch(() => ({})); if (!res.ok) throw new Error(d.detail || '加载报告失败'); return d
+}
+
+export async function submitGiftFeedback(payload, token) {
+  const res = await fetch(`${API_BASE}/gift/feedback`, {
+    method: 'POST', headers: _gAuth(token, true), body: JSON.stringify(payload),
+  })
+  const d = await res.json().catch(() => ({})); if (!res.ok) throw new Error(d.detail || '提交反馈失败'); return d
+}
+
+export async function fetchGiftFeedback(token) {
+  const res = await fetch(`${API_BASE}/gift/feedback`, { headers: _gAuth(token) })
+  const d = await res.json().catch(() => ({})); if (!res.ok) throw new Error(d.detail || '加载反馈失败'); return d
+}
+
+export async function submitGiftReview(payload, token) {
+  const res = await fetch(`${API_BASE}/gift/review`, {
+    method: 'POST', headers: _gAuth(token, true), body: JSON.stringify(payload),
+  })
+  const d = await res.json().catch(() => ({})); if (!res.ok) throw new Error(d.detail || '提交复盘失败'); return d
+}
+
+export async function fetchGiftReviews(token, limit = 20) {
+  const res = await fetch(`${API_BASE}/gift/review?limit=${limit}`, { headers: _gAuth(token) })
+  if (!res.ok) throw new Error('加载复盘失败'); return res.json()
+}
