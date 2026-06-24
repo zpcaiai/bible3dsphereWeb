@@ -47,6 +47,8 @@ export default function CommunionPage({ user, onBack, onOpenVoice }) {
   const friendsRef = useRef([])
   friendsRef.current = friends
   const messagesEndRef = useRef(null)
+  const typingTimeoutRef = useRef(null)
+  useEffect(() => () => { if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current) }, [])
 
   const isOnline = useCallback((email) => !!onlineFriends?.has?.(email), [onlineFriends])
 
@@ -92,7 +94,8 @@ export default function CommunionPage({ user, onBack, onOpenVoice }) {
         const active = activePeerRef.current
         if (active && active.email === msg.from) {
           setTypingFrom(msg.from)
-          setTimeout(() => setTypingFrom(null), 2500)
+          if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current)
+          typingTimeoutRef.current = setTimeout(() => { setTypingFrom(null); typingTimeoutRef.current = null }, 2500)
         }
         break
       }
