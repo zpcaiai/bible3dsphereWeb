@@ -64,7 +64,7 @@ export default function RelationshipGraphView({ token, onBack, initialFocus = ''
     setLoading(true); setError('')
     const params = new URLSearchParams()
     if (focus) { params.set('focus', focus); params.set('depth', String(depth)) }
-    if (typeFilter !== 'all') params.set('node_type', typeFilter)
+    // 分类筛选改为「前端只高亮、不剔除」：不再按 node_type 向后端硬过滤，保留全部节点。
     params.set('limit', focus ? '260' : '180')
     fetch(`${API_BASE}/characters/knowledge-graph?${params.toString()}`, {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
@@ -79,7 +79,7 @@ export default function RelationshipGraphView({ token, onBack, initialFocus = ''
       })
       .catch((e) => { if (alive) { setError(String(e.message || e)); setLoading(false) } })
     return () => { alive = false }
-  }, [focus, depth, typeFilter, token])
+  }, [focus, depth, token])
 
   // ---- container size ----
   useEffect(() => {
@@ -312,7 +312,8 @@ export default function RelationshipGraphView({ token, onBack, initialFocus = ''
             })}
             {nodes.map((node) => {
               const isSel = node.id === selId
-              const dim = selId && !isSel && !(adj && adj.set.has(node.id))
+              const typeMiss = typeFilter !== 'all' && node.type !== typeFilter
+              const dim = (selId && !isSel && !(adj && adj.set.has(node.id))) || typeMiss
               const showLabel = isSel || (adj && adj.set.has(node.id)) || (node.degree || 0) >= labelCut || node.type !== 'character'
               return (
                 <g key={node.id} transform={`translate(${node.x},${node.y})`} style={{ cursor: 'pointer', opacity: dim ? 0.25 : 1 }}
