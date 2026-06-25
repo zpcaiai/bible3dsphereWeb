@@ -294,6 +294,13 @@ export default function RelationshipGraphView({ token, onBack, initialFocus = ''
         {loading && <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'rgba(255,255,255,0.6)', fontSize: 14 }}>{en ? 'Loading graph…' : '加载图谱中…'}</div>}
         {error && !loading && <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ff6b6b', fontSize: 13, padding: 20, textAlign: 'center' }}>{(en ? 'Failed to load: ' : '加载失败：') + error}</div>}
         {!loading && !error && nodes.length === 0 && <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'rgba(255,255,255,0.5)', fontSize: 14 }}>{en ? 'No data' : '暂无数据'}</div>}
+        {!loading && !error && nodes.length > 0 && edges.length === 0 && (
+          <div style={{ position: 'absolute', top: 14, left: '50%', transform: 'translateX(-50%)', maxWidth: 470, pointerEvents: 'none', textAlign: 'center', background: 'rgba(0,0,0,0.55)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 12, padding: '12px 16px', color: 'rgba(255,255,255,0.82)', fontSize: 13, lineHeight: 1.7 }}>
+            {en
+              ? 'The graph currently maps relationships between people. This node has no links yet — try focusing on a person (e.g. David, Paul, Moses).'
+              : '关系图谱目前主要收录「人物」之间的关系；该节点暂无关系连线。试试聚焦某个人物（如 大卫、保罗、摩西）。'}
+          </div>
+        )}
 
         <svg width={size.w} height={size.h} style={{ display: 'block', cursor: drag.current?.kind === 'pan' ? 'grabbing' : 'grab' }}
           onPointerDown={onBgPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerLeave={onPointerUp} onWheel={onWheel}>
