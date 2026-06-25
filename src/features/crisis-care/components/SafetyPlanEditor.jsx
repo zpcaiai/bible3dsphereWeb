@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { SuggestMenu } from '../../../components/SuggestField'
+const SP_MSG_OPTS = ['我现在很不好，需要你陪我说说话。', '我正在经历危机，请尽快联系我。', '我需要帮助，请打电话给我。', '我现在不安全，请帮我联系专业支持。']
 import { buildSafetyPlanTemplate, EMERGENCY_COPY_TEXT } from '../data/crisisContent'
 import { getResources } from '../data/crisisResources'
 
@@ -67,7 +69,7 @@ export default function SafetyPlanEditor({ plan, regionCode = 'TW', onSave, sync
 
       <div className="cc-field">
         <label>我的紧急求助文本（可一键复制给真人）</label>
-        <textarea className="cc-input" rows={3} value={draft.emergencyMessageTemplate || ''} onChange={(e) => patch('emergencyMessageTemplate', e.target.value)} />
+        <span style={{ position: 'relative', display: 'block' }}><textarea className="cc-input" style={{ paddingRight: 92 }} rows={3} value={draft.emergencyMessageTemplate || ''} onChange={(e) => patch('emergencyMessageTemplate', e.target.value)} /><SuggestMenu accent="#7dd3fc" top={8} right={8} options={SP_MSG_OPTS} value={draft.emergencyMessageTemplate || ''} onChange={(v) => patch('emergencyMessageTemplate', v)} /></span>
       </div>
 
       {!hasPerson && <p className="cc-muted" style={{ color: '#ff9f8a' }}>建议至少填一位可以联系的真人 —— 危机中，被真实的人接住很重要。</p>}

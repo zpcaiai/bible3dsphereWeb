@@ -1,4 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
+import { SuggestMenu } from './components/SuggestField'
+const SJ_OPTS = {
+  summary: ['核心主题是…', '主题经文：', '讲员的主要要点：', '最触动我的一句话：', '信息指向基督…'],
+  bibleStudy: ['这段经文的上下文是…', '关键词 / 重复出现的是…', '我新看见的是…', '与其他经文对照…', '这里的应许 / 命令是…'],
+  reflection: ['这周我在…做到了', '我仍在…上挣扎', '神光照我要改变…', '我把它应用在…', '需要继续操练的是…'],
+  lesson: ['神教我学习信靠', '神对付我的骄傲', '学会在等候中安息', '在软弱中经历恩典', '顺服比明白更重要'],
+  conclusion: ['这周的得：', '这周的失：', '我要为…悔改', '我要为…感恩', '下一步我要…'],
+  encouragement: ['主的恩典够我用', '靠主仍可重新开始', '为一件小事感恩', '神必看顾', '不要怕，只要信'],
+}
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
 import { fetchSermonJournals, saveSermonJournal, deleteSermonJournal, toggleShareSermonJournal } from './api'
@@ -669,13 +678,17 @@ export default function SermonJournalPage({ user, token, onBack }) {
             {SECTION_CONFIG.map(({ key, icon, label, placeholder, rows }) => (
               <section key={key} className="sj-section glass">
                 <div className="sj-section-title">{icon} {label}</div>
+                <span style={{ position: 'relative', display: 'block' }}>
                 <textarea
                   className="sj-textarea"
+                  style={{ paddingRight: 92 }}
                   placeholder={placeholder}
                   value={current[key]}
                   onChange={e => updateField(key, e.target.value)}
                   rows={rows}
                 />
+                <SuggestMenu top={8} right={8} options={SJ_OPTS[key] || []} value={current[key]} onChange={(v) => updateField(key, v)} />
+                </span>
               </section>
             ))}
 

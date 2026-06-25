@@ -9,8 +9,16 @@ import BackButton from './BackButton'
 import { fetchExamenToday, saveExamen, fetchExamenHistory } from './api'
 import { getToken } from './auth'
 import useDraft from './useDraft'
+import { SuggestMenu } from './components/SuggestField'
 
 const FIELD_MAX = 500
+const EXAMEN_OPTS = {
+  consolation: ['今天读经时心里被触动', '有人关心我 / 我关心了别人', '工作 / 学习中经历平安', '在祷告中感到与神亲近', '在一处小事里看见恩典', '危机中有意外的帮助'],
+  desolation: ['忙碌中忘了神', '因某事焦虑 / 烦躁', '和人起了冲突', '感到孤单 / 不被理解', '被诱惑或软弱绊倒', '心里冷淡、不想祷告'],
+  gratitude: ['为今天的饮食 / 平安', '为一位家人 / 朋友', '为神的话语', '为一次及时的帮助', '为健康 / 工作', '为主的赦免与同在'],
+  confession: ['求主赦免我的骄傲', '把焦虑交托给主', '饶恕那位伤害我的人', '放下对结果的掌控', '承认我的拖延 / 懒散', '交还我紧抓的人或事'],
+  tomorrow_step: ['明天主动问候一个人', '早起留十分钟读经', '向一个人表达感谢', '节制使用手机', '为一件事专心祷告', '完成一直拖延的小事'],
+}
 
 function friendlyError(e, fallback) {
   const msg = e?.message || ''
@@ -117,9 +125,12 @@ export default function ExamenPage({ user, onBack, onNeedLogin }) {
               <div key={f.key} style={card}>
                 <div style={{ fontSize: 13.5, fontWeight: 700, marginBottom: 4 }}>{f.icon} {f.title}</div>
                 <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', marginBottom: 8, lineHeight: 1.6 }}>{f.prompt}</div>
+                <span style={{ position: 'relative', display: 'block' }}>
                 <textarea value={vals[f.key]} onChange={e => set(f.key, e.target.value.slice(0, FIELD_MAX))} rows={2} placeholder={f.ph}
                   aria-label={f.title}
-                  style={{ width: '100%', boxSizing: 'border-box', padding: '10px 12px', borderRadius: 8, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', fontSize: 13, resize: 'vertical' }} />
+                  style={{ width: '100%', boxSizing: 'border-box', padding: '10px 96px 10px 12px', borderRadius: 8, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', fontSize: 13, resize: 'vertical' }} />
+                <SuggestMenu accent="#a78bfa" top={8} right={8} options={EXAMEN_OPTS[f.key] || []} value={vals[f.key] || ''} onChange={(v) => set(f.key, v.slice(0, FIELD_MAX))} />
+                </span>
                 <div style={{ fontSize: 10.5, color: 'rgba(255,255,255,0.3)', textAlign: 'right', marginTop: 4 }}>{(vals[f.key] || '').length}/{FIELD_MAX}</div>
               </div>
             ))}

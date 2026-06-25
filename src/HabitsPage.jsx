@@ -9,6 +9,8 @@
  */
 
 import { useState, useEffect } from 'react'
+import { SuggestMenu } from './components/SuggestField'
+const HAB_OPTS = ['今天做到了，感谢神', '今天没做到 / 忘了', '比昨天有进步', '遇到拦阻：', '靠主恩典坚持', '想为此祷告']
 import { API_BASE } from './api'
 import { getToken } from './auth'
 import SinPatternLibrary from './features/spiritual-formation/components/SinPatternLibrary'
@@ -319,7 +321,8 @@ export default function HabitsPage({ user, token: propToken, embedded = false, o
                     </div>
 
                     {/* 反思笔记 */}
-                    <div style={{ paddingLeft: 44 }}>
+                    <div style={{ paddingLeft: 44, position: 'relative' }}>
+                      <SuggestMenu top={2} right={2} options={HAB_OPTS} value={note} onChange={(v) => setNotes(prev => ({ ...prev, [habit.id]: v }))} />
                       <textarea
                         value={note}
                         onChange={e => setNotes(prev => ({ ...prev, [habit.id]: e.target.value }))}

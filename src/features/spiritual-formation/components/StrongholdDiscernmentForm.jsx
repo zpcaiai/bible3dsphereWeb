@@ -6,6 +6,7 @@ import { MODULE_DISCLAIMER } from '../lib/pastoralSafety'
 import StrongholdCard from './StrongholdCard'
 import GospelResponsePanel from './GospelResponsePanel'
 import { buildGospelResponse } from '../lib/gospelResponse'
+import SuggestField, { SuggestMenu } from '../../../components/SuggestField'
 
 const EMOTIONS = [
   ['焦虑', 'Anxiety'], ['羞耻', 'Shame'], ['愤怒', 'Anger'], ['恐惧', 'Fear'],
@@ -50,15 +51,17 @@ export default function StrongholdDiscernmentForm({ onSave }) {
       </div>
 
       {/* 输入 */}
-      <div style={{ marginBottom: '14px' }}>
+      <div style={{ marginBottom: '14px', position: 'relative' }}>
         <textarea
           value={text}
           onChange={(e) => setText(e.target.value)}
           rows={5}
           placeholder={T('比如：只要事情有一点不确定我就很焦虑，必须把每个细节都安排好…',
                          'e.g. The moment anything is uncertain I get anxious and need every detail arranged…')}
-          style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', padding: '12px 14px', color: '#fff', fontSize: '13.5px', lineHeight: '1.6', outline: 'none', boxSizing: 'border-box', resize: 'vertical' }}
+          style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', padding: '12px 14px', color: '#fff', fontSize: '13.5px', lineHeight: '1.6', outline: 'none', boxSizing: 'border-box', resize: 'vertical', paddingRight: '96px' }}
         />
+        <SuggestMenu accent="#8c8cff" top={8} right={8} value={text} onChange={setText}
+          options={[T('一有不确定我就很焦虑，必须掌控每个细节', 'The moment things are uncertain I get anxious and must control every detail'), T('我很怕被人拒绝 / 看不起', 'I am afraid of being rejected or looked down on'), T('我靠成就和别人的称赞来确认自己的价值', 'I rely on achievement and praise to feel worthy'), T('我用手机 / 娱乐 / 食物来麻痹空虚', 'I numb emptiness with phone / entertainment / food'), T('我对某人有挥之不去的苦毒和愤怒', 'I carry lingering bitterness and anger toward someone'), T('在这件事上我很难信靠神，总想自己掌控', 'I find it hard to trust God here and keep trying to control it')]} />
       </div>
 
       {/* 情绪标签 */}

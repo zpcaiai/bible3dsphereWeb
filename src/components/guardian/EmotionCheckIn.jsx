@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { SuggestMenu } from '../SuggestField'
+const GEC_OPTS = ['因为工作 / 学业压力', '因为一段关系', '因为身体疲惫', '因为属灵的枯干', '说不清，只是有点低落']
 import { checkinEmotion } from './guardianApi'
 import { useGuardianStore } from './guardianStore'
 import { C, S } from './guardianStyles'
@@ -75,8 +77,11 @@ export default function EmotionCheckIn({ onDone }) {
           style={{ width: '100%', accentColor: C.flame }} />
       </div>
 
+      <span style={{ position: 'relative', display: 'block' }}>
       <textarea value={note} rows={2} placeholder={t("（可选）是什么带来了这个感受？")}
-        onChange={(e) => setNote(e.target.value)} style={S.input} />
+        onChange={(e) => setNote(e.target.value)} style={{ ...S.input, paddingRight: 92 }} />
+      <SuggestMenu accent="#a78bfa" top={8} right={8} options={GEC_OPTS} value={note} onChange={setNote} />
+      </span>
 
       {error && <p style={{ ...S.dimText, color: '#ff9f8a', margin: 0 }}>{error}</p>}
 

@@ -4,6 +4,14 @@
  * 入口：今日心镜 (SoulDashboard) 卡片。
  */
 import { useState } from 'react'
+import { SuggestMenu } from './components/SuggestField'
+const GD_OPTS = {
+  event: ['今天和某人起了冲突', '工作 / 学业上受挫', '被人误解 / 拒绝', '计划被打乱', '听到一个坏消息'],
+  feeling: ['焦虑 / 担忧', '愤怒 / 烦躁', '羞耻 / 自责', '悲伤 / 失落', '空虚 / 麻木'],
+  want: ['想被认可 / 尊重', '想要掌控和确定', '想被爱 / 被接纳', '想要安全感', '想证明自己有价值'],
+  fear: ['怕失去掌控', '怕被拒绝 / 抛弃', '怕自己没有价值', '怕失败 / 丢脸', '怕得不到所盼望的'],
+  belief: ['「神不管我」', '「凡事都靠我自己」', '「我不配被爱」', '「神不够好」', '「我必须完美才被接纳」'],
+}
 import BackButton from './BackButton'
 import { diagnoseGospel, fetchGospelHistory } from './api'
 import { getToken } from './auth'
@@ -66,8 +74,11 @@ export default function GospelDiagnosticPage({ user, onBack, onNeedLogin }) {
             <div style={card}>
               <div style={{ fontSize: 11, color: '#a78bfa', fontWeight: 700, marginBottom: 8 }}>第 {step + 1} / {STEPS.length} 问</div>
               <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 10 }}>{cur.q}</div>
+              <span style={{ position: 'relative', display: 'block' }}>
               <textarea value={vals[cur.key]} onChange={e => set(cur.key, e.target.value)} rows={3} placeholder={cur.ph}
-                style={{ width: '100%', boxSizing: 'border-box', padding: '12px', borderRadius: 8, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', fontSize: 14, resize: 'vertical' }} />
+                style={{ width: '100%', boxSizing: 'border-box', padding: '12px 96px 12px 12px', borderRadius: 8, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', fontSize: 14, resize: 'vertical' }} />
+              <SuggestMenu accent="#a78bfa" top={8} right={8} options={GD_OPTS[cur.key] || []} value={vals[cur.key]} onChange={(v) => set(cur.key, v)} />
+              </span>
               <div style={{ display: 'flex', gap: 8, marginTop: 14 }}>
                 {step > 0 && <button onClick={() => setStep(step - 1)} style={{ ...btn('rgba(255,255,255,0.08)'), color: 'rgba(255,255,255,0.7)', flex: 1 }}>上一步</button>}
                 {step < STEPS.length - 1

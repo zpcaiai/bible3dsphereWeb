@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
+import { SuggestMenu } from './components/SuggestField'
+const DSQ_OPTS = ['我现在最真实的感受是…', '这件事让我想到神…', '我需要在这方面成长', '我想诚实地承认…', '我盼望神在这件事上帮助我…']
 import { fetchDailySoulQuestion, saveSoulAnswer, fetchSoulQuestionHistory } from './api'
 
 const LOOP_LABELS = {
@@ -145,6 +147,7 @@ export default function DailySoulQuestionPage({ user, token, onBack }) {
                     <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)', marginBottom: 8 }}>
                       诚实地回答这个问题（无需完美，只需真实）
                     </div>
+                    <span style={{ position: 'relative', display: 'block' }}>
                     <textarea
                       ref={textareaRef}
                       value={answer}
@@ -153,10 +156,12 @@ export default function DailySoulQuestionPage({ user, token, onBack }) {
                       style={{
                         width: '100%', minHeight: 120, background: 'rgba(255,255,255,0.07)',
                         border: '1px solid rgba(255,255,255,0.15)', borderRadius: 12, color: '#fff',
-                        fontSize: 15, padding: '14px 16px', resize: 'vertical', outline: 'none',
+                        fontSize: 15, padding: '14px 96px 14px 16px', resize: 'vertical', outline: 'none',
                         fontFamily: 'inherit', lineHeight: 1.7, boxSizing: 'border-box',
                       }}
                     />
+                    <SuggestMenu accent="#a78bfa" top={10} right={10} options={DSQ_OPTS} value={answer} onChange={setAnswer} />
+                    </span>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 12 }}>
                       <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: 'rgba(255,255,255,0.6)', cursor: 'pointer' }}>
                         <input type="checkbox" checked={saveToJournal} onChange={e => setSaveToJournal(e.target.checked)} />

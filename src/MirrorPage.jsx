@@ -1,4 +1,6 @@
 import { useState, useMemo, useCallback, useRef, useEffect } from 'react'
+import { SuggestMenu } from './components/SuggestField'
+const MIRROR_OPTS = ['当面对试探时，我要警醒祷告，远离罪', '当害怕时，我要先求问神，再行动', '我要在一件具体的事上顺服神', '我要为某个人 / 某件事持续祷告', '我要放下骄傲，谦卑倚靠神', '我要在软弱中支取主的恩典']
 import { useGlobalAudio, TTSButton as _TTSBtn, TTSFullBar as _TTSFullBar } from './useGlobalAudio.jsx'
 import { MIRROR_CHARACTERS, MIRROR_THEMES } from './mirrorData'
 import { saveJournal } from './api'
@@ -608,6 +610,7 @@ function CharacterDetail({ char: _rawChar, onBack, user, token }) {
               : char.type === '混合' ? `效法${char.name}的长处、以其失败为警戒，今天我立志：`
               : `效法${char.name}，今天我立志：`)}
         </div>
+        <div style={{ position: 'relative' }}>
         <textarea
           value={commitment}
           onChange={e => setCommitment(e.target.value)}
@@ -615,10 +618,12 @@ function CharacterDetail({ char: _rawChar, onBack, user, token }) {
           style={{
             width: '100%', minHeight: 80, background: 'rgba(255,255,255,0.07)',
             border: '1px solid rgba(52,199,89,0.3)', borderRadius: 8, color: '#fff',
-            fontSize: 14, padding: '10px 12px', resize: 'vertical', outline: 'none',
+            fontSize: 14, padding: '10px 96px 10px 12px', resize: 'vertical', outline: 'none',
             fontFamily: 'inherit', lineHeight: 1.6, boxSizing: 'border-box',
           }}
         />
+        <SuggestMenu accent="#34c759" top={8} right={8} options={MIRROR_OPTS} value={commitment} onChange={setCommitment} />
+        </div>
         <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 10, gap: 8, alignItems: 'center' }}>
           {commitmentSaved && <span style={{ fontSize: 12, color: '#34c759' }}><AutoText>✅ 已存入灵修日记</AutoText></span>}
           {user ? (

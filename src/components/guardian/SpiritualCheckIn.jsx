@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { SuggestMenu } from '../SuggestField'
+const GCK_OPTS = ['主啊，谢谢你今天与我同在', '我现在有点累，求你加力', '我把这件事交托给你', '求你赦免我今天的软弱', '我想更亲近你']
 import { checkinSpiritual } from './guardianApi'
 import { useGuardianStore } from './guardianStore'
 import { C, S } from './guardianStyles'
@@ -74,8 +76,11 @@ export default function SpiritualCheckIn({ onDone }) {
         ))}
       </div>
 
+      <span style={{ position: 'relative', display: 'block' }}>
       <textarea value={note} rows={2} placeholder={t("（可选）想对神或对自己说点什么？")}
-        onChange={(e) => setNote(e.target.value)} style={S.input} />
+        onChange={(e) => setNote(e.target.value)} style={{ ...S.input, paddingRight: 92 }} />
+      <SuggestMenu accent="#a78bfa" top={8} right={8} options={GCK_OPTS} value={note} onChange={setNote} />
+      </span>
 
       {error && <p style={{ ...S.dimText, color: '#ff9f8a', margin: 0 }}>{error}</p>}
 

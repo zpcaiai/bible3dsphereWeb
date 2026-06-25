@@ -7,6 +7,10 @@
  * 入口：今日心镜 (SoulDashboard) 卡片。
  */
 import { useEffect, useState } from 'react'
+import { SuggestMenu } from './components/SuggestField'
+const WP_DESC = ['我在等一个结果 / 答复', '我怕它永远不会发生', '我怕自己会被落下', '我担心时间来不及', '我怕神忘记了我']
+const WP_REFLECT = ['在等待中我学会…', '神提醒我…', '我仍然挣扎于…', '我选择继续信靠', '我把主权交还给神']
+const WP_TODAY = ['今天我比较平静', '今天有点焦虑', '我提醒自己神掌权', '我为此祷告了', '我和人聊了聊，好一些']
 import BackButton from './BackButton'
 import {
   fetchWaitingCases, createWaitingCase, analyzeWaitingCase,
@@ -161,7 +165,7 @@ function CreateView({ onCancel, onCreated, onNeedLogin, setError }) {
         <label style={lbl}>我正在等什么？</label>
         <input value={waitingFor} onChange={e => setWaitingFor(e.target.value)} placeholder="如：一个 offer、一段关系的回应、一个突破…" style={input} />
         <label style={{ ...lbl, marginTop: 14 }}>具体描述（可选）</label>
-        <textarea value={desc} onChange={e => setDesc(e.target.value)} rows={3} placeholder="发生了什么？你最害怕它不来的原因是什么？" style={{ ...input, resize: 'vertical' }} />
+        <span style={{ position: 'relative', display: 'block' }}><textarea value={desc} onChange={e => setDesc(e.target.value)} rows={3} placeholder="发生了什么？你最害怕它不来的原因是什么？" style={{ ...input, resize: 'vertical', paddingRight: 96 }} /><SuggestMenu accent="#a78bfa" top={8} right={8} options={WP_DESC} value={desc} onChange={setDesc} /></span>
       </div>
       <div style={card}>
         <div style={{ fontSize: 12, fontWeight: 700, color: 'rgba(255,255,255,0.6)', marginBottom: 6 }}>诚实地为此刻打分（0–10）</div>
@@ -324,7 +328,7 @@ function PracticeCard({ p, onSaved, setError, onNeedLogin }) {
         <div style={{ marginTop: 10, paddingTop: 10, borderTop: '1px solid rgba(255,255,255,0.06)' }}>
           <div style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.74)', lineHeight: 1.7, marginBottom: 8 }}>{p.practice_content}</div>
           <div style={{ fontSize: 12, color: '#a78bfa', fontStyle: 'italic', marginBottom: 8 }}>💭 {p.reflection_prompt}</div>
-          <textarea value={text} onChange={e => setText(e.target.value)} rows={3} placeholder="写下你的反思…" style={{ ...input, resize: 'vertical' }} />
+          <span style={{ position: 'relative', display: 'block' }}><textarea value={text} onChange={e => setText(e.target.value)} rows={3} placeholder="写下你的反思…" style={{ ...input, resize: 'vertical', paddingRight: 96 }} /><SuggestMenu accent="#a78bfa" top={8} right={8} options={WP_REFLECT} value={text} onChange={setText} /></span>
           <button onClick={complete} disabled={busy} style={{ ...primaryBtn, marginTop: 8, padding: 10, fontSize: 13 }}>{busy ? '保存中…' : (p.completed ? '更新反思' : '完成这一天')}</button>
         </div>
       )}
@@ -356,7 +360,7 @@ function ReflectBox({ caseId, onSaved, setError, onNeedLogin }) {
   return (
     <div style={{ ...card, marginTop: 12 }}>
       <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 10 }}>今天的等待，状态如何？</div>
-      <textarea value={text} onChange={e => setText(e.target.value)} rows={3} placeholder="今天等待中发生了什么？我的内心如何？" style={{ ...input, resize: 'vertical' }} />
+      <span style={{ position: 'relative', display: 'block' }}><textarea value={text} onChange={e => setText(e.target.value)} rows={3} placeholder="今天等待中发生了什么？我的内心如何？" style={{ ...input, resize: 'vertical', paddingRight: 96 }} /><SuggestMenu accent="#a78bfa" top={8} right={8} options={WP_TODAY} value={text} onChange={setText} /></span>
       {[['焦虑', anx, setAnx], ['盼望', hope, setHope], ['信靠', trust, setTrust]].map(([n, v, set]) => (
         <div key={n} style={{ marginTop: 10 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}><span style={{ color: 'rgba(255,255,255,0.7)' }}>{n}</span><span style={{ color: '#5ac8fa', fontWeight: 700 }}>{v}</span></div>

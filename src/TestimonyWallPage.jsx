@@ -5,6 +5,12 @@
  * 作为分享墙 (ShareWallPage) 的子标签挂载，接收 { user, token }。
  */
 import { useEffect, useState } from 'react'
+import { SuggestMenu } from './components/SuggestField'
+const TW_OPTS = {
+  before_story: ['那时我心里很空虚', '我在用…填补内心', '我对人生感到迷茫', '我经历了一段苦难', '我曾抗拒 / 怀疑神'],
+  how_story: ['一位…带我认识主', '借着一本书 / 一句经文', '在一次聚会 / 患难中', '神回应了我的祷告', '我决定接受耶稣'],
+  after_story: ['我心里有了平安', '我与家人的关系改善', '我有了活下去的盼望', '我学会把重担交给神', '最感恩的是…'],
+}
 import { amenTestimony, deleteTestimony, fetchTestimonies, submitTestimony } from './api'
 import useDraft from './useDraft'
 
@@ -182,14 +188,17 @@ export default function TestimonyWallPage({ user, token }) {
               <label style={{ display: 'block', fontSize: 12.5, fontWeight: 700, color: 'rgba(255,255,255,0.8)', marginBottom: 6 }} htmlFor={`tw-${s.key}`}>
                 {s.icon} 「{s.label}」{s.required ? '' : '（选填）'}
               </label>
+              <span style={{ position: 'relative', display: 'block' }}>
               <textarea
                 id={`tw-${s.key}`}
                 value={form[s.key]}
                 onChange={e => setField(s.key, e.target.value, STORY_MAX)}
                 rows={3}
                 placeholder={`${s.label}：${s.ph}`}
-                style={inp}
+                style={{ ...inp, paddingRight: 92 }}
               />
+              <SuggestMenu top={8} right={8} options={TW_OPTS[s.key] || []} value={form[s.key]} onChange={(v) => setField(s.key, v, STORY_MAX)} />
+              </span>
               <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', textAlign: 'right', marginTop: 4 }}>{form[s.key].length}/{STORY_MAX}</div>
             </div>
           ))}

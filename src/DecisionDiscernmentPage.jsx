@@ -3,6 +3,8 @@
  * 神的旨意不是算出来的，而是在与神同行中辨明的。今日心镜 overlay。
  */
 import { useState } from 'react'
+import { SuggestMenu } from './components/SuggestField'
+const DD_OPTS = ['要不要换工作 / 城市', '要不要继续 / 结束一段关系', '一个重大的经济决定', '要不要接受一个服事', '家庭 / 子女的决定']
 import BackButton from './BackButton'
 import { runDiscernment } from './api'
 import { getToken } from './auth'
@@ -56,7 +58,7 @@ export default function DecisionDiscernmentPage({ user, onBack, onNeedLogin }) {
             </div>
             <div style={card}>
               <label style={lbl}>我正在面对的决定</label>
-              <textarea value={situation} onChange={e => setSituation(e.target.value)} rows={2} placeholder="如：要不要换城市 / 接受这份工作 / 结束这段关系…" style={inp} />
+              <span style={{ position: 'relative', display: 'block' }}><textarea value={situation} onChange={e => setSituation(e.target.value)} rows={2} placeholder="如：要不要换城市 / 接受这份工作 / 结束这段关系…" style={{ ...inp, paddingRight: 96 }} /><SuggestMenu accent="#a78bfa" top={8} right={8} options={DD_OPTS} value={situation} onChange={setSituation} /></span>
             </div>
             {opts.map((o, i) => (
               <div key={i} style={card}>

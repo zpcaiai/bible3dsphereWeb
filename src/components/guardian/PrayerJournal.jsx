@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react'
+import { SuggestMenu } from '../SuggestField'
+const GPJ_OPTS = ['主啊，谢谢你的恩典', '求你帮助我面对…', '为家人 / 朋友代求', '求你赐我平安与智慧', '我把忧虑交给你']
 import { fetchPrayers, savePrayer, markPrayerAnswered } from './guardianApi'
 import { C, S } from './guardianStyles'
 import { t } from '../../i18n/runtime'
@@ -53,8 +55,11 @@ export default function PrayerJournal() {
         ))}
       </div>
 
+      <span style={{ position: 'relative', display: 'block' }}>
       <textarea value={content} rows={3} placeholder={t("把你的祷告写下来…")}
-        onChange={(e) => setContent(e.target.value)} style={S.input} />
+        onChange={(e) => setContent(e.target.value)} style={{ ...S.input, paddingRight: 92 }} />
+      <SuggestMenu accent="#a78bfa" top={8} right={8} options={GPJ_OPTS} value={content} onChange={setContent} />
+      </span>
       {error && <p style={{ ...S.dimText, color: '#ff9f8a', margin: 0 }}>{error}</p>}
       <button type="button" onClick={submit} disabled={saving || !content.trim()}
         style={{ ...S.primaryBtn, opacity: saving || !content.trim() ? 0.4 : 1 }}>

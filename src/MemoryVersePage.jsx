@@ -3,6 +3,8 @@
  * 灵修 tab 子页。复习 / 我的 / 添加。
  */
 import { useEffect, useState } from 'react'
+import { SuggestMenu } from './components/SuggestField'
+const MV_OPTS = ['你要专心仰赖耶和华，不可倚靠自己的聪明。(箴3:5)', '应当一无挂虑，只要凡事借着祷告祈求，将所要的告诉神。(腓4:6)', '我靠着那加给我力量的，凡事都能做。(腓4:13)', '耶和华是我的牧者，我必不致缺乏。(诗23:1)', '神爱世人，甚至将他的独生子赐给他们。(约3:16)', '你们要先求他的国和他的义。(太6:33)']
 import { addMemoryVerse, fetchMemoryDue, fetchMemoryList, reviewMemoryVerse, deleteMemoryVerse, fetchMemoryMilestones } from './api'
 import { getToken } from './auth'
 
@@ -154,7 +156,10 @@ export default function MemoryVersePage({ user }) {
           <label style={{ display: 'block', fontSize: 12, color: 'rgba(255,255,255,0.6)', marginBottom: 6 }}>经节出处</label>
           <input value={ref} onChange={e => setRef(e.target.value)} placeholder="如：腓立比书 4:6-7" style={inp} />
           <label style={{ display: 'block', fontSize: 12, color: 'rgba(255,255,255,0.6)', margin: '14px 0 6px' }}>经文</label>
-          <textarea value={text} onChange={e => setText(e.target.value)} rows={4} placeholder="把要背诵的经文抄在这里…" style={{ ...inp, resize: 'vertical' }} />
+          <span style={{ position: 'relative', display: 'block' }}>
+          <textarea value={text} onChange={e => setText(e.target.value)} rows={4} placeholder="把要背诵的经文抄在这里…" style={{ ...inp, resize: 'vertical', paddingRight: 96 }} />
+          <SuggestMenu top={8} right={8} options={MV_OPTS} value={text} onChange={setText} />
+          </span>
           <button onClick={add} disabled={busy} style={{ width: '100%', marginTop: 14, padding: 13, borderRadius: 12, border: 'none', background: 'linear-gradient(135deg, #8b5cf6, #5ac8fa)', color: '#fff', fontSize: 15, fontWeight: 700, cursor: 'pointer' }}>加入背诵</button>
           {msg && <div style={{ textAlign: 'center', marginTop: 12, fontSize: 13, color: msg.startsWith('✓') ? '#34c759' : '#ffd43b' }}>{msg}</div>}
         </div>

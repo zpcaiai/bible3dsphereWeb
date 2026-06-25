@@ -3,6 +3,8 @@
  * 单一入口减少导航碎片化。入口：今日心镜 (SoulDashboard) 卡片。
  */
 import { useEffect, useState } from 'react'
+import { SuggestMenu } from './components/SuggestField'
+const PH_OPTS = ['感谢今天的平安', '感谢一位家人 / 朋友', '感谢神的供应', '感谢一次及时的帮助', '感谢主的同在与话语']
 import BackButton from './BackButton'
 import { currentSeason } from './churchCalendar'
 import {
@@ -82,7 +84,10 @@ function Gratitude({ onNeedLogin }) {
         <div style={{ fontSize: 13, lineHeight: 1.7, color: 'rgba(255,255,255,0.8)' }}>感恩使人看见恩典的手。写下今天哪怕最小的一件，让喜乐落地生根。</div>
       </div>
       <div style={card}>
-        <textarea value={text} onChange={e => setText(e.target.value)} rows={2} placeholder="今天我感谢神……" style={inp} aria-label="感恩内容" />
+        <span style={{ position: 'relative', display: 'block' }}>
+        <textarea value={text} onChange={e => setText(e.target.value)} rows={2} placeholder="今天我感谢神……" style={{ ...inp, paddingRight: 96 }} aria-label="感恩内容" />
+        <SuggestMenu accent="#34c759" top={8} right={8} options={PH_OPTS} value={text} onChange={setText} />
+        </span>
         <button onClick={add} disabled={busy} style={btn('#34c759')}>{busy ? '添加中…' : '＋ 数算这件恩典'}</button>
       </div>
 

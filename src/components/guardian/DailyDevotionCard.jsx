@@ -1,4 +1,8 @@
 import { useEffect, useState } from 'react'
+import { SuggestMenu } from '../SuggestField'
+const DDC_OBS = ['这段经文在讲…', '关键词是…', '神的属性：…', '重复出现的应许 / 命令']
+const DDC_APP = ['今天我要…', '在一件事上顺服', '向一个人表达爱', '放下一个挂虑']
+const DDC_PRAY = ['主啊，帮助我…', '谢谢你，因为…', '求你赦免…', '愿你的旨意成就']
 import { fetchDevotions, saveDevotion } from './guardianApi'
 import { C, S } from './guardianStyles'
 import { t } from '../../i18n/runtime'
@@ -63,7 +67,10 @@ export default function DailyDevotionCard() {
       {fields.map((f) => (
         <div key={f.label}>
           <label style={{ ...S.dimText, display: 'block', marginBottom: 4 }}>{f.label}</label>
-          <textarea value={f.value} rows={2} onChange={(e) => f.set(e.target.value)} style={S.input} />
+          <span style={{ position: 'relative', display: 'block' }}>
+          <textarea value={f.value} rows={2} onChange={(e) => f.set(e.target.value)} style={{ ...S.input, paddingRight: 92 }} />
+          <SuggestMenu accent="#a78bfa" top={8} right={8} options={f.label.includes('观察') ? DDC_OBS : f.label.includes('应用') ? DDC_APP : DDC_PRAY} value={f.value} onChange={(v) => f.set(v)} />
+          </span>
         </div>
       ))}
 

@@ -1,4 +1,7 @@
 import { useEffect, useState } from 'react'
+import { SuggestMenu } from './components/SuggestField'
+const DS_SIT_OPTS = ['要不要接受一个新工作机会', '要不要换城市 / 搬家', '一段关系是否继续', '一个重大的经济决定', '要不要接受 / 放下一个服事', '子女教育 / 家庭安排']
+const DS_MOVE_OPTS = ['想到这个方向我感到平安', '想到这个方向我感到兴奋', '想到另一个方向我感到焦虑', '我心里有些恐惧 / 不安', '我感到被催促、不太安稳', '说不清，但隐约有平安']
 import BackButton from './BackButton'
 import { API_BASE, fetchFormationProfile } from './api'
 import { getToken } from './auth'
@@ -968,6 +971,7 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
             <div style={{ fontSize:16, fontWeight:700, color:'#fff', marginBottom:6 }}>第一步：描述处境</div>
             <div style={{ fontSize:12, color:'rgba(255,255,255,0.4)', marginBottom:16 }}>用一两句话说出你正在面对的处境或决策</div>
 
+            <div style={{ position: 'relative' }}>
             <textarea
               value={discernSituation}
               onChange={e => setDiscernSituation(e.target.value)}
@@ -977,12 +981,14 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
                 width:'100%', boxSizing:'border-box',
                 background:'rgba(255,255,255,0.05)',
                 border:'1px solid rgba(255,255,255,0.12)',
-                borderRadius:10, padding:'12px 14px',
+                borderRadius:10, padding:'12px 96px 12px 14px',
                 color:'rgba(255,255,255,0.9)', fontSize:14,
                 lineHeight:1.65, resize:'none', outline:'none',
                 fontFamily:'inherit', marginBottom:16,
               }}
             />
+            <SuggestMenu accent="#a78bfa" top={8} right={8} options={DS_SIT_OPTS} value={discernSituation} onChange={setDiscernSituation} />
+            </div>
 
             <div style={{ fontSize:12, fontWeight:700, color:'rgba(255,255,255,0.5)', marginBottom:10 }}>这属于哪类处境？</div>
             <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:8 }}>
@@ -1036,6 +1042,7 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
                 <div style={{ fontSize:12, fontWeight:700, color:'rgba(255,255,255,0.5)', marginBottom:8 }}>
                   简短描述你的感受原因（可选）
                 </div>
+                <div style={{ position: 'relative' }}>
                 <textarea
                   value={discernMovementNote}
                   onChange={e => setDiscernMovementNote(e.target.value)}
@@ -1045,12 +1052,14 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
                     width:'100%', boxSizing:'border-box',
                     background:'rgba(255,255,255,0.05)',
                     border:'1px solid rgba(255,255,255,0.1)',
-                    borderRadius:10, padding:'10px 12px',
+                    borderRadius:10, padding:'10px 96px 10px 12px',
                     color:'rgba(255,255,255,0.85)', fontSize:13,
                     lineHeight:1.6, resize:'none', outline:'none',
                     fontFamily:'inherit',
                   }}
                 />
+                <SuggestMenu accent="#a78bfa" top={8} right={8} options={DS_MOVE_OPTS} value={discernMovementNote} onChange={setDiscernMovementNote} />
+                </div>
               </div>
             )}
           </div>

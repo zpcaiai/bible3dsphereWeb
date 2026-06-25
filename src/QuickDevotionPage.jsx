@@ -1,4 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
+import { SuggestMenu } from './components/SuggestField'
+const QD_QUESTION_OPTS = ['这句话提醒我神是信实的', '我需要在这件事上更信靠神', '我想为此向神祷告', '我要把它化作今天一个小行动', '我被神的爱触动了']
+const QD_GRAT_OPTS = ['感谢今天的平安', '感谢一位家人 / 朋友', '感谢神的供应', '感谢一次及时的帮助', '感谢主的话语与同在']
 import BackButton from './BackButton'
 import { saveJournal } from './api'
 
@@ -73,12 +76,15 @@ export default function QuickDevotionPage({ user, token, onBack, onDone }) {
           <div style={{ fontSize: 16, fontWeight: 600, color: '#e0d4ff', lineHeight: 1.6, marginBottom: 20, textAlign: 'center' }}>
             {devotion.question}
           </div>
+          <span style={{ position: 'relative', display: 'block' }}>
           <textarea
             value={questionAnswer}
             onChange={e => setQuestionAnswer(e.target.value)}
             placeholder="简短地写下你真实的回应（也可以跳过）"
-            style={{ width: '100%', minHeight: 90, background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 10, color: '#fff', fontSize: 14, padding: '12px', resize: 'none', outline: 'none', fontFamily: 'inherit', lineHeight: 1.6, boxSizing: 'border-box' }}
+            style={{ width: '100%', minHeight: 90, background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 10, color: '#fff', fontSize: 14, padding: '12px 96px 12px 12px', resize: 'none', outline: 'none', fontFamily: 'inherit', lineHeight: 1.6, boxSizing: 'border-box' }}
           />
+          <SuggestMenu accent="#c4b5fd" top={8} right={8} options={QD_QUESTION_OPTS} value={questionAnswer} onChange={setQuestionAnswer} />
+          </span>
         </div>
       ),
     },
@@ -89,12 +95,15 @@ export default function QuickDevotionPage({ user, token, onBack, onDone }) {
           <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.6)', marginBottom: 16, lineHeight: 1.6, textAlign: 'center' }}>
             今天，你感谢神的一件事是什么？
           </div>
+          <span style={{ position: 'relative', display: 'block' }}>
           <textarea
             value={gratitude}
             onChange={e => setGratitude(e.target.value)}
             placeholder="写下一件，哪怕很小的事..."
-            style={{ width: '100%', minHeight: 80, background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 10, color: '#fff', fontSize: 14, padding: '12px', resize: 'none', outline: 'none', fontFamily: 'inherit', lineHeight: 1.6, boxSizing: 'border-box' }}
+            style={{ width: '100%', minHeight: 80, background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 10, color: '#fff', fontSize: 14, padding: '12px 96px 12px 12px', resize: 'none', outline: 'none', fontFamily: 'inherit', lineHeight: 1.6, boxSizing: 'border-box' }}
           />
+          <SuggestMenu accent="#c4b5fd" top={8} right={8} options={QD_GRAT_OPTS} value={gratitude} onChange={setGratitude} />
+          </span>
         </div>
       ),
     },

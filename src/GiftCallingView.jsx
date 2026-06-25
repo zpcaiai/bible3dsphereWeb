@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   fetchGiftMeta, fetchGiftProfile, assessGift, fetchGiftHistory, fetchGiftAssessment,
   submitGiftFeedback, fetchGiftFeedback, submitGiftReview, fetchGiftReviews,
@@ -294,6 +294,89 @@ function Report({ r, meta }) {
   )
 }
 
+// ── 下拉建议 + 手动输入 组合控件 ───────────────────────────────────────────────
+const comboBtn = {
+  position: 'absolute', top: 6, right: 6, zIndex: 2, padding: '3px 9px', fontSize: 11.5,
+  fontFamily: 'inherit', cursor: 'pointer', borderRadius: 7, whiteSpace: 'nowrap',
+  border: '1px solid rgba(245,181,63,0.4)', background: ACCENT_DIM, color: ACCENT,
+}
+const comboPanel = {
+  position: 'absolute', top: 34, right: 6, zIndex: 30, maxHeight: 240, overflowY: 'auto',
+  minWidth: 200, maxWidth: 340, padding: 5, borderRadius: 10,
+  border: '1px solid rgba(245,181,63,0.35)', background: '#1a1c24',
+  boxShadow: '0 12px 32px rgba(0,0,0,0.55)',
+}
+const comboItem = { padding: '7px 10px', fontSize: 12.5, color: 'rgba(255,255,255,0.85)', borderRadius: 7, cursor: 'pointer', lineHeight: 1.5 }
+
+// 组合输入：可从「常见选项」下拉中选取（追加到内容），也可随时手动输入
+function ComboField({ label, value, onChange, placeholder, options = [], multiline = true, minHeight = 64, sep = '；', required = false }) {
+  const [open, setOpen] = useState(false)
+  const wrapRef = useRef(null)
+  useEffect(() => {
+    if (!open) return
+    const onDoc = (e) => { if (wrapRef.current && !wrapRef.current.contains(e.target)) setOpen(false) }
+    document.addEventListener('mousedown', onDoc)
+    return () => document.removeEventListener('mousedown', onDoc)
+  }, [open])
+  function pick(opt) {
+    const cur = (value || '').trim()
+    const parts = cur ? cur.split(/[；;，,、\n]/).map(x => x.trim()).filter(Boolean) : []
+    if (!parts.includes(opt)) onChange(cur ? cur + sep + opt : opt)
+    setOpen(false)
+  }
+  return (
+    <div style={{ position: 'relative' }} ref={wrapRef}>
+      {label && <label style={lbl}>{label}{required ? ' *' : ''}</label>}
+      <div style={{ position: 'relative' }}>
+        {multiline
+          ? <textarea value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder} style={{ ...ta, minHeight, paddingRight: 92 }} />
+          : <input value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder} style={{ ...inp, paddingRight: 92 }} />}
+        {options.length > 0 && (
+          <button type="button" onClick={() => setOpen(o => !o)} style={comboBtn}>常见选项 ▾</button>
+        )}
+        {open && options.length > 0 && (
+          <div style={comboPanel}>
+            {options.map(opt => (
+              <div key={opt} style={comboItem}
+                onMouseDown={e => e.preventDefault()}
+                onClick={() => pick(opt)}
+                onMouseEnter={e => { e.currentTarget.style.background = ACCENT_DIM }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
+              >{opt}</div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// 测评字段「常见选项」（按字段标签关键字匹配，兼容服务端返回的字段）
+const ASSESS_OPTION_GROUPS = [
+  { match: ['长期经历', '项目', '服事记录'], opts: ['长期带领小组 / 门徒训练', '主日讲道 / 教导圣经', '敬拜带领 / 音乐事奉', '儿童 / 青少年事工', '探访关怀 / 病床探访', '短宣 / 宣教经历', '行政 / 后勤 / 财务', '接待 / 招待新朋友', '祷告 / 代祷事奉', '文字 / 翻译 / 媒体', '怜悯 / 帮助弱势'] },
+  { match: ['反复关注', '主题'], opts: ['如何更深认识神', '如何向身边人传福音', '教会合一与关系', '真理与异端的分辨', '苦难中神的旨意', '圣洁与对付罪', '家庭 / 婚姻中的信仰', '职场中作见证', '下一代信仰传承', '灵命枯干与复兴'] },
+  { match: ['服事经历', '果效'], opts: ['有人因此信主 / 受洗', '帮助信徒回到教会', '小组人数稳定增长', '被服事者灵命成长', '同工关系得到医治', '带出新的服事同工', '暂未见明显果效仍坚持', '服事中自己被建造'] },
+  { match: ['别人常请', '他人反馈'], opts: ['请我讲解圣经 / 解答信仰', '请我代祷', '找我倾诉 / 寻求安慰', '请我协调 / 调解关系', '请我组织 / 策划活动', '请我带新人 / 教技能', '称赞我有爱心 / 有耐心', '称赞我可靠 / 负责任'] },
+  { match: ['愿意付代价', '你为谁'], opts: ['为失丧的灵魂得救', '为教会被建造', '为下一代的信仰', '为受苦 / 弱势的人', '为家人信主', '为真理被持守', '为神的荣耀', '为同工 / 朋友成长'] },
+  { match: ['后天技能', '专业能力'], opts: ['教学 / 培训', '写作 / 文案', '音乐 / 乐器', '设计 / 影音剪辑', '编程 / 技术', '行政 / 项目管理', '财务 / 会计', '医疗 / 护理', '外语 / 翻译', '心理 / 辅导', '领导 / 管理'] },
+  { match: ['压力下', '试探', '软弱'], opts: ['容易焦虑 / 担忧', '容易发怒 / 急躁', '倾向逃避 / 拖延', '在意人的称赞', '容易灰心 / 自我怀疑', '过度承担 / 难以拒绝', '骄傲 / 爱比较', '在情欲 / 私欲上挣扎', '冷淡 / 放弃祷告'] },
+  { match: ['信仰历程', '灵修', '教会生活'], opts: ['从小在基督徒家庭长大', '成年后归主', '已受洗 / 固定聚会', '有稳定灵修读经习惯', '委身于一间地方教会', '在小组中被牧养', '经历过灵命低谷', '曾离开后又回到神', '正在寻求 / 慕道中'] },
+]
+function optionsForLabel(zh = '') {
+  const g = ASSESS_OPTION_GROUPS.find(g => g.match.some(m => zh.includes(m)))
+  return g ? g.opts : []
+}
+
+// 反馈 / 复盘「常见选项」
+const FB_GIFT_OPTS = ['教导', '劝勉', '怜悯', '治理（带领）', '服事（帮助）', '给予', '信心', '智慧', '知识', '分辨诸灵', '传福音', '牧养', '款待', '祷告']
+const FB_CONCERN_OPTS = ['表达过于直接', '缺乏耐心', '容易独断', '不易接受意见', '过度劳累 / 不会休息', '忽略家庭', '追求果效胜于关系', '不够主动', '容易灰心']
+const FB_TEXT_OPTS = ['一次带人信主的经历', '一次教导 / 分享的经历', '一次关怀 / 探访的经历', '一次带领 / 组织的经历', '一次在软弱中仍坚持的经历']
+const RV_OBS_OPTS = ['有人在服事中被造就 / 鼓励', '看见自己的恩赐被使用', '服事中遇到拦阻 / 挣扎', '团队配搭顺畅', '有新朋友加入', '自己灵里有些疲乏']
+const RV_GRAT_OPTS = ['感谢神使用我', '感谢同工的配搭', '感谢看见生命改变', '感谢神在软弱中的恩典', '感谢有服事的机会']
+const RV_REP_OPTS = ['在骄傲上需要对付', '忽略了祷告', '对人缺乏耐心', '追求称赞而非神的喜悦', '过度倚靠自己']
+const RV_PRAY_OPTS = ['求主加添爱心与能力', '求主赐下合一', '求主医治关系', '求主使我谦卑', '求主感动更多同工']
+const RV_ACTION_OPTS = ['下月做一次小组分享', '邀请一位新朋友', '固定每周代祷', '找牧者 / 导师交流', '安排适当休息']
+
 // ── 测评表单 ─────────────────────────────────────────────────────────────────
 function AssessForm({ meta, token, onDone }) {
   const fields = meta?.input_fields || []
@@ -319,15 +402,14 @@ function AssessForm({ meta, token, onDone }) {
         诚实地写下你的长期经历、负担与挣扎。系统会辅助辨识天然优势、属灵恩赐、果子成熟度、使命方向、误用风险与服事方向，并给出成长计划。资料越具体，辨识越准。
       </div>
       {fields.map(f => (
-        <div key={f.key}>
-          <label style={lbl}>{f.zh}</label>
-          <textarea
-            value={vals[f.key] || ''}
-            onChange={e => setVals(v => ({ ...v, [f.key]: e.target.value }))}
-            placeholder={f.zh}
-            style={{ ...ta, minHeight: 64 }}
-          />
-        </div>
+        <ComboField
+          key={f.key}
+          label={f.zh}
+          value={vals[f.key] || ''}
+          onChange={val => setVals(v => ({ ...v, [f.key]: val }))}
+          placeholder={f.zh}
+          options={optionsForLabel(f.zh)}
+        />
       ))}
       <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12.5, color: 'rgba(255,255,255,0.75)', margin: '12px 0 4px', cursor: 'pointer' }}>
         <input type="checkbox" checked={useAi} onChange={e => setUseAi(e.target.checked)} />
@@ -405,12 +487,9 @@ function FeedbackForm({ token }) {
           ))}
         </div>
       ))}
-      <label style={lbl}>你观察到的明显恩赐（逗号分隔）</label>
-      <input value={gifts} onChange={e => setGifts(e.target.value)} placeholder="如：教导、分辨" style={inp} />
-      <label style={lbl}>需要成长/留意之处（逗号分隔）</label>
-      <input value={concerns} onChange={e => setConcerns(e.target.value)} placeholder="如：表达过于直接" style={inp} />
-      <label style={lbl}>具体例子 / 自由反馈</label>
-      <textarea value={text} onChange={e => setText(e.target.value)} placeholder="一个具体的服事例子…" style={{ ...ta, minHeight: 70 }} />
+      <ComboField label="你观察到的明显恩赐（逗号分隔）" value={gifts} onChange={setGifts} placeholder="如：教导、分辨" options={FB_GIFT_OPTS} multiline={false} sep="、" />
+      <ComboField label="需要成长/留意之处（逗号分隔）" value={concerns} onChange={setConcerns} placeholder="如：表达过于直接" options={FB_CONCERN_OPTS} multiline={false} sep="、" />
+      <ComboField label="具体例子 / 自由反馈" value={text} onChange={setText} placeholder="一个具体的服事例子…" options={FB_TEXT_OPTS} minHeight={70} />
       <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: 'rgba(255,255,255,0.6)', margin: '8px 0', cursor: 'pointer' }}>
         <input type="checkbox" checked={consent} onChange={e => setConsent(e.target.checked)} /> 同意将此反馈用于辅助辨识
       </label>
@@ -468,16 +547,11 @@ function ReviewForm({ token }) {
       <select value={kind} onChange={e => setKind(e.target.value)} style={inp}>
         {REVIEW_OPTS.map(([k, z]) => <option key={k} value={k} style={{ color: '#000' }}>{z}</option>)}
       </select>
-      <label style={lbl}>本期观察 *</label>
-      <textarea value={obs} onChange={e => setObs(e.target.value)} placeholder="这段时间服事中我看见什么？人是否被造就？" style={{ ...ta, minHeight: 90 }} />
-      <label style={lbl}>感恩</label>
-      <textarea value={grat} onChange={e => setGrat(e.target.value)} placeholder="为神的工作感恩…" style={{ ...ta, minHeight: 56 }} />
-      <label style={lbl}>悔改</label>
-      <textarea value={rep} onChange={e => setRep(e.target.value)} placeholder="需要向神承认与转向的…" style={{ ...ta, minHeight: 56 }} />
-      <label style={lbl}>祷告</label>
-      <textarea value={pray} onChange={e => setPray(e.target.value)} placeholder="主啊…" style={{ ...ta, minHeight: 56 }} />
-      <label style={lbl}>下一步行动</label>
-      <input value={action} onChange={e => setAction(e.target.value)} placeholder="如：下月做一次小组护教学分享" style={inp} />
+      <ComboField label="本期观察" required value={obs} onChange={setObs} placeholder="这段时间服事中我看见什么？人是否被造就？" options={RV_OBS_OPTS} minHeight={90} />
+      <ComboField label="感恩" value={grat} onChange={setGrat} placeholder="为神的工作感恩…" options={RV_GRAT_OPTS} minHeight={56} />
+      <ComboField label="悔改" value={rep} onChange={setRep} placeholder="需要向神承认与转向的…" options={RV_REP_OPTS} minHeight={56} />
+      <ComboField label="祷告" value={pray} onChange={setPray} placeholder="主啊…" options={RV_PRAY_OPTS} minHeight={56} />
+      <ComboField label="下一步行动" value={action} onChange={setAction} placeholder="如：下月做一次小组护教学分享" options={RV_ACTION_OPTS} multiline={false} />
       {err && <div style={{ color: '#ff6b6b', fontSize: 12, marginBottom: 8 }}>{err}</div>}
       <button onClick={submit} disabled={busy} style={{ ...primaryBtn, width: '100%', opacity: busy ? 0.6 : 1 }}>{busy ? '保存中…' : '保存复盘'}</button>
 

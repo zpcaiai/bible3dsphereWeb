@@ -1,4 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
+import { SuggestMenu } from './components/SuggestField'
+const DF_JOURNAL = ['今天我感到…', '我心里渴望…', '我在害怕 / 担心…', '我和某人之间…', '神今天提醒我…']
+const DF_PRAYER = ['主啊，谢谢你…', '求你帮助我…', '我把…交托给你', '求你赦免我…', '愿你的旨意成就']
 import {
   fetchDiscipleMeta, fetchDiscipleProfile, assessDisciple, fetchDiscipleHistory,
   askDiscipleMentor, fetchDiscipleNetwork, addDiscipleRelationship, endDiscipleRelationship,
@@ -415,11 +418,11 @@ function Reflect({ token, onDone, meta, dimZh, idolZh, stateZh }) {
         诚实地写下今天的处境、情绪与挣扎。引擎会从中辨识你的信念、偶像、顺服与呼召，给出今日的一步顺服。
       </div>
       <label style={lbl}>今日反思 / 处境 *</label>
-      <textarea value={journal} onChange={e => setJournal(e.target.value)} placeholder="今天发生了什么？我有什么感受、渴望或害怕？我在挣扎什么？" style={{ ...ta, minHeight: 130 }} />
+      <span style={{ position: 'relative', display: 'block' }}><textarea value={journal} onChange={e => setJournal(e.target.value)} placeholder="今天发生了什么？我有什么感受、渴望或害怕？我在挣扎什么？" style={{ ...ta, minHeight: 130, paddingRight: 96 }} /><SuggestMenu accent="#a78bfa" top={8} right={8} options={DF_JOURNAL} value={journal} onChange={setJournal} /></span>
       <label style={lbl}>今日经文（可选）</label>
       <input value={scripture} onChange={e => setScripture(e.target.value)} placeholder="例：马太福音 6:33" style={inp} />
       <label style={lbl}>今日祷告（可选）</label>
-      <textarea value={prayer} onChange={e => setPrayer(e.target.value)} placeholder="主啊……" style={{ ...ta, minHeight: 70 }} />
+      <span style={{ position: 'relative', display: 'block' }}><textarea value={prayer} onChange={e => setPrayer(e.target.value)} placeholder="主啊……" style={{ ...ta, minHeight: 70, paddingRight: 96 }} /><SuggestMenu accent="#a78bfa" top={8} right={8} options={DF_PRAYER} value={prayer} onChange={setPrayer} /></span>
       {err && <div style={{ color: '#ff6b6b', fontSize: 12, marginBottom: 8 }}>{err}</div>}
       <button onClick={submit} disabled={submitting} style={{ ...primaryBtn, width: '100%', opacity: submitting ? 0.6 : 1 }}>
         {submitting ? '引擎分析中…' : '🧬 提交并评估'}

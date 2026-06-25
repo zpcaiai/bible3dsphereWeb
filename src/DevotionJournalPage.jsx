@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { SuggestMenu } from './components/SuggestField'
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
 import { deleteJournal, fetchJournals, saveJournal } from './api'
@@ -48,6 +49,14 @@ const FIELDS = [
   { key: 'application',  label: '🌱 行道应用', placeholder: '你今天打算如何将这段话活出来？', rows: 3 },
   { key: 'prayer',       label: '🙏 祷告记录', placeholder: '写下你今天的祷告…', rows: 4 },
 ]
+
+const DJ_OPTS = {
+  scripture: ['约 3:16', '诗 23', '腓 4:6-7', '罗 8:28', '太 6:33', '耶 29:11', '箴 3:5-6', '赛 40:31'],
+  observation: ['这段经文强调神的信实', '重复出现的关键词是…', '这里有一个命令 / 应许', '上下文在讲…', '让我印象深刻的是…'],
+  reflection: ['神提醒我要更信靠祂', '我在这方面有亏欠', '这正对应我现在的处境', '神的爱让我感到被接纳', '我需要悔改的是…'],
+  application: ['今天向一个人表达关心', '在一件事上选择诚实', '放下手机多陪家人', '为某件事专心祷告', '完成一直拖延的小事', '用这节经文鼓励一个人'],
+  prayer: ['主啊，感谢你的话语', '求你帮助我信靠你', '赦免我的软弱', '求你引导今天的决定', '为我所爱的人代求', '愿你的旨意成就在我身上'],
+}
 
 function today() {
   return new Date().toISOString().slice(0, 10)
@@ -219,23 +228,26 @@ function JournalEditor({ initial, token, onSaved, onCancel }) {
         {FIELDS.map(f => (
           <div key={f.key} className="dj-field">
             <label className="dj-field-label">{f.label}</label>
-            {f.key === 'scripture' ? (
-              <textarea
-                className="dj-textarea"
-                placeholder={f.placeholder}
-                rows={f.rows}
-                value={form[f.key] || ''}
-                onChange={e => set(f.key, e.target.value)}
-              />
-            ) : (
-              <EmojiTextarea
-                className="dj-textarea"
-                placeholder={f.placeholder}
-                rows={f.rows}
-                value={form[f.key] || ''}
-                onChange={v => set(f.key, v)}
-              />
-            )}
+            <div style={{ position: 'relative' }}>
+              {f.key === 'scripture' ? (
+                <textarea
+                  className="dj-textarea"
+                  placeholder={f.placeholder}
+                  rows={f.rows}
+                  value={form[f.key] || ''}
+                  onChange={e => set(f.key, e.target.value)}
+                />
+              ) : (
+                <EmojiTextarea
+                  className="dj-textarea"
+                  placeholder={f.placeholder}
+                  rows={f.rows}
+                  value={form[f.key] || ''}
+                  onChange={v => set(f.key, v)}
+                />
+              )}
+              <SuggestMenu accent="#a78bfa" options={DJ_OPTS[f.key] || []} value={form[f.key] || ''} onChange={(v) => set(f.key, v)} />
+            </div>
           </div>
         ))}
 

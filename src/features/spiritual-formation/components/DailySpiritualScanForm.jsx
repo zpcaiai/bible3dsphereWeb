@@ -2,8 +2,10 @@ import { useMemo, useState } from 'react'
 import { sinPatternMap, sinPatterns } from '../data/sinPatterns'
 import { recommendSpiritualResponse } from '../lib/recommendationEngine'
 import { HOLY_SPIRIT_FRUITS } from '../types/spiritualFormation'
+import SuggestField, { SuggestMenu } from '../../../components/SuggestField'
 
 const EMOTIONS = ['anxiety', 'anger', 'envy', 'lust', 'emptiness', 'shame', 'prideful_confidence', 'fear', 'numbness', 'bitterness', 'restlessness', 'gratitude', 'peace', 'joy', 'sadness', 'loneliness']
+const CONFESSION_OPTS = ['Lord, I bring this honestly into Your light.', 'Father, I confess I trusted ___ instead of You.', 'I sought control / approval / comfort more than You.', 'Lord, I have sinned in thought and deed; cleanse me.', 'I confess my fear and unbelief; help me trust You.']
 const TRIGGERS = ['pressure', 'loneliness', 'comparison', 'success', 'failure', 'rejection', 'offense', 'financial_insecurity', 'sexual_temptation', 'boredom', 'fatigue', 'conflict', 'social_media', 'power_opportunity', 'religious_performance']
 
 function uid() {
@@ -32,6 +34,7 @@ export default function DailySpiritualScanForm({ userId, onSave }) {
     selectedSinPattern: form.selectedPrimarySinPattern || undefined,
   }), [form])
   const primary = form.selectedPrimarySinPattern || recommendation.likelySinPatterns[0] || 'self_centeredness'
+  const pd = sinPatternMap[primary] || sinPatterns[0]
 
   function update(field, value) {
     setSaved(false)
@@ -81,7 +84,7 @@ export default function DailySpiritualScanForm({ userId, onSave }) {
       </div>
       <div className="sf-form-grid">
         <label>Strongest emotion<select value={form.strongestEmotion} onChange={(e) => update('strongestEmotion', e.target.value)}>{EMOTIONS.map((item) => <option key={item}>{item}</option>)}</select></label>
-        <label>Behavior that followed<textarea value={form.behaviorDescription} onChange={(e) => update('behaviorDescription', e.target.value)} placeholder="What did you do, avoid, say, click, hide, or pursue?" /></label>
+        <label>Behavior that followed<span style={{ position: 'relative', display: 'block' }}><textarea style={{ paddingRight: 96 }} value={form.behaviorDescription} onChange={(e) => update('behaviorDescription', e.target.value)} placeholder="What did you do, avoid, say, click, hide, or pursue?" /><SuggestMenu accent="#8c8cff" options={pd.commonSymptoms} value={form.behaviorDescription} onChange={(v) => update('behaviorDescription', v)} /></span></label>
       </div>
       <div className="sf-choice-block">
         <span>Triggers</span>
@@ -93,11 +96,11 @@ export default function DailySpiritualScanForm({ userId, onSave }) {
         <div className="sf-chip-row">{recommendation.likelySinPatterns.map((id) => <button className={`sf-chip-btn ${primary === id ? 'active' : ''}`} key={id} type="button" onClick={() => update('selectedPrimarySinPattern', id)}>{sinPatternMap[id].name}</button>)}</div>
       </div>
       <div className="sf-form-grid">
-        <label>Core lie<textarea value={form.coreLie} onChange={(e) => update('coreLie', e.target.value)} placeholder={recommendation.possibleCoreLies[0]} /></label>
-        <label>Gospel truth<textarea value={form.gospelTruth} onChange={(e) => update('gospelTruth', e.target.value)} placeholder={recommendation.suggestedGospelTruths[0]} /></label>
-        <label>Confession<textarea value={form.confession} onChange={(e) => update('confession', e.target.value)} /></label>
-        <label>Repentance action<textarea value={form.repentanceAction} onChange={(e) => update('repentanceAction', e.target.value)} /></label>
-        <label>Concrete obedience action<textarea value={form.obedienceAction} onChange={(e) => update('obedienceAction', e.target.value)} /></label>
+        <label>Core lie<span style={{ position: 'relative', display: 'block' }}><textarea style={{ paddingRight: 96 }} value={form.coreLie} onChange={(e) => update('coreLie', e.target.value)} placeholder={recommendation.possibleCoreLies[0]} /><SuggestMenu accent="#8c8cff" options={recommendation.possibleCoreLies} value={form.coreLie} onChange={(v) => update('coreLie', v)} /></span></label>
+        <label>Gospel truth<span style={{ position: 'relative', display: 'block' }}><textarea style={{ paddingRight: 96 }} value={form.gospelTruth} onChange={(e) => update('gospelTruth', e.target.value)} placeholder={recommendation.suggestedGospelTruths[0]} /><SuggestMenu accent="#8c8cff" options={recommendation.suggestedGospelTruths} value={form.gospelTruth} onChange={(v) => update('gospelTruth', v)} /></span></label>
+        <label>Confession<span style={{ position: 'relative', display: 'block' }}><textarea style={{ paddingRight: 96 }} value={form.confession} onChange={(e) => update('confession', e.target.value)} /><SuggestMenu accent="#8c8cff" options={CONFESSION_OPTS} value={form.confession} onChange={(v) => update('confession', v)} /></span></label>
+        <label>Repentance action<span style={{ position: 'relative', display: 'block' }}><textarea style={{ paddingRight: 96 }} value={form.repentanceAction} onChange={(e) => update('repentanceAction', e.target.value)} /><SuggestMenu accent="#8c8cff" options={pd.putOffActions} value={form.repentanceAction} onChange={(v) => update('repentanceAction', v)} /></span></label>
+        <label>Concrete obedience action<span style={{ position: 'relative', display: 'block' }}><textarea style={{ paddingRight: 96 }} value={form.obedienceAction} onChange={(e) => update('obedienceAction', e.target.value)} /><SuggestMenu accent="#8c8cff" options={pd.putOnActions} value={form.obedienceAction} onChange={(v) => update('obedienceAction', v)} /></span></label>
         <label>Fruit to practice<select value={form.fruitPracticed[0]} onChange={(e) => update('fruitPracticed', [e.target.value])}>{HOLY_SPIRIT_FRUITS.map((fruit) => <option key={fruit}>{fruit}</option>)}</select></label>
       </div>
       <label className="sf-check"><input type="checkbox" checked={form.graceRecoveryNeeded} onChange={(e) => update('graceRecoveryNeeded', e.target.checked)} /> I need grace recovery for this pattern.</label>

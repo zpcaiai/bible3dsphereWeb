@@ -1,4 +1,7 @@
 import { useState } from 'react'
+import { SuggestMenu } from './components/SuggestField'
+const CHK_PRAYER_OPTS = ['为家人的健康与平安', '为工作 / 学业', '为一个还未信主的朋友', '为教会与牧者', '为我正在做的决定', '为我心里的挣扎与软弱', '为国家 / 世界的需要']
+const CHK_GRAT_OPTS = ['感谢今天的平安', '感谢一位家人 / 朋友', '感谢神的供应', '感谢一次及时的帮助', '感谢主的话语与同在']
 import { submitCheckin } from './api'
 
 const MOOD_OPTIONS = ['非常好', '比较好', '一般', '比较差', '很差']
@@ -373,25 +376,33 @@ export default function CheckInPage({ user, emotionLabel, emotionQuery, token, o
           {/* 代祷事项 */}
           <section className="checkin-section glass">
             <div className="checkin-section-title">🙏 代祷事项</div>
+            <span style={{ position: 'relative', display: 'block' }}>
             <textarea
               className="checkin-textarea"
+              style={{ paddingRight: 92 }}
               placeholder="今天有什么想交托给神的..."
               value={prayerRequest}
               onChange={e => setPrayerRequest(e.target.value)}
               rows={3}
             />
+            <SuggestMenu top={8} right={8} options={CHK_PRAYER_OPTS} value={prayerRequest} onChange={setPrayerRequest} />
+            </span>
           </section>
 
           {/* 今日感恩 */}
           <section className="checkin-section glass">
             <div className="checkin-section-title">✨ 今日感恩</div>
+            <span style={{ position: 'relative', display: 'block' }}>
             <textarea
               className="checkin-textarea"
+              style={{ paddingRight: 92 }}
               placeholder="今天感恩的一件事..."
               value={gratitude}
               onChange={e => setGratitude(e.target.value)}
               rows={2}
             />
+            <SuggestMenu top={8} right={8} options={CHK_GRAT_OPTS} value={gratitude} onChange={setGratitude} />
+            </span>
           </section>
 
           <button
