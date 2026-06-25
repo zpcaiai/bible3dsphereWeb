@@ -28,6 +28,34 @@ const NODE_TYPE_LABEL = {
 }
 const colorOf = (t) => NODE_COLORS[t] || '#aeaeb2'
 
+// ── 时间先后排序：用 era（时代）+ firstAppearance（首次经文）派生年代序 ──
+const ERA_ORDER = [
+  ['创世', 0], ['起初', 0], ['创造', 0], ['族长', 1], ['出埃及', 2], ['旷野', 2], ['西奈', 2], ['律法', 2],
+  ['征服', 3], ['进入迦南', 3], ['迦南', 3], ['约书亚', 3], ['士师', 4],
+  ['统一王国', 5], ['联合王国', 5], ['王国时代', 5], ['列王初', 5], ['王国初', 5],
+  ['分裂', 6], ['列王', 6], ['先知', 6],
+  ['被掳', 7], ['流亡', 7], ['巴比伦', 7],
+  ['归回', 8], ['波斯', 8], ['重建', 8], ['两约', 9],
+  ['新约', 10], ['福音', 10], ['耶稣', 10], ['使徒', 11], ['教会', 11], ['书信', 11], ['启示', 12],
+]
+function eraIndex(era) {
+  const s = String(era || '')
+  for (const [kw, idx] of ERA_ORDER) if (s.includes(kw)) return idx
+  return 5.5
+}
+const BOOK_ORDER = { '创':1,'出':2,'利':3,'民':4,'申':5,'书':6,'士':7,'得':8,'撒上':9,'撒下':10,'王上':11,'王下':12,'代上':13,'代下':14,'拉':15,'尼':16,'斯':17,'伯':18,'诗':19,'箴':20,'传':21,'歌':22,'赛':23,'耶':24,'哀':25,'结':26,'但':27,'何':28,'珥':29,'摩':30,'俄':31,'拿':32,'弥':33,'鸿':34,'哈':35,'番':36,'该':37,'亚':38,'玛':39,'太':40,'可':41,'路':42,'约':43,'徒':44,'罗':45,'林前':46,'林后':47,'加':48,'弗':49,'腓':50,'西':51,'帖前':52,'帖后':53,'提前':54,'提后':55,'多':56,'门':57,'来':58,'雅':59,'彼前':60,'彼后':61,'约一':62,'约二':63,'约三':64,'犹':65,'启':66 }
+const BOOK_KEYS = Object.keys(BOOK_ORDER).sort((a, b) => b.length - a.length)
+function bookChapter(ref) {
+  const s = String(ref || '').trim()
+  if (!s) return 0
+  for (const b of BOOK_KEYS) { if (s.startsWith(b)) { const m = s.slice(b.length).match(/\d+/); return BOOK_ORDER[b] * 1000 + (m ? Math.min(parseInt(m[0], 10), 999) : 0) } }
+  return 0
+}
+function chronoKey(node) {
+  if (!node) return 9e9
+  return eraIndex(node.era) * 1e6 + bookChapter(node.firstAppearance)
+}
+
 const CARD_BY_NAME = new Map()
 for (const c of MIRROR_CHARACTERS) { if (!CARD_BY_NAME.has(c.name)) CARD_BY_NAME.set(c.name, c) }
 const stripParen = (x) => String(x || '').replace(/[（(][^)）]*[)）]/g, '').trim()
@@ -229,17 +257,21 @@ export default function RelationshipGraphView({ token, onBack, initialFocus = ''
   const selId = selected?.id
   const adj = useMemo(() => {
     if (!selId) return null
+    const nodeById = new Map((raw.nodes || []).map((n) => [n.id, n]))
     const set = new Set()
     const rels = []
     for (const e of raw.edges) {
       if (e.source === selId || e.target === selId) {
         const otherId = e.source === selId ? e.target : e.source
+        const otherType = e.source === selId ? e.targetType : e.sourceType
         set.add(otherId)
-        rels.push({ id: e.id, label: (en && e.labelEn) ? e.labelEn : (e.label || e.type), otherName: e.source === selId ? e.targetName : e.sourceName, otherType: e.source === selId ? e.targetType : e.sourceType, dir: e.source === selId ? 'out' : 'in' })
+        rels.push({ id: e.id, label: (en && e.labelEn) ? e.labelEn : (e.label || e.type), otherName: e.source === selId ? e.targetName : e.sourceName, otherType, dir: e.source === selId ? 'out' : 'in', chrono: chronoKey(nodeById.get(otherId)), isChar: otherType === 'character' ? 0 : 1 })
       }
     }
+    // 时间先后：人物在前（按年代序），其余节点在后
+    rels.sort((a, b) => a.isChar - b.isChar || a.chrono - b.chrono || String(a.otherName || '').localeCompare(String(b.otherName || '')))
     return { set, rels }
-  }, [selId, raw.edges, en])
+  }, [selId, raw.edges, raw.nodes, en])
 
   const selCard = selected ? resolveCard(selected) : null
   const v = viewRef.current
