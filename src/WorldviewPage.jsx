@@ -4,6 +4,7 @@ import { getToken } from './auth'
 import { t } from './i18n/runtime'
 import { AutoText } from './autoTranslate'
 import SuggestField from './components/SuggestField'
+import FormationHistory from './components/FormationHistory'
 import {
   rewriteNarrative, diagnoseWorldview, fetchWorldviewProfile, fetchWorldviewAssessments,
 } from './api'
@@ -241,33 +242,8 @@ function ProfileTab({ token }) {
 
 // ── 历史 ─────────────────────────────────────────────────────────────────────
 function HistoryTab({ token }) {
-  const [items, setItems] = useState(null)
-  const [err, setErr] = useState('')
-  useEffect(() => {
-    if (!token) return
-    fetchWorldviewAssessments(token, 20).then((d) => setItems(d.assessments || [])).catch((e) => setErr(e.message))
-  }, [token])
   if (!token) return <div style={{ ...card, textAlign: 'center', color: 'rgba(255,255,255,0.5)' }}>{t('请先登录查看历史。')}</div>
-  if (err) return <Err>{err}</Err>
-  if (items == null) return <div style={{ ...card, textAlign: 'center', color: 'rgba(255,255,255,0.5)' }}>{t('加载中…')}</div>
-  if (items.length === 0) return <div style={{ ...card, textAlign: 'center', color: 'rgba(255,255,255,0.5)' }}>{t('暂无历史诊断记录。')}</div>
-  return (
-    <div>
-      {items.map((it) => (
-        <div key={it.id} style={card}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-            <span style={{ fontSize: 12, color: ACCENT, fontWeight: 600 }}>{t(it.source_type)}</span>
-            <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)' }}>{(it.created_at || '').slice(0, 10)}</span>
-          </div>
-          {it.summary && <div style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.75)', lineHeight: 1.6 }}><D>{it.summary}</D></div>}
-          <div style={{ marginTop: 4 }}>
-            {(it.domains || []).map((d, i) => <Chip key={i}><D>{typeof d === 'string' ? d : (d.domain || d.name)}</D></Chip>)}
-            {it.overall_score != null && <span style={{ fontSize: 11.5, color: 'rgba(255,255,255,0.5)', marginLeft: 6 }}>{t('一致性')} {fmtScore(it.overall_score)}</span>}
-          </div>
-        </div>
-      ))}
-    </div>
-  )
+  return <FormationHistory token={token} source="worldview" accent={ACCENT} emptyText={t('暂无历史诊断记录。')} />
 }
 
 const TABS = [['narrative', '✍️ 叙事重写'], ['diagnose', '🧭 世界观诊断'], ['profile', '🧩 我的画像'], ['history', '🗂 历史']]

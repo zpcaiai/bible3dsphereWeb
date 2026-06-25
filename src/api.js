@@ -2087,8 +2087,9 @@ export async function fetchFormationState(token) {
   const res = await fetch(`${API_BASE}/formation/state`, { headers: token ? { Authorization: `Bearer ${token}` } : {} })
   const d = await res.json().catch(() => ({})); if (!res.ok) throw new Error(d.detail || '加载失败'); return d
 }
-export async function fetchFormationTimeline(token, limit = 30) {
-  const res = await fetch(`${API_BASE}/formation/timeline?limit=${limit}`, { headers: token ? { Authorization: `Bearer ${token}` } : {} })
+export async function fetchFormationTimeline(token, limit = 30, source = null) {
+  const qs = new URLSearchParams({ limit: String(limit) }); if (source) qs.set('source', source)
+  const res = await fetch(`${API_BASE}/formation/timeline?${qs.toString()}`, { headers: token ? { Authorization: `Bearer ${token}` } : {} })
   const d = await res.json().catch(() => ({})); if (!res.ok) throw new Error(d.detail || '加载失败'); return d
 }
 export async function fetchFormationNext(token) {
