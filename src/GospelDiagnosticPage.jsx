@@ -13,7 +13,7 @@ const GD_OPTS = {
   belief: ['「神不管我」', '「凡事都靠我自己」', '「我不配被爱」', '「神不够好」', '「我必须完美才被接纳」'],
 }
 import BackButton from './BackButton'
-import { diagnoseGospel, fetchGospelHistory } from './api'
+import { diagnoseDiscernment, fetchGospelHistory } from './api'
 import { getToken } from './auth'
 
 const STEPS = [
@@ -40,7 +40,7 @@ export default function GospelDiagnosticPage({ user, onBack, onNeedLogin }) {
   async function submit() {
     const t = getToken(); if (!t) { onNeedLogin && onNeedLogin(); return }
     setBusy(true); setError('')
-    try { const r = await diagnoseGospel({ ...vals, use_ai: true }, t); setResult(r); setView('result'); window.scrollTo({ top: 0 }) }
+    try { const r = await diagnoseDiscernment({ lens: 'gospel', inputs: vals, use_ai: true }, t); setResult(r.raw || r); setView('result'); window.scrollTo({ top: 0 }) }
     catch (e) { setError(e.message || '诊断失败') } finally { setBusy(false) }
   }
   async function openHistory() {

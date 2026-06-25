@@ -2082,6 +2082,30 @@ export async function fetchWorldviewMeta() {
   if (!res.ok) throw new Error('加载失败'); return res.json()
 }
 
+// ── 统一成长闭环 (/api/formation) ──
+export async function fetchFormationState(token) {
+  const res = await fetch(`${API_BASE}/formation/state`, { headers: token ? { Authorization: `Bearer ${token}` } : {} })
+  const d = await res.json().catch(() => ({})); if (!res.ok) throw new Error(d.detail || '加载失败'); return d
+}
+export async function fetchFormationTimeline(token, limit = 30) {
+  const res = await fetch(`${API_BASE}/formation/timeline?limit=${limit}`, { headers: token ? { Authorization: `Bearer ${token}` } : {} })
+  const d = await res.json().catch(() => ({})); if (!res.ok) throw new Error(d.detail || '加载失败'); return d
+}
+export async function fetchFormationNext(token) {
+  const res = await fetch(`${API_BASE}/formation/next`, { headers: token ? { Authorization: `Bearer ${token}` } : {} })
+  const d = await res.json().catch(() => ({})); if (!res.ok) throw new Error(d.detail || '加载失败'); return d
+}
+export async function postFormationEvent(payload, token) {
+  const res = await fetch(`${API_BASE}/formation/event`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) }, body: JSON.stringify(payload) })
+  const d = await res.json().catch(() => ({})); if (!res.ok) throw new Error(d.detail || '写入失败'); return d
+}
+
+// ── 统一辨识 (/api/discernment) ──
+export async function diagnoseDiscernment(payload, token) {
+  const res = await fetch(`${API_BASE}/discernment/diagnose`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) }, body: JSON.stringify(payload) })
+  const d = await res.json().catch(() => ({})); if (!res.ok) throw new Error(d.detail || '诊断失败'); return d
+}
+
 export async function fetchGiftProfile(token) {
   const res = await fetch(`${API_BASE}/gift/profile`, { headers: _gAuth(token) })
   const d = await res.json().catch(() => ({})); if (!res.ok) throw new Error(d.detail || '加载画像失败'); return d
