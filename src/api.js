@@ -2100,6 +2100,10 @@ export async function postFormationEvent(payload, token) {
   const res = await fetch(`${API_BASE}/formation/event`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) }, body: JSON.stringify(payload) })
   const d = await res.json().catch(() => ({})); if (!res.ok) throw new Error(d.detail || '写入失败'); return d
 }
+export async function postFormationBaseline(payload, token) {
+  const res = await fetch(`${API_BASE}/formation/baseline`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) }, body: JSON.stringify(payload) })
+  const d = await res.json().catch(() => ({})); if (!res.ok) throw new Error(d.detail || '诊断失败'); return d
+}
 
 // ── 统一辨识 (/api/discernment) ──
 export async function diagnoseDiscernment(payload, token) {

@@ -1,6 +1,22 @@
 // 自动抽取的「中文原文 → 英文」映射 / auto-extracted zh→en map.
 // 由 scripts/i18n_autoen_fill.mjs 机翻补全；缺失键回退显示中文原文。
 export default {
+  "从这里开始": "Start Here",
+  "用几分钟做一次基线诊断，系统会据此为你生成一条个性化的成长路径——而不是让你在众多入口里迷路。": "Take a few minutes for a baseline assessment, and the system will generate a personalized growth path for you — instead of leaving you lost among many entry points.",
+  "此刻你的处境 / 挣扎": "Your situation / struggle right now",
+  "例如：最近很焦虑，总想证明自己，读经祷告也提不起劲……": "e.g. Lately I've been anxious, always trying to prove myself, and can't get motivated to read or pray…",
+  "加做心灵体检（可选）": "Add a spiritual check-up (optional)",
+  "为每一项打分：0 = 完全没有，10 = 非常强烈。": "Rate each item: 0 = not at all, 10 = very strongly.",
+  "请先登录后再做基线诊断。": "Please log in before taking the baseline assessment.",
+  "请先用几句话写下你现在的处境，或做一下心灵体检。": "Please write a few words about your situation, or do the spiritual check-up first.",
+  "正在为你生成路径…": "Generating your path…",
+  "生成我的成长路径": "Generate my growth path",
+  "基线诊断": "Baseline assessment",
+  "为你定制的下一步": "Your tailored next steps",
+  "优先": "Priority",
+  "开始这一步": "Start this step",
+  "稍后再说，先回主页": "Maybe later — back to home",
+  "开始": "Start",
   "请先登录后再导出——你的灵修数据保存在你的账号下。": "Please sign in before exporting — your devotional data is stored under your account.",
   "暂无可导出的数据（请确认已登录、后端在运行，且已有记录）。": "Nothing to export yet (make sure you are signed in, the backend is running, and you have records).",
   "无法搜索：请确认已登录、且后端服务在运行。": "Can't search: please make sure you are signed in and the backend is running.",
