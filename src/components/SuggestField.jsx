@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { t } from '../i18n/runtime'
 
 /**
  * SuggestField — 通用「常见选项 + 手动输入」组合控件
@@ -37,7 +38,8 @@ export default function SuggestField({
   function pick(opt) {
     const cur = (value || '').trim()
     const parts = cur ? cur.split(/[；;，,、\n]/).map(x => x.trim()).filter(Boolean) : []
-    if (!parts.includes(opt)) onChange(cur ? cur + sep + opt : opt)
+    const v = t(opt)
+    if (!parts.includes(v)) onChange(cur ? cur + sep + v : v)
     setOpen(false)
   }
 
@@ -52,18 +54,18 @@ export default function SuggestField({
     <div style={{ position: 'relative', margin: '8px 0', ...style }} ref={ref}>
       {label && (
         <label style={{ display: 'block', fontSize: 12, opacity: 0.6, margin: '0 0 5px' }}>
-          {label}{required ? ' *' : ''}
+          {t(label)}{required ? ' *' : ''}
         </label>
       )}
       <div style={{ position: 'relative' }}>
         {multiline ? (
           <textarea
-            value={value || ''} onChange={e => onChange(e.target.value)} placeholder={placeholder}
+            value={value || ''} onChange={e => onChange(e.target.value)} placeholder={t(placeholder)}
             style={{ ...baseInput, minHeight, resize: 'vertical', lineHeight: 1.6 }}
           />
         ) : (
           <input
-            value={value || ''} onChange={e => onChange(e.target.value)} placeholder={placeholder}
+            value={value || ''} onChange={e => onChange(e.target.value)} placeholder={t(placeholder)}
             style={baseInput}
           />
         )}
@@ -75,7 +77,7 @@ export default function SuggestField({
               fontFamily: 'inherit', cursor: 'pointer', borderRadius: 7, whiteSpace: 'nowrap',
               border: '1px solid ' + hexToRgba(accent, 0.4), background: accentDim, color: accent,
             }}
-          >常见选项 ▾</button>
+          >{t('常见选项')} ▾</button>
         )}
         {open && options.length > 0 && (
           <div
@@ -92,7 +94,7 @@ export default function SuggestField({
                 onMouseEnter={e => { e.currentTarget.style.background = accentDim }}
                 onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
                 style={{ padding: '7px 10px', fontSize: 12.5, color: 'rgba(255,255,255,0.85)', borderRadius: 7, cursor: 'pointer', lineHeight: 1.5 }}
-              >{opt}</div>
+              >{t(opt)}</div>
             ))}
           </div>
         )}
@@ -121,7 +123,8 @@ export function SuggestMenu({ options = [], value, onChange, sep = '；', accent
   function pick(opt) {
     const cur = (value || '').trim()
     const parts = cur ? cur.split(/[；;，,、\n]/).map(x => x.trim()).filter(Boolean) : []
-    if (!parts.includes(opt)) onChange(cur ? cur + sep + opt : opt)
+    const v = t(opt)
+    if (!parts.includes(v)) onChange(cur ? cur + sep + v : v)
     setOpen(false)
   }
   return (
@@ -132,7 +135,7 @@ export function SuggestMenu({ options = [], value, onChange, sep = '；', accent
           padding: '3px 9px', fontSize: 11.5, fontFamily: 'inherit', cursor: 'pointer', borderRadius: 7,
           whiteSpace: 'nowrap', border: '1px solid ' + hexToRgba(accent, 0.4), background: accentDim, color: accent,
         }}
-      >{title} ▾</button>
+      >{t(title)} ▾</button>
       {open && (
         <div
           style={{
@@ -148,7 +151,7 @@ export function SuggestMenu({ options = [], value, onChange, sep = '；', accent
               onMouseEnter={e => { e.currentTarget.style.background = accentDim }}
               onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
               style={{ padding: '7px 10px', fontSize: 12.5, color: 'rgba(255,255,255,0.85)', borderRadius: 7, cursor: 'pointer', lineHeight: 1.5 }}
-            >{opt}</div>
+            >{t(opt)}</div>
           ))}
         </div>
       )}

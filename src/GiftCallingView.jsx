@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { t } from './i18n/runtime'
 import {
   fetchGiftMeta, fetchGiftProfile, assessGift, fetchGiftHistory, fetchGiftAssessment,
   submitGiftFeedback, fetchGiftFeedback, submitGiftReview, fetchGiftReviews,
@@ -321,18 +322,19 @@ function ComboField({ label, value, onChange, placeholder, options = [], multili
   function pick(opt) {
     const cur = (value || '').trim()
     const parts = cur ? cur.split(/[；;，,、\n]/).map(x => x.trim()).filter(Boolean) : []
-    if (!parts.includes(opt)) onChange(cur ? cur + sep + opt : opt)
+    const v = t(opt)
+    if (!parts.includes(v)) onChange(cur ? cur + sep + v : v)
     setOpen(false)
   }
   return (
     <div style={{ position: 'relative' }} ref={wrapRef}>
-      {label && <label style={lbl}>{label}{required ? ' *' : ''}</label>}
+      {label && <label style={lbl}>{t(label)}{required ? ' *' : ''}</label>}
       <div style={{ position: 'relative' }}>
         {multiline
-          ? <textarea value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder} style={{ ...ta, minHeight, paddingRight: 92 }} />
-          : <input value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder} style={{ ...inp, paddingRight: 92 }} />}
+          ? <textarea value={value} onChange={e => onChange(e.target.value)} placeholder={t(placeholder)} style={{ ...ta, minHeight, paddingRight: 92 }} />
+          : <input value={value} onChange={e => onChange(e.target.value)} placeholder={t(placeholder)} style={{ ...inp, paddingRight: 92 }} />}
         {options.length > 0 && (
-          <button type="button" onClick={() => setOpen(o => !o)} style={comboBtn}>常见选项 ▾</button>
+          <button type="button" onClick={() => setOpen(o => !o)} style={comboBtn}>{t('常见选项')} ▾</button>
         )}
         {open && options.length > 0 && (
           <div style={comboPanel}>
@@ -342,7 +344,7 @@ function ComboField({ label, value, onChange, placeholder, options = [], multili
                 onClick={() => pick(opt)}
                 onMouseEnter={e => { e.currentTarget.style.background = ACCENT_DIM }}
                 onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
-              >{opt}</div>
+              >{t(opt)}</div>
             ))}
           </div>
         )}

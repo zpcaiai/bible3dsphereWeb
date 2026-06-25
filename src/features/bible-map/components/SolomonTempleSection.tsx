@@ -7,6 +7,7 @@
  * 1 肘 ≈ 0.45 米；本图为教学示意复原。
  */
 import { useRef, useState } from 'react'
+import { t } from '../../../i18n/runtime'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls, Html } from '@react-three/drei'
 import { TEMPLE_PARTS } from '../../../data/templeStructure.js'
@@ -84,7 +85,7 @@ function Label({ c, y, text, tone = 'stone' }: { c: Vec2; y: number; text: strin
       <div style={{
         whiteSpace: 'nowrap', fontSize: 12, fontWeight: 700, color: palette[tone],
         textShadow: '0 1px 4px rgba(0,0,0,0.9)', letterSpacing: '0.04em', userSelect: 'none',
-      }}>{text}</div>
+      }}>{t(text)}</div>
     </Html>
   )
 }
@@ -199,8 +200,8 @@ export function SolomonTempleSection({ onBack }: Props) {
     <div className="flex h-screen flex-col">
       <header className="flex items-center justify-between border-b border-white/10 px-4 py-3">
         <div>
-          <h1 className="text-lg font-bold text-white">📐 所罗门圣殿 · 3D 结构剖面图</h1>
-          <p className="text-xs text-gray-400">第一圣殿（王上6-7；代下3-4）· 拖动旋转，点击构件查看经文资料</p>
+          <h1 className="text-lg font-bold text-white">{t('📐 所罗门圣殿 · 3D 结构剖面图')}</h1>
+          <p className="text-xs text-gray-400">{t('第一圣殿（王上6-7；代下3-4）· 拖动旋转，点击构件查看经文资料')}</p>
         </div>
         <div className="flex items-center gap-2">
           <button
@@ -209,16 +210,16 @@ export function SolomonTempleSection({ onBack }: Props) {
               cut ? 'border-amber-400/60 bg-amber-400/15 text-amber-300' : 'border-white/15 bg-white/5 text-gray-200 hover:bg-white/10'
             }`}
           >
-            {cut ? '🔪 剖视内部（开）' : '🏛️ 还原全貌'}
+            {cut ? t('🔪 剖视内部（开）') : t('🏛️ 还原全貌')}
           </button>
           <button
             onClick={() => controls.current?.reset()}
             className="rounded-lg border border-white/15 bg-white/5 px-3 py-1.5 text-sm text-gray-200 hover:bg-white/10"
           >
-            ↻ 复位视角
+            {t('↻ 复位视角')}
           </button>
           <button onClick={onBack} className="rounded-lg border border-white/15 bg-white/5 px-3 py-1.5 text-sm text-gray-200 hover:bg-white/10">
-            ‹ 返回
+            {t('‹ 返回')}
           </button>
         </div>
       </header>
@@ -249,12 +250,12 @@ export function SolomonTempleSection({ onBack }: Props) {
 
         {/* 图例 */}
         <div className="absolute left-4 top-4 rounded-xl border border-white/10 bg-black/70 p-3 backdrop-blur">
-          <div className="mb-1.5 text-xs font-bold text-gray-200">图例</div>
+          <div className="mb-1.5 text-xs font-bold text-gray-200">{t('图例')}</div>
           <div className="space-y-1">
             {legend.map((l) => (
               <div key={l.t} className="flex items-center gap-2 text-[11px] text-gray-300">
                 <span className="inline-block h-3 w-3 rounded-sm" style={{ background: l.c }} />
-                {l.t}
+                {t(l.t)}
               </div>
             ))}
           </div>
@@ -264,23 +265,23 @@ export function SolomonTempleSection({ onBack }: Props) {
         {part && (
           <div className="absolute right-4 top-4 max-w-xs rounded-xl border border-amber-400/20 bg-black/75 p-4 backdrop-blur">
             <div className="mb-1 flex items-start justify-between gap-3">
-              <h2 className="text-base font-bold text-amber-300">{part.name}</h2>
+              <h2 className="text-base font-bold text-amber-300">{t(part.name)}</h2>
               <button onClick={() => setSel(null)} className="text-gray-400 hover:text-white" aria-label="关闭">✕</button>
             </div>
-            <div className="mb-2 text-xs text-amber-400/90">{part.ref}</div>
-            {part.dims && <div className="mb-2 text-xs text-gray-400">尺寸：{part.dims}</div>}
-            <p className="text-sm leading-relaxed text-gray-200">{part.desc}</p>
+            <div className="mb-2 text-xs text-amber-400/90">{t(part.ref)}</div>
+            {part.dims && <div className="mb-2 text-xs text-gray-400">{t('尺寸：')}{t(part.dims)}</div>}
+            <p className="text-sm leading-relaxed text-gray-200">{t(part.desc)}</p>
           </div>
         )}
 
         {/* 提示 */}
         <div className="pointer-events-none absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full border border-white/10 bg-black/60 px-4 py-1.5 text-[11px] text-gray-300 backdrop-blur">
-          🖱️ 左键拖动旋转 · 滚轮缩放 · 右键平移 · 点击构件看注解
+          {t('🖱️ 左键拖动旋转 · 滚轮缩放 · 右键平移 · 点击构件看注解')}
         </div>
       </div>
 
       <div className="border-t border-white/10 px-4 py-2">
-        <p className="text-center text-[11px] text-gray-500">{DISCLAIMER}　1 肘 ≈ 0.45 米，几何为教学示意复原。</p>
+        <p className="text-center text-[11px] text-gray-500">{t(DISCLAIMER)}　{t('1 肘 ≈ 0.45 米，几何为教学示意复原。')}</p>
       </div>
     </div>
   )

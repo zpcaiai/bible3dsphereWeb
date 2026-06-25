@@ -2052,6 +2052,36 @@ export async function fetchGiftMeta() {
   if (!res.ok) throw new Error('加载失败'); return res.json()
 }
 
+// ── 世界观 / 生命叙事 (Worldview Formation OS, /api/worldview) ──
+export async function rewriteNarrative(payload, token) {
+  const res = await fetch(`${API_BASE}/worldview/narrative/rewrite`, {
+    method: 'POST', headers: _gAuth(token, true), body: JSON.stringify(payload),
+  })
+  const d = await res.json().catch(() => ({})); if (!res.ok) throw new Error(d.detail || '生成失败'); return d
+}
+
+export async function diagnoseWorldview(payload, token) {
+  const res = await fetch(`${API_BASE}/worldview/diagnose`, {
+    method: 'POST', headers: _gAuth(token, true), body: JSON.stringify(payload),
+  })
+  const d = await res.json().catch(() => ({})); if (!res.ok) throw new Error(d.detail || '诊断失败'); return d
+}
+
+export async function fetchWorldviewProfile(token) {
+  const res = await fetch(`${API_BASE}/worldview/profile`, { headers: _gAuth(token) })
+  const d = await res.json().catch(() => ({})); if (!res.ok) throw new Error(d.detail || '加载画像失败'); return d
+}
+
+export async function fetchWorldviewAssessments(token, limit = 20) {
+  const res = await fetch(`${API_BASE}/worldview/assessments?limit=${limit}`, { headers: _gAuth(token) })
+  const d = await res.json().catch(() => ({})); if (!res.ok) throw new Error(d.detail || '加载失败'); return d
+}
+
+export async function fetchWorldviewMeta() {
+  const res = await fetch(`${API_BASE}/worldview/meta`)
+  if (!res.ok) throw new Error('加载失败'); return res.json()
+}
+
 export async function fetchGiftProfile(token) {
   const res = await fetch(`${API_BASE}/gift/profile`, { headers: _gAuth(token) })
   const d = await res.json().catch(() => ({})); if (!res.ok) throw new Error(d.detail || '加载画像失败'); return d

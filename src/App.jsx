@@ -49,6 +49,7 @@ const MorningDewPage = lazyWithRetry(() => import('./MorningDewPage'))
 const EngineeringPage = lazyWithRetry(() => import('./EngineeringPage'))
 const BibleMapsPage = lazyWithRetry(() => import('./BibleMapsPage'))
 const BibleAtlasPage = lazyWithRetry(() => import('./features/bible-map/BibleAtlasPage'))
+const WorldviewPage = lazyWithRetry(() => import('./WorldviewPage'))
 const CommunityPage = lazyWithRetry(() => import('./CommunityPage'))
 const VoiceRoomPage = lazyWithRetry(() => import('./VoiceRoomPage'))
 const CommunionPage = lazyWithRetry(() => import('./CommunionPage'))
@@ -1700,6 +1701,7 @@ function AppContent() {
                   <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                     {[
                       { icon: '🔍', label: '每日一问', panel: 'soul-question' },
+                      { icon: '🧭', label: '世界观', panel: 'worldview' },
                       { icon: '⏱', label: '2分钟灵修', action: () => setShowQuickDevotion(true) },
                       { icon: '📊', label: '灵命图谱', panel: 'growth-map' },
                       { icon: '📈', label: '灵命成长', panel: 'engineering' },
@@ -2890,6 +2892,14 @@ function AppContent() {
           <div className="page-overlay">
             <Suspense fallback={null}>
               <BibleAtlasPage onBack={() => setActivePanel('sphere')} />
+            </Suspense>
+          </div>
+        )}
+
+        {activePanel === 'worldview' && (
+          <div className="page-overlay">
+            <Suspense fallback={null}>
+              <WorldviewPage onBack={() => setActivePanel('sphere')} />
             </Suspense>
           </div>
         )}
