@@ -13,11 +13,30 @@ const toast = (m, ty = 'info') => window.showToast?.(m, ty)
 
 const fmtDate = (s) => { try { return new Date(s).toLocaleString('zh-CN', { hour12: false }) } catch { return s || '' } }
 
+// 旧版本地灵修笔记（localStorage），与 DevotionJournalPage 一致，导出时一并合并，避免本地记录丢失
+function getLegacyLocalJournals() {
+  try {
+    const personal = localStorage.getItem('devotion_notes_personal')
+    const items = personal ? JSON.parse(personal) : []
+    return items.map((n) => ({
+      id: `local_${n.id || n.createdAt || Date.now()}`,
+      date: n.date || (n.createdAt ? new Date(n.createdAt).toISOString().slice(0, 10) : ''),
+      title: n.title || '', scripture: n.scripture || '', observation: n.observation || '',
+      reflection: n.reflection || '', application: n.application || '', prayer: n.prayer || '',
+      created_at: n.createdAt ? new Date(n.createdAt).toISOString() : null,
+    }))
+  } catch { return [] }
+}
+
 async function collect(parts) {
   const token = getToken()
   const out = { exportedAt: new Date().toISOString() }
   if (parts.journal) {
-    try { out.journals = (await fetchJournals(token, 500, 0)).items || [] } catch { out.journals = [] }
+    let api = []
+    try { api = (await fetchJournals(token, 500, 0)).items || [] } catch { api = [] }
+    const legacy = getLegacyLocalJournals()
+    const seen = new Set(api.map((j) => j.id))
+    out.journals = [...api, ...legacy.filter((j) => !seen.has(j.id))]
   }
   if (parts.prayer) {
     try { out.prayers = (await fetchPrayers(500, 0, token)).items || [] } catch { out.prayers = [] }
@@ -50,8 +69,10 @@ function toText(data) {
     for (const j of data.journals) {
       L.push(`◆ ${fmtDate(j.date || j.created_at)}${j.title ? ` · ${j.title}` : ''}`)
       if (j.scripture || j.scripture_ref) L.push(`  📖 ${j.scripture || j.scripture_ref}`)
+      if (j.observation) L.push(`  观察：${String(j.observation).replace(/\n/g, '\n  ')}`)
       const body = j.reflection || j.content || ''
       if (body) L.push(`  默想：${String(body).replace(/\n/g, '\n  ')}`)
+      if (j.application) L.push(`  应用：${String(j.application).replace(/\n/g, '\n  ')}`)
       if (j.prayer) L.push(`  祷告：${String(j.prayer).replace(/\n/g, '\n  ')}`)
       if (j.gratitude) L.push(`  感恩：${String(j.gratitude).replace(/\n/g, '\n  ')}`)
       L.push('')
@@ -119,10 +140,25 @@ export default function ExportDataPage({ onBack }) {
   const togglePart = (k) => setParts((p) => ({ ...p, [k]: !p[k] }))
   const nothing = Object.values(parts).every((v) => !v)
 
+  async function gather() {
+    const data = await collect(parts)
+    const total = (data.journals?.length || 0) + (data.prayers?.length || 0) + (data.sermons?.length || 0)
+      + (data.gospel?.length || 0) + (data.testimonies?.length || 0)
+      + (data.reading ? Object.keys(data.reading.by_book || {}).length : 0)
+    if (total === 0) {
+      toast(getToken()
+        ? t('暂无可导出的数据（请确认已登录、后端在运行，且已有记录）。')
+        : t('请先登录后再导出——你的灵修数据保存在你的账号下。'), 'error')
+      return null
+    }
+    return toText(data)
+  }
+
   async function exportTxt() {
     setBusy(true)
     try {
-      const text = toText(await collect(parts))
+      const text = await gather()
+      if (!text) return
       const blob = new Blob(['﻿' + text], { type: 'text/plain;charset=utf-8' })
       const a = document.createElement('a')
       a.href = URL.createObjectURL(blob)
@@ -137,7 +173,8 @@ export default function ExportDataPage({ onBack }) {
   async function exportPdf() {
     setBusy(true)
     try {
-      const text = toText(await collect(parts))
+      const text = await gather()
+      if (!text) return
       const w = window.open('', '_blank')
       if (!w) { toast(t('请允许弹出窗口'), 'error'); return }
       w.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>灵修数据导出</title>

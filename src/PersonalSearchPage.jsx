@@ -49,13 +49,13 @@ async function searchAll(kw, token) {
   const tasks = [
     (async () => {
       const items = (await fetchJournals(token, 500, 0)).items || []
-      const hits = items.filter((j) => [j.title, j.scripture, j.reflection, j.prayer, j.gratitude, j.content].map(_norm).join(' ').includes(k))
-        .map((j) => ({ id: j.id ?? j.date, title: j.title || j.scripture || '灵修日记', date: (j.date || j.created_at || '').slice(0, 10), snippet: _snippet(j.reflection || j.prayer || j.content || j.scripture, kw) }))
+      const hits = items.filter((j) => [j.title, j.scripture, j.observation, j.reflection, j.application, j.prayer, j.gratitude, j.content].map(_norm).join(' ').includes(k))
+        .map((j) => ({ id: j.id ?? j.date, title: j.title || j.scripture || '灵修日记', date: (j.date || j.created_at || '').slice(0, 10), snippet: _snippet(j.reflection || j.observation || j.application || j.prayer || j.content || j.scripture, kw) }))
       return hits.length ? { type: 'devotion', label: '灵修日记', items: hits } : null
     })(),
     (async () => {
       const items = (await fetchSermonJournals(token, 500, 0)).items || []
-      const hits = items.filter((sx) => [sx.title, sx.preacher, sx.scripture, sx.summary, sx.reflection, sx.lesson, sx.encouragement, sx.conclusion].map(_norm).join(' ').includes(k))
+      const hits = items.filter((sx) => [sx.title, sx.preacher, sx.scripture, sx.summary, sx.bibleStudy, sx.reflection, sx.lesson, sx.encouragement, sx.conclusion].map(_norm).join(' ').includes(k))
         .map((sx) => ({ id: sx.id ?? sx.date, title: sx.title || sx.scripture || '主日笔记', date: (sx.date || sx.created_at || '').slice(0, 10), snippet: _snippet(sx.summary || sx.reflection || sx.scripture, kw) }))
       return hits.length ? { type: 'sermon', label: '主日笔记', items: hits } : null
     })(),
@@ -83,7 +83,9 @@ async function searchAll(kw, token) {
 
   const settled = await Promise.allSettled(tasks)
   const groups = settled.filter((x) => x.status === 'fulfilled' && x.value).map((x) => x.value)
-  return { q: kw.trim(), groups }
+  const errors = settled.filter((x) => x.status === 'rejected').map((x) => String((x.reason && x.reason.message) || x.reason))
+  const failedAll = groups.length === 0 && errors.length === settled.length
+  return { q: kw.trim(), groups, errors, failedAll }
 }
 
 export default function PersonalSearchPage({ token, onBack, onOpenPanel }) {
@@ -151,9 +153,17 @@ export default function PersonalSearchPage({ token, onBack, onOpenPanel }) {
         {err && <div style={{ textAlign: 'center', padding: 24, color: '#ff6b6b', fontSize: 13 }}>{err}</div>}
 
         {result && !loading && result.groups?.length === 0 && (
-          <div style={{ textAlign: 'center', padding: '40px 16px', color: 'rgba(255,255,255,0.45)', fontSize: 13.5 }}>
-            {t("没有找到包含「")}{result.q}{t("」的记录。")}
-          </div>
+          result.failedAll ? (
+            <div style={{ textAlign: 'center', padding: '40px 16px', color: '#ffb3a0', fontSize: 13, lineHeight: 1.8 }}>
+              {t("无法搜索：请确认已登录、且后端服务在运行。")}
+              {result.errors?.[0] && <div style={{ fontSize: 11.5, color: 'rgba(255,255,255,0.4)', marginTop: 8 }}>{result.errors[0]}</div>}
+            </div>
+          ) : (
+            <div style={{ textAlign: 'center', padding: '40px 16px', color: 'rgba(255,255,255,0.45)', fontSize: 13.5 }}>
+              {t("没有找到包含「")}{result.q}{t("」的记录。")}
+              {!token && <div style={{ fontSize: 12, color: '#7dd3fc', marginTop: 10 }}>{t("（个人检索需要先登录）")}</div>}
+            </div>
+          )
         )}
 
         {result && !loading && result.groups?.map((g) => {

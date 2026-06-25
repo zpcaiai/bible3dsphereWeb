@@ -1,6 +1,10 @@
 // 自动抽取的「中文原文 → 英文」映射 / auto-extracted zh→en map.
 // 由 scripts/i18n_autoen_fill.mjs 机翻补全；缺失键回退显示中文原文。
 export default {
+  "请先登录后再导出——你的灵修数据保存在你的账号下。": "Please sign in before exporting — your devotional data is stored under your account.",
+  "暂无可导出的数据（请确认已登录、后端在运行，且已有记录）。": "Nothing to export yet (make sure you are signed in, the backend is running, and you have records).",
+  "无法搜索：请确认已登录、且后端服务在运行。": "Can't search: please make sure you are signed in and the backend is running.",
+  "（个人检索需要先登录）": "(Personal search requires signing in)",
   "可多选": "Multi-select",
   "本系统提供辅助性的世界观辨识与生命叙事重写，不是最终定论。最终方向需要圣经、祷告、教会共同体与牧者印证；如遇危机请立即寻求帮助与专业支持。": "This tool offers supportive worldview discernment and life-narrative rewriting—not a final verdict. The final direction needs Scripture, prayer, the church community, and pastoral confirmation. If you are in crisis, please seek help and professional support right away.",
   "请先登录后再使用": "Please sign in first.",

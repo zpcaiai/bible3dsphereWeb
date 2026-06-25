@@ -265,7 +265,7 @@ const spiritualPrinciples = [
 
 export default function DecisionSupportPage({ user, onBack, embedded = false, onNeedLogin }) {
   const [renderError, setRenderError] = useState(null)
-  const [activeTab, setActiveTab] = useState('personality') // new, history, principles
+  const [activeTab, setActiveTab] = useState('dashboard') // 心迹默认打开「今日心镜」
   const [loading, setLoading] = useState(false)
   const [decisions, setDecisions] = useState([])
   const [selectedDecision, setSelectedDecision] = useState(null)
