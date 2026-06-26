@@ -16,7 +16,20 @@ import { DISCLAIMER } from '../domain/constants'
 const C = 0.1 // 1 肘 → 世界单位（缩放，便于取景）
 
 type Vec2 = [number, number]
+type Vec3 = [number, number, number]
 interface SelFn { (id: string): void }
+
+const mat = (color: string, gold = false, bronze = false, opacity = 1) => (
+  <meshStandardMaterial
+    color={color}
+    transparent={opacity < 1}
+    opacity={opacity}
+    roughness={gold || bronze ? 0.35 : 0.85}
+    metalness={gold || bronze ? 0.8 : 0.08}
+    emissive={gold ? color : '#000000'}
+    emissiveIntensity={gold ? 0.22 : 0}
+  />
+)
 
 // ── 通用几何（坐标：x 东(+)/西(−)，z 北(+)/南(−)，y 上；单位：肘）──
 function Box({
@@ -34,24 +47,16 @@ function Box({
       onPointerOut={id ? () => { document.body.style.cursor = 'default' } : undefined}
     >
       <boxGeometry args={[w, h, d]} />
-      <meshStandardMaterial
-        color={color}
-        transparent={opacity < 1}
-        opacity={opacity}
-        roughness={gold ? 0.35 : 0.85}
-        metalness={gold ? 0.7 : 0.08}
-        emissive={gold ? color : '#000000'}
-        emissiveIntensity={gold ? 0.22 : 0}
-      />
+      {mat(color, gold, false, opacity)}
     </mesh>
   )
 }
 
 function Cyl({
-  c, r, rTop, base, top, color, id, onSel, seg = 24, bronze = false, gold = false,
+  c, r, rTop, base, top, color, id, onSel, seg = 24, bronze = false, gold = false, opacity = 1,
 }: {
   c: Vec2; r: number; rTop?: number; base: number; top: number; color: string
-  id?: string; onSel?: SelFn; seg?: number; bronze?: boolean; gold?: boolean
+  id?: string; onSel?: SelFn; seg?: number; bronze?: boolean; gold?: boolean; opacity?: number
 }) {
   const h = Math.max(0.001, (top - base) * C)
   return (
@@ -62,13 +67,7 @@ function Cyl({
       onPointerOut={id ? () => { document.body.style.cursor = 'default' } : undefined}
     >
       <cylinderGeometry args={[(rTop ?? r) * C, r * C, h, seg]} />
-      <meshStandardMaterial
-        color={color}
-        roughness={(bronze || gold) ? 0.35 : 0.8}
-        metalness={(bronze || gold) ? 0.8 : 0.1}
-        emissive={gold ? color : '#000000'}
-        emissiveIntensity={gold ? 0.2 : 0}
-      />
+      {mat(color, gold, bronze, opacity)}
     </mesh>
   )
 }
@@ -90,11 +89,184 @@ function Label({ c, y, text, tone = 'stone' }: { c: Vec2; y: number; text: strin
   )
 }
 
+// ── 家具组件 ──
+function Ark({ c, onSel }: { c: Vec2; onSel: SelFn }) {
+  const GOLD = '#f0d060'
+  const g = mat(GOLD, true)
+  return (
+    <group position={[c[0] * C, 0, c[1] * C]} onClick={(e: any) => { e.stopPropagation(); onSel('ark') }} onPointerOver={(e: any) => { e.stopPropagation(); document.body.style.cursor = 'pointer' }} onPointerOut={() => { document.body.style.cursor = 'default' }}>
+      {/* 柜体 2.5×1.5×1.5 */}
+      <mesh position={[0, 0.75 * C, 0]}>{g}<boxGeometry args={[2.5 * C, 1.5 * C, 1.5 * C]} /></mesh>
+      {/* 金边/冠 */}
+      <mesh position={[0, 1.55 * C, 0]}>{g}<boxGeometry args={[2.7 * C, 0.1 * C, 1.7 * C]} /></mesh>
+      <mesh position={[0, 0.05 * C, 0]}>{g}<boxGeometry args={[2.7 * C, 0.1 * C, 1.7 * C]} /></mesh>
+      {/* 四个金环 */}
+      {[[-1.15, 0.6], [1.15, 0.6], [-1.15, -0.6], [1.15, -0.6]].map(([x, z], i) => (
+        <mesh key={i} position={[x * C, 0.75 * C, z * C]} rotation={[0, 0, Math.PI / 2]}>{g}<torusGeometry args={[0.18 * C, 0.04 * C, 8, 16]} /></mesh>
+      ))}
+      {/* 两根杠 */}
+      <mesh position={[0, 0.75 * C, 1.15 * C]} rotation={[Math.PI / 2, 0, 0]}>{g}<cylinderGeometry args={[0.06 * C, 0.06 * C, 4.2 * C, 12]} /></mesh>
+      <mesh position={[0, 0.75 * C, -1.15 * C]} rotation={[Math.PI / 2, 0, 0]}>{g}<cylinderGeometry args={[0.06 * C, 0.06 * C, 4.2 * C, 12]} /></mesh>
+      {/* 施恩座 */}
+      <mesh position={[0, 1.55 * C, 0]}>{g}<boxGeometry args={[2.5 * C, 0.08 * C, 1.5 * C]} /></mesh>
+    </group>
+  )
+}
+
+function Cherub({ position, onSel, facing = 'center' }: { position: Vec3; onSel: SelFn; facing?: 'center' | 'outward' }) {
+  const GOLD = '#f0d060', GOLD_D = '#d8b040'
+  const g = mat(GOLD, true), gd = mat(GOLD_D, true)
+  const x = position[0] * C, y = position[1] * C, z = position[2] * C
+  const s = facing === 'center' ? -1 : 1
+  return (
+    <group position={[x, y, z]} onClick={(e: any) => { e.stopPropagation(); onSel('cherubim') }} onPointerOver={(e: any) => { e.stopPropagation(); document.body.style.cursor = 'pointer' }} onPointerOut={() => { document.body.style.cursor = 'default' }}>
+      {/* 身体 */}
+      <mesh position={[0, 4.5 * C, 0]}>{g}<boxGeometry args={[1.2 * C, 9 * C, 1.0 * C]} /></mesh>
+      {/* 头 */}
+      <mesh position={[0, 9.4 * C, 0]}>{gd}<sphereGeometry args={[0.7 * C, 16, 16]} /></mesh>
+      {/* 外翼（达墙） */}
+      <mesh position={[s * 4.5 * C, 7 * C, 0]} rotation={[0, 0, s * 0.55]}>{g}<boxGeometry args={[7 * C, 0.3 * C, 3.2 * C]} /></mesh>
+      {/* 内翼（相接） */}
+      <mesh position={[s * 1.2 * C, 7 * C, 0]} rotation={[0, 0, s * -0.35]}>{g}<boxGeometry args={[5 * C, 0.3 * C, 3.2 * C]} /></mesh>
+    </group>
+  )
+}
+
+function Menorah({ c, onSel }: { c: Vec2; onSel: SelFn }) {
+  const GOLD = '#f0d060', FLAME = '#ffcc40'
+  const g = mat(GOLD, true)
+  const f = mat(FLAME, true)
+  return (
+    <group position={[c[0] * C, 0, c[1] * C]} onClick={(e: any) => { e.stopPropagation(); onSel('lampstand') }} onPointerOver={(e: any) => { e.stopPropagation(); document.body.style.cursor = 'pointer' }} onPointerOut={() => { document.body.style.cursor = 'default' }}>
+      {/* 主干 */}
+      <mesh position={[0, 2.5 * C, 0]}>{g}<cylinderGeometry args={[0.12 * C, 0.15 * C, 5 * C, 12]} /></mesh>
+      {/* 底座 */}
+      <mesh position={[0, 0.15 * C, 0]}>{g}<cylinderGeometry args={[0.55 * C, 0.6 * C, 0.3 * C, 12]} /></mesh>
+      {/* 中焰 */}
+      <mesh position={[0, 5.1 * C, 0]}>{f}<sphereGeometry args={[0.22 * C, 12, 12]} /></mesh>
+      {/* 三对枝 */}
+      {[-1, 1].map((side) => (
+        [1.4, 2.6, 3.8].map((h, i) => {
+          const angle = side * (0.55 + i * 0.18)
+          const dx = Math.sin(angle) * 1.6 * C
+          const dy = Math.cos(angle) * 1.6 * C
+          return (
+            <group key={`${side}-${i}`}>
+              <mesh position={[dx * 0.5, (h * C) + dy * 0.5, 0]} rotation={[0, 0, -angle]}>{g}<cylinderGeometry args={[0.07 * C, 0.09 * C, 2.0 * C, 10]} /></mesh>
+              <mesh position={[dx, h * C + dy, 0]}>{f}<sphereGeometry args={[0.16 * C, 10, 10]} /></mesh>
+            </group>
+          )
+        })
+      ))}
+    </group>
+  )
+}
+
+function IncenseAltar({ c, onSel }: { c: Vec2; onSel: SelFn }) {
+  const GOLD = '#f0d060'
+  const g = mat(GOLD, true)
+  return (
+    <group position={[c[0] * C, 0, c[1] * C]} onClick={(e: any) => { e.stopPropagation(); onSel('incense') }} onPointerOver={(e: any) => { e.stopPropagation(); document.body.style.cursor = 'pointer' }} onPointerOut={() => { document.body.style.cursor = 'default' }}>
+      {/* 坛身 1×1×2 */}
+      <mesh position={[0, 1 * C, 0]}>{g}<boxGeometry args={[1 * C, 2 * C, 1 * C]} /></mesh>
+      {/* 四角 */}
+      {[[0.55, 0.55], [0.55, -0.55], [-0.55, 0.55], [-0.55, -0.55]].map(([x, z], i) => (
+        <mesh key={i} position={[x * C, 2.05 * C, z * C]}>{g}<coneGeometry args={[0.14 * C, 0.35 * C, 8]} /></mesh>
+      ))}
+      {/* 顶沿 */}
+      <mesh position={[0, 2.02 * C, 0]}>{g}<boxGeometry args={[1.2 * C, 0.06 * C, 1.2 * C]} /></mesh>
+      {/* 香烟 */}
+      <mesh position={[0, 2.45 * C, 0]}>{mat('#d0c0ff', true, false, 0.55)}<sphereGeometry args={[0.25 * C, 10, 10]} /></mesh>
+    </group>
+  )
+}
+
+function ShowbreadTable({ c, onSel }: { c: Vec2; onSel: SelFn }) {
+  const GOLD = '#c8a060', BREAD = '#e8b86d'
+  const g = mat(GOLD, true), b = mat(BREAD, false)
+  return (
+    <group position={[c[0] * C, 0, c[1] * C]} onClick={(e: any) => { e.stopPropagation(); onSel('table') }} onPointerOver={(e: any) => { e.stopPropagation(); document.body.style.cursor = 'pointer' }} onPointerOut={() => { document.body.style.cursor = 'default' }}>
+      {/* 桌面 */}
+      <mesh position={[0, 1.4 * C, 0]}>{g}<boxGeometry args={[2 * C, 0.12 * C, 1 * C]} /></mesh>
+      {/* 四腿 */}
+      {[[0.85, 0.35], [0.85, -0.35], [-0.85, 0.35], [-0.85, -0.35]].map(([x, z], i) => (
+        <mesh key={i} position={[x * C, 0.7 * C, z * C]}>{g}<cylinderGeometry args={[0.06 * C, 0.06 * C, 1.4 * C, 8]} /></mesh>
+      ))}
+      {/* 12 个饼 */}
+      {Array.from({ length: 12 }, (_, i) => {
+        const ix = (i % 6) - 2.5, iz = i < 6 ? 0.22 : -0.22
+        return <mesh key={i} position={[ix * 0.28 * C, 1.55 * C, iz * C]}>{b}<boxGeometry args={[0.24 * C, 0.08 * C, 0.18 * C]} /></mesh>
+      })}
+    </group>
+  )
+}
+
+function BronzePillar({ c, id, onSel }: { c: Vec2; id: string; onSel: SelFn }) {
+  const BRONZE = '#b87333', BRONZE_D = '#a8632a'
+  const b = mat(BRONZE, false, true), bd = mat(BRONZE_D, false, true)
+  return (
+    <group position={[c[0] * C, 0, c[1] * C]} onClick={(e: any) => { e.stopPropagation(); onSel(id) }} onPointerOver={(e: any) => { e.stopPropagation(); document.body.style.cursor = 'pointer' }} onPointerOut={() => { document.body.style.cursor = 'default' }}>
+      {/* 柱身 18 肘 */}
+      <mesh position={[0, 9 * C, 0]}>{b}<cylinderGeometry args={[1.9 * C, 2.0 * C, 18 * C, 18]} /></mesh>
+      {/* 柱顶 5 肘 */}
+      <mesh position={[0, 20.5 * C, 0]}>{bd}<cylinderGeometry args={[2.5 * C, 2.0 * C, 5 * C, 18]} /></mesh>
+      {/* 百合花装饰 */}
+      <mesh position={[0, 22.8 * C, 0]}>{b}<coneGeometry args={[2.6 * C, 0.6 * C, 12]} /></mesh>
+      {/* 石榴网子（用环示意） */}
+      {[20.2, 20.8, 21.4].map((y, i) => (
+        <mesh key={i} position={[0, y * C, 0]} rotation={[Math.PI / 2, 0, 0]}>{bd}<torusGeometry args={[2.15 * C, 0.08 * C, 6, 24]} /></mesh>
+      ))}
+    </group>
+  )
+}
+
+function BronzeAltar({ c, onSel }: { c: Vec2; onSel: SelFn }) {
+  const BRONZE = '#b87333', BRONZE_D = '#a8632a'
+  const b = mat(BRONZE, false, true), bd = mat(BRONZE_D, false, true)
+  return (
+    <group position={[c[0] * C, 0, c[1] * C]} onClick={(e: any) => { e.stopPropagation(); onSel('altar') }} onPointerOver={(e: any) => { e.stopPropagation(); document.body.style.cursor = 'pointer' }} onPointerOut={() => { document.body.style.cursor = 'default' }}>
+      {/* 坛基 20×20×10 */}
+      <mesh position={[0, 4 * C, 0]}>{bd}<boxGeometry args={[20 * C, 8 * C, 20 * C]} /></mesh>
+      <mesh position={[0, 9 * C, 0]}>{b}<boxGeometry args={[14 * C, 2 * C, 14 * C]} /></mesh>
+      {/* 四角 */}
+      {[[9.7, 9.7], [9.7, -9.7], [-9.7, 9.7], [-9.7, -9.7]].map(([x, z], i) => (
+        <mesh key={i} position={[x * C, 10.4 * C, z * C]}>{b}<coneGeometry args={[0.5 * C, 1.2 * C, 6]} /></mesh>
+      ))}
+      {/* 坛坡（由南向北） */}
+      <mesh position={[0, 1.5 * C, 12 * C]} rotation={[0.2, 0, 0]}>{bd}<boxGeometry args={[6 * C, 0.5 * C, 8 * C]} /></mesh>
+    </group>
+  )
+}
+
+function BronzeSea({ c, onSel }: { c: Vec2; onSel: SelFn }) {
+  const BRONZE = '#b87333', OX = '#9a6a3a'
+  const b = mat(BRONZE, false, true), ox = mat(OX, false, true)
+  return (
+    <group position={[c[0] * C, 0, c[1] * C]} onClick={(e: any) => { e.stopPropagation(); onSel('sea') }} onPointerOver={(e: any) => { e.stopPropagation(); document.body.style.cursor = 'pointer' }} onPointerOut={() => { document.body.style.cursor = 'default' }}>
+      {/* 十二牛底座（简化为3组方向） */}
+      {[0, 1, 2, 3].map((dir) => {
+        const angle = (dir * Math.PI) / 2
+        const rad = 3.8 * C
+        return (
+          <group key={dir} rotation={[0, angle, 0]}>
+            {[0, 1, 2].map((i) => (
+              <mesh key={i} position={[0, 1 * C, (i - 1) * 2.2 * C + rad]}>{ox}<boxGeometry args={[1.2 * C, 2 * C, 2.2 * C]} /></mesh>
+            ))}
+          </group>
+        )
+      })}
+      {/* 海盆 */}
+      <mesh position={[0, 5 * C, 0]}>{b}<cylinderGeometry args={[5.4 * C, 5.0 * C, 5 * C, 24]} /></mesh>
+      {/* 盆沿 */}
+      <mesh position={[0, 7.55 * C, 0]}>{b}<torusGeometry args={[5.4 * C, 0.12 * C, 8, 24]} /></mesh>
+    </group>
+  )
+}
+
 // ── 圣殿场景 ──
 function TempleScene({ cut, onSel }: { cut: boolean; onSel: SelFn }) {
   const ghost = cut ? 0.1 : 1 // 被剖去的构件以「幽灵面」淡显
   const STONE = '#cfc5b0', CEDAR = '#7a5c3a', COURT = '#8d7f63'
-  const BRONZE = '#b87333', BRONZE_D = '#a8632a', GOLD = '#f0d060', GOLD_D = '#d8b040'
 
   // 旁屋（3 层）单侧渲染辅助
   const stories = (cx: number, cz: number, w: number, d: number, op = 1) => (
@@ -108,6 +280,11 @@ function TempleScene({ cut, onSel }: { cut: boolean; onSel: SelFn }) {
     <group>
       {/* 院基台 */}
       <Box c={[-2, 0]} size={[150, 96]} base={-2.5} top={0} color={COURT} id="court" onSel={onSel} />
+
+      {/* 殿内地板（三个区域） */}
+      <Box c={[-40, 0]} size={[20, 20]} base={0} top={0.15} color="#c6b8a0" opacity={0.8} />
+      <Box c={[-20, 0]} size={[40, 20]} base={0} top={0.15} color="#c6b8a0" opacity={0.8} />
+      <Box c={[15, 0]} size={[10, 20]} base={0} top={0.15} color="#c6b8a0" opacity={0.8} />
 
       {/* ── 殿墙（殿身长60×宽20×高30 肘）── */}
       <Box c={[-51, 0]} size={[2, 24]} base={0} top={30} color={STONE} id="walls" onSel={onSel} />         {/* 西墙 */}
@@ -135,34 +312,35 @@ function TempleScene({ cut, onSel }: { cut: boolean; onSel: SelFn }) {
       {stories(-54.5, 0, 5, 32)}
 
       {/* 铜柱 雅斤（南）/ 波阿斯（北）*/}
-      <Cyl c={[24, -7]} r={1.9} base={0} top={18} color={BRONZE} id="jachin" onSel={onSel} bronze />
-      <Cyl c={[24, -7]} r={2.5} base={18} top={23} color={BRONZE_D} id="jachin" onSel={onSel} bronze />
-      <Cyl c={[24, 7]} r={1.9} base={0} top={18} color={BRONZE} id="boaz" onSel={onSel} bronze />
-      <Cyl c={[24, 7]} r={2.5} base={18} top={23} color={BRONZE_D} id="boaz" onSel={onSel} bronze />
+      <BronzePillar c={[24, -7]} id="jachin" onSel={onSel} />
+      <BronzePillar c={[24, 7]} id="boaz" onSel={onSel} />
 
       {/* 铜祭坛（20×20×10）*/}
-      <Box c={[45, 0]} size={[20, 20]} base={0} top={8} color={BRONZE_D} id="altar" onSel={onSel} />
-      <Box c={[45, 0]} size={[14, 14]} base={8} top={10} color={BRONZE} id="altar" onSel={onSel} />
+      <BronzeAltar c={[45, 0]} onSel={onSel} />
 
       {/* 铜海（径10·高5，立于十二铜牛）*/}
-      <Cyl c={[40, -25]} r={3} base={0} top={2.5} color="#8a5a2a" id="sea-base" onSel={onSel} seg={12} bronze />
-      <Cyl c={[40, -25]} r={5} rTop={5.4} base={2.5} top={7.5} color={BRONZE} id="sea" onSel={onSel} bronze />
+      <BronzeSea c={[40, -25]} onSel={onSel} />
 
       {/* ── 内殿陈设（剖视时可见）── */}
-      {/* 至圣所：约柜 + 两基路伯（翅膀相接达于两墙）*/}
-      <Box c={[-40, 0]} size={[2.5, 1.5]} base={0} top={1.5} color={GOLD} id="ark" onSel={onSel} gold />
-      <Box c={[-40, 4]} size={[1.5, 1.5]} base={0} top={10} color={GOLD_D} id="cherubim" onSel={onSel} gold />
-      <Box c={[-40, -4]} size={[1.5, 1.5]} base={0} top={10} color={GOLD_D} id="cherubim" onSel={onSel} gold />
-      <Box c={[-40, 0]} size={[3, 18]} base={8.5} top={9.3} color={GOLD_D} id="cherubim" onSel={onSel} gold />
+      {/* 至圣所：约柜 + 两基路伯 */}
+      <Ark c={[-40, 0]} onSel={onSel} />
+      <Cherub position={[-40, 0, 6.5]} onSel={onSel} facing="center" />
+      <Cherub position={[-40, 0, -6.5]} onSel={onSel} facing="center" />
 
       {/* 圣所：金香坛 + 金灯台×10 + 陈设饼桌×10 */}
-      <Box c={[-28, 0]} size={[1, 1]} base={0} top={2} color={GOLD} id="incense" onSel={onSel} gold />
-      {[-26, -20, -14, -8, -2].map((x) => (
-        <group key={x}>
-          <Cyl c={[x, 6]} r={0.5} base={0} top={3} color={GOLD} id="lampstand" onSel={onSel} seg={10} gold />
-          <Cyl c={[x, -6]} r={0.5} base={0} top={3} color={GOLD} id="lampstand" onSel={onSel} seg={10} gold />
-          <Box c={[x + 3, 3]} size={[2, 1.2]} base={0} top={1.5} color="#c8a060" id="table" onSel={onSel} gold />
-          <Box c={[x + 3, -3]} size={[2, 1.2]} base={0} top={1.5} color="#c8a060" id="table" onSel={onSel} gold />
+      <IncenseAltar c={[-28, 0]} onSel={onSel} />
+      {/* 右五（北） */}
+      {[-22, -16, -10, -4, 2].map((x, i) => (
+        <group key={`n-${i}`}>
+          <Menorah c={[x, 6]} onSel={onSel} />
+          <ShowbreadTable c={[x + 2, 3]} onSel={onSel} />
+        </group>
+      ))}
+      {/* 左五（南） */}
+      {[-22, -16, -10, -4, 2].map((x, i) => (
+        <group key={`s-${i}`}>
+          <Menorah c={[x, -6]} onSel={onSel} />
+          <ShowbreadTable c={[x + 2, -3]} onSel={onSel} />
         </group>
       ))}
 
@@ -175,6 +353,9 @@ function TempleScene({ cut, onSel }: { cut: boolean; onSel: SelFn }) {
       <Label c={[45, 0]} y={13} text="铜祭坛" tone="bronze" />
       <Label c={[40, -25]} y={10} text="铜海" tone="bronze" />
       {cut && <Label c={[-40, 0]} y={3.2} text="约柜" tone="gold" />}
+      {cut && <Label c={[-28, 0]} y={4.5} text="金香坛" tone="gold" />}
+      {cut && <Label c={[-16, 6]} y={6} text="金灯台" tone="gold" />}
+      {cut && <Label c={[-14, 3]} y={3.5} text="陈设饼桌" tone="gold" />}
       <Label c={[62, 0]} y={2} text="← 殿门朝东 (East)" tone="east" />
     </group>
   )
