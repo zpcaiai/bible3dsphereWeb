@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { SuggestMenu } from './components/SuggestField'
 const CHK_PRAYER_OPTS = ['为家人的健康与平安', '为工作 / 学业', '为一个还未信主的朋友', '为教会与牧者', '为我正在做的决定', '为我心里的挣扎与软弱', '为国家 / 世界的需要']
 const CHK_GRAT_OPTS = ['感谢今天的平安', '感谢一位家人 / 朋友', '感谢神的供应', '感谢一次及时的帮助', '感谢主的话语与同在']
-import { submitCheckin, postFormationEvent } from './api'
+import { submitCheckin } from './api'
 
 const MOOD_OPTIONS = ['非常好', '比较好', '一般', '比较差', '很差']
 const SLEEP_OPTIONS = ['充足', '尚可', '较少', '很少', '失眠']
@@ -187,7 +187,6 @@ export default function CheckInPage({ user, emotionLabel, emotionQuery, token, o
     } catch (err) {
       console.warn('[checkin] tag sync failed:', err)
     }
-    try { await postFormationEvent({ source: 'checkin', event_type: 'checkin', title: '今日签到', summary: emotionLabel || '', severity: 'green' }, token) } catch (e) { /* best-effort */ }
     setSubmitted(true)
   }
 

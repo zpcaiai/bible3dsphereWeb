@@ -4,7 +4,7 @@
  */
 import { useEffect, useState } from 'react'
 import BackButton from './BackButton'
-import { fetchVapidKey, fetchPushPrefs, subscribePush, savePushPrefs, testPush, fetchCareConsent, saveCareConsent } from './api'
+import { fetchVapidKey, fetchPushPrefs, subscribePush, savePushPrefs, testPush } from './api'
 import { getToken } from './auth'
 
 function urlBase64ToUint8Array(base64String) {
@@ -27,8 +27,6 @@ export default function ReminderSettings({ onBack }) {
   const [eveningOn, setEveningOn] = useState(true)
   const [morningTime, setMorningTime] = useState('07:00')
   const [eveningTime, setEveningTime] = useState('21:30')
-  const [growthOn, setGrowthOn] = useState(true)
-  const [shareCare, setShareCare] = useState(true)
   const [busy, setBusy] = useState(false)
   const [msg, setMsg] = useState('')
 
@@ -41,9 +39,7 @@ export default function ReminderSettings({ onBack }) {
       if (r.evening_time) setEveningTime(r.evening_time)
       if (typeof r.morning_on === 'boolean') setMorningOn(r.morning_on)
       if (typeof r.evening_on === 'boolean') setEveningOn(r.evening_on)
-      if (typeof r.growth_on === 'boolean') setGrowthOn(r.growth_on)
     }).catch(() => {})
-    if (t) fetchCareConsent(t).then(r => { if (typeof r.share_formation_flags === 'boolean') setShareCare(r.share_formation_flags) }).catch(() => {})
   }, [])
 
   async function enable() {
@@ -63,7 +59,7 @@ export default function ReminderSettings({ onBack }) {
       await subscribePush({
         endpoint: j.endpoint, p256dh: j.keys.p256dh, auth: j.keys.auth,
         morning_on: morningOn, evening_on: eveningOn,
-        morning_time: morningTime, evening_time: eveningTime, growth_on: growthOn,
+        morning_time: morningTime, evening_time: eveningTime,
       }, getToken())
       setSubscribed(true); setMsg('✓ 提醒已开启')
     } catch (e) { setMsg('开启失败：' + (e.message || '')) }
@@ -73,7 +69,7 @@ export default function ReminderSettings({ onBack }) {
   async function saveTimes() {
     setBusy(true); setMsg('')
     try {
-      await savePushPrefs({ morning_on: morningOn, evening_on: eveningOn, morning_time: morningTime, evening_time: eveningTime, growth_on: growthOn }, getToken())
+      await savePushPrefs({ morning_on: morningOn, evening_on: eveningOn, morning_time: morningTime, evening_time: eveningTime }, getToken())
       setMsg('✓ 已保存')
     } catch (e) { setMsg(e.message || '保存失败') }
     finally { setBusy(false) }
@@ -113,30 +109,6 @@ export default function ReminderSettings({ onBack }) {
           <Row label="🌅 晨更提醒" on={morningOn} setOn={setMorningOn} time={morningTime} setTime={setMorningTime} />
           <div style={{ height: 1, background: 'rgba(255,255,255,0.06)', margin: '14px 0' }} />
           <Row label="🌙 晚祷提醒" on={eveningOn} setOn={setEveningOn} time={eveningTime} setTime={setEveningTime} />
-        </div>
-
-        <div style={card}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-            <div>
-              <div style={{ fontSize: 14, fontWeight: 600 }}>🌱 成长轻推</div>
-              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', marginTop: 2, lineHeight: 1.5 }}>每天午间一条「今日该做」，据你的成长画像（逾期纪律 / 未跟进的诊断）生成</div>
-            </div>
-            <button onClick={() => setGrowthOn(!growthOn)} style={{ width: 46, height: 26, borderRadius: 13, border: 'none', cursor: 'pointer', background: growthOn ? '#34c759' : 'rgba(255,255,255,0.18)', position: 'relative', flexShrink: 0 }}>
-              <span style={{ position: 'absolute', top: 3, left: growthOn ? 23 : 3, width: 20, height: 20, borderRadius: '50%', background: '#fff', transition: 'all .2s' }} />
-            </button>
-          </div>
-        </div>
-
-        <div style={card}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-            <div>
-              <div style={{ fontSize: 14, fontWeight: 600 }}>🔒 关怀可见性</div>
-              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', marginTop: 2, lineHeight: 1.5 }}>允许牧者 / 小组长在关怀汇总中看到你近期的风险信号（仅类别与时间，不含日志内容）。关闭后你的数据不进入任何关怀汇总。</div>
-            </div>
-            <button onClick={async () => { const v = !shareCare; setShareCare(v); try { await saveCareConsent(v, getToken()); setMsg('✓ 关怀可见性已更新') } catch (e) { setMsg('保存失败') } }} style={{ width: 46, height: 26, borderRadius: 13, border: 'none', cursor: 'pointer', background: shareCare ? '#34c759' : 'rgba(255,255,255,0.18)', position: 'relative', flexShrink: 0 }}>
-              <span style={{ position: 'absolute', top: 3, left: shareCare ? 23 : 3, width: 20, height: 20, borderRadius: '50%', background: '#fff', transition: 'all .2s' }} />
-            </button>
-          </div>
         </div>
 
         {!subscribed ? (

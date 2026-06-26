@@ -1836,10 +1836,6 @@ export async function fetchFuelMeta() {
 export async function fetchFuelPack(key, ai = 0) {
   const res = await fetch(`${API_BASE}/fuel/pack/${key}?ai=${ai}`); if (!res.ok) throw new Error('加载失败'); return res.json()
 }
-export async function fetchRecommendedFuel(token) {
-  const res = await fetch(`${API_BASE}/formation/recommend`, { headers: token ? { Authorization: `Bearer ${token}` } : {} })
-  const d = await res.json().catch(() => ({})); if (!res.ok) throw new Error(d.detail || '加载失败'); return d
-}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 双属灵 Agent / Spiritual Agents (司布真 / 钟马田)
@@ -2084,50 +2080,6 @@ export async function fetchWorldviewAssessments(token, limit = 20) {
 export async function fetchWorldviewMeta() {
   const res = await fetch(`${API_BASE}/worldview/meta`)
   if (!res.ok) throw new Error('加载失败'); return res.json()
-}
-
-// ── 统一成长闭环 (/api/formation) ──
-export async function fetchFormationState(token) {
-  const res = await fetch(`${API_BASE}/formation/state`, { headers: token ? { Authorization: `Bearer ${token}` } : {} })
-  const d = await res.json().catch(() => ({})); if (!res.ok) throw new Error(d.detail || '加载失败'); return d
-}
-export async function fetchFormationTimeline(token, limit = 30, source = null) {
-  const qs = new URLSearchParams({ limit: String(limit) }); if (source) qs.set('source', source)
-  const res = await fetch(`${API_BASE}/formation/timeline?${qs.toString()}`, { headers: token ? { Authorization: `Bearer ${token}` } : {} })
-  const d = await res.json().catch(() => ({})); if (!res.ok) throw new Error(d.detail || '加载失败'); return d
-}
-export async function fetchFormationNext(token) {
-  const res = await fetch(`${API_BASE}/formation/next`, { headers: token ? { Authorization: `Bearer ${token}` } : {} })
-  const d = await res.json().catch(() => ({})); if (!res.ok) throw new Error(d.detail || '加载失败'); return d
-}
-export async function fetchFormationCurve(token, days = 90, bucket = 'week') {
-  const qs = new URLSearchParams({ days: String(days), bucket })
-  const res = await fetch(`${API_BASE}/formation/curve?${qs.toString()}`, { headers: token ? { Authorization: `Bearer ${token}` } : {} })
-  const d = await res.json().catch(() => ({})); if (!res.ok) throw new Error(d.detail || '加载失败'); return d
-}
-
-// ── 关怀可见性同意 (/api/care/my-consent) ──
-export async function fetchCareConsent(token) {
-  const res = await fetch(`${API_BASE}/care/my-consent`, { headers: token ? { Authorization: `Bearer ${token}` } : {} })
-  const d = await res.json().catch(() => ({})); if (!res.ok) throw new Error(d.detail || '加载失败'); return d
-}
-export async function saveCareConsent(share, token) {
-  const res = await fetch(`${API_BASE}/care/my-consent`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) }, body: JSON.stringify({ share_formation_flags: share }) })
-  const d = await res.json().catch(() => ({})); if (!res.ok) throw new Error(d.detail || '保存失败'); return d
-}
-export async function postFormationEvent(payload, token) {
-  const res = await fetch(`${API_BASE}/formation/event`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) }, body: JSON.stringify(payload) })
-  const d = await res.json().catch(() => ({})); if (!res.ok) throw new Error(d.detail || '写入失败'); return d
-}
-export async function postFormationBaseline(payload, token) {
-  const res = await fetch(`${API_BASE}/formation/baseline`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) }, body: JSON.stringify(payload) })
-  const d = await res.json().catch(() => ({})); if (!res.ok) throw new Error(d.detail || '诊断失败'); return d
-}
-
-// ── 统一辨识 (/api/discernment) ──
-export async function diagnoseDiscernment(payload, token) {
-  const res = await fetch(`${API_BASE}/discernment/diagnose`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) }, body: JSON.stringify(payload) })
-  const d = await res.json().catch(() => ({})); if (!res.ok) throw new Error(d.detail || '诊断失败'); return d
 }
 
 export async function fetchGiftProfile(token) {

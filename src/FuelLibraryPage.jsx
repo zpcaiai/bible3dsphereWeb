@@ -4,8 +4,7 @@
  */
 import { useEffect, useState } from 'react'
 import BackButton from './BackButton'
-import { fetchFuelMeta, fetchFuelPack, fetchRecommendedFuel } from './api'
-import { getToken } from './auth'
+import { fetchFuelMeta, fetchFuelPack } from './api'
 
 const card = { background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, padding: 16, marginBottom: 12 }
 
@@ -13,10 +12,8 @@ export default function FuelLibraryPage({ onClose }) {
   const [struggles, setStruggles] = useState([])
   const [pack, setPack] = useState(null)
   const [loading, setLoading] = useState(false)
-  const [rec, setRec] = useState([])
 
   useEffect(() => { fetchFuelMeta().then(r => setStruggles(r.struggles || [])).catch(() => {}) }, [])
-  useEffect(() => { fetchRecommendedFuel(getToken()).then(r => setRec((r.fuel || []).filter(x => (x.score || 0) > 0).slice(0, 3))).catch(() => {}) }, [])
   async function open(key) { setLoading(true); try { const r = await fetchFuelPack(key, 0); setPack(r.pack) } catch (e) {} finally { setLoading(false) } }
 
   return (
@@ -35,19 +32,6 @@ export default function FuelLibraryPage({ onClose }) {
                 不按作者分区，而按你此刻的困扰组织。选一个，我把经文与多位属灵前辈的洞见为你组装成一份养料。
               </div>
             </div>
-            {rec.length > 0 && (
-              <div style={{ marginBottom: 14 }}>
-                <div style={{ fontSize: 12, fontWeight: 700, color: '#c4b5fd', marginBottom: 8 }}>🌱 为你推荐 · 据你的成长画像</div>
-                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                  {rec.map(s => (
-                    <button key={s.key} onClick={() => open(s.key)} style={{ cursor: 'pointer', borderRadius: 12, padding: '10px 14px', background: `linear-gradient(135deg, ${s.color}33, rgba(255,255,255,0.03))`, border: `1px solid ${s.color}66`, color: '#fff', display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <span style={{ fontSize: 18 }}>{s.icon}</span>
-                      <span style={{ fontSize: 13.5, fontWeight: 700 }}>{s.name}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 10 }}>
               {struggles.map(s => (
                 <button key={s.key} onClick={() => open(s.key)} style={{ cursor: 'pointer', borderRadius: 14, padding: '18px 14px', textAlign: 'center', background: `linear-gradient(135deg, ${s.color}22, rgba(255,255,255,0.02))`, border: `1px solid ${s.color}40`, color: '#fff' }}>

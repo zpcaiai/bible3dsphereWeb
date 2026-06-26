@@ -30,7 +30,6 @@ export default function CareDashboardPage({ user, token, churchId: churchIdProp,
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [busy, setBusy] = useState('')
-  const [flags, setFlags] = useState(null)
 
   const load = useCallback(async () => {
     if (!churchId) return
@@ -40,10 +39,6 @@ export default function CareDashboardPage({ user, token, churchId: churchIdProp,
       if (r.status === 403) throw new Error('你没有权限查看这个小组的关怀面板。')
       if (!r.ok) throw new Error('加载失败，请稍后再试。')
       setData(await r.json())
-      try {
-        const fr = await fetch(`${API_BASE}/care/groups/${churchId}/formation-flags`, { headers: authHeaders(token) })
-        setFlags(fr.ok ? await fr.json() : null)
-      } catch { setFlags(null) }
     } catch (e) {
       setError(e.message); setData(null)
     } finally {
@@ -126,39 +121,6 @@ export default function CareDashboardPage({ user, token, churchId: churchIdProp,
               </li>
             ))}
           </ul>
-
-          {flags && flags.restricted && (
-            <p className="mt-6 text-xs text-slate-400">成长风险汇总仅向牧者级开放；小组长请使用上方关怀信号。</p>
-          )}
-          {flags && !flags.restricted && (
-            <div className="mt-6">
-              <h2 className="text-sm font-semibold mb-1">成长风险汇总 · 近 {flags.window_days} 天</h2>
-              <p className="text-xs text-slate-400 mb-3">由统一成长事件聚合，仅显示风险类别与时间，不含日志全文——帮助你看见谁这阵子可能需要主动关怀。</p>
-              {(!flags.items || flags.items.length === 0) && (
-                <p className="text-sm text-slate-500">近期没有需要留意的成长风险信号。</p>
-              )}
-              <ul className="space-y-2">
-                {(flags.items || []).map((m) => (
-                  <li key={m.user_id} className={`border rounded-lg p-3 ${m.risk === 'red' ? 'bg-red-50 border-red-200' : 'bg-amber-50 border-amber-200'}`}>
-                    <div className="flex justify-between items-center gap-2">
-                      <div className="font-medium">{m.name} <span className="text-xs text-slate-400">{m.email_masked}</span></div>
-                      <span className={`text-xs px-2 py-0.5 rounded shrink-0 ${m.risk === 'red' ? 'bg-red-200 text-red-800' : 'bg-amber-200 text-amber-800'}`}>
-                        {m.risk === 'red' ? '高负荷' : '需留意'}{m.red ? ` · ${m.red}红` : ''}{m.amber ? ` · ${m.amber}黄` : ''}
-                      </span>
-                    </div>
-                    <div className="flex flex-wrap gap-1 mt-2">
-                      {(m.flags || []).map((f, i) => (
-                        <span key={i} className="text-xs bg-white/70 border rounded px-2 py-0.5">
-                          {f.title}{f.at ? ` · ${String(f.at).slice(5, 10)}` : ''}
-                        </span>
-                      ))}
-                    </div>
-                    <div className="text-xs text-slate-400 mt-1">最近活动：{m.last_at ? String(m.last_at).slice(0, 10) : '—'}</div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
         </>
       )}
     </div>
