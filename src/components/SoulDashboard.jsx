@@ -17,7 +17,6 @@ import WaitingPathPage from '../WaitingPathPage'
 import ExamenPage from '../ExamenPage'
 import ReminderSettings from '../ReminderSettings'
 import PracticeHubPage from '../PracticeHubPage'
-import GrowthCurve from './GrowthCurve'
 import PlanetHome from '../PlanetHome'
 import PilgrimJourneyPage from '../PilgrimJourneyPage'
 import FaithHopeLovePage from '../FaithHopeLovePage'
@@ -300,8 +299,6 @@ export default function SoulDashboard({ user }) {
           )}
         </div>
       )}
-
-      <GrowthCurve token={getToken()} />
 
       {/* ── 今日心镜 头部 ── */}
       <div style={{
