@@ -13,8 +13,7 @@ const GD_OPTS = {
   belief: ['「神不管我」', '「凡事都靠我自己」', '「我不配被爱」', '「神不够好」', '「我必须完美才被接纳」'],
 }
 import BackButton from './BackButton'
-import { diagnoseDiscernment } from './api'
-import FormationHistory from './components/FormationHistory'
+import { diagnoseDiscernment, fetchGospelHistory } from './api'
 import { getToken } from './auth'
 
 const STEPS = [
@@ -46,7 +45,7 @@ export default function GospelDiagnosticPage({ user, onBack, onNeedLogin }) {
   }
   async function openHistory() {
     const t = getToken(); if (!t) { onNeedLogin && onNeedLogin(); return }
-    setView('history')
+    try { const r = await fetchGospelHistory(t); setHistory(r.items || []); setView('history') } catch (e) { setError(e.message) }
   }
   function restart() { setVals({ event: '', feeling: '', want: '', fear: '', belief: '' }); setStep(0); setResult(null); setView('form') }
 
@@ -129,7 +128,21 @@ export default function GospelDiagnosticPage({ user, onBack, onNeedLogin }) {
           </>
         )}
 
-        {view === 'history' && <FormationHistory token={getToken()} source="gospel" accent="#a78bfa" emptyText="还没有诊断记录" />}
+        {view === 'history' && (
+          history.length === 0
+            ? <div style={{ ...card, textAlign: 'center', color: 'rgba(255,255,255,0.5)' }}>还没有诊断记录</div>
+            : history.map((h, i) => (
+              <div key={i} style={card}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+                  <span style={{ fontSize: 13, fontWeight: 600 }}>{h.idol_name} · {h.emotion}</span>
+                  <span style={{ fontSize: 10.5, color: 'rgba(255,255,255,0.35)' }}>{(h.created_at || '').slice(0, 10)}</span>
+                </div>
+                {h.event && <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', marginBottom: 6 }}>{h.event}</div>}
+                <div style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.78)', lineHeight: 1.6 }}>{h.gospel_truth}</div>
+                {h.action && <div style={{ fontSize: 12, color: '#5ac8fa', marginTop: 6 }}>→ {h.action}</div>}
+              </div>
+            ))
+        )}
       </div>
     </div>
   )

@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 import { t } from './i18n/runtime'
-import FormationHistory from './components/FormationHistory'
 import {
   fetchGiftMeta, fetchGiftProfile, assessGift, fetchGiftHistory, fetchGiftAssessment,
   submitGiftFeedback, fetchGiftFeedback, submitGiftReview, fetchGiftReviews,
@@ -587,7 +586,25 @@ function ReviewForm({ token }) {
 
 // ── 历史 ─────────────────────────────────────────────────────────────────────
 function HistoryList({ token, onOpen }) {
-  return <FormationHistory token={token} source="gift" onOpen={onOpen} accent={ACCENT} emptyText="还没有测评记录" />
+  const [items, setItems] = useState([])
+  const [err, setErr] = useState('')
+  useEffect(() => { if (token) fetchGiftHistory(token, 30).then(d => setItems(d.items || [])).catch(() => setErr('加载失败')) }, [token])
+  if (err) return <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 13, padding: 20, textAlign: 'center' }}>{err}</div>
+  if (items.length === 0) return <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 13, padding: 20, textAlign: 'center' }}>还没有测评记录</div>
+  return (
+    <div>
+      {items.map(it => (
+        <div key={it.id} onClick={() => onOpen(it.id)} style={{ ...card, cursor: 'pointer' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+            <span style={{ fontSize: 13, fontWeight: 600, color: '#fff' }}>{it.title || '恩赐与呼召分析'}</span>
+            <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)' }}>{(it.completed_at || it.created_at || '').slice(0, 10)}</span>
+          </div>
+          {it.summary && <div style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.7)', lineHeight: 1.5 }}>{it.summary}</div>}
+          <div style={{ marginTop: 4 }}><Chip tone="accent">置信度 {CONF_ZH[it.confidence] || it.confidence}</Chip></div>
+        </div>
+      ))}
+    </div>
+  )
 }
 
 // ── 主组件 ───────────────────────────────────────────────────────────────────
