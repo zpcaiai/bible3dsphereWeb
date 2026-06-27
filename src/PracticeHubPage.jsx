@@ -8,7 +8,7 @@ const PH_OPTS = ['感谢今天的平安', '感谢一位家人 / 朋友', '感谢
 import BackButton from './BackButton'
 import { currentSeason } from './churchCalendar'
 import {
-  addGratitude, fetchGratitude, deleteGratitude, fetchGratitudeReview,
+  addGratitude, fetchGratitude, deleteGratitude, fetchGratitudeReview, postFormationEvent,
   fetchGoals, addGoal, checkinGoal, deleteGoal,
   recordConfession, exportMyData,
 } from './api'
@@ -65,7 +65,7 @@ function Gratitude({ onNeedLogin }) {
   const [reviewError, setReviewError] = useState('')
   useEffect(() => { load() }, [])
   async function load() { const t = getToken(); if (!t) return; try { const r = await fetchGratitude(t); setList(r.entries || []) } catch (e) {} }
-  async function add() { const t = getToken(); if (!t) { onNeedLogin && onNeedLogin(); return } if (!text.trim()) return; setBusy(true); try { await addGratitude(text.trim(), t); setText(''); load() } catch (e) {} finally { setBusy(false) } }
+  async function add() { const t = getToken(); if (!t) { onNeedLogin && onNeedLogin(); return } if (!text.trim()) return; setBusy(true); try { await addGratitude(text.trim(), t); try { await postFormationEvent({ source: 'habits', event_type: 'practice', title: '感恩操练', summary: text.trim().slice(0, 80), severity: 'green' }, t) } catch (e2) {} setText(''); load() } catch (e) {} finally { setBusy(false) } }
   async function del(id) { const t = getToken(); await deleteGratitude(id, t); load() }
   async function loadReview() {
     const t = getToken(); if (!t) { onNeedLogin && onNeedLogin(); return }

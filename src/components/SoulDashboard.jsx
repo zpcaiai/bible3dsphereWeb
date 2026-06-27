@@ -10,13 +10,14 @@
  */
 
 import { useEffect, useState } from 'react'
-import { API_BASE, fetchFormationProfile, fetchWeeklyPastoral } from '../api'
+import { API_BASE, fetchFormationProfile, fetchWeeklyPastoral, fetchFormationState, fetchFormationNext, fetchFormationTimeline } from '../api'
 import { getToken } from '../auth'
 import IdolatryMonitorPage from '../IdolatryMonitorPage'
 import WaitingPathPage from '../WaitingPathPage'
 import ExamenPage from '../ExamenPage'
 import ReminderSettings from '../ReminderSettings'
 import PracticeHubPage from '../PracticeHubPage'
+import GrowthCurve from './GrowthCurve'
 import PlanetHome from '../PlanetHome'
 import PilgrimJourneyPage from '../PilgrimJourneyPage'
 import FaithHopeLovePage from '../FaithHopeLovePage'
@@ -28,6 +29,12 @@ import SpiritualCheckupPage from '../SpiritualCheckupPage'
 import SpiritualFormationPage from '../features/spiritual-formation/app/SpiritualFormationPage'
 
 const MVFE_BASE = API_BASE + '/mvfe'
+
+const NEXT_ICON = { care: '🛟', practice: '🌱', diagnose: '🧭', review: '🪞' }
+const SRC_LABEL = { worldview: '世界观', discernment: '辨识', gift: '恩赐', spiritual_formation: '塑造', weekly_review: '复盘', crisis: '危机', checkin: '签到', examen: '省察', gospel: '福音', habits: '操练', reflection: '反思' }
+const SRC_COLOR = { worldview: '#8c8cff', discernment: '#8c8cff', gift: '#f5b53f', spiritual_formation: '#34c759', weekly_review: '#7dd3fc', crisis: '#ff6b6b', examen: '#a78bfa', gospel: '#f5b53f' }
+const FM_CHIP = { display: 'inline-block', margin: '3px 5px 0 0', padding: '2px 8px', borderRadius: 999, fontSize: 11, background: 'rgba(140,140,255,0.16)', color: '#c7c8ff' }
+const FM_CHIP_WARN = { ...FM_CHIP, background: 'rgba(255,159,138,0.14)', color: '#ffb3a0' }
 
 const DIMS = [
   { key: 'humility',           name: '谦逊',    color: '#4ade80', icon: '🌿', good: true  },
@@ -140,8 +147,18 @@ export default function SoulDashboard({ user }) {
   const [mvfeLast, setMvfeLast]    = useState(null)
   const [selectedDec, setSelDec]   = useState(null)
   const [loading, setLoading]      = useState(true)
+  const [fmState, setFmState]      = useState(null)
+  const [fmNext, setFmNext]        = useState(null)
+  const [fmTimeline, setFmTimeline] = useState([])
 
   useEffect(() => { const t = getToken(); if (!t) return; fetchWeeklyPastoral(t).then(setPastoral).catch(() => {}) }, [])
+
+  useEffect(() => {
+    const t = getToken(); if (!t) return
+    fetchFormationState(t).then(d => setFmState(d.state || null)).catch(() => {})
+    fetchFormationNext(t).then(d => setFmNext(d.next || null)).catch(() => {})
+    fetchFormationTimeline(t, 20).then(d => setFmTimeline(d.events || [])).catch(() => {})
+  }, [])
 
   useEffect(() => {
     async function load() {
@@ -241,6 +258,50 @@ export default function SoulDashboard({ user }) {
         </div>
         <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.45)' }}>›</span>
       </button>
+
+      {/* ── 成长闭环：今日该做 / 当前焦点 / 时间轴 ── */}
+      {(fmNext || (fmState && fmState.hasData)) && (
+        <div style={{ margin: '4px 16px 0' }}>
+          {fmNext && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, borderRadius: 16, padding: '14px 16px', background: 'linear-gradient(135deg, rgba(245,181,63,0.16), rgba(140,140,255,0.10))', border: '1px solid rgba(245,181,63,0.35)', color: '#fff' }}>
+              <span style={{ fontSize: 24 }}>{NEXT_ICON[fmNext.kind] || '✨'}</span>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: 10.5, color: '#f5d98f', fontWeight: 700, letterSpacing: 1 }}>今日该做</div>
+                <div style={{ fontSize: 14.5, fontWeight: 700, marginTop: 2 }}>{fmNext.title}</div>
+                <div style={{ fontSize: 11.5, color: 'rgba(255,255,255,0.62)', marginTop: 3, lineHeight: 1.55 }}>{fmNext.action}</div>
+              </div>
+            </div>
+          )}
+          {fmState && fmState.hasData && (
+            <div style={{ marginTop: 8, borderRadius: 14, padding: '12px 14px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                <span style={{ fontSize: 12.5, fontWeight: 700, color: '#c7c8ff' }}>🧭 当前焦点</span>
+                <span style={{ fontSize: 11, color: (fmState.riskLevel && fmState.riskLevel !== 'green') ? '#ffb3a0' : 'rgba(255,255,255,0.4)' }}>{(fmState.riskLevel && fmState.riskLevel !== 'green') ? ('风险 · ' + fmState.riskLevel) : '平稳'}</span>
+              </div>
+              {fmState.currentFocus && <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.85)', lineHeight: 1.6, marginBottom: 6 }}>{fmState.currentFocus}</div>}
+              <div>
+                {(fmState.dominantIdols || []).slice(0, 4).map((d, i) => <span key={'i' + i} style={FM_CHIP_WARN}>{typeof d === 'string' ? d : (d.name || '')}</span>)}
+                {(fmState.activeThemes || []).slice(0, 4).map((d, i) => <span key={'t' + i} style={FM_CHIP}>{d}</span>)}
+              </div>
+              <div style={{ fontSize: 10.5, color: 'rgba(255,255,255,0.4)', marginTop: 6 }}>已累计 {fmState.eventCount} 条成长记录</div>
+            </div>
+          )}
+          {fmTimeline.length > 0 && (
+            <div style={{ marginTop: 8, borderRadius: 14, padding: '12px 14px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+              <div style={{ fontSize: 12.5, fontWeight: 700, color: '#c7c8ff', marginBottom: 8 }}>🕰 神的带领 · 时间轴</div>
+              {fmTimeline.slice(0, 6).map((e) => (
+                <div key={e.id} style={{ display: 'flex', gap: 8, fontSize: 12, padding: '4px 0', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+                  <span style={{ color: 'rgba(255,255,255,0.35)', flex: '0 0 46px' }}>{(e.occurredAt || '').slice(5, 10)}</span>
+                  <span style={{ color: SRC_COLOR[e.source] || '#9ecbff', flex: '0 0 auto' }}>{SRC_LABEL[e.source] || e.source}</span>
+                  <span style={{ color: 'rgba(255,255,255,0.75)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{e.title || e.summary || e.type}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      <GrowthCurve token={getToken()} />
 
       {/* ── 今日心镜 头部 ── */}
       <div style={{
