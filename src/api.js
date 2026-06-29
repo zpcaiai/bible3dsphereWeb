@@ -66,11 +66,16 @@ export async function fetchLayout() {
     return data
   } catch (err) {
     console.log('[api] fetchLayout api failed, fallback to static json', err.message)
-    const response = await fetch('/emotion_sphere_layout.json')
-    if (!response.ok) throw new Error('Failed to fetch layout (static fallback)')
-    const items = await response.json()
-    console.log(`[api] fetchLayout static ok: ${items.length} items`)
-    return { items, count: items.length }
+    try {
+      const response = await fetch('/emotion_sphere_layout.json')
+      if (!response.ok) throw new Error('static fallback not found')
+      const items = await response.json()
+      console.log(`[api] fetchLayout static ok: ${items.length} items`)
+      return { items, count: items.length }
+    } catch (err2) {
+      console.log('[api] fetchLayout static fallback also failed, returning empty', err2.message)
+      return { items: [], count: 0 }
+    }
   }
 }
 
