@@ -118,11 +118,11 @@ export default function EngineeringPage({ onBack, user, token }) {
   useEffect(() => {
     if (!user) { setLoading(false); return }
     const headers = token ? { Authorization: `Bearer ${token}` } : {}
-    const creds = { credentials: 'include', headers }
+    const authRequest = { headers }
 
     Promise.all([
-      fetch(`${API_BASE}/daily-devotion-personal`, creds).then(r => r.ok ? r.json() : null).catch(() => null),
-      fetch(`${API_BASE}/spiritual-health-check`, creds).then(r => r.ok ? r.json() : null).catch(() => null),
+      fetch(`${API_BASE}/daily-devotion-personal`, authRequest).then(r => r.ok ? r.json() : null).catch(() => null),
+      fetch(`${API_BASE}/spiritual-health-check`, authRequest).then(r => r.ok ? r.json() : null).catch(() => null),
     ]).then(([devot, hlth]) => {
       if (devot) setFormation(devot)
       if (hlth?.ok) setHealth(hlth)
@@ -136,7 +136,7 @@ export default function EngineeringPage({ onBack, user, token }) {
   useEffect(() => {
     if (!user) return
     const headers = token ? { Authorization: `Bearer ${token}` } : {}
-    fetch(`${API_BASE}/daily-devotion-personal`, { credentials: 'include', headers })
+    fetch(`${API_BASE}/daily-devotion-personal`, { headers })
       .then(r => r.ok ? r.json() : null)
       .then(d => {
         // The endpoint returns focus_dim info but not all 8 scores

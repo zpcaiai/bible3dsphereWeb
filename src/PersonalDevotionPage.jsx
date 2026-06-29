@@ -193,12 +193,13 @@ function PersonalCard({ user, token }) {
     setLoading(true)
     fetch(`${API}/daily-devotion-personal`, {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
-      credentials: 'include',
     })
-      .then(r => r.ok ? r.json() : Promise.reject(r.status))
+      .then(r => r.ok ? r.json() : Promise.reject(new Error(String(r.status))))
       .then(d => { setFallbackReason(''); setData(d); try { localStorage.setItem(cacheKey, JSON.stringify(d)) } catch { /**/ } })
-      .catch(() => {
-        setFallbackReason('个性化灵修服务暂时不可用，已切换为本地读经灵修。')
+      .catch((err) => {
+        setFallbackReason(err?.message === '401'
+          ? '登录状态已过期，已切换为本地读经灵修。'
+          : '个性化灵修服务暂时不可用，已切换为本地读经灵修。')
         setData(buildFallbackDevotion(reading))
       })
       .finally(() => setLoading(false))
