@@ -18,13 +18,14 @@ async function requestJson(path: string, token?: string, init: RequestInit = {})
 
 export async function loadSpiritualFormationData(token?: string) {
   if (!token) throw new Error("No auth token");
-  const [daily, thoughts, recoveries, plans, activePlan, holyLife] = await Promise.all([
+  const [daily, thoughts, recoveries, plans, activePlan, holyLife, holyLifeSummary] = await Promise.all([
     requestJson("/daily-examens?limit=365", token),
     requestJson("/thought-captive?limit=365", token),
     requestJson("/grace-recovery?limit=365", token),
     requestJson("/plans?limit=200", token),
     requestJson("/plans/active", token),
     requestJson("/holy-life/day-logs?limit=365", token),
+    requestJson("/holy-life/summary?days=30", token).catch(() => null),
   ]);
   return {
     dailyExamens: daily.items || [],
@@ -33,6 +34,7 @@ export async function loadSpiritualFormationData(token?: string) {
     plans: plans.items || [],
     activePlan: activePlan.plan || null,
     holyLifeDayLogs: holyLife.items || [],
+    holyLifeSummary: holyLifeSummary || null,
   };
 }
 

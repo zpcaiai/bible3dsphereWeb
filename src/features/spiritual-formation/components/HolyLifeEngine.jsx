@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { holyLifePipeline, holyLifeSkills, holyLifeSkillsById } from '../data/holyLifeSkills'
 
 const DEFAULT_SCORE = 50
@@ -40,10 +40,45 @@ function createDayLog(userId, date = todayKey()) {
     intention: '',
     entries: holyLifeSkills.map((skill) => createEntry(skill.id)),
     presenceLogs: [],
+    ruleOfLife: createRuleOfLife(),
+    purposeReview: createPurposeReview(),
+    decisionSanctificationLogs: [],
     dailyReport: '',
     tomorrowFormation: '',
     createdAt: now,
     updatedAt: now,
+  }
+}
+
+function createRuleOfLife(patch = {}) {
+  return {
+    theme: '',
+    morningPrayer: '',
+    dailyPractice: '',
+    decisionGuardrail: '',
+    eveningExamen: '',
+    generatedAt: '',
+    ...patch,
+  }
+}
+
+function createPurposeReview(patch = {}) {
+  return {
+    callingStatement: '',
+    stewardshipFocus: '',
+    misalignment: '',
+    nextFaithfulAction: '',
+    ...patch,
+  }
+}
+
+function createDecisionDraft() {
+  return {
+    decision: '',
+    motive: '',
+    desireToSurrender: '',
+    scriptureAnchor: '',
+    obedienceStep: '',
   }
 }
 
@@ -90,29 +125,89 @@ function buildTomorrowFormation(log) {
   return `明天优先操练「${skill.shortTitle}」：${skill.practice}`
 }
 
+function buildRuleOfLife(log) {
+  const summary = summarizeDay(log)
+  const weakest = [...log.entries].sort((a, b) => a.score - b.score)[0]
+  const focusSkill = weakest ? holyLifeSkillsById[weakest.skillId] : holyLifeSkillsById.purpose_reset
+  const intention = log.intention.trim() || '今天把普通生活献给神'
+  return createRuleOfLife({
+    theme: `${focusSkill.shortTitle}：${focusSkill.metric}`,
+    morningPrayer: `主啊，${intention}。求你洁净我的动机，使今天的时间、言语和选择都归向你。`,
+    dailyPractice: focusSkill.practice,
+    decisionGuardrail: `今天每个重要决定先问：这是否出于爱、真理、谦卑，并能使我更忠心？当前需警醒：${summary.weakest}。`,
+    eveningExamen: '今晚回看：我在哪些普通时刻记得神？哪里只是追随自己？明天一步顺服是什么？',
+    generatedAt: new Date().toISOString(),
+  })
+}
+
+function buildPurposeReview(log) {
+  const purpose = log.entries.find((entry) => entry.skillId === 'purpose_reset')
+  const charity = log.entries.find((entry) => entry.skillId === 'charity_practice')
+  return createPurposeReview({
+    callingStatement: log.intention.trim() || '在神面前忠心管理今天所托付的人、事、时间与机会。',
+    stewardshipFocus: purpose?.reflection || '把最普通的职责当作今日敬拜的场所。',
+    misalignment: charity?.completed ? '警醒不要把善行变成自我证明。' : '留意只完成任务，却没有真实地爱人。',
+    nextFaithfulAction: buildTomorrowFormation(log),
+  })
+}
+
 function ensureEntries(log) {
   const existing = new Map((log.entries || []).map((entry) => [entry.skillId, entry]))
   return {
     ...log,
     entries: holyLifeSkills.map((skill) => existing.get(skill.id) || createEntry(skill.id)),
     presenceLogs: Array.isArray(log.presenceLogs) ? log.presenceLogs : [],
+    ruleOfLife: createRuleOfLife(log.ruleOfLife || {}),
+    purposeReview: createPurposeReview(log.purposeReview || {}),
+    decisionSanctificationLogs: Array.isArray(log.decisionSanctificationLogs) ? log.decisionSanctificationLogs : [],
     intention: log.intention || '',
     dailyReport: log.dailyReport || '',
     tomorrowFormation: log.tomorrowFormation || '',
   }
 }
 
-export default function HolyLifeEngine({ userId, initialTodayLog, history = [], onSave }) {
+export default function HolyLifeEngine({ userId, initialTodayLog, history = [], summaryStats, onSave }) {
   const [log, setLog] = useState(() => ensureEntries(initialTodayLog || createDayLog(userId)))
   const [activeTime, setActiveTime] = useState('morning')
-  const [saved, setSaved] = useState(false)
+  const [saveState, setSaveState] = useState(initialTodayLog ? 'synced' : 'idle')
+  const [dirty, setDirty] = useState(false)
   const [presenceDraft, setPresenceDraft] = useState('')
+  const [decisionDraft, setDecisionDraft] = useState(() => createDecisionDraft())
+  const hydratedKeyRef = useRef(initialTodayLog ? `${initialTodayLog.id}:${initialTodayLog.updatedAt || ''}` : '')
   const summary = useMemo(() => summarizeDay(log), [log])
   const recent = useMemo(() => history.filter((item) => item.id !== log.id).slice(0, 14), [history, log.id])
   const visibleSkills = holyLifeSkills.filter((skill) => activeTime === 'all' || skill.time === activeTime)
+  const saveLabel = {
+    idle: '保存今日',
+    saving: '保存中…',
+    synced: '已同步',
+    local: '已本地保存',
+    error: '保存失败',
+  }[saveState] || '保存今日'
+
+  useEffect(() => {
+    if (!initialTodayLog || dirty) return
+    const key = `${initialTodayLog.id}:${initialTodayLog.updatedAt || ''}`
+    if (key && key !== hydratedKeyRef.current) {
+      hydratedKeyRef.current = key
+      setLog(ensureEntries(initialTodayLog))
+      setSaveState('synced')
+    }
+  }, [initialTodayLog, dirty])
+
+  useEffect(() => {
+    if (!dirty) return undefined
+    const warnBeforeUnload = (event) => {
+      event.preventDefault()
+      event.returnValue = ''
+    }
+    window.addEventListener('beforeunload', warnBeforeUnload)
+    return () => window.removeEventListener('beforeunload', warnBeforeUnload)
+  }, [dirty])
 
   function updateLog(updater) {
-    setSaved(false)
+    setDirty(true)
+    setSaveState('idle')
     setLog((prev) => {
       const next = typeof updater === 'function' ? updater(prev) : updater
       return { ...next, updatedAt: new Date().toISOString() }
@@ -143,16 +238,61 @@ export default function HolyLifeEngine({ userId, initialTodayLog, history = [], 
     if (presence && !presence.completed) updateEntry('presence_of_god', { completed: true, score: Math.max(presence.score, 70), reflection })
   }
 
-  function save() {
+  function generateRuleOfLife() {
+    updateLog((prev) => ({ ...prev, ruleOfLife: buildRuleOfLife(prev), purposeReview: buildPurposeReview(prev) }))
+  }
+
+  function updatePurposeReview(field, value) {
+    updateLog((prev) => ({ ...prev, purposeReview: { ...createPurposeReview(prev.purposeReview), [field]: value } }))
+  }
+
+  function addDecisionLog() {
+    const hasContent = Object.values(decisionDraft).some((value) => value.trim())
+    if (!hasContent) return
+    const nextDecision = {
+      id: uid('decision'),
+      createdAt: new Date().toISOString(),
+      decision: decisionDraft.decision.trim(),
+      motive: decisionDraft.motive.trim(),
+      desireToSurrender: decisionDraft.desireToSurrender.trim(),
+      scriptureAnchor: decisionDraft.scriptureAnchor.trim() || '罗马书 12:1-2',
+      obedienceStep: decisionDraft.obedienceStep.trim(),
+    }
+    updateLog((prev) => ({
+      ...prev,
+      decisionSanctificationLogs: [nextDecision, ...(prev.decisionSanctificationLogs || [])].slice(0, 20),
+    }))
+    setDecisionDraft(createDecisionDraft())
+    const decision = log.entries.find((entry) => entry.skillId === 'intention_inspector')
+    if (decision && !decision.completed) updateEntry('intention_inspector', { completed: true, score: Math.max(decision.score, 70), reflection: nextDecision.motive || nextDecision.decision })
+  }
+
+  async function save() {
     const next = {
       ...log,
+      ruleOfLife: log.ruleOfLife?.generatedAt ? log.ruleOfLife : buildRuleOfLife(log),
+      purposeReview: log.purposeReview?.callingStatement ? log.purposeReview : buildPurposeReview(log),
       dailyReport: log.dailyReport || buildReport(log),
       tomorrowFormation: log.tomorrowFormation || buildTomorrowFormation(log),
       updatedAt: new Date().toISOString(),
     }
     setLog(next)
-    onSave(next)
-    setSaved(true)
+    setSaveState('saving')
+    try {
+      const result = await onSave(next)
+      if (result?.__localOnly) {
+        setSaveState('local')
+      } else {
+        if (result) {
+          setLog(ensureEntries(result))
+          hydratedKeyRef.current = `${result.id}:${result.updatedAt || ''}`
+        }
+        setSaveState('synced')
+      }
+      setDirty(false)
+    } catch {
+      setSaveState('error')
+    }
   }
 
   function generateReport() {
@@ -170,7 +310,7 @@ export default function HolyLifeEngine({ userId, initialTodayLog, history = [], 
           <h2>圣洁生活引擎</h2>
           <p>基于 William Law 的 Daily Practice Layer：不是增加任务，而是把普通生活重新带回敬拜。</p>
         </div>
-        <button className="sf-primary holy-life-save" type="button" onClick={save}>{saved ? '已保存' : '保存今日'}</button>
+        <button className="sf-primary holy-life-save" type="button" onClick={save} disabled={saveState === 'saving'}>{saveLabel}</button>
       </div>
 
       <div className="holy-life-summary">
@@ -191,6 +331,13 @@ export default function HolyLifeEngine({ userId, initialTodayLog, history = [], 
           <div className="holy-life-score">{log.presenceLogs.length}</div>
           <p>目标不是频率本身，而是日间真实归回。</p>
         </article>
+        {summaryStats && (
+          <article className="sf-card">
+            <h3>近 {summaryStats.days || 30} 天趋势</h3>
+            <div className="holy-life-score">{summaryStats.averageScore || 0}</div>
+            <p>{summaryStats.logCount || 0} 天记录 · {summaryStats.presencePauseCount || 0} 次同在暂停 · {summaryStats.decisionLogCount || 0} 个成圣决定</p>
+          </article>
+        )}
       </div>
 
       <div className="sf-card holy-life-intention">
@@ -204,6 +351,39 @@ export default function HolyLifeEngine({ userId, initialTodayLog, history = [], 
         <div className="holy-life-pipeline">
           {holyLifePipeline.map((step, index) => <span key={step}>{index + 1}. {step}</span>)}
         </div>
+      </div>
+
+      <div className="holy-life-report-grid">
+        <article className="sf-card holy-life-rule">
+          <div className="holy-life-card-head">
+            <div>
+              <h3>Daily Rule of Life</h3>
+              <p>{log.ruleOfLife?.theme || '从今日意向与最低形成分生成一条日规。'}</p>
+            </div>
+            <button className="sf-primary" type="button" onClick={generateRuleOfLife}>生成日规</button>
+          </div>
+          <div className="holy-life-rule-list">
+            <p><b>晨祷</b>{log.ruleOfLife?.morningPrayer || '尚未生成。'}</p>
+            <p><b>日间操练</b>{log.ruleOfLife?.dailyPractice || '尚未生成。'}</p>
+            <p><b>决策护栏</b>{log.ruleOfLife?.decisionGuardrail || '尚未生成。'}</p>
+            <p><b>晚间省察</b>{log.ruleOfLife?.eveningExamen || '尚未生成。'}</p>
+          </div>
+        </article>
+        <article className="sf-card holy-life-purpose">
+          <h3>Purpose Review</h3>
+          <label>今日呼召陈述
+            <textarea value={log.purposeReview?.callingStatement || ''} onChange={(event) => updatePurposeReview('callingStatement', event.target.value)} placeholder="今天神托付我的中心责任是什么？" />
+          </label>
+          <label>管家职分焦点
+            <textarea value={log.purposeReview?.stewardshipFocus || ''} onChange={(event) => updatePurposeReview('stewardshipFocus', event.target.value)} placeholder="时间、关系、工作、身体或资源中，哪个领域需要忠心？" />
+          </label>
+          <label>偏离警戒
+            <textarea value={log.purposeReview?.misalignment || ''} onChange={(event) => updatePurposeReview('misalignment', event.target.value)} placeholder="今天最容易把目的从神转向自己的地方是什么？" />
+          </label>
+          <label>下一步忠心
+            <textarea value={log.purposeReview?.nextFaithfulAction || ''} onChange={(event) => updatePurposeReview('nextFaithfulAction', event.target.value)} placeholder="一个可以执行的顺服动作。" />
+          </label>
+        </article>
       </div>
 
       <div className="sf-card holy-life-presence">
@@ -263,6 +443,44 @@ export default function HolyLifeEngine({ userId, initialTodayLog, history = [], 
             </article>
           )
         })}
+      </div>
+
+      <div className="sf-card holy-life-decision">
+        <div className="holy-life-card-head">
+          <div>
+            <h3>Decision Sanctification</h3>
+            <p>把重要决定带到动机、省察、经文与顺服行动里。</p>
+          </div>
+          <button className="sf-primary" type="button" onClick={addDecisionLog}>记录决定</button>
+        </div>
+        <div className="holy-life-decision-grid">
+          <label>决定
+            <textarea value={decisionDraft.decision} onChange={(event) => setDecisionDraft((prev) => ({ ...prev, decision: event.target.value }))} placeholder="我要做的决定是什么？" />
+          </label>
+          <label>动机省察
+            <textarea value={decisionDraft.motive} onChange={(event) => setDecisionDraft((prev) => ({ ...prev, motive: event.target.value }))} placeholder="这是出于爱、真理、谦卑，还是恐惧、骄傲、逃避？" />
+          </label>
+          <label>愿意交托的欲望
+            <textarea value={decisionDraft.desireToSurrender} onChange={(event) => setDecisionDraft((prev) => ({ ...prev, desireToSurrender: event.target.value }))} placeholder="若神引导不同，我愿意放下什么？" />
+          </label>
+          <label>经文锚点
+            <textarea value={decisionDraft.scriptureAnchor} onChange={(event) => setDecisionDraft((prev) => ({ ...prev, scriptureAnchor: event.target.value }))} placeholder="罗马书 12:1-2" />
+          </label>
+          <label>顺服行动
+            <textarea value={decisionDraft.obedienceStep} onChange={(event) => setDecisionDraft((prev) => ({ ...prev, obedienceStep: event.target.value }))} placeholder="下一步可执行的忠心是什么？" />
+          </label>
+        </div>
+        {(log.decisionSanctificationLogs || []).length ? (
+          <div className="holy-life-decision-list">
+            {(log.decisionSanctificationLogs || []).slice(0, 6).map((item) => (
+              <div key={item.id}>
+                <strong>{item.decision || '未命名决定'}</strong>
+                <span>{item.scriptureAnchor}</span>
+                <p>{item.obedienceStep || item.motive || '已记录。'}</p>
+              </div>
+            ))}
+          </div>
+        ) : <p className="sf-empty">还没有记录需要成圣辨识的决定。</p>}
       </div>
 
       <div className="holy-life-report-grid">

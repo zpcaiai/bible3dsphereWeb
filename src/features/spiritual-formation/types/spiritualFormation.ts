@@ -276,6 +276,32 @@ export type HolyLifePresenceLog = {
   reflection: string;
 };
 
+export type HolyLifeRuleOfLife = {
+  theme: string;
+  morningPrayer: string;
+  dailyPractice: string;
+  decisionGuardrail: string;
+  eveningExamen: string;
+  generatedAt: string;
+};
+
+export type HolyLifePurposeReview = {
+  callingStatement: string;
+  stewardshipFocus: string;
+  misalignment: string;
+  nextFaithfulAction: string;
+};
+
+export type HolyLifeDecisionLog = {
+  id: string;
+  createdAt: string;
+  decision: string;
+  motive: string;
+  desireToSurrender: string;
+  scriptureAnchor: string;
+  obedienceStep: string;
+};
+
 export type HolyLifeDayLog = {
   id: string;
   userId: string;
@@ -283,6 +309,9 @@ export type HolyLifeDayLog = {
   intention: string;
   entries: HolyLifeSkillEntry[];
   presenceLogs: HolyLifePresenceLog[];
+  ruleOfLife?: HolyLifeRuleOfLife;
+  purposeReview?: HolyLifePurposeReview;
+  decisionSanctificationLogs?: HolyLifeDecisionLog[];
   dailyReport: string;
   tomorrowFormation: string;
   createdAt: string;

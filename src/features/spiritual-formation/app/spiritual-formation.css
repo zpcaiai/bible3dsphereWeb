@@ -464,7 +464,8 @@
 
 .holy-life-intention label,
 .holy-life-skill label,
-.holy-life-report-grid label {
+.holy-life-report-grid label,
+.holy-life-decision label {
   display: grid;
   gap: 8px;
   color: rgba(255, 255, 255, 0.82);
@@ -475,7 +476,8 @@
 .holy-life-intention textarea,
 .holy-life-presence textarea,
 .holy-life-skill textarea,
-.holy-life-report-grid textarea {
+.holy-life-report-grid textarea,
+.holy-life-decision textarea {
   width: 100%;
   min-height: 84px;
   resize: vertical;
@@ -557,6 +559,65 @@
   margin-top: 14px;
 }
 
+.holy-life-rule-list,
+.holy-life-decision-list {
+  display: grid;
+  gap: 10px;
+}
+
+.holy-life-rule-list p,
+.holy-life-decision-list div {
+  margin: 0;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.22);
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.holy-life-rule-list b,
+.holy-life-decision-list strong,
+.holy-life-decision-list span {
+  display: block;
+}
+
+.holy-life-rule-list b,
+.holy-life-decision-list strong {
+  color: #8effae;
+  margin-bottom: 4px;
+}
+
+.holy-life-purpose,
+.holy-life-decision {
+  display: grid;
+  gap: 12px;
+}
+
+.holy-life-decision-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.holy-life-decision-grid label:first-child,
+.holy-life-decision-grid label:last-child {
+  grid-column: 1 / -1;
+}
+
+.holy-life-decision-list {
+  margin-top: 2px;
+}
+
+.holy-life-decision-list span {
+  color: rgba(190, 236, 255, 0.78);
+  font-size: 12px;
+}
+
+.holy-life-decision-list p {
+  margin: 6px 0 0;
+  color: rgba(255, 255, 255, 0.72);
+}
+
 .holy-life-history {
   display: grid;
   gap: 10px;
@@ -619,6 +680,10 @@
   .holy-life-presence,
   .holy-life-card-head {
     display: grid;
+  }
+
+  .holy-life-decision-grid {
+    grid-template-columns: 1fr;
   }
 
   .holy-life-history div {

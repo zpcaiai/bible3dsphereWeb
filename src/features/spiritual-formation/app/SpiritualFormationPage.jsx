@@ -121,14 +121,16 @@ export default function SpiritualFormationPage({ user, token, onBack, initialTab
   async function saveAndRefresh(localFn, remoteFn, value) {
     localFn(value)
     refresh()
-    if (!token || !remoteFn) return
+    if (!token || !remoteFn) return { __localOnly: true, dayLog: value }
     try {
       setSyncState('syncing')
-      await remoteFn(value, token)
+      const saved = await remoteFn(value, token)
       await reloadRemote()
+      return saved || value
     } catch (error) {
       setSyncState('local')
       setSyncError(error?.message || '后端保存失败，已保留本地记录')
+      return { __localOnly: true, dayLog: value }
     }
   }
 
@@ -212,7 +214,7 @@ export default function SpiritualFormationPage({ user, token, onBack, initialTab
 
       {tab === 'library' && <SinPatternLibrary />}
       {tab === 'stronghold' && <StrongholdPage userId={userId} token={token} />}
-      {tab === 'holy-life' && <HolyLifeEngine userId={userId} initialTodayLog={data.holyLifeDayLogs?.find((entry) => entry.date === todayKey())} history={data.holyLifeDayLogs || []} onSave={(entry) => saveAndRefresh(saveHolyLifeDayLog, createHolyLifeDayLogRemote, entry)} />}
+      {tab === 'holy-life' && <HolyLifeEngine userId={userId} initialTodayLog={data.holyLifeDayLogs?.find((entry) => entry.date === todayKey())} history={data.holyLifeDayLogs || []} summaryStats={data.holyLifeSummary} onSave={(entry) => saveAndRefresh(saveHolyLifeDayLog, createHolyLifeDayLogRemote, entry)} />}
       {tab === 'daily' && <DailySpiritualScanForm userId={userId} onSave={(entry) => saveAndRefresh(saveDailyExamen, createDailyExamenRemote, entry)} />}
       {tab === 'thought' && <ThoughtCaptiveFlow userId={userId} onSave={(entry) => saveAndRefresh(saveThoughtCaptiveEntry, createThoughtCaptiveRemote, entry)} />}
       {tab === 'recovery' && <GraceRecoveryFlow userId={userId} onSave={(entry) => saveAndRefresh(saveGraceRecoveryEntry, createGraceRecoveryRemote, entry)} />}

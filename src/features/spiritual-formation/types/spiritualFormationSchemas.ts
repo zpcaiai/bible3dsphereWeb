@@ -80,6 +80,31 @@ const isPresenceLogArray = (value: unknown) =>
     isNonEmptyString(item.createdAt) &&
     typeof item.reflection === "string"
   );
+const isRuleOfLife = (value: unknown) =>
+  isRecord(value) &&
+  typeof value.theme === "string" &&
+  typeof value.morningPrayer === "string" &&
+  typeof value.dailyPractice === "string" &&
+  typeof value.decisionGuardrail === "string" &&
+  typeof value.eveningExamen === "string" &&
+  typeof value.generatedAt === "string";
+const isPurposeReview = (value: unknown) =>
+  isRecord(value) &&
+  typeof value.callingStatement === "string" &&
+  typeof value.stewardshipFocus === "string" &&
+  typeof value.misalignment === "string" &&
+  typeof value.nextFaithfulAction === "string";
+const isDecisionLogArray = (value: unknown) =>
+  Array.isArray(value) && value.every((item) =>
+    isRecord(item) &&
+    isNonEmptyString(item.id) &&
+    isNonEmptyString(item.createdAt) &&
+    typeof item.decision === "string" &&
+    typeof item.motive === "string" &&
+    typeof item.desireToSurrender === "string" &&
+    typeof item.scriptureAnchor === "string" &&
+    typeof item.obedienceStep === "string"
+  );
 
 function requireFields(obj: Record<string, unknown>, fields: string[]) {
   return fields.filter((field) => !isNonEmptyString(obj[field])).map((field) => `${field} is required`);
@@ -185,6 +210,9 @@ export const HolyLifeDayLogSchema = makeSchema<HolyLifeDayLog>((value) => {
   if (typeof value.intention !== "string") errors.push("intention must be a string");
   if (!isHolyLifeEntryArray(value.entries)) errors.push("entries must contain known holy life skill entries");
   if (!isPresenceLogArray(value.presenceLogs)) errors.push("presenceLogs must contain presence log objects");
+  if (value.ruleOfLife !== undefined && !isRuleOfLife(value.ruleOfLife)) errors.push("ruleOfLife must contain daily rule fields");
+  if (value.purposeReview !== undefined && !isPurposeReview(value.purposeReview)) errors.push("purposeReview must contain purpose review fields");
+  if (value.decisionSanctificationLogs !== undefined && !isDecisionLogArray(value.decisionSanctificationLogs)) errors.push("decisionSanctificationLogs must contain decision log objects");
   if (typeof value.dailyReport !== "string") errors.push("dailyReport must be a string");
   if (typeof value.tomorrowFormation !== "string") errors.push("tomorrowFormation must be a string");
   return errors;
