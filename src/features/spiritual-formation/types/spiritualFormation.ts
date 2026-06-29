@@ -318,6 +318,23 @@ export type HolyLifeDayLog = {
   updatedAt: string;
 };
 
+export type HorariumPrayerEntry = {
+  hourId: string;
+  completed: boolean;
+  reflection: string;
+  completedAt?: string;
+};
+
+export type HorariumDayLog = {
+  id: string;
+  userId: string;
+  date: string;
+  entries: HorariumPrayerEntry[];
+  note: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
 export const HOLY_SPIRIT_FRUITS: HolySpiritFruit[] = [
   "love",
   "joy",

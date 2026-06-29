@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { holyLifePipeline, holyLifeSkills, holyLifeSkillsById } from '../data/holyLifeSkills'
+import { generateRuleOfLifeRemote } from '../lib/apiStorage'
 
 const DEFAULT_SCORE = 50
 const TIME_LABELS = {
@@ -166,7 +167,7 @@ function ensureEntries(log) {
   }
 }
 
-export default function HolyLifeEngine({ userId, initialTodayLog, history = [], summaryStats, onSave }) {
+export default function HolyLifeEngine({ userId, token, initialTodayLog, history = [], summaryStats, onSave }) {
   const [log, setLog] = useState(() => ensureEntries(initialTodayLog || createDayLog(userId)))
   const [activeTime, setActiveTime] = useState('morning')
   const [saveState, setSaveState] = useState(initialTodayLog ? 'synced' : 'idle')
@@ -238,8 +239,21 @@ export default function HolyLifeEngine({ userId, initialTodayLog, history = [], 
     if (presence && !presence.completed) updateEntry('presence_of_god', { completed: true, score: Math.max(presence.score, 70), reflection })
   }
 
-  function generateRuleOfLife() {
-    updateLog((prev) => ({ ...prev, ruleOfLife: buildRuleOfLife(prev), purposeReview: buildPurposeReview(prev) }))
+  async function generateRuleOfLife() {
+    const snapshot = log
+    let rule = buildRuleOfLife(snapshot) // local fallback
+    if (token) {
+      try {
+        const remote = await generateRuleOfLifeRemote(
+          { intention: snapshot.intention, entries: snapshot.entries.map((e) => ({ skillId: e.skillId, score: e.score })) },
+          token,
+        )
+        if (remote && remote.morningPrayer) rule = { ...rule, ...remote }
+      } catch {
+        // keep local fallback
+      }
+    }
+    updateLog((prev) => ({ ...prev, ruleOfLife: rule, purposeReview: buildPurposeReview(prev) }))
   }
 
   function updatePurposeReview(field, value) {

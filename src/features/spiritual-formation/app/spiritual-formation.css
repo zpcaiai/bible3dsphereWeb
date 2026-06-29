@@ -690,3 +690,31 @@
     grid-template-columns: 82px 42px 1fr 30px;
   }
 }
+
+/* Horarium — fixed hours of prayer (mirrors holy-life skill cards) */
+.horarium-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+}
+
+.horarium-hour {
+  display: grid;
+  gap: 10px;
+}
+
+.horarium-hour label {
+  display: grid;
+  gap: 6px;
+}
+
+.horarium-hour textarea {
+  width: 100%;
+  min-height: 64px;
+  resize: vertical;
+}
+
+.horarium-hour.is-complete {
+  border-color: rgba(52, 199, 89, 0.25);
+  background: rgba(52, 199, 89, 0.07);
+}

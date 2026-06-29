@@ -6,6 +6,7 @@ import {
   createDailyExamenRemote,
   createGraceRecoveryRemote,
   createHolyLifeDayLogRemote,
+  createHorariumDayLogRemote,
   createThoughtCaptiveRemote,
   createTransformationPlanRemote,
   loadSpiritualFormationData,
@@ -17,9 +18,11 @@ import {
   listDailyExamens,
   listGraceRecoveryEntries,
   listHolyLifeDayLogs,
+  listHorariumDayLogs,
   listThoughtCaptiveEntries,
   listTransformationPlans,
   saveHolyLifeDayLog,
+  saveHorariumDayLog,
   saveDailyExamen,
   saveGraceRecoveryEntry,
   saveThoughtCaptiveEntry,
@@ -30,6 +33,7 @@ import DailySpiritualScanForm from '../components/DailySpiritualScanForm'
 import FruitTree from '../components/FruitTree'
 import GraceRecoveryFlow from '../components/GraceRecoveryFlow'
 import HolyLifeEngine from '../components/HolyLifeEngine'
+import HorariumEngine from '../components/HorariumEngine'
 import NewCreationMap from '../components/NewCreationMap'
 import SinPatternLibrary from '../components/SinPatternLibrary'
 import StrongholdPage from '../components/StrongholdPage'
@@ -43,6 +47,7 @@ const TABS = [
   ['library', '罪模式库'],
   ['stronghold', '自高之事'],
   ['holy-life', '圣洁生活'],
+  ['horarium', '定时祷告'],
   ['daily', '每日扫描'],
   ['thought', '思想俘虏'],
   ['recovery', '恩典恢复'],
@@ -76,10 +81,11 @@ export default function SpiritualFormationPage({ user, token, onBack, initialTab
     thoughtEntries: listThoughtCaptiveEntries(userId),
     graceRecoveryEntries: listGraceRecoveryEntries(userId),
     holyLifeDayLogs: listHolyLifeDayLogs(userId),
+    horariumDayLogs: listHorariumDayLogs(userId),
     plans: listTransformationPlans(userId),
     activePlan: getActiveTransformationPlan(userId),
   }), [userId, refreshKey])
-  const data = { ...localData, ...(remoteData || {}), holyLifeDayLogs: remoteData?.holyLifeDayLogs || localData.holyLifeDayLogs }
+  const data = { ...localData, ...(remoteData || {}), holyLifeDayLogs: remoteData?.holyLifeDayLogs || localData.holyLifeDayLogs, horariumDayLogs: remoteData?.horariumDayLogs || localData.horariumDayLogs }
 
   useEffect(() => {
     let cancelled = false
@@ -164,6 +170,7 @@ export default function SpiritualFormationPage({ user, token, onBack, initialTab
             {[
               ['daily', 'Start Daily Scan', 'Name emotion, trigger, lie, confession, and obedience.'],
               ['holy-life', 'Holy Life Engine', 'Practice consecration, purpose, presence, speech, charity, examen, and eternal perspective.'],
+              ['horarium', 'Horarium 定时祷告', 'Pray the fixed hours — praise, humility, love, resignation, confession, eternity.'],
               ['thought', 'Take a Thought Captive', 'Catch a thought and answer it with gospel truth.'],
               ['recovery', 'I Fell and Need Grace Recovery', 'Come into the light without hiding or despair.'],
               ['plans', 'Create Transformation Plan', 'Choose a 7-day, 30-day, 90-day, or 1-year plan.'],
@@ -214,7 +221,8 @@ export default function SpiritualFormationPage({ user, token, onBack, initialTab
 
       {tab === 'library' && <SinPatternLibrary />}
       {tab === 'stronghold' && <StrongholdPage userId={userId} token={token} />}
-      {tab === 'holy-life' && <HolyLifeEngine userId={userId} initialTodayLog={data.holyLifeDayLogs?.find((entry) => entry.date === todayKey())} history={data.holyLifeDayLogs || []} summaryStats={data.holyLifeSummary} onSave={(entry) => saveAndRefresh(saveHolyLifeDayLog, createHolyLifeDayLogRemote, entry)} />}
+      {tab === 'holy-life' && <HolyLifeEngine userId={userId} token={token} initialTodayLog={data.holyLifeDayLogs?.find((entry) => entry.date === todayKey())} history={data.holyLifeDayLogs || []} summaryStats={data.holyLifeSummary} onSave={(entry) => saveAndRefresh(saveHolyLifeDayLog, createHolyLifeDayLogRemote, entry)} />}
+      {tab === 'horarium' && <HorariumEngine userId={userId} initialTodayLog={data.horariumDayLogs?.find((entry) => entry.date === todayKey())} history={data.horariumDayLogs || []} onSave={(entry) => saveAndRefresh(saveHorariumDayLog, createHorariumDayLogRemote, entry)} />}
       {tab === 'daily' && <DailySpiritualScanForm userId={userId} onSave={(entry) => saveAndRefresh(saveDailyExamen, createDailyExamenRemote, entry)} />}
       {tab === 'thought' && <ThoughtCaptiveFlow userId={userId} onSave={(entry) => saveAndRefresh(saveThoughtCaptiveEntry, createThoughtCaptiveRemote, entry)} />}
       {tab === 'recovery' && <GraceRecoveryFlow userId={userId} onSave={(entry) => saveAndRefresh(saveGraceRecoveryEntry, createGraceRecoveryRemote, entry)} />}

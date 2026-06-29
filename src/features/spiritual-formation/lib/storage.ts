@@ -1,4 +1,4 @@
-import type { DailyExamen, GraceRecoveryEntry, HolyLifeDayLog, ThoughtCaptiveEntry, TransformationPlan } from "../types/spiritualFormation";
+import type { DailyExamen, GraceRecoveryEntry, HolyLifeDayLog, HorariumDayLog, ThoughtCaptiveEntry, TransformationPlan } from "../types/spiritualFormation";
 import { DailyExamenSchema, GraceRecoveryEntrySchema, HolyLifeDayLogSchema, ThoughtCaptiveEntrySchema, TransformationPlanSchema } from "../types/spiritualFormationSchemas";
 
 export const DEFAULT_USER_ID = "local-user";
@@ -9,6 +9,7 @@ export const STORAGE_KEYS = {
   graceRecoveryEntries: "spiritualFormation.graceRecoveryEntries",
   transformationPlans: "spiritualFormation.transformationPlans",
   holyLifeDayLogs: "spiritualFormation.holyLifeDayLogs",
+  horariumDayLogs: "spiritualFormation.horariumDayLogs",
 } as const;
 
 function hasStorage() {
@@ -115,4 +116,14 @@ export function listHolyLifeDayLogs(userId: string): HolyLifeDayLog[] {
 
 export function getHolyLifeDayLog(userId: string, date: string): HolyLifeDayLog | null {
   return listHolyLifeDayLogs(userId).find((entry) => entry.date === date) ?? null;
+}
+
+export function saveHorariumDayLog(log: HorariumDayLog): void {
+  upsert(STORAGE_KEYS.horariumDayLogs, log);
+}
+
+export function listHorariumDayLogs(userId: string): HorariumDayLog[] {
+  return readList<HorariumDayLog>(STORAGE_KEYS.horariumDayLogs)
+    .filter((entry) => entry.userId === userId)
+    .sort((a, b) => b.date.localeCompare(a.date));
 }
