@@ -114,6 +114,30 @@ function useMcCheyne() {
   return plan ? (plan[key] || null) : undefined
 }
 
+function readingSummary(reading) {
+  if (!reading) return ''
+  const refs = [reading.f1, reading.f2, reading.n1, reading.ps].filter(Boolean)
+  return refs.length ? refs.join('、') : ''
+}
+
+function buildFallbackDevotion(reading) {
+  const refs = readingSummary(reading)
+  const readingLine = refs ? `今天的麦琴读经是：${refs}。` : '今天先安静读一段经文，把心重新归向神。'
+  return {
+    ok: true,
+    localFallback: true,
+    theme: '今日读经与归回',
+    verse_ref: reading?.ps || reading?.n1 || '诗篇 119:105',
+    verse_text: '你的话是我脚前的灯，是我路上的光。',
+    devotion_text: `${readingLine}\n\n个性化灵修服务暂时不可用，但今天的操练仍然清楚：先来到神的话语前，不急着追求新的内容，而是把已经领受的真理认真听进去。读经时留意一个词、一句命令、一个应许，并问：今天我可以怎样具体顺服？`,
+    prayer_text: '主啊，求你借着今天的经文光照我的心，使我不只是读过，而是真实回应。帮助我在普通的一天里记得你、信靠你、顺服你。阿们。',
+    stage: 'stable',
+    stage_icon: '📖',
+    stage_label: '本地读经',
+    stage_action: refs ? `先读完：${refs}` : '先读一段经文，并写下一步顺服。',
+  }
+}
+
 // ── Styles ────────────────────────────────────────────────────────────────────
 const bg = 'linear-gradient(160deg,#0d1117 0%,#0a1628 60%,#060d1f 100%)'
 
@@ -155,7 +179,8 @@ const S = {
 function PersonalCard({ user, token }) {
   const [data, setData]     = useState(null)
   const [loading, setLoading] = useState(false)
-  const [error, setError]   = useState(null)
+  const [fallbackReason, setFallbackReason] = useState('')
+  const reading = useMcCheyne()
 
   const cacheKey = `personal_devot_${new Date().toISOString().slice(0, 10)}_${user?.email || ''}`
 
@@ -171,10 +196,13 @@ function PersonalCard({ user, token }) {
       credentials: 'include',
     })
       .then(r => r.ok ? r.json() : Promise.reject(r.status))
-      .then(d => { setData(d); try { localStorage.setItem(cacheKey, JSON.stringify(d)) } catch { /**/ } })
-      .catch(e => setError(String(e)))
+      .then(d => { setFallbackReason(''); setData(d); try { localStorage.setItem(cacheKey, JSON.stringify(d)) } catch { /**/ } })
+      .catch(() => {
+        setFallbackReason('个性化灵修服务暂时不可用，已切换为本地读经灵修。')
+        setData(buildFallbackDevotion(reading))
+      })
       .finally(() => setLoading(false))
-  }, [user?.email])
+  }, [user?.email, token, reading])
 
   if (!user) return (
     <div style={{ ...S.section, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '32px 16px', textAlign: 'center', gap: 8 }}>
@@ -192,10 +220,10 @@ function PersonalCard({ user, token }) {
     </div>
   )
 
-  if (error || !data) return (
+  if (!data) return (
     <div style={S.section}>
       <div style={{ padding: '24px 16px', textAlign: 'center', color: 'rgba(255,255,255,0.4)', fontSize: 13 }}>
-        {error ? `加载失败: ${error}` : '暂无个性化灵修内容'}
+        暂无个性化灵修内容
       </div>
     </div>
   )
@@ -215,6 +243,11 @@ function PersonalCard({ user, token }) {
       </div>
 
       <div style={S.sectionBody}>
+        {fallbackReason && (
+          <div style={{ marginBottom: 12, padding: '8px 10px', borderRadius: 8, background: 'rgba(255,193,7,0.08)', border: '1px solid rgba(255,193,7,0.18)', color: 'rgba(255,226,150,0.78)', fontSize: 12, lineHeight: 1.5 }}>
+            {fallbackReason}
+          </div>
+        )}
         {/* Verse */}
         <div style={S.label}>
           <span>✨ 今日经文</span>
@@ -223,7 +256,7 @@ function PersonalCard({ user, token }) {
         <div style={{ marginBottom: 4, fontSize: 11, color: 'rgba(90,200,250,0.7)', fontWeight: 600 }}>{data.verse_ref}</div>
         <div style={S.verse}>「{data.verse_text}」</div>
         {/* 完整章节 — 手风琴，默认折叠 */}
-        <ScriptureVerses scriptureRef={data.verse_ref} initialOpen={false} />
+        {!data.localFallback && <ScriptureVerses scriptureRef={data.verse_ref} initialOpen={false} />}
 
         {/* Devotion text */}
         <div style={{ ...S.label, marginTop: 16 }}>
