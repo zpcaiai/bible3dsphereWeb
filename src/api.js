@@ -2517,3 +2517,85 @@ export const agentApi = {
   todayPlan: (t) => _fGet('/formation-agent/daily-plan/today', t),
   recommendations: (t) => _fGet('/formation-agent/recommendations', t),
 }
+
+// ── Formation Analytics (B11) ──
+export const analyticsApi = {
+  summary: (period, t) => _fGet(`/analytics/summary?period=${period || 'monthly'}`, t),
+  series: (days, t) => _fGet(`/analytics/series?days=${days || 84}`, t),
+  graceEvidence: (t) => _fGet('/analytics/grace-evidence', t),
+  addGrace: (b, t) => _fPost('/analytics/grace-evidence', b, t),
+  generateReport: (period, t) => _fPost(`/analytics/reports/generate?period=${period || 'monthly'}`, {}, t),
+  reports: (t) => _fGet('/analytics/reports', t),
+}
+
+// ── Productization (B12) ──
+export const prodApi = {
+  plans: (t) => _fGet('/productization/plans', t),
+  subscription: (t) => _fGet('/productization/subscription', t),
+  subscribe: (b, t) => _fPost('/productization/subscribe', b, t),
+  myOrgs: (t) => _fGet('/productization/orgs', t),
+  createOrg: (b, t) => _fPost('/productization/orgs', b, t),
+}
+
+async function _fDelete(path, token) {
+  const r = await fetch(`${API_BASE}${path}`, { method: 'DELETE', headers: _fH(token) })
+  const d = await r.json().catch(() => ({}))
+  if (!r.ok) throw new Error(d.detail || '操作失败')
+  return d
+}
+
+// ── Spiritual Memory 记忆库 (B10) ──
+export const memoryApi = {
+  profile: (t) => _fGet('/spiritual-memory/profile', t),
+  patchProfile: (b, t) => _fPatch('/spiritual-memory/profile', b, t),
+  consent: (t) => _fGet('/spiritual-memory/consent', t),
+  patchConsent: (b, t) => _fPatch('/spiritual-memory/consent', b, t),
+  items: (type, t) => _fGet(`/spiritual-memory/items${type ? `?memory_type=${encodeURIComponent(type)}` : ''}`, t),
+  addItem: (b, t) => _fPost('/spiritual-memory/items', b, t),
+  patchItem: (id, b, t) => _fPatch(`/spiritual-memory/items/${id}`, b, t),
+  deleteItem: (id, t) => _fDelete(`/spiritual-memory/items/${id}`, t),
+  search: (b, t) => _fPost('/spiritual-memory/search', b, t),
+  summary: (t) => _fGet('/spiritual-memory/summary', t),
+}
+
+// ── AI Tutor 属灵导师对话 (B10) ──
+export const tutorApi = {
+  threads: (t) => _fGet('/ai-tutor/threads', t),
+  createThread: (b, t) => _fPost('/ai-tutor/threads', b, t),
+  thread: (id, t) => _fGet(`/ai-tutor/threads/${id}`, t),
+  send: (id, b, t) => _fPost(`/ai-tutor/threads/${id}/messages`, b, t),
+  archive: (id, t) => _fDelete(`/ai-tutor/threads/${id}`, t),
+  chat: (b, t) => _fPost('/ai-tutor/chat', b, t),
+}
+
+// ── Org Console 组织管理台 (B12 多租户) ──
+export const orgApi = {
+  myRole: (oid, t) => _fGet(`/org-console/${oid}/my-role`, t),
+  summary: (oid, t) => _fGet(`/org-console/${oid}/summary`, t),
+  groups: (oid, t) => _fGet(`/org-console/${oid}/groups`, t),
+  claimGroup: (oid, gid, t) => _fPost(`/org-console/${oid}/groups/${gid}/claim`, {}, t),
+  mentorRelationships: (oid, t) => _fGet(`/org-console/${oid}/mentor-relationships`, t),
+  members: (oid, t) => _fGet(`/org-console/${oid}/members`, t),
+  discipleship: (oid, t) => _fGet(`/org-console/${oid}/discipleship`, t),
+  mentorProgress: (oid, t) => _fGet(`/org-console/${oid}/mentor-progress`, t),
+  churchTrend: (oid, weeks, t) => _fGet(`/org-console/${oid}/church-trend?weeks=${weeks || 12}`, t),
+  groupHealth: (oid, t) => _fGet(`/org-console/${oid}/group-health`, t),
+  activityTrend: (oid, weeks, t) => _fGet(`/org-console/${oid}/activity-trend?weeks=${weeks || 12}`, t),
+}
+
+// ── Billing / Stripe (B12-4) ──
+export const billingApi = {
+  status: (t) => _fGet('/billing/status', t),
+  checkout: (b, t) => _fPost('/billing/checkout', b, t),
+}
+
+// ── Platform Admin / Moderation (B12-4) ──
+export const platformApi = {
+  overview: (t) => _fGet('/platform/overview', t),
+  crisisQueue: (days, t) => _fGet(`/platform/moderation/crisis-queue?days=${days || 30}`, t),
+  reviewCrisis: (id, b, t) => _fPost(`/platform/moderation/crisis/${id}/review`, b, t),
+  orgs: (t) => _fGet('/platform/orgs', t),
+  suspendOrg: (id, b, t) => _fPost(`/platform/orgs/${id}/suspend`, b, t),
+  reactivateOrg: (id, b, t) => _fPost(`/platform/orgs/${id}/reactivate`, b, t),
+  modLog: (t) => _fGet('/platform/moderation/log', t),
+}
