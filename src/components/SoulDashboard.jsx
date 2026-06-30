@@ -20,6 +20,11 @@ import PsalmPrayerPage from '../PsalmPrayerPage'
 import MissionLifePage from '../MissionLifePage'
 import PracticingPresencePage from '../PracticingPresencePage'
 import FastingSimplicityPage from '../FastingSimplicityPage'
+import DoctrineLearningPage from '../DoctrineLearningPage'
+import ChurchIntegrationPage from '../ChurchIntegrationPage'
+import DiscipleshipPathwayPage from '../DiscipleshipPathwayPage'
+import AccountabilityGroupPage from '../AccountabilityGroupPage'
+import MentorCoachingPage from '../MentorCoachingPage'
 import SabbathRestPage from '../SabbathRestPage'
 import FruitTrackerPage from '../FruitTrackerPage'
 import TemptationResistancePage from '../TemptationResistancePage'
@@ -471,6 +476,71 @@ export default function SoulDashboard({ user }) {
         </div>
       </button>
 
+      {/* ── 导师陪跑 ── */}
+      <button onClick={() => setOverlay('mentor')} style={{ display: 'block', width: 'calc(100% - 32px)', textAlign: 'left', cursor: 'pointer', margin: '0 16px 12px', borderRadius: 14, padding: '14px 16px',
+        background: 'linear-gradient(135deg, rgba(139,92,246,0.16), rgba(125,211,252,0.10))', border: '1px solid rgba(139,92,246,0.25)', color: '#fff' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <span style={{ fontSize: 24 }}>🤝</span>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 14, fontWeight: 700 }}>导师陪跑</div>
+            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>同意范围内的陪伴 · 提问/观察/计划</div>
+          </div>
+          <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)' }}>›</span>
+        </div>
+      </button>
+
+      {/* ── 小组监督 ── */}
+      <button onClick={() => setOverlay('acc-group')} style={{ display: 'block', width: 'calc(100% - 32px)', textAlign: 'left', cursor: 'pointer', margin: '0 16px 12px', borderRadius: 14, padding: '14px 16px',
+        background: 'linear-gradient(135deg, rgba(245,181,63,0.16), rgba(52,199,89,0.10))', border: '1px solid rgba(245,181,63,0.25)', color: '#fff' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <span style={{ fontSize: 24 }}>👥</span>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 14, fontWeight: 700 }}>小组监督</div>
+            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>同意制 · 坚固爱与信,不羞辱</div>
+          </div>
+          <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)' }}>›</span>
+        </div>
+      </button>
+
+      {/* ── 门徒成长路径 ── */}
+      <button onClick={() => setOverlay('disciple-path')} style={{ display: 'block', width: 'calc(100% - 32px)', textAlign: 'left', cursor: 'pointer', margin: '0 16px 12px', borderRadius: 14, padding: '14px 16px',
+        background: 'linear-gradient(135deg, rgba(52,199,89,0.16), rgba(139,92,246,0.10))', border: '1px solid rgba(52,199,89,0.25)', color: '#fff' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <span style={{ fontSize: 24 }}>🌱</span>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 14, fontWeight: 700 }}>门徒成长路径</div>
+            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>阶段评估 → 个性化路径</div>
+          </div>
+          <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)' }}>›</span>
+        </div>
+      </button>
+
+      {/* ── 教会生活整合 ── */}
+      <button onClick={() => setOverlay('church-life')} style={{ display: 'block', width: 'calc(100% - 32px)', textAlign: 'left', cursor: 'pointer', margin: '0 16px 12px', borderRadius: 14, padding: '14px 16px',
+        background: 'linear-gradient(135deg, rgba(125,211,252,0.16), rgba(245,181,63,0.10))', border: '1px solid rgba(125,211,252,0.25)', color: '#fff' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <span style={{ fontSize: 24 }}>⛪</span>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 14, fontWeight: 700 }}>教会生活整合</div>
+            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>渐进重返 · 创伤先医治</div>
+          </div>
+          <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)' }}>›</span>
+        </div>
+      </button>
+
+      {/* ── 教义学习 ── */}
+      <button onClick={() => setOverlay('doctrine')} style={{ display: 'block', width: 'calc(100% - 32px)', textAlign: 'left', cursor: 'pointer', margin: '0 16px 12px', borderRadius: 14, padding: '14px 16px',
+        background: 'linear-gradient(135deg, rgba(139,92,246,0.16), rgba(245,181,63,0.10))', border: '1px solid rgba(139,92,246,0.25)', color: '#fff' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <span style={{ fontSize: 24 }}>📚</span>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 14, fontWeight: 700 }}>教义学习</div>
+            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>经文/教义/传统/应用 · 连接成长</div>
+          </div>
+          <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)' }}>›</span>
+        </div>
+      </button>
+
       {/* ── 圣经默想 Lectio Divina ── */}
       <button onClick={() => setOverlay('lectio')} style={{ display: 'block', width: 'calc(100% - 32px)', textAlign: 'left', cursor: 'pointer', margin: '0 16px 12px', borderRadius: 14, padding: '14px 16px',
         background: 'linear-gradient(135deg, rgba(52,199,89,0.16), rgba(90,200,250,0.10))', border: '1px solid rgba(52,199,89,0.25)', color: '#fff' }}>
@@ -637,6 +707,11 @@ export default function SoulDashboard({ user }) {
           {overlay === 'mission-life' && <MissionLifePage user={user} onBack={() => setOverlay(null)} />}
           {overlay === 'presence' && <PracticingPresencePage user={user} onBack={() => setOverlay(null)} />}
           {overlay === 'fasting' && <FastingSimplicityPage user={user} onBack={() => setOverlay(null)} />}
+          {overlay === 'doctrine' && <DoctrineLearningPage user={user} onBack={() => setOverlay(null)} />}
+          {overlay === 'church-life' && <ChurchIntegrationPage user={user} onBack={() => setOverlay(null)} />}
+          {overlay === 'disciple-path' && <DiscipleshipPathwayPage user={user} onBack={() => setOverlay(null)} />}
+          {overlay === 'acc-group' && <AccountabilityGroupPage user={user} onBack={() => setOverlay(null)} />}
+          {overlay === 'mentor' && <MentorCoachingPage user={user} onBack={() => setOverlay(null)} />}
           {overlay === 'sabbath' && <SabbathRestPage user={user} onBack={() => setOverlay(null)} />}
           {overlay === 'fruit' && <FruitTrackerPage user={user} onBack={() => setOverlay(null)} />}
           {overlay === 'temptation' && <TemptationResistancePage user={user} onBack={() => setOverlay(null)} />}

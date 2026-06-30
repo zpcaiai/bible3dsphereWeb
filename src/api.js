@@ -2463,3 +2463,48 @@ export const formationApi = {
   fastingActivePlans: (t) => _fGet('/fasting/plans/active', t),
   simplicityAudit: (b, t) => _fPost('/fasting/simplicity/audit', b, t),
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// B7 群体/门训 + B9 教义 统一封装
+// ─────────────────────────────────────────────────────────────────────────────
+async function _fPatch(path, body, token) {
+  const r = await fetch(`${API_BASE}${path}`, { method: 'PATCH', headers: _fH(token, true), body: JSON.stringify(body || {}) })
+  const d = await r.json().catch(() => ({})); if (!r.ok) throw new Error(d.detail || '操作失败'); return d
+}
+
+export const communityApi = {
+  // Mentor
+  mentorRels: (t) => _fGet('/mentor/relationships', t),
+  createMentorRel: (b, t) => _fPost('/mentor/relationships', b, t),
+  mentorSessions: (rid, t) => _fGet(`/mentor/relationships/${rid}/sessions`, t),
+  createMentorSession: (rid, b, t) => _fPost(`/mentor/relationships/${rid}/sessions`, b, t),
+  mentorRecommend: (b, t) => _fPost('/mentor/recommend', b, t),
+  mentorQuestions: (t) => _fGet('/mentor/questions', t),
+  // Accountability Group
+  myGroups: (t) => _fGet('/accountability-group/groups', t),
+  createGroup: (b, t) => _fPost('/accountability-group/groups', b, t),
+  groupDetail: (id, t) => _fGet(`/accountability-group/groups/${id}`, t),
+  groupCheckin: (id, b, t) => _fPost(`/accountability-group/groups/${id}/checkins`, b, t),
+  groupCheckins: (id, t) => _fGet(`/accountability-group/groups/${id}/checkins`, t),
+  groupPrayers: (id, t) => _fGet(`/accountability-group/groups/${id}/prayer-requests`, t),
+  addGroupPrayer: (id, b, t) => _fPost(`/accountability-group/groups/${id}/prayer-requests`, b, t),
+  // Discipleship
+  discStages: (t) => _fGet('/discipleship/stages', t),
+  discAssess: (b, t) => _fPost('/discipleship/assessments', b, t),
+  discRecommend: (t) => _fPost('/discipleship/recommend', {}, t),
+  discCreatePath: (b, t) => _fPost('/discipleship/paths', b, t),
+  discActivePath: (t) => _fGet('/discipleship/paths/active', t),
+  discUpdateStep: (id, b, t) => _fPatch(`/discipleship/steps/${id}`, b, t),
+  // Church Integration
+  churchCurrent: (t) => _fGet('/church-integration/connections/current', t),
+  churchUpsert: (b, t) => _fPost('/church-integration/connections', b, t),
+  churchRecommend: (b, t) => _fPost('/church-integration/recommend', b, t),
+  churchRhythms: (t) => _fGet('/church-integration/rhythms', t),
+  churchCreateRhythm: (b, t) => _fPost('/church-integration/rhythms', b, t),
+  churchReentry: (b, t) => _fPost('/church-integration/reentry-plans', b, t),
+  // Doctrine (B9)
+  doctrineTopics: (t) => _fGet('/doctrine/topics', t),
+  doctrinePaths: (t) => _fGet('/doctrine/paths', t),
+  doctrineRecommend: (b, t) => _fPost('/doctrine/recommend', b, t),
+  doctrineProgress: (b, t) => _fPost('/doctrine/progress', b, t),
+}
