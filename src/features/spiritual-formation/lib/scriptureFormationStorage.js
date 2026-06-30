@@ -1,3 +1,5 @@
+import { syncBatch14Record } from './batch14Api'
+
 export const SCRIPTURE_FORMATION_STORAGE_KEYS = {
   lectioSessions: 'scriptureFormation.lectioSessions',
   memoryItems: 'scriptureFormation.memoryItems',
@@ -24,16 +26,17 @@ function writeList(key, items) {
   window.localStorage.setItem(key, JSON.stringify(items))
 }
 
-function upsert(key, entry) {
+function upsert(key, entry, recordType) {
   const items = readList(key)
   const next = items.some((item) => item.id === entry.id)
     ? items.map((item) => item.id === entry.id ? entry : item)
     : [entry, ...items]
   writeList(key, next)
+  if (recordType) syncBatch14Record('scripture', recordType, entry)
 }
 
 export function saveLectioSession(session) {
-  upsert(SCRIPTURE_FORMATION_STORAGE_KEYS.lectioSessions, session)
+  upsert(SCRIPTURE_FORMATION_STORAGE_KEYS.lectioSessions, session, 'lectio_sessions')
 }
 
 export function listLectioSessions(userId) {
@@ -43,7 +46,7 @@ export function listLectioSessions(userId) {
 }
 
 export function saveMemoryItem(item) {
-  upsert(SCRIPTURE_FORMATION_STORAGE_KEYS.memoryItems, item)
+  upsert(SCRIPTURE_FORMATION_STORAGE_KEYS.memoryItems, item, 'memory_items')
 }
 
 export function listMemoryItems(userId) {
@@ -53,7 +56,7 @@ export function listMemoryItems(userId) {
 }
 
 export function saveExamenSession(session) {
-  upsert(SCRIPTURE_FORMATION_STORAGE_KEYS.examenSessions, session)
+  upsert(SCRIPTURE_FORMATION_STORAGE_KEYS.examenSessions, session, 'examen_sessions')
 }
 
 export function listExamenSessions(userId) {
@@ -63,7 +66,7 @@ export function listExamenSessions(userId) {
 }
 
 export function saveConfessionSession(session) {
-  upsert(SCRIPTURE_FORMATION_STORAGE_KEYS.confessionSessions, session)
+  upsert(SCRIPTURE_FORMATION_STORAGE_KEYS.confessionSessions, session, 'confession_sessions')
 }
 
 export function listConfessionSessions(userId) {

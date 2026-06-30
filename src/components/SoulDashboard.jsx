@@ -18,6 +18,9 @@ import ExamenPage from '../ExamenPage'
 import LectioPage from '../LectioPage'
 import PsalmPrayerPage from '../PsalmPrayerPage'
 import MissionLifePage from '../MissionLifePage'
+import PracticingPresencePage from '../PracticingPresencePage'
+import IntercessionPage from '../IntercessionPage'
+import PrayerRulePage from '../PrayerRulePage'
 import ReminderSettings from '../ReminderSettings'
 import PracticeHubPage from '../PracticeHubPage'
 import PlanetHome from '../PlanetHome'
@@ -373,6 +376,45 @@ export default function SoulDashboard({ user }) {
         </div>
       </button>
 
+      {/* ── 祷告规则 · 每日节奏 ── */}
+      <button onClick={() => setOverlay('prayer-rule')} style={{ display: 'block', width: 'calc(100% - 32px)', textAlign: 'left', cursor: 'pointer', margin: '0 16px 12px', borderRadius: 14, padding: '14px 16px',
+        background: 'linear-gradient(135deg, rgba(139,92,246,0.16), rgba(90,200,250,0.10))', border: '1px solid rgba(139,92,246,0.25)', color: '#fff' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <span style={{ fontSize: 24 }}>🕯</span>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 14, fontWeight: 700 }}>祷告规则 · 每日节奏</div>
+            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>晨 / 午 / 晚 · 与神相交不是表现</div>
+          </div>
+          <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)' }}>›</span>
+        </div>
+      </button>
+
+      {/* ── 代祷名单 ── */}
+      <button onClick={() => setOverlay('intercession')} style={{ display: 'block', width: 'calc(100% - 32px)', textAlign: 'left', cursor: 'pointer', margin: '0 16px 12px', borderRadius: 14, padding: '14px 16px',
+        background: 'linear-gradient(135deg, rgba(245,181,63,0.16), rgba(255,107,107,0.10))', border: '1px solid rgba(245,181,63,0.25)', color: '#fff' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <span style={{ fontSize: 24 }}>🙏</span>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 14, fontWeight: 700 }}>代祷名单</div>
+            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>持续为人代求 · 把结果交托给神</div>
+          </div>
+          <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)' }}>›</span>
+        </div>
+      </button>
+
+      {/* ── 操练与神同在 ── */}
+      <button onClick={() => setOverlay('presence')} style={{ display: 'block', width: 'calc(100% - 32px)', textAlign: 'left', cursor: 'pointer', margin: '0 16px 12px', borderRadius: 14, padding: '14px 16px',
+        background: 'linear-gradient(135deg, rgba(125,211,252,0.16), rgba(52,199,89,0.10))', border: '1px solid rgba(125,211,252,0.25)', color: '#fff' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <span style={{ fontSize: 24 }}>🌿</span>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 14, fontWeight: 700 }}>操练与神同在</div>
+            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>30–60 秒回到神面前 · 不是打卡</div>
+          </div>
+          <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)' }}>›</span>
+        </div>
+      </button>
+
       {/* ── 圣经默想 Lectio Divina ── */}
       <button onClick={() => setOverlay('lectio')} style={{ display: 'block', width: 'calc(100% - 32px)', textAlign: 'left', cursor: 'pointer', margin: '0 16px 12px', borderRadius: 14, padding: '14px 16px',
         background: 'linear-gradient(135deg, rgba(52,199,89,0.16), rgba(90,200,250,0.10))', border: '1px solid rgba(52,199,89,0.25)', color: '#fff' }}>
@@ -537,6 +579,9 @@ export default function SoulDashboard({ user }) {
           {overlay === 'lectio' && <LectioPage user={user} onBack={() => setOverlay(null)} />}
           {overlay === 'psalm' && <PsalmPrayerPage user={user} onBack={() => setOverlay(null)} />}
           {overlay === 'mission-life' && <MissionLifePage user={user} onBack={() => setOverlay(null)} />}
+          {overlay === 'presence' && <PracticingPresencePage user={user} onBack={() => setOverlay(null)} />}
+          {overlay === 'intercession' && <IntercessionPage user={user} onBack={() => setOverlay(null)} />}
+          {overlay === 'prayer-rule' && <PrayerRulePage user={user} onBack={() => setOverlay(null)} />}
           {overlay === 'reminder' && <ReminderSettings onBack={() => setOverlay(null)} />}
           {overlay === 'hub' && <PracticeHubPage user={user} onBack={() => setOverlay(null)} />}
           {overlay === 'gospel' && <GospelDiagnosticPage user={user} onBack={() => setOverlay(null)} />}

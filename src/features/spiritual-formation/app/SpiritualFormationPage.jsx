@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import BackButton from '../../../BackButton'
 import { sinPatternMap } from '../data/sinPatterns'
+import { hydrateBatch14LocalCaches, setBatch14AuthToken } from '../lib/batch14Api'
 import { MODULE_DISCLAIMER } from '../lib/pastoralSafety'
 import {
   createDailyExamenRemote,
@@ -107,6 +108,7 @@ export default function SpiritualFormationPage({ user, token, onBack, initialTab
 
   useEffect(() => {
     let cancelled = false
+    setBatch14AuthToken(token)
     if (!token) {
       setRemoteData(null)
       setSyncState('local')
@@ -129,6 +131,21 @@ export default function SpiritualFormationPage({ user, token, onBack, initialTab
       })
     return () => { cancelled = true }
   }, [token, refreshKey])
+
+  useEffect(() => {
+    let cancelled = false
+    if (!token) {
+      setBatch14AuthToken('')
+      return
+    }
+    setBatch14AuthToken(token)
+    hydrateBatch14LocalCaches(token)
+      .then((result) => {
+        if (!cancelled && result?.hydrated) refresh()
+      })
+      .catch(() => {})
+    return () => { cancelled = true }
+  }, [token])
 
   function refresh() {
     setRefreshKey((value) => value + 1)

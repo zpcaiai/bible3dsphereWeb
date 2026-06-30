@@ -2399,3 +2399,67 @@ export async function fetchMissionReview(token) {
   const res = await fetch(`${API_BASE}/mission-life/review`, { headers: missionHeaders(token) })
   if (!res.ok) throw new Error('加载回顾失败'); return res.json()
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// B1-6 新 skill 统一封装：祷告规则/代祷/同在/试探/果子/安息/禁食
+// ─────────────────────────────────────────────────────────────────────────────
+const _fH = (token, json = false) => ({
+  ...(json ? { 'Content-Type': 'application/json' } : {}),
+  ...(token ? { Authorization: `Bearer ${token}` } : {}),
+})
+async function _fGet(path, token) {
+  const r = await fetch(`${API_BASE}${path}`, { headers: _fH(token) })
+  if (!r.ok) throw new Error('加载失败')
+  return r.json()
+}
+async function _fPost(path, body, token) {
+  const r = await fetch(`${API_BASE}${path}`, { method: 'POST', headers: _fH(token, true), body: JSON.stringify(body || {}) })
+  const d = await r.json().catch(() => ({}))
+  if (!r.ok) throw new Error(d.detail || '操作失败')
+  return d
+}
+
+export const formationApi = {
+  // Prayer Rule
+  prayerToday: (t) => _fGet('/prayer-rule/today', t),
+  createDefaultRule: (t) => _fPost('/prayer-rule/rules/default', {}, t),
+  startPrayerSession: (b, t) => _fPost('/prayer-rule/sessions', b, t),
+  completePrayerSession: (id, b, t) => _fPost(`/prayer-rule/sessions/${id}/complete`, b, t),
+  prayerReview: (t) => _fGet('/prayer-rule/review', t),
+  // Intercession
+  intercessionToday: (t) => _fGet('/intercession/today', t),
+  intercessionRequests: (status, t) => _fGet(`/intercession/requests?status=${status || 'active'}`, t),
+  addIntercessionRequest: (b, t) => _fPost('/intercession/requests', b, t),
+  prayRequest: (id, b, t) => _fPost(`/intercession/requests/${id}/pray`, b, t),
+  answerRequest: (id, b, t) => _fPost(`/intercession/requests/${id}/answered`, b, t),
+  // Practicing Presence
+  presencePractices: (t) => _fGet('/presence/practices', t),
+  recommendPresence: (b, t) => _fPost('/presence/recommend', b, t),
+  startPresenceCheckin: (b, t) => _fPost('/presence/checkins', b, t),
+  completePresenceCheckin: (id, b, t) => _fPost(`/presence/checkins/${id}/complete`, b, t),
+  presenceReflection: (t) => _fGet('/presence/reflection', t),
+  // Temptation
+  temptationTypes: (t) => _fGet('/temptation/types', t),
+  resistTemptation: (b, t) => _fPost('/temptation/resist', b, t),
+  createTemptationPlan: (b, t) => _fPost('/temptation/plans', b, t),
+  temptationPlans: (t) => _fGet('/temptation/plans', t),
+  temptationCheckin: (b, t) => _fPost('/temptation/checkins', b, t),
+  // Fruit
+  fruitDimensions: (t) => _fGet('/fruit/dimensions', t),
+  submitFruit: (b, t) => _fPost('/fruit/assessments', b, t),
+  fruitLatest: (t) => _fGet('/fruit/latest', t),
+  fruitTrends: (t) => _fGet('/fruit/trends', t),
+  fruitInsights: (t) => _fPost('/fruit/insights', {}, t),
+  // Sabbath & Rest
+  sabbathAudit: (b, t) => _fPost('/sabbath/audit', b, t),
+  sabbathLatestAudit: (t) => _fGet('/sabbath/audit/latest', t),
+  sabbathRecommend: (t) => _fGet('/sabbath/recommend', t),
+  createSabbathPlan: (b, t) => _fPost('/sabbath/plans', b, t),
+  sabbathActivePlan: (t) => _fGet('/sabbath/plans/active', t),
+  // Fasting & Simplicity
+  fastingPractices: (t) => _fGet('/fasting/practices', t),
+  recommendFasting: (b, t) => _fPost('/fasting/recommend', b, t),
+  createFastingPlan: (b, t) => _fPost('/fasting/plans', b, t),
+  fastingActivePlans: (t) => _fGet('/fasting/plans/active', t),
+  simplicityAudit: (b, t) => _fPost('/fasting/simplicity/audit', b, t),
+}
