@@ -30,6 +30,8 @@ import OrgConsolePage from '../OrgConsolePage'
 import BillingPage from '../BillingPage'
 import PlatformAdminPage from '../PlatformAdminPage'
 import SpiritualMemoryPage from '../SpiritualMemoryPage'
+import MVFEPage from '../MVFEPage'
+import PilgrimsGame from '../features/godot/PilgrimsGame'
 import DoctrineLearningPage from '../DoctrineLearningPage'
 import ChurchIntegrationPage from '../ChurchIntegrationPage'
 import DiscipleshipPathwayPage from '../DiscipleshipPathwayPage'
@@ -616,6 +618,19 @@ export default function SoulDashboard({ user }) {
         </div>
       </button>
 
+      {/* ── 灵镜观心 MVFE ── */}
+      <button onClick={() => setOverlay('mvfe')} style={{ display: 'block', width: 'calc(100% - 32px)', textAlign: 'left', cursor: 'pointer', margin: '0 16px 12px', borderRadius: 14, padding: '14px 16px',
+        background: 'linear-gradient(135deg, rgba(199,200,255,0.16), rgba(125,211,252,0.10))', border: '1px solid rgba(199,200,255,0.25)', color: '#fff' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <span style={{ fontSize: 24 }}>🧬</span>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 14, fontWeight: 700 }}>{i18nT('灵镜观心')}</div>
+            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>{i18nT('HIDOS 人格形成动态观测')}</div>
+          </div>
+          <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)' }}>›</span>
+        </div>
+      </button>
+
       {/* ── 计划与组织 ── */}
       <button onClick={() => setOverlay('productization')} style={{ display: 'block', width: 'calc(100% - 32px)', textAlign: 'left', cursor: 'pointer', margin: '0 16px 12px', borderRadius: 14, padding: '14px 16px',
         background: 'linear-gradient(135deg, rgba(139,92,246,0.16), rgba(125,211,252,0.10))', border: '1px solid rgba(139,92,246,0.25)', color: '#fff' }}>
@@ -837,6 +852,13 @@ export default function SoulDashboard({ user }) {
           {overlay === 'platform-admin' && <PlatformAdminPage user={user} onBack={() => setOverlay(null)} />}
           {overlay === 'ai-tutor' && <AITutorChatPage user={user} onBack={() => setOverlay(null)} />}
           {overlay === 'spiritual-memory' && <SpiritualMemoryPage user={user} onBack={() => setOverlay(null)} />}
+          {overlay === 'mvfe' && <MVFEPage user={user} onBack={() => setOverlay(null)} />}
+          {overlay === 'pilgrim-game' && (
+            <div style={{ position: 'absolute', inset: 0 }}>
+              <button onClick={() => setOverlay(null)} style={{ position: 'absolute', top: 12, left: 12, zIndex: 10, background: 'rgba(0,0,0,0.55)', color: '#fff', border: '1px solid rgba(255,255,255,0.25)', borderRadius: 10, padding: '8px 12px', cursor: 'pointer', fontSize: 14 }}>{i18nT('← 返回')}</button>
+              <PilgrimsGame />
+            </div>
+          )}
           {overlay === 'formation-home' && <FormationAgentDashboard user={user} go={(t) => setOverlay(t)} onBack={() => setOverlay(null)} />}
           {overlay === 'lectio' && <LectioPage user={user} onBack={() => setOverlay(null)} />}
           {overlay === 'psalm' && <PsalmPrayerPage user={user} onBack={() => setOverlay(null)} />}
