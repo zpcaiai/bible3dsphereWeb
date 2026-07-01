@@ -27,6 +27,17 @@ export const EXPANSION_CHIPS_OPTIONAL = {
   ],
 }
 
+
+// 扩充第二辑（13 个新引擎）的大陆入口；同样默认仅在 includeOptional 时挂载。
+export const EXPANSION_CHIPS_BATCH2 = {
+  '健康教会九标志': [['团契生活', 'exp:fellowship'], ['爱邻舍 · 公义款待', 'exp:neighbor']],
+  '认识自己': [['感恩 · 数算恩典', 'exp:eucharisteo'], ['智慧 · 敬畏神地活', 'exp:wisdom']],
+  '回到福音': [['得救的确据', 'exp:assurance'], ['道成肉身 · 与神性情有份', 'exp:incarnation'], ['敬畏神 · 欢喜而战兢', 'exp:feargod']],
+  '与神同行': [['安息节奏 · 铲除匆忙', 'exp:ruleoflife'], ['祷告经典 · 祷告的学校', 'exp:prayerschool'], ['默观 · 在神爱里安息', 'exp:contemplation']],
+  '等候上帝': [['复活盼望', 'exp:hope']],
+  '人格塑造': [['成圣 · 治死与穿上', 'exp:holiness'], ['饶恕与和好', 'exp:forgiveness']],
+}
+
 function _merge(a, b) {
   const out = {}
   for (const k of new Set([...Object.keys(a), ...Object.keys(b)])) out[k] = [...(a[k] || []), ...(b[k] || [])]
@@ -35,7 +46,9 @@ function _merge(a, b) {
 
 // 把扩充 chips 追加到匹配 name 的大陆上，返回新数组（不改原对象）。
 export function withExpansionChips(continents, opts = {}) {
-  const map = opts.includeOptional ? _merge(EXPANSION_CHIPS, EXPANSION_CHIPS_OPTIONAL) : EXPANSION_CHIPS
+  // 默认挂载：用户指定的三个入口（联合/知足/哀歌）+ 第二辑 13 个新引擎
+  let map = _merge(EXPANSION_CHIPS, EXPANSION_CHIPS_BATCH2)
+  if (opts.includeOptional) map = _merge(map, EXPANSION_CHIPS_OPTIONAL)
   return (continents || []).map((c) => (map[c.name] ? { ...c, chips: [...c.chips, ...map[c.name]] } : c))
 }
 

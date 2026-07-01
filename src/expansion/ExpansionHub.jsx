@@ -24,6 +24,19 @@ const FEATURES = [
   { key: 'spirits', prefix: 'spirits', action: 'discern', emoji: '🌗', name: '诸灵分辨', sub: '安慰/枯竭 · 依纳爵', kind: 'text', field: 'text', placeholder: '描述你此刻的内在状态，例如「这几天读经祷告都很枯干，提不起劲」' },
   { key: 'renovation', prefix: 'renovation', action: 'assess', emoji: '🌱', name: '心意更新', sub: '全人塑造 VIM · 魏乐德', kind: 'ratings', metaKey: 'dimensions' },
   { key: 'chinese', prefix: 'chinese', action: 'meditate', emoji: '🏮', name: '华人本土灵修', sub: '倪柝声/王明道/唐崇荣', kind: 'text', field: 'need', placeholder: '说出你此刻的处境或需要，例如「我为信仰受了很多苦，快撑不住了」' },
+  { key: 'assurance', prefix: 'assurance', action: 'analyze', emoji: '🛡️', name: '得救的确据', sub: '全备的基督 · 傅格森', kind: 'text', field: 'text', placeholder: '写下动摇你确据的处境，例如「我又犯了同样的罪，怀疑自己没得救」' },
+  { key: 'forgiveness', prefix: 'forgiveness', action: 'analyze', emoji: '🕊️', name: '饶恕与和好', sub: 'REACH · 沃弗/Worthington', kind: 'text', field: 'text', placeholder: '说出你受的伤，例如「我被最信任的人背叛了，放不下」' },
+  { key: 'fellowship', prefix: 'fellowship', action: 'analyze', emoji: '🤝', name: '团契生活', sub: '基督里的团契 · 潘霍华', kind: 'text', field: 'text', placeholder: '你在团契/教会里的挣扎，例如「我对教会很失望，大家都很表面」' },
+  { key: 'ruleoflife', prefix: 'rule-of-life', action: 'analyze', emoji: '🌿', name: '安息节奏', sub: '铲除匆忙 · Comer/Barton/毕德生', kind: 'text', field: 'text', placeholder: '描述你的步调，例如「最近特别忙，一点小事就发火，没时间祷告」' },
+  { key: 'feargod', prefix: 'fear-of-god', action: 'analyze', emoji: '⚡', name: '敬畏神', sub: '欢喜而战兢 · 里夫斯', kind: 'text', field: 'text', placeholder: '你与神关系的状态，例如「我总觉得神随时要惩罚我」' },
+  { key: 'eucharisteo', prefix: 'eucharisteo', action: 'analyze', emoji: '🙏', name: '感恩 · 数算恩典', sub: 'eucharisteo · 沃斯甘', kind: 'text', field: 'text', placeholder: '你此刻的心境，例如「最近很平淡麻木，感受不到什么」' },
+  { key: 'holiness', prefix: 'holiness', action: 'analyze', emoji: '🔥', name: '成圣与圣洁', sub: '治死与穿上 · 莱尔/马歇尔', kind: 'text', field: 'text', placeholder: '你想胜过的罪或想长进处，例如「我想胜过我的坏脾气和苦毒」' },
+  { key: 'neighbor', prefix: 'neighbor-love', action: 'analyze', emoji: '🫂', name: '爱邻舍 · 公义款待', sub: '慷慨的正义 · 凯勒', kind: 'text', field: 'text', placeholder: '你在回避的一个人或需要，例如「我总怕麻烦，不想伸手帮人」' },
+  { key: 'hope', prefix: 'hope', action: 'analyze', emoji: '🌅', name: '复活盼望', sub: '意料之外的盼望 · 赖特', kind: 'text', field: 'text', placeholder: '你的哀伤/惧怕/虚空，例如「我失去了至亲，很想念」' },
+  { key: 'prayerschool', prefix: 'prayer-school', action: 'analyze', emoji: '🕯️', name: '祷告经典', sub: '祷告的学校 · 慕安得烈/Bounds', kind: 'text', field: 'text', placeholder: '你祷告的卡点，例如「我不会祷告，也不知道说什么」' },
+  { key: 'contemplation', prefix: 'contemplation', action: 'analyze', emoji: '🌫️', name: '默观 · 在神爱里安息', sub: '朱利安/大德兰/未知之云', kind: 'text', field: 'text', placeholder: '你心里的躁动，例如「我很焦虑，一直担心未来」' },
+  { key: 'incarnation', prefix: 'incarnation', action: 'analyze', emoji: '🌟', name: '道成肉身', sub: '与神性情有份 · 亚他那修', kind: 'text', field: 'text', placeholder: '你的处境，例如「觉得没人懂我的软弱，神也不懂」' },
+  { key: 'wisdom', prefix: 'wisdom', action: 'analyze', emoji: '🦉', name: '智慧 · 敬畏神地活', sub: '箴言/传道书/雅各', kind: 'text', field: 'text', placeholder: '需要智慧的处境，例如「我总管不住嘴，冲动说错话」' },
   { key: 'resources', emoji: '📚', name: '推荐书目 · 圣诗', sub: '按大陆精选 · 可收藏', kind: 'resources' },
 ]
 
@@ -36,6 +49,9 @@ const LABELS = {
   deepen: '可求神加深', attribute: '属性', lie: '谎言', key_question: '关键分辨', closing: '', message: '', prayer_scaffold: '祷告脚手架',
   root: '根源', deficit: '福音欠缺', deepen_dirs: '可加深的方向', weak: '成长的邀请',
   movements: '四步哀歌', draft: '可照着祷告', guidance: '', verb: '', prayer: '完整祷文', themes: '主题', name: '',
+  // —— 扩充第二辑字段标签 ——
+  diagnosis: '看见', gospel_truth: '福音真理', grounds_line: '确据的根基', lean_note: '偏向', way_forward: '出路', way_outward: '向外的一步', teaching: '经典的话', hope: '盼望', principle: '原则', wise_step: '智慧的一步', from_above_test: '从上头来的智慧 · 检验', contemplative_practice: '默观操练', valley_prayer: '清教徒祷文', doctrine_note: '温柔的教义提示', prescription: '开的药', rule_hint: '生活规则', gospel_order_note: '福音次序', pair_line: '治死 · 穿上', spirit_note: '倚靠圣灵', concrete_step: '落到一个人一个动作', gospel_root: '福音的根', distinction: '分辨', mediator_reminder: '回到根基', balance_note: '平衡', voice_note: '经典的话', invite: '邀请', abuse_note: '安全优先', crisis_note: '',
+  trigger: '触发点', shadow: '此刻的阴影', block: '卡点', state: '状态', facet: '面向', domain: '领域', focus: '焦点', hurt_type: '伤害类型', struggle: '挣扎', symptom: '匆忙病征', mood: '心境', inward_curve: '向内蜷缩', suggested_form: '爱的操练', prescribed_practice: '操练', mortify: '治死', vivify: '穿上',
 }
 const SKIP = new Set(['ai_used', 'crisis', 'crisis_note'])
 

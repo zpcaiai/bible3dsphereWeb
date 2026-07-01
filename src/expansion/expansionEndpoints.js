@@ -112,6 +112,61 @@ export const resourceHymns = (token) => GET('/resources/hymns', token)
 export const resourceBookmark = (slug, kind, token) => POST('/resources/bookmark', { slug, kind: kind || 'book' }, token)
 export const resourceBookmarks = (token) => GET('/resources/bookmarks', token)
 
+
+// ── 扩充第二辑（13 个新引擎，统一 analyze + {text}）──
+export const assuranceMeta = (token) => GET('/assurance/meta', token)
+export const assuranceAnalyze = (text, token) => POST('/assurance/analyze', { text, use_ai: true }, token)
+export const assuranceHistory = (token, limit = 20) => GET(`/assurance/history?limit=${limit}`, token)
+export const assuranceLatest = (token) => GET('/assurance/latest', token)
+export const forgivenessMeta = (token) => GET('/forgiveness/meta', token)
+export const forgivenessAnalyze = (text, token) => POST('/forgiveness/analyze', { text, use_ai: true }, token)
+export const forgivenessHistory = (token, limit = 20) => GET(`/forgiveness/history?limit=${limit}`, token)
+export const forgivenessLatest = (token) => GET('/forgiveness/latest', token)
+export const fellowshipMeta = (token) => GET('/fellowship/meta', token)
+export const fellowshipAnalyze = (text, token) => POST('/fellowship/analyze', { text, use_ai: true }, token)
+export const fellowshipHistory = (token, limit = 20) => GET(`/fellowship/history?limit=${limit}`, token)
+export const fellowshipLatest = (token) => GET('/fellowship/latest', token)
+export const ruleoflifeMeta = (token) => GET('/rule-of-life/meta', token)
+export const ruleoflifeAnalyze = (text, token) => POST('/rule-of-life/analyze', { text, use_ai: true }, token)
+export const ruleoflifeHistory = (token, limit = 20) => GET(`/rule-of-life/history?limit=${limit}`, token)
+export const ruleoflifeLatest = (token) => GET('/rule-of-life/latest', token)
+export const feargodMeta = (token) => GET('/fear-of-god/meta', token)
+export const feargodAnalyze = (text, token) => POST('/fear-of-god/analyze', { text, use_ai: true }, token)
+export const feargodHistory = (token, limit = 20) => GET(`/fear-of-god/history?limit=${limit}`, token)
+export const feargodLatest = (token) => GET('/fear-of-god/latest', token)
+export const eucharisteoMeta = (token) => GET('/eucharisteo/meta', token)
+export const eucharisteoAnalyze = (text, token) => POST('/eucharisteo/analyze', { text, use_ai: true }, token)
+export const eucharisteoHistory = (token, limit = 20) => GET(`/eucharisteo/history?limit=${limit}`, token)
+export const eucharisteoLatest = (token) => GET('/eucharisteo/latest', token)
+export const holinessMeta = (token) => GET('/holiness/meta', token)
+export const holinessAnalyze = (text, token) => POST('/holiness/analyze', { text, use_ai: true }, token)
+export const holinessHistory = (token, limit = 20) => GET(`/holiness/history?limit=${limit}`, token)
+export const holinessLatest = (token) => GET('/holiness/latest', token)
+export const neighborMeta = (token) => GET('/neighbor-love/meta', token)
+export const neighborAnalyze = (text, token) => POST('/neighbor-love/analyze', { text, use_ai: true }, token)
+export const neighborHistory = (token, limit = 20) => GET(`/neighbor-love/history?limit=${limit}`, token)
+export const neighborLatest = (token) => GET('/neighbor-love/latest', token)
+export const hopeMeta = (token) => GET('/hope/meta', token)
+export const hopeAnalyze = (text, token) => POST('/hope/analyze', { text, use_ai: true }, token)
+export const hopeHistory = (token, limit = 20) => GET(`/hope/history?limit=${limit}`, token)
+export const hopeLatest = (token) => GET('/hope/latest', token)
+export const prayerschoolMeta = (token) => GET('/prayer-school/meta', token)
+export const prayerschoolAnalyze = (text, token) => POST('/prayer-school/analyze', { text, use_ai: true }, token)
+export const prayerschoolHistory = (token, limit = 20) => GET(`/prayer-school/history?limit=${limit}`, token)
+export const prayerschoolLatest = (token) => GET('/prayer-school/latest', token)
+export const contemplationMeta = (token) => GET('/contemplation/meta', token)
+export const contemplationAnalyze = (text, token) => POST('/contemplation/analyze', { text, use_ai: true }, token)
+export const contemplationHistory = (token, limit = 20) => GET(`/contemplation/history?limit=${limit}`, token)
+export const contemplationLatest = (token) => GET('/contemplation/latest', token)
+export const incarnationMeta = (token) => GET('/incarnation/meta', token)
+export const incarnationAnalyze = (text, token) => POST('/incarnation/analyze', { text, use_ai: true }, token)
+export const incarnationHistory = (token, limit = 20) => GET(`/incarnation/history?limit=${limit}`, token)
+export const incarnationLatest = (token) => GET('/incarnation/latest', token)
+export const wisdomMeta = (token) => GET('/wisdom/meta', token)
+export const wisdomAnalyze = (text, token) => POST('/wisdom/analyze', { text, use_ai: true }, token)
+export const wisdomHistory = (token, limit = 20) => GET(`/wisdom/history?limit=${limit}`, token)
+export const wisdomLatest = (token) => GET('/wisdom/latest', token)
+
 // 便捷映射：featureKey → { prefix, action, meta, run } —— 供动态调用。
 export const EXPANSION_MODULES = {
   lament: { prefix: 'lament', action: 'compose', meta: lamentMeta, run: lamentCompose },
@@ -128,4 +183,17 @@ export const EXPANSION_MODULES = {
   renovation: { prefix: 'renovation', action: 'assess', meta: renovationMeta, run: renovationAssess },
   chinese: { prefix: 'chinese', action: 'meditate', meta: chineseMeta, run: chineseMeditate },
   resources: { prefix: 'resources', action: null, meta: resourceMeta, run: null },
+  assurance: { prefix: 'assurance', action: 'analyze', meta: assuranceMeta, run: assuranceAnalyze },
+  forgiveness: { prefix: 'forgiveness', action: 'analyze', meta: forgivenessMeta, run: forgivenessAnalyze },
+  fellowship: { prefix: 'fellowship', action: 'analyze', meta: fellowshipMeta, run: fellowshipAnalyze },
+  ruleoflife: { prefix: 'rule-of-life', action: 'analyze', meta: ruleoflifeMeta, run: ruleoflifeAnalyze },
+  feargod: { prefix: 'fear-of-god', action: 'analyze', meta: feargodMeta, run: feargodAnalyze },
+  eucharisteo: { prefix: 'eucharisteo', action: 'analyze', meta: eucharisteoMeta, run: eucharisteoAnalyze },
+  holiness: { prefix: 'holiness', action: 'analyze', meta: holinessMeta, run: holinessAnalyze },
+  neighbor: { prefix: 'neighbor-love', action: 'analyze', meta: neighborMeta, run: neighborAnalyze },
+  hope: { prefix: 'hope', action: 'analyze', meta: hopeMeta, run: hopeAnalyze },
+  prayerschool: { prefix: 'prayer-school', action: 'analyze', meta: prayerschoolMeta, run: prayerschoolAnalyze },
+  contemplation: { prefix: 'contemplation', action: 'analyze', meta: contemplationMeta, run: contemplationAnalyze },
+  incarnation: { prefix: 'incarnation', action: 'analyze', meta: incarnationMeta, run: incarnationAnalyze },
+  wisdom: { prefix: 'wisdom', action: 'analyze', meta: wisdomMeta, run: wisdomAnalyze },
 }
