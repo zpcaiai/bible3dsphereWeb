@@ -22,6 +22,7 @@ import { TTSButton, TTSFullBar } from './useGlobalAudio.jsx'
 import { ttsServerParamsFor, pickVoiceFor, speechLangFor } from './voice'
 import LanguageToggle from './i18n/LanguageToggle'
 import GlobalToast from './components/GlobalToast'
+import ConfirmDialog from './components/ConfirmDialog'
 import AiStatusBanner from './components/AiStatusBanner'
 import SeekersStandalonePage from './components/SeekersStandalonePage'
 import DevotionTabContainer from './components/DevotionTabContainer'
@@ -1475,7 +1476,7 @@ function AppContent() {
                     <button
                       disabled={churchLeaveLoading}
                       onClick={async () => {
-                        if (!window.confirm('确定退出「' + myChurch.name + '」？')) return
+                        if (!(await window.confirmDialog?.('确定退出「' + myChurch.name + '」？'))) return
                         setChurchLeaveLoading(true)
                         try {
                           await leaveChurch(getToken())
@@ -3179,6 +3180,7 @@ export default function App() {
       <AiStatusBanner />
       <AppContent />
       <GlobalToast />
+      <ConfirmDialog />
     </QueryClientProvider>
   )
 }

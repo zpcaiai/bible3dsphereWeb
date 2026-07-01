@@ -38,8 +38,8 @@ export default function StrongholdTimeline({ userId = 'local-user', refreshKey =
   const insight = buildGrowthInsight(summary)
   const maxCount = summary.topStrongholds[0]?.count || 1
 
-  function handleClear() {
-    const ok = typeof window === 'undefined' || window.confirm(T('确定清空辨识记录吗？此操作不可恢复。', 'Clear all discernment records? This cannot be undone.'))
+  async function handleClear() {
+    const ok = typeof window === 'undefined' || await window.confirmDialog?.(T('确定清空辨识记录吗？此操作不可恢复。', 'Clear all discernment records? This cannot be undone.'))
     if (!ok) return
     if (onClear) { onClear(); return }
     clearScanRecords(userId)

@@ -582,7 +582,7 @@ export default function SermonJournalPage({ user, token, onBack }) {
                         {i18nT('编辑')}
                       </button>
                       <button
-                        onClick={() => { if (window.confirm(i18nT('确定删除此信息？'))) deleteJournal(j.id) }}
+                        onClick={async () => { if (await window.confirmDialog?.(i18nT('确定删除此信息？'))) deleteJournal(j.id) }}
                         title={i18nT('删除')}
                         style={{
                           padding: '4px 10px',

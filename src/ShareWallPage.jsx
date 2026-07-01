@@ -376,7 +376,7 @@ function NoteDetailOverlay({ note, onClose, onUnshare, onAmen, token }) {
   }
 
   async function handleUnshare() {
-    if (!window.confirm(i18nT('确定要从分享墙撤回这篇内容吗？'))) return
+    if (!(await window.confirmDialog?.(i18nT('确定要从分享墙撤回这篇内容吗？')))) return
     onUnshare(note.id)
     onClose()
   }

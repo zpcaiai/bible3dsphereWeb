@@ -134,7 +134,7 @@ export default function CommunionPage({ user, onBack, onOpenVoice }) {
     catch (e) { showToast(e.message) }
   }
   async function onRemove(email) {
-    if (!window.confirm(i18nT('确定删除该好友？'))) return
+    if (!(await window.confirmDialog?.(i18nT('确定删除该好友？')))) return
     try { await removeFriend(email); if (activePeer?.email === email) setActivePeer(null); loadFriends() }
     catch (e) { showToast(e.message) }
   }

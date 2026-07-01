@@ -5290,3 +5290,39 @@ select:focus-visible,
   white-space: nowrap;
   border: 0;
 }
+
+/* ============================================================
+   全局确认弹窗 ConfirmDialog（Promise 版，替代 window.confirm）
+   ============================================================ */
+.confirm-overlay {
+  position: fixed; inset: 0; z-index: 10000;
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+  background: rgba(6, 8, 16, 0.62);
+  backdrop-filter: blur(3px);
+  animation: confirm-fade 0.14s ease-out;
+}
+.confirm-box {
+  width: 100%; max-width: 340px;
+  padding: 22px 20px 16px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #1b1730 0%, #141020 100%);
+  border: 1px solid rgba(139, 92, 246, 0.22);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  color: #eef1ff;
+  animation: confirm-pop 0.16s cubic-bezier(0.2, 0.9, 0.3, 1.1);
+}
+.confirm-msg { font-size: 15px; line-height: 1.65; white-space: pre-wrap; word-break: break-word; }
+.confirm-actions { display: flex; gap: 10px; margin-top: 20px; }
+.confirm-btn {
+  flex: 1; padding: 10px 14px; border-radius: 10px;
+  font-size: 14px; font-weight: 600; cursor: pointer;
+  border: 1px solid transparent; transition: filter 0.15s, background 0.15s;
+}
+.confirm-btn.cancel { background: rgba(255, 255, 255, 0.08); color: #cdd3f0; border-color: rgba(255, 255, 255, 0.12); }
+.confirm-btn.ok { background: #6d7cff; color: #fff; }
+.confirm-btn.ok.danger { background: #ef4444; }
+.confirm-btn:hover { filter: brightness(1.08); }
+.confirm-btn:active { filter: brightness(0.94); }
+@keyframes confirm-fade { from { opacity: 0 } to { opacity: 1 } }
+@keyframes confirm-pop { from { opacity: 0; transform: translateY(8px) scale(0.98) } to { opacity: 1; transform: none } }

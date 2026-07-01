@@ -66,3 +66,30 @@ git push origin main
 ```
 
 > 注：请勿 `git add` 沙箱临时探测文件 `__cap_test.txt` / `__cap_copy.txt`（已加入 `.gitignore`，清理脚本亦会删除）。
+
+---
+
+## 四、第二轮：深层改进（已完成并验证）
+
+> 校验方式：受限于本环境无法安装 Linux 版原生构建二进制（rollup/esbuild），改用 `node --check`（JS）+ `@babel/parser`（每个 JSX 文件）逐一校验。
+> 注：`await` 出现在非 async 函数中会被解析器判为语法错误——因此「解析通过」也间接证明了下方 `confirm()` 改造的 async 位置正确。**上线前请本地 `npm run build` 跑一次并做冒烟测试。**
+
+| # | 深层改进 | 文件 | 说明 |
+|---|----------|------|------|
+| 8 | **「减弱动态」接入 3D 场景** | `src/prefersReducedMotion.js`(新) + `src/EmotionSphereScene.jsx` | 新增模块级缓存的偏好读取（随系统设置实时更新）；对 3 处装饰性自转 `useFrame` 加门控——晕动症用户/低端机不再持续旋转。已确认全项目仅此文件有装饰性自转。 |
+| 9 | **`confirm()` → Promise 版全局弹窗** | `src/components/ConfirmDialog.jsx`(新) + `styles.css` + `App.jsx` + 5 个页面 | 新增 `window.confirmDialog(msg,{tone,confirmText,cancelText})→Promise<boolean>`（支持 Esc/Enter/点击遮罩、`alertdialog` 语义）；替换全部 6 处真实 `window.confirm`。用 `?.` 可选链调用——弹窗未挂载时破坏性操作**安全中止**（fail-closed）。未误改两处同名局部函数 `confirm()`。 |
+| 10 | **PWA「新版本」提示** | `src/pwa.js` | 将「静默强制刷新」改为**非打断式**底部提示条（含「刷新／关闭」按钮），且仅在真正「更新」（已有 controller）时出现，首次安装不打扰。自包含实现，不依赖 React 树。 |
+| 11 | **ESLint 就绪配置** | `eslint.config.js`(新) | 提供 ESLint 9 扁平配置（React Hooks + Refresh 规则）。**未改动 `package.json`/`ci.yml`**，以免破坏 `npm ci`；启用步骤见文件内注释。 |
+
+**顺带澄清一项路线图担忧：** `src/mirrorData.js`（36k 行）的两个使用者（`MirrorPage`、`RelationshipGraphView`）**均已在懒加载链内**（`MirrorPage` 走 `lazyWithRetry`，`RelationshipGraphView` 仅被其引用）。即该数据已被打包进按需 chunk、不在主包中——**无需高风险地拆分该文件**。
+
+## 五、路线图状态更新
+
+**已解决 / 已交付：** 首屏白屏、SEO/分享卡、无障碍焦点与减弱动态（CSS+3D）、`alert→toast`、`confirm→Promise 弹窗`、PWA 更新提示、仓库杂物治理、ESLint 配置（待激活）、mirrorData（确认已代码分割）。
+
+**仍建议后续处理（需本地构建/依赖变更，本环境无法安全验证，故未擅自改动）：**
+1. **激活 ESLint 并入 CI**：装依赖后先本地 `npx eslint .` 观察，再加入 CI（建议先非阻塞）。
+2. **打包体积分析**：`npm i -D rollup-plugin-visualizer` 生成 treemap，复核百余页面的懒加载与大依赖（three/deck/mapbox 已在 `manualChunks` 分包）。
+3. **源码层 `console.log` 收敛**：生产构建已剥离（本轮 vite 配置），如需源码整洁可逐步改统一 `debug()` 包装。
+4. **扩充组件测试**：为高频交互页（代祷墙、灵修记录、登录、确认弹窗）补测试——本环境无法运行 vitest（缺 esbuild 原生二进制），留待本地。
+5. **空/错/载状态统一**：为列表页统一空状态与失败重试。

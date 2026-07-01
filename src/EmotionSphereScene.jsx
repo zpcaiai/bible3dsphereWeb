@@ -1,6 +1,7 @@
 import { t as i18nT } from './i18n/runtime'
 import { Component, useMemo, useRef, useEffect, useCallback, useState } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
+import { prefersReducedMotion } from './prefersReducedMotion'
 import { Bloom, EffectComposer } from '@react-three/postprocessing'
 import { Billboard, Html, OrbitControls, Stars, Text } from '@react-three/drei'
 import * as THREE from 'three'
@@ -108,7 +109,7 @@ function CameraLODWatcher() {
 // ─── Wireframe shell ─────────────────────────────────────────────────────────
 function SphereShell() {
   const ref = useRef()
-  useFrame((_, dt) => { if (ref.current) ref.current.rotation.y += dt * 0.045 })
+  useFrame((_, dt) => { if (ref.current && !prefersReducedMotion()) ref.current.rotation.y += dt * 0.045 })
   return (
     <mesh ref={ref}>
       <sphereGeometry args={[SPHERE_RADIUS - 0.055, 48, 48]} />
@@ -381,7 +382,7 @@ function CommunityHaloRings ({ emotions }) {
 
   // Slowly counter-rotate the whole halo group for a living feel
   useFrame((_, dt) => {
-    if (groupRef.current) groupRef.current.rotation.y -= dt * 0.018
+    if (groupRef.current && !prefersReducedMotion()) groupRef.current.rotation.y -= dt * 0.018
   })
 
   if (!emotions || emotions.length === 0) return null
@@ -448,7 +449,7 @@ function EmotionSphere({
   const groupRef = useRef()
 
   useFrame((_, dt) => {
-    if (groupRef.current) groupRef.current.rotation.y += dt * 0.033
+    if (groupRef.current && !prefersReducedMotion()) groupRef.current.rotation.y += dt * 0.033
   })
 
   const handleHover = useCallback((item) => {

@@ -174,7 +174,7 @@ export default function CommunityPage({ user, token, onBack }) {
   }
 
   async function removePost(post) {
-    if (!window.confirm(i18nT('确定删除这条状态？'))) return
+    if (!(await window.confirmDialog?.(i18nT('确定删除这条状态？')))) return
     try {
       await deleteCommunityPost(post.id, token)
       setPosts(prev => prev.filter(p => p.id !== post.id))
