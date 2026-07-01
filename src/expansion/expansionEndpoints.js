@@ -167,6 +167,104 @@ export const wisdomAnalyze = (text, token) => POST('/wisdom/analyze', { text, us
 export const wisdomHistory = (token, limit = 20) => GET(`/wisdom/history?limit=${limit}`, token)
 export const wisdomLatest = (token) => GET('/wisdom/latest', token)
 
+
+// ── 扩充第三辑（10 个新引擎，统一 analyze + {text}）──
+export const holyspiritMeta = (token) => GET('/holy-spirit/meta', token)
+export const holyspiritAnalyze = (text, token) => POST('/holy-spirit/analyze', { text, use_ai: true }, token)
+export const holyspiritHistory = (token, limit = 20) => GET(`/holy-spirit/history?limit=${limit}`, token)
+export const holyspiritLatest = (token) => GET('/holy-spirit/latest', token)
+export const adoptionMeta = (token) => GET('/adoption/meta', token)
+export const adoptionAnalyze = (text, token) => POST('/adoption/analyze', { text, use_ai: true }, token)
+export const adoptionHistory = (token, limit = 20) => GET(`/adoption/history?limit=${limit}`, token)
+export const adoptionLatest = (token) => GET('/adoption/latest', token)
+export const crossMeta = (token) => GET('/cross/meta', token)
+export const crossAnalyze = (text, token) => POST('/cross/analyze', { text, use_ai: true }, token)
+export const crossHistory = (token, limit = 20) => GET(`/cross/history?limit=${limit}`, token)
+export const crossLatest = (token) => GET('/cross/latest', token)
+export const fearofmanMeta = (token) => GET('/fear-of-man/meta', token)
+export const fearofmanAnalyze = (text, token) => POST('/fear-of-man/analyze', { text, use_ai: true }, token)
+export const fearofmanHistory = (token, limit = 20) => GET(`/fear-of-man/history?limit=${limit}`, token)
+export const fearofmanLatest = (token) => GET('/fear-of-man/latest', token)
+export const providenceMeta = (token) => GET('/providence/meta', token)
+export const providenceAnalyze = (text, token) => POST('/providence/analyze', { text, use_ai: true }, token)
+export const providenceHistory = (token, limit = 20) => GET(`/providence/history?limit=${limit}`, token)
+export const providenceLatest = (token) => GET('/providence/latest', token)
+export const repentanceMeta = (token) => GET('/repentance/meta', token)
+export const repentanceAnalyze = (text, token) => POST('/repentance/analyze', { text, use_ai: true }, token)
+export const repentanceHistory = (token, limit = 20) => GET(`/repentance/history?limit=${limit}`, token)
+export const repentanceLatest = (token) => GET('/repentance/latest', token)
+export const doubtMeta = (token) => GET('/doubt/meta', token)
+export const doubtAnalyze = (text, token) => POST('/doubt/analyze', { text, use_ai: true }, token)
+export const doubtHistory = (token, limit = 20) => GET(`/doubt/history?limit=${limit}`, token)
+export const doubtLatest = (token) => GET('/doubt/latest', token)
+export const generosityMeta = (token) => GET('/generosity/meta', token)
+export const generosityAnalyze = (text, token) => POST('/generosity/analyze', { text, use_ai: true }, token)
+export const generosityHistory = (token, limit = 20) => GET(`/generosity/history?limit=${limit}`, token)
+export const generosityLatest = (token) => GET('/generosity/latest', token)
+export const humilityMeta = (token) => GET('/humility/meta', token)
+export const humilityAnalyze = (text, token) => POST('/humility/analyze', { text, use_ai: true }, token)
+export const humilityHistory = (token, limit = 20) => GET(`/humility/history?limit=${limit}`, token)
+export const humilityLatest = (token) => GET('/humility/latest', token)
+export const worddelightMeta = (token) => GET('/word-delight/meta', token)
+export const worddelightAnalyze = (text, token) => POST('/word-delight/analyze', { text, use_ai: true }, token)
+export const worddelightHistory = (token, limit = 20) => GET(`/word-delight/history?limit=${limit}`, token)
+export const worddelightLatest = (token) => GET('/word-delight/latest', token)
+
+
+// ── 扩充第四辑（13 个新引擎，统一 analyze + {text}）──
+export const angerMeta = (token) => GET('/anger/meta', token)
+export const angerAnalyze = (text, token) => POST('/anger/analyze', { text, use_ai: true }, token)
+export const angerHistory = (token, limit = 20) => GET(`/anger/history?limit=${limit}`, token)
+export const angerLatest = (token) => GET('/anger/latest', token)
+export const lonelinessMeta = (token) => GET('/loneliness/meta', token)
+export const lonelinessAnalyze = (text, token) => POST('/loneliness/analyze', { text, use_ai: true }, token)
+export const lonelinessHistory = (token, limit = 20) => GET(`/loneliness/history?limit=${limit}`, token)
+export const lonelinessLatest = (token) => GET('/loneliness/latest', token)
+export const perfectionismMeta = (token) => GET('/perfectionism/meta', token)
+export const perfectionismAnalyze = (text, token) => POST('/perfectionism/analyze', { text, use_ai: true }, token)
+export const perfectionismHistory = (token, limit = 20) => GET(`/perfectionism/history?limit=${limit}`, token)
+export const perfectionismLatest = (token) => GET('/perfectionism/latest', token)
+export const envyMeta = (token) => GET('/envy/meta', token)
+export const envyAnalyze = (text, token) => POST('/envy/analyze', { text, use_ai: true }, token)
+export const envyHistory = (token, limit = 20) => GET(`/envy/history?limit=${limit}`, token)
+export const envyLatest = (token) => GET('/envy/latest', token)
+export const burnoutMeta = (token) => GET('/burnout/meta', token)
+export const burnoutAnalyze = (text, token) => POST('/burnout/analyze', { text, use_ai: true }, token)
+export const burnoutHistory = (token, limit = 20) => GET(`/burnout/history?limit=${limit}`, token)
+export const burnoutLatest = (token) => GET('/burnout/latest', token)
+export const comfortMeta = (token) => GET('/comfort/meta', token)
+export const comfortAnalyze = (text, token) => POST('/comfort/analyze', { text, use_ai: true }, token)
+export const comfortHistory = (token, limit = 20) => GET(`/comfort/history?limit=${limit}`, token)
+export const comfortLatest = (token) => GET('/comfort/latest', token)
+export const prodigalMeta = (token) => GET('/prodigal/meta', token)
+export const prodigalAnalyze = (text, token) => POST('/prodigal/analyze', { text, use_ai: true }, token)
+export const prodigalHistory = (token, limit = 20) => GET(`/prodigal/history?limit=${limit}`, token)
+export const prodigalLatest = (token) => GET('/prodigal/latest', token)
+export const acediaMeta = (token) => GET('/acedia/meta', token)
+export const acediaAnalyze = (text, token) => POST('/acedia/analyze', { text, use_ai: true }, token)
+export const acediaHistory = (token, limit = 20) => GET(`/acedia/history?limit=${limit}`, token)
+export const acediaLatest = (token) => GET('/acedia/latest', token)
+export const conscienceMeta = (token) => GET('/conscience/meta', token)
+export const conscienceAnalyze = (text, token) => POST('/conscience/analyze', { text, use_ai: true }, token)
+export const conscienceHistory = (token, limit = 20) => GET(`/conscience/history?limit=${limit}`, token)
+export const conscienceLatest = (token) => GET('/conscience/latest', token)
+export const secondcomingMeta = (token) => GET('/second-coming/meta', token)
+export const secondcomingAnalyze = (text, token) => POST('/second-coming/analyze', { text, use_ai: true }, token)
+export const secondcomingHistory = (token, limit = 20) => GET(`/second-coming/history?limit=${limit}`, token)
+export const secondcomingLatest = (token) => GET('/second-coming/latest', token)
+export const chronicMeta = (token) => GET('/chronic-suffering/meta', token)
+export const chronicAnalyze = (text, token) => POST('/chronic-suffering/analyze', { text, use_ai: true }, token)
+export const chronicHistory = (token, limit = 20) => GET(`/chronic-suffering/history?limit=${limit}`, token)
+export const chronicLatest = (token) => GET('/chronic-suffering/latest', token)
+export const parentingMeta = (token) => GET('/parenting/meta', token)
+export const parentingAnalyze = (text, token) => POST('/parenting/analyze', { text, use_ai: true }, token)
+export const parentingHistory = (token, limit = 20) => GET(`/parenting/history?limit=${limit}`, token)
+export const parentingLatest = (token) => GET('/parenting/latest', token)
+export const agingMeta = (token) => GET('/aging/meta', token)
+export const agingAnalyze = (text, token) => POST('/aging/analyze', { text, use_ai: true }, token)
+export const agingHistory = (token, limit = 20) => GET(`/aging/history?limit=${limit}`, token)
+export const agingLatest = (token) => GET('/aging/latest', token)
+
 // 便捷映射：featureKey → { prefix, action, meta, run } —— 供动态调用。
 export const EXPANSION_MODULES = {
   lament: { prefix: 'lament', action: 'compose', meta: lamentMeta, run: lamentCompose },
@@ -183,6 +281,29 @@ export const EXPANSION_MODULES = {
   renovation: { prefix: 'renovation', action: 'assess', meta: renovationMeta, run: renovationAssess },
   chinese: { prefix: 'chinese', action: 'meditate', meta: chineseMeta, run: chineseMeditate },
   resources: { prefix: 'resources', action: null, meta: resourceMeta, run: null },
+  anger: { prefix: 'anger', action: 'analyze', meta: angerMeta, run: angerAnalyze },
+  loneliness: { prefix: 'loneliness', action: 'analyze', meta: lonelinessMeta, run: lonelinessAnalyze },
+  perfectionism: { prefix: 'perfectionism', action: 'analyze', meta: perfectionismMeta, run: perfectionismAnalyze },
+  envy: { prefix: 'envy', action: 'analyze', meta: envyMeta, run: envyAnalyze },
+  burnout: { prefix: 'burnout', action: 'analyze', meta: burnoutMeta, run: burnoutAnalyze },
+  comfort: { prefix: 'comfort', action: 'analyze', meta: comfortMeta, run: comfortAnalyze },
+  prodigal: { prefix: 'prodigal', action: 'analyze', meta: prodigalMeta, run: prodigalAnalyze },
+  acedia: { prefix: 'acedia', action: 'analyze', meta: acediaMeta, run: acediaAnalyze },
+  conscience: { prefix: 'conscience', action: 'analyze', meta: conscienceMeta, run: conscienceAnalyze },
+  secondcoming: { prefix: 'second-coming', action: 'analyze', meta: secondcomingMeta, run: secondcomingAnalyze },
+  chronic: { prefix: 'chronic-suffering', action: 'analyze', meta: chronicMeta, run: chronicAnalyze },
+  parenting: { prefix: 'parenting', action: 'analyze', meta: parentingMeta, run: parentingAnalyze },
+  aging: { prefix: 'aging', action: 'analyze', meta: agingMeta, run: agingAnalyze },
+  holyspirit: { prefix: 'holy-spirit', action: 'analyze', meta: holyspiritMeta, run: holyspiritAnalyze },
+  adoption: { prefix: 'adoption', action: 'analyze', meta: adoptionMeta, run: adoptionAnalyze },
+  cross: { prefix: 'cross', action: 'analyze', meta: crossMeta, run: crossAnalyze },
+  fearofman: { prefix: 'fear-of-man', action: 'analyze', meta: fearofmanMeta, run: fearofmanAnalyze },
+  providence: { prefix: 'providence', action: 'analyze', meta: providenceMeta, run: providenceAnalyze },
+  repentance: { prefix: 'repentance', action: 'analyze', meta: repentanceMeta, run: repentanceAnalyze },
+  doubt: { prefix: 'doubt', action: 'analyze', meta: doubtMeta, run: doubtAnalyze },
+  generosity: { prefix: 'generosity', action: 'analyze', meta: generosityMeta, run: generosityAnalyze },
+  humility: { prefix: 'humility', action: 'analyze', meta: humilityMeta, run: humilityAnalyze },
+  worddelight: { prefix: 'word-delight', action: 'analyze', meta: worddelightMeta, run: worddelightAnalyze },
   assurance: { prefix: 'assurance', action: 'analyze', meta: assuranceMeta, run: assuranceAnalyze },
   forgiveness: { prefix: 'forgiveness', action: 'analyze', meta: forgivenessMeta, run: forgivenessAnalyze },
   fellowship: { prefix: 'fellowship', action: 'analyze', meta: fellowshipMeta, run: fellowshipAnalyze },

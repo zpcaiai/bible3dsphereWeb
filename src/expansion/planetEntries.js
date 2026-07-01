@@ -38,6 +38,28 @@ export const EXPANSION_CHIPS_BATCH2 = {
   '人格塑造': [['成圣 · 治死与穿上', 'exp:holiness'], ['饶恕与和好', 'exp:forgiveness']],
 }
 
+
+// 扩充第三辑（10 个新引擎）的大陆入口；默认随 withExpansionChips 挂载。
+export const EXPANSION_CHIPS_BATCH3 = {
+  '认识自己': [['怕人 → 敬畏神', 'exp:fearofman']],
+  '回到福音': [['儿子的名分 · 天父收纳', 'exp:adoption'], ['十字架默想', 'exp:cross'], ['悔改的解剖', 'exp:repentance']],
+  '与神同行': [['圣灵 · 与圣灵同行', 'exp:holyspirit'], ['爱慕神的话 · 诗119', 'exp:worddelight']],
+  '等候上帝': [['神的护理 · 信靠主权的手', 'exp:providence'], ['与怀疑同行', 'exp:doubt']],
+  '人格塑造': [['慷慨 · 财宝在天', 'exp:generosity'], ['谦卑', 'exp:humility']],
+}
+
+
+// 扩充第四辑（13 个新引擎）的大陆入口；默认随 withExpansionChips 挂载。
+export const EXPANSION_CHIPS_BATCH4 = {
+  '认识自己': [['忿怒 · 在神前处理', 'exp:anger'], ['完美主义 · 内在批判者', 'exp:perfectionism'], ['嫉妒 / 羡慕', 'exp:envy']],
+  '等候上帝': [['孤单 · 被看不见的痛', 'exp:loneliness'], ['为浪子/未信至亲祷告', 'exp:prodigal'], ['慢性 / 长期受苦', 'exp:chronic']],
+  '与神同行': [['耗竭 · 服事倦怠', 'exp:burnout'], ['属灵麻木 · acedia', 'exp:acedia']],
+  '健康教会九标志': [['安慰的服事 · 同哭', 'exp:comfort']],
+  '回到福音': [['良心', 'exp:conscience']],
+  '天路客': [['主再来 · 儆醒地活', 'exp:secondcoming'], ['年老 · 善始善终', 'exp:aging']],
+  '人格塑造': [['教养儿女 · 家庭门训', 'exp:parenting']],
+}
+
 function _merge(a, b) {
   const out = {}
   for (const k of new Set([...Object.keys(a), ...Object.keys(b)])) out[k] = [...(a[k] || []), ...(b[k] || [])]
@@ -47,7 +69,7 @@ function _merge(a, b) {
 // 把扩充 chips 追加到匹配 name 的大陆上，返回新数组（不改原对象）。
 export function withExpansionChips(continents, opts = {}) {
   // 默认挂载：用户指定的三个入口（联合/知足/哀歌）+ 第二辑 13 个新引擎
-  let map = _merge(EXPANSION_CHIPS, EXPANSION_CHIPS_BATCH2)
+  let map = _merge(_merge(_merge(EXPANSION_CHIPS, EXPANSION_CHIPS_BATCH2), EXPANSION_CHIPS_BATCH3), EXPANSION_CHIPS_BATCH4)
   if (opts.includeOptional) map = _merge(map, EXPANSION_CHIPS_OPTIONAL)
   return (continents || []).map((c) => (map[c.name] ? { ...c, chips: [...c.chips, ...map[c.name]] } : c))
 }

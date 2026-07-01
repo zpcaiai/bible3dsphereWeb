@@ -37,6 +37,29 @@ const FEATURES = [
   { key: 'contemplation', prefix: 'contemplation', action: 'analyze', emoji: '🌫️', name: '默观 · 在神爱里安息', sub: '朱利安/大德兰/未知之云', kind: 'text', field: 'text', placeholder: '你心里的躁动，例如「我很焦虑，一直担心未来」' },
   { key: 'incarnation', prefix: 'incarnation', action: 'analyze', emoji: '🌟', name: '道成肉身', sub: '与神性情有份 · 亚他那修', kind: 'text', field: 'text', placeholder: '你的处境，例如「觉得没人懂我的软弱，神也不懂」' },
   { key: 'wisdom', prefix: 'wisdom', action: 'analyze', emoji: '🦉', name: '智慧 · 敬畏神地活', sub: '箴言/传道书/雅各', kind: 'text', field: 'text', placeholder: '需要智慧的处境，例如「我总管不住嘴，冲动说错话」' },
+  { key: 'holyspirit', prefix: 'holy-spirit', action: 'analyze', emoji: '🕊️', name: '圣灵 · 与圣灵同行', sub: '字里行间的圣灵 · 巴刻/Fee', kind: 'text', field: 'text', placeholder: '说出你的处境，例如「我想改变却总是无力，靠自己撑不住」' },
+  { key: 'adoption', prefix: 'adoption', action: 'analyze', emoji: '🤗', name: '儿子的名分 · 天父收纳', sub: '福音最高特权 · 巴刻/傅格森', kind: 'text', field: 'text', placeholder: '例如「我总觉得什么都得靠自己，像个孤儿」' },
+  { key: 'cross', prefix: 'cross', action: 'analyze', emoji: '✝️', name: '十字架默想', sub: '当代基督十架 · 斯托得', kind: 'text', field: 'text', placeholder: '例如「我一直有很深的罪咎，觉得该被罚」' },
+  { key: 'fearofman', prefix: 'fear-of-man', action: 'analyze', emoji: '👥', name: '怕人 → 敬畏神', sub: '认可偶像 · Ed Welch', kind: 'text', field: 'text', placeholder: '例如「我特别在意别人评价，被批评就崩」' },
+  { key: 'providence', prefix: 'providence', action: 'analyze', emoji: '🌤️', name: '神的护理 · 信靠主权的手', sub: '护理的奥秘 · 傅拉维/Bridges', kind: 'text', field: 'text', placeholder: '例如「最近一切都失控了，乱成一团」' },
+  { key: 'repentance', prefix: 'repentance', action: 'analyze', emoji: '🔄', name: '悔改的解剖', sub: '悔改的教义 · 华森', kind: 'text', field: 'text', placeholder: '例如「我一直自责却没有改变，走不出来」' },
+  { key: 'doubt', prefix: 'doubt', action: 'analyze', emoji: '❓', name: '与怀疑同行', sub: '信心危机 · 牧养向', kind: 'text', field: 'text', placeholder: '例如「我最近信不动了，有很多疑问」' },
+  { key: 'generosity', prefix: 'generosity', action: 'analyze', emoji: '💝', name: '慷慨 · 管家 · 财宝在天', sub: 'The Treasure Principle · Alcorn', kind: 'text', field: 'text', placeholder: '例如「我钱抓得很紧，总怕不够，很不安」' },
+  { key: 'humility', prefix: 'humility', action: 'analyze', emoji: '🙇', name: '谦卑', sub: 'Humility · 慕安得烈', kind: 'text', field: 'text', placeholder: '例如「我很骄傲，总想被看见、爱表现」' },
+  { key: 'worddelight', prefix: 'word-delight', action: 'analyze', emoji: '🍯', name: '爱慕神的话 · 诗篇119', sub: '把「该读经」变成爱慕', kind: 'text', field: 'text', placeholder: '例如「读经对我像例行任务，没味道」' },
+  { key: 'anger', prefix: 'anger', action: 'analyze', emoji: '😤', name: '忿怒 · 在神面前处理愤怒', sub: 'Good and Angry · Powlison', kind: 'text', field: 'text', placeholder: '例如「我一点就炸，事后很后悔」' },
+  { key: 'loneliness', prefix: 'loneliness', action: 'analyze', emoji: '🌑', name: '孤单 · 被看不见的痛', sub: '看顾人的神 El Roi · 夏甲', kind: 'text', field: 'text', placeholder: '例如「没人懂我，觉得不被看见」' },
+  { key: 'perfectionism', prefix: 'perfectionism', action: 'analyze', emoji: '🎯', name: '完美主义 · 内在批判者→恩典', sub: '把批判者换成基督的声音', kind: 'text', field: 'text', placeholder: '例如「我做什么都觉得不够好」' },
+  { key: 'envy', prefix: 'envy', action: 'analyze', emoji: '😔', name: '嫉妒 / 羡慕', sub: '拿到光下 · 与喜乐者同乐', kind: 'text', field: 'text', placeholder: '例如「见不得别人成功，很眼红」' },
+  { key: 'burnout', prefix: 'burnout', action: 'analyze', emoji: '🪫', name: '耗竭 · 服事倦怠', sub: '以利亚 · 先被喂养再喂养', kind: 'text', field: 'text', placeholder: '例如「我烧干了，什么都给不出」' },
+  { key: 'comfort', prefix: 'comfort', action: 'analyze', emoji: '💐', name: '安慰的服事 · 与哀哭者同哭', sub: '负伤的治疗者 · 卢云', kind: 'text', field: 'text', placeholder: '例如「朋友丧亲了，我不知道说什么」' },
+  { key: 'prodigal', prefix: 'prodigal', action: 'analyze', emoji: '🏡', name: '为浪子 / 未信至亲祷告', sub: '莫妮加 · 恒切代求', kind: 'text', field: 'text', placeholder: '例如「为远离神的孩子揪心」' },
+  { key: 'acedia', prefix: 'acedia', action: 'analyze', emoji: '🥱', name: '属灵麻木 · 正午的魔鬼', sub: 'acedia · 沙漠教父', kind: 'text', field: 'text', placeholder: '例如「什么都不想做，提不起劲」' },
+  { key: 'conscience', prefix: 'conscience', action: 'analyze', emoji: '🧭', name: '良心', sub: 'Conscience · Naselli', kind: 'text', field: 'text', placeholder: '例如「为圣经没禁止的事一直定罪自己」' },
+  { key: 'secondcoming', prefix: 'second-coming', action: 'analyze', emoji: '⏳', name: '主再来 · 儆醒地活', sub: '十童女/才干/绵羊山羊', kind: 'text', field: 'text', placeholder: '例如「我属灵懈怠，活得像主不回来」' },
+  { key: 'chronic', prefix: 'chronic-suffering', action: 'analyze', emoji: '🩹', name: '慢性 / 长期受苦', sub: '与刺同行 · Risner/Tada', kind: 'text', field: 'text', placeholder: '例如「慢性病看不到尽头，日复一日」' },
+  { key: 'parenting', prefix: 'parenting', action: 'analyze', emoji: '👨‍👩‍👧', name: '教养儿女 · 家庭门训', sub: 'Parenting · Paul Tripp', kind: 'text', field: 'text', placeholder: '例如「管孩子越管越僵，总靠吼」' },
+  { key: 'aging', prefix: 'aging', action: 'analyze', emoji: '🌾', name: '年老 · 善始善终', sub: '仍要结果子 · 巴刻', kind: 'text', field: 'text', placeholder: '例如「觉得老了没用了，不被需要」' },
   { key: 'resources', emoji: '📚', name: '推荐书目 · 圣诗', sub: '按大陆精选 · 可收藏', kind: 'resources' },
 ]
 
@@ -52,6 +75,8 @@ const LABELS = {
   // —— 扩充第二辑字段标签 ——
   diagnosis: '看见', gospel_truth: '福音真理', grounds_line: '确据的根基', lean_note: '偏向', way_forward: '出路', way_outward: '向外的一步', teaching: '经典的话', hope: '盼望', principle: '原则', wise_step: '智慧的一步', from_above_test: '从上头来的智慧 · 检验', contemplative_practice: '默观操练', valley_prayer: '清教徒祷文', doctrine_note: '温柔的教义提示', prescription: '开的药', rule_hint: '生活规则', gospel_order_note: '福音次序', pair_line: '治死 · 穿上', spirit_note: '倚靠圣灵', concrete_step: '落到一个人一个动作', gospel_root: '福音的根', distinction: '分辨', mediator_reminder: '回到根基', balance_note: '平衡', voice_note: '经典的话', invite: '邀请', abuse_note: '安全优先', crisis_note: '',
   trigger: '触发点', shadow: '此刻的阴影', block: '卡点', state: '状态', facet: '面向', domain: '领域', focus: '焦点', hurt_type: '伤害类型', struggle: '挣扎', symptom: '匆忙病征', mood: '心境', inward_curve: '向内蜷缩', suggested_form: '爱的操练', prescribed_practice: '操练', mortify: '治死', vivify: '穿上',
+  spirit_ministry: '圣灵的职事', adoption_truth: '收纳的真理', cure: '解药', root: '根', three_pillars: '三根支柱', pillar_note: '这根支柱', pillar: '支柱', steward_reminder: '管家的身份', word_practice: '读经操练', next_route: '可继续', reversal: '反转', six_elements: '悔改六要素', achievement: '十架的成就', image: '意象', need: '此刻的需要', kind: '怀疑的种类', form: '怕人的形态', situation: '处境',
+  four_steps: '四步', two_moves: '两个方向', inner_critic: '内在批判者的声音', christ_voice: '基督的声音', antidote: '解药', restore_order: '恢复的次序', avoid: '要避免的', posture: '你的姿态', calibrate_note: '校准良心', hope_link: '盼望', violence_note: '安全优先',
 }
 const SKIP = new Set(['ai_used', 'crisis', 'crisis_note'])
 
