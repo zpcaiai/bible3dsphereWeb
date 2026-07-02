@@ -14,6 +14,3 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </LanguageProvider>
   </React.StrictMode>,
 )
-
-// === EXPANSION PACK launcher (content-theology-expansion) — additive, idempotent, self-mounting ===
-import('./expansion/ExpansionLauncher.jsx').then((m) => m && m.mountExpansionLauncher && m.mountExpansionLauncher()).catch(() => {})

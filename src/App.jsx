@@ -26,6 +26,7 @@ import ConfirmDialog from './components/ConfirmDialog'
 import AiStatusBanner from './components/AiStatusBanner'
 import SeekersStandalonePage from './components/SeekersStandalonePage'
 import DevotionTabContainer from './components/DevotionTabContainer'
+import ExpansionLauncher from './expansion/ExpansionLauncher'
 
 const CheckInPage = lazyWithRetry(() => import('./CheckInPage'))
 const ShareWallPage = lazyWithRetry(() => import('./ShareWallPage'))
@@ -3134,6 +3135,7 @@ function AppContent() {
         <Suspense fallback={null}>
           <GuardianWidget />
         </Suspense>
+        <ExpansionLauncher />
 
         {/* 浮动登录遮罩 — 保持当前页面挂载，不清空用户输入 */}
         {showLoginOverlay && !user && (
