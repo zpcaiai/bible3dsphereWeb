@@ -97,7 +97,7 @@ export function BibleDoctrinePanel({ userId, token, data, onRefresh }) {
 
   return (
     <section className="sf-section">
-      <div className="sf-section-heading"><h2>{T('圣经知识图谱与教义学习系统', 'Bible Knowledge Graph & Doctrine Learning OS')}</h2><p>Distinguishes biblical text, interpretation, tradition, and formation application.</p></div>
+      <div className="sf-section-heading"><h2>Bible Knowledge Graph & Doctrine Learning OS / 圣经知识图谱与教义学习系统</h2><p>Distinguishes biblical text, interpretation, tradition, and formation application.</p></div>
       <article className="sf-card sf-flow-card">
         <label>Character search<input value={query} onChange={(event) => setQuery(event.target.value)} /></label>
         <button className="sf-primary" type="button" onClick={createLearningArtifacts}>Create Doctrine Path and Dialogue</button>

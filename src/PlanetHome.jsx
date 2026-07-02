@@ -11,7 +11,7 @@ const CONTINENTS = [
     icon: '⛪', name: '健康教会九标志', en: 'Church Health · 9Marks', color: '#8b5cf6',
     q: '我是否越来越委身、被门训、在肢体中成长？',
     by: '9Marks · 归回本地教会的成长生态',
-    chips: [['九标志概览', 'nine-marks'], ['圣礼年历', 'sacrament-calendar'], ['本地教会', 'church-life'], ['门训路径', 'disciple-path'], ['福音诊断室', 'gospel']],
+    chips: [['九标志概览', 'nine-marks'], ['圣礼年历', 'sacrament-calendar'], ['本地教会', 'church-life'], ['门训路径', 'disciple-path'], ['教会福音诊断', 'gospel']],
   },
   {
     icon: '🧭', name: '认识自己', en: 'Self Discovery', color: '#da77f2',

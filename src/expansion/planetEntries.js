@@ -5,6 +5,7 @@
 //
 // 机制：新 chip 的 target 用 'exp:<featureKey>' 前缀；PlanetHome 的 act() 认出该前缀，
 //       调用 window.__expansionOpen(featureKey)（由 ExpansionLauncher 暴露），绕过既有 go()。
+import './expansionI18n'
 
 // 用户指定的三个大陆入口（哀歌 / 联合 / 知足）
 export const EXPANSION_CHIPS = {
@@ -43,7 +44,7 @@ export const EXPANSION_CHIPS_BATCH2 = {
 export const EXPANSION_CHIPS_BATCH3 = {
   '认识自己': [['怕人 → 敬畏神', 'exp:fearofman']],
   '回到福音': [['儿子的名分 · 天父收纳', 'exp:adoption'], ['十字架默想', 'exp:cross'], ['悔改的解剖', 'exp:repentance']],
-  '与神同行': [['圣灵 · 与圣灵同行', 'exp:holyspirit'], ['爱慕神的话 · 诗119', 'exp:worddelight']],
+  '与神同行': [['圣灵 · 与圣灵同行', 'exp:holyspirit'], ['诸灵分辨', 'exp:spirits'], ['爱慕神的话 · 诗119', 'exp:worddelight']],
   '等候上帝': [['神的护理 · 信靠主权的手', 'exp:providence'], ['与怀疑同行', 'exp:doubt']],
   '人格塑造': [['慷慨 · 财宝在天', 'exp:generosity'], ['谦卑', 'exp:humility']],
 }
@@ -68,7 +69,7 @@ function _merge(a, b) {
 
 // 把扩充 chips 追加到匹配 name 的大陆上，返回新数组（不改原对象）。
 export function withExpansionChips(continents, opts = {}) {
-  // 默认挂载：用户指定的三个入口（联合/知足/哀歌）+ 第二辑 13 个新引擎
+  // 默认挂载：用户指定的三个入口（联合/知足/哀歌）+ 第二、三、四辑新引擎。
   let map = _merge(_merge(_merge(EXPANSION_CHIPS, EXPANSION_CHIPS_BATCH2), EXPANSION_CHIPS_BATCH3), EXPANSION_CHIPS_BATCH4)
   if (opts.includeOptional) map = _merge(map, EXPANSION_CHIPS_OPTIONAL)
   return (continents || []).map((c) => (map[c.name] ? { ...c, chips: [...c.chips, ...map[c.name]] } : c))

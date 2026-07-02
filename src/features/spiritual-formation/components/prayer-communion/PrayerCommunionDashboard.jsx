@@ -395,7 +395,7 @@ export default function PrayerCommunionDashboard({ userId }) {
   return (
     <section className="sf-section prayer-communion">
       <div className="sf-section-heading">
-        <h2>{T('祷告与神相交系统', 'Prayer & Communion OS')}</h2>
+        <h2>Prayer & Communion OS / 祷告与神相交系统</h2>
         <p>{MODULE_DISCLAIMER}</p>
       </div>
       <MiniTabs active={tab} onChange={setTab} />

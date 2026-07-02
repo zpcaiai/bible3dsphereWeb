@@ -77,7 +77,7 @@ export function CommunityOverview({ userId, data }) {
   return (
     <section className="sf-section">
       <div className="sf-section-heading">
-        <h2>{T('群体、监督与门徒训练系统', 'Community, Accountability & Discipleship OS')}</h2>
+        <h2>Community, Accountability & Discipleship OS / 群体、监督与门徒训练系统</h2>
         <p>{MODULE_DISCLAIMER}</p>
       </div>
       <article className="sf-card sf-flow-card">

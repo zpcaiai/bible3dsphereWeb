@@ -333,7 +333,7 @@ export default function WorldviewFormationDashboard({ userId = 'local-user' }) {
   return (
     <section className="sf-module">
       <div className="sf-section-heading">
-        <h2>{T('世界观塑造系统扩展', 'Worldview Formation OS Expansion')}</h2>
+        <h2>Worldview Formation OS Expansion / 世界观塑造系统扩展</h2>
         <p>{MODULE_DISCLAIMER}</p>
       </div>
       <MiniTabs active={tab} onChange={setTab} />

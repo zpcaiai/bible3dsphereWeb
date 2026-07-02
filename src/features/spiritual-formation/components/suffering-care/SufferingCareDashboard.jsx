@@ -314,7 +314,7 @@ export default function SufferingCareDashboard({ userId = 'local-user' }) {
   return (
     <section className="sf-module">
       <div className="sf-section-heading">
-        <h2>{T('苦难、危机与医治塑造系统', 'Suffering, Crisis & Healing Formation OS')}</h2>
+        <h2>Suffering, Crisis & Healing Formation OS / 苦难、危机与医治塑造系统</h2>
         <p>{MODULE_DISCLAIMER}</p>
       </div>
       <MiniTabs active={tab} onChange={setTab} />

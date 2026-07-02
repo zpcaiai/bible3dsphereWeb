@@ -1,9 +1,9 @@
 // ExpansionHub.jsx — 内容与神学扩充 · 聚合面板（content-theology-expansion 批次）
 // 只覆盖与并行进程「不重叠」的 8 个模块 + 推荐书目/圣诗；调用自包含 expansionApi。
 import React, { useEffect, useState } from 'react'
-import { t as i18nT } from '../i18n/runtime'
+import { getRuntimeLang, t as i18nT } from '../i18n/runtime'
 import TranslatableParagraph from '../TranslatableParagraph'
-import { getMeta, runAction, getBooks, getHymns, hasToken } from './expansionApi'
+import { getMeta, runAction, getBooks, getHymns } from './expansionApi'
 import './expansionI18n'
 
 const ACCENT = '#da77f2'
@@ -65,17 +65,17 @@ const FEATURES = [
 
 const LABELS = {
   summary: '小结', reflection: '回应', truth: '真理', scripture: '经文', verse: '经文', practice: '操练',
-  practices: '操练', prayer: '祷告', meditation: '默想', note: '说明', assurance: '确据', encouragement: '鼓励',
+  practices: '操练', prayer: '完整祷文', meditation: '默想', note: '说明', assurance: '确据', encouragement: '鼓励',
   reassurance: '宽心的话', invitation: '邀请', invitations: '成长邀请', growth_step: '成长一步', growth_steps: '成长的一步',
   vision: '它在训练你渴望', counter_liturgy: '反礼仪', first_step: '第一步', lesson: '功课', anchor: '锚点',
   misplaced: '错置的期待', logic: '为什么这是喜乐之路', fight_for_joy: '为喜乐而争战', strong: '较扎根的',
   deepen: '可求神加深', attribute: '属性', lie: '谎言', key_question: '关键分辨', closing: '', message: '', prayer_scaffold: '祷告脚手架',
-  root: '根源', deficit: '福音欠缺', deepen_dirs: '可加深的方向', weak: '成长的邀请',
-  movements: '四步哀歌', draft: '可照着祷告', guidance: '', verb: '', prayer: '完整祷文', themes: '主题', name: '',
+  root: '根', deficit: '福音欠缺', deepen_dirs: '可加深的方向', weak: '成长的邀请',
+  movements: '四步哀歌', draft: '可照着祷告', guidance: '', verb: '', themes: '主题', name: '',
   // —— 扩充第二辑字段标签 ——
   diagnosis: '看见', gospel_truth: '福音真理', grounds_line: '确据的根基', lean_note: '偏向', way_forward: '出路', way_outward: '向外的一步', teaching: '经典的话', hope: '盼望', principle: '原则', wise_step: '智慧的一步', from_above_test: '从上头来的智慧 · 检验', contemplative_practice: '默观操练', valley_prayer: '清教徒祷文', doctrine_note: '温柔的教义提示', prescription: '开的药', rule_hint: '生活规则', gospel_order_note: '福音次序', pair_line: '治死 · 穿上', spirit_note: '倚靠圣灵', concrete_step: '落到一个人一个动作', gospel_root: '福音的根', distinction: '分辨', mediator_reminder: '回到根基', balance_note: '平衡', voice_note: '经典的话', invite: '邀请', abuse_note: '安全优先', crisis_note: '',
   trigger: '触发点', shadow: '此刻的阴影', block: '卡点', state: '状态', facet: '面向', domain: '领域', focus: '焦点', hurt_type: '伤害类型', struggle: '挣扎', symptom: '匆忙病征', mood: '心境', inward_curve: '向内蜷缩', suggested_form: '爱的操练', prescribed_practice: '操练', mortify: '治死', vivify: '穿上',
-  spirit_ministry: '圣灵的职事', adoption_truth: '收纳的真理', cure: '解药', root: '根', three_pillars: '三根支柱', pillar_note: '这根支柱', pillar: '支柱', steward_reminder: '管家的身份', word_practice: '读经操练', next_route: '可继续', reversal: '反转', six_elements: '悔改六要素', achievement: '十架的成就', image: '意象', need: '此刻的需要', kind: '怀疑的种类', form: '怕人的形态', situation: '处境',
+  spirit_ministry: '圣灵的职事', adoption_truth: '收纳的真理', cure: '解药', three_pillars: '三根支柱', pillar_note: '这根支柱', pillar: '支柱', steward_reminder: '管家的身份', word_practice: '读经操练', next_route: '可继续', reversal: '反转', six_elements: '悔改六要素', achievement: '十架的成就', image: '意象', need: '此刻的需要', kind: '怀疑的种类', form: '怕人的形态', situation: '处境',
   four_steps: '四步', two_moves: '两个方向', inner_critic: '内在批判者的声音', christ_voice: '基督的声音', antidote: '解药', restore_order: '恢复的次序', avoid: '要避免的', posture: '你的姿态', calibrate_note: '校准良心', hope_link: '盼望', violence_note: '安全优先',
 }
 const SKIP = new Set(['ai_used', 'crisis', 'crisis_note'])
@@ -167,7 +167,6 @@ function FeatureRunner({ feature, onBack }) {
   }, [ratingItems.length]) // eslint-disable-line
 
   async function submit(override) {
-    if (!hasToken()) { setError(i18nT('请先登录后再使用此功能（推荐书目/圣诗无需登录）。')); return }
     const val = (typeof override === 'string') ? override : text
     if (typeof override === 'string' && override !== text) setText(override)
     setBusy(true); setError(''); setResult(null)
@@ -179,7 +178,7 @@ function FeatureRunner({ feature, onBack }) {
       else if (feature.kind === 'knowgod') { if (attribute) body.attribute = attribute; else body.need = val }
       const r = await runAction(feature.prefix, feature.action, body)
       setResult(r); window.scrollTo({ top: 0 })
-    } catch (e) { setError(e.message || '提交失败') } finally { setBusy(false) }
+    } catch (e) { setError(i18nT(e.message || '提交失败')) } finally { setBusy(false) }
   }
 
   const attrs = (feature.kind === 'knowgod' && meta && Array.isArray(meta.attributes)) ? meta.attributes : []
@@ -252,6 +251,7 @@ function ResourcesView({ onBack }) {
   const [books, setBooks] = useState([])
   const [hymns, setHymns] = useState([])
   const [err, setErr] = useState('')
+  const english = getRuntimeLang() === 'en'
   useEffect(() => {
     getBooks().then((d) => setBooks(d.books || [])).catch((e) => setErr(e.message))
     getHymns().then((d) => setHymns(d.hymns || [])).catch(() => {})
@@ -270,11 +270,11 @@ function ResourcesView({ onBack }) {
             {byCont[c].map((b) => (
               <div key={b.slug} style={card}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}>
-                  <span style={{ fontSize: 14, fontWeight: 600 }}>{'★'.repeat(b.priority || 0)} {b.zh}</span>
+                  <span style={{ fontSize: 14, fontWeight: 600 }}>{'★'.repeat(b.priority || 0)} {english ? (b.en || b.zh) : b.zh}</span>
                   {b.public_domain && <span style={{ fontSize: 10, color: '#34c759' }}>{i18nT('公版')}</span>}
                 </div>
-                <div style={{ fontSize: 11.5, color: 'rgba(255,255,255,0.5)', margin: '2px 0 4px' }}>{b.en} · {b.author}</div>
-                <TranslatableParagraph style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.75)', lineHeight: 1.7 }}>{String(b.blurb)}</TranslatableParagraph>
+                <div style={{ fontSize: 11.5, color: 'rgba(255,255,255,0.5)', margin: '2px 0 4px' }}>{english ? b.author : `${b.en} · ${b.author}`}</div>
+                <TranslatableParagraph style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.75)', lineHeight: 1.7 }}>{String(english ? (b.blurbEn || b.blurb) : b.blurb)}</TranslatableParagraph>
               </div>
             ))}
           </div>
@@ -282,7 +282,10 @@ function ResourcesView({ onBack }) {
         <div style={{ fontSize: 13, fontWeight: 700, color: '#5ac8fa', margin: '10px 0 8px' }}>{i18nT('🎵 圣诗扩充')}</div>
         {hymns.map((h) => (
           <div key={h.slug} style={{ ...card, display: 'flex', justifyContent: 'space-between' }}>
-            <span style={{ fontSize: 13.5 }}>{h.zh} <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: 11 }}>{h.en}</span></span>
+            <span style={{ fontSize: 13.5 }}>
+              {english ? (h.en || h.zh) : h.zh}
+              {!english && <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: 11 }}> {h.en}</span>}
+            </span>
             <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)' }}>{h.era} · {h.theme}</span>
           </div>
         ))}

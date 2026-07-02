@@ -360,7 +360,7 @@ export default function HolyHabitDashboard({ userId = 'local-user' }) {
   return (
     <section className="sf-module">
       <div className="sf-section-heading">
-        <h2>{T('生活规则与圣洁习惯引擎', 'Rule of Life & Holy Habit Engine')}</h2>
+        <h2>Rule of Life & Holy Habit Engine / 生活规则与圣洁习惯引擎</h2>
         <p>{MODULE_DISCLAIMER}</p>
       </div>
       <MiniTabs active={tab} onChange={setTab} />

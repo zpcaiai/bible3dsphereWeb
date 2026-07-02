@@ -72,7 +72,7 @@ export function GiftCallingOverview({ userId, data }) {
   return (
     <section className="sf-section">
       <div className="sf-section-heading">
-        <h2>{T('恩赐、呼召与使命系统', 'Gift, Calling & Mission OS')}</h2>
+        <h2>Gift, Calling & Mission OS / 恩赐、呼召与使命系统</h2>
         <p>{MODULE_DISCLAIMER}</p>
       </div>
       <article className="sf-card sf-flow-card">
