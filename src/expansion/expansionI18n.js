@@ -449,6 +449,21 @@ export const EN = {
   '体力衰退带来的失落': 'The loss that comes with declining strength',
   '想善用余年、留下属灵传承': 'I want to use my remaining years well',
   '面对死亡渐近的思虑': 'Facing the nearness of death',
+  // —— worddelight options 补 EN ——
+  '读经像例行任务，没味道': 'Bible reading feels like a chore, no taste',
+  '读了不知道有什么用、跟生活接不上': 'I read but don\'t see the point or how it connects',
+  '因为读得少而愧疚': 'I feel guilty for reading so little',
+  '想更爱慕神的话': 'I want to love God\'s word more',
+  // —— 结果字段标签补 EN ——
+  '数算恩典的取景框': 'Ways to count your gifts',
+  'REACH 五步': 'The five REACH steps',
+  '节奏（日/周/季）': 'Rhythms (daily / weekly / seasonal)',
+  '服事的操练': 'Practices of service',
+  '要脱去的': 'Put off',
+  '要穿上的': 'Put on',
+  '例如': 'e.g.',
+  '节奏层': 'Rhythm layer',
+  '经典之声': 'From the classics',
 }
 
 let _seeded = false

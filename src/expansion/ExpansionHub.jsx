@@ -46,7 +46,7 @@ const FEATURES = [
   { key: 'doubt', prefix: 'doubt', action: 'analyze', emoji: '❓', name: '与怀疑同行', sub: '信心危机 · 牧养向', kind: 'text', field: 'text', options: ['有很多理性上的疑问', '被苦难/人伤了，对神起疑', '属灵枯竭、感觉不到神', '只是想在怀疑里被陪伴'], placeholder: '例如「我最近信不动了，有很多疑问」' },
   { key: 'generosity', prefix: 'generosity', action: 'analyze', emoji: '💝', name: '慷慨 · 管家 · 财宝在天', sub: 'The Treasure Principle · Alcorn', kind: 'text', field: 'text', options: ['钱抓得很紧、总怕不够', '把钱当成自己的', '想更有意义地用钱', '想脱离金钱的辖制、学慷慨'], placeholder: '例如「我钱抓得很紧，总怕不够，很不安」' },
   { key: 'humility', prefix: 'humility', action: 'analyze', emoji: '🙇', name: '谦卑', sub: 'Humility · 慕安得烈', kind: 'text', field: 'text', options: ['我很骄傲、爱表现', '老是贬低自己、觉得很差', '总在跟人比较', '想学像基督那样谦卑服事'], placeholder: '例如「我很骄傲，总想被看见、爱表现」' },
-  { key: 'worddelight', prefix: 'word-delight', action: 'analyze', emoji: '🍯', name: '爱慕神的话 · 诗篇119', sub: '把「该读经」变成爱慕', kind: 'text', field: 'text', placeholder: '例如「读经对我像例行任务，没味道」' },
+  { key: 'worddelight', prefix: 'word-delight', action: 'analyze', emoji: '🍯', name: '爱慕神的话 · 诗篇119', sub: '把「该读经」变成爱慕', kind: 'text', field: 'text', options: ['读经像例行任务，没味道', '读了不知道有什么用、跟生活接不上', '因为读得少而愧疚', '想更爱慕神的话'], placeholder: '例如「读经对我像例行任务，没味道」' },
   { key: 'anger', prefix: 'anger', action: 'analyze', emoji: '😤', name: '忿怒 · 在神面前处理愤怒', sub: 'Good and Angry · Powlison', kind: 'text', field: 'text', options: ['我一点就炸、事后后悔', '闷着的怒、记恨放不下', '我在对神生气', '为不义/邪恶而愤怒'], placeholder: '例如「我一点就炸，事后很后悔」' },
   { key: 'loneliness', prefix: 'loneliness', action: 'analyze', emoji: '🌑', name: '孤单 · 被看不见的痛', sub: '看顾人的神 El Roi · 夏甲', kind: 'text', field: 'text', options: ['没人懂我、觉得不被看见', '身边没有人、举目无亲', '人群里更孤单', '失去后的孤单'], placeholder: '例如「没人懂我，觉得不被看见」' },
   { key: 'perfectionism', prefix: 'perfectionism', action: 'analyze', emoji: '🎯', name: '完美主义 · 内在批判者→恩典', sub: '把批判者换成基督的声音', kind: 'text', field: 'text', options: ['做什么都觉得不够好', '怕失败、不敢开始', '对自己极苛刻', '无法放松、必须掌控一切'], placeholder: '例如「我做什么都觉得不够好」' },
@@ -75,10 +75,11 @@ const LABELS = {
   // —— 扩充第二辑字段标签 ——
   diagnosis: '看见', gospel_truth: '福音真理', grounds_line: '确据的根基', lean_note: '偏向', way_forward: '出路', way_outward: '向外的一步', teaching: '经典的话', hope: '盼望', principle: '原则', wise_step: '智慧的一步', from_above_test: '从上头来的智慧 · 检验', contemplative_practice: '默观操练', valley_prayer: '清教徒祷文', doctrine_note: '温柔的教义提示', prescription: '开的药', rule_hint: '生活规则', gospel_order_note: '福音次序', pair_line: '治死 · 穿上', spirit_note: '倚靠圣灵', concrete_step: '落到一个人一个动作', gospel_root: '福音的根', distinction: '分辨', mediator_reminder: '回到根基', balance_note: '平衡', voice_note: '经典的话', invite: '邀请', abuse_note: '安全优先', crisis_note: '',
   trigger: '触发点', shadow: '此刻的阴影', block: '卡点', state: '状态', facet: '面向', domain: '领域', focus: '焦点', hurt_type: '伤害类型', struggle: '挣扎', symptom: '匆忙病征', mood: '心境', inward_curve: '向内蜷缩', suggested_form: '爱的操练', prescribed_practice: '操练', mortify: '治死', vivify: '穿上',
+  grounds: '确据的根基', gift_lenses: '数算恩典的取景框', reach_steps: 'REACH 五步', rhythm_layers: '节奏（日/周/季）', ministries: '服事的操练', put_off: '要脱去的', put_on: '要穿上的', key_distinction: '关键分辨', examples: '例如', layer: '节奏层', voice: '经典之声',
   spirit_ministry: '圣灵的职事', adoption_truth: '收纳的真理', cure: '解药', three_pillars: '三根支柱', pillar_note: '这根支柱', pillar: '支柱', steward_reminder: '管家的身份', word_practice: '读经操练', next_route: '可继续', reversal: '反转', six_elements: '悔改六要素', achievement: '十架的成就', image: '意象', need: '此刻的需要', kind: '怀疑的种类', form: '怕人的形态', situation: '处境',
   four_steps: '四步', two_moves: '两个方向', inner_critic: '内在批判者的声音', christ_voice: '基督的声音', antidote: '解药', restore_order: '恢复的次序', avoid: '要避免的', posture: '你的姿态', calibrate_note: '校准良心', hope_link: '盼望', violence_note: '安全优先',
 }
-const SKIP = new Set(['ai_used', 'crisis', 'crisis_note'])
+const SKIP = new Set(['ai_used', 'crisis', 'crisis_note', 'lang', 'en_localized', 'lean', 'mode', 'type', 'violence_flag', 'abuse_flag', 'scruple_flag', 'shame_flag', 'hard_mode', 'legalist_lean'])
 
 function Scripture({ ref, text }) {
   return (
