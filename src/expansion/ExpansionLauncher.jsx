@@ -1,10 +1,10 @@
-// ExpansionLauncher.jsx — 自挂载悬浮入口 + 深链开启（content-theology-expansion 批次）
-// 暴露 window.__expansionOpen(featureKey) 供 PlanetHome 等直接深链到某个扩充模块。
+// ExpansionLauncher.jsx — 自挂载「扩充灵修」面板宿主（content-theology-expansion 批次）
+// 不再悬浮首页按钮；仅暴露 window.__expansionOpen(featureKey|'') 供 PlanetHome 大陆入口
+// 深链到某个扩充模块（传空则打开全部模块网格）。
 import React, { useEffect, useState } from 'react'
 import ReactDOM from 'react-dom/client'
 import ExpansionHub from './ExpansionHub'
 import AppErrorBoundary from '../AppErrorBoundary'
-import { t as i18nT } from '../i18n/runtime'
 import './expansionI18n'
 
 function Launcher() {
@@ -19,26 +19,12 @@ function Launcher() {
 
   const close = () => { setOpen(false); setOpenKey(null) }
 
+  // 无悬浮按钮：仅当被 window.__expansionOpen(...) 唤起时渲染全屏面板。
+  if (!open) return null
   return (
-    <>
-      <button
-        onClick={() => { setOpenKey(null); setOpen(true) }}
-        title={i18nT('扩充灵修 · 内容与神学扩充')}
-        aria-label={i18nT('扩充灵修 · 内容与神学扩充')}
-        style={{
-          position: 'fixed', right: 16, bottom: 96, zIndex: 9998,
-          width: 52, height: 52, borderRadius: 26, cursor: 'pointer',
-          border: '1px solid rgba(255,255,255,0.16)', color: '#fff', fontSize: 22,
-          background: 'linear-gradient(135deg,#7b2ff7,#5ac8fa)',
-          boxShadow: '0 6px 20px rgba(0,0,0,0.45)',
-        }}
-      >📖</button>
-      {open && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 9999, background: '#000' }}>
-          <AppErrorBoundary><ExpansionHub key={openKey || 'root'} initialFeatureKey={openKey} onClose={close} /></AppErrorBoundary>
-        </div>
-      )}
-    </>
+    <div style={{ position: 'fixed', inset: 0, zIndex: 9999, background: '#000' }}>
+      <AppErrorBoundary><ExpansionHub key={openKey || 'root'} initialFeatureKey={openKey} onClose={close} /></AppErrorBoundary>
+    </div>
   )
 }
 

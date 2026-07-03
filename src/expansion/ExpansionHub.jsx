@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import { getRuntimeLang, t as i18nT } from '../i18n/runtime'
 import TranslatableParagraph from '../TranslatableParagraph'
+import BackButton from '../BackButton'
 import { getMeta, runAction, getBooks, getHymns } from './expansionApi'
 import './expansionI18n'
 
@@ -149,10 +150,6 @@ function RenderResult({ data }) {
         </div>
       )}
       {Object.entries(data).filter(([k]) => !SKIP.has(k)).map(([k, v]) => <Field key={k} k={k} v={v} />)}
-      <details style={{ marginTop: 10 }}>
-        <summary style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', cursor: 'pointer' }}>{i18nT('完整结果')}</summary>
-        <pre style={{ fontSize: 10.5, color: 'rgba(255,255,255,0.5)', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{JSON.stringify(data, null, 2)}</pre>
-      </details>
     </div>
   )
 }
@@ -319,7 +316,7 @@ function ResourcesView({ onBack }) {
 function Header({ title, sub, onBack }) {
   return (
     <div style={{ padding: '12px 16px', borderBottom: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', gap: 12, background: 'rgba(28,28,30,0.92)', position: 'sticky', top: 0, zIndex: 100, backdropFilter: 'blur(10px)' }}>
-      <button onClick={onBack} style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', color: '#fff', borderRadius: 8, padding: '6px 12px', cursor: 'pointer', fontSize: 13 }}>{i18nT('‹ 返回')}</button>
+      <BackButton onClick={onBack} />
       <div><div style={{ fontSize: 17, fontWeight: 600 }}>{i18nT(title)}</div>{sub && <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)' }}>{i18nT(sub)}</div>}</div>
     </div>
   )

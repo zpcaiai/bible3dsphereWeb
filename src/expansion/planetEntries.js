@@ -61,6 +61,12 @@ export const EXPANSION_CHIPS_BATCH4 = {
   '人格塑造': [['教养儿女 · 家庭门训', 'exp:parenting']],
 }
 
+// 「扩充灵修 · 全部」根入口：挂到「与神同行」大陆；target='exp:' → window.__expansionOpen('')
+// 打开全部模块网格（含未单独挂 chip 的 认识神/心意更新/以神为乐/情感健康 等，避免入口被移除后成为孤儿）。
+export const EXPANSION_ROOT_ENTRY = {
+  '与神同行': [['扩充灵修 · 全部', 'exp:']],
+}
+
 function _merge(a, b) {
   const out = {}
   for (const k of new Set([...Object.keys(a), ...Object.keys(b)])) out[k] = [...(a[k] || []), ...(b[k] || [])]
@@ -72,6 +78,7 @@ export function withExpansionChips(continents, opts = {}) {
   // 默认挂载：用户指定的三个入口（联合/知足/哀歌）+ 第二、三、四辑新引擎。
   let map = _merge(_merge(_merge(EXPANSION_CHIPS, EXPANSION_CHIPS_BATCH2), EXPANSION_CHIPS_BATCH3), EXPANSION_CHIPS_BATCH4)
   if (opts.includeOptional) map = _merge(map, EXPANSION_CHIPS_OPTIONAL)
+  map = _merge(map, EXPANSION_ROOT_ENTRY)
   return (continents || []).map((c) => (map[c.name] ? { ...c, chips: [...c.chips, ...map[c.name]] } : c))
 }
 
