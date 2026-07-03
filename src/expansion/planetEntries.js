@@ -61,6 +61,19 @@ export const EXPANSION_CHIPS_BATCH4 = {
   '人格塑造': [['教养儿女 · 家庭门训', 'exp:parenting']],
 }
 
+// 精简后的「默认」大陆入口：每个大陆只保留最有代表性的 2–3 个扩充模块，
+// 其余全部收进「扩充灵修 · 全部」网格，避免 chip 过多导致界面拥挤。
+// （标签沿用各批次原文，复用既有 i18n；opts.includeOptional 时仍展开全量。）
+export const EXPANSION_CHIPS_DEFAULT = {
+  '回到福音': [['与基督联合', 'exp:union'], ['得救的确据', 'exp:assurance'], ['十字架默想', 'exp:cross']],
+  '认识自己': [['基督徒知足', 'exp:contentment'], ['怕人 → 敬畏神', 'exp:fearofman'], ['完美主义 · 内在批判者', 'exp:perfectionism']],
+  '等候上帝': [['哀歌 · 向神倾诉', 'exp:lament'], ['复活盼望', 'exp:hope'], ['与怀疑同行', 'exp:doubt']],
+  '与神同行': [['祷告经典 · 祷告的学校', 'exp:prayerschool'], ['默观 · 在神爱里安息', 'exp:contemplation']],
+  '人格塑造': [['成圣 · 治死与穿上', 'exp:holiness'], ['谦卑', 'exp:humility'], ['饶恕与和好', 'exp:forgiveness']],
+  '健康教会九标志': [['团契生活', 'exp:fellowship'], ['爱邻舍 · 公义款待', 'exp:neighbor']],
+  '天路客': [['主再来 · 儆醒地活', 'exp:secondcoming'], ['年老 · 善始善终', 'exp:aging']],
+}
+
 // 「扩充灵修 · 全部」根入口：挂到「与神同行」大陆；target='exp:' → window.__expansionOpen('')
 // 打开全部模块网格（含未单独挂 chip 的 认识神/心意更新/以神为乐/情感健康 等，避免入口被移除后成为孤儿）。
 export const EXPANSION_ROOT_ENTRY = {
@@ -75,9 +88,14 @@ function _merge(a, b) {
 
 // 把扩充 chips 追加到匹配 name 的大陆上，返回新数组（不改原对象）。
 export function withExpansionChips(continents, opts = {}) {
-  // 默认挂载：用户指定的三个入口（联合/知足/哀歌）+ 第二、三、四辑新引擎。
-  let map = _merge(_merge(_merge(EXPANSION_CHIPS, EXPANSION_CHIPS_BATCH2), EXPANSION_CHIPS_BATCH3), EXPANSION_CHIPS_BATCH4)
-  if (opts.includeOptional) map = _merge(map, EXPANSION_CHIPS_OPTIONAL)
+  // 默认：精简的策展入口（每大陆 2–3 个）+「全部」网格入口。
+  // opts.includeOptional：展开全量（用户三入口 + 二/三/四辑 + 可选辑），用于需要完整列表的场景。
+  let map
+  if (opts.includeOptional) {
+    map = _merge(_merge(_merge(_merge(EXPANSION_CHIPS, EXPANSION_CHIPS_BATCH2), EXPANSION_CHIPS_BATCH3), EXPANSION_CHIPS_BATCH4), EXPANSION_CHIPS_OPTIONAL)
+  } else {
+    map = EXPANSION_CHIPS_DEFAULT
+  }
   map = _merge(map, EXPANSION_ROOT_ENTRY)
   return (continents || []).map((c) => (map[c.name] ? { ...c, chips: [...c.chips, ...map[c.name]] } : c))
 }
