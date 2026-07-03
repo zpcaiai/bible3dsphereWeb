@@ -53,7 +53,7 @@
 ## 三、收尾操作（需在本地执行）
 
 ```bash
-cd ~/Documents/Projects/DoctorPro/bible3dsphere-frontend
+cd ~/Documents/Projects/DoctorPro/bible3dsphereWeb
 
 # 1) 清理杂物（沙箱无法删除文件，故本地执行）
 bash scripts/cleanup-cruft.sh

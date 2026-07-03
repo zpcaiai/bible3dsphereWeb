@@ -33,7 +33,7 @@
 
 前端：
 ```bash
-cd bible3dsphere-frontend
+cd bible3dsphereWeb
 npx vitest run src/features/spiritual-formation   # 60 passed
 npx vite build                                     # clean
 ```

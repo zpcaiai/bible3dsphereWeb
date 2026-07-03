@@ -1,4 +1,4 @@
-# 属灵星球前端（bible3dsphere-frontend）
+# 属灵星球前端（bible3dsphereWeb）
 
 本仓库是 [bible3dsphere](https://github.com/stephenzhao/bible3dsphere) monorepo 的前端独立仓，
 从 `a4f0d6a` 提取 `emotion-sphere-ui/` 目录内容提升为仓库根。
@@ -354,4 +354,4 @@ Batch 13 architecture docs:
 - `docs/architecture/FULL_MASTER_BUILD_PROMPT.md`
 
 Safety and integrity strategy：所有 Batches 9-13 AI-facing / reflective flows 先走 safety check。Doctrine/apologetics 区分 biblical text、theological interpretation、tradition、application，不使用教义羞辱或操控用户。AI tutor 不发明用户历史，不暴露 memory，不替代人类牧养/临床/紧急支持。Analytics 不做属灵排名，不做 holiness leaderboard。Tenant/admin/productization flows 默认 tenant isolation、audited admin access、role permission、consent scope、redaction policy，并保证 crisis routing 对所有 subscription states 可用。
-# bible3dsphere-frontend
+# bible3dsphereWeb
