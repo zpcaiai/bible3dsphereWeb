@@ -81,11 +81,11 @@ const LABELS = {
 }
 const SKIP = new Set(['ai_used', 'crisis', 'crisis_note', 'lang', 'en_localized', 'lean', 'mode', 'type', 'violence_flag', 'abuse_flag', 'scruple_flag', 'shame_flag', 'hard_mode', 'legalist_lean'])
 
-function Scripture({ ref, text }) {
+function Scripture({ reference, text }) {
   return (
     <div style={{ ...quote }}>
       {text && <TranslatableParagraph style={{ fontSize: 14, lineHeight: 1.8, color: 'rgba(255,255,255,0.9)' }}>{'「' + String(text) + '」'}</TranslatableParagraph>}
-      {ref && <div style={{ fontSize: 12, color: ACCENT, marginTop: 6, textAlign: 'right' }}>—— {ref}</div>}
+      {reference && <div style={{ fontSize: 12, color: ACCENT, marginTop: 6, textAlign: 'right' }}>—— {reference}</div>}
     </div>
   )
 }
@@ -95,7 +95,7 @@ function Field({ k, v }) {
   if (v == null || v === '' || (Array.isArray(v) && v.length === 0)) return null
   // scripture-like object
   if (v && typeof v === 'object' && !Array.isArray(v) && ('ref' in v || 'text' in v)) {
-    return (<div style={{ marginBottom: 10 }}>{label && <div style={lbl}>{i18nT(label)}</div>}<Scripture ref={v.ref} text={v.text} /></div>)
+    return (<div style={{ marginBottom: 10 }}>{label && <div style={lbl}>{i18nT(label)}</div>}<Scripture reference={v.ref} text={v.text} /></div>)
   }
   if (typeof v === 'string' || typeof v === 'number') {
     return (<div style={{ marginBottom: 10 }}>{label && <div style={lbl}>{i18nT(label)}</div>}<TranslatableParagraph style={{ fontSize: 13.5, lineHeight: 1.8, color: 'rgba(255,255,255,0.85)' }}>{String(v)}</TranslatableParagraph></div>)
@@ -119,6 +119,25 @@ function Field({ k, v }) {
   return null
 }
 const lbl = { fontSize: 11, color: 'rgba(255,255,255,0.45)', marginBottom: 3, letterSpacing: 0.3 }
+
+class ResultBoundary extends React.Component {
+  constructor(props) { super(props); this.state = { error: null } }
+  static getDerivedStateFromError(error) { return { error } }
+  componentDidCatch(error, info) { console.error('[ExpansionResult] 渲染出错:', error, info?.componentStack) }
+  render() {
+    if (this.state.error) {
+      let dump = ''
+      try { dump = JSON.stringify(this.props.data, null, 2) } catch { dump = String(this.props.data) }
+      return (
+        <div style={{ ...card, borderColor: 'rgba(255,135,135,0.4)' }}>
+          <div style={{ color: '#ff8787', fontSize: 13, marginBottom: 8 }}>{i18nT('结果已生成，但显示时出了点问题。下面是完整内容：')}</div>
+          <pre style={{ fontSize: 11, color: 'rgba(255,255,255,0.72)', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{dump}</pre>
+        </div>
+      )
+    }
+    return this.props.children
+  }
+}
 
 function RenderResult({ data }) {
   if (!data) return null
@@ -153,6 +172,7 @@ function FeatureRunner({ feature, onBack }) {
   const [result, setResult] = useState(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
+  const [runId, setRunId] = useState(0)
 
   useEffect(() => {
     let alive = true
@@ -171,6 +191,7 @@ function FeatureRunner({ feature, onBack }) {
     const val = (typeof override === 'string') ? override : text
     if (typeof override === 'string' && override !== text) setText(override)
     setBusy(true); setError(''); setResult(null)
+    setRunId((n) => n + 1)
     try {
       let body = { use_ai: true }
       if (feature.kind === 'text') body[feature.field] = val
@@ -242,7 +263,7 @@ function FeatureRunner({ feature, onBack }) {
               {busy ? i18nT('生成中…') : i18nT('开始')}
             </button>
           </>
-        ) : <RenderResult data={result} />}
+        ) : <ResultBoundary key={runId} data={result}><RenderResult data={result} /></ResultBoundary>}
       </div>
     </div>
   )

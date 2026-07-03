@@ -29,10 +29,10 @@ export default function FormationAnalyticsPage({ user, onBack }) {
         <>
           <div style={{ ...card, background: 'rgba(52,199,89,0.08)' }}>
             <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 6 }}>{i18nT('🌱 恩典证据')}</div>
-            {sum.grace_evidence.map((g, i) => <div key={i} style={{ fontSize: 13, color: 'rgba(255,255,255,0.85)', marginBottom: 5 }}>· {g}</div>)}
+            {(sum.grace_evidence || []).map((g, i) => <div key={i} style={{ fontSize: 13, color: 'rgba(255,255,255,0.85)', marginBottom: 5 }}>· {g}</div>)}
           </div>
 
-          {m && (
+          {m && m.practice && m.community && (
             <div style={card}>
               <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 8 }}>{i18nT('近 30 天的迹象')}</div>
               <div style={{ fontSize: 13, lineHeight: 1.9, color: 'rgba(255,255,255,0.8)' }}>

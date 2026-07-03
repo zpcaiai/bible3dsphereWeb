@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import ReactDOM from 'react-dom/client'
 import ExpansionHub from './ExpansionHub'
+import AppErrorBoundary from '../AppErrorBoundary'
 import { t as i18nT } from '../i18n/runtime'
 import './expansionI18n'
 
@@ -34,7 +35,7 @@ function Launcher() {
       >📖</button>
       {open && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 9999, background: '#000' }}>
-          <ExpansionHub key={openKey || 'root'} initialFeatureKey={openKey} onClose={close} />
+          <AppErrorBoundary><ExpansionHub key={openKey || 'root'} initialFeatureKey={openKey} onClose={close} /></AppErrorBoundary>
         </div>
       )}
     </>
