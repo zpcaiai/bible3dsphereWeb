@@ -138,6 +138,7 @@ describe('useSpeechInput', () => {
   })
 
   it('sets recordingError when getUserMedia is denied', async () => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {})
     vi.stubGlobal('navigator', {
       userAgent: 'TestBrowser',
       mediaDevices: {
@@ -149,10 +150,14 @@ describe('useSpeechInput', () => {
       },
     })
 
-    const { result } = renderHook(() => useSpeechInput({}))
-    await act(async () => { await result.current.startRecording() })
+    try {
+      const { result } = renderHook(() => useSpeechInput({}))
+      await act(async () => { await result.current.startRecording() })
 
-    expect(result.current.recordingError).toContain('权限被拒绝')
+      expect(result.current.recordingError).toContain('权限被拒绝')
+    } finally {
+      consoleError.mockRestore()
+    }
   })
 
   it('postProcess callback transforms transcript before onTranscript', async () => {

@@ -2,9 +2,11 @@
  * Interaction tests for the PlanetHome navigation surface.
  */
 import React from 'react'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { cleanup, fireEvent, render } from '@testing-library/react'
 import PlanetHome from '../PlanetHome'
+import { mergeAutoEn } from '../i18n/translations'
+import { setRuntimeLang } from '../i18n/runtime'
 
 const renderPlanetHome = () => {
   const onClose = vi.fn()
@@ -14,8 +16,13 @@ const renderPlanetHome = () => {
 }
 
 describe('PlanetHome', () => {
+  beforeEach(() => {
+    setRuntimeLang('zh')
+  })
+
   afterEach(() => {
     cleanup()
+    setRuntimeLang('zh')
   })
 
   it('renders the full growth-map entry list', () => {
@@ -28,6 +35,22 @@ describe('PlanetHome', () => {
     expect(document.body.textContent).toContain('等候上帝')
     expect(document.body.textContent).toContain('天路客')
     expect(document.body.textContent).toContain('人格塑造')
+  })
+
+  it('localizes continent copy in EN mode', () => {
+    mergeAutoEn({
+      '认识自己': 'Self Discovery',
+      '我为什么软弱、焦虑、重复跌倒？': 'Why am I weak, anxious, and repeating the same falls?',
+      '钟马田 · 看见真实的自己': 'Lloyd-Jones · Seeing your true self',
+    })
+    setRuntimeLang('en')
+
+    renderPlanetHome()
+
+    expect(document.body.textContent).toContain('Self Discovery')
+    expect(document.body.textContent).toContain('Why am I weak, anxious, and repeating the same falls?')
+    expect(document.body.textContent).toContain('Lloyd-Jones · Seeing your true self')
+    expect(document.body.textContent).not.toContain('我为什么软弱、焦虑、重复跌倒？')
   })
 
   it('routes primary action chips through go()', () => {

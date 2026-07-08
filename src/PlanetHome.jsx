@@ -79,17 +79,17 @@ export default function PlanetHome({ onClose, go }) {
             <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
               <span style={{ fontSize: 30 }}>{c.icon}</span>
               <div>
-                <div style={{ fontSize: 17, fontWeight: 700 }}>{c.name}</div>
-                <div style={{ fontSize: 10.5, color: c.color, letterSpacing: 1 }}>{c.en} · {c.by}</div>
+                <div style={{ fontSize: 17, fontWeight: 700 }}>{i18nT(c.name)}</div>
+                <div style={{ fontSize: 10.5, color: c.color, letterSpacing: 1 }}>{c.en} · {i18nT(c.by)}</div>
               </div>
             </div>
-            <div style={{ fontSize: 13.5, color: 'rgba(255,255,255,0.82)', lineHeight: 1.6, fontStyle: 'italic', marginBottom: 12 }}>「{c.q}」</div>
+            <div style={{ fontSize: 13.5, color: 'rgba(255,255,255,0.82)', lineHeight: 1.6, fontStyle: 'italic', marginBottom: 12 }}>「{i18nT(c.q)}」</div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
               {c.chips.map(([label, target], j) => (
                 <button key={j} onClick={(e) => { e.stopPropagation(); act(target) }} style={{ padding: '7px 14px', borderRadius: 18, border: 'none', cursor: 'pointer', fontSize: 12.5, fontWeight: 700, background: `${c.color}28`, color: c.color }}>{i18nT(label)} ›</button>
               ))}
             </div>
-            {c.note && <div style={{ fontSize: 10.5, color: 'rgba(255,255,255,0.4)', marginTop: 10 }}>{c.note}</div>}
+            {c.note && <div style={{ fontSize: 10.5, color: 'rgba(255,255,255,0.4)', marginTop: 10 }}>{i18nT(c.note)}</div>}
           </div>
         ))}
         <div style={{ fontSize: 10.5, color: 'rgba(255,255,255,0.3)', textAlign: 'center', lineHeight: 1.7, marginTop: 4 }}>

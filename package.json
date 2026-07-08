@@ -11,9 +11,9 @@
     "i18n:fill:dry": "node scripts/i18n_autoen_fill.mjs --dry-run",
     "preview": "vite preview",
     "preview:mobile": "vite preview --host 0.0.0.0 --port 4173",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test": "NODE_OPTIONS=--no-warnings vitest run",
+    "test:watch": "NODE_OPTIONS=--no-warnings vitest",
+    "test:coverage": "NODE_OPTIONS=--no-warnings vitest run --coverage"
   },
   "dependencies": {
     "@react-three/drei": "^9.122.0",

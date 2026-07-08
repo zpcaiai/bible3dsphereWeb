@@ -1,5 +1,5 @@
 // ExpansionHub.jsx — 内容与神学扩充 · 聚合面板（content-theology-expansion 批次）
-// 只覆盖与并行进程「不重叠」的 8 个模块 + 推荐书目/圣诗；调用自包含 expansionApi。
+// 聚合全部内容与神学扩充模块 + 推荐书目/圣诗；调用自包含 expansionApi。
 import React, { useEffect, useState } from 'react'
 import { getRuntimeLang, t as i18nT } from '../i18n/runtime'
 import TranslatableParagraph from '../TranslatableParagraph'

@@ -16,3 +16,9 @@ if (typeof globalThis.localStorage === 'undefined') {
 
 // Silence console.log noise from api.js during tests
 vi.spyOn(console, 'log').mockImplementation(() => {})
+
+// jsdom intentionally does not implement scrolling APIs. Components use
+// scrollTo after successful submissions; tests only need the call to be safe.
+if (typeof window !== 'undefined' && !window.scrollTo?.mock) {
+  window.scrollTo = vi.fn()
+}

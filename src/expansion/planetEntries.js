@@ -1,8 +1,5 @@
 // planetEntries.js — 属灵星球「大陆入口」延迟接线注册表（content-theology-expansion 批次）
 //
-// ⚠️ 不修改并行进程正在改动的 PlanetHome.jsx。此文件+文档提供「即插式」补丁：
-//    等他们那批前端合并后，按 docs/EXPANSION_PLANETHOME_WIRING.md 加 3 行即可生效。
-//
 // 机制：新 chip 的 target 用 'exp:<featureKey>' 前缀；PlanetHome 的 act() 认出该前缀，
 //       调用 window.__expansionOpen(featureKey)（由 ExpansionLauncher 暴露），绕过既有 go()。
 import './expansionI18n'

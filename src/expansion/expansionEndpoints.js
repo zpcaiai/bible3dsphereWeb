@@ -1,10 +1,24 @@
-// expansionEndpoints.js — 内容与神学扩充：全部 12 模块的 api.js 风格调用（content-theology-expansion）
+// expansionEndpoints.js — 内容与神学扩充：api.js 风格调用（content-theology-expansion）
 //
 // 供并行进程/任意前端直接 import 使用；风格对齐既有 src/api.js 的 submitCheckup（Bearer token）。
 // token 省略时回退到 ../auth 的 getToken()。所有端点见 docs/EXPANSION_API.md。
 import { getToken } from '../auth'
+import { getRuntimeLang } from '../i18n/runtime'
 
 const API_BASE = (import.meta.env.VITE_API_BASE?.trim()) || '/api'
+
+function isEn() {
+  return getRuntimeLang() === 'en'
+}
+
+function msg(zh, en) {
+  return isEn() ? en : zh
+}
+
+function withLang(path) {
+  const sep = path.includes('?') ? '&' : '?'
+  return `${path}${sep}lang=${encodeURIComponent(getRuntimeLang())}`
+}
 
 function headers(json, token) {
   const t = token ?? ((typeof getToken === 'function') ? getToken() : null)
@@ -18,19 +32,28 @@ async function _read(r, failMsg) {
   let d = null
   try { d = raw ? JSON.parse(raw) : null } catch { d = null }
   if (!r.ok) {
-    if (r.status === 401) throw new Error('请先登录后再使用此功能。')
+    if (r.status === 401) throw new Error(msg('请先登录后再使用此功能。', 'Please sign in before using this feature.'))
     throw new Error((d && (d.detail || d.message)) || `${failMsg}（HTTP ${r.status}）`)
   }
-  if (d == null || typeof d !== 'object') throw new Error('后端接口暂不可用：服务端可能尚未部署或未启动（返回了非 JSON）。')
+  if (d == null || typeof d !== 'object') {
+    throw new Error(msg(
+      '后端接口暂不可用：服务端可能尚未部署或未启动（返回了非 JSON）。',
+      'Backend endpoint unavailable: the service may not be deployed or awake yet (non-JSON response).',
+    ))
+  }
   return d
 }
 async function GET(path, token) {
-  const r = await fetch(`${API_BASE}${path}`, { headers: headers(false, token) })
-  return _read(r, '加载失败')
+  const r = await fetch(`${API_BASE}${withLang(path)}`, { headers: headers(false, token) })
+  return _read(r, msg('加载失败', 'Load failed'))
 }
 async function POST(path, body, token) {
-  const r = await fetch(`${API_BASE}${path}`, { method: 'POST', headers: headers(true, token), body: JSON.stringify(body || {}) })
-  return _read(r, '提交失败')
+  const r = await fetch(`${API_BASE}${path}`, {
+    method: 'POST',
+    headers: headers(true, token),
+    body: JSON.stringify({ lang: getRuntimeLang(), ...(body || {}) }),
+  })
+  return _read(r, msg('提交失败', 'Submit failed'))
 }
 
 // ── 1) 哀歌 lament（Vroegop 四步） ──
