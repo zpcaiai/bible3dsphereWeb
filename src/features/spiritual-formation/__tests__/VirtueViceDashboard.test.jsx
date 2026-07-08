@@ -3,14 +3,26 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import VirtueViceDashboard from '../components/virtue-vice/VirtueViceDashboard'
 import { VIRTUE_VICE_STORAGE_KEYS } from '../lib/virtueViceStorage'
+import { setRuntimeLang } from '../../../i18n/runtime'
 
 describe('VirtueViceDashboard', () => {
   beforeEach(() => {
+    setRuntimeLang('en')
     Object.values(VIRTUE_VICE_STORAGE_KEYS).forEach((key) => window.localStorage.removeItem(key))
   })
 
   afterEach(() => {
     cleanup()
+    setRuntimeLang('en')
+  })
+
+  it('renders dashboard controls in Chinese mode', () => {
+    setRuntimeLang('zh')
+    render(<VirtueViceDashboard userId="u1" />)
+
+    expect(screen.getByText('德性与罪性塑造系统')).toBeTruthy()
+    expect(screen.getByText('当前德性焦点')).toBeTruthy()
+    expect(screen.getByText('打开德性')).toBeTruthy()
   })
 
   it('creates a virtue focus and logs a practice', () => {

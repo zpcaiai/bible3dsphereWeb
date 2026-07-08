@@ -110,6 +110,12 @@ const SECTION_CONFIG = [
   { key: 'encouragement',icon: '🌟', label: '鼓励与感恩',      placeholder: '一句话鼓励自己，或记录一个感恩的时刻…', type: 'textarea', rows: 2 },
 ]
 
+const localizeSection = (section) => ({
+  ...section,
+  label: i18nT(section.label),
+  placeholder: i18nT(section.placeholder),
+})
+
 const ADMIN_EMAIL = 'zpclord@sina.com'
 
 export default function SermonJournalPage({ user, token, onBack }) {
@@ -676,7 +682,9 @@ export default function SermonJournalPage({ user, token, onBack }) {
             </section>
 
             {/* Main content sections */}
-            {SECTION_CONFIG.map(({ key, icon, label, placeholder, rows }) => (
+            {SECTION_CONFIG.map((section) => {
+              const { key, icon, label, placeholder, rows } = localizeSection(section)
+              return (
               <section key={key} className="sj-section glass">
                 <div className="sj-section-title">{icon} {label}</div>
                 <span style={{ position: 'relative', display: 'block' }}>
@@ -691,7 +699,8 @@ export default function SermonJournalPage({ user, token, onBack }) {
                 <SuggestMenu top={8} right={8} options={SJ_OPTS[key] || []} value={current[key]} onChange={(v) => updateField(key, v)} />
                 </span>
               </section>
-            ))}
+              )
+            })}
 
             {/* Questions */}
             <section className="sj-section glass">
@@ -702,7 +711,7 @@ export default function SermonJournalPage({ user, token, onBack }) {
                     <span className="sj-list-num">{i + 1}</span>
                     <textarea
                       className="sj-textarea sj-list-input"
-                      placeholder={`思考题 ${i + 1}…`}
+                      placeholder={i18nT('思考题 {n}…', { n: i + 1 })}
                       value={q}
                       onChange={e => updateListField('questions', i, e.target.value)}
                       rows={2}
@@ -725,7 +734,7 @@ export default function SermonJournalPage({ user, token, onBack }) {
                     <span className="sj-list-num">{i + 1}</span>
                     <input
                       className="sj-input sj-list-input"
-                      placeholder={`实践 ${i + 1}：具体可执行的行动…`}
+                      placeholder={i18nT('实践 {n}：具体可执行的行动…', { n: i + 1 })}
                       value={p}
                       onChange={e => updateListField('practices', i, e.target.value)}
                     />

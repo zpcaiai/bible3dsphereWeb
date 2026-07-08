@@ -38,7 +38,7 @@ export default function AgentChatPage({ onBack, onNeedLogin }) {
       setMsgs([...next, { role: 'assistant', content: r.reply }])
       if (typeof r.configured === 'boolean') setConfigured(r.configured)
     } catch (e) {
-      setMsgs([...next, { role: 'assistant', content: '（一时无法回应，请稍后再试。）' }])
+      setMsgs([...next, { role: 'assistant', content: i18nT('（一时无法回应，请稍后再试。）') }])
     } finally { setBusy(false) }
   }
 
@@ -71,12 +71,12 @@ export default function AgentChatPage({ onBack, onNeedLogin }) {
               color: 'rgba(255,255,255,0.9)', whiteSpace: 'pre-wrap' }}>{m.content}</div>
           </div>
         ))}
-        {busy && <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', paddingLeft: 4 }}>{agentMeta.name}{i18nT('正在回应…')}</div>}
+        {busy && <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', paddingLeft: 4 }}>{i18nT('{name}正在回应…', { name: agentMeta.name })}</div>}
         <div ref={endRef} />
       </div>
 
       <div style={{ display: 'flex', gap: 8, padding: '10px 16px', borderTop: '1px solid rgba(255,255,255,0.1)', background: 'rgba(28,28,30,0.92)', flexShrink: 0 }}>
-        <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && send()} placeholder={`对${agentMeta.name}说…`}
+        <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && send()} placeholder={i18nT('对{name}说…', { name: agentMeta.name })}
           style={{ flex: 1, padding: '11px 14px', borderRadius: 22, background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)', color: '#fff', fontSize: 14 }} />
         <button onClick={send} disabled={busy} style={{ width: 64, borderRadius: 22, border: 'none', background: `linear-gradient(135deg, ${agentMeta.color}, #5ac8fa)`, color: '#fff', fontSize: 14, fontWeight: 700, cursor: 'pointer' }}>{i18nT('发送')}</button>
       </div>

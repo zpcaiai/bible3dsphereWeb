@@ -3,20 +3,23 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import PrayerCommunionDashboard from '../components/prayer-communion/PrayerCommunionDashboard'
 import { PRAYER_COMMUNION_STORAGE_KEYS } from '../lib/prayerCommunionStorage'
+import { setRuntimeLang } from '../../../i18n/runtime'
 
 describe('PrayerCommunionDashboard', () => {
   beforeEach(() => {
+    setRuntimeLang('en')
     Object.values(PRAYER_COMMUNION_STORAGE_KEYS).forEach((key) => window.localStorage.removeItem(key))
   })
 
   afterEach(() => {
     cleanup()
+    setRuntimeLang('en')
   })
 
   it('renders dashboard cards and completes a prayer rule session', () => {
     render(<PrayerCommunionDashboard userId="u1" />)
 
-    expect(screen.getByText('Prayer & Communion OS / 祷告与神相交系统')).toBeTruthy()
+    expect(screen.getByText('Prayer & Communion OS')).toBeTruthy()
     expect(screen.getByText('Today’s Prayer Rhythm')).toBeTruthy()
 
     fireEvent.click(screen.getByText('Open Prayer Rule'))
@@ -28,6 +31,15 @@ describe('PrayerCommunionDashboard', () => {
     expect(screen.getByText('Prayer Session Summary')).toBeTruthy()
     const stored = JSON.parse(window.localStorage.getItem(PRAYER_COMMUNION_STORAGE_KEYS.prayerSessions) || '[]')
     expect(stored[0].status).toBe('completed')
+  })
+
+  it('renders main controls in Chinese mode', () => {
+    setRuntimeLang('zh')
+    render(<PrayerCommunionDashboard userId="u1" />)
+
+    expect(screen.getByText('祷告与神相交系统')).toBeTruthy()
+    expect(screen.getByText('今日祷告节奏')).toBeTruthy()
+    expect(screen.getByText('打开祷告规则')).toBeTruthy()
   })
 
   it('creates intercession request and marks it answered', () => {

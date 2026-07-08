@@ -51,6 +51,12 @@ const FIELDS = [
   { key: 'prayer',       label: '🙏 祷告记录', placeholder: '写下你今天的祷告…', rows: 4 },
 ]
 
+const localizeField = (field) => ({
+  ...field,
+  label: i18nT(field.label),
+  placeholder: i18nT(field.placeholder),
+})
+
 const DJ_OPTS = {
   scripture: ['约 3:16', '诗 23', '腓 4:6-7', '罗 8:28', '太 6:33', '耶 29:11', '箴 3:5-6', '赛 40:31'],
   observation: ['这段经文强调神的信实', '重复出现的关键词是…', '这里有一个命令 / 应许', '上下文在讲…', '让我印象深刻的是…'],
@@ -226,7 +232,9 @@ function JournalEditor({ initial, token, onSaved, onCancel }) {
         </div>
 
         {/* Content fields */}
-        {FIELDS.map(f => (
+        {FIELDS.map((field) => {
+          const f = localizeField(field)
+          return (
           <div key={f.key} className="dj-field">
             <label className="dj-field-label">{f.label}</label>
             <div style={{ position: 'relative' }}>
@@ -250,7 +258,8 @@ function JournalEditor({ initial, token, onSaved, onCancel }) {
               <SuggestMenu accent="#a78bfa" options={DJ_OPTS[f.key] || []} value={form[f.key] || ''} onChange={(v) => set(f.key, v)} />
             </div>
           </div>
-        ))}
+          )
+        })}
 
         {error && <div className="dj-error">{error}</div>}
 
