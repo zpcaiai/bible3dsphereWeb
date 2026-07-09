@@ -30,6 +30,9 @@ import {
   AttentionStatusBadge,
   ScriptureSelector,
 } from '../components/attentionComponents'
+import AccountabilityScreen from './AccountabilityScreen'
+import GroupsScreen from './GroupsScreen'
+import PrivacyScreen from './PrivacyScreen'
 import ReportsScreen from './ReportsScreen'
 import './attention.css'
 
@@ -155,6 +158,9 @@ export default function AttentionPage({ user, token, onBack, initialSection = 'd
   if (section === 'review') return <ReviewScreen token={token} timezone={timezone} onBack={() => openPage('dashboard')} openPage={openPage} />
   if (section === 'diagnosis') return <DiagnosisScreen token={token} localDate={localDate} onBack={() => openPage('dashboard')} openPage={openPage} />
   if (section === 'warfare') return <WarfareScreen token={token} onBack={() => openPage('dashboard')} />
+  if (section === 'accountability') return <AccountabilityScreen token={token} onBack={() => openPage('dashboard')} openPage={openPage} />
+  if (section === 'groups') return <GroupsScreen token={token} onBack={() => openPage('dashboard')} openPage={openPage} />
+  if (section === 'privacy') return <PrivacyScreen token={token} onBack={() => openPage('dashboard')} />
   if (section === 'reports') {
     return <ReportsScreen token={token} timezone={timezone} onBack={() => openPage('dashboard')} openPage={openPage} />
   }
@@ -219,6 +225,23 @@ export default function AttentionPage({ user, token, onBack, initialSection = 'd
             <p>本周还没有生成守心周报。你可以在周末或现在生成一个临时回顾。</p>
           )}
         </AttentionCard>
+
+        <AttentionCard title="同伴守望" actionLabel="进入守望" onAction={() => openPage('accountability')}>
+          <p>只在你选择的边界内，把守心状态、代祷请求或摘要分享给可信任的人。</p>
+          <ul className="attn-checks">
+            <li>同行伙伴：{summary?.accountability?.activePartnersCount || 0} 位</li>
+            <li>待处理邀请：{summary?.accountability?.pendingInvitationsCount || 0} 条</li>
+            <li>开放代祷：{summary?.accountability?.openPrayerRequestsCount || 0} 条</li>
+          </ul>
+        </AttentionCard>
+
+        <AttentionCard title="守心小组与挑战" actionLabel="进入小组" onAction={() => openPage('groups')}>
+          <p>和小组一起建立节奏，不排名，不公开比较，只看温柔的整体进展。</p>
+          <ul className="attn-checks">
+            <li>已加入小组：{summary?.groups?.activeGroupsCount || 0} 个</li>
+            <li>参与中挑战：{summary?.groups?.activeChallengesCount || 0} 个</li>
+          </ul>
+        </AttentionCard>
       </section>
 
       <section className="attn-section">
@@ -233,6 +256,7 @@ export default function AttentionPage({ user, token, onBack, initialSection = 'd
           <button type="button" onClick={() => openPage('diagnosis')}>AI 守心洞察</button>
           <button type="button" onClick={() => openPage('warfare')}>注意力争战地图</button>
           <button type="button" onClick={() => openPage('reports')}>守心周报</button>
+          <button type="button" onClick={() => openPage('privacy')}>隐私边界</button>
         </div>
       </section>
     </main>

@@ -115,6 +115,9 @@ export function AttentionQuickActions({ openPage }) {
     ['diagnosis', 'AI 守心洞察', '基于记录生成温柔的属灵反思。'],
     ['warfare', '争战地图', '看见牵引路径并建立守心计划。'],
     ['reports', '守心周报', '回看本周节奏、恩典和下周一个操练。'],
+    ['accountability', '同伴守望', '选择性分享摘要、发送代祷请求。'],
+    ['groups', '守心小组', '加入小组挑战，不排名、不比较。'],
+    ['privacy', '隐私边界', '管理伙伴、小组和挑战可见范围。'],
   ]
   return (
     <div className="attn-action-grid">

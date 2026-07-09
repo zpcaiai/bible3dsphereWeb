@@ -111,4 +111,40 @@ describe('attention api contracts', () => {
     await attentionApi.growthTrend({ days: 90 }, 'token-a')
     expect(lastFetch().url).toBe('/api/attention/growth?days=90')
   })
+
+  it('calls accountability privacy partner share and prayer endpoints', async () => {
+    global.fetch.mockResolvedValueOnce(okJson({ settings: {} }))
+    await attentionApi.privacy('token-a')
+    expect(lastFetch().url).toBe('/api/attention/privacy')
+
+    global.fetch.mockResolvedValueOnce(okJson({ relationship: {} }))
+    await attentionApi.invitePartner({ partnerUserId: 'b@example.com' }, 'token-a')
+    expect(lastFetch().url).toBe('/api/attention/accountability/partners/invite')
+
+    global.fetch.mockResolvedValueOnce(okJson({ share: {} }))
+    await attentionApi.createShare({ scope: 'partner', sourceType: 'weekly_report' }, 'token-a')
+    expect(lastFetch().url).toBe('/api/attention/accountability/shares')
+
+    global.fetch.mockResolvedValueOnce(okJson({ prayerRequest: {} }))
+    await attentionApi.createPrayerRequest({ targetUserId: 'b@example.com', title: '请代祷' }, 'token-a')
+    expect(lastFetch().url).toBe('/api/attention/accountability/prayer-requests')
+  })
+
+  it('calls group and challenge endpoints', async () => {
+    global.fetch.mockResolvedValueOnce(okJson({ group: {} }))
+    await attentionApi.createGroup({ name: '同行小组' }, 'token-a')
+    expect(lastFetch().url).toBe('/api/attention/groups')
+
+    global.fetch.mockResolvedValueOnce(okJson({ templates: [] }))
+    await attentionApi.challengeTemplates('token-a')
+    expect(lastFetch().url).toBe('/api/attention/challenges/templates')
+
+    global.fetch.mockResolvedValueOnce(okJson({ challenge: {} }))
+    await attentionApi.createGroupChallenge('g1', { title: '5 天立约' }, 'token-a')
+    expect(lastFetch().url).toBe('/api/attention/groups/g1/challenges')
+
+    global.fetch.mockResolvedValueOnce(okJson({ checkin: {} }))
+    await attentionApi.saveChallengeCheckin('g1', 'c1', { completed: true }, 'token-a')
+    expect(lastFetch().url).toBe('/api/attention/groups/g1/challenges/c1/checkins')
+  })
 })

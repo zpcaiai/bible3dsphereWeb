@@ -2937,4 +2937,118 @@ export const attentionApi = {
     const res = await fetch(`${API_BASE}/attention/warfare/plans/${encodeURIComponent(planId)}/checkins`, { method: 'POST', headers: _fH(token, true), body: JSON.stringify(body || {}) })
     return _attentionJson(res, '保存今日 check-in 时遇到问题。')
   },
+  privacy: async (token) => {
+    const res = await fetch(`${API_BASE}/attention/privacy`, { headers: _fH(token) })
+    return _attentionJson(res, '暂时无法加载守心隐私设置。')
+  },
+  updatePrivacy: async (body, token) => {
+    const res = await fetch(`${API_BASE}/attention/privacy`, { method: 'PUT', headers: _fH(token, true), body: JSON.stringify(body || {}) })
+    return _attentionJson(res, '保存守心隐私设置时遇到问题。')
+  },
+  partners: async ({ status } = {}, token) => {
+    const qs = new URLSearchParams()
+    if (status) qs.set('status', status)
+    const res = await fetch(`${API_BASE}/attention/accountability/partners${qs.toString() ? `?${qs}` : ''}`, { headers: _fH(token) })
+    return _attentionJson(res, '暂时无法加载守望伙伴。')
+  },
+  invitePartner: async (body, token) => {
+    const res = await fetch(`${API_BASE}/attention/accountability/partners/invite`, { method: 'POST', headers: _fH(token, true), body: JSON.stringify(body || {}) })
+    return _attentionJson(res, '发送守望邀请时遇到问题。')
+  },
+  partnerInvitations: async (token) => {
+    const res = await fetch(`${API_BASE}/attention/accountability/partners/invitations`, { headers: _fH(token) })
+    return _attentionJson(res, '暂时无法加载守望邀请。')
+  },
+  updatePartner: async (relationshipId, body, token) => {
+    const res = await fetch(`${API_BASE}/attention/accountability/partners/${encodeURIComponent(relationshipId)}`, { method: 'PUT', headers: _fH(token, true), body: JSON.stringify(body || {}) })
+    return _attentionJson(res, '更新守望关系时遇到问题。')
+  },
+  partnerPermissions: async (relationshipId, token) => {
+    const res = await fetch(`${API_BASE}/attention/accountability/partners/${encodeURIComponent(relationshipId)}/permissions`, { headers: _fH(token) })
+    return _attentionJson(res, '暂时无法加载伙伴权限。')
+  },
+  updatePartnerPermissions: async (relationshipId, body, token) => {
+    const res = await fetch(`${API_BASE}/attention/accountability/partners/${encodeURIComponent(relationshipId)}/permissions`, { method: 'PUT', headers: _fH(token, true), body: JSON.stringify(body || {}) })
+    return _attentionJson(res, '保存伙伴权限时遇到问题。')
+  },
+  shares: async ({ box } = {}, token) => {
+    const qs = new URLSearchParams()
+    if (box) qs.set('box', box)
+    const res = await fetch(`${API_BASE}/attention/accountability/shares${qs.toString() ? `?${qs}` : ''}`, { headers: _fH(token) })
+    return _attentionJson(res, '暂时无法加载守心分享。')
+  },
+  createShare: async (body, token) => {
+    const res = await fetch(`${API_BASE}/attention/accountability/shares`, { method: 'POST', headers: _fH(token, true), body: JSON.stringify(body || {}) })
+    return _attentionJson(res, '创建守心分享时遇到问题。')
+  },
+  revokeShare: async (shareId, token) => {
+    const res = await fetch(`${API_BASE}/attention/accountability/shares/${encodeURIComponent(shareId)}`, { method: 'DELETE', headers: _fH(token) })
+    return _attentionJson(res, '撤回守心分享时遇到问题。')
+  },
+  prayerRequests: async ({ status } = {}, token) => {
+    const qs = new URLSearchParams()
+    if (status) qs.set('status', status)
+    const res = await fetch(`${API_BASE}/attention/accountability/prayer-requests${qs.toString() ? `?${qs}` : ''}`, { headers: _fH(token) })
+    return _attentionJson(res, '暂时无法加载代祷请求。')
+  },
+  createPrayerRequest: async (body, token) => {
+    const res = await fetch(`${API_BASE}/attention/accountability/prayer-requests`, { method: 'POST', headers: _fH(token, true), body: JSON.stringify(body || {}) })
+    return _attentionJson(res, '发送代祷请求时遇到问题。')
+  },
+  updatePrayerRequest: async (prayerId, body, token) => {
+    const res = await fetch(`${API_BASE}/attention/accountability/prayer-requests/${encodeURIComponent(prayerId)}`, { method: 'PUT', headers: _fH(token, true), body: JSON.stringify(body || {}) })
+    return _attentionJson(res, '更新代祷请求时遇到问题。')
+  },
+  deletePrayerRequest: async (prayerId, token) => {
+    const res = await fetch(`${API_BASE}/attention/accountability/prayer-requests/${encodeURIComponent(prayerId)}`, { method: 'DELETE', headers: _fH(token) })
+    return _attentionJson(res, '删除代祷请求时遇到问题。')
+  },
+  markPrayerRequestPrayed: async (prayerId, body, token) => {
+    const res = await fetch(`${API_BASE}/attention/accountability/prayer-requests/${encodeURIComponent(prayerId)}/pray`, { method: 'POST', headers: _fH(token, true), body: JSON.stringify(body || {}) })
+    return _attentionJson(res, '记录代祷时遇到问题。')
+  },
+  groups: async (token) => {
+    const res = await fetch(`${API_BASE}/attention/groups`, { headers: _fH(token) })
+    return _attentionJson(res, '暂时无法加载守心小组。')
+  },
+  createGroup: async (body, token) => {
+    const res = await fetch(`${API_BASE}/attention/groups`, { method: 'POST', headers: _fH(token, true), body: JSON.stringify(body || {}) })
+    return _attentionJson(res, '创建守心小组时遇到问题。')
+  },
+  joinGroup: async (body, token) => {
+    const res = await fetch(`${API_BASE}/attention/groups/join`, { method: 'POST', headers: _fH(token, true), body: JSON.stringify(body || {}) })
+    return _attentionJson(res, '加入守心小组时遇到问题。')
+  },
+  groupMembers: async (groupId, token) => {
+    const res = await fetch(`${API_BASE}/attention/groups/${encodeURIComponent(groupId)}/members`, { headers: _fH(token) })
+    return _attentionJson(res, '暂时无法加载小组成员。')
+  },
+  createGroupInvitation: async (groupId, body, token) => {
+    const res = await fetch(`${API_BASE}/attention/groups/${encodeURIComponent(groupId)}/invitations`, { method: 'POST', headers: _fH(token, true), body: JSON.stringify(body || {}) })
+    return _attentionJson(res, '创建小组邀请时遇到问题。')
+  },
+  challengeTemplates: async (token) => {
+    const res = await fetch(`${API_BASE}/attention/challenges/templates`, { headers: _fH(token) })
+    return _attentionJson(res, '暂时无法加载挑战模板。')
+  },
+  myChallenges: async (token) => {
+    const res = await fetch(`${API_BASE}/attention/challenges/mine`, { headers: _fH(token) })
+    return _attentionJson(res, '暂时无法加载我的挑战。')
+  },
+  groupChallenges: async (groupId, token) => {
+    const res = await fetch(`${API_BASE}/attention/groups/${encodeURIComponent(groupId)}/challenges`, { headers: _fH(token) })
+    return _attentionJson(res, '暂时无法加载小组挑战。')
+  },
+  createGroupChallenge: async (groupId, body, token) => {
+    const res = await fetch(`${API_BASE}/attention/groups/${encodeURIComponent(groupId)}/challenges`, { method: 'POST', headers: _fH(token, true), body: JSON.stringify(body || {}) })
+    return _attentionJson(res, '创建小组挑战时遇到问题。')
+  },
+  challengeParticipants: async (groupId, challengeId, token) => {
+    const res = await fetch(`${API_BASE}/attention/groups/${encodeURIComponent(groupId)}/challenges/${encodeURIComponent(challengeId)}/participants`, { headers: _fH(token) })
+    return _attentionJson(res, '暂时无法加载挑战参与状态。')
+  },
+  saveChallengeCheckin: async (groupId, challengeId, body, token) => {
+    const res = await fetch(`${API_BASE}/attention/groups/${encodeURIComponent(groupId)}/challenges/${encodeURIComponent(challengeId)}/checkins`, { method: 'POST', headers: _fH(token, true), body: JSON.stringify(body || {}) })
+    return _attentionJson(res, '保存挑战 check-in 时遇到问题。')
+  },
 }

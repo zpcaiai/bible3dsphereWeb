@@ -80,4 +80,55 @@ describe('AttentionPage', () => {
     expect(getByText('这周还没有生成守心周报')).toBeTruthy()
     expect(queryByText('表现很差')).toBeFalsy()
   })
+
+  it('renders accountability privacy and group screens', async () => {
+    global.fetch.mockImplementation((url) => {
+      const path = String(url)
+      if (path.includes('/attention/accountability/partners/invitations')) return Promise.resolve(okJson({ received: [], sent: [] }))
+      if (path.includes('/attention/accountability/partners')) return Promise.resolve(okJson({ relationships: [] }))
+      if (path.includes('/attention/accountability/prayer-requests')) return Promise.resolve(okJson({ prayerRequests: [] }))
+      if (path.includes('/attention/accountability/shares')) return Promise.resolve(okJson({ shares: [] }))
+      return Promise.resolve(okJson({ exists: false, covenant: null }))
+    })
+    const accountability = render(<AttentionPage user={{ email: 'a@example.com' }} token="token-a" onBack={() => {}} initialSection="accountability" />)
+    await waitFor(() => expect(accountability.getByText('同伴守望')).toBeTruthy())
+    expect(accountability.getByText('邀请守望伙伴')).toBeTruthy()
+    cleanup()
+
+    global.fetch.mockImplementation((url) => {
+      const path = String(url)
+      if (path.includes('/attention/privacy')) return Promise.resolve(okJson({
+        settings: {
+          defaultPartnerVisibility: 'status_only',
+          defaultGroupVisibility: 'status_only',
+          defaultChallengeVisibility: 'status_only',
+          shareScoresWithPartners: false,
+          shareScoresWithGroups: false,
+          shareWeeklyReportSummary: false,
+          shareWarfarePlanProgress: false,
+          sharePrayerRequests: true,
+          hideSensitiveCategories: ['lust'],
+          allowPartnerReminders: true,
+          allowGroupChallengeReminders: true,
+          requirePreviewBeforeSharing: true,
+        },
+      }))
+      return Promise.resolve(okJson({ exists: false, covenant: null }))
+    })
+    const privacy = render(<AttentionPage user={{ email: 'a@example.com' }} token="token-a" onBack={() => {}} initialSection="privacy" />)
+    await waitFor(() => expect(privacy.getByText('守心隐私')).toBeTruthy())
+    expect(privacy.getByText('敏感内容保护')).toBeTruthy()
+    cleanup()
+
+    global.fetch.mockImplementation((url) => {
+      const path = String(url)
+      if (path.includes('/attention/challenges/templates')) return Promise.resolve(okJson({ templates: [] }))
+      if (path.includes('/attention/challenges/mine')) return Promise.resolve(okJson({ challenges: [] }))
+      if (path.includes('/attention/groups')) return Promise.resolve(okJson({ groups: [] }))
+      return Promise.resolve(okJson({ exists: false, covenant: null }))
+    })
+    const groups = render(<AttentionPage user={{ email: 'a@example.com' }} token="token-a" onBack={() => {}} initialSection="groups" />)
+    await waitFor(() => expect(groups.getByText('守心小组')).toBeTruthy())
+    expect(groups.getByText('温柔挑战模板')).toBeTruthy()
+  })
 })
