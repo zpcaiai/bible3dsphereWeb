@@ -65,4 +65,19 @@ describe('AttentionPage', () => {
     expect(getByText('最近 7 天')).toBeTruthy()
     expect(getByText('模式地图')).toBeTruthy()
   })
+
+  it('renders reports page without score shame language', async () => {
+    global.fetch.mockImplementation((url) => {
+      if (String(url).includes('/attention/reports/weekly/history')) return Promise.resolve(okJson({ reports: [] }))
+      if (String(url).includes('/attention/growth')) return Promise.resolve(okJson({ trend: { range: { days: 30 }, points: [], summary: {} } }))
+      if (String(url).includes('/attention/reports/weekly')) return Promise.resolve(okJson({ exists: false, report: null, weekStart: '2026-07-06', weekEnd: '2026-07-12' }))
+      return Promise.resolve(okJson({ exists: false, covenant: null }))
+    })
+    const { getByText, queryByText } = render(<AttentionPage user={{ email: 'a@example.com' }} token="token-a" onBack={() => {}} initialSection="reports" />)
+
+    await waitFor(() => expect(getByText('守心周报')).toBeTruthy())
+    expect(getByText('守心评分是节奏指标，不是属灵身份，也不是神对你的评价。它只帮助你看见：哪些节奏正在建立，哪些地方需要温柔留意。')).toBeTruthy()
+    expect(getByText('这周还没有生成守心周报')).toBeTruthy()
+    expect(queryByText('表现很差')).toBeFalsy()
+  })
 })

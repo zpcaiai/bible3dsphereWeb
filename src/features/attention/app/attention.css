@@ -241,6 +241,206 @@
   padding: 8px 12px;
 }
 
+.attn-notice {
+  border-color: rgba(85, 211, 138, 0.22);
+  background: rgba(85, 211, 138, 0.07);
+}
+
+.attn-week-selector {
+  display: grid;
+  gap: 12px;
+}
+
+.attn-week-controls,
+.attn-week-actions,
+.attn-segmented,
+.attn-history-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.attn-week-controls input {
+  min-height: 42px;
+  color: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+
+.attn-report-hero {
+  border-color: rgba(244, 214, 151, 0.28);
+  background: linear-gradient(135deg, rgba(244, 214, 151, 0.12), rgba(85, 211, 138, 0.08));
+}
+
+.attn-report-hero h2,
+.attn-score-number {
+  margin: 0 0 8px;
+  font-size: 32px;
+  line-height: 1.1;
+  letter-spacing: 0;
+}
+
+.attn-score-number {
+  color: #f4d697;
+  font-weight: 800;
+}
+
+.attn-spark-bars {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(34px, 1fr));
+  gap: 8px;
+  min-height: 122px;
+  align-items: end;
+}
+
+.attn-spark-item {
+  display: grid;
+  gap: 6px;
+  justify-items: center;
+  min-width: 0;
+}
+
+.attn-spark-bar {
+  width: 100%;
+  max-width: 28px;
+  min-height: 8px;
+  border-radius: 7px 7px 3px 3px;
+  background: linear-gradient(180deg, #55d38a, #f4d697);
+}
+
+.attn-spark-bar.muted {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.attn-spark-item span {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.58);
+}
+
+.attn-breakdown {
+  display: grid;
+  gap: 12px;
+}
+
+.attn-breakdown-row {
+  display: grid;
+  gap: 6px;
+}
+
+.attn-breakdown-row strong,
+.attn-breakdown-row span {
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.attn-breakdown-row div,
+.attn-allocation div div {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.attn-breakdown-row i,
+.attn-allocation i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #55d38a, #f4d697);
+}
+
+.attn-allocation {
+  display: grid;
+  gap: 12px;
+}
+
+.attn-allocation > div {
+  display: grid;
+  gap: 6px;
+}
+
+.attn-allocation span,
+.attn-allocation strong {
+  color: rgba(255, 255, 255, 0.86);
+}
+
+.attn-cat-worship { background: #8bd3ff !important; }
+.attn-cat-mission { background: #55d38a !important; }
+.attn-cat-relationship { background: #f4d697 !important; }
+.attn-cat-restoration { background: #b8a6ff !important; }
+.attn-cat-captured { background: #d7a86e !important; }
+
+.attn-report-list {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 10px;
+  color: rgba(255, 255, 255, 0.76);
+  line-height: 1.65;
+}
+
+.attn-report-list li {
+  min-width: 0;
+}
+
+.attn-report-list strong,
+.attn-report-list span {
+  display: block;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.attn-growth-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.attn-segmented {
+  padding: 4px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.attn-segmented button {
+  min-height: 34px;
+  border-radius: 7px;
+  border: 0;
+  padding: 6px 10px;
+  color: rgba(255, 255, 255, 0.76);
+  background: transparent;
+  cursor: pointer;
+}
+
+.attn-segmented button.active {
+  color: #07100e;
+  background: #f4d697;
+  font-weight: 800;
+}
+
+.attn-history-list {
+  display: grid;
+  gap: 10px;
+}
+
+.attn-history-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.attn-history-row strong,
+.attn-history-row p {
+  overflow-wrap: anywhere;
+}
+
 .attn-alert {
   margin-bottom: 14px;
   color: #f4d697;
@@ -492,12 +692,18 @@
 
   .attn-bars div,
   .attn-list-row,
-  .attn-path {
+  .attn-path,
+  .attn-history-row {
     grid-template-columns: 1fr;
     display: grid;
   }
 
-  .attn-list-row .attn-ghost {
+  .attn-list-row .attn-ghost,
+  .attn-history-actions,
+  .attn-history-actions .attn-ghost,
+  .attn-week-actions .attn-button,
+  .attn-week-controls .attn-ghost,
+  .attn-week-controls input {
     width: 100%;
   }
 }

@@ -91,4 +91,24 @@ describe('attention api contracts', () => {
     await attentionApi.savePlanCheckin('p1', { status: 'returned' }, 'token-a')
     expect(lastFetch().url).toBe('/api/attention/warfare/plans/p1/checkins')
   })
+
+  it('calls score report and growth endpoints', async () => {
+    global.fetch.mockResolvedValueOnce(okJson({ score: {} }))
+    await attentionApi.dailyScore({ date: '2026-07-09', force: true }, 'token-a', 'Asia/Shanghai')
+    expect(lastFetch().url).toBe('/api/attention/scores/daily?date=2026-07-09&force=true')
+    expect(lastFetch().options.headers['X-Timezone']).toBe('Asia/Shanghai')
+
+    global.fetch.mockResolvedValueOnce(okJson({ report: {} }))
+    await attentionApi.generateWeeklyReport({ weekStart: '2026-07-06', forceRegenerate: true }, 'token-a')
+    expect(lastFetch().url).toBe('/api/attention/reports/weekly/generate')
+    expect(JSON.parse(lastFetch().options.body)).toEqual({ weekStart: '2026-07-06', forceRegenerate: true })
+
+    global.fetch.mockResolvedValueOnce(okJson({ reports: [] }))
+    await attentionApi.weeklyReportHistory({ limit: 12 }, 'token-a')
+    expect(lastFetch().url).toBe('/api/attention/reports/weekly/history?limit=12')
+
+    global.fetch.mockResolvedValueOnce(okJson({ trend: {} }))
+    await attentionApi.growthTrend({ days: 90 }, 'token-a')
+    expect(lastFetch().url).toBe('/api/attention/growth?days=90')
+  })
 })

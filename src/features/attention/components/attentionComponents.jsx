@@ -114,6 +114,7 @@ export function AttentionQuickActions({ openPage }) {
     ['review', '晚间复盘', '感恩、悔改并设立明日防线。'],
     ['diagnosis', 'AI 守心洞察', '基于记录生成温柔的属灵反思。'],
     ['warfare', '争战地图', '看见牵引路径并建立守心计划。'],
+    ['reports', '守心周报', '回看本周节奏、恩典和下周一个操练。'],
   ]
   return (
     <div className="attn-action-grid">

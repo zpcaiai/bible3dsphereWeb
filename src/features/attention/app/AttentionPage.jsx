@@ -25,12 +25,12 @@ import {
 import {
   AttentionCard,
   AttentionCovenantPreview,
-  AttentionEmptyState,
   AttentionPullSelector,
   AttentionQuickActions,
   AttentionStatusBadge,
   ScriptureSelector,
 } from '../components/attentionComponents'
+import ReportsScreen from './ReportsScreen'
 import './attention.css'
 
 const BLANK_FORM = {
@@ -156,7 +156,7 @@ export default function AttentionPage({ user, token, onBack, initialSection = 'd
   if (section === 'diagnosis') return <DiagnosisScreen token={token} localDate={localDate} onBack={() => openPage('dashboard')} openPage={openPage} />
   if (section === 'warfare') return <WarfareScreen token={token} onBack={() => openPage('dashboard')} />
   if (section === 'reports') {
-    return <AttentionEmptyState title="守心周报" onBack={() => openPage('dashboard')}>周报、评分系统和成长曲线将在后续批次中展开。</AttentionEmptyState>
+    return <ReportsScreen token={token} timezone={timezone} onBack={() => openPage('dashboard')} openPage={openPage} />
   }
 
   const status = covenant ? 'covenant_done' : 'not_started'
@@ -206,6 +206,18 @@ export default function AttentionPage({ user, token, onBack, initialSection = 'd
         <AttentionCard title="注意力争战地图" actionLabel="查看地图" onAction={() => openPage('warfare')}>
           <p>看见近期最常牵引你的注意力路径，并建立具体防线。</p>
           {summary?.warfare?.activePlansCount ? <p>活跃守心计划：{summary.warfare.activePlansCount} 个</p> : <p className="attn-muted">继续记录后，地图会更清晰。</p>}
+        </AttentionCard>
+
+        <AttentionCard title="本周守心摘要" actionLabel={summary?.weekly?.reportExists ? '查看周报' : '生成 / 查看周报'} onAction={() => openPage('reports')}>
+          {summary?.weekly?.reportExists ? (
+            <>
+              <p>平均守心节奏：{summary.weekly.scoreAverage ?? '记录不足'}</p>
+              <p>本周主要牵引：{(summary.weekly.topPulls || []).map((p) => p.label).join('、') || '暂无明显记录'}</p>
+              <p className="attn-muted">下周操练：{summary.weekly.nextWeekPractice || '保留当前节奏，并为一个高风险时段预设边界。'}</p>
+            </>
+          ) : (
+            <p>本周还没有生成守心周报。你可以在周末或现在生成一个临时回顾。</p>
+          )}
         </AttentionCard>
       </section>
 

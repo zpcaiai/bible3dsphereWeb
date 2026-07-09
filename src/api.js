@@ -2740,6 +2740,68 @@ export const attentionApi = {
     const res = await fetch(`${API_BASE}/attention/today/summary`, { headers })
     return _attentionJson(res, '暂时无法加载今日守心总览。')
   },
+  dailyScore: async ({ date, force } = {}, token, timezone = '') => {
+    const qs = new URLSearchParams()
+    if (date) qs.set('date', date)
+    if (force != null) qs.set('force', force ? 'true' : 'false')
+    const headers = _fH(token)
+    if (timezone) headers['X-Timezone'] = timezone
+    const res = await fetch(`${API_BASE}/attention/scores/daily${qs.toString() ? `?${qs}` : ''}`, { headers })
+    return _attentionJson(res, '暂时无法计算守心节奏指标，请稍后再试。')
+  },
+  recomputeDailyScore: async (body, token, timezone = '') => {
+    const headers = _fH(token, true)
+    if (timezone) headers['X-Timezone'] = timezone
+    const res = await fetch(`${API_BASE}/attention/scores/daily`, { method: 'POST', headers, body: JSON.stringify(body || {}) })
+    return _attentionJson(res, '暂时无法计算守心节奏指标，请稍后再试。')
+  },
+  dailyScoresRange: async ({ from, to } = {}, token, timezone = '') => {
+    const qs = new URLSearchParams()
+    if (from) qs.set('from', from)
+    if (to) qs.set('to', to)
+    const headers = _fH(token)
+    if (timezone) headers['X-Timezone'] = timezone
+    const res = await fetch(`${API_BASE}/attention/scores/range${qs.toString() ? `?${qs}` : ''}`, { headers })
+    return _attentionJson(res, '暂时无法计算守心节奏指标，请稍后再试。')
+  },
+  weeklyReport: async ({ weekStart } = {}, token, timezone = '') => {
+    const qs = new URLSearchParams()
+    if (weekStart) qs.set('weekStart', weekStart)
+    const headers = _fH(token)
+    if (timezone) headers['X-Timezone'] = timezone
+    const res = await fetch(`${API_BASE}/attention/reports/weekly${qs.toString() ? `?${qs}` : ''}`, { headers })
+    return _attentionJson(res, '暂时无法加载守心周报，请稍后再试。')
+  },
+  generateWeeklyReport: async (body, token, timezone = '') => {
+    const headers = _fH(token, true)
+    if (timezone) headers['X-Timezone'] = timezone
+    const res = await fetch(`${API_BASE}/attention/reports/weekly/generate`, { method: 'POST', headers, body: JSON.stringify(body || {}) })
+    return _attentionJson(res, '生成守心周报时遇到问题，请稍后再试。')
+  },
+  weeklyReportHistory: async ({ limit } = {}, token, timezone = '') => {
+    const qs = new URLSearchParams()
+    if (limit) qs.set('limit', String(limit))
+    const headers = _fH(token)
+    if (timezone) headers['X-Timezone'] = timezone
+    const res = await fetch(`${API_BASE}/attention/reports/weekly/history${qs.toString() ? `?${qs}` : ''}`, { headers })
+    return _attentionJson(res, '暂时无法加载历史周报，请稍后再试。')
+  },
+  deleteWeeklyReport: async (id, token, timezone = '') => {
+    const headers = _fH(token)
+    if (timezone) headers['X-Timezone'] = timezone
+    const res = await fetch(`${API_BASE}/attention/reports/weekly/${encodeURIComponent(id)}`, { method: 'DELETE', headers })
+    return _attentionJson(res, '隐藏周报时遇到问题，请稍后再试。')
+  },
+  growthTrend: async ({ days, from, to } = {}, token, timezone = '') => {
+    const qs = new URLSearchParams()
+    if (days) qs.set('days', String(days))
+    if (from) qs.set('from', from)
+    if (to) qs.set('to', to)
+    const headers = _fH(token)
+    if (timezone) headers['X-Timezone'] = timezone
+    const res = await fetch(`${API_BASE}/attention/growth${qs.toString() ? `?${qs}` : ''}`, { headers })
+    return _attentionJson(res, '暂时无法加载成长曲线，请稍后再试。')
+  },
   activeFocusSession: async (token) => {
     const res = await fetch(`${API_BASE}/attention/focus-sessions/active`, { headers: _fH(token) })
     return _attentionJson(res, '暂时无法加载专注状态。')
