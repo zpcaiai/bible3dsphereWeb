@@ -17,6 +17,44 @@ const MODES = [
   { key: 'growth', label: t("成长") },
 ]
 
+const PASTORAL_PROMPTS = [
+  {
+    key: 'pray',
+    icon: '🙏',
+    mode: 'prayer',
+    label: '带我祷告',
+    prompt: '请带我用一句真实的祷告，把现在的心交给神。',
+  },
+  {
+    key: 'guilt',
+    icon: '✝️',
+    mode: 'comfort',
+    label: '我很自责',
+    prompt: '我感到自责和羞愧，请用福音陪我分辨认罪与控告。',
+  },
+  {
+    key: 'weary',
+    icon: '🕯️',
+    mode: 'comfort',
+    label: '我很疲惫',
+    prompt: '我很疲惫，不想假装刚强，请陪我回到基督的安息。',
+  },
+  {
+    key: 'waiting',
+    icon: '🧭',
+    mode: 'reflection',
+    label: '我在等候',
+    prompt: '我正在等候一件事，请帮助我分辨信靠与掌控。',
+  },
+  {
+    key: 'help',
+    icon: '🛟',
+    mode: 'companion',
+    label: '我需要帮助',
+    prompt: '我现在不太安全，请先帮助我找到真实的人和安全下一步。',
+  },
+]
+
 export default function GuardianChatPanel() {
   const { messages, sending, chatMode, setChatMode, sendMessage, setSpriteState } = useGuardianStore()
   const [input, setInput] = useState('')
@@ -40,7 +78,7 @@ export default function GuardianChatPanel() {
   })
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+    bottomRef.current?.scrollIntoView?.({ behavior: 'smooth' })
   }, [messages.length, sending])
 
   // 新的守护者回复 → 自动朗读；对话模式下读完自动开麦，形成对话循环
@@ -83,6 +121,12 @@ export default function GuardianChatPanel() {
     sendMessage(text)
   }
 
+  const applyPastoralPrompt = (item) => {
+    setChatMode(item.mode)
+    setInput(t(item.prompt))
+    setSpriteState(item.mode === 'prayer' ? 'praying' : item.mode === 'comfort' ? 'comforting' : 'listening')
+  }
+
   const iconBtn = (active) => ({
     border: 'none', cursor: 'pointer', borderRadius: 10,
     padding: '8px 10px', fontSize: 15, lineHeight: 1,
@@ -96,6 +140,34 @@ export default function GuardianChatPanel() {
         {MODES.map((m) => (
           <button key={m.key} type="button" style={S.chip(chatMode === m.key)}
             onClick={() => setChatMode(m.key)}>{m.label}</button>
+        ))}
+      </div>
+
+      <div style={{ display: 'flex', gap: 6, overflowX: 'auto', padding: '0 12px 8px' }}>
+        {PASTORAL_PROMPTS.map((item) => (
+          <button
+            key={item.key}
+            type="button"
+            onClick={() => applyPastoralPrompt(item)}
+            style={{
+              border: '1px solid rgba(255,255,255,0.1)',
+              background: item.key === 'help' ? 'rgba(255,107,107,0.14)' : 'rgba(255,255,255,0.055)',
+              color: item.key === 'help' ? '#ffb3b3' : 'rgba(232,238,255,0.82)',
+              borderRadius: 12,
+              padding: '7px 9px',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 5,
+              flex: '0 0 auto',
+              cursor: 'pointer',
+              fontSize: 12,
+              fontWeight: 700,
+              fontFamily: 'inherit',
+            }}
+          >
+            <span aria-hidden="true">{item.icon}</span>
+            <span>{t(item.label)}</span>
+          </button>
         ))}
       </div>
 

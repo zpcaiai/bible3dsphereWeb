@@ -1,6 +1,7 @@
 import { t as i18nT } from './i18n/runtime'
 import BackButton from './BackButton'
 import { withExpansionChips, handleExpansionTarget } from './expansion/planetEntries'
+import PastoralPathCard, { PASTORAL_ROUTE_TARGETS } from './components/PastoralPathCard'
 /**
  * PlanetHome — 属灵星球 · 成长地图（IA v1，增量、不删现有功能）
  * 把愿景的五大陆作为「人格塑造路径」的导航，路由到已有功能。
@@ -58,6 +59,10 @@ export default function PlanetHome({ onClose, go }) {
     if (handleExpansionTarget(target)) return
     go(target)
   }
+  const openPastoralRoute = (route) => {
+    const target = PASTORAL_ROUTE_TARGETS.planet[route]
+    if (target) act(target)
+  }
   return (
     <div style={{ width: '100%', height: '100%', background: 'radial-gradient(circle at 50% 12%, rgba(139,92,246,0.18), #05060c 60%)', color: '#fff', overflowY: 'auto', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
       <div style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 12, position: 'sticky', top: 0, zIndex: 100, background: 'rgba(5,6,12,0.7)', backdropFilter: 'blur(10px)' }}>
@@ -74,6 +79,7 @@ export default function PlanetHome({ onClose, go }) {
       </div>
 
       <div style={{ padding: '0 16px 110px', maxWidth: 640, margin: '0 auto' }}>
+        <PastoralPathCard compact onOpen={openPastoralRoute} />
         {withExpansionChips(CONTINENTS).map((c, i) => (
           <div key={i} onClick={() => act(c.chips[0][1])} style={{ cursor: 'pointer', marginBottom: 14, borderRadius: 18, padding: 18, background: `linear-gradient(135deg, ${c.color}22, rgba(255,255,255,0.02))`, border: `1px solid ${c.color}44` }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>

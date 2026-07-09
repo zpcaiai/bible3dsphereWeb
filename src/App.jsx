@@ -28,6 +28,8 @@ import SeekersStandalonePage from './components/SeekersStandalonePage'
 import DevotionTabContainer from './components/DevotionTabContainer'
 import ExpansionLauncher from './expansion/ExpansionLauncher'
 import VoiceHoldButton from './components/VoiceHoldButton'
+import PastoralPathCard, { PASTORAL_ROUTE_TARGETS } from './components/PastoralPathCard'
+import { useGuardianStore } from './components/guardian/guardianStore'
 
 const CheckInPage = lazyWithRetry(() => import('./CheckInPage'))
 const ShareWallPage = lazyWithRetry(() => import('./ShareWallPage'))
@@ -77,6 +79,7 @@ const queryClient = new QueryClient({
 
 function AppContent() {
   const { user, setUser, authLoading, handleLogout } = useAuth()
+  const setGuardianWidgetMode = useGuardianStore((state) => state.setWidgetMode)
 
   const [showLogin, setShowLogin] = useState(false)
   const [showLoginOverlay, setShowLoginOverlay] = useState(false)
@@ -1270,6 +1273,23 @@ function AppContent() {
     setActivePanel(panel)
   }
 
+  function handlePastoralRoute(route) {
+    const target = PASTORAL_ROUTE_TARGETS.app[route]
+    if (route === 'crisis' || target === 'sos') {
+      setShowSOS(true)
+      return
+    }
+    if (route === 'guardian') {
+      setGuardianWidgetMode('expanded')
+      setQuery(i18nT('请像属灵守护者一样，陪我把今天的状态带到神面前，并给我一个合乎圣经、真实可行的下一步。'))
+      return
+    }
+    if (target === 'spiritual-formation') {
+      setFormationInitialTab(route === 'waiting' ? 'cross-lament-hope' : route === 'examen' ? 'daily' : 'home')
+    }
+    if (target) handlePanelSwitch(target)
+  }
+
   function handleLoginSuccess(u) {
     setUser(u)  // Update React auth state so user is recognized
     setShowLogin(false)
@@ -1740,6 +1760,8 @@ function AppContent() {
                   </p>
                 </section>
               )}
+
+              <PastoralPathCard compact onOpen={handlePastoralRoute} />
 
               {/* 情感轨迹卡 — 30天心路历程摘要 */}
               {user && emotionTrajectory && emotionTrajectory.count > 0 && (

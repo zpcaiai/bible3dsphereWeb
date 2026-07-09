@@ -7,6 +7,7 @@ import { cleanup, fireEvent, render } from '@testing-library/react'
 import PlanetHome from '../PlanetHome'
 import { mergeAutoEn } from '../i18n/translations'
 import { setRuntimeLang } from '../i18n/runtime'
+import autoEn from '../i18n/auto-en'
 
 const renderPlanetHome = () => {
   const onClose = vi.fn()
@@ -17,6 +18,7 @@ const renderPlanetHome = () => {
 
 describe('PlanetHome', () => {
   beforeEach(() => {
+    mergeAutoEn(autoEn)
     setRuntimeLang('zh')
   })
 
@@ -31,6 +33,7 @@ describe('PlanetHome', () => {
     renderPlanetHome()
 
     expect(document.body.textContent).toContain('属灵星球')
+    expect(document.body.textContent).toContain('今日牧养路径')
     expect(document.body.textContent).toContain('认识自己')
     expect(document.body.textContent).toContain('回到福音')
     expect(document.body.textContent).toContain('与神同行')
@@ -40,18 +43,13 @@ describe('PlanetHome', () => {
   })
 
   it('localizes continent copy in EN mode', () => {
-    mergeAutoEn({
-      '认识自己': 'Self Discovery',
-      '我为什么软弱、焦虑、重复跌倒？': 'Why am I weak, anxious, and repeating the same falls?',
-      '钟马田 · 看见真实的自己': 'Lloyd-Jones · Seeing your true self',
-    })
     setRuntimeLang('en')
 
     renderPlanetHome()
 
-    expect(document.body.textContent).toContain('Self Discovery')
-    expect(document.body.textContent).toContain('Why am I weak, anxious, and repeating the same falls?')
-    expect(document.body.textContent).toContain('Lloyd-Jones · Seeing your true self')
+    expect(document.body.textContent).toContain('Know yourself')
+    expect(document.body.textContent).toContain('Why am I weak, anxious, and repeatedly falling?')
+    expect(document.body.textContent).toContain('Lloyd-Jones · seeing your true self')
     expect(document.body.textContent).not.toContain('我为什么软弱、焦虑、重复跌倒？')
   })
 
@@ -92,6 +90,20 @@ describe('PlanetHome', () => {
 
     expect(go).toHaveBeenNthCalledWith(1, 'checkup')
     expect(go).toHaveBeenNthCalledWith(2, 'examen')
+  })
+
+  it('routes pastoral path states to existing planet overlays', () => {
+    const { getByText, go } = renderPlanetHome()
+
+    fireEvent.click(getByText('开始默想经文'))
+    fireEvent.click(getByText('我在等候'))
+    fireEvent.click(getByText('走等候之路'))
+    fireEvent.click(getByText('我不太安全'))
+    fireEvent.click(getByText('打开安全帮助'))
+
+    expect(go).toHaveBeenNthCalledWith(1, 'lectio')
+    expect(go).toHaveBeenNthCalledWith(2, 'waiting')
+    expect(go).toHaveBeenNthCalledWith(3, 'checkup')
   })
 
   it('routes expansion chips through the expansion launcher', () => {
