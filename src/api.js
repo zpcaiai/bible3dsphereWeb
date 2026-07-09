@@ -2686,3 +2686,193 @@ export const churchHealthApi = {
   listDiscipleship: (t) => _fGet('/church-health/discipleship/me', t),
   careSignals: (t) => _fGet('/church-health/care-signals', t),
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Attention Stewardship / 守心
+// ─────────────────────────────────────────────────────────────────────────────
+async function _attentionJson(res, fallback = '请求失败') {
+  const data = await res.json().catch(() => ({}))
+  if (!res.ok) {
+    const detail = data.detail || data
+    const message = detail?.message || detail?.error || detail || fallback
+    const err = new Error(typeof message === 'string' ? message : fallback)
+    err.status = res.status
+    err.payload = detail
+    throw err
+  }
+  return data
+}
+
+export const attentionApi = {
+  today: async (token, timezone = '') => {
+    const headers = _fH(token)
+    if (timezone) headers['X-Timezone'] = timezone
+    const res = await fetch(`${API_BASE}/attention/covenant/today`, { headers })
+    return _attentionJson(res, '暂时无法加载今日立约，请稍后再试。')
+  },
+  createCovenant: async (body, token, timezone = '') => {
+    const headers = _fH(token, true)
+    if (timezone) headers['X-Timezone'] = timezone
+    const res = await fetch(`${API_BASE}/attention/covenant`, { method: 'POST', headers, body: JSON.stringify(body || {}) })
+    return _attentionJson(res, '保存今日立约时遇到问题，请稍后再试。')
+  },
+  updateCovenant: async (id, body, token, timezone = '') => {
+    const headers = _fH(token, true)
+    if (timezone) headers['X-Timezone'] = timezone
+    const res = await fetch(`${API_BASE}/attention/covenant/${encodeURIComponent(id)}`, { method: 'PUT', headers, body: JSON.stringify(body || {}) })
+    return _attentionJson(res, '保存今日立约时遇到问题，请稍后再试。')
+  },
+  listCovenants: async ({ from, to } = {}, token) => {
+    const qs = new URLSearchParams()
+    if (from) qs.set('from', from)
+    if (to) qs.set('to', to)
+    const suffix = qs.toString() ? `?${qs}` : ''
+    const res = await fetch(`${API_BASE}/attention/covenants${suffix}`, { headers: _fH(token) })
+    return _attentionJson(res, '获取历史立约失败。')
+  },
+  suggestCovenant: async (body, token) => {
+    const res = await fetch(`${API_BASE}/attention/covenant/suggest`, { method: 'POST', headers: _fH(token, true), body: JSON.stringify(body || {}) })
+    return _attentionJson(res, '暂时无法生成建议，你仍然可以手动填写。')
+  },
+  todaySummary: async (token, timezone = '') => {
+    const headers = _fH(token)
+    if (timezone) headers['X-Timezone'] = timezone
+    const res = await fetch(`${API_BASE}/attention/today/summary`, { headers })
+    return _attentionJson(res, '暂时无法加载今日守心总览。')
+  },
+  activeFocusSession: async (token) => {
+    const res = await fetch(`${API_BASE}/attention/focus-sessions/active`, { headers: _fH(token) })
+    return _attentionJson(res, '暂时无法加载专注状态。')
+  },
+  startFocusSession: async (body, token) => {
+    const res = await fetch(`${API_BASE}/attention/focus-sessions`, { method: 'POST', headers: _fH(token, true), body: JSON.stringify(body || {}) })
+    return _attentionJson(res, '开始专注时遇到问题。')
+  },
+  endFocusSession: async (id, body, token) => {
+    const res = await fetch(`${API_BASE}/attention/focus-sessions/${encodeURIComponent(id)}/end`, { method: 'POST', headers: _fH(token, true), body: JSON.stringify(body || {}) })
+    return _attentionJson(res, '结束专注时遇到问题。')
+  },
+  interruptFocusSession: async (id, body, token) => {
+    const res = await fetch(`${API_BASE}/attention/focus-sessions/${encodeURIComponent(id)}/interrupt`, { method: 'POST', headers: _fH(token, true), body: JSON.stringify(body || {}) })
+    return _attentionJson(res, '记录中断时遇到问题。')
+  },
+  listFocusSessions: async ({ from, to, limit } = {}, token) => {
+    const qs = new URLSearchParams()
+    if (from) qs.set('from', from)
+    if (to) qs.set('to', to)
+    if (limit) qs.set('limit', String(limit))
+    const res = await fetch(`${API_BASE}/attention/focus-sessions${qs.toString() ? `?${qs}` : ''}`, { headers: _fH(token) })
+    return _attentionJson(res, '暂时无法加载专注记录。')
+  },
+  listEntries: async ({ date } = {}, token) => {
+    const qs = new URLSearchParams()
+    if (date) qs.set('date', date)
+    const res = await fetch(`${API_BASE}/attention/entries${qs.toString() ? `?${qs}` : ''}`, { headers: _fH(token) })
+    return _attentionJson(res, '暂时无法加载注意力账本。')
+  },
+  createEntry: async (body, token) => {
+    const res = await fetch(`${API_BASE}/attention/entries`, { method: 'POST', headers: _fH(token, true), body: JSON.stringify(body || {}) })
+    return _attentionJson(res, '保存注意力记录时遇到问题。')
+  },
+  updateEntry: async (id, body, token) => {
+    const res = await fetch(`${API_BASE}/attention/entries/${encodeURIComponent(id)}`, { method: 'PUT', headers: _fH(token, true), body: JSON.stringify(body || {}) })
+    return _attentionJson(res, '更新注意力记录时遇到问题。')
+  },
+  deleteEntry: async (id, token) => {
+    const res = await fetch(`${API_BASE}/attention/entries/${encodeURIComponent(id)}`, { method: 'DELETE', headers: _fH(token) })
+    return _attentionJson(res, '删除注意力记录时遇到问题。')
+  },
+  todayReview: async (token, timezone = '') => {
+    const headers = _fH(token)
+    if (timezone) headers['X-Timezone'] = timezone
+    const res = await fetch(`${API_BASE}/attention/review/today`, { headers })
+    return _attentionJson(res, '暂时无法加载晚间复盘。')
+  },
+  saveReview: async (body, token) => {
+    const res = await fetch(`${API_BASE}/attention/review`, { method: 'POST', headers: _fH(token, true), body: JSON.stringify(body || {}) })
+    return _attentionJson(res, '保存晚间复盘时遇到问题。')
+  },
+  updateReview: async (id, body, token) => {
+    const res = await fetch(`${API_BASE}/attention/review/${encodeURIComponent(id)}`, { method: 'PUT', headers: _fH(token, true), body: JSON.stringify(body || {}) })
+    return _attentionJson(res, '保存晚间复盘时遇到问题。')
+  },
+  suggestReview: async (token) => {
+    const res = await fetch(`${API_BASE}/attention/review/suggest`, { method: 'POST', headers: _fH(token, true), body: JSON.stringify({}) })
+    return _attentionJson(res, '暂时无法生成复盘建议。')
+  },
+  generateDiagnosis: async (body, token) => {
+    const res = await fetch(`${API_BASE}/attention/diagnosis/generate`, { method: 'POST', headers: _fH(token, true), body: JSON.stringify(body || {}) })
+    return _attentionJson(res, '暂时无法生成守心洞察。')
+  },
+  quickReset: async (body, token) => {
+    const res = await fetch(`${API_BASE}/attention/diagnosis/quick-reset`, { method: 'POST', headers: _fH(token, true), body: JSON.stringify(body || {}) })
+    return _attentionJson(res, '暂时无法生成归回建议。')
+  },
+  askDiagnosis: async (body, token) => {
+    const res = await fetch(`${API_BASE}/attention/diagnosis/ask`, { method: 'POST', headers: _fH(token, true), body: JSON.stringify(body || {}) })
+    return _attentionJson(res, '暂时无法询问守心 Agent。')
+  },
+  listDiagnoses: async ({ from, to, type, savedOnly, limit } = {}, token) => {
+    const qs = new URLSearchParams()
+    if (from) qs.set('from', from)
+    if (to) qs.set('to', to)
+    if (type) qs.set('type', type)
+    if (savedOnly != null) qs.set('savedOnly', savedOnly ? 'true' : 'false')
+    if (limit) qs.set('limit', String(limit))
+    const res = await fetch(`${API_BASE}/attention/diagnoses${qs.toString() ? `?${qs}` : ''}`, { headers: _fH(token) })
+    return _attentionJson(res, '暂时无法加载历史洞察。')
+  },
+  deleteDiagnosis: async (id, token) => {
+    const res = await fetch(`${API_BASE}/attention/diagnoses/${encodeURIComponent(id)}`, { method: 'DELETE', headers: _fH(token) })
+    return _attentionJson(res, '删除守心洞察时遇到问题。')
+  },
+  warfareMap: async ({ days, from, to } = {}, token) => {
+    const qs = new URLSearchParams()
+    if (days) qs.set('days', String(days))
+    if (from) qs.set('from', from)
+    if (to) qs.set('to', to)
+    const res = await fetch(`${API_BASE}/attention/warfare/map${qs.toString() ? `?${qs}` : ''}`, { headers: _fH(token) })
+    return _attentionJson(res, '暂时无法加载争战地图。')
+  },
+  warfarePatternLibrary: async (token) => {
+    const res = await fetch(`${API_BASE}/attention/warfare/pattern-library`, { headers: _fH(token) })
+    return _attentionJson(res, '暂时无法加载争战模式库。')
+  },
+  listWarfarePlans: async ({ status } = {}, token) => {
+    const qs = new URLSearchParams()
+    if (status) qs.set('status', status)
+    const res = await fetch(`${API_BASE}/attention/warfare/plans${qs.toString() ? `?${qs}` : ''}`, { headers: _fH(token) })
+    return _attentionJson(res, '暂时无法加载守心计划。')
+  },
+  createWarfarePlan: async (body, token) => {
+    const res = await fetch(`${API_BASE}/attention/warfare/plans`, { method: 'POST', headers: _fH(token, true), body: JSON.stringify(body || {}) })
+    return _attentionJson(res, '保存守心计划时遇到问题。')
+  },
+  updateWarfarePlan: async (id, body, token) => {
+    const res = await fetch(`${API_BASE}/attention/warfare/plans/${encodeURIComponent(id)}`, { method: 'PUT', headers: _fH(token, true), body: JSON.stringify(body || {}) })
+    return _attentionJson(res, '更新守心计划时遇到问题。')
+  },
+  deleteWarfarePlan: async (id, token) => {
+    const res = await fetch(`${API_BASE}/attention/warfare/plans/${encodeURIComponent(id)}`, { method: 'DELETE', headers: _fH(token) })
+    return _attentionJson(res, '删除守心计划时遇到问题。')
+  },
+  createPlanFromDiagnosis: async (diagnosisId, token) => {
+    const res = await fetch(`${API_BASE}/attention/warfare/from-diagnosis`, { method: 'POST', headers: _fH(token, true), body: JSON.stringify({ diagnosisId }) })
+    return _attentionJson(res, '暂时无法从这份洞察创建计划。')
+  },
+  todayWarfareCheckins: async (token) => {
+    const res = await fetch(`${API_BASE}/attention/warfare/checkins/today`, { headers: _fH(token) })
+    return _attentionJson(res, '暂时无法加载今日 check-in。')
+  },
+  listPlanCheckins: async (planId, { from, to } = {}, token) => {
+    const qs = new URLSearchParams()
+    if (from) qs.set('from', from)
+    if (to) qs.set('to', to)
+    const res = await fetch(`${API_BASE}/attention/warfare/plans/${encodeURIComponent(planId)}/checkins${qs.toString() ? `?${qs}` : ''}`, { headers: _fH(token) })
+    return _attentionJson(res, '暂时无法加载 check-in。')
+  },
+  savePlanCheckin: async (planId, body, token) => {
+    const res = await fetch(`${API_BASE}/attention/warfare/plans/${encodeURIComponent(planId)}/checkins`, { method: 'POST', headers: _fH(token, true), body: JSON.stringify(body || {}) })
+    return _attentionJson(res, '保存今日 check-in 时遇到问题。')
+  },
+}

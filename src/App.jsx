@@ -66,6 +66,7 @@ const PersonalSearchPage = lazyWithRetry(() => import('./PersonalSearchPage'))
 const BibleSearchPage = lazyWithRetry(() => import('./BibleSearchPage'))
 const ExportDataPage = lazyWithRetry(() => import('./ExportDataPage'))
 const SpiritualFormationPage = lazyWithRetry(() => import('./features/spiritual-formation/app/SpiritualFormationPage'))
+const AttentionPage = lazyWithRetry(() => import('./features/attention/app/AttentionPage'))
 
 // React Query client for HabitsPage
 const queryClient = new QueryClient({
@@ -163,6 +164,7 @@ function AppContent() {
   const [pendingPanel, setPendingPanel] = useState(null)
   const [loginMessage, setLoginMessage] = useState('')
   const [formationInitialTab, setFormationInitialTab] = useState('home')
+  const [attentionInitialSection, setAttentionInitialSection] = useState('dashboard')
   const [gardenClickCount, setGardenClickCount] = useState(0)
   const [sermonClickCount, setSermonClickCount] = useState(0)
   const [includeBiblicalExample, setIncludeBiblicalExample] = useState(true)
@@ -1218,8 +1220,24 @@ function AppContent() {
   // 分享深链：/?share=book:<id> 或 /?share=hymn:<id>
   useEffect(() => {
     try {
+      const pathMatch = window.location.pathname.match(/^\/attention(?:\/([^/]+))?\/?$/)
+      if (pathMatch) {
+        setAttentionInitialSection(pathMatch[1] || 'dashboard')
+        setTimeout(() => handlePanelSwitch('attention'), 60)
+        return
+      }
       const sp = new URLSearchParams(window.location.search)
       const panel = sp.get('panel')
+      if (panel === 'attention') {
+        const attentionSection = sp.get('attentionSection') || 'dashboard'
+        setAttentionInitialSection(attentionSection)
+        sp.delete('panel')
+        sp.delete('attentionSection')
+        const nextSearch = sp.toString()
+        window.history.replaceState({}, '', `${window.location.pathname}${nextSearch ? `?${nextSearch}` : ''}${window.location.hash}`)
+        setTimeout(() => handlePanelSwitch('attention'), 60)
+        return
+      }
       if (panel === 'spiritual-formation') {
         const formationTab = sp.get('formationTab')
         if (formationTab) setFormationInitialTab(formationTab)
@@ -1244,7 +1262,7 @@ function AppContent() {
   }, [])
 
   function handlePanelSwitch(panel) {
-    const needsLogin = ['mydevotion', 'prayer', 'devotion', 'journal', 'evangelism', 'checkin', 'sharewall', 'innerlife', 'soul-question', 'growth-map', 'partner', 'bible-reading', 'communion', 'voice']
+    const needsLogin = ['mydevotion', 'prayer', 'devotion', 'journal', 'evangelism', 'checkin', 'sharewall', 'innerlife', 'soul-question', 'growth-map', 'partner', 'bible-reading', 'communion', 'voice', 'attention']
     if (needsLogin.includes(panel) && !user) {
       const messages = {
         mydevotion: '登录后记录和分享你的灵修日记',
@@ -1262,6 +1280,7 @@ function AppContent() {
         'bible-reading': '登录后记录圣经通读进度',
         'communion': '登录后与弟兄姊妹聊天和语音通话',
         'voice': '登录后创建群并发起多人实时语音通话',
+        attention: '登录后使用守心模块，保存每日注意力立约',
       }
       setLoginMessage(messages[panel])
       setPendingPanel(panel)
@@ -2938,6 +2957,25 @@ function AppContent() {
                 onBack={() => setActivePanel('sphere')}
               />
             </Suspense>
+          </div>
+        )}
+
+        {/* 守心 — Attention Stewardship */}
+        {activePanel === 'attention' && (
+          <div className="page-overlay">
+            {user ? (
+              <Suspense fallback={null}>
+                <AttentionPage
+                  user={user}
+                  token={getToken()}
+                  initialSection={attentionInitialSection}
+                  onBack={() => {
+                    try { window.history.replaceState({}, '', '/') } catch { /* ignore */ }
+                    setActivePanel('sphere')
+                  }}
+                />
+              </Suspense>
+            ) : showLogin ? renderInlineLogin() : null}
           </div>
         )}
 

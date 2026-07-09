@@ -30,7 +30,7 @@ const CONTINENTS = [
     icon: '🌅', name: '与神同行', en: 'Walk With God', color: '#34c759',
     q: '今天如何亲近基督？',
     by: '司布真 · 看见荣耀的基督',
-    chips: [['灵修操练', 'hub'], ['规则辨识', 'rule-discernment'], ['养料库', 'fuel']],
+    chips: [['灵修操练', 'hub'], ['守心立约', 'attention'], ['规则辨识', 'rule-discernment'], ['养料库', 'fuel']],
     note: '清晨甘露 · 读经计划 · 背经，都在底部「灵修」里',
   },
   {

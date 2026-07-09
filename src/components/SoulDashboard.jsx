@@ -53,6 +53,7 @@ import AgentChatPage from '../AgentChatPage'
 import GospelDiagnosticPage from '../GospelDiagnosticPage'
 import SpiritualCheckupPage from '../SpiritualCheckupPage'
 import SpiritualFormationPage from '../features/spiritual-formation/app/SpiritualFormationPage'
+import AttentionPage from '../features/attention/app/AttentionPage'
 import NineMarksPage from '../NineMarksPage'
 import OrdoAmorisDashboard from '../features/spiritual-formation/components/ordo-amoris/OrdoAmorisDashboard'
 import CreedCatechismGalaxy from '../features/spiritual-formation/components/creed-catechism/CreedCatechismGalaxy'
@@ -893,6 +894,7 @@ export default function SoulDashboard({ user }) {
           {overlay === 'checkup' && <SpiritualCheckupPage user={user} onBack={() => setOverlay(null)} />}
           {overlay === 'holy-life' && <SpiritualFormationPage user={user} token={getToken()} initialTab="holy-life" onBack={() => setOverlay(null)} />}
           {overlay === 'spiritual-formation' && <SpiritualFormationPage user={user} token={getToken()} onBack={() => setOverlay(null)} />}
+          {overlay === 'attention' && <AttentionPage user={user} token={getToken()} onBack={() => setOverlay(null)} />}
           {overlay === 'nine-marks' && <NineMarksPage user={user} onBack={() => setOverlay(null)} />}
           {overlay === 'ordo-amoris' && <div className="sf-page"><BackOverlay onBack={() => setOverlay(null)} /><OrdoAmorisDashboard userId={user?.id || user?.userId || user?.email || 'local-user'} token={getToken()} /></div>}
           {overlay === 'creed-catechism' && <div className="sf-page"><BackOverlay onBack={() => setOverlay(null)} /><CreedCatechismGalaxy userId={user?.id || user?.userId || user?.email || 'local-user'} token={getToken()} /></div>}
