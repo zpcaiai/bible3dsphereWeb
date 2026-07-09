@@ -8,6 +8,7 @@ export const EN = {
   '内容与神学扩充': 'Content & Theology Expansion',
   '属灵星球 · 新增养料（自包含增量）': 'Spiritual Planet · new formation material',
   '扩充灵修 · 内容与神学扩充': 'Expansion · Content & Theology',
+  '扩充灵修': 'Expansion',
   '‹ 返回': '‹ Back',
   '开始': 'Begin',
   '生成中…': 'Generating…',
@@ -16,6 +17,10 @@ export const EN = {
   '中文': 'Chinese',
   '点一个常见的，或在下面自己写：': 'Pick a common option, or write your own below:',
   '请先登录后再使用此功能（推荐书目/圣诗无需登录）。': 'Please sign in to use this feature (book/hymn lists need no sign-in).',
+  '本地兜底结果：后端未响应，已用前端内置规则生成。连接后端后可获得完整服务端结果。':
+    'Local fallback result: the backend did not respond, so the frontend generated this with built-in rules. Connect the backend for full server results.',
+  '本地兜底资源：后端资源接口未响应，当前显示前端内置精选。':
+    'Local fallback resources: the backend resource endpoint did not respond, so built-in curated items are shown.',
   '补足神学光谱空白的新养料：认识神、与基督联合、以神为乐、知足、情感真伪、基督的慈心、文化礼仪、情感健康，以及一份分大陆的推荐书目与圣诗。':
     'New material filling gaps in the theological spectrum: knowing God, union with Christ, delight in God, contentment, discerning affections, the heart of Christ, cultural liturgies, emotional health — plus recommended books and hymns by continent.',
   // 功能名 / feature names

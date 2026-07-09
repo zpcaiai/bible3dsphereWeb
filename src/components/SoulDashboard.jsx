@@ -890,7 +890,6 @@ export default function SoulDashboard({ user }) {
           {overlay === 'discern' && <DecisionDiscernmentPage user={user} onBack={() => setOverlay(null)} />}
           {overlay === 'fuel' && <FuelLibraryPage onClose={() => setOverlay(null)} />}
           {overlay === 'agent' && <AgentChatPage onBack={() => setOverlay(null)} />}
-          {overlay === 'formation-home' && <FormationAgentDashboard user={user} onBack={() => setOverlay(null)} go={setOverlay} />}
           {overlay === 'checkup' && <SpiritualCheckupPage user={user} onBack={() => setOverlay(null)} />}
           {overlay === 'holy-life' && <SpiritualFormationPage user={user} token={getToken()} initialTab="holy-life" onBack={() => setOverlay(null)} />}
           {overlay === 'spiritual-formation' && <SpiritualFormationPage user={user} token={getToken()} onBack={() => setOverlay(null)} />}
@@ -907,7 +906,7 @@ export default function SoulDashboard({ user }) {
 }
 
 function BackOverlay({ onBack }) {
-  return <button type="button" onClick={onBack} style={{ marginBottom: 12, border: '1px solid rgba(255,255,255,0.16)', borderRadius: 10, padding: '8px 12px', background: 'rgba(255,255,255,0.08)', color: '#fff', cursor: 'pointer' }}>← 返回</button>
+  return <button type="button" onClick={onBack} style={{ marginBottom: 12, border: '1px solid rgba(255,255,255,0.16)', borderRadius: 10, padding: '8px 12px', background: 'rgba(255,255,255,0.08)', color: '#fff', cursor: 'pointer' }}>{i18nT('← 返回')}</button>
 }
 
 function DimRow({ dim, score }) {

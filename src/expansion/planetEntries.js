@@ -100,8 +100,12 @@ export function withExpansionChips(continents, opts = {}) {
 // 在 PlanetHome 的 act() 里最先调用；命中 'exp:' 前缀则深链打开扩充面板并返回 true。
 export function handleExpansionTarget(target) {
   if (typeof target === 'string' && target.startsWith('exp:')) {
+    const key = target.slice(4)
     if (typeof window !== 'undefined' && typeof window.__expansionOpen === 'function') {
-      window.__expansionOpen(target.slice(4))
+      window.__expansionOpen(key)
+    } else if (typeof window !== 'undefined') {
+      window.__pendingExpansionOpen = key
+      try { window.dispatchEvent(new CustomEvent('expansion:open', { detail: { key } })) } catch { /* noop */ }
     }
     return true
   }

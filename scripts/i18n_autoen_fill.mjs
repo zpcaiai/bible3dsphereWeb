@@ -101,7 +101,7 @@ async function main() {
   if (DRY) { console.log('（dry-run）示例缺失：', missing.slice(0, 20)); return }
 
   if (!process.env.DEEPSEEK_API_KEY && !process.env.SILICONFLOW_API_KEY && !process.env.GEMINI_API_KEY) {
-    console.warn(`\u26a0 \u8df3\u8fc7 auto-en \u56de\u586b\uff1a\u672a\u8bbe API key\uff08\u7f3a ${missing.length} \u6761\uff0c\u7531\u8fd0\u884c\u65f6\u5b9e\u65f6\u7ffb\u8bd1\u517d\u5e95\uff09`)
+    console.warn(`\u26a0 \u8df3\u8fc7 auto-en \u56de\u586b\uff1a\u672a\u8bbe API key\uff08\u7f3a ${missing.length} \u6761\uff0c\u7531\u8fd0\u884c\u65f6\u5b9e\u65f6\u7ffb\u8bd1\u515c\u5e95\uff09`)
     return
   }
   const p = provider()

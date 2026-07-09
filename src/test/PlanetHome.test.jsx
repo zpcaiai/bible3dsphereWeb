@@ -23,6 +23,8 @@ describe('PlanetHome', () => {
   afterEach(() => {
     cleanup()
     setRuntimeLang('zh')
+    try { delete window.__expansionOpen } catch { window.__expansionOpen = undefined }
+    try { delete window.__pendingExpansionOpen } catch { window.__pendingExpansionOpen = undefined }
   })
 
   it('renders the full growth-map entry list', () => {
@@ -90,5 +92,15 @@ describe('PlanetHome', () => {
 
     expect(go).toHaveBeenNthCalledWith(1, 'checkup')
     expect(go).toHaveBeenNthCalledWith(2, 'examen')
+  })
+
+  it('routes expansion chips through the expansion launcher', () => {
+    window.__expansionOpen = vi.fn()
+    const { getByText, go } = renderPlanetHome()
+
+    fireEvent.click(getByText('扩充灵修 · 全部 ›'))
+
+    expect(window.__expansionOpen).toHaveBeenCalledWith('')
+    expect(go).not.toHaveBeenCalled()
   })
 })

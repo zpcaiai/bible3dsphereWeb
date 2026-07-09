@@ -1,12 +1,11 @@
 /**
  * useSpeechInput
  *
- * Encapsulates all browser microphone + Deepgram transcription logic
+ * Encapsulates all browser microphone + server-side transcription logic
  * that was previously inline in App.jsx.
  *
  * Usage:
  *   const speech = useSpeechInput({
- *     deepgramApiKey,
  *     onTranscript: (text) => setQuery(q => q ? `${q} ${text}` : text),
  *     onLoadingChange: setLoading,
  *     postProcess: async (raw) => { /* punctuation + bilingual * / return raw },
@@ -20,11 +19,12 @@
  *   startRecording(), stopRecording()
  */
 import { useState, useRef, useCallback } from 'react'
+import { t as i18nT } from '../i18n/runtime'
+import { transcribeAudioBlob } from '../api'
 
 const MAX_RECORDING_SECONDS = 120
 
 export function useSpeechInput ({
-  deepgramApiKey = '',
   onTranscript,
   onLoadingChange,
   postProcess,
@@ -48,47 +48,31 @@ export function useSpeechInput ({
   /** Long-press delay handle — exposed so callers can cancel it on mouseLeave */
   const recordingDelayRef = useRef(null)
 
-  // ── Internal: Deepgram transcription ──────────────────────────────────────
+  // ── Internal: backend speech transcription ───────────────────────────────
   const _transcribe = useCallback(async (audioBlob) => {
     onLoadingChange?.(true)
-    setRecordingError('正在识别语音...')
+    setRecordingError(i18nT('正在识别语音...'))
     try {
-      const res = await fetch(
-        'https://api.deepgram.com/v1/listen?model=nova-2&punctuate=true&paragraphs=true&smart_format=true',
-        {
-          method: 'POST',
-          headers: {
-            Authorization: `Token ${deepgramApiKey}`,
-            'Content-Type': 'audio/webm',
-          },
-          body: audioBlob,
-        }
-      )
-      if (!res.ok) {
-        const errBody = await res.json().catch(() => ({}))
-        throw new Error(errBody.err_msg || `语音识别失败: ${res.status}`)
-      }
-
-      const data = await res.json()
-      const raw  = data.results?.channels?.[0]?.alternatives?.[0]?.transcript
+      const data = await transcribeAudioBlob(audioBlob)
+      const raw = data.transcript
 
       if (raw?.trim()) {
-        setRecordingError('正在优化文本...')
+        setRecordingError(i18nT('正在优化文本...'))
         const processed = postProcess
           ? await postProcess(raw.trim())
           : raw.trim()
         onTranscript?.(processed)
         setRecordingError(null)
       } else {
-        setRecordingError('未能识别到语音内容，请重试')
+        setRecordingError(i18nT('未能识别到语音内容，请重试'))
       }
     } catch (err) {
       console.error('[useSpeechInput] transcribe error:', err)
-      setRecordingError(err.message || '语音识别失败，请检查网络连接')
+      setRecordingError(i18nT(err.message || '语音识别失败，请检查网络连接'))
     } finally {
       onLoadingChange?.(false)
     }
-  }, [deepgramApiKey, postProcess, onTranscript, onLoadingChange])
+  }, [postProcess, onTranscript, onLoadingChange])
 
   // ── startRecording ─────────────────────────────────────────────────────────
   const startRecording = useCallback(async () => {

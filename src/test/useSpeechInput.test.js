@@ -28,16 +28,19 @@ function makeStreamMock () {
   return { getTracks: () => [{ stop: vi.fn() }] }
 }
 
-function makeDeepgramResponse (transcript) {
+function makeAudioChunk () {
+  return new Blob(['audio'], { type: 'audio/webm' })
+}
+
+function makeTranscribeResponse (transcript) {
   return {
     ok: true,
+    headers: { get: () => 'application/json' },
     json: async () => ({
-      results: {
-        channels: [{
-          alternatives: [{ transcript }],
-          detected_language: 'zh',
-        }],
-      },
+      ok: true,
+      transcript,
+      detected_language: 'zh',
+      provider: 'deepgram',
     }),
   }
 }
@@ -54,9 +57,6 @@ describe('useSpeechInput', () => {
     streamMock = makeStreamMock()
 
     vi.stubGlobal('MediaRecorder', vi.fn(() => mediaRecorderMock))
-    vi.stubGlobal('Blob', class MockBlob {
-      constructor (parts, opts) { this.type = opts?.type }
-    })
 
     vi.stubGlobal('navigator', {
       userAgent: 'TestBrowser/1.0',
@@ -99,12 +99,14 @@ describe('useSpeechInput', () => {
   })
 
   it('stopRecording sets isRecording = false', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => makeTranscribeResponse('')))
     const { result } = renderHook(() => useSpeechInput({}))
 
     await act(async () => { await result.current.startRecording() })
     expect(result.current.isRecording).toBe(true)
 
-    act(() => { result.current.stopRecording() })
+    await act(async () => { result.current.stopRecording() })
+    await act(async () => {})
     expect(result.current.isRecording).toBe(false)
   })
 
@@ -117,19 +119,45 @@ describe('useSpeechInput', () => {
     expect(result.current.recordingSeconds).toBe(3)
   })
 
+  it('shows backend configuration error after transcription returns 503', async () => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {})
+    const fetchMock = vi.fn(async () => ({
+      ok: false,
+      status: 503,
+      headers: { get: () => 'application/json' },
+      json: async () => ({ detail: 'Speech transcription is not configured' }),
+    }))
+    vi.stubGlobal('fetch', fetchMock)
+    try {
+      const { result } = renderHook(() => useSpeechInput({}))
+
+      await act(async () => { await result.current.startRecording() })
+      act(() => { mediaRecorderMock.ondataavailable?.({ data: makeAudioChunk() }) })
+      await act(async () => { result.current.stopRecording() })
+      await act(async () => {})
+
+      expect(result.current.isRecording).toBe(false)
+      expect(result.current.recordingError).toContain('DEEPGRAM_API_KEY')
+      expect(navigator.mediaDevices.getUserMedia).toHaveBeenCalled()
+      expect(fetchMock).toHaveBeenCalled()
+    } finally {
+      consoleError.mockRestore()
+    }
+  })
+
   it('onTranscript called with Deepgram result after stop', async () => {
     const onTranscript = vi.fn()
-    const fakeFetch = vi.fn(async () => makeDeepgramResponse('我感到很平安'))
+    const fakeFetch = vi.fn(async () => makeTranscribeResponse('我感到很平安'))
     vi.stubGlobal('fetch', fakeFetch)
 
     const { result } = renderHook(() =>
-      useSpeechInput({ deepgramApiKey: 'test-key', onTranscript })
+      useSpeechInput({ onTranscript })
     )
 
     await act(async () => { await result.current.startRecording() })
     // Simulate data + stop
-    act(() => { mediaRecorderMock.ondataavailable?.({ data: { size: 10 } }) })
-    await act(async () => { mediaRecorderMock.onstop?.() })
+    act(() => { mediaRecorderMock.ondataavailable?.({ data: makeAudioChunk() }) })
+    await act(async () => { result.current.stopRecording() })
 
     // Let async work settle
     await act(async () => {})
@@ -163,15 +191,15 @@ describe('useSpeechInput', () => {
   it('postProcess callback transforms transcript before onTranscript', async () => {
     const onTranscript = vi.fn()
     const postProcess = vi.fn(async (raw) => `[processed] ${raw}`)
-    vi.stubGlobal('fetch', vi.fn(async () => makeDeepgramResponse('hello world')))
+    vi.stubGlobal('fetch', vi.fn(async () => makeTranscribeResponse('hello world')))
 
     const { result } = renderHook(() =>
-      useSpeechInput({ deepgramApiKey: 'key', onTranscript, postProcess })
+      useSpeechInput({ onTranscript, postProcess })
     )
 
     await act(async () => { await result.current.startRecording() })
-    act(() => { mediaRecorderMock.ondataavailable?.({ data: { size: 5 } }) })
-    await act(async () => { mediaRecorderMock.onstop?.() })
+    act(() => { mediaRecorderMock.ondataavailable?.({ data: makeAudioChunk() }) })
+    await act(async () => { result.current.stopRecording() })
     await act(async () => {})
 
     expect(postProcess).toHaveBeenCalledWith('hello world')

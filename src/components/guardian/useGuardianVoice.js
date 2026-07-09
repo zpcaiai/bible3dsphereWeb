@@ -1,11 +1,9 @@
-// 守护者语音能力：STT（复用全站 useSpeechInput/Deepgram）+ TTS（后端高质量 Neural 优先，浏览器原生兜底）
+// 守护者语音能力：STT（复用全站 useSpeechInput/后端转写）+ TTS（后端高质量 Neural 优先，浏览器原生兜底）
 // 支持「对话模式」：守护者说完后自动开麦，形成连续语音对话循环。
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useSpeechInput } from '../../hooks/useSpeechInput'
 import { pickVoiceFor, speechLangFor, ttsServerParamsFor } from '../../voice'
 import { fetchTTS } from '../../api'
-
-const DEEPGRAM_KEY = import.meta.env.VITE_DEEPGRAM_API_KEY || 'a87cbb2d1ec9b07a456fb55319a104731924b12f'
 
 // 与 App.jsx 同一偏好序列：温柔的中文女声
 const PREFERRED_VOICES = [
@@ -43,7 +41,6 @@ export function useGuardianVoice({ onTranscript } = {}) {
   const genRef = useRef(0)        // 每次 speak() 自增，作废上一段在途请求
 
   const speech = useSpeechInput({
-    deepgramApiKey: DEEPGRAM_KEY,
     onTranscript: (t) => onTranscript?.(t),
   })
 

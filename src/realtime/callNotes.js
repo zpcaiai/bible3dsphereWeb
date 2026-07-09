@@ -4,6 +4,7 @@
 // 引擎选择：偏好 'auto'（默认，Web Speech 不可用或连续出错时自动降级）| 'deepgram'（强制云转写）。
 // 每人只转写自己的发言（说话人归属准确、不录他人音频）；
 // 各端转写行经 LiveKit 数据通道广播，全房间共同拼出带名字的完整记录。
+import { transcribeAudioBlob } from '../api'
 
 let recognition = null
 let active = false
@@ -15,19 +16,17 @@ let buffer = []          // [{ t: epochMs, name, text, remote }]
 let lineSink = null      // 本地新行回调（通话组件用它广播到房间）
 const listeners = new Set()
 
-// Deepgram 引擎状态
+// 后端云转写引擎状态
 let dgStream = null
 let dgRecorder = null
 let dgTimer = null
 const DG_SEGMENT_MS = 8000
-// 与 App.jsx 同模式：Vite 构建期静态替换 env
-const DG_KEY = import.meta.env?.VITE_DEEPGRAM_API_KEY || 'a87cbb2d1ec9b07a456fb55319a104731924b12f'
 
 export function isSupported() {
   return typeof window !== 'undefined' && !!(window.SpeechRecognition || window.webkitSpeechRecognition)
 }
 export function deepgramAvailable() {
-  return typeof window !== 'undefined' && !!window.MediaRecorder && !!DG_KEY
+  return typeof window !== 'undefined' && !!window.MediaRecorder
 }
 
 // ── 引擎偏好（localStorage 持久化）──
@@ -101,7 +100,7 @@ function startWeb(lang) {
   try { recognition.start(); return true } catch { return false }
 }
 
-// ── 引擎二：Deepgram 云转写（分段上传，段间无缝衔接）────────────────────────
+// ── 引擎二：后端云转写（分段上传，段间无缝衔接）────────────────────────────
 function pickMime() {
   const cands = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4']
   for (const m of cands) { try { if (window.MediaRecorder?.isTypeSupported?.(m)) return m } catch { /* noop */ } }
@@ -109,19 +108,15 @@ function pickMime() {
 }
 
 async function dgTranscribe(blob, contentType) {
-  const url = 'https://api.deepgram.com/v1/listen'
-    + '?model=nova-2&detect_language=true&punctuate=true&smart_format=true'
-  const doFetch = () => fetch(url, {
-    method: 'POST',
-    headers: { Authorization: `Token ${DG_KEY}`, 'Content-Type': contentType || 'audio/webm' },
-    body: blob,
-  })
   try {
-    let res = await doFetch()
-    if (!res.ok && res.status >= 500) { await new Promise((r) => setTimeout(r, 600)); res = await doFetch() }
-    if (!res.ok) return
-    const tx = (await res.json()).results?.channels?.[0]?.alternatives?.[0]?.transcript
-    if (tx?.trim()) pushLocal(tx.trim())
+    let data
+    try {
+      data = await transcribeAudioBlob(blob, { contentType: contentType || 'audio/webm' })
+    } catch {
+      await new Promise((r) => setTimeout(r, 600))
+      data = await transcribeAudioBlob(blob, { contentType: contentType || 'audio/webm' })
+    }
+    if (data.transcript?.trim()) pushLocal(data.transcript.trim())
   } catch { /* 单段失败丢弃，不中断会话 */ }
 }
 

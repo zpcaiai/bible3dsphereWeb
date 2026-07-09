@@ -44,8 +44,9 @@ VITE_API_BASE=https://stephenzao-biblesphere.hf.space/api npm run dev
 | `VITE_MAPLIBRE_STYLE` | MapLibre 底图样式 URL | 离线/自定义底图时设置 |
 | `VITE_HYMN_AUDIO_BASE` | 诗歌音频资源 CDN 基础路径 | HymnPlayer 必需 |
 | `VITE_BOOK_BASE` | EPUB 书籍资源 R2/CDN 基础路径 | 属灵书籍模块必需 |
-| `VITE_DEEPGRAM_API_KEY` | Deepgram 语音识别 API Key | 语音输入功能必需 |
 | `VITE_MAP_PROVIDER` | 地图提供商（mapbox/maplibre/cesium） | 默认 mapbox |
+
+语音输入通过后端 `/api/speech/transcribe` 代理转写；请在后端服务设置私有环境变量 `DEEPGRAM_API_KEY`，不要把语音供应商密钥配置成 `VITE_*` 浏览器变量。
 
 后端 API 根地址：`https://stephenzao-biblesphere.hf.space`
 

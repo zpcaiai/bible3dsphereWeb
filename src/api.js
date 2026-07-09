@@ -252,6 +252,30 @@ export async function fetchMeditationQuestions(reference, text) {
   return data.questions || []
 }
 
+export async function transcribeAudioBlob(audioBlob, { contentType } = {}) {
+  const form = new FormData()
+  const type = contentType || audioBlob?.type || 'audio/webm'
+  form.append('file', audioBlob, `voice.${type.includes('mp4') ? 'mp4' : 'webm'}`)
+
+  const response = await fetch(`${API_BASE}/speech/transcribe`, {
+    method: 'POST',
+    body: form,
+  })
+  const responseType = response.headers.get('content-type') || ''
+  const data = responseType.includes('application/json') ? await response.json() : {}
+  if (!response.ok) {
+    if (response.status === 503) throw new Error('云转写未配置：请在后端设置 DEEPGRAM_API_KEY。')
+    if (response.status === 413) throw new Error('录音太长，请缩短后重试。')
+    if (response.status === 415) throw new Error('当前音频格式不支持，请换浏览器或重试。')
+    throw new Error(data.detail || data.error || '语音识别失败，请检查网络连接')
+  }
+  return {
+    transcript: String(data.transcript || '').trim(),
+    detectedLanguage: data.detected_language || data.detectedLanguage || '',
+    provider: data.provider || 'server',
+  }
+}
+
 // ── A1: 每日灵魂一问 ──────────────────────────────────────────
 export async function fetchDailySoulQuestion(token) {
   const response = await fetch(`${API_BASE}/daily-soul-question`, {

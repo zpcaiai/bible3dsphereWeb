@@ -2,13 +2,10 @@ import { t as i18nT } from './i18n/runtime'
 import { useEffect, useRef, useState } from 'react'
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
-import { amenEvangelismPrayer, deleteEvangelismPrayer, fetchEvangelismPrayers, restoreEvangelismPrayer, submitEvangelismPrayer, updateEvangelismPrayer, runQuery, fetchSeekersClassCourses } from './api'
+import { amenEvangelismPrayer, deleteEvangelismPrayer, fetchEvangelismPrayers, restoreEvangelismPrayer, submitEvangelismPrayer, updateEvangelismPrayer, runQuery, fetchSeekersClassCourses, transcribeAudioBlob } from './api'
 import usePullToRefresh from './hooks/usePullToRefresh'
 import { escapeHtml, escapeHtmlWithBr } from './sanitize'
 import BibleMapPage from './BibleMapPage'
-
-// Deepgram API Key for voice input - 支持从环境变量读取
-const DEEPGRAM_API_KEY = import.meta.env.VITE_DEEPGRAM_API_KEY || 'a87cbb2d1ec9b07a456fb55319a104731924b12f'
 
 const AMEN_KEY = 'evangelism-amened-v1'
 
@@ -558,46 +555,26 @@ export default function EvangelismPage({ user, token, onBack, onPrayerWall }) {
     }
   }
 
-  // 使用 Deepgram 进行语音识别（支持多语言自动检测）
+  // 使用后端代理进行语音识别（支持多语言自动检测）
   async function transcribeAudio(audioBlob, onTranscript) {
     try {
-      setRecordingError('正在识别语音...')
-
-      // 使用 Nova-2 多语言模型，自动检测语言
-      const response = await fetch('https://api.deepgram.com/v1/listen?model=nova-2&punctuate=true&paragraphs=true&smart_format=true', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Token ${DEEPGRAM_API_KEY}`,
-          'Content-Type': 'audio/webm',
-        },
-        body: audioBlob,
-      })
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}))
-        throw new Error(errorData.err_msg || `语音识别失败: ${response.status}`)
-      }
-
-      const data = await response.json()
-      const transcript = data.results?.channels?.[0]?.alternatives?.[0]?.transcript
-      const detectedLanguage = data.results?.channels?.[0]?.detected_language || 'zh'
-      console.log('[transcribe] Deepgram原始结果:', transcript, '检测语言:', detectedLanguage)
+      setRecordingError(i18nT('正在识别语音...'))
+      const { transcript } = await transcribeAudioBlob(audioBlob)
 
       if (transcript && transcript.trim()) {
         // 检测文本语言
         const textLang = detectTextLanguage(transcript.trim())
-        console.log('[transcribe] 检测到的语言:', textLang)
 
         // 生成双语版本
         let bilingualText = transcript.trim()
         if (textLang === 'zh') {
           // 中文转英文
-          setRecordingError('正在翻译成英文...')
+          setRecordingError(i18nT('正在翻译成英文...'))
           const englishText = await translateText(transcript.trim(), 'en')
           bilingualText = `${transcript.trim()}\n\n[English] ${englishText}`
         } else if (textLang === 'en') {
           // 英文转中文
-          setRecordingError('正在翻译成中文...')
+          setRecordingError(i18nT('正在翻译成中文...'))
           const chineseText = await translateText(transcript.trim(), 'zh')
           bilingualText = `[中文] ${chineseText}\n\n${transcript.trim()}`
         }
@@ -605,11 +582,11 @@ export default function EvangelismPage({ user, token, onBack, onPrayerWall }) {
         onTranscript(bilingualText)
         setRecordingError(null)
       } else {
-        setRecordingError('未能识别到语音内容，请重试')
+        setRecordingError(i18nT('未能识别到语音内容，请重试'))
       }
     } catch (err) {
       console.error('语音识别失败:', err)
-      setRecordingError(err.message || '语音识别失败，请检查网络连接')
+      setRecordingError(i18nT(err.message || '语音识别失败，请检查网络连接'))
     }
   }
 

@@ -185,7 +185,7 @@ function AppContent() {
   // 检测浏览器环境（同时由 useSpeechInput 使用）
   const ua = navigator.userAgent || ''
 
-  // 语音输入 hook — encapsulates MediaRecorder + Deepgram + browser detection
+  // 语音输入 hook — encapsulates MediaRecorder + backend transcription + browser detection
   const {
     isRecording,
     recordingSeconds,
@@ -200,7 +200,6 @@ function AppContent() {
     startRecording,
     stopRecording,
   } = useSpeechInput({
-    deepgramApiKey: import.meta.env.VITE_DEEPGRAM_API_KEY || 'a87cbb2d1ec9b07a456fb55319a104731924b12f',
     onTranscript: (text) => setQuery(prev => prev ? `${prev} ${text}` : text),
     onLoadingChange: setLoading,
     postProcess: async (raw) => {
@@ -383,8 +382,6 @@ function AppContent() {
       }
     }
   }
-
-  // Deepgram API Key - 支持从环境变量读取
 
   // 构建 TTS 播放文本
   function buildSpeakText() {

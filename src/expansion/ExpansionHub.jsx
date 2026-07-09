@@ -80,7 +80,7 @@ const LABELS = {
   spirit_ministry: '圣灵的职事', adoption_truth: '收纳的真理', cure: '解药', three_pillars: '三根支柱', pillar_note: '这根支柱', pillar: '支柱', steward_reminder: '管家的身份', word_practice: '读经操练', next_route: '可继续', reversal: '反转', six_elements: '悔改六要素', achievement: '十架的成就', image: '意象', need: '此刻的需要', kind: '怀疑的种类', form: '怕人的形态', situation: '处境',
   four_steps: '四步', two_moves: '两个方向', inner_critic: '内在批判者的声音', christ_voice: '基督的声音', antidote: '解药', restore_order: '恢复的次序', avoid: '要避免的', posture: '你的姿态', calibrate_note: '校准良心', hope_link: '盼望', violence_note: '安全优先',
 }
-const SKIP = new Set(['ai_used', 'crisis', 'crisis_note', 'lang', 'en_localized', 'lean', 'mode', 'type', 'violence_flag', 'abuse_flag', 'scruple_flag', 'shame_flag', 'hard_mode', 'legalist_lean'])
+const SKIP = new Set(['ai_used', 'crisis', 'crisis_note', 'lang', 'en_localized', 'lean', 'mode', 'type', 'local_only', 'engine', 'violence_flag', 'abuse_flag', 'scruple_flag', 'shame_flag', 'hard_mode', 'legalist_lean'])
 
 function Scripture({ reference, text }) {
   return (
@@ -144,6 +144,13 @@ function RenderResult({ data }) {
   if (!data) return null
   return (
     <div>
+      {data.local_only && (
+        <div style={{ ...card, borderColor: 'rgba(90,200,250,0.35)', background: 'rgba(90,200,250,0.08)' }}>
+          <div style={{ fontSize: 12.5, lineHeight: 1.75, color: 'rgba(255,255,255,0.82)' }}>
+            {i18nT('本地兜底结果：后端未响应，已用前端内置规则生成。连接后端后可获得完整服务端结果。')}
+          </div>
+        </div>
+      )}
       {data.crisis && data.crisis_note && (
         <div style={{ ...card, borderColor: 'rgba(255,135,135,0.5)', background: 'rgba(255,80,80,0.10)' }}>
           <TranslatableParagraph style={{ fontSize: 13.5, lineHeight: 1.85, color: '#ffb3b3' }}>{'💛 ' + String(data.crisis_note)}</TranslatableParagraph>
@@ -217,7 +224,7 @@ function FeatureRunner({ feature, onBack }) {
                     <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', marginBottom: 6 }}>{i18nT('点一个常见的，或在下面自己写：')}</div>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 10 }}>
                       {feature.options.map((opt, i) => (
-                        <button key={i} onClick={() => submit(opt)} disabled={busy}
+                        <button key={i} type="button" onClick={() => submit(opt)} disabled={busy}
                           style={{ ...chip, textAlign: 'left', maxWidth: '100%', opacity: busy ? 0.6 : 1 }}>{i18nT(opt)}</button>
                       ))}
                     </div>
@@ -233,7 +240,7 @@ function FeatureRunner({ feature, onBack }) {
                 <textarea value={text} onChange={(e) => setText(e.target.value)} placeholder={i18nT('例如「我好孤单，没人懂我」')} style={ta} rows={3} />
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, margin: '8px 0' }}>
                   {attrs.map((a) => (
-                    <button key={a.key} onClick={() => setAttribute(attribute === a.key ? '' : a.key)}
+                    <button key={a.key} type="button" onClick={() => setAttribute(attribute === a.key ? '' : a.key)}
                       style={{ ...chip, ...(attribute === a.key ? chipOn : {}) }}>{a.name || a.key}</button>
                   ))}
                 </div>
@@ -256,7 +263,7 @@ function FeatureRunner({ feature, onBack }) {
                 ))}
               </>
             )}
-            <button onClick={() => submit()} disabled={busy} style={{ ...primaryBtn, opacity: busy ? 0.6 : 1 }}>
+            <button type="button" onClick={() => submit()} disabled={busy} style={{ ...primaryBtn, opacity: busy ? 0.6 : 1 }}>
               {busy ? i18nT('生成中…') : i18nT('开始')}
             </button>
           </>
@@ -270,10 +277,11 @@ function ResourcesView({ onBack }) {
   const [books, setBooks] = useState([])
   const [hymns, setHymns] = useState([])
   const [err, setErr] = useState('')
+  const [localOnly, setLocalOnly] = useState(false)
   const english = getRuntimeLang() === 'en'
   useEffect(() => {
-    getBooks().then((d) => setBooks(d.books || [])).catch((e) => setErr(e.message))
-    getHymns().then((d) => setHymns(d.hymns || [])).catch(() => {})
+    getBooks().then((d) => { setBooks(d.books || []); if (d.local_only) setLocalOnly(true) }).catch((e) => setErr(e.message))
+    getHymns().then((d) => { setHymns(d.hymns || []); if (d.local_only) setLocalOnly(true) }).catch(() => {})
   }, [])
   const CONT = { A: '认识神', B: '回到福音', C: '心的争战', D: '与神同行', E: '等候与受苦', F: '分辨与呼召', G: '门徒与群体', H: '华人本土灵修' }
   const byCont = {}
@@ -283,6 +291,13 @@ function ResourcesView({ onBack }) {
       <Header title="推荐书目 · 圣诗" sub="按大陆精选（★ = 填补空白/极高契合）" onBack={onBack} />
       <div style={{ padding: '14px 16px 120px', maxWidth: 660, margin: '0 auto' }}>
         {err && <div style={{ ...card, color: '#ff8787', fontSize: 13 }}>{err}</div>}
+        {localOnly && (
+          <div style={{ ...card, borderColor: 'rgba(90,200,250,0.35)', background: 'rgba(90,200,250,0.08)' }}>
+            <div style={{ fontSize: 12.5, lineHeight: 1.75, color: 'rgba(255,255,255,0.82)' }}>
+              {i18nT('本地兜底资源：后端资源接口未响应，当前显示前端内置精选。')}
+            </div>
+          </div>
+        )}
         {Object.keys(CONT).filter((c) => byCont[c]).map((c) => (
           <div key={c} style={{ marginBottom: 16 }}>
             <div style={{ fontSize: 13, fontWeight: 700, color: ACCENT, margin: '4px 0 8px' }}>{i18nT(CONT[c])}</div>
@@ -334,9 +349,9 @@ export default function ExpansionHub({ onClose, initialFeatureKey }) {
         <div style={{ ...quote }}>
           <div style={{ fontSize: 12.5, lineHeight: 1.8, color: 'rgba(255,255,255,0.8)' }}>{i18nT('补足神学光谱空白的新养料：认识神、与基督联合、以神为乐、知足、情感真伪、基督的慈心、文化礼仪、情感健康，以及一份分大陆的推荐书目与圣诗。')}</div>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(152px, 1fr))', gap: 10 }}>
           {FEATURES.map((f) => (
-            <button key={f.key} onClick={() => setSelected(f)} style={tile}>
+            <button key={f.key} type="button" aria-label={`${i18nT(f.name)} · ${i18nT(f.sub)}`} onClick={() => setSelected(f)} style={tile}>
               <div style={{ fontSize: 26 }}>{f.emoji}</div>
               <div style={{ fontSize: 14, fontWeight: 600, marginTop: 6 }}>{i18nT(f.name)}</div>
               <div style={{ fontSize: 10.5, color: 'rgba(255,255,255,0.45)', marginTop: 2, lineHeight: 1.5 }}>{i18nT(f.sub)}</div>
