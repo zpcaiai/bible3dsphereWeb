@@ -124,8 +124,12 @@ export function useGuardianVoice({ onTranscript } = {}) {
     isRecording: speech.isRecording,
     recordingSeconds: speech.recordingSeconds,
     recordingError: speech.recordingError,
+    speechPhase: speech.speechPhase,
+    isTranscribing: speech.isTranscribing,
+    maxRecordingSeconds: speech.maxRecordingSeconds,
     startRecording: speech.startRecording,
     stopRecording: speech.stopRecording,
+    cancelRecording: speech.cancelRecording,
     // TTS
     speaking,
     speak,

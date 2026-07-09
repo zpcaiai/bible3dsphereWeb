@@ -27,6 +27,7 @@ import AiStatusBanner from './components/AiStatusBanner'
 import SeekersStandalonePage from './components/SeekersStandalonePage'
 import DevotionTabContainer from './components/DevotionTabContainer'
 import ExpansionLauncher from './expansion/ExpansionLauncher'
+import VoiceHoldButton from './components/VoiceHoldButton'
 
 const CheckInPage = lazyWithRetry(() => import('./CheckInPage'))
 const ShareWallPage = lazyWithRetry(() => import('./ShareWallPage'))
@@ -182,23 +183,19 @@ function AppContent() {
   const [isPolishing, setIsPolishing] = useState(false)
   const googleTTSAudioRef = useRef(null)  // 用于 Google Cloud TTS 播放
 
-  // 检测浏览器环境（同时由 useSpeechInput 使用）
-  const ua = navigator.userAgent || ''
-
   // 语音输入 hook — encapsulates MediaRecorder + backend transcription + browser detection
   const {
     isRecording,
     recordingSeconds,
     recordingError,
     setRecordingError,
+    speechPhase,
+    isTranscribing,
     isWeChat,
-    isIOS,
-    isSafari,
-    isAndroid,
     maxRecordingSeconds,
-    recordingDelayRef,
     startRecording,
     stopRecording,
+    cancelRecording,
   } = useSpeechInput({
     onTranscript: (text) => setQuery(prev => prev ? `${prev} ${text}` : text),
     onLoadingChange: setLoading,
@@ -1810,43 +1807,6 @@ function AppContent() {
                 <div className="section-title" style={{display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '12px'}}>
                   <span>🙏</span><span>{i18nT('倾心吐意')}</span>
                 </div>
-                {/* 微信风格录音浮层 */}
-                {isRecording && (
-                  <div style={{
-                    position: 'fixed',
-                    left: '50%',
-                    top: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    zIndex: 9999,
-                    background: 'rgba(0,0,0,0.75)',
-                    borderRadius: '16px',
-                    padding: '28px 36px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    gap: '12px',
-                    pointerEvents: 'none',
-                  }}>
-                    <div style={{fontSize: '48px', animation: 'pulse 1s ease-in-out infinite'}}>🎙️</div>
-                    <div style={{color: '#fff', fontSize: '15px', fontWeight: 600}}>{i18nT('松开发送')}</div>
-                    <div style={{color: 'rgba(255,255,255,0.65)', fontSize: '13px'}}>{recordingSeconds}s / {maxRecordingSeconds}s</div>
-                    <div style={{
-                      width: '160px',
-                      height: '4px',
-                      background: 'rgba(255,255,255,0.2)',
-                      borderRadius: '2px',
-                      overflow: 'hidden',
-                    }}>
-                      <div style={{
-                        width: `${(recordingSeconds / maxRecordingSeconds) * 100}%`,
-                        height: '100%',
-                        background: recordingSeconds > 100 ? '#ff3b30' : '#34c759',
-                        borderRadius: '2px',
-                        transition: 'width 0.5s linear',
-                      }} />
-                    </div>
-                  </div>
-                )}
                 <form className="query-form" onSubmit={handleSubmit}>
                   {/* 快速提示 */}
                   <div style={{margin: '0 0 10px 0'}}>
@@ -1900,104 +1860,32 @@ function AppContent() {
                   {/* 按钮行：录音 + 润色 */}
                   <div style={{
                     display: 'flex',
-                    gap: '16px',
+                    gap: '12px',
                     marginTop: '12px',
                     justifyContent: 'flex-end',
+                    alignItems: 'stretch',
+                    flexWrap: 'wrap',
                   }}>
-                    {/* 语音输入按钮 - 长按录音（微信浏览器禁用） */}
-                    <button
-                      type="button"
-                      onMouseDown={() => {
-                        if (!isWeChat) {
-                          recordingDelayRef.current = setTimeout(() => {
-                            recordingDelayRef.current = null
-                            setQuery(''); startRecording()
-                          }, 1000)
-                        }
+                    <VoiceHoldButton
+                      speech={{
+                        isRecording,
+                        recordingSeconds,
+                        maxRecordingSeconds,
+                        recordingError,
+                        speechPhase,
+                        isTranscribing,
+                        startRecording,
+                        stopRecording,
+                        cancelRecording,
                       }}
-                      onMouseUp={() => {
-                        if (!isWeChat) {
-                          if (recordingDelayRef.current) {
-                            clearTimeout(recordingDelayRef.current)
-                            recordingDelayRef.current = null
-                          } else if (isRecording) {
-                            stopRecording()
-                          }
-                        }
+                      clearBeforeStart={() => {
+                        if (query === DEFAULT_QUERY_TEXT) setQuery('')
                       }}
-                      onMouseLeave={() => {
-                        if (recordingDelayRef.current) {
-                          clearTimeout(recordingDelayRef.current)
-                          recordingDelayRef.current = null
-                        } else if (isRecording) {
-                          stopRecording()
-                        }
-                      }}
-                      onTouchStart={(e) => {
-                        if (!isWeChat) {
-                          e.preventDefault()
-                          recordingDelayRef.current = setTimeout(() => {
-                            recordingDelayRef.current = null
-                            setQuery(''); startRecording()
-                          }, 1000)
-                        }
-                      }}
-                      onTouchEnd={(e) => {
-                        if (!isWeChat) {
-                          e.preventDefault()
-                          if (recordingDelayRef.current) {
-                            clearTimeout(recordingDelayRef.current)
-                            recordingDelayRef.current = null
-                          } else if (isRecording) {
-                            stopRecording()
-                          }
-                        }
-                      }}
-                      onTouchCancel={(e) => {
-                        if (!isWeChat) {
-                          e.preventDefault()
-                          if (recordingDelayRef.current) {
-                            clearTimeout(recordingDelayRef.current)
-                            recordingDelayRef.current = null
-                          } else if (isRecording) {
-                            stopRecording()
-                          }
-                        }
-                      }}
-                      disabled={loading || isWeChat}
-                      style={{
-                        padding: '0 20px',
-                        height: '40px',
-                        borderRadius: '20px',
-                        border: 'none',
-                        background: isRecording
-                          ? 'linear-gradient(135deg, #ff3b30, #ff6b6b)'
-                          : isWeChat 
-                            ? 'linear-gradient(135deg, #999, #bbb)'
-                            : 'linear-gradient(135deg, #007aff, #5e5ce6)',
-                        color: '#fff',
-                        fontSize: '14px',
-                        fontWeight: 600,
-                        cursor: (loading || isWeChat) ? 'not-allowed' : 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '6px',
-                        boxShadow: isRecording
-                          ? '0 0 12px rgba(255, 59, 48, 0.6)'
-                          : '0 2px 8px rgba(0, 122, 255, 0.3)',
-                        animation: isRecording ? 'pulse 1.5s ease-in-out infinite' : 'none',
-                        opacity: (loading || isWeChat) ? 0.5 : 1,
-                        transition: 'all 0.2s ease',
-                        userSelect: 'none',
-                        WebkitUserSelect: 'none',
-                      }}
-                      title={isWeChat 
-                        ? '微信浏览器不支持录音，请用 Safari/Chrome 打开' 
-                        : (isRecording ? `录音中 ${recordingSeconds}s / 松开停止` : '长按录音，松开识别')}
-                    >
-                      <span>{isRecording ? '🔴' : (isWeChat ? '🚫' : '🎤')}</span>
-                      <span>{isRecording ? `${recordingSeconds}s` : (isWeChat ? '微信不支持' : '长按录音')}</span>
-                    </button>
+                      disabled={loading || isTranscribing}
+                      variant="home"
+                      showOverlay
+                      style={{ flex: '1 1 190px' }}
+                    />
                     {/* 润色按钮 - 微信浏览器隐藏，提示用外部浏览器 */}
                     {!isWeChat && (
                     <button
@@ -2039,7 +1927,7 @@ function AppContent() {
                       <span>{isPolishing ? '润色中…' : '润色'}</span>
                     </button>
                     )}
-                    {/* 微信浏览器提示 */}
+                    {/* 微信内置浏览器提示 */}
                     {isWeChat && (
                       <div style={{
                         padding: '8px 12px',
@@ -2053,7 +1941,7 @@ function AppContent() {
                         flex: 1,
                       }}>
                         <span>⚠️</span>
-                        <span>{i18nT('微信不支持录音，请用 Safari/Chrome 打开')}</span>
+                        <span>{i18nT('微信内若无法唤起麦克风，请用 Safari/Chrome 打开')}</span>
                       </div>
                     )}
                   </div>

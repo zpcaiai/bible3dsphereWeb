@@ -5,6 +5,7 @@ import { C, S } from './guardianStyles'
 import './guardian.css'
 import { t } from '../../i18n/runtime'
 import { AutoText } from '../../autoTranslate.jsx'
+import VoiceHoldButton from '../VoiceHoldButton'
 
 const MODES = [
   { key: 'companion', label: t("陪伴") },
@@ -60,21 +61,6 @@ export default function GuardianChatPanel() {
       },
     })
   }, [messages, autoSpeak, callMode])  // eslint-disable-line react-hooks/exhaustive-deps
-
-  // 微信式按住说话：按下开麦、松开发送（对话模式由 📞 控制，长按无效）
-  const startMicHold = () => {
-    if (callMode) return
-    voice.stopSpeaking()
-    setSpriteState('listening')
-    voice.startRecording()
-  }
-  const endMicHold = () => {
-    if (callMode) return
-    if (voice.isRecording) {
-      voice.stopRecording()
-      setSpriteState('idle')
-    }
-  }
 
   const toggleCallMode = () => {
     if (callMode) {
@@ -135,31 +121,35 @@ export default function GuardianChatPanel() {
       </div>
 
       {/* 语音状态提示 */}
-      {(voice.isRecording || voice.recordingError || callMode) && (
+      {(voice.isRecording || voice.isTranscribing || voice.recordingError || callMode) && (
         <div style={{ padding: '0 14px 4px', fontSize: 11.5,
           color: voice.isRecording ? '#ff8a8a' : C.dim,
           display: 'flex', alignItems: 'center', gap: 6 }}>
           {voice.isRecording && <span className="guardian-rec-dot" />}
           {voice.isRecording
-            ? `正在聆听… ${voice.recordingSeconds}s（松开发送）`
-            : voice.recordingError || (callMode ? t("对话模式开启：说完会自动回复并继续听你说") : '')}
+            ? `${t("正在聆听…")} ${voice.recordingSeconds}s（${t("松开发送")}）`
+            : voice.isTranscribing
+              ? t("正在转文字…")
+              : voice.recordingError || (callMode ? t("对话模式开启：说完会自动回复并继续听你说") : '')}
         </div>
       )}
 
       <div style={{ display: 'flex', gap: 6, alignItems: 'flex-end',
         borderTop: `1px solid ${C.lineSoft}`, padding: 12 }}>
         {/* 🎤 单次语音输入 */}
-        <button type="button"
-          onMouseDown={startMicHold}
-          onMouseUp={endMicHold}
-          onMouseLeave={endMicHold}
-          onTouchStart={(e) => { e.preventDefault(); startMicHold() }}
-          onTouchEnd={(e) => { e.preventDefault(); endMicHold() }}
-          title={voice.isRecording ? t("松开发送") : t("按住说话")}
-          style={iconBtn(voice.isRecording)}
-          className={voice.isRecording ? 'guardian-rec-pulse' : ''}>
-          🎤
-        </button>
+        <VoiceHoldButton
+          speech={voice}
+          compact
+          variant="guardian"
+          showOverlay={false}
+          disabled={callMode || voice.isTranscribing || sending}
+          onHoldStart={() => {
+            voice.stopSpeaking()
+            setSpriteState('listening')
+          }}
+          onHoldEnd={() => setSpriteState('idle')}
+          onHoldCancel={() => setSpriteState('idle')}
+        />
         {/* 📞 连续语音对话 */}
         <button type="button" onClick={toggleCallMode}
           title={callMode ? t("结束语音对话") : t("开始语音对话（自动朗读+自动聆听）")}

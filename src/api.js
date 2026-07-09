@@ -255,7 +255,14 @@ export async function fetchMeditationQuestions(reference, text) {
 export async function transcribeAudioBlob(audioBlob, { contentType } = {}) {
   const form = new FormData()
   const type = contentType || audioBlob?.type || 'audio/webm'
-  form.append('file', audioBlob, `voice.${type.includes('mp4') ? 'mp4' : 'webm'}`)
+  const extension = type.includes('mp4') || type.includes('m4a')
+    ? 'mp4'
+    : type.includes('mpeg') || type.includes('mp3')
+      ? 'mp3'
+      : type.includes('wav')
+        ? 'wav'
+        : 'webm'
+  form.append('file', audioBlob, `voice.${extension}`)
 
   const response = await fetch(`${API_BASE}/speech/transcribe`, {
     method: 'POST',

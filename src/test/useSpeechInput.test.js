@@ -56,7 +56,9 @@ describe('useSpeechInput', () => {
     mediaRecorderMock = makeMediaRecorderMock()
     streamMock = makeStreamMock()
 
-    vi.stubGlobal('MediaRecorder', vi.fn(() => mediaRecorderMock))
+    const MediaRecorderMock = vi.fn(() => mediaRecorderMock)
+    MediaRecorderMock.isTypeSupported = vi.fn((type) => type === 'audio/webm' || type === 'audio/webm;codecs=opus')
+    vi.stubGlobal('MediaRecorder', MediaRecorderMock)
 
     vi.stubGlobal('navigator', {
       userAgent: 'TestBrowser/1.0',
@@ -81,6 +83,8 @@ describe('useSpeechInput', () => {
     expect(result.current.isRecording).toBe(false)
     expect(result.current.recordingSeconds).toBe(0)
     expect(result.current.recordingError).toBeNull()
+    expect(result.current.speechPhase).toBe('idle')
+    expect(result.current.isTranscribing).toBe(false)
   })
 
   it('browser detection — isWeChat true when UA contains MicroMessenger', () => {
@@ -133,6 +137,7 @@ describe('useSpeechInput', () => {
 
       await act(async () => { await result.current.startRecording() })
       act(() => { mediaRecorderMock.ondataavailable?.({ data: makeAudioChunk() }) })
+      act(() => { vi.advanceTimersByTime(700) })
       await act(async () => { result.current.stopRecording() })
       await act(async () => {})
 
@@ -157,6 +162,7 @@ describe('useSpeechInput', () => {
     await act(async () => { await result.current.startRecording() })
     // Simulate data + stop
     act(() => { mediaRecorderMock.ondataavailable?.({ data: makeAudioChunk() }) })
+    act(() => { vi.advanceTimersByTime(700) })
     await act(async () => { result.current.stopRecording() })
 
     // Let async work settle
@@ -182,7 +188,7 @@ describe('useSpeechInput', () => {
       const { result } = renderHook(() => useSpeechInput({}))
       await act(async () => { await result.current.startRecording() })
 
-      expect(result.current.recordingError).toContain('权限被拒绝')
+      expect(result.current.recordingError).toMatch(/权限被拒绝|Permission denied/)
     } finally {
       consoleError.mockRestore()
     }
@@ -199,6 +205,7 @@ describe('useSpeechInput', () => {
 
     await act(async () => { await result.current.startRecording() })
     act(() => { mediaRecorderMock.ondataavailable?.({ data: makeAudioChunk() }) })
+    act(() => { vi.advanceTimersByTime(700) })
     await act(async () => { result.current.stopRecording() })
     await act(async () => {})
 
@@ -209,5 +216,40 @@ describe('useSpeechInput', () => {
   it('maxRecordingSeconds is 120', () => {
     const { result } = renderHook(() => useSpeechInput({}))
     expect(result.current.maxRecordingSeconds).toBe(120)
+  })
+
+  it('short recordings are not sent for transcription', async () => {
+    const fetchMock = vi.fn(async () => makeTranscribeResponse('短句'))
+    vi.stubGlobal('fetch', fetchMock)
+    const { result } = renderHook(() => useSpeechInput({}))
+
+    await act(async () => { await result.current.startRecording() })
+    act(() => { mediaRecorderMock.ondataavailable?.({ data: makeAudioChunk() }) })
+    await act(async () => { result.current.stopRecording() })
+    await act(async () => {})
+
+    expect(fetchMock).not.toHaveBeenCalled()
+    expect(result.current.recordingError).toMatch(/录音太短|Recording was too short/)
+    expect(result.current.speechPhase).toBe('error')
+  })
+
+  it('cancelRecording discards audio without transcription', async () => {
+    const onTranscript = vi.fn()
+    const fetchMock = vi.fn(async () => makeTranscribeResponse('不会提交'))
+    vi.stubGlobal('fetch', fetchMock)
+    const { result } = renderHook(() => useSpeechInput({ onTranscript }))
+
+    await act(async () => { await result.current.startRecording() })
+    act(() => {
+      mediaRecorderMock.ondataavailable?.({ data: makeAudioChunk() })
+      vi.advanceTimersByTime(700)
+    })
+    await act(async () => { result.current.cancelRecording() })
+    await act(async () => {})
+
+    expect(fetchMock).not.toHaveBeenCalled()
+    expect(onTranscript).not.toHaveBeenCalled()
+    expect(result.current.recordingError).toBeNull()
+    expect(result.current.speechPhase).toBe('idle')
   })
 })
