@@ -31,6 +31,7 @@ import {
   ScriptureSelector,
 } from '../components/attentionComponents'
 import AccountabilityScreen from './AccountabilityScreen'
+import AdminScreen from './AdminScreen'
 import GroupsScreen from './GroupsScreen'
 import PrivacyScreen from './PrivacyScreen'
 import ReportsScreen from './ReportsScreen'
@@ -161,6 +162,7 @@ export default function AttentionPage({ user, token, onBack, initialSection = 'd
   if (section === 'accountability') return <AccountabilityScreen token={token} onBack={() => openPage('dashboard')} openPage={openPage} />
   if (section === 'groups') return <GroupsScreen token={token} onBack={() => openPage('dashboard')} openPage={openPage} />
   if (section === 'privacy') return <PrivacyScreen token={token} onBack={() => openPage('dashboard')} />
+  if (section === 'admin') return <AdminScreen token={token} onBack={() => openPage('dashboard')} />
   if (section === 'reports') {
     return <ReportsScreen token={token} timezone={timezone} onBack={() => openPage('dashboard')} openPage={openPage} />
   }
@@ -246,7 +248,7 @@ export default function AttentionPage({ user, token, onBack, initialSection = 'd
 
       <section className="attn-section">
         <h2>快速入口</h2>
-        <AttentionQuickActions openPage={openPage} />
+        <AttentionQuickActions openPage={openPage} isAdmin={Boolean(user?.is_admin || user?.isAdmin)} />
       </section>
 
       <section className="attn-section attn-reminder">

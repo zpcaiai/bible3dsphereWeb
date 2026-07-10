@@ -147,4 +147,26 @@ describe('attention api contracts', () => {
     await attentionApi.saveChallengeCheckin('g1', 'c1', { completed: true }, 'token-a')
     expect(lastFetch().url).toBe('/api/attention/groups/g1/challenges/c1/checkins')
   })
+
+  it('calls attention health integration and admin endpoints', async () => {
+    global.fetch.mockResolvedValueOnce(okJson({ ok: true }))
+    await attentionApi.health('token-a')
+    expect(lastFetch().url).toBe('/api/attention/health')
+
+    global.fetch.mockResolvedValueOnce(okJson({ routes: [] }))
+    await attentionApi.routeRegistry('token-a')
+    expect(lastFetch().url).toBe('/api/attention/integration/routes')
+
+    global.fetch.mockResolvedValueOnce(okJson({ metrics: {} }))
+    await attentionApi.adminOverview('token-a')
+    expect(lastFetch().url).toBe('/api/attention/admin/overview')
+
+    global.fetch.mockResolvedValueOnce(okJson({ checks: [] }))
+    await attentionApi.adminAudit('token-a')
+    expect(lastFetch().url).toBe('/api/attention/admin/audit')
+
+    global.fetch.mockResolvedValueOnce(okJson({ contentLibrary: {} }))
+    await attentionApi.adminContentLibrary('token-a')
+    expect(lastFetch().url).toBe('/api/attention/admin/content-library')
+  })
 })

@@ -131,4 +131,33 @@ describe('AttentionPage', () => {
     await waitFor(() => expect(groups.getByText('守心小组')).toBeTruthy())
     expect(groups.getByText('温柔挑战模板')).toBeTruthy()
   })
+
+  it('renders admin aggregate-only screen for admin users', async () => {
+    global.fetch.mockImplementation((url) => {
+      const path = String(url)
+      if (path.includes('/attention/admin/overview')) return Promise.resolve(okJson({
+        metrics: {
+          activeAttentionUsers7d: 3,
+          dailyCovenants7d: 5,
+          focusSessions7d: 4,
+          ledgerEntries7d: 8,
+          reviews7d: 2,
+          diagnoses7d: 1,
+          groupsActive: 1,
+          prayerRequestsOpen: 2,
+          crisisSafetyTriggers7d: 0,
+        },
+        health: { checks: { database: 'ok', privacyDefaults: 'ok' } },
+      }))
+      if (path.includes('/attention/admin/audit')) return Promise.resolve(okJson({ checks: [{ key: 'admin_route_role_protected', status: 'pass', message: 'protected' }] }))
+      if (path.includes('/attention/admin/content-library')) return Promise.resolve(okJson({ contentLibrary: { scriptureCount: 10, warfarePatternCount: 9, challengeTemplateCount: 9, scoreRuleVersion: 'v1' } }))
+      return Promise.resolve(okJson({ exists: false, covenant: null }))
+    })
+    const { getByText, queryByText } = render(<AttentionPage user={{ email: 'admin@example.com', is_admin: true }} token="token-a" onBack={() => {}} initialSection="admin" />)
+
+    await waitFor(() => expect(getByText('守心运营后台')).toBeTruthy())
+    expect(getByText('7 天聚合指标')).toBeTruthy()
+    expect(getByText('安全审计摘要')).toBeTruthy()
+    expect(queryByText('raw prayer')).toBeFalsy()
+  })
 })

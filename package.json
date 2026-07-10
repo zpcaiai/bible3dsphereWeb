@@ -13,7 +13,14 @@
     "preview:mobile": "vite preview --host 0.0.0.0 --port 4173",
     "test": "NODE_OPTIONS=--no-warnings vitest run",
     "test:watch": "NODE_OPTIONS=--no-warnings vitest",
-    "test:coverage": "NODE_OPTIONS=--no-warnings vitest run --coverage"
+    "test:coverage": "NODE_OPTIONS=--no-warnings vitest run --coverage",
+    "attention:seed": "node scripts/attention/seed-attention-demo.mjs",
+    "attention:reset-demo": "node scripts/attention/reset-attention-demo.mjs",
+    "attention:audit:security": "node scripts/attention/audit-attention-security.mjs",
+    "attention:audit:permissions": "node scripts/attention/audit-attention-permissions.mjs",
+    "attention:audit:logs": "node scripts/attention/audit-attention-logs.mjs",
+    "attention:smoke": "node scripts/attention/smoke-attention.mjs",
+    "attention:release-report": "node scripts/attention/generate-attention-release-report.mjs"
   },
   "dependencies": {
     "@react-three/drei": "^9.122.0",

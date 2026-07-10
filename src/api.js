@@ -2740,6 +2740,20 @@ export const attentionApi = {
     const res = await fetch(`${API_BASE}/attention/today/summary`, { headers })
     return _attentionJson(res, '暂时无法加载今日守心总览。')
   },
+  health: async (token) => {
+    const res = await fetch(`${API_BASE}/attention/health`, { headers: _fH(token) })
+    return _attentionJson(res, '暂时无法加载守心模块健康状态。')
+  },
+  dashboardSummary: async (token, timezone = '') => {
+    const headers = _fH(token)
+    if (timezone) headers['X-Timezone'] = timezone
+    const res = await fetch(`${API_BASE}/attention/dashboard/summary`, { headers })
+    return _attentionJson(res, '暂时无法加载守心总览。')
+  },
+  routeRegistry: async (token) => {
+    const res = await fetch(`${API_BASE}/attention/integration/routes`, { headers: _fH(token) })
+    return _attentionJson(res, '暂时无法加载守心路由清单。')
+  },
   dailyScore: async ({ date, force } = {}, token, timezone = '') => {
     const qs = new URLSearchParams()
     if (date) qs.set('date', date)
@@ -3050,5 +3064,24 @@ export const attentionApi = {
   saveChallengeCheckin: async (groupId, challengeId, body, token) => {
     const res = await fetch(`${API_BASE}/attention/groups/${encodeURIComponent(groupId)}/challenges/${encodeURIComponent(challengeId)}/checkins`, { method: 'POST', headers: _fH(token, true), body: JSON.stringify(body || {}) })
     return _attentionJson(res, '保存挑战 check-in 时遇到问题。')
+  },
+  adminOverview: async (token) => {
+    const res = await fetch(`${API_BASE}/attention/admin/overview`, { headers: _fH(token) })
+    return _attentionJson(res, '暂时无法加载守心运营概览。')
+  },
+  adminAudit: async (token) => {
+    const res = await fetch(`${API_BASE}/attention/admin/audit`, { headers: _fH(token) })
+    return _attentionJson(res, '暂时无法加载守心审计摘要。')
+  },
+  adminContentLibrary: async (token) => {
+    const res = await fetch(`${API_BASE}/attention/admin/content-library`, { headers: _fH(token) })
+    return _attentionJson(res, '暂时无法加载守心内容库摘要。')
+  },
+  adminReports: async ({ from, to } = {}, token) => {
+    const qs = new URLSearchParams()
+    if (from) qs.set('from', from)
+    if (to) qs.set('to', to)
+    const res = await fetch(`${API_BASE}/attention/admin/reports${qs.toString() ? `?${qs}` : ''}`, { headers: _fH(token) })
+    return _attentionJson(res, '暂时无法加载守心运营报表。')
   },
 }

@@ -106,7 +106,7 @@ export function AttentionCovenantPreview({ covenant }) {
   )
 }
 
-export function AttentionQuickActions({ openPage }) {
+export function AttentionQuickActions({ openPage, isAdmin = false }) {
   const actions = [
     ['covenant', '今日立约', '开始或编辑今天的注意力立约。'],
     ['focus', '开始专注', '祷告后进入使命专注，记录中断与完成。'],
@@ -119,6 +119,7 @@ export function AttentionQuickActions({ openPage }) {
     ['groups', '守心小组', '加入小组挑战，不排名、不比较。'],
     ['privacy', '隐私边界', '管理伙伴、小组和挑战可见范围。'],
   ]
+  if (isAdmin) actions.push(['admin', '运营后台', '查看脱敏聚合指标和上线审计状态。'])
   return (
     <div className="attn-action-grid">
       {actions.map(([id, title, sub]) => (

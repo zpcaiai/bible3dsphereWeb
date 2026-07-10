@@ -330,6 +330,32 @@
   cursor: pointer;
 }
 
+.attn-admin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+  gap: 10px;
+}
+
+.attn-admin-metric {
+  display: grid;
+  gap: 4px;
+  min-height: 86px;
+  border-radius: 8px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.055);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+.attn-admin-metric strong {
+  font-size: 26px;
+  line-height: 1;
+}
+
+.attn-admin-metric span {
+  color: rgba(255, 255, 255, 0.62);
+  line-height: 1.35;
+}
+
 .attn-notice {
   border-color: rgba(85, 211, 138, 0.22);
   background: rgba(85, 211, 138, 0.07);
