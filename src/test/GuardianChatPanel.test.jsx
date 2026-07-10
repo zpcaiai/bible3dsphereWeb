@@ -47,7 +47,7 @@ describe('GuardianChatPanel pastoral prompts', () => {
   it('fills a gospel prompt and switches to comfort mode for shame/self-blame', () => {
     const { container } = render(<GuardianChatPanel />)
 
-    fireEvent.click(screen.getByText('我很自责'))
+    fireEvent.change(screen.getByLabelText('快速引导'), { target: { value: 'guilt' } })
 
     expect(useGuardianStore.getState().chatMode).toBe('comfort')
     expect(container.querySelector('textarea').value).toContain('分辨认罪与控告')
@@ -56,7 +56,7 @@ describe('GuardianChatPanel pastoral prompts', () => {
   it('fills a prayer prompt and switches to prayer mode', () => {
     const { container } = render(<GuardianChatPanel />)
 
-    fireEvent.click(screen.getByText('带我祷告'))
+    fireEvent.change(screen.getByLabelText('快速引导'), { target: { value: 'pray' } })
 
     expect(useGuardianStore.getState().chatMode).toBe('prayer')
     expect(container.querySelector('textarea').value).toContain('把现在的心交给神')

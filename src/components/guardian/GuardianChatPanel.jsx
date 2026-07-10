@@ -127,51 +127,47 @@ export default function GuardianChatPanel() {
     setSpriteState(item.mode === 'prayer' ? 'praying' : item.mode === 'comfort' ? 'comforting' : 'listening')
   }
 
+  const compactSelect = {
+    flex: 1,
+    minWidth: 0,
+    height: 28,
+    border: `1px solid ${C.lineSoft}`,
+    borderRadius: 7,
+    background: 'rgba(11,16,38,0.72)',
+    color: C.text,
+    padding: '0 4px',
+    fontSize: 10.5,
+    fontFamily: 'inherit',
+  }
+
   const iconBtn = (active) => ({
     border: 'none', cursor: 'pointer', borderRadius: 10,
-    padding: '8px 10px', fontSize: 15, lineHeight: 1,
+    width: 32, height: 32, flex: '0 0 32px', padding: 0, fontSize: 14, lineHeight: 1,
     background: active ? 'rgba(255,179,71,0.25)' : 'rgba(42,51,88,0.45)',
     color: active ? C.flame : C.dim,
   })
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <div style={{ display: 'flex', gap: 4, overflowX: 'auto', padding: '4px 12px 8px' }}>
-        {MODES.map((m) => (
-          <button key={m.key} type="button" style={S.chip(chatMode === m.key)}
-            onClick={() => setChatMode(m.key)}>{m.label}</button>
-        ))}
+      <div className="guardian-chat-shortcuts" style={{ display: 'flex', gap: 4, padding: '4px 6px' }}>
+        <select aria-label={t("对话模式")} value={chatMode} onChange={(e) => setChatMode(e.target.value)} style={compactSelect}>
+          {MODES.map((mode) => <option key={mode.key} value={mode.key}>{mode.label}</option>)}
+        </select>
+        <select
+          aria-label={t("快速引导")}
+          value=""
+          onChange={(e) => {
+            const item = PASTORAL_PROMPTS.find((prompt) => prompt.key === e.target.value)
+            if (item) applyPastoralPrompt(item)
+          }}
+          style={compactSelect}
+        >
+          <option value="">{t("快速引导")}</option>
+          {PASTORAL_PROMPTS.map((item) => <option key={item.key} value={item.key}>{item.icon} {t(item.label)}</option>)}
+        </select>
       </div>
 
-      <div style={{ display: 'flex', gap: 6, overflowX: 'auto', padding: '0 12px 8px' }}>
-        {PASTORAL_PROMPTS.map((item) => (
-          <button
-            key={item.key}
-            type="button"
-            onClick={() => applyPastoralPrompt(item)}
-            style={{
-              border: '1px solid rgba(255,255,255,0.1)',
-              background: item.key === 'help' ? 'rgba(255,107,107,0.14)' : 'rgba(255,255,255,0.055)',
-              color: item.key === 'help' ? '#ffb3b3' : 'rgba(232,238,255,0.82)',
-              borderRadius: 12,
-              padding: '7px 9px',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 5,
-              flex: '0 0 auto',
-              cursor: 'pointer',
-              fontSize: 12,
-              fontWeight: 700,
-              fontFamily: 'inherit',
-            }}
-          >
-            <span aria-hidden="true">{item.icon}</span>
-            <span>{t(item.label)}</span>
-          </button>
-        ))}
-      </div>
-
-      <div style={{ flex: 1, overflowY: 'auto', padding: '8px 12px', display: 'flex',
+      <div className="guardian-chat-messages" style={{ flex: 1, overflowY: 'auto', padding: '6px 8px', display: 'flex',
         flexDirection: 'column', gap: 10 }}>
         {messages.map((m) => (
           <div key={m.id} style={{ display: 'flex',
@@ -206,14 +202,15 @@ export default function GuardianChatPanel() {
         </div>
       )}
 
-      <div style={{ display: 'flex', gap: 6, alignItems: 'flex-end',
-        borderTop: `1px solid ${C.lineSoft}`, padding: 12 }}>
+      <div className="guardian-chat-composer" style={{ display: 'flex', flexWrap: 'wrap', gap: 3, alignItems: 'center',
+        borderTop: `1px solid ${C.lineSoft}`, padding: 5 }}>
         {/* 🎤 单次语音输入 */}
         <VoiceHoldButton
           speech={voice}
           compact
           variant="guardian"
           showOverlay={false}
+          style={{ width: 32, height: 32, flex: '0 0 32px', borderRadius: 8 }}
           disabled={callMode || voice.isTranscribing || sending}
           onHoldStart={() => {
             voice.stopSpeaking()
@@ -246,10 +243,11 @@ export default function GuardianChatPanel() {
             if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submit() }
           }}
           style={{ ...S.input, flex: 1, padding: '4px 12px', lineHeight: 1.3,
-            fontSize: 'clamp(12px, 3.4vw, 13.5px)', maxHeight: 'min(48px, 10vh)' }}
+            flexBasis: '100%', order: -1, minHeight: 30, fontSize: 12, maxHeight: 42 }}
         />
         <button type="button" onClick={submit} disabled={sending || !input.trim()}
-          style={{ ...S.primaryBtn, opacity: sending || !input.trim() ? 0.4 : 1 }}>
+          style={{ ...S.primaryBtn, width: 43, height: 32, padding: 0, borderRadius: 8,
+            fontSize: 11, opacity: sending || !input.trim() ? 0.4 : 1 }}>
           {t("发送")}
         </button>
       </div>

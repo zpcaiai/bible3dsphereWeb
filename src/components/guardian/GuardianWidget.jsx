@@ -1,6 +1,6 @@
 // 属灵守护者 / AI Companion Sprite — 右下角常驻 Widget
 // 定位：属灵同行者，不是神/牧者/医生/心理咨询师的替代。
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useGuardianStore } from './guardianStore'
 import { fetchGuardianInsights } from './guardianApi'
 import GuardianSprite from './GuardianSprite'
@@ -59,6 +59,19 @@ function ReflectionPanel() {
 
 const POS_KEY = 'guardian-sprite-pos'
 const SPRITE_BOX = 70 // 小精灵按钮可视尺寸（58 + padding）
+const PANEL_WIDTH = 180
+const PANEL_HEIGHT = 270
+
+function clampPos({ x, y }, width = SPRITE_BOX, height = SPRITE_BOX) {
+  return {
+    x: Math.min(Math.max(0, x), Math.max(0, window.innerWidth - width)),
+    y: Math.min(Math.max(0, y), Math.max(0, window.innerHeight - height)),
+  }
+}
+
+function savePos(position) {
+  try { localStorage.setItem(POS_KEY, JSON.stringify(position)) } catch { /* storage is optional */ }
+}
 
 function loadPos() {
   try {
@@ -67,10 +80,7 @@ function loadPos() {
     const { x, y } = JSON.parse(raw)
     if (typeof x !== 'number' || typeof y !== 'number') return null
     // 读取时夹紧到当前视口内（换设备/转屏后不丢）
-    return {
-      x: Math.min(Math.max(0, x), Math.max(0, window.innerWidth - SPRITE_BOX)),
-      y: Math.min(Math.max(0, y), Math.max(0, window.innerHeight - SPRITE_BOX)),
-    }
+    return clampPos({ x, y })
   } catch { return null }
 }
 
@@ -88,6 +98,8 @@ export default function GuardianWidget() {
 
   const onSpritePointerDown = (e) => {
     if (e.target.closest('[data-no-drag]')) return
+    if (e.button != null && e.button !== 0) return
+    e.preventDefault()
     const el = e.currentTarget
     // 以整个容器（面板+小鸽子）为基准拖动，展开状态下也不会跳位
     const box = rootRef.current?.getBoundingClientRect()
@@ -109,10 +121,39 @@ export default function GuardianWidget() {
   }
   const onSpritePointerUp = () => {
     if (movedRef.current && dragRef.current) {
-      setPos((p) => { if (p) try { localStorage.setItem(POS_KEY, JSON.stringify(p)) } catch {} return p })
+      setPos((p) => { if (p) savePos(p); return p })
     }
     dragRef.current = null
   }
+
+  // 展开、收起或转屏后，按真实容器尺寸重新夹紧，避免窗口被留在屏幕外。
+  useLayoutEffect(() => {
+    if (!pos || !rootRef.current) return
+    const box = rootRef.current.getBoundingClientRect()
+    setPos((current) => {
+      if (!current) return current
+      const next = clampPos(current, box.width || SPRITE_BOX, box.height || SPRITE_BOX)
+      if (next.x === current.x && next.y === current.y) return current
+      savePos(next)
+      return next
+    })
+  }, [expanded]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    const keepVisible = () => {
+      const box = rootRef.current?.getBoundingClientRect()
+      if (!box) return
+      setPos((current) => {
+        if (!current) return current
+        const next = clampPos(current, box.width || SPRITE_BOX, box.height || SPRITE_BOX)
+        if (next.x === current.x && next.y === current.y) return current
+        savePos(next)
+        return next
+      })
+    }
+    window.addEventListener('resize', keepVisible)
+    return () => window.removeEventListener('resize', keepVisible)
+  }, [])
 
   useEffect(() => { refresh() }, [])  // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -122,17 +163,17 @@ export default function GuardianWidget() {
   }
 
   return (
-    <div ref={rootRef} style={{ position: 'fixed', zIndex: 1200,
+    <div ref={rootRef} className="guardian-widget-root" style={{ position: 'fixed', zIndex: 1200,
       ...(pos ? { left: pos.x, top: pos.y } : { bottom: 20, right: 20 }),
-      display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 12 }}>
+      display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8 }}>
       {expanded && (
-        <div className="guardian-panel" style={{
-          width: 360, maxWidth: 'calc(100vw - 40px)', height: 540,
-          maxHeight: 'calc(100vh - 130px)',
+        <div className="guardian-panel guardian-panel--compact" data-testid="guardian-panel" style={{
+          width: PANEL_WIDTH, maxWidth: 'calc(100vw - 16px)', height: PANEL_HEIGHT,
+          maxHeight: 'calc(100vh - 94px)',
           display: 'flex', flexDirection: 'column', overflow: 'hidden',
-          borderRadius: 16, border: `1px solid ${C.line}`,
+          borderRadius: 10, border: `1px solid ${C.line}`,
           background: C.panel, backdropFilter: 'blur(10px)',
-          boxShadow: '0 18px 50px rgba(0,0,0,0.5)',
+          boxShadow: '0 12px 34px rgba(0,0,0,0.48)',
         }}>
           {/* 头部（拖拽手柄：展开状态按住这里也能拖动） */}
           <div
@@ -140,30 +181,34 @@ export default function GuardianWidget() {
             onPointerMove={onSpritePointerMove}
             onPointerUp={onSpritePointerUp}
             onPointerCancel={onSpritePointerUp}
-            style={{ display: 'flex', alignItems: 'center', gap: 10,
-              borderBottom: `1px solid ${C.lineSoft}`, padding: '10px 12px',
+            data-testid="guardian-drag-handle"
+            aria-label={t("拖动守护者窗口")}
+            style={{ display: 'flex', alignItems: 'center', gap: 6,
+              borderBottom: `1px solid ${C.lineSoft}`, padding: '5px 6px',
               cursor: 'grab', touchAction: 'none', userSelect: 'none' }}>
-            <GuardianSprite state={spriteState} size={36} />
-            <div style={{ flex: 1 }}>
-              <p style={{ fontSize: 13.5, fontWeight: 600, color: C.text, margin: 0 }}>
+            <GuardianSprite state={spriteState} size={24} />
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <p style={{ fontSize: 11, fontWeight: 700, color: C.text, margin: 0,
+                overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 {profile?.name ? <AutoText>{profile.name}</AutoText> : t("属灵守护者")}
               </p>
-              <p style={{ fontSize: 11, color: C.dim, margin: 0 }}>
+              <p style={{ fontSize: 9, color: C.dim, margin: 0,
+                overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 {profile ? <>{profile.stageEmoji} <AutoText>{profile.stageZh}</AutoText> · </> : ''}{t("同行者，不是替代者")}
               </p>
             </div>
             <button type="button" data-no-drag onClick={() => setWidgetMode('collapsed')} aria-label={t("收起")}
               style={{ background: 'none', border: 'none', cursor: 'pointer',
-                color: C.dim, fontSize: 14, padding: '4px 8px' }}>─</button>
+                color: C.dim, fontSize: 13, width: 28, height: 28, padding: 0 }}>─</button>
           </div>
 
           {/* Tab 栏 */}
-          <div style={{ display: 'flex', gap: 2, borderBottom: `1px solid ${C.lineSoft}`,
-            padding: '6px 8px' }}>
+          <div style={{ display: 'flex', gap: 1, borderBottom: `1px solid ${C.lineSoft}`,
+            padding: '3px 2px' }}>
             {TABS.map((t) => (
               <button key={t.key} type="button" title={t.label} onClick={() => openTab(t.key)}
-                style={{ flex: 1, border: 'none', cursor: 'pointer', fontSize: 14,
-                  borderRadius: 8, padding: '4px 0',
+                style={{ flex: 1, minWidth: 20, height: 26, border: 'none', cursor: 'pointer', fontSize: 12,
+                  borderRadius: 6, padding: 0,
                   background: tab === t.key ? 'rgba(42,51,88,0.6)' : 'transparent',
                   opacity: tab === t.key ? 1 : 0.6 }}>
                 {t.icon}
