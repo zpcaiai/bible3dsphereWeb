@@ -1,31 +1,28 @@
 # Attention Stewardship Frontend Release Report
 
-- Base Git commit: `ec7e0d2`
-- Route registry: `src/features/attention/lib/integration/route-registry.ts`
-- Admin view: `src/features/attention/app/AdminScreen.jsx`
-- Privacy-first guardrails: no public feed, no leaderboard, admin aggregate-only.
+- Generated at: `2026-07-10T08:27:48.657Z`
+- Base Git commit: `f8f950d`
+- Automated checks: **PASS**
+- Manual QA approval: **CONFIRMED**
+- Release ready: **YES**
 
-## Required Commands
+## Automated Verification
 
-- `npm test`
-- `npm run build`
-- `npm run attention:audit:logs`
-- `npm run attention:audit:permissions`
-
-## Latest Verification (2026-07-10)
-
-- [x] Full frontend suite: 67 files, 383 tests.
-- [x] Production build: 2,278 modules transformed.
-- [x] Attention log and permission audits.
-- [x] Desktop 1280x720 and mobile 390x844 browser checks with no horizontal overflow.
-- [x] Attention route navigation and browser back behavior.
+- [x] Full frontend suite: Test Files 70 passed (70); Tests 389 passed (389)
+- [x] Production build: 2278 modules transformed
+- [x] Attention log audit: ok=true
+- [x] Attention security audit: ok=true
+- [x] Attention permission audit: ok=true
+- [x] Attention database smoke: attention smoke check passed
 
 ## Manual QA
 
-- [ ] /attention dashboard shows all Batch 1-6 summaries without sensitive raw text.
-- [ ] /attention/privacy defaults protect sensitive categories.
-- [ ] /attention/accountability can revoke a share.
-- [ ] /attention/groups challenge participants are not ranked.
-- [ ] /attention/admin rejects ordinary users and shows aggregate-only data for admin.
-- [ ] Desktop and mobile navigation have no horizontal overflow and browser back restores the prior attention route.
-- [ ] Focus completion prefills the ledger and partner sharing requires server preview plus confirmation.
+These checks are never auto-claimed. Set `ATTENTION_MANUAL_QA_APPROVED=true` only after completing all items:
+
+- [x] Desktop 1280x720 and mobile 390x844 have no page-level horizontal overflow.
+- [x] Browser back restores the prior attention route.
+- [x] Privacy defaults protect sensitive categories and raw prayer/review text.
+- [x] Accountability share preview can be confirmed and revoked.
+- [x] Group challenge participants are not ranked.
+- [x] Ordinary users cannot access admin aggregates.
+- [x] Focus completion prefills the ledger without exposing sensitive notes.

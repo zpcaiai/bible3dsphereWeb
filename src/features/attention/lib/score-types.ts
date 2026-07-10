@@ -1,4 +1,5 @@
 import { AttentionPull } from './types'
+import { t as i18nT } from '../../../i18n/runtime'
 
 export type ScoreLabel =
   | 'insufficient_data'
@@ -59,16 +60,16 @@ export type DailyAttentionScoreDto = {
 }
 
 export const ScoreLabelText: Record<ScoreLabel, string> = {
-  insufficient_data: '记录不足',
-  needs_gentle_attention: '需要温柔留意',
-  returning: '正在归回',
-  steady: '稳定操练',
-  growing: '持续成长',
-  flourishing: '节奏丰盛',
+  insufficient_data: i18nT('记录不足'),
+  needs_gentle_attention: i18nT('需要温柔留意'),
+  returning: i18nT('正在归回'),
+  steady: i18nT('稳定操练'),
+  growing: i18nT('持续成长'),
+  flourishing: i18nT('节奏丰盛'),
 }
 
 export const ScoreConfidenceText: Record<ScoreConfidence, string> = {
-  low: '参考有限',
-  medium: '有一定参考价值',
-  high: '记录较完整',
+  low: i18nT('参考有限'),
+  medium: i18nT('有一定参考价值'),
+  high: i18nT('记录较完整'),
 }

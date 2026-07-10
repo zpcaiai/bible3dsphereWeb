@@ -71,6 +71,7 @@ const namespacedEn = {
   'lang.zh': '中文',
   'lang.en': 'EN',
   'lang.switchTitle': '切换语言 / Switch language',
+  '以为“因信称义”会让人轻看顺服与善行。': 'Thinking justification by faith makes obedience and good works unimportant.',
 
   '本地兜底结果：后端未响应，已用前端内置规则生成。连接后端后可获得完整服务端结果。': 'Local fallback result: the backend did not respond, so the frontend generated this with built-in rules. Connect the backend for full server results.',
   '本地兜底资源：后端资源接口未响应，当前显示前端内置精选。': 'Local fallback resources: the backend resource endpoint did not respond, so built-in curated items are shown.',

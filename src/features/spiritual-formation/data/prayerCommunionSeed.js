@@ -132,7 +132,8 @@ export const psalmProfiles = [
   suggestedUseCases,
   difficultyLevel,
   cautionNotes: cautionNotes || '',
-  text: `Psalm ${psalmNumber} placeholder text for guided prayer. Import licensed Bible text later; this profile preserves the prayer structure and metadata.`,
+  text: '',
+  textAvailable: false,
 }))
 
 export const presencePractices = [

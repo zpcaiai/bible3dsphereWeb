@@ -1,7 +1,8 @@
+import { t as i18nT } from '../../../i18n/runtime'
 export const ChallengePrivacyLabel: Record<string, string> = {
-  status_only: '只显示完成状态',
-  summary: '显示整体摘要',
-  anonymous_aggregate: '匿名聚合',
+  status_only: i18nT('只显示完成状态'),
+  summary: i18nT('显示整体摘要'),
+  anonymous_aggregate: i18nT('匿名聚合'),
 }
 
 export interface AttentionChallenge {

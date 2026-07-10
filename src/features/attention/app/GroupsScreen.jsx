@@ -3,6 +3,7 @@ import { attentionApi } from '../../../api'
 import { AttentionCard } from '../components/attentionComponents'
 import { ChallengePrivacyLabel } from '../lib/challenge-types'
 import { GroupRoleLabel, GroupTypeLabel } from '../lib/group-types'
+import { t as i18nT } from '../../../i18n/runtime'
 
 function todayIso(offset = 0) {
   const date = new Date()
@@ -38,7 +39,7 @@ export default function GroupsScreen({ token, onBack, openPage }) {
 
   useEffect(() => {
     let cancelled = false
-    load().catch(() => { if (!cancelled) setMessage('暂时无法加载守心小组。') })
+    load().catch(() => { if (!cancelled) setMessage(i18nT('暂时无法加载守心小组。')) })
     return () => { cancelled = true }
   }, [token])
 
@@ -56,7 +57,7 @@ export default function GroupsScreen({ token, onBack, openPage }) {
       if (cancelled) return
       setMembers(memberData.members || [])
       setGroupChallenges(challengeData.challenges || [])
-    }).catch((error) => { if (!cancelled) setMessage(error?.message || '暂时无法加载小组详情。') })
+    }).catch((error) => { if (!cancelled) setMessage(error?.message || i18nT('暂时无法加载小组详情。')) })
     return () => { cancelled = true }
   }, [selectedGroup?.id, token])
 
@@ -68,7 +69,7 @@ export default function GroupsScreen({ token, onBack, openPage }) {
       await load()
       if (success) setMessage(success)
     } catch (error) {
-      setMessage(error?.message || '操作未完成，请稍后重试。')
+      setMessage(error?.message || i18nT('操作未完成，请稍后重试。'))
     } finally {
       setBusy(false)
     }
@@ -80,11 +81,11 @@ export default function GroupsScreen({ token, onBack, openPage }) {
       name,
       groupType: 'private',
       defaultMemberVisibility: 'status_only',
-      guidelines: '彼此提醒，不比较，不公开软弱。',
+      guidelines: i18nT('彼此提醒，不比较，不公开软弱。'),
       }, token)
       setName('')
       if (result.group?.id) setSelectedGroupId(result.group.id)
-    }, '守心小组已创建。')
+    }, i18nT('守心小组已创建。'))
   }
 
   async function joinGroup() {
@@ -92,7 +93,7 @@ export default function GroupsScreen({ token, onBack, openPage }) {
       const result = await attentionApi.joinGroup({ inviteCode }, token)
       setInviteCode('')
       if (result.group?.id) setSelectedGroupId(result.group.id)
-    }, '已加入守心小组。')
+    }, i18nT('已加入守心小组。'))
   }
 
   async function createTemplateChallenge(template) {
@@ -108,14 +109,14 @@ export default function GroupsScreen({ token, onBack, openPage }) {
       targetMinutes: template.defaultTargetMinutes,
       checkinPrompt: template.checkinPrompt,
       privacyMode: template.privacyMode || 'status_only',
-    }, token), '小组挑战已创建。')
+    }, token), i18nT('小组挑战已创建。'))
   }
 
   async function checkin(challenge) {
     await run(() => attentionApi.saveChallengeCheckin(challenge.groupId, challenge.id, {
       completed: true,
       visibilityLevel: challenge.privacyMode === 'summary' ? 'summary' : 'status_only',
-    }, token), '今日 Check-in 已保存。')
+    }, token), i18nT('今日 Check-in 已保存。'))
   }
 
   async function showParticipants(challenge) {
@@ -125,83 +126,83 @@ export default function GroupsScreen({ token, onBack, openPage }) {
       setParticipantView({ challenge, loading: false, participants: data.participants || [], progress: data.progress || challenge.progress })
     } catch (error) {
       setParticipantView(null)
-      setMessage(error?.message || '暂时无法加载挑战同行状态。')
+      setMessage(error?.message || i18nT('暂时无法加载挑战同行状态。'))
     }
   }
 
   return (
     <main className="attn-page">
       <header className="attn-header compact">
-        <button className="attn-ghost" type="button" onClick={onBack}>返回守心首页</button>
-        <h1>守心小组</h1>
-        <p>小组挑战只显示整体节奏和非排名进展。它不是排行榜，也不是公开动态。</p>
+        <button className="attn-ghost" type="button" onClick={onBack}>{i18nT("返回守心首页")}</button>
+        <h1>{i18nT("守心小组")}</h1>
+        <p>{i18nT("小组挑战只显示整体节奏和非排名进展。它不是排行榜，也不是公开动态。")}</p>
       </header>
 
       {message ? <div className="attn-alert" role="status">{message}</div> : null}
 
       <section className="attn-grid">
-        <AttentionCard title="创建小组" actionLabel="隐私设置" onAction={() => openPage('privacy')}>
+        <AttentionCard title={i18nT("创建小组")} actionLabel={i18nT("隐私设置")} onAction={() => openPage('privacy')}>
           <div className="attn-inline-form">
-            <input value={name} onChange={(e) => setName(e.target.value)} placeholder="例如：周三守心同行" />
-            <button className="attn-button" type="button" disabled={busy || !name.trim()} onClick={createGroup}>创建</button>
+            <input value={name} onChange={(e) => setName(e.target.value)} placeholder={i18nT("例如：周三守心同行")} />
+            <button className="attn-button" type="button" disabled={busy || !name.trim()} onClick={createGroup}>{i18nT("创建")}</button>
           </div>
         </AttentionCard>
 
-        <AttentionCard title="加入小组">
+        <AttentionCard title={i18nT("加入小组")}>
           <div className="attn-inline-form">
-            <input value={inviteCode} onChange={(e) => setInviteCode(e.target.value)} placeholder="邀请码" />
-            <button className="attn-button" type="button" disabled={busy || !inviteCode.trim()} onClick={joinGroup}>加入</button>
+            <input value={inviteCode} onChange={(e) => setInviteCode(e.target.value)} placeholder={i18nT("邀请码")} />
+            <button className="attn-button" type="button" disabled={busy || !inviteCode.trim()} onClick={joinGroup}>{i18nT("加入")}</button>
           </div>
         </AttentionCard>
 
-        <AttentionCard title="我的小组">
+        <AttentionCard title={i18nT("我的小组")}>
           <div className="attn-list">
             {groups.map((group) => (
               <button type="button" aria-pressed={selectedGroup?.id === group.id} className={`attn-list-item attn-group-choice ${selectedGroup?.id === group.id ? 'active' : ''}`} key={group.id} onClick={() => setSelectedGroupId(group.id)}>
                 <strong>{group.name}</strong>
                 <span>{GroupTypeLabel[group.groupType] || group.groupType} · {GroupRoleLabel[group.currentUserRole] || group.currentUserRole}</span>
-                <span>{group.membersCount || 0} 位成员 · {group.activeChallengesCount || 0} 个挑战</span>
-                {group.inviteCode ? <code>邀请码：{group.inviteCode}</code> : null}
+                <span>{group.membersCount || 0} {i18nT("位成员 ·")} {group.activeChallengesCount || 0} {i18nT("个挑战")}</span>
+                {group.inviteCode ? <code>{i18nT("邀请码：")}{group.inviteCode}</code> : null}
               </button>
             ))}
-            {!groups.length ? <p className="attn-muted">还没有守心小组。</p> : null}
+            {!groups.length ? <p className="attn-muted">{i18nT("还没有守心小组。")}</p> : null}
           </div>
         </AttentionCard>
 
-        <AttentionCard title={selectedGroup ? `${selectedGroup.name} · 小组详情` : '小组详情'}>
+        <AttentionCard title={selectedGroup ? i18nT('{name} · 小组详情', { name: selectedGroup.name }) : i18nT('小组详情')}>
           {selectedGroup ? <>
-            <p>成员按加入顺序显示，不按完成数或评分排序。</p>
+            <p>{i18nT("成员按加入顺序显示，不按完成数或评分排序。")}</p>
             <div className="attn-list">{members.map((member) => <div className="attn-list-item" key={member.id}><strong>{member.user?.displayName || member.user?.id}</strong><span>{GroupRoleLabel[member.role] || member.role} · {member.status}</span></div>)}</div>
-            <h4>小组挑战</h4>
-            <div className="attn-list">{groupChallenges.map((challenge) => <div className="attn-list-item" key={challenge.id}><strong>{challenge.title}</strong><span>{ChallengePrivacyLabel[challenge.privacyMode] || challenge.privacyMode} · 小组完成率 {challenge.progress?.groupCompletionRate || 0}%</span><button type="button" onClick={() => showParticipants(challenge)}>查看同行状态</button></div>)}{!groupChallenges.length ? <p className="attn-muted">这个小组还没有进行中的挑战。</p> : null}</div>
-          </> : <p className="attn-muted">选择或加入一个小组后查看详情。</p>}
+            <h4>{i18nT("小组挑战")}</h4>
+            <div className="attn-list">{groupChallenges.map((challenge) => <div className="attn-list-item" key={challenge.id}><strong>{challenge.title}</strong><span>{ChallengePrivacyLabel[challenge.privacyMode] || challenge.privacyMode} {i18nT("· 小组完成率")} {challenge.progress?.groupCompletionRate || 0}%</span><button type="button" onClick={() => showParticipants(challenge)}>{i18nT("查看同行状态")}</button></div>)}{!groupChallenges.length ? <p className="attn-muted">{i18nT("这个小组还没有进行中的挑战。")}</p> : null}</div>
+          </> : <p className="attn-muted">{i18nT("选择或加入一个小组后查看详情。")}</p>}
         </AttentionCard>
 
-        <AttentionCard title="我的挑战">
+        <AttentionCard title={i18nT("我的挑战")}>
           <div className="attn-list">
             {myChallenges.map((challenge) => (
               <div className="attn-list-item" key={challenge.id}>
                 <strong>{challenge.title}</strong>
-                <span>{ChallengePrivacyLabel[challenge.privacyMode] || challenge.privacyMode} · 完成 {challenge.progress?.completedCheckins || 0} 次</span>
+                <span>{ChallengePrivacyLabel[challenge.privacyMode] || challenge.privacyMode} {i18nT("· 完成")} {challenge.progress?.completedCheckins || 0} {i18nT("次")}</span>
                 <span>{challenge.progress?.encouragementText}</span>
-                <div className="attn-row-actions"><button type="button" disabled={busy} onClick={() => checkin(challenge)}>今日 Check-in</button><button type="button" onClick={() => showParticipants(challenge)}>同行状态</button></div>
+                <div className="attn-row-actions"><button type="button" disabled={busy} onClick={() => checkin(challenge)}>{i18nT("今日 Check-in")}</button><button type="button" onClick={() => showParticipants(challenge)}>{i18nT("同行状态")}</button></div>
               </div>
             ))}
-            {!myChallenges.length ? <p className="attn-muted">还没有参与中的挑战。</p> : null}
+            {!myChallenges.length ? <p className="attn-muted">{i18nT("还没有参与中的挑战。")}</p> : null}
           </div>
         </AttentionCard>
       </section>
 
       {participantView ? <section className="attn-section attn-participant-panel" aria-live="polite">
-        <div className="attn-card-head"><div><h2>{participantView.challenge.title} · 同行状态</h2><p>只显示挑战允许的状态摘要，不显示个人复盘正文，也不进行排名。</p></div><button type="button" className="attn-ghost" onClick={() => setParticipantView(null)}>关闭</button></div>
-        {participantView.loading ? <p>正在加载…</p> : participantView.challenge.privacyMode === 'anonymous_aggregate' ? <p>此挑战采用匿名聚合，仅显示 {participantView.progress?.activeParticipants || 0} 位参与者的整体节奏。</p> : <div className="attn-list">{participantView.participants.map((participant) => <div className="attn-list-item" key={participant.user?.id}><strong>{participant.user?.displayName || participant.user?.id}</strong><span>{participant.encouragementText}</span><span>已完成 {participant.completedDays || 0} 天</span></div>)}</div>}
+        <div className="attn-card-head"><div><h2>{participantView.challenge.title} {i18nT("· 同行状态")}</h2><p>{i18nT("只显示挑战允许的状态摘要，不显示个人复盘正文，也不进行排名。")}</p></div><button type="button" className="attn-ghost" onClick={() => setParticipantView(null)}>{i18nT("关闭")}</button></div>
+        {participantView.loading ? <p>{i18nT("正在加载…")}</p> : participantView.challenge.privacyMode === 'anonymous_aggregate' ? <p>{i18nT("此挑战采用匿名聚合，仅显示")} {participantView.progress?.activeParticipants || 0} {i18nT("位参与者的整体节奏。")}</p> : <div className="attn-list">{participantView.participants.map((participant) => <div className="attn-list-item" key={participant.user?.id}><strong>{participant.user?.displayName || participant.user?.id}</strong><span>{participant.encouragementText}</span><span>{i18nT("已完成")} {participant.completedDays || 0} {i18nT("天")}</span></div>)}</div>}
       </section> : null}
 
       <section className="attn-section">
-        <h2>温柔挑战模板</h2>
+        <h2>{i18nT("温柔挑战模板")}</h2>
         <div className="attn-grid compact">
           {templates.map((template) => (
-            <AttentionCard key={template.key} title={template.title} actionLabel={selectedGroup && ['owner', 'leader'].includes(selectedGroup.currentUserRole) ? '创建到当前小组' : ''} onAction={() => createTemplateChallenge(template)}>
+            <AttentionCard key={template.key} title={template.title} actionLabel={selectedGroup && ['owner', 'leader'].includes(selectedGroup.currentUserRole) ? i18nT('创建到当前小组') : ''} onAction={() => createTemplateChallenge(template)}>
               <p>{template.description}</p>
               <p className="attn-muted">{template.gentleGuideline}</p>
             </AttentionCard>

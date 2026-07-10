@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { attentionApi } from '../../../api'
 import { AttentionCard } from '../components/attentionComponents'
 import { AttentionVisibilityLabel, SensitiveCategoryLabel } from '../lib/privacy-types'
+import { t as i18nT } from '../../../i18n/runtime'
 
 const VISIBILITY = ['status_only', 'summary', 'private']
 
@@ -17,7 +18,7 @@ export default function PrivacyScreen({ token, onBack }) {
     setMessage('')
     attentionApi.privacy(token)
       .then((data) => { if (!cancelled) setSettings(data.settings) })
-      .catch(() => { if (!cancelled) setMessage('暂时无法加载隐私设置。') })
+      .catch(() => { if (!cancelled) setMessage(i18nT('暂时无法加载隐私设置。')) })
       .finally(() => { if (!cancelled) setLoading(false) })
     return () => { cancelled = true }
   }
@@ -46,9 +47,9 @@ export default function PrivacyScreen({ token, onBack }) {
     try {
       const data = await attentionApi.updatePrivacy(settings, token)
       setSettings(data.settings)
-      setMessage('隐私设置已保存。')
+      setMessage(i18nT('隐私设置已保存。'))
     } catch (err) {
-      setMessage(err?.message || '保存隐私设置时遇到问题。')
+      setMessage(err?.message || i18nT('保存隐私设置时遇到问题。'))
     } finally {
       setSaving(false)
     }
@@ -57,22 +58,22 @@ export default function PrivacyScreen({ token, onBack }) {
   return (
     <main className="attn-page">
       <header className="attn-header compact">
-        <button className="attn-ghost" type="button" onClick={onBack}>返回守心首页</button>
-        <h1>守心隐私</h1>
-        <p>你决定哪些摘要可以被看见。原始祷告、复盘、洞察和敏感牵引不会自动分享。</p>
+        <button className="attn-ghost" type="button" onClick={onBack}>{i18nT("返回守心首页")}</button>
+        <h1>{i18nT("守心隐私")}</h1>
+        <p>{i18nT("你决定哪些摘要可以被看见。原始祷告、复盘、洞察和敏感牵引不会自动分享。")}</p>
       </header>
 
-      {message ? <div className="attn-alert" role="status">{message}{!settings && !loading ? <button type="button" onClick={load}>重试</button> : null}</div> : null}
-      {loading ? <div className="attn-loading">正在加载隐私边界…</div> : null}
+      {message ? <div className="attn-alert" role="status">{message}{!settings && !loading ? <button type="button" onClick={load}>{i18nT("重试")}</button> : null}</div> : null}
+      {loading ? <div className="attn-loading">{i18nT("正在加载隐私边界…")}</div> : null}
 
       {settings ? (
         <section className="attn-grid">
-          <AttentionCard title="默认可见范围">
+          <AttentionCard title={i18nT("默认可见范围")}>
             <div className="attn-form-grid">
               {[
-                ['defaultPartnerVisibility', '守望伙伴默认可见'],
-                ['defaultGroupVisibility', '守心小组默认可见'],
-                ['defaultChallengeVisibility', '挑战 Check-in 默认可见'],
+                ['defaultPartnerVisibility', i18nT('守望伙伴默认可见')],
+                ['defaultGroupVisibility', i18nT('守心小组默认可见')],
+                ['defaultChallengeVisibility', i18nT('挑战 Check-in 默认可见')],
               ].map(([key, label]) => (
                 <label key={key}>
                   {label}
@@ -84,15 +85,15 @@ export default function PrivacyScreen({ token, onBack }) {
             </div>
           </AttentionCard>
 
-          <AttentionCard title="分享开关">
+          <AttentionCard title={i18nT("分享开关")}>
             <div className="attn-toggle-list">
               {[
-                ['shareWeeklyReportSummary', '允许手动分享周报摘要'],
-                ['shareWarfarePlanProgress', '允许手动分享守心计划进展'],
-                ['sharePrayerRequests', '允许发送代祷请求'],
-                ['shareScoresWithPartners', '允许向伙伴分享评分摘要'],
-                ['shareScoresWithGroups', '允许向小组分享评分摘要'],
-                ['requirePreviewBeforeSharing', '分享前需要预览'],
+                ['shareWeeklyReportSummary', i18nT('允许手动分享周报摘要')],
+                ['shareWarfarePlanProgress', i18nT('允许手动分享守心计划进展')],
+                ['sharePrayerRequests', i18nT('允许发送代祷请求')],
+                ['shareScoresWithPartners', i18nT('允许向伙伴分享评分摘要')],
+                ['shareScoresWithGroups', i18nT('允许向小组分享评分摘要')],
+                ['requirePreviewBeforeSharing', i18nT('分享前需要预览')],
               ].map(([key, label]) => (
                 <label key={key} className="attn-toggle">
                   <input type="checkbox" checked={Boolean(settings[key])} onChange={(e) => patch({ [key]: e.target.checked })} />
@@ -102,7 +103,7 @@ export default function PrivacyScreen({ token, onBack }) {
             </div>
           </AttentionCard>
 
-          <AttentionCard title="敏感内容保护">
+          <AttentionCard title={i18nT("敏感内容保护")}>
             <div className="attn-pill-grid">
               {Object.entries(SensitiveCategoryLabel).map(([key, label]) => (
                 <button
@@ -116,13 +117,13 @@ export default function PrivacyScreen({ token, onBack }) {
                 </button>
               ))}
             </div>
-            <p className="attn-muted">被保护的类别在分享摘要中会被遮蔽为“一个敏感牵引”。</p>
+            <p className="attn-muted">{i18nT("被保护的类别在分享摘要中会被遮蔽为“一个敏感牵引”。")}</p>
           </AttentionCard>
         </section>
       ) : null}
 
       <section className="attn-section">
-        <button className="attn-button" type="button" disabled={!settings || saving} onClick={save}>{saving ? '保存中…' : '保存隐私设置'}</button>
+        <button className="attn-button" type="button" disabled={!settings || saving} onClick={save}>{saving ? i18nT('保存中…') : i18nT('保存隐私设置')}</button>
       </section>
     </main>
   )

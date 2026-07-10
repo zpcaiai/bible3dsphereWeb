@@ -1219,6 +1219,7 @@ function AppContent() {
 
   // 分享深链：/?share=book:<id> 或 /?share=hymn:<id>
   useEffect(() => {
+    if (authLoading) return
     try {
       const pathMatch = window.location.pathname.match(/^\/attention(?:\/([^/]+))?\/?$/)
       if (pathMatch) {
@@ -1259,28 +1260,28 @@ function AppContent() {
         else if (kind === 'hymn') setActivePanel('prayer')
       }, 60)
     } catch { /* ignore */ }
-  }, [])
+  }, [authLoading])
 
   function handlePanelSwitch(panel) {
     const needsLogin = ['mydevotion', 'prayer', 'devotion', 'journal', 'evangelism', 'checkin', 'sharewall', 'innerlife', 'soul-question', 'growth-map', 'partner', 'bible-reading', 'communion', 'voice', 'attention']
     if (needsLogin.includes(panel) && !user) {
       const messages = {
-        mydevotion: '登录后记录和分享你的灵修日记',
-        prayer: '登录后参与代祷和分享祷告需要',
-        devotion: '登录后记录你的灵修成长',
-        sharewall: '登录后查看分享墙内容',
-        journal: '登录后查看主日信息',
-        evangelism: '登录后参与传FY事工',
-        checkin: '登录后打卡记录情绪',
-        innerlife: '登录后使用属灵辨识与灵镜分析',
-        mirror: '登录后查看圣经人物镜鉴',
-        'soul-question': '登录后开始每日灵魂一问',
-        'growth-map': '登录后查看你的灵命成长图谱',
-        'partner': '登录后配对属灵伙伴',
-        'bible-reading': '登录后记录圣经通读进度',
-        'communion': '登录后与弟兄姊妹聊天和语音通话',
-        'voice': '登录后创建群并发起多人实时语音通话',
-        attention: '登录后使用守心模块，保存每日注意力立约',
+        mydevotion: i18nT('登录后记录和分享你的灵修日记'),
+        prayer: i18nT('登录后参与代祷和分享祷告需要'),
+        devotion: i18nT('登录后记录你的灵修成长'),
+        sharewall: i18nT('登录后查看分享墙内容'),
+        journal: i18nT('登录后查看主日信息'),
+        evangelism: i18nT('登录后参与传福音事工'),
+        checkin: i18nT('登录后打卡记录情绪'),
+        innerlife: i18nT('登录后使用属灵辨识与灵镜分析'),
+        mirror: i18nT('登录后查看圣经人物镜鉴'),
+        'soul-question': i18nT('登录后开始每日灵魂一问'),
+        'growth-map': i18nT('登录后查看你的灵命成长图谱'),
+        'partner': i18nT('登录后配对属灵伙伴'),
+        'bible-reading': i18nT('登录后记录圣经通读进度'),
+        'communion': i18nT('登录后与弟兄姊妹聊天和语音通话'),
+        'voice': i18nT('登录后创建群并发起多人实时语音通话'),
+        attention: i18nT('登录后使用守心模块，保存每日注意力立约'),
       }
       setLoginMessage(messages[panel])
       setPendingPanel(panel)
@@ -1325,7 +1326,7 @@ function AppContent() {
   }
 
   function handleNeedLogin(message) {
-    setLoginOverlayMessage(message || '请先登录后再继续操作')
+    setLoginOverlayMessage(message || i18nT('请先登录后再继续操作'))
     setShowLoginOverlay(true)
   }
 
@@ -1339,7 +1340,7 @@ function AppContent() {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '24px 20px',
+        padding: 0,
         boxSizing: 'border-box',
         overflowY: 'auto',
         overflowX: 'hidden',
@@ -1552,6 +1553,62 @@ function AppContent() {
         </div>
       )
     }
+
+    if (authLoading) {
+      return (
+        <div style={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#050507', color: 'rgba(255,255,255,0.7)' }}>
+          {i18nT('加载中…')}
+        </div>
+      )
+    }
+
+    if (!user && (showLogin || showLoginOverlay)) {
+      return (
+        <LoginScreen
+          onLogin={handleLoginSuccess}
+          message={showLoginOverlay ? loginOverlayMessage : loginMessage}
+          onBack={() => {
+            if (showLoginOverlay) {
+              setShowLoginOverlay(false)
+              setLoginOverlayMessage('')
+              return
+            }
+            setShowLogin(false)
+            setPendingPanel(null)
+            setLoginMessage('')
+            setActivePanel('sphere')
+          }}
+        />
+      )
+    }
+
+    if (user && activePanel === 'attention') {
+      return (
+        <div style={{ minHeight: '100dvh', background: '#0d0d14' }}>
+          <div style={{
+            position: 'fixed',
+            top: 'calc(env(safe-area-inset-top, 0px) + 8px)',
+            right: 'calc(env(safe-area-inset-right, 0px) + 10px)',
+            zIndex: 1500,
+          }}>
+            <LanguageToggle />
+          </div>
+          <Suspense fallback={<div style={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'rgba(255,255,255,0.7)' }}>{i18nT('加载中…')}</div>}>
+            <AttentionPage
+              user={user}
+              token={getToken()}
+              initialSection={attentionInitialSection}
+              onBack={() => {
+                try { window.history.replaceState({}, '', '/') } catch { /* ignore */ }
+                setActivePanel('sphere')
+              }}
+            />
+          </Suspense>
+        </div>
+      )
+    }
+
+    const suppressGlobalChrome = showSOS
 
     return (
       <div className="mobile-app-shell">
@@ -2960,25 +3017,6 @@ function AppContent() {
           </div>
         )}
 
-        {/* 守心 — Attention Stewardship */}
-        {activePanel === 'attention' && (
-          <div className="page-overlay">
-            {user ? (
-              <Suspense fallback={null}>
-                <AttentionPage
-                  user={user}
-                  token={getToken()}
-                  initialSection={attentionInitialSection}
-                  onBack={() => {
-                    try { window.history.replaceState({}, '', '/') } catch { /* ignore */ }
-                    setActivePanel('sphere')
-                  }}
-                />
-              </Suspense>
-            ) : showLogin ? renderInlineLogin() : null}
-          </div>
-        )}
-
         {/* A5: 2分钟快速灵修 */}
         {showQuickDevotion && (
           <Suspense fallback={null}>
@@ -3007,7 +3045,7 @@ function AppContent() {
         </Suspense>
 
         {/* 底部 Tab Bar */}
-        <nav className="mobile-bottom-nav glass">
+        {!suppressGlobalChrome ? <nav className="mobile-bottom-nav glass" aria-label={i18nT('主要导航')}>
           <button
             className={`mobile-nav-item ${activePanel === 'sphere' ? 'active' : ''}`}
             onClick={() => setActivePanel('sphere')}
@@ -3071,26 +3109,29 @@ function AppContent() {
             <span className="mobile-nav-icon">💬</span>
             <span className="mobile-nav-label">{i18nT('相通')}</span>
           </button>
-        </nav>
+        </nav> : null}
 
         {/* 全局实时：唯一 WebSocket + 任意页面来电弹窗 */}
         <RealtimeRoot user={user} />
 
         {/* 属灵守护者·和平鸽精灵（右下角常驻） */}
-        <Suspense fallback={null}>
-          <GuardianWidget />
-        </Suspense>
-        <ExpansionLauncher />
+        {!suppressGlobalChrome ? (
+          <>
+            <Suspense fallback={null}>
+              <GuardianWidget />
+            </Suspense>
+            <ExpansionLauncher />
+          </>
+        ) : null}
 
         {/* 浮动登录遮罩 — 保持当前页面挂载，不清空用户输入 */}
         {showLoginOverlay && !user && (
           <div style={{
             position: 'fixed', inset: 0, zIndex: 9999,
-            background: 'rgba(0,0,0,0.75)',
-            backdropFilter: 'blur(8px)',
+            background: '#050507',
             display: 'flex', flexDirection: 'column',
             alignItems: 'center', justifyContent: 'center',
-            padding: '24px 20px', boxSizing: 'border-box',
+            padding: 0, boxSizing: 'border-box',
             overflowY: 'auto',
           }}>
             <LoginScreen

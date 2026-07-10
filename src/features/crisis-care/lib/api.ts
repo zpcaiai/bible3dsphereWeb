@@ -11,7 +11,7 @@ import type {
 
 async function call(path: string, init: RequestInit = {}, auth = false): Promise<any> {
   const token = auth ? getToken() : null;
-  const res = await fetch(`${API_BASE}/api/crisis${path}`, {
+  const res = await fetch(`${API_BASE}/crisis${path}`, {
     ...init,
     headers: {
       "Content-Type": "application/json",

@@ -1,12 +1,13 @@
 import React, { useMemo } from 'react'
 import { enabledAttentionRoutes } from '../lib/integration/route-registry'
+import { t as i18nT } from '../../../i18n/runtime'
 
 const GROUP_LABELS = {
-  daily: '每日节奏',
-  insight: '洞察与成长',
-  community: '同行关系',
-  settings: '设置',
-  admin: '运营',
+  daily: i18nT('每日节奏'),
+  insight: i18nT('洞察与成长'),
+  community: i18nT('同行关系'),
+  settings: i18nT('设置'),
+  admin: i18nT('运营'),
 }
 
 export default function AttentionShell({ section, openPage, flags, isAdmin, children }) {
@@ -18,9 +19,9 @@ export default function AttentionShell({ section, openPage, flags, isAdmin, chil
 
   return (
     <div className="attn-shell">
-      <aside className="attn-sidebar" aria-label="守心模块导航">
+      <aside className="attn-sidebar" aria-label={i18nT("守心模块导航")}>
         <button className="attn-brand" type="button" onClick={() => openPage('dashboard')}>
-          <strong>守心</strong>
+          <strong>{i18nT("守心")}</strong>
           <span>Attention Stewardship</span>
         </button>
         {Object.entries(grouped).map(([group, items]) => (
@@ -44,8 +45,8 @@ export default function AttentionShell({ section, openPage, flags, isAdmin, chil
       </aside>
 
       <details className="attn-mobile-nav">
-        <summary>守心导航 · {routes.find((route) => route.key === section)?.label || '守心首页'}</summary>
-        <nav aria-label="守心移动导航">
+        <summary><span>{routes.find((route) => route.key === section)?.label || i18nT('守心首页')}</span></summary>
+        <nav aria-label={i18nT("守心移动导航")}>
           {routes.map((route) => (
             <button
               type="button"

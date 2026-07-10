@@ -62,6 +62,7 @@ describe('attention integrated journeys', () => {
     await waitFor(() => expect(view.getByRole('heading', { level: 1, name: '注意力账本' })).toBeTruthy())
     expect(view.getByDisplayValue('完成发布检查')).toBeTruthy()
     expect(view.getByDisplayValue('20')).toBeTruthy()
+    expect(view.queryByDisplayValue('完成核心任务')).toBeNull()
   })
 
   it('requires an explicit preview before sharing a weekly report', async () => {

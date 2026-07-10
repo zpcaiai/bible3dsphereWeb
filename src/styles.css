@@ -671,8 +671,15 @@ button, input, textarea {
   bottom: 0;
   padding: 8px 8px calc(8px + var(--safe-bottom));
   display: grid;
-  grid-template-columns: repeat(8, 1fr);
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(56px, 1fr);
+  grid-template-columns: none;
   gap: 2px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
   z-index: 1000;
   background: rgba(0, 0, 0, 0.75);
   backdrop-filter: blur(20px) saturate(180%);
@@ -680,6 +687,8 @@ button, input, textarea {
   border-top: 0.5px solid var(--ios-border);
   height: var(--tab-bar-height);
 }
+
+.mobile-bottom-nav::-webkit-scrollbar { display: none; }
 
 .mobile-nav-item {
   border: none;
@@ -696,6 +705,7 @@ button, input, textarea {
   gap: 3px;
   transition: color 0.2s ease;
   padding: 4px 4px;
+  scroll-snap-align: center;
 }
 
 .mobile-nav-item.active {
@@ -710,9 +720,15 @@ button, input, textarea {
 }
 
 .mobile-nav-label {
-  font-size: 9px;
+  font-size: 11px;
   line-height: 1;
   font-weight: 500;
+}
+
+.auth-input:focus-visible,
+[role="tab"]:focus-visible {
+  outline: 3px solid #64b5ff !important;
+  outline-offset: 2px;
 }
 
 @keyframes paneIn {
@@ -3506,7 +3522,7 @@ canvas {
   }
 
   .mobile-nav-label {
-    font-size: 9px;
+    font-size: 11px;
   }
 
   .mobile-sphere-stage {

@@ -3,12 +3,13 @@ import { attentionApi } from '../../../api'
 import { AttentionCategoryLabel } from '../lib/constants'
 import { ScoreLabelText } from '../lib/score-types'
 import { AttentionCard } from '../components/attentionComponents'
+import { t as i18nT } from '../../../i18n/runtime'
 
 const TREND_LABEL = {
-  up: '比上周更稳定',
-  down: '本周节奏有些波动',
-  stable: '与上周大致稳定',
-  insufficient: '趋势参考不足',
+  up: i18nT('比上周更稳定'),
+  down: i18nT('本周节奏有些波动'),
+  stable: i18nT('与上周大致稳定'),
+  insufficient: i18nT('趋势参考不足'),
 }
 
 const CATEGORY_KEYS = ['worship', 'mission', 'relationship', 'restoration', 'captured']
@@ -36,12 +37,12 @@ function formatRange(report, weekStart) {
   return `${start} - ${end}`
 }
 
-function copyText(text, setMessage, fallback = '已复制。') {
+function copyText(text, setMessage, fallback = i18nT('已复制。')) {
   if (!text) return
-  navigator.clipboard?.writeText(text).then(() => setMessage(fallback)).catch(() => setMessage('暂时无法复制，请手动选择文字。'))
+  navigator.clipboard?.writeText(text).then(() => setMessage(fallback)).catch(() => setMessage(i18nT('暂时无法复制，请手动选择文字。')))
 }
 
-function SparkBars({ points, metric = 'score', nullLabel = '记录不足' }) {
+function SparkBars({ points, metric = 'score', nullLabel = i18nT('记录不足') }) {
   const values = points.map((point) => point?.[metric]).filter((value) => value != null)
   const max = Math.max(100, ...values, 1)
   return (
@@ -63,9 +64,9 @@ function SparkBars({ points, metric = 'score', nullLabel = '记录不足' }) {
 function ScoreMeaningNotice({ report }) {
   return (
     <section className="attn-section attn-notice">
-      <h2>评分说明</h2>
-      <p>守心评分是节奏指标，不是属灵身份，也不是神对你的评价。它只帮助你看见：哪些节奏正在建立，哪些地方需要温柔留意。</p>
-      {report?.dataCompleteness < 60 ? <p>本周记录还不够完整，因此分数仅供参考，或者暂不显示。</p> : null}
+      <h2>{i18nT("评分说明")}</h2>
+      <p>{i18nT("守心评分是节奏指标，不是属灵身份，也不是神对你的评价。它只帮助你看见：哪些节奏正在建立，哪些地方需要温柔留意。")}</p>
+      {report?.dataCompleteness < 60 ? <p>{i18nT("本周记录还不够完整，因此分数仅供参考，或者暂不显示。")}</p> : null}
     </section>
   )
 }
@@ -75,18 +76,18 @@ function WeekSelector({ weekStart, setWeekStart, loading, onGenerate, onRefresh 
   return (
     <section className="attn-section attn-week-selector">
       <div className="attn-week-controls">
-        <button type="button" className="attn-ghost" onClick={() => setWeekStart(isoDate(addDays(new Date(`${weekStart}T00:00:00`), -7)))}>上一周</button>
+        <button type="button" className="attn-ghost" onClick={() => setWeekStart(isoDate(addDays(new Date(`${weekStart}T00:00:00`), -7)))}>{i18nT("上一周")}</button>
         <input type="date" value={weekStart} onChange={(e) => setWeekStart(isoDate(mondayOf(new Date(`${e.target.value}T00:00:00`))))} />
-        <button type="button" className="attn-ghost" onClick={() => setWeekStart(isoDate(addDays(new Date(`${weekStart}T00:00:00`), 7)))}>下一周</button>
-        <button type="button" className="attn-ghost" onClick={() => setWeekStart(current)}>本周</button>
-        <button type="button" className="attn-ghost" onClick={() => setWeekStart(isoDate(addDays(new Date(`${current}T00:00:00`), -7)))}>上周</button>
+        <button type="button" className="attn-ghost" onClick={() => setWeekStart(isoDate(addDays(new Date(`${weekStart}T00:00:00`), 7)))}>{i18nT("下一周")}</button>
+        <button type="button" className="attn-ghost" onClick={() => setWeekStart(current)}>{i18nT("本周")}</button>
+        <button type="button" className="attn-ghost" onClick={() => setWeekStart(isoDate(addDays(new Date(`${current}T00:00:00`), -7)))}>{i18nT("上周")}</button>
       </div>
       <div className="attn-week-actions">
-        <button type="button" className="attn-button" disabled={loading} onClick={() => onGenerate(false)}>生成 / 查看周报</button>
-        <button type="button" className="attn-button secondary" disabled={loading} onClick={() => onRefresh()}>重新加载</button>
-        <button type="button" className="attn-button secondary" disabled={loading} onClick={() => onGenerate(true)}>重新生成</button>
+        <button type="button" className="attn-button" disabled={loading} onClick={() => onGenerate(false)}>{i18nT("生成 / 查看周报")}</button>
+        <button type="button" className="attn-button secondary" disabled={loading} onClick={() => onRefresh()}>{i18nT("重新加载")}</button>
+        <button type="button" className="attn-button secondary" disabled={loading} onClick={() => onGenerate(true)}>{i18nT("重新生成")}</button>
       </div>
-      {weekStart === current ? <p>这是本周截至今天的临时报告，周末后可重新生成完整周报。</p> : null}
+      {weekStart === current ? <p>{i18nT("这是本周截至今天的临时报告，周末后可重新生成完整周报。")}</p> : null}
     </section>
   )
 }
@@ -95,9 +96,9 @@ function WeeklyHero({ report, weekStart }) {
   return (
     <section className="attn-section attn-report-hero">
       <p className="attn-sub">{formatRange(report, weekStart)}</p>
-      <h2>{report?.scoreAverage == null ? '记录不足，暂不显示评分' : `${report.scoreAverage} 分 · ${ScoreLabelText[report.scoreLabel] || report.scoreLabel}`}</h2>
-      <p>{report?.reportSections?.weeklySummary || '你可以根据这一周的立约、账本、专注、复盘和守心计划生成一份温柔回顾。'}</p>
-      {report ? <p>趋势：{TREND_LABEL[report.scoreTrend] || '趋势参考不足'} · 数据完整度 {report.dataCompleteness}%</p> : null}
+      <h2>{report?.scoreAverage == null ? i18nT('记录不足，暂不显示评分') : i18nT('{score} 分 · {label}', { score: report.scoreAverage, label: ScoreLabelText[report.scoreLabel] || report.scoreLabel })}</h2>
+      <p>{report?.reportSections?.weeklySummary || i18nT('你可以根据这一周的立约、账本、专注、复盘和守心计划生成一份温柔回顾。')}</p>
+      {report ? <p>{i18nT("趋势：")}{TREND_LABEL[report.scoreTrend] || i18nT('趋势参考不足')} {i18nT("· 数据完整度")} {report.dataCompleteness}%</p> : null}
     </section>
   )
 }
@@ -112,7 +113,7 @@ function ScoreBreakdown({ report }) {
   })
   const averaged = Object.values(byKey).map((item) => ({ ...item, score: Math.round(item.score / Math.max(1, item.count)) }))
   return (
-    <AttentionCard title="评分组成" subtitle="展示的是本周每日组件的平均值">
+    <AttentionCard title={i18nT("评分组成")} subtitle={i18nT("展示的是本周每日组件的平均值")}>
       <div className="attn-breakdown">
         {averaged.length ? averaged.map((item) => (
           <div key={item.key} className="attn-breakdown-row">
@@ -122,7 +123,7 @@ function ScoreBreakdown({ report }) {
             <p>{item.reason}</p>
             {item.gentleSuggestion ? <p>{item.gentleSuggestion}</p> : null}
           </div>
-        )) : <p>生成周报后会显示 6 个维度的节奏参考。</p>}
+        )) : <p>{i18nT("生成周报后会显示 6 个维度的节奏参考。")}</p>}
       </div>
     </AttentionCard>
   )
@@ -133,36 +134,36 @@ function AllocationChart({ report }) {
   const percentages = report?.categoryPercentages || {}
   const invested = CATEGORY_KEYS.filter((key) => key !== 'captured').reduce((sum, key) => sum + Number(minutes[key] || 0), 0)
   return (
-    <AttentionCard title="五类注意力分布">
+    <AttentionCard title={i18nT("五类注意力分布")}>
       <div className="attn-allocation">
         {CATEGORY_KEYS.map((key) => (
           <div key={key}>
             <span>{AttentionCategoryLabel[key] || key}</span>
-            <strong>{minutes[key] || 0} 分钟 · {percentages[key] || 0}%</strong>
+            <strong>{minutes[key] || 0} {i18nT("分钟 ·")} {percentages[key] || 0}%</strong>
             <div><i className={`attn-cat-${key}`} style={{ width: `${percentages[key] || 0}%` }} /></div>
           </div>
         ))}
       </div>
-      {minutes.captured > 0 ? <p>本周有一部分注意力被牵引。看见它，是重新设防的开始。</p> : null}
-      {invested > (minutes.captured || 0) ? <p>本周更多注意力投入在敬拜、使命、关系与恢复上，这是可以感恩的节奏。</p> : null}
+      {minutes.captured > 0 ? <p>{i18nT("本周有一部分注意力被牵引。看见它，是重新设防的开始。")}</p> : null}
+      {invested > (minutes.captured || 0) ? <p>{i18nT("本周更多注意力投入在敬拜、使命、关系与恢复上，这是可以感恩的节奏。")}</p> : null}
     </AttentionCard>
   )
 }
 
 function PullTrendList({ pulls }) {
   return (
-    <AttentionCard title="主要牵引">
+    <AttentionCard title={i18nT("主要牵引")}>
       {pulls?.length ? (
         <ul className="attn-report-list">
           {pulls.slice(0, 5).map((pull) => (
             <li key={pull.pull}>
               <strong>{pull.label}</strong>
-              <span>{pull.count} 次 · {pull.minutes} 分钟</span>
-              <p>{pull.label}出现时，可以把查看、回应或逃避放到固定窗口，而不是让它随时接管注意力。</p>
+              <span>{pull.count} {i18nT("次 ·")} {pull.minutes} {i18nT("分钟")}</span>
+              <p>{pull.label}{i18nT("出现时，可以把查看、回应或逃避放到固定窗口，而不是让它随时接管注意力。")}</p>
             </li>
           ))}
         </ul>
-      ) : <p>本周没有记录明显牵引。继续保持温柔觉察。</p>}
+      ) : <p>{i18nT("本周没有记录明显牵引。继续保持温柔觉察。")}</p>}
     </AttentionCard>
   )
 }
@@ -173,23 +174,23 @@ function GrowthCurvePanel({ trend, days, setDays }) {
     <section className="attn-section">
       <div className="attn-card-head">
         <div>
-          <h2>成长曲线</h2>
-          <p>看见长期节奏，而不是被某一天定义。</p>
+          <h2>{i18nT("成长曲线")}</h2>
+          <p>{i18nT("看见长期节奏，而不是被某一天定义。")}</p>
         </div>
         <div className="attn-segmented">
-          {[30, 60, 90].map((value) => <button type="button" key={value} aria-pressed={days === value} className={days === value ? 'active' : ''} onClick={() => setDays(value)}>{value} 天</button>)}
+          {[30, 60, 90].map((value) => <button type="button" key={value} aria-pressed={days === value} className={days === value ? 'active' : ''} onClick={() => setDays(value)}>{value} {i18nT("天")}</button>)}
         </div>
       </div>
       {trend?.points?.length ? (
         <div className="attn-growth-grid">
-          <AttentionCard title="守心评分趋势" subtitle={`平均 ${summary.averageScore ?? '记录不足'}`}><SparkBars points={trend.points} metric="score" /></AttentionCard>
-          <AttentionCard title="投入型注意力" subtitle={`日均 ${summary.averageInvestedMinutes || 0} 分钟`}><SparkBars points={trend.points} metric="investedMinutes" /></AttentionCard>
-          <AttentionCard title="被牵引注意力" subtitle={`日均 ${summary.averageCapturedMinutes || 0} 分钟`}><SparkBars points={trend.points} metric="capturedMinutes" /></AttentionCard>
-          <AttentionCard title="专注分钟" subtitle={summary.focusTrend === 'up' ? '专注投入有增加趋势。' : summary.focusTrend === 'insufficient' ? '趋势仅供参考。' : '继续温柔观察。'}><SparkBars points={trend.points} metric="focusMinutes" /></AttentionCard>
+          <AttentionCard title={i18nT("守心评分趋势")} subtitle={i18nT('平均 {value}', { value: summary.averageScore ?? i18nT('记录不足') })}><SparkBars points={trend.points} metric="score" /></AttentionCard>
+          <AttentionCard title={i18nT("投入型注意力")} subtitle={i18nT('日均 {count} 分钟', { count: summary.averageInvestedMinutes || 0 })}><SparkBars points={trend.points} metric="investedMinutes" /></AttentionCard>
+          <AttentionCard title={i18nT("被牵引注意力")} subtitle={i18nT('日均 {count} 分钟', { count: summary.averageCapturedMinutes || 0 })}><SparkBars points={trend.points} metric="capturedMinutes" /></AttentionCard>
+          <AttentionCard title={i18nT("专注分钟")} subtitle={summary.focusTrend === 'up' ? i18nT('专注投入有增加趋势。') : summary.focusTrend === 'insufficient' ? i18nT('趋势仅供参考。') : i18nT('继续温柔观察。')}><SparkBars points={trend.points} metric="focusMinutes" /></AttentionCard>
         </div>
-      ) : <p>成长曲线还没有足够记录。</p>}
-      {summary.capturedTrend === 'down' ? <p>被牵引时长有下降趋势，这是值得感恩的变化。</p> : null}
-      {summary.capturedTrend === 'up' ? <p>被牵引时长近期有上升趋势，可以温柔留意触发场景。</p> : null}
+      ) : <p>{i18nT("成长曲线还没有足够记录。")}</p>}
+      {summary.capturedTrend === 'down' ? <p>{i18nT("被牵引时长有下降趋势，这是值得感恩的变化。")}</p> : null}
+      {summary.capturedTrend === 'up' ? <p>{i18nT("被牵引时长近期有上升趋势，可以温柔留意触发场景。")}</p> : null}
     </section>
   )
 }
@@ -211,7 +212,7 @@ export default function ReportsScreen({ token, timezone, onBack, openPage }) {
       const data = await attentionApi.weeklyReport({ weekStart }, token, timezone)
       setReport(data.report || null)
     } catch {
-      setError('暂时无法加载守心周报，请稍后再试。')
+      setError(i18nT('暂时无法加载守心周报，请稍后再试。'))
     } finally {
       setLoading(false)
     }
@@ -224,10 +225,10 @@ export default function ReportsScreen({ token, timezone, onBack, openPage }) {
     try {
       const data = await attentionApi.generateWeeklyReport({ weekStart, forceRegenerate }, token, timezone)
       setReport(data.report)
-      setMessage(forceRegenerate ? '已重新生成这份周报。' : '已生成守心周报。')
+      setMessage(forceRegenerate ? i18nT('已重新生成这份周报。') : i18nT('已生成守心周报。'))
       await loadHistory()
     } catch {
-      setError('生成守心周报时遇到问题，请稍后再试。')
+      setError(i18nT('生成守心周报时遇到问题，请稍后再试。'))
     } finally {
       setLoading(false)
     }
@@ -239,14 +240,14 @@ export default function ReportsScreen({ token, timezone, onBack, openPage }) {
   }
 
   async function hideReport(id) {
-    if (!window.confirm('确定隐藏这份周报吗？这不会影响原始注意力记录。')) return
+    if (!window.confirm(i18nT('确定隐藏这份周报吗？这不会影响原始注意力记录。'))) return
     try {
       await attentionApi.deleteWeeklyReport(id, token, timezone)
-      setMessage('已隐藏这份周报。')
+      setMessage(i18nT('已隐藏这份周报。'))
       if (report?.id === id) setReport(null)
       await loadHistory()
     } catch {
-      setError('隐藏周报时遇到问题，请稍后再试。')
+      setError(i18nT('隐藏周报时遇到问题，请稍后再试。'))
     }
   }
 
@@ -262,7 +263,7 @@ export default function ReportsScreen({ token, timezone, onBack, openPage }) {
     let cancelled = false
     attentionApi.growthTrend({ days }, token, timezone)
       .then((data) => { if (!cancelled) setGrowth(data.trend) })
-      .catch(() => { if (!cancelled) setError('暂时无法加载成长曲线，请稍后再试。') })
+      .catch(() => { if (!cancelled) setError(i18nT('暂时无法加载成长曲线，请稍后再试。')) })
     return () => { cancelled = true }
   }, [days, token, timezone])
 
@@ -271,17 +272,17 @@ export default function ReportsScreen({ token, timezone, onBack, openPage }) {
   return (
     <main className="attn-page">
       <header className="attn-header">
-        <button className="attn-ghost" type="button" onClick={onBack}>返回守心首页</button>
+        <button className="attn-ghost" type="button" onClick={onBack}>{i18nT("返回守心首页")}</button>
         <div>
-          <h1>守心周报</h1>
-          <p>安静回看这一周：注意力献给了什么，心被什么牵引，又在哪里重新归回。</p>
-          <p className="attn-sub">周报不是属灵成绩单，而是帮助你看见节奏、恩典与下周一个小小的操练方向。</p>
+          <h1>{i18nT("守心周报")}</h1>
+          <p>{i18nT("安静回看这一周：注意力献给了什么，心被什么牵引，又在哪里重新归回。")}</p>
+          <p className="attn-sub">{i18nT("周报不是属灵成绩单，而是帮助你看见节奏、恩典与下周一个小小的操练方向。")}</p>
         </div>
       </header>
 
       {error ? <div className="attn-alert">{error}</div> : null}
       {message ? <div className="attn-alert">{message}</div> : null}
-      {loading ? <div className="attn-loading">正在整理这一周的守心记录…</div> : null}
+      {loading ? <div className="attn-loading">{i18nT("正在整理这一周的守心记录…")}</div> : null}
 
       <ScoreMeaningNotice report={report} />
       <WeekSelector weekStart={weekStart} setWeekStart={setWeekStart} loading={loading} onGenerate={generate} onRefresh={loadReport} />
@@ -289,38 +290,38 @@ export default function ReportsScreen({ token, timezone, onBack, openPage }) {
 
       {!report ? (
         <section className="attn-section">
-          <h2>这周还没有生成守心周报</h2>
-          <p>你可以根据这一周的立约、账本、专注、复盘和守心计划生成一份温柔回顾。</p>
-          <button type="button" className="attn-button" onClick={() => generate(false)} disabled={loading}>生成本周报告</button>
+          <h2>{i18nT("这周还没有生成守心周报")}</h2>
+          <p>{i18nT("你可以根据这一周的立约、账本、专注、复盘和守心计划生成一份温柔回顾。")}</p>
+          <button type="button" className="attn-button" onClick={() => generate(false)} disabled={loading}>{i18nT("生成本周报告")}</button>
         </section>
       ) : (
         <>
           <section className="attn-grid">
-            <AttentionCard title="平均守心节奏" subtitle="这个分数不是属灵价值，只是根据记录计算出的节奏参考。">
-              <div className="attn-score-number">{report.scoreAverage == null ? '记录不足' : report.scoreAverage}</div>
-              <p>{ScoreLabelText[report.scoreLabel] || report.scoreLabel} · 数据完整度 {report.dataCompleteness}%</p>
+            <AttentionCard title={i18nT("平均守心节奏")} subtitle={i18nT("这个分数不是属灵价值，只是根据记录计算出的节奏参考。")}>
+              <div className="attn-score-number">{report.scoreAverage == null ? i18nT('记录不足') : report.scoreAverage}</div>
+              <p>{ScoreLabelText[report.scoreLabel] || report.scoreLabel} {i18nT("· 数据完整度")} {report.dataCompleteness}%</p>
             </AttentionCard>
-            <AttentionCard title="专注与执行">
-              <p>专注不是证明自己，而是把一段注意力忠心献上。</p>
+            <AttentionCard title={i18nT("专注与执行")}>
+              <p>{i18nT("专注不是证明自己，而是把一段注意力忠心献上。")}</p>
               <dl className="attn-summary-list">
-                <div><dt>总专注分钟</dt><dd>{report.focusSummary?.totalMinutes || 0}</dd></div>
-                <div><dt>完成段数</dt><dd>{report.focusSummary?.completedSessions || 0}</dd></div>
-                <div><dt>中断段数</dt><dd>{report.focusSummary?.interruptedSessions || 0}</dd></div>
+                <div><dt>{i18nT("总专注分钟")}</dt><dd>{report.focusSummary?.totalMinutes || 0}</dd></div>
+                <div><dt>{i18nT("完成段数")}</dt><dd>{report.focusSummary?.completedSessions || 0}</dd></div>
+                <div><dt>{i18nT("中断段数")}</dt><dd>{report.focusSummary?.interruptedSessions || 0}</dd></div>
               </dl>
             </AttentionCard>
-            <AttentionCard title="晚间复盘节奏">
-              <p>晚间复盘不是总结失败，而是在神面前看见恩典、承认失守、设立明日防线。</p>
+            <AttentionCard title={i18nT("晚间复盘节奏")}>
+              <p>{i18nT("晚间复盘不是总结失败，而是在神面前看见恩典、承认失守、设立明日防线。")}</p>
               <strong>{report.reviewSummary?.reviewDays || 0} / 7</strong>
               <p>{report.reviewSummary?.reviewRhythmLabel}</p>
             </AttentionCard>
-            <AttentionCard title="守心计划进展" actionLabel="查看争战地图" onAction={() => openPage('warfare')}>
-              <p>守心计划不是靠意志力硬撑，而是提前铺好归回路径。</p>
-              <p>活跃计划 {report.warfareSummary?.activePlansCount || 0} 个 · check-in {report.warfareSummary?.checkinsCount || 0} 次</p>
+            <AttentionCard title={i18nT("守心计划进展")} actionLabel={i18nT("查看争战地图")} onAction={() => openPage('warfare')}>
+              <p>{i18nT("守心计划不是靠意志力硬撑，而是提前铺好归回路径。")}</p>
+              <p>{i18nT("活跃计划")} {report.warfareSummary?.activePlansCount || 0} {i18nT("个 · check-in")} {report.warfareSummary?.checkinsCount || 0} {i18nT("次")}</p>
             </AttentionCard>
           </section>
 
           <section className="attn-grid">
-            <AttentionCard title="每日评分曲线"><SparkBars points={report.dailyScores || []} /></AttentionCard>
+            <AttentionCard title={i18nT("每日评分曲线")}><SparkBars points={report.dailyScores || []} /></AttentionCard>
             <ScoreBreakdown report={report} />
           </section>
 
@@ -330,21 +331,21 @@ export default function ReportsScreen({ token, timezone, onBack, openPage }) {
           </section>
 
           <section className="attn-grid">
-            <AttentionCard title="本周可以感恩的地方">
-              <ul className="attn-report-list">{(sections.graceHighlights || ['即使本周记录不多，愿你看见：你愿意回看自己的注意力，这本身就是恩典的开始。']).map((item) => <li key={item}>{item}</li>)}</ul>
+            <AttentionCard title={i18nT("本周可以感恩的地方")}>
+              <ul className="attn-report-list">{(sections.graceHighlights || [i18nT('即使本周记录不多，愿你看见：你愿意回看自己的注意力，这本身就是恩典的开始。')]).map((item) => <li key={item}>{item}</li>)}</ul>
             </AttentionCard>
-            <AttentionCard title="本周需要温柔留意的模式">
+            <AttentionCard title={i18nT("本周需要温柔留意的模式")}>
               <p>{sections.mainPattern}</p>
               <p>{sections.warningWithoutShame}</p>
             </AttentionCard>
-            <AttentionCard title="下周一个操练">
+            <AttentionCard title={i18nT("下周一个操练")}>
               <p>{report.nextWeekPractice || sections.nextWeekPractice}</p>
               <p>{sections.suggestedBoundary}</p>
-              <button type="button" className="attn-button secondary" onClick={() => copyText(`${report.nextWeekPractice || ''}\n${sections.suggestedBoundary || ''}`, setMessage, '已复制下周操练。')}>复制到下周操练</button>
+              <button type="button" className="attn-button secondary" onClick={() => copyText(`${report.nextWeekPractice || ''}\n${sections.suggestedBoundary || ''}`, setMessage, i18nT('已复制下周操练。'))}>{i18nT("复制到下周操练")}</button>
             </AttentionCard>
-            <AttentionCard title="周报祷告">
+            <AttentionCard title={i18nT("周报祷告")}>
               <p>{report.prayer}</p>
-              <button type="button" className="attn-button secondary" onClick={() => copyText(report.prayer, setMessage, '祷告已复制。')}>复制祷告</button>
+              <button type="button" className="attn-button secondary" onClick={() => copyText(report.prayer, setMessage, i18nT('祷告已复制。'))}>{i18nT("复制祷告")}</button>
             </AttentionCard>
           </section>
         </>
@@ -353,23 +354,23 @@ export default function ReportsScreen({ token, timezone, onBack, openPage }) {
       <GrowthCurvePanel trend={growth} days={days} setDays={setDays} />
 
       <section className="attn-section">
-        <h2>历史周报</h2>
+        <h2>{i18nT("历史周报")}</h2>
         {history.length ? (
           <div className="attn-history-list">
             {history.map((item) => (
               <article key={item.id} className="attn-history-row">
                 <div>
                   <strong>{formatRange(item, item.weekStart)}</strong>
-                  <p>{item.scoreAverage == null ? '记录不足' : `${item.scoreAverage} · ${ScoreLabelText[item.scoreLabel] || item.scoreLabel}`} · {(item.reportSections?.weeklySummary || '').slice(0, 80)}</p>
+                  <p>{item.scoreAverage == null ? i18nT('记录不足') : `${item.scoreAverage} · ${ScoreLabelText[item.scoreLabel] || item.scoreLabel}`} · {(item.reportSections?.weeklySummary || '').slice(0, 80)}</p>
                 </div>
                 <div className="attn-history-actions">
-                  <button type="button" className="attn-ghost" onClick={() => setWeekStart(item.weekStart)}>查看</button>
-                  <button type="button" className="attn-ghost" onClick={() => hideReport(item.id)}>隐藏</button>
+                  <button type="button" className="attn-ghost" onClick={() => setWeekStart(item.weekStart)}>{i18nT("查看")}</button>
+                  <button type="button" className="attn-ghost" onClick={() => hideReport(item.id)}>{i18nT("隐藏")}</button>
                 </div>
               </article>
             ))}
           </div>
-        ) : <p>还没有历史周报。</p>}
+        ) : <p>{i18nT("还没有历史周报。")}</p>}
       </section>
     </main>
   )

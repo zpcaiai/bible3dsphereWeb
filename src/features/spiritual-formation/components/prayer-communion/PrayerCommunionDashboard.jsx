@@ -291,7 +291,7 @@ export function PsalmPrayerGuide({ userId, sessions, onSaveSession }) {
 
 function PsalmTextDisplay({ psalm }) {
   if (!psalm) return null
-  return <article className="sf-card"><h3>{T('诗篇', 'Psalm')} {psalm.psalmNumber}: {psalm.title}</h3><p>{psalm.text}</p><div className="sf-chip-row">{psalm.dominantEmotions.map((emotion) => <span className="sf-chip" key={emotion}>{emotion}</span>)}</div>{psalm.cautionNotes && <p className="sf-warning">{psalm.cautionNotes}</p>}</article>
+  return <article className="sf-card"><h3>{T('诗篇', 'Psalm')} {psalm.psalmNumber}: {psalm.title}</h3>{psalm.textAvailable && psalm.text ? <p>{psalm.text}</p> : <p className="sf-muted">{T('为避免把占位文字误当作经文，本页只提供诗篇引用与祷告结构。请在你信任的圣经译本中阅读全文。', 'To avoid presenting placeholder copy as Scripture, this page provides only the Psalm reference and prayer structure. Read the full text in a Bible translation you trust.')}</p>}<div className="sf-chip-row">{psalm.dominantEmotions.map((emotion) => <span className="sf-chip" key={emotion}>{emotion}</span>)}</div>{psalm.cautionNotes && <p className="sf-warning">{psalm.cautionNotes}</p>}</article>
 }
 
 export function PracticingPresenceCheckIn({ userId, checkins, rules, onSaveCheckin, onSaveRule }) {

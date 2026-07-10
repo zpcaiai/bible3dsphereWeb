@@ -15,8 +15,13 @@ import {
   startPsalmPrayerSession,
   submitPsalmMovement,
 } from '../lib/prayerCommunionEngine'
+import { psalmProfiles } from '../data/prayerCommunionSeed'
 
 describe('Prayer & Communion OS engine', () => {
+  it('never exposes placeholder copy as Psalm text', () => {
+    expect(psalmProfiles.every((psalm) => psalm.text === '' && psalm.textAvailable === false)).toBe(true)
+  })
+
   it('creates a default prayer rule and completes a prayer session', () => {
     const rule = createDefaultPrayerRule('u1')
     const plan = getTodayPrayerPlan('u1', [rule], [])

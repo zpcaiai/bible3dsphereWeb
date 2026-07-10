@@ -2436,6 +2436,7 @@ export async function fetchMissionReview(token) {
 // ─────────────────────────────────────────────────────────────────────────────
 const _fH = (token, json = false) => ({
   ...(json ? { 'Content-Type': 'application/json' } : {}),
+  'X-Lang': getRuntimeLang(),
   ...(token ? { Authorization: `Bearer ${token}` } : {}),
 })
 async function _fGet(path, token) {

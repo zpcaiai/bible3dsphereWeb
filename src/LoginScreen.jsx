@@ -1,6 +1,7 @@
 import { t as i18nT } from './i18n/runtime'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import BackButton from './BackButton'
+import LanguageToggle from './i18n/LanguageToggle'
 import { loginWithEmail, registerWithEmail, sendEmailCode, sendResetCode, resetPassword } from './auth'
 
 const cardStyle = {
@@ -25,7 +26,6 @@ const inputStyle = {
   fontSize: '16px',
   padding: '12px 14px',
   boxSizing: 'border-box',
-  outline: 'none',
   fontFamily: 'inherit',
   WebkitAppearance: 'none',
 }
@@ -45,24 +45,47 @@ const primaryBtnStyle = (disabled) => ({
   fontFamily: 'inherit',
 })
 
-const mutedText = { fontSize: '12px', color: 'rgba(255,255,255,0.35)', textAlign: 'center', lineHeight: 1.6, margin: '16px 0 0' }
+const mutedText = { fontSize: '12px', color: 'rgba(255,255,255,0.62)', textAlign: 'center', lineHeight: 1.6, margin: '16px 0 0' }
 const errorText = { fontSize: '13px', color: '#ff3b30', margin: '10px 0 0', textAlign: 'center' }
-const labelStyle = { fontSize: '13px', color: 'rgba(255,255,255,0.5)', marginBottom: '6px', display: 'block' }
+const labelStyle = { fontSize: '13px', color: 'rgba(255,255,255,0.72)', marginBottom: '6px', display: 'block' }
+const REMEMBERED_EMAIL_KEY = 'bs_remember_email'
+const LEGACY_CREDENTIALS_KEY = 'bs_remember_creds'
+
+function loadRememberedEmail() {
+  try {
+    const email = localStorage.getItem(REMEMBERED_EMAIL_KEY) || ''
+    localStorage.removeItem(LEGACY_CREDENTIALS_KEY)
+    return email
+  } catch {
+    return ''
+  }
+}
+
+function persistRememberedEmail(email, rememberMe) {
+  try {
+    if (rememberMe) localStorage.setItem(REMEMBERED_EMAIL_KEY, email)
+    else localStorage.removeItem(REMEMBERED_EMAIL_KEY)
+    localStorage.removeItem(LEGACY_CREDENTIALS_KEY)
+  } catch {
+    // Authentication must still succeed when browser storage is unavailable.
+  }
+}
 
 export default function LoginScreen({ onLogin, onBack, message }) {
   const [tab, setTab] = useState('login') // 'login' | 'register' | 'reset'
-  const [sharedEmail, setSharedEmail] = useState('john@bible-sphere.com') // Shared email across tabs
+  const [sharedEmail, setSharedEmail] = useState(loadRememberedEmail)
   return (
     <div style={{
-      width: '100%', height: '100dvh', background: '#000',
+      width: '100%', minHeight: '100dvh', background: '#000',
       display: 'flex', flexDirection: 'column', alignItems: 'center',
-      justifyContent: 'center', padding: '24px 20px', boxSizing: 'border-box',
-      position: 'relative',
+      justifyContent: 'flex-start', padding: '24px 20px', boxSizing: 'border-box',
+      position: 'relative', overflowY: 'auto',
     }}>
       {onBack && (
         <BackButton onClick={onBack} style={{ position: 'absolute', top: 16, left: 16 }} />
       )}
-      <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+      <LanguageToggle style={{ position: 'absolute', top: 16, right: 16 }} />
+      <div style={{ textAlign: 'center', marginTop: 'auto', marginBottom: '32px' }}>
         <div style={{ fontSize: '64px', lineHeight: 1, marginBottom: '12px' }}>🔮</div>
         <h1 style={{ margin: 0, fontSize: '26px', fontWeight: 700, color: '#fff', letterSpacing: '-0.02em' }}>{i18nT('属灵星球')}</h1>
         <p style={{ margin: '6px 0 0', fontSize: '14px', color: 'rgba(255,255,255,0.4)' }}>Bible Emotion Sphere</p>
@@ -86,13 +109,18 @@ export default function LoginScreen({ onLogin, onBack, message }) {
           </div>
         )}
         {/* Tab 切换 */}
-        <div style={{
+        <div role="tablist" aria-label={i18nT('账号操作')} style={{
           display: 'flex', gap: '2px', padding: '3px',
           background: 'rgba(120,120,128,0.2)', borderRadius: '10px', marginBottom: '24px',
         }}>
-          {[['login', '登录'], ['register', '注册'], ['reset', '重置密码']].map(([key, label]) => (
+          {[['login', i18nT('登录')], ['register', i18nT('注册')], ['reset', i18nT('重置密码')]].map(([key, label]) => (
             <button
               key={key}
+              id={`auth-tab-${key}`}
+              type="button"
+              role="tab"
+              aria-selected={tab === key}
+              aria-controls={`auth-panel-${key}`}
               onClick={() => setTab(key)}
               style={{
                 flex: 1, minHeight: '36px', border: 'none', borderRadius: '8px', fontFamily: 'inherit',
@@ -105,16 +133,18 @@ export default function LoginScreen({ onLogin, onBack, message }) {
           ))}
         </div>
 
-        {tab === 'login' && <LoginForm email={sharedEmail} setEmail={setSharedEmail} onLogin={onLogin} onReset={() => setTab('reset')} />}
-        {tab === 'register' && <RegisterForm email={sharedEmail} setEmail={setSharedEmail} onDone={() => setTab('login')} onLogin={onLogin} />}
-        {tab === 'reset' && <ResetPasswordForm email={sharedEmail} setEmail={setSharedEmail} onDone={() => setTab('login')} />}
+        <div role="tabpanel" id={`auth-panel-${tab}`} aria-labelledby={`auth-tab-${tab}`}>
+          {tab === 'login' && <LoginForm email={sharedEmail} setEmail={setSharedEmail} onLogin={onLogin} onReset={() => setTab('reset')} />}
+          {tab === 'register' && <RegisterForm email={sharedEmail} setEmail={setSharedEmail} onDone={() => setTab('login')} onLogin={onLogin} />}
+          {tab === 'reset' && <ResetPasswordForm email={sharedEmail} setEmail={setSharedEmail} onDone={() => setTab('login')} />}
+        </div>
 
         <p style={mutedText}>{i18nT('登录即表示同意服务条款与隐私政策')}</p>
       </div>
 
       {/* 站点声明 */}
-      <div style={{ marginTop: '18px', textAlign: 'center', fontSize: '11px',
-        color: 'rgba(255,255,255,0.32)', lineHeight: 1.8, maxWidth: 360 }}>
+      <div style={{ marginTop: '18px', textAlign: 'center', fontSize: '12px',
+        color: 'rgba(255,255,255,0.62)', lineHeight: 1.7, maxWidth: 360, marginBottom: 'auto' }}>
         <div>{i18nT('本站内容为开发者 Ethan 原创，仅供个人灵修学习，不得用于商业用途，最终解释权归开发者所有')}</div>
         <a href="mailto:zpchoney@gmail.com" style={{ color: 'rgba(90,200,250,0.7)', textDecoration: 'none' }}>zpchoney@gmail.com</a>
       </div>
@@ -123,20 +153,10 @@ export default function LoginScreen({ onLogin, onBack, message }) {
 }
 
 function LoginForm({ email, setEmail, onLogin, onReset }) {
-  const savedCreds = (() => {
-    try { return JSON.parse(localStorage.getItem('bs_remember_creds') || 'null') } catch { return null }
-  })()
-  const [password, setPassword] = useState(savedCreds?.password || 'John')
-  const [rememberMe, setRememberMe] = useState(!!savedCreds)
+  const [password, setPassword] = useState('')
+  const [rememberMe, setRememberMe] = useState(() => Boolean(email))
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-
-  // If saved credentials exist, override with them (use useEffect to avoid setState during render)
-  useEffect(() => {
-    if (savedCreds && !email) {
-      setEmail(savedCreds.email)
-    }
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -144,11 +164,7 @@ function LoginForm({ email, setEmail, onLogin, onReset }) {
     setLoading(true)
     try {
       const data = await loginWithEmail(email.trim(), password)
-      if (rememberMe) {
-        localStorage.setItem('bs_remember_creds', JSON.stringify({ email: email.trim(), password }))
-      } else {
-        localStorage.removeItem('bs_remember_creds')
-      }
+      persistRememberedEmail(email.trim(), rememberMe)
       if (data.user && onLogin) onLogin(data.user)
     } catch (err) {
       setError(err.message)
@@ -160,16 +176,18 @@ function LoginForm({ email, setEmail, onLogin, onReset }) {
   return (
     <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
       <div>
-        <label style={labelStyle}>{i18nT('邮箱')}</label>
+        <label htmlFor="login-email" style={labelStyle}>{i18nT('邮箱')}</label>
         <input
+          id="login-email" className="auth-input"
           type="email" required value={email} onChange={e => setEmail(e.target.value)}
-          placeholder="john@bible-sphere.com" autoComplete="email"
+          placeholder="you@example.com" autoComplete="email"
           style={inputStyle}
         />
       </div>
       <div>
-        <label style={labelStyle}>{i18nT('密码')}</label>
+        <label htmlFor="login-password" style={labelStyle}>{i18nT('密码')}</label>
         <input
+          id="login-password" className="auth-input"
           type="password" required value={password} onChange={e => setPassword(e.target.value)}
           placeholder={i18nT('输入密码')} autoComplete="current-password"
           style={inputStyle}
@@ -180,11 +198,11 @@ function LoginForm({ email, setEmail, onLogin, onReset }) {
           type="checkbox" checked={rememberMe} onChange={e => setRememberMe(e.target.checked)}
           style={{ width: '16px', height: '16px', accentColor: '#007aff' }}
         />
-        {i18nT('记住账号密码')}
+        {i18nT('记住邮箱')}
       </label>
       {error && <p style={errorText}>{error}</p>}
       <button type="submit" disabled={loading} style={primaryBtnStyle(loading)}>
-        {loading ? '⏳ 登录中...' : '🔑 登录'}
+        {loading ? i18nT('⏳ 登录中...') : i18nT('🔑 登录')}
       </button>
       <div style={{ textAlign: 'center', marginTop: '8px' }}>
         <button
@@ -238,7 +256,7 @@ function RegisterForm({ email, setEmail, onDone, onLogin }) {
       const data = await sendEmailCode(email.trim())
       // Check if email already registered
       if (data.registered) {
-        setError(data.message || '该邮箱已注册，请直接登录')
+        setError(data.message || i18nT('该邮箱已注册，请直接登录'))
         setSendLoading(false)
         // Auto switch to login tab after 1.5s
         setTimeout(() => onDone && onDone(), 1500)
@@ -273,9 +291,10 @@ function RegisterForm({ email, setEmail, onDone, onLogin }) {
   return (
     <form onSubmit={handleRegister} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
       <div>
-        <label style={labelStyle}>{i18nT('邮箱')}</label>
+        <label htmlFor="register-email" style={labelStyle}>{i18nT('邮箱')}</label>
         <div style={{ display: 'flex', gap: '8px' }}>
           <input
+            id="register-email" className="auth-input"
             type="email" required value={email} onChange={e => handleEmailChange(e.target.value)}
             placeholder="you@example.com" autoComplete="email"
             style={{ ...inputStyle, flex: 1 }}
@@ -292,13 +311,14 @@ function RegisterForm({ email, setEmail, onDone, onLogin }) {
               whiteSpace: 'nowrap',
             }}
           >
-            {countdown > 0 ? `${countdown}s` : sendLoading ? '发送中' : '获取验证码'}
+            {countdown > 0 ? `${countdown}s` : sendLoading ? i18nT('发送中') : i18nT('获取验证码')}
           </button>
         </div>
       </div>
       <div>
-        <label style={labelStyle}>{i18nT('验证码')}</label>
+        <label htmlFor="register-code" style={labelStyle}>{i18nT('验证码')}</label>
         <input
+          id="register-code" className="auth-input"
           type="text" required value={code} onChange={e => setCode(e.target.value)}
           placeholder={i18nT('6位验证码')} maxLength={6} inputMode="numeric"
           style={inputStyle}
@@ -310,16 +330,18 @@ function RegisterForm({ email, setEmail, onDone, onLogin }) {
         )}
       </div>
       <div>
-        <label style={labelStyle}>{i18nT('密码（至少6位）')}</label>
+        <label htmlFor="register-password" style={labelStyle}>{i18nT('密码（至少6位）')}</label>
         <input
+          id="register-password" className="auth-input"
           type="password" required value={password} onChange={e => setPassword(e.target.value)}
           placeholder={i18nT('设置登录密码')} autoComplete="new-password" minLength={6}
           style={inputStyle}
         />
       </div>
       <div>
-        <label style={labelStyle}>{i18nT('昵称（选填）')}</label>
+        <label htmlFor="register-nickname" style={labelStyle}>{i18nT('昵称（选填）')}</label>
         <input
+          id="register-nickname" className="auth-input"
           type="text" value={nickname} onChange={e => setNickname(e.target.value)}
           placeholder={i18nT('你的名字')}
           style={inputStyle}
@@ -327,7 +349,7 @@ function RegisterForm({ email, setEmail, onDone, onLogin }) {
       </div>
       {error && <p style={errorText}>{error}</p>}
       <button type="submit" disabled={regLoading || !codeSent} style={primaryBtnStyle(regLoading || !codeSent)}>
-        {regLoading ? '⏳ 注册中...' : '✅ 注册并登录'}
+        {regLoading ? i18nT('⏳ 注册中...') : i18nT('✅ 注册并登录')}
       </button>
     </form>
   )
@@ -408,9 +430,10 @@ function ResetPasswordForm({ email, setEmail, onDone }) {
   return (
     <form onSubmit={handleReset} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
       <div>
-        <label style={labelStyle}>{i18nT('注册邮箱')}</label>
+        <label htmlFor="reset-email" style={labelStyle}>{i18nT('注册邮箱')}</label>
         <div style={{ display: 'flex', gap: '8px' }}>
           <input
+            id="reset-email" className="auth-input"
             type="email" required value={email} onChange={e => setEmail(e.target.value)}
             placeholder="you@example.com" autoComplete="email"
             style={{ ...inputStyle, flex: 1 }}
@@ -427,13 +450,14 @@ function ResetPasswordForm({ email, setEmail, onDone }) {
               whiteSpace: 'nowrap',
             }}
           >
-            {countdown > 0 ? `${countdown}s` : sendLoading ? '发送中' : '获取验证码'}
+            {countdown > 0 ? `${countdown}s` : sendLoading ? i18nT('发送中') : i18nT('获取验证码')}
           </button>
         </div>
       </div>
       <div>
-        <label style={labelStyle}>{i18nT('验证码')}</label>
+        <label htmlFor="reset-code" style={labelStyle}>{i18nT('验证码')}</label>
         <input
+          id="reset-code" className="auth-input"
           type="text" required value={code} onChange={e => setCode(e.target.value)}
           placeholder={i18nT('6位验证码')} maxLength={6} inputMode="numeric"
           style={inputStyle}
@@ -445,16 +469,18 @@ function ResetPasswordForm({ email, setEmail, onDone }) {
         )}
       </div>
       <div>
-        <label style={labelStyle}>{i18nT('新密码（至少6位）')}</label>
+        <label htmlFor="reset-password" style={labelStyle}>{i18nT('新密码（至少6位）')}</label>
         <input
+          id="reset-password" className="auth-input"
           type="password" required value={password} onChange={e => setPassword(e.target.value)}
           placeholder={i18nT('设置新密码')} autoComplete="new-password" minLength={6}
           style={inputStyle}
         />
       </div>
       <div>
-        <label style={labelStyle}>{i18nT('确认密码')}</label>
+        <label htmlFor="reset-password-confirm" style={labelStyle}>{i18nT('确认密码')}</label>
         <input
+          id="reset-password-confirm" className="auth-input"
           type="password" required value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)}
           placeholder={i18nT('再次输入新密码')} autoComplete="new-password"
           style={inputStyle}
@@ -462,7 +488,7 @@ function ResetPasswordForm({ email, setEmail, onDone }) {
       </div>
       {error && <p style={errorText}>{error}</p>}
       <button type="submit" disabled={resetLoading || !codeSent} style={primaryBtnStyle(resetLoading || !codeSent)}>
-        {resetLoading ? '⏳ 重置中...' : '🔄 重置密码'}
+        {resetLoading ? i18nT('⏳ 重置中...') : i18nT('🔄 重置密码')}
       </button>
       <div style={{ textAlign: 'center', marginTop: '4px' }}>
         <button
@@ -480,4 +506,3 @@ function ResetPasswordForm({ email, setEmail, onDone }) {
     </form>
   )
 }
-
