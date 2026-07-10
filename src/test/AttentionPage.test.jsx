@@ -49,9 +49,9 @@ describe('AttentionPage', () => {
   })
 
   it('renders diagnosis tools', async () => {
-    const { getByText } = render(<AttentionPage user={{ email: 'a@example.com' }} token="token-a" onBack={() => {}} initialSection="diagnosis" />)
+    const { getByText, getByRole } = render(<AttentionPage user={{ email: 'a@example.com' }} token="token-a" onBack={() => {}} initialSection="diagnosis" />)
 
-    await waitFor(() => expect(getByText('AI 守心洞察')).toBeTruthy())
+    await waitFor(() => expect(getByRole('heading', { level: 1, name: 'AI 守心洞察' })).toBeTruthy())
     expect(getByText('生成今日洞察')).toBeTruthy()
     expect(getByText('现在被牵引了吗？')).toBeTruthy()
     expect(getByText('问守心 Agent')).toBeTruthy()
@@ -91,7 +91,7 @@ describe('AttentionPage', () => {
       return Promise.resolve(okJson({ exists: false, covenant: null }))
     })
     const accountability = render(<AttentionPage user={{ email: 'a@example.com' }} token="token-a" onBack={() => {}} initialSection="accountability" />)
-    await waitFor(() => expect(accountability.getByText('同伴守望')).toBeTruthy())
+    await waitFor(() => expect(accountability.getByRole('heading', { level: 1, name: '同伴守望' })).toBeTruthy())
     expect(accountability.getByText('邀请守望伙伴')).toBeTruthy()
     cleanup()
 
@@ -128,7 +128,7 @@ describe('AttentionPage', () => {
       return Promise.resolve(okJson({ exists: false, covenant: null }))
     })
     const groups = render(<AttentionPage user={{ email: 'a@example.com' }} token="token-a" onBack={() => {}} initialSection="groups" />)
-    await waitFor(() => expect(groups.getByText('守心小组')).toBeTruthy())
+    await waitFor(() => expect(groups.getByRole('heading', { level: 1, name: '守心小组' })).toBeTruthy())
     expect(groups.getByText('温柔挑战模板')).toBeTruthy()
   })
 

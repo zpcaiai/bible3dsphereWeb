@@ -8,17 +8,25 @@ const sha = (() => {
 })()
 const report = `# Attention Stewardship Frontend Release Report
 
-- Git commit: \`${sha}\`
+- Base Git commit: \`${sha}\`
 - Route registry: \`src/features/attention/lib/integration/route-registry.ts\`
 - Admin view: \`src/features/attention/app/AdminScreen.jsx\`
 - Privacy-first guardrails: no public feed, no leaderboard, admin aggregate-only.
 
 ## Required Commands
 
-- \`npm run test -- src/test/attention.test.js src/test/attentionApi.contract.test.js src/test/AttentionPage.test.jsx src/test/attentionIntegration.test.ts\`
+- \`npm test\`
 - \`npm run build\`
 - \`npm run attention:audit:logs\`
-- \`npm run attention:audit:security\`
+- \`npm run attention:audit:permissions\`
+
+## Latest Verification (2026-07-10)
+
+- [x] Full frontend suite: 67 files, 383 tests.
+- [x] Production build: 2,278 modules transformed.
+- [x] Attention log and permission audits.
+- [x] Desktop 1280x720 and mobile 390x844 browser checks with no horizontal overflow.
+- [x] Attention route navigation and browser back behavior.
 
 ## Manual QA
 
@@ -27,6 +35,8 @@ const report = `# Attention Stewardship Frontend Release Report
 - [ ] /attention/accountability can revoke a share.
 - [ ] /attention/groups challenge participants are not ranked.
 - [ ] /attention/admin rejects ordinary users and shows aggregate-only data for admin.
+- [ ] Desktop and mobile navigation have no horizontal overflow and browser back restores the prior attention route.
+- [ ] Focus completion prefills the ledger and partner sharing requires server preview plus confirmation.
 `
 
 const dir = resolve(root, 'reports')

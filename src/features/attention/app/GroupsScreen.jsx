@@ -17,7 +17,12 @@ export default function GroupsScreen({ token, onBack, openPage }) {
   const [name, setName] = useState('')
   const [inviteCode, setInviteCode] = useState('')
   const [message, setMessage] = useState('')
-  const firstGroup = useMemo(() => groups[0], [groups])
+  const [selectedGroupId, setSelectedGroupId] = useState('')
+  const [members, setMembers] = useState([])
+  const [groupChallenges, setGroupChallenges] = useState([])
+  const [participantView, setParticipantView] = useState(null)
+  const [busy, setBusy] = useState(false)
+  const selectedGroup = useMemo(() => groups.find((group) => group.id === selectedGroupId) || groups[0], [groups, selectedGroupId])
 
   async function load() {
     const [groupData, templateData, challengeData] = await Promise.all([
@@ -28,6 +33,7 @@ export default function GroupsScreen({ token, onBack, openPage }) {
     setGroups(groupData.groups || [])
     setTemplates(templateData.templates || [])
     setMyChallenges(challengeData.challenges || [])
+    if (!selectedGroupId && groupData.groups?.[0]) setSelectedGroupId(groupData.groups[0].id)
   }
 
   useEffect(() => {
@@ -36,28 +42,62 @@ export default function GroupsScreen({ token, onBack, openPage }) {
     return () => { cancelled = true }
   }, [token])
 
+  useEffect(() => {
+    if (!selectedGroup?.id) {
+      setMembers([])
+      setGroupChallenges([])
+      return
+    }
+    let cancelled = false
+    Promise.all([
+      attentionApi.groupMembers(selectedGroup.id, token),
+      attentionApi.groupChallenges(selectedGroup.id, token),
+    ]).then(([memberData, challengeData]) => {
+      if (cancelled) return
+      setMembers(memberData.members || [])
+      setGroupChallenges(challengeData.challenges || [])
+    }).catch((error) => { if (!cancelled) setMessage(error?.message || '暂时无法加载小组详情。') })
+    return () => { cancelled = true }
+  }, [selectedGroup?.id, token])
+
+  async function run(action, success = '') {
+    setBusy(true)
+    setMessage('')
+    try {
+      await action()
+      await load()
+      if (success) setMessage(success)
+    } catch (error) {
+      setMessage(error?.message || '操作未完成，请稍后重试。')
+    } finally {
+      setBusy(false)
+    }
+  }
+
   async function createGroup() {
-    await attentionApi.createGroup({
+    await run(async () => {
+      const result = await attentionApi.createGroup({
       name,
       groupType: 'private',
       defaultMemberVisibility: 'status_only',
       guidelines: '彼此提醒，不比较，不公开软弱。',
-    }, token)
-    setName('')
-    await load()
-    setMessage('守心小组已创建。')
+      }, token)
+      setName('')
+      if (result.group?.id) setSelectedGroupId(result.group.id)
+    }, '守心小组已创建。')
   }
 
   async function joinGroup() {
-    await attentionApi.joinGroup({ inviteCode }, token)
-    setInviteCode('')
-    await load()
-    setMessage('已加入守心小组。')
+    await run(async () => {
+      const result = await attentionApi.joinGroup({ inviteCode }, token)
+      setInviteCode('')
+      if (result.group?.id) setSelectedGroupId(result.group.id)
+    }, '已加入守心小组。')
   }
 
   async function createTemplateChallenge(template) {
-    if (!firstGroup) return
-    await attentionApi.createGroupChallenge(firstGroup.id, {
+    if (!selectedGroup) return
+    await run(() => attentionApi.createGroupChallenge(selectedGroup.id, {
       templateKey: template.key,
       title: template.title,
       description: template.description,
@@ -68,17 +108,25 @@ export default function GroupsScreen({ token, onBack, openPage }) {
       targetMinutes: template.defaultTargetMinutes,
       checkinPrompt: template.checkinPrompt,
       privacyMode: template.privacyMode || 'status_only',
-    }, token)
-    await load()
-    setMessage('小组挑战已创建。')
+    }, token), '小组挑战已创建。')
   }
 
   async function checkin(challenge) {
-    await attentionApi.saveChallengeCheckin(challenge.groupId, challenge.id, {
+    await run(() => attentionApi.saveChallengeCheckin(challenge.groupId, challenge.id, {
       completed: true,
       visibilityLevel: challenge.privacyMode === 'summary' ? 'summary' : 'status_only',
-    }, token)
-    await load()
+    }, token), '今日 Check-in 已保存。')
+  }
+
+  async function showParticipants(challenge) {
+    setParticipantView({ challenge, loading: true, participants: [], progress: challenge.progress })
+    try {
+      const data = await attentionApi.challengeParticipants(challenge.groupId, challenge.id, token)
+      setParticipantView({ challenge, loading: false, participants: data.participants || [], progress: data.progress || challenge.progress })
+    } catch (error) {
+      setParticipantView(null)
+      setMessage(error?.message || '暂时无法加载挑战同行状态。')
+    }
   }
 
   return (
@@ -89,35 +137,44 @@ export default function GroupsScreen({ token, onBack, openPage }) {
         <p>小组挑战只显示整体节奏和非排名进展。它不是排行榜，也不是公开动态。</p>
       </header>
 
-      {message ? <div className="attn-alert">{message}</div> : null}
+      {message ? <div className="attn-alert" role="status">{message}</div> : null}
 
       <section className="attn-grid">
         <AttentionCard title="创建小组" actionLabel="隐私设置" onAction={() => openPage('privacy')}>
           <div className="attn-inline-form">
             <input value={name} onChange={(e) => setName(e.target.value)} placeholder="例如：周三守心同行" />
-            <button className="attn-button" type="button" disabled={!name.trim()} onClick={createGroup}>创建</button>
+            <button className="attn-button" type="button" disabled={busy || !name.trim()} onClick={createGroup}>创建</button>
           </div>
         </AttentionCard>
 
         <AttentionCard title="加入小组">
           <div className="attn-inline-form">
             <input value={inviteCode} onChange={(e) => setInviteCode(e.target.value)} placeholder="邀请码" />
-            <button className="attn-button" type="button" disabled={!inviteCode.trim()} onClick={joinGroup}>加入</button>
+            <button className="attn-button" type="button" disabled={busy || !inviteCode.trim()} onClick={joinGroup}>加入</button>
           </div>
         </AttentionCard>
 
         <AttentionCard title="我的小组">
           <div className="attn-list">
             {groups.map((group) => (
-              <div className="attn-list-item" key={group.id}>
+              <button type="button" aria-pressed={selectedGroup?.id === group.id} className={`attn-list-item attn-group-choice ${selectedGroup?.id === group.id ? 'active' : ''}`} key={group.id} onClick={() => setSelectedGroupId(group.id)}>
                 <strong>{group.name}</strong>
                 <span>{GroupTypeLabel[group.groupType] || group.groupType} · {GroupRoleLabel[group.currentUserRole] || group.currentUserRole}</span>
                 <span>{group.membersCount || 0} 位成员 · {group.activeChallengesCount || 0} 个挑战</span>
                 {group.inviteCode ? <code>邀请码：{group.inviteCode}</code> : null}
-              </div>
+              </button>
             ))}
             {!groups.length ? <p className="attn-muted">还没有守心小组。</p> : null}
           </div>
+        </AttentionCard>
+
+        <AttentionCard title={selectedGroup ? `${selectedGroup.name} · 小组详情` : '小组详情'}>
+          {selectedGroup ? <>
+            <p>成员按加入顺序显示，不按完成数或评分排序。</p>
+            <div className="attn-list">{members.map((member) => <div className="attn-list-item" key={member.id}><strong>{member.user?.displayName || member.user?.id}</strong><span>{GroupRoleLabel[member.role] || member.role} · {member.status}</span></div>)}</div>
+            <h4>小组挑战</h4>
+            <div className="attn-list">{groupChallenges.map((challenge) => <div className="attn-list-item" key={challenge.id}><strong>{challenge.title}</strong><span>{ChallengePrivacyLabel[challenge.privacyMode] || challenge.privacyMode} · 小组完成率 {challenge.progress?.groupCompletionRate || 0}%</span><button type="button" onClick={() => showParticipants(challenge)}>查看同行状态</button></div>)}{!groupChallenges.length ? <p className="attn-muted">这个小组还没有进行中的挑战。</p> : null}</div>
+          </> : <p className="attn-muted">选择或加入一个小组后查看详情。</p>}
         </AttentionCard>
 
         <AttentionCard title="我的挑战">
@@ -127,7 +184,7 @@ export default function GroupsScreen({ token, onBack, openPage }) {
                 <strong>{challenge.title}</strong>
                 <span>{ChallengePrivacyLabel[challenge.privacyMode] || challenge.privacyMode} · 完成 {challenge.progress?.completedCheckins || 0} 次</span>
                 <span>{challenge.progress?.encouragementText}</span>
-                <button type="button" onClick={() => checkin(challenge)}>今日 Check-in</button>
+                <div className="attn-row-actions"><button type="button" disabled={busy} onClick={() => checkin(challenge)}>今日 Check-in</button><button type="button" onClick={() => showParticipants(challenge)}>同行状态</button></div>
               </div>
             ))}
             {!myChallenges.length ? <p className="attn-muted">还没有参与中的挑战。</p> : null}
@@ -135,11 +192,16 @@ export default function GroupsScreen({ token, onBack, openPage }) {
         </AttentionCard>
       </section>
 
+      {participantView ? <section className="attn-section attn-participant-panel" aria-live="polite">
+        <div className="attn-card-head"><div><h2>{participantView.challenge.title} · 同行状态</h2><p>只显示挑战允许的状态摘要，不显示个人复盘正文，也不进行排名。</p></div><button type="button" className="attn-ghost" onClick={() => setParticipantView(null)}>关闭</button></div>
+        {participantView.loading ? <p>正在加载…</p> : participantView.challenge.privacyMode === 'anonymous_aggregate' ? <p>此挑战采用匿名聚合，仅显示 {participantView.progress?.activeParticipants || 0} 位参与者的整体节奏。</p> : <div className="attn-list">{participantView.participants.map((participant) => <div className="attn-list-item" key={participant.user?.id}><strong>{participant.user?.displayName || participant.user?.id}</strong><span>{participant.encouragementText}</span><span>已完成 {participant.completedDays || 0} 天</span></div>)}</div>}
+      </section> : null}
+
       <section className="attn-section">
         <h2>温柔挑战模板</h2>
         <div className="attn-grid compact">
           {templates.map((template) => (
-            <AttentionCard key={template.key} title={template.title} actionLabel={firstGroup ? '创建挑战' : ''} onAction={() => createTemplateChallenge(template)}>
+            <AttentionCard key={template.key} title={template.title} actionLabel={selectedGroup && ['owner', 'leader'].includes(selectedGroup.currentUserRole) ? '创建到当前小组' : ''} onAction={() => createTemplateChallenge(template)}>
               <p>{template.description}</p>
               <p className="attn-muted">{template.gentleGuideline}</p>
             </AttentionCard>

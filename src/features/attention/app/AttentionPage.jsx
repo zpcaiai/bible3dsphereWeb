@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useId, useMemo, useState } from 'react'
 import { attentionApi } from '../../../api'
 import {
   ATTENTION_DURATION_OPTIONS,
@@ -25,11 +25,15 @@ import {
 import {
   AttentionCard,
   AttentionCovenantPreview,
+  AttentionEmptyState,
   AttentionPullSelector,
   AttentionQuickActions,
   AttentionStatusBadge,
   ScriptureSelector,
 } from '../components/attentionComponents'
+import AttentionShell from '../components/AttentionShell'
+import { attentionFeatureFlags } from '../lib/integration/feature-flags'
+import { attentionSectionFromPath, enabledAttentionRoutes } from '../lib/integration/route-registry'
 import AccountabilityScreen from './AccountabilityScreen'
 import AdminScreen from './AdminScreen'
 import GroupsScreen from './GroupsScreen'
@@ -79,6 +83,16 @@ const REVIEW_BLANK = {
   prayer: REVIEW_PRAYER_TEMPLATE,
 }
 
+function consumeLedgerDraft() {
+  try {
+    const raw = window.sessionStorage.getItem('attention:ledger-draft')
+    window.sessionStorage.removeItem('attention:ledger-draft')
+    return raw ? { ...ENTRY_BLANK, ...JSON.parse(raw) } : ENTRY_BLANK
+  } catch {
+    return ENTRY_BLANK
+  }
+}
+
 function toForm(covenant) {
   if (!covenant) return BLANK_FORM
   return {
@@ -111,13 +125,31 @@ export default function AttentionPage({ user, token, onBack, initialSection = 'd
   const [error, setError] = useState('')
   const [covenant, setCovenant] = useState(null)
   const [summary, setSummary] = useState(null)
+  const [summaryError, setSummaryError] = useState('')
+  const [summaryRefresh, setSummaryRefresh] = useState(0)
   const localDate = useMemo(() => getUserLocalDate(user), [user])
   const reminder = useMemo(() => stableAttentionReminder(localDate), [localDate])
   const timezone = user?.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone || 'Asia/Taipei'
+  const flags = useMemo(() => attentionFeatureFlags(), [])
+  const isAdmin = Boolean(user?.is_admin || user?.isAdmin)
+  const routes = useMemo(() => enabledAttentionRoutes(flags, isAdmin), [flags, isAdmin])
+  const allowedSections = useMemo(() => new Set(routes.map((route) => route.key)), [routes])
+  const routeSections = useMemo(() => new Set(enabledAttentionRoutes(flags, true).map((route) => route.key)), [flags])
 
   useEffect(() => {
-    setSection(initialSection)
-  }, [initialSection])
+    setSection(routeSections.has(initialSection) ? initialSection : 'dashboard')
+  }, [initialSection, routeSections])
+
+  useEffect(() => {
+    function syncFromHistory() {
+      const next = attentionSectionFromPath(window.location.pathname)
+      if (next && routeSections.has(next)) setSection(next)
+      else if (!next) onBack?.()
+      else setSection('dashboard')
+    }
+    window.addEventListener('popstate', syncFromHistory)
+    return () => window.removeEventListener('popstate', syncFromHistory)
+  }, [onBack, routeSections])
 
   useEffect(() => {
     let cancelled = false
@@ -137,41 +169,68 @@ export default function AttentionPage({ user, token, onBack, initialSection = 'd
   useEffect(() => {
     if (section !== 'dashboard') return undefined
     let cancelled = false
+    setSummaryError('')
     attentionApi.todaySummary(token, timezone)
       .then((data) => { if (!cancelled) setSummary(data) })
-      .catch(() => { /* dashboard summary is non-blocking */ })
+      .catch(() => { if (!cancelled) setSummaryError('部分守心摘要暂时无法更新，其他功能仍可继续使用。') })
     return () => { cancelled = true }
-  }, [section, token, timezone])
+  }, [section, summaryRefresh, token, timezone])
 
-  function openPage(next) {
-    setSection(next)
+  function openPage(next, options = {}) {
+    const safeNext = routeSections.has(next) ? next : 'dashboard'
+    setSection(safeNext)
     try {
-      const path = next === 'dashboard' ? '/attention' : `/attention/${next}`
-      window.history.replaceState({}, '', path)
+      const path = safeNext === 'dashboard' ? '/attention' : `/attention/${safeNext}`
+      const method = options.replace ? 'replaceState' : 'pushState'
+      if (window.location.pathname !== path) window.history[method]({}, '', path)
     } catch { /* ignore */ }
   }
 
-  if (section === 'covenant') {
-    return <AttentionCovenantScreen covenant={covenant} token={token} timezone={timezone} onSaved={setCovenant} onBack={() => openPage('dashboard')} openPage={openPage} />
+  const shellProps = { section, openPage, flags, isAdmin }
+
+  if (!flags.ATTENTION_MODULE_ENABLED) {
+    return <AttentionEmptyState title="守心模块暂未开放" onBack={onBack}>当前环境尚未启用守心模块。</AttentionEmptyState>
   }
-  if (section === 'focus') return <FocusScreen token={token} onBack={() => openPage('dashboard')} openPage={openPage} />
-  if (section === 'ledger') return <LedgerScreen token={token} localDate={localDate} onBack={() => openPage('dashboard')} openPage={openPage} />
-  if (section === 'review') return <ReviewScreen token={token} timezone={timezone} onBack={() => openPage('dashboard')} openPage={openPage} />
-  if (section === 'diagnosis') return <DiagnosisScreen token={token} localDate={localDate} onBack={() => openPage('dashboard')} openPage={openPage} />
-  if (section === 'warfare') return <WarfareScreen token={token} onBack={() => openPage('dashboard')} />
-  if (section === 'accountability') return <AccountabilityScreen token={token} onBack={() => openPage('dashboard')} openPage={openPage} />
-  if (section === 'groups') return <GroupsScreen token={token} onBack={() => openPage('dashboard')} openPage={openPage} />
-  if (section === 'privacy') return <PrivacyScreen token={token} onBack={() => openPage('dashboard')} />
-  if (section === 'admin') return <AdminScreen token={token} onBack={() => openPage('dashboard')} />
+
+  if (section === 'covenant') {
+    return <AttentionShell {...shellProps}><AttentionCovenantScreen covenant={covenant} token={token} timezone={timezone} onSaved={setCovenant} onBack={() => openPage('dashboard')} openPage={openPage} /></AttentionShell>
+  }
+  if (section === 'focus') return <AttentionShell {...shellProps}><FocusScreen token={token} onBack={() => openPage('dashboard')} openPage={openPage} /></AttentionShell>
+  if (section === 'ledger') return <AttentionShell {...shellProps}><LedgerScreen token={token} localDate={localDate} onBack={() => openPage('dashboard')} openPage={openPage} /></AttentionShell>
+  if (section === 'review') return <AttentionShell {...shellProps}><ReviewScreen token={token} timezone={timezone} onBack={() => openPage('dashboard')} openPage={openPage} /></AttentionShell>
+  if (section === 'diagnosis') return <AttentionShell {...shellProps}><DiagnosisScreen token={token} localDate={localDate} onBack={() => openPage('dashboard')} openPage={openPage} /></AttentionShell>
+  if (section === 'warfare') return <AttentionShell {...shellProps}><WarfareScreen token={token} onBack={() => openPage('dashboard')} /></AttentionShell>
+  if (section === 'accountability') return <AttentionShell {...shellProps}><AccountabilityScreen token={token} onBack={() => openPage('dashboard')} openPage={openPage} /></AttentionShell>
+  if (section === 'groups') return <AttentionShell {...shellProps}><GroupsScreen token={token} onBack={() => openPage('dashboard')} openPage={openPage} /></AttentionShell>
+  if (section === 'privacy') return <AttentionShell {...shellProps}><PrivacyScreen token={token} onBack={() => openPage('dashboard')} /></AttentionShell>
+  if (section === 'admin' && !isAdmin) return <AttentionShell {...shellProps}><AttentionEmptyState title="无权访问运营后台" onBack={() => openPage('dashboard')}>运营后台仅向管理员开放，普通用户数据不会在这里展示。</AttentionEmptyState></AttentionShell>
+  if (section === 'admin') return <AttentionShell {...shellProps}><AdminScreen token={token} onBack={() => openPage('dashboard')} /></AttentionShell>
   if (section === 'reports') {
-    return <ReportsScreen token={token} timezone={timezone} onBack={() => openPage('dashboard')} openPage={openPage} />
+    return <AttentionShell {...shellProps}><ReportsScreen token={token} timezone={timezone} onBack={() => openPage('dashboard')} openPage={openPage} /></AttentionShell>
   }
 
   const status = covenant ? 'covenant_done' : 'not_started'
   const ledger = summary?.ledger || emptyDailySummary()
   const focus = summary?.focus || {}
+  const dashboardMessage = summary?.review?.exists
+    ? '今天已经完成复盘。愿你在恩典中安息。'
+    : ledger.capturedMinutes > 0
+      ? '今天有一段注意力被牵引。看见它，是归回的开始。'
+      : covenant && !ledger.entriesCount
+        ? '今天已经完成立约。接下来可以记录一段注意力流向。'
+        : covenant
+          ? '今天的守心节奏已经开始，继续忠心走下一小步。'
+          : '今天还没有开始守心操练。可以先用一分钟，把心带回神面前。'
+  const priorityActions = [
+    ...(focus.activeSessionExists ? ['focus'] : []),
+    ...(!covenant ? ['covenant'] : []),
+    ...(!summary?.review?.exists ? ['review'] : []),
+    ...(summary?.groups?.todayChallengeCheckinsDue ? ['groups'] : []),
+    'ledger', 'diagnosis', 'warfare', 'reports', 'accountability', 'privacy', 'admin',
+  ]
   return (
-    <main className="attn-page">
+    <AttentionShell {...shellProps}>
+      <main className="attn-page">
       <header className="attn-header">
         <button className="attn-ghost" type="button" onClick={onBack}>返回星球</button>
         <div>
@@ -182,12 +241,13 @@ export default function AttentionPage({ user, token, onBack, initialSection = 'd
       </header>
 
       {error ? <div className="attn-alert">{error}</div> : null}
+      {summaryError ? <div className="attn-alert" role="status">{summaryError}<button type="button" onClick={() => setSummaryRefresh((value) => value + 1)}>重新加载摘要</button></div> : null}
       {loading ? <div className="attn-loading">正在加载今日守心状态…</div> : null}
 
       <section className="attn-grid">
         <AttentionCard title="今日守心状态" subtitle={localDate}>
           <div className="attn-status-row"><AttentionStatusBadge status={status} /></div>
-          <p>{covenant ? '今天已经完成守心立约。愿你把最清醒、最宝贵的注意力献给神所托付的事。' : '今天，你的注意力正在被什么牵引？在开始一天之前，可以先用一分钟把心归给主。'}</p>
+          <p>{dashboardMessage}</p>
           <ul className="attn-checks">
             <li>{covenant ? '今日已立约' : '今日尚未立约'}</li>
             <li>账本记录：{ledger.entriesCount || 0} 条</li>
@@ -242,13 +302,23 @@ export default function AttentionPage({ user, token, onBack, initialSection = 'd
           <ul className="attn-checks">
             <li>已加入小组：{summary?.groups?.activeGroupsCount || 0} 个</li>
             <li>参与中挑战：{summary?.groups?.activeChallengesCount || 0} 个</li>
+            <li>今日待 Check-in：{summary?.groups?.todayChallengeCheckinsDue || 0} 个</li>
+          </ul>
+        </AttentionCard>
+
+        <AttentionCard title="隐私边界" actionLabel="查看设置" onAction={() => openPage('privacy')}>
+          <p>原始祷告、复盘、洞察和敏感牵引不会自动分享。</p>
+          <ul className="attn-checks">
+            <li>伙伴默认：{summary?.privacy?.defaultPartnerVisibility === 'status_only' ? '只显示完成状态' : '按你的设置'}</li>
+            <li>小组默认：{summary?.privacy?.defaultGroupVisibility === 'status_only' ? '只显示完成状态' : '按你的设置'}</li>
+            <li>{summary?.privacy?.sensitiveProtectionEnabled !== false ? '敏感内容保护已开启' : '请检查敏感内容保护'}</li>
           </ul>
         </AttentionCard>
       </section>
 
       <section className="attn-section">
         <h2>快速入口</h2>
-        <AttentionQuickActions openPage={openPage} isAdmin={Boolean(user?.is_admin || user?.isAdmin)} />
+        <AttentionQuickActions openPage={openPage} isAdmin={isAdmin} allowedSections={allowedSections} priorityKeys={priorityActions} />
       </section>
 
       <section className="attn-section attn-reminder">
@@ -261,7 +331,8 @@ export default function AttentionPage({ user, token, onBack, initialSection = 'd
           <button type="button" onClick={() => openPage('privacy')}>隐私边界</button>
         </div>
       </section>
-    </main>
+      </main>
+    </AttentionShell>
   )
 }
 
@@ -376,6 +447,8 @@ function FocusScreen({ token, onBack, openPage }) {
   const [message, setMessage] = useState('')
   const [busy, setBusy] = useState(false)
   const [tick, setTick] = useState(Date.now())
+  const [closingReflection, setClosingReflection] = useState('')
+  const [interruptionReason, setInterruptionReason] = useState('')
 
   useEffect(() => {
     let cancelled = false
@@ -383,14 +456,16 @@ function FocusScreen({ token, onBack, openPage }) {
       if (cancelled) return
       if (a.status === 'fulfilled') setActive(a.value.active)
       if (l.status === 'fulfilled') setSessions(l.value.sessions || [])
+      if (a.status === 'rejected' && l.status === 'rejected') setMessage('暂时无法加载专注状态，请稍后重试。')
     })
     return () => { cancelled = true }
   }, [token])
 
   useEffect(() => {
+    if (!active) return undefined
     const id = window.setInterval(() => setTick(Date.now()), 1000)
     return () => window.clearInterval(id)
-  }, [])
+  }, [active])
 
   function patch(values) {
     setForm((current) => ({ ...current, ...values }))
@@ -414,10 +489,19 @@ function FocusScreen({ token, onBack, openPage }) {
     if (!active) return
     setBusy(true)
     try {
-      const reflection = window.prompt('用一句话记录这段专注结束时的状态：') || ''
-      const result = await attentionApi.endFocusSession(active.id, { closingReflection: reflection }, token)
+      const result = await attentionApi.endFocusSession(active.id, { closingReflection }, token)
       setActive(null)
       setSessions((current) => [result.session, ...current.filter((s) => s.id !== result.session.id)])
+      setClosingReflection('')
+      try {
+        window.sessionStorage.setItem('attention:ledger-draft', JSON.stringify({
+          category: active.focusType || 'mission',
+          activityName: active.intention || `${FOCUS_TYPE_META[active.focusType]?.label || '专注'}记录`,
+          durationMinutes: result.session.actualMinutes || active.plannedMinutes || 25,
+          attentionState: active.interrupted ? 'scattered' : 'focused',
+        }))
+      } catch { /* transient prefill is optional */ }
+      openPage('ledger')
     } catch (err) {
       setMessage(err.message || '结束专注时遇到问题。')
     } finally {
@@ -427,11 +511,12 @@ function FocusScreen({ token, onBack, openPage }) {
 
   async function interrupt() {
     if (!active) return
-    const reason = window.prompt('刚才是什么牵引了你的注意力？')
+    const reason = interruptionReason.trim()
     if (!reason) return
     try {
       const result = await attentionApi.interruptFocusSession(active.id, { interruptionReason: reason }, token)
       setActive(result.session)
+      setInterruptionReason('')
       setMessage('已记录中断。看见牵引，是重新归回的开始。')
     } catch (err) {
       setMessage(err.message || '记录中断时遇到问题。')
@@ -448,23 +533,29 @@ function FocusScreen({ token, onBack, openPage }) {
       <section className="attn-grid">
         <AttentionCard title={active ? '专注进行中' : '开始一段专注'}>
           {active ? (
-            <div className="attn-focus-timer">
+            <div className="attn-focus-timer" aria-live="polite">
               <strong>{remaining} 分钟</strong>
               <span>已进行 {elapsed} 分钟 / 计划 {active.plannedMinutes} 分钟</span>
               <p>{active.intention || '愿这段注意力忠心献上。'}</p>
+              <Field label="刚才是什么牵引了注意力？">
+                <input value={interruptionReason} onChange={(event) => setInterruptionReason(event.target.value)} placeholder="只在需要记录中断时填写" />
+              </Field>
+              <Field label="结束时的一句话复盘">
+                <textarea rows={3} value={closingReflection} onChange={(event) => setClosingReflection(event.target.value)} placeholder="这段专注结束时，我留意到…" />
+              </Field>
               <div className="attn-footer-actions">
                 <button type="button" className="attn-button" disabled={busy} onClick={end}>结束专注</button>
-                <button type="button" className="attn-button secondary" onClick={interrupt}>记录中断</button>
+                <button type="button" className="attn-button secondary" disabled={busy || !interruptionReason.trim()} onClick={interrupt}>记录中断</button>
                 <button type="button" className="attn-button secondary" onClick={() => openPage('ledger')}>去账本</button>
               </div>
             </div>
           ) : (
             <div className="attn-form compact-form">
               <Field label="专注类型">
-                <div className="attn-pill-grid">{Object.entries(FOCUS_TYPE_META).map(([key, meta]) => <button key={key} type="button" className={`attn-pill ${form.focusType === key ? 'active' : ''}`} onClick={() => patch({ focusType: key, openingPrayer: meta.prayer })}>{meta.label}</button>)}</div>
+                <div className="attn-pill-grid">{Object.entries(FOCUS_TYPE_META).map(([key, meta]) => <button key={key} type="button" aria-pressed={form.focusType === key} className={`attn-pill ${form.focusType === key ? 'active' : ''}`} onClick={() => patch({ focusType: key, openingPrayer: meta.prayer })}>{meta.label}</button>)}</div>
               </Field>
               <Field label="计划时长">
-                <div className="attn-pill-grid">{ATTENTION_DURATION_OPTIONS.map((min) => <button key={min} type="button" className={`attn-pill ${form.plannedMinutes === min ? 'active' : ''}`} onClick={() => patch({ plannedMinutes: min })}>{min} 分钟</button>)}</div>
+                <div className="attn-pill-grid">{ATTENTION_DURATION_OPTIONS.map((min) => <button key={min} type="button" aria-pressed={form.plannedMinutes === min} className={`attn-pill ${form.plannedMinutes === min ? 'active' : ''}`} onClick={() => patch({ plannedMinutes: min })}>{min} 分钟</button>)}</div>
               </Field>
               <Field label="这段专注献给什么？"><input value={form.intention} onChange={(e) => patch({ intention: e.target.value })} placeholder="例如：完成一个核心任务" /></Field>
               <Field label="开始祷告"><textarea rows={4} value={form.openingPrayer} onChange={(e) => patch({ openingPrayer: e.target.value })} /></Field>
@@ -483,7 +574,7 @@ function FocusScreen({ token, onBack, openPage }) {
 function LedgerScreen({ token, localDate, onBack, openPage }) {
   const [entries, setEntries] = useState([])
   const [summary, setSummary] = useState(emptyDailySummary())
-  const [form, setForm] = useState(ENTRY_BLANK)
+  const [form, setForm] = useState(consumeLedgerDraft)
   const [message, setMessage] = useState('')
 
   const load = async () => {
@@ -518,10 +609,15 @@ function LedgerScreen({ token, localDate, onBack, openPage }) {
 
   async function remove(id) {
     if (!window.confirm('确定删除这条注意力记录吗？')) return
-    await attentionApi.deleteEntry(id, token)
-    const next = entries.filter((e) => e.id !== id)
-    setEntries(next)
-    setSummary(calculateDailySummary(next))
+    try {
+      await attentionApi.deleteEntry(id, token)
+      const next = entries.filter((e) => e.id !== id)
+      setEntries(next)
+      setSummary(calculateDailySummary(next))
+      setMessage('注意力记录已删除。')
+    } catch (err) {
+      setMessage(err?.message || '删除注意力记录时遇到问题。')
+    }
   }
 
   return (
@@ -541,7 +637,7 @@ function LedgerScreen({ token, localDate, onBack, openPage }) {
         <AttentionCard title="新增记录">
           <form className="attn-form compact-form" onSubmit={submit}>
             <Field label="注意力类型">
-              <div className="attn-pill-grid">{Object.entries(AttentionCategoryLabel).map(([key, label]) => <button key={key} type="button" className={`attn-pill ${form.category === key ? 'active' : ''}`} onClick={() => patch({ category: key, pulls: key === 'captured' ? form.pulls : [] })}>{label}</button>)}</div>
+              <div className="attn-pill-grid">{Object.entries(AttentionCategoryLabel).map(([key, label]) => <button key={key} type="button" aria-pressed={form.category === key} className={`attn-pill ${form.category === key ? 'active' : ''}`} onClick={() => patch({ category: key, pulls: key === 'captured' ? form.pulls : [] })}>{label}</button>)}</div>
             </Field>
             <Field label="活动名称">
               <div className="attn-pill-grid">{(ATTENTION_ENTRY_QUICK_ACTIVITIES[form.category] || []).map((name) => <button key={name} type="button" className="attn-pill" onClick={() => patch({ activityName: name })}>{name}</button>)}</div>
@@ -567,6 +663,7 @@ function ReviewScreen({ token, timezone, onBack, openPage }) {
   const [review, setReview] = useState(null)
   const [form, setForm] = useState(REVIEW_BLANK)
   const [message, setMessage] = useState('')
+  const [busy, setBusy] = useState(false)
 
   useEffect(() => {
     attentionApi.todayReview(token, timezone).then((result) => {
@@ -582,8 +679,17 @@ function ReviewScreen({ token, timezone, onBack, openPage }) {
   }
 
   async function suggest() {
-    const result = await attentionApi.suggestReview(token)
-    patch(result.suggestion || {})
+    setBusy(true)
+    setMessage('')
+    try {
+      const result = await attentionApi.suggestReview(token)
+      patch(result.suggestion || {})
+      setMessage('已生成复盘建议，你可以继续调整。')
+    } catch (err) {
+      setMessage(err?.message || '暂时无法生成复盘建议，你仍然可以手动填写。')
+    } finally {
+      setBusy(false)
+    }
   }
 
   async function submit(event) {
@@ -608,8 +714,8 @@ function ReviewScreen({ token, timezone, onBack, openPage }) {
         <Field label="明天要设立哪一道防线？"><textarea rows={3} value={form.tomorrowBoundary || ''} onChange={(e) => patch({ tomorrowBoundary: e.target.value })} /></Field>
         <Field label="结束祷告"><textarea rows={5} value={form.prayer || ''} onChange={(e) => patch({ prayer: e.target.value })} /></Field>
         <div className="attn-footer-actions">
-          <button type="submit" className="attn-button">{review ? '保存复盘修改' : '保存晚间复盘'}</button>
-          <button type="button" className="attn-button secondary" onClick={suggest}>生成复盘建议</button>
+          <button type="submit" className="attn-button" disabled={busy}>{review ? '保存复盘修改' : '保存晚间复盘'}</button>
+          <button type="button" className="attn-button secondary" disabled={busy} onClick={suggest}>{busy ? '正在生成建议…' : '生成复盘建议'}</button>
           <button type="button" className="attn-button secondary" onClick={() => openPage('diagnosis')}>生成 AI 守心洞察</button>
         </div>
       </form>
@@ -680,8 +786,13 @@ function DiagnosisScreen({ token, localDate, onBack, openPage }) {
 
   async function deleteHistory(id) {
     if (!window.confirm('确定删除这份守心洞察吗？删除后无法恢复。')) return
-    await attentionApi.deleteDiagnosis(id, token)
-    setHistory((items) => items.filter((item) => item.id !== id))
+    try {
+      await attentionApi.deleteDiagnosis(id, token)
+      setHistory((items) => items.filter((item) => item.id !== id))
+      setMessage('守心洞察已删除。')
+    } catch (err) {
+      setMessage(err?.message || '删除守心洞察时遇到问题。')
+    }
   }
 
   async function createPlanFromDiagnosis() {
@@ -689,9 +800,13 @@ function DiagnosisScreen({ token, localDate, onBack, openPage }) {
       setMessage('请先勾选“生成后保存到历史”，保存洞察后再转为守心计划。')
       return
     }
-    const data = await attentionApi.createPlanFromDiagnosis(record.id, token)
-    setMessage('已创建守心计划，你可以在注意力争战地图中继续调整。')
-    if (data.plan) openPage('warfare')
+    try {
+      const data = await attentionApi.createPlanFromDiagnosis(record.id, token)
+      setMessage('已创建守心计划，你可以在注意力争战地图中继续调整。')
+      if (data.plan) openPage('warfare')
+    } catch (err) {
+      setMessage(err?.message || '暂时无法从这份洞察创建守心计划。')
+    }
   }
 
   return (
@@ -704,8 +819,8 @@ function DiagnosisScreen({ token, localDate, onBack, openPage }) {
             <Field label="日期"><input type="date" value={date} onChange={(e) => setDate(e.target.value)} /></Field>
             <Field label="诊断类型">
               <div className="attn-pill-grid">
-                <button type="button" className={`attn-pill ${diagnosisType === 'daily' ? 'active' : ''}`} onClick={() => setDiagnosisType('daily')}>今日守心洞察</button>
-                <button type="button" className={`attn-pill ${diagnosisType === 'weekly_pattern' ? 'active' : ''}`} onClick={() => setDiagnosisType('weekly_pattern')}>最近 7 天模式</button>
+                <button type="button" aria-pressed={diagnosisType === 'daily'} className={`attn-pill ${diagnosisType === 'daily' ? 'active' : ''}`} onClick={() => setDiagnosisType('daily')}>今日守心洞察</button>
+                <button type="button" aria-pressed={diagnosisType === 'weekly_pattern'} className={`attn-pill ${diagnosisType === 'weekly_pattern' ? 'active' : ''}`} onClick={() => setDiagnosisType('weekly_pattern')}>最近 7 天模式</button>
               </div>
             </Field>
             <label className="attn-inline"><input type="checkbox" checked={save} onChange={(e) => setSave(e.target.checked)} /> 生成后保存到历史</label>
@@ -795,9 +910,13 @@ function WarfareScreen({ token, onBack }) {
   }
 
   async function saveCheckin(planId, status) {
-    await attentionApi.savePlanCheckin(planId, { status, noticed: status !== 'not_seen', returnedToGod: status === 'returned' }, token)
-    setMessage('今日 check-in 已保存。')
-    await load()
+    try {
+      await attentionApi.savePlanCheckin(planId, { status, noticed: status !== 'not_seen', returnedToGod: status === 'returned' }, token)
+      setMessage('今日 check-in 已保存。')
+      await load()
+    } catch (err) {
+      setMessage(err?.message || '保存今日 check-in 时遇到问题。')
+    }
   }
 
   const scores = map?.patternScores || WARFARE_PATTERNS.map((p) => ({ patternKey: p.key, label: p.label, intensity: 'none', score: 0, evidence: {}, suggestedNextStep: '近期没有明显记录。' }))
@@ -806,7 +925,7 @@ function WarfareScreen({ token, onBack }) {
       <PageHeader title="注意力争战地图" subtitle="看见注意力被牵引的路径，并建立归回的防线。" onBack={onBack} />
       {message ? <div className="attn-alert">{message}</div> : null}
       <section className="attn-section">
-        <div className="attn-pill-grid">{[7, 14, 30].map((d) => <button key={d} type="button" className={`attn-pill ${days === d ? 'active' : ''}`} onClick={() => setDays(d)}>最近 {d} 天</button>)}</div>
+        <div className="attn-pill-grid">{[7, 14, 30].map((d) => <button key={d} type="button" aria-pressed={days === d} className={`attn-pill ${days === d ? 'active' : ''}`} onClick={() => setDays(d)}>最近 {d} 天</button>)}</div>
       </section>
       <section className="attn-grid">
         <AttentionCard title="地图总览">
@@ -894,13 +1013,25 @@ function PageHeader({ title, subtitle, onBack }) {
 }
 
 function Field({ label, hint, children }) {
+  const id = useId()
+  const items = React.Children.toArray(children)
+  const singleControl = items.length === 1
+    && React.isValidElement(items[0])
+    && ['input', 'textarea', 'select'].includes(items[0].type)
   return (
-    <section className="attn-field">
-      <label>
+    <section className="attn-field" role={singleControl ? undefined : 'group'} aria-labelledby={singleControl ? undefined : `${id}-label`}>
+      {singleControl ? (
+        <label htmlFor={`${id}-control`}>
+          <span>{label}</span>
+          {hint ? <small>{hint}</small> : null}
+        </label>
+      ) : (
+        <div className="attn-field-label" id={`${id}-label`}>
         <span>{label}</span>
         {hint ? <small>{hint}</small> : null}
-        {children}
-      </label>
+        </div>
+      )}
+      {singleControl ? React.cloneElement(items[0], { id: items[0].props.id || `${id}-control` }) : children}
     </section>
   )
 }
@@ -908,8 +1039,8 @@ function Field({ label, hint, children }) {
 function QuickField({ label, hint, field, value, options, onQuick, onChange }) {
   return (
     <Field label={label} hint={hint}>
-      <div className="attn-pill-grid">{options.map((option) => <button key={option} type="button" className={`attn-pill ${value === option ? 'active' : ''}`} onClick={() => onQuick(field, option)}>{option}</button>)}</div>
-      <input value={value} onChange={(e) => onChange({ [field]: e.target.value })} />
+      <div className="attn-pill-grid">{options.map((option) => <button key={option} type="button" aria-pressed={value === option} className={`attn-pill ${value === option ? 'active' : ''}`} onClick={() => onQuick(field, option)}>{option}</button>)}</div>
+      <input aria-label={`${label}（自定义）`} value={value} onChange={(e) => onChange({ [field]: e.target.value })} />
     </Field>
   )
 }

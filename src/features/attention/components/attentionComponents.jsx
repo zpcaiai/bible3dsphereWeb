@@ -66,6 +66,7 @@ export function ScriptureSelector({ reference, text, onChange }) {
             key={ref}
             type="button"
             className={`attn-pill ${reference === ref ? 'active' : ''}`}
+            aria-pressed={reference === ref}
             onClick={() => onChange({ scriptureReference: ref, scriptureText: body })}
           >
             {ref}
@@ -106,7 +107,7 @@ export function AttentionCovenantPreview({ covenant }) {
   )
 }
 
-export function AttentionQuickActions({ openPage, isAdmin = false }) {
+export function AttentionQuickActions({ openPage, isAdmin = false, allowedSections, priorityKeys = [] }) {
   const actions = [
     ['covenant', '今日立约', '开始或编辑今天的注意力立约。'],
     ['focus', '开始专注', '祷告后进入使命专注，记录中断与完成。'],
@@ -120,9 +121,13 @@ export function AttentionQuickActions({ openPage, isAdmin = false }) {
     ['privacy', '隐私边界', '管理伙伴、小组和挑战可见范围。'],
   ]
   if (isAdmin) actions.push(['admin', '运营后台', '查看脱敏聚合指标和上线审计状态。'])
+  const priority = new Map(priorityKeys.map((key, index) => [key, index]))
+  const visibleActions = actions
+    .filter(([id]) => !allowedSections || allowedSections.has(id))
+    .sort(([a], [b]) => (priority.get(a) ?? 99) - (priority.get(b) ?? 99))
   return (
     <div className="attn-action-grid">
-      {actions.map(([id, title, sub]) => (
+      {visibleActions.map(([id, title, sub]) => (
         <button key={id} type="button" className="attn-action" onClick={() => openPage(id)}>
           <strong>{title}</strong>
           <span>{sub}</span>

@@ -177,7 +177,7 @@ function GrowthCurvePanel({ trend, days, setDays }) {
           <p>看见长期节奏，而不是被某一天定义。</p>
         </div>
         <div className="attn-segmented">
-          {[30, 60, 90].map((value) => <button type="button" key={value} className={days === value ? 'active' : ''} onClick={() => setDays(value)}>{value} 天</button>)}
+          {[30, 60, 90].map((value) => <button type="button" key={value} aria-pressed={days === value} className={days === value ? 'active' : ''} onClick={() => setDays(value)}>{value} 天</button>)}
         </div>
       </div>
       {trend?.points?.length ? (

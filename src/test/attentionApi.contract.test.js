@@ -124,6 +124,9 @@ describe('attention api contracts', () => {
     global.fetch.mockResolvedValueOnce(okJson({ share: {} }))
     await attentionApi.createShare({ scope: 'partner', sourceType: 'weekly_report' }, 'token-a')
     expect(lastFetch().url).toBe('/api/attention/accountability/shares')
+    global.fetch.mockResolvedValueOnce(okJson({ preview: {} }))
+    await attentionApi.previewShare({ scope: 'partner', sourceType: 'weekly_report' }, 'token-a')
+    expect(lastFetch().url).toBe('/api/attention/accountability/shares/preview')
 
     global.fetch.mockResolvedValueOnce(okJson({ prayerRequest: {} }))
     await attentionApi.createPrayerRequest({ targetUserId: 'b@example.com', title: '请代祷' }, 'token-a')

@@ -2612,12 +2612,12 @@ function AppContent() {
                   <div className="stats-card">
                     <div className="stats-pulse"></div>
                     <div className="stats-icon">👁</div>
-                    <div className="stats-value">{visitStats.page_views.toLocaleString()}</div>
+                    <div className="stats-value">{Number(visitStats?.page_views || 0).toLocaleString()}</div>
                     <div className="stats-label">{i18nT('总浏览量')}</div>
                   </div>
                   <div className="stats-card">
                     <div className="stats-icon">👤</div>
-                    <div className="stats-value">{visitStats.unique_visitors.toLocaleString()}</div>
+                    <div className="stats-value">{Number(visitStats?.unique_visitors || 0).toLocaleString()}</div>
                     <div className="stats-label">{i18nT('独立访客')}</div>
                   </div>
                 </div>

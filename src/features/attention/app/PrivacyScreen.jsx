@@ -9,13 +9,22 @@ export default function PrivacyScreen({ token, onBack }) {
   const [settings, setSettings] = useState(null)
   const [message, setMessage] = useState('')
   const [saving, setSaving] = useState(false)
+  const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
+  function load() {
     let cancelled = false
+    setLoading(true)
+    setMessage('')
     attentionApi.privacy(token)
       .then((data) => { if (!cancelled) setSettings(data.settings) })
       .catch(() => { if (!cancelled) setMessage('暂时无法加载隐私设置。') })
+      .finally(() => { if (!cancelled) setLoading(false) })
     return () => { cancelled = true }
+  }
+
+  useEffect(() => {
+    const cancel = load()
+    return cancel
   }, [token])
 
   function patch(values) {
@@ -53,8 +62,8 @@ export default function PrivacyScreen({ token, onBack }) {
         <p>你决定哪些摘要可以被看见。原始祷告、复盘、洞察和敏感牵引不会自动分享。</p>
       </header>
 
-      {message ? <div className="attn-alert">{message}</div> : null}
-      {!settings ? <div className="attn-loading">正在加载隐私边界…</div> : null}
+      {message ? <div className="attn-alert" role="status">{message}{!settings && !loading ? <button type="button" onClick={load}>重试</button> : null}</div> : null}
+      {loading ? <div className="attn-loading">正在加载隐私边界…</div> : null}
 
       {settings ? (
         <section className="attn-grid">
@@ -100,6 +109,7 @@ export default function PrivacyScreen({ token, onBack }) {
                   key={key}
                   type="button"
                   className={`attn-pill ${(settings.hideSensitiveCategories || []).includes(key) ? 'active' : ''}`}
+                  aria-pressed={(settings.hideSensitiveCategories || []).includes(key)}
                   onClick={() => toggleHidden(key)}
                 >
                   {label}

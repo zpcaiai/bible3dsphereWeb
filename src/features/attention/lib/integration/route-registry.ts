@@ -26,3 +26,20 @@ export const ATTENTION_ROUTES: AttentionRoute[] = [
 export function visibleAttentionRoutes(isAdmin = false) {
   return ATTENTION_ROUTES.filter((route) => !route.requiresAdmin || isAdmin)
 }
+
+export function enabledAttentionRoutes(
+  flags: Record<string, boolean>,
+  isAdmin = false,
+) {
+  const disabled = new Set<string>()
+  if (!flags.ATTENTION_AI_ENABLED) disabled.add('diagnosis')
+  if (!flags.ATTENTION_COMMUNITY_ENABLED) disabled.add('accountability')
+  if (!flags.ATTENTION_GROUPS_ENABLED) disabled.add('groups')
+  if (!flags.ATTENTION_ADMIN_ENABLED) disabled.add('admin')
+  return visibleAttentionRoutes(isAdmin).filter((route) => !disabled.has(route.key))
+}
+
+export function attentionSectionFromPath(pathname: string) {
+  const match = String(pathname || '').match(/^\/attention(?:\/([^/]+))?\/?$/)
+  return match ? (match[1] || 'dashboard') : null
+}

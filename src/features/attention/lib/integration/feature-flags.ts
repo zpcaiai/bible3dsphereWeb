@@ -1,5 +1,4 @@
 export function attentionFeatureFlags(env = import.meta.env) {
-  const prod = env.PROD === true || env.MODE === 'production'
   const bool = (key: string, fallback: boolean) => {
     const raw = String(env[key] ?? '').trim().toLowerCase()
     if (['1', 'true', 'yes', 'on'].includes(raw)) return true
@@ -7,7 +6,7 @@ export function attentionFeatureFlags(env = import.meta.env) {
     return fallback
   }
   return {
-    ATTENTION_MODULE_ENABLED: bool('VITE_ATTENTION_MODULE_ENABLED', !prod),
+    ATTENTION_MODULE_ENABLED: bool('VITE_ATTENTION_MODULE_ENABLED', true),
     ATTENTION_AI_ENABLED: bool('VITE_ATTENTION_AI_ENABLED', true),
     ATTENTION_COMMUNITY_ENABLED: bool('VITE_ATTENTION_COMMUNITY_ENABLED', true),
     ATTENTION_GROUPS_ENABLED: bool('VITE_ATTENTION_GROUPS_ENABLED', true),

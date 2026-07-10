@@ -2995,6 +2995,10 @@ export const attentionApi = {
     const res = await fetch(`${API_BASE}/attention/accountability/shares`, { method: 'POST', headers: _fH(token, true), body: JSON.stringify(body || {}) })
     return _attentionJson(res, '创建守心分享时遇到问题。')
   },
+  previewShare: async (body, token) => {
+    const res = await fetch(`${API_BASE}/attention/accountability/shares/preview`, { method: 'POST', headers: _fH(token, true), body: JSON.stringify(body || {}) })
+    return _attentionJson(res, '生成分享预览时遇到问题。')
+  },
   revokeShare: async (shareId, token) => {
     const res = await fetch(`${API_BASE}/attention/accountability/shares/${encodeURIComponent(shareId)}`, { method: 'DELETE', headers: _fH(token) })
     return _attentionJson(res, '撤回守心分享时遇到问题。')
