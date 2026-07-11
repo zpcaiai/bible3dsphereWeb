@@ -2,6 +2,7 @@
 // Cache name includes a version token — change it to bust all caches on next deploy
 const CACHE_VERSION = 'emotion-sphere-2025-v4'
 const ASSET_EXTS = ['.js', '.css', '.woff2', '.woff', '.ttf', '.png', '.svg', '.ico', '.webp', '.json']
+const MISSION_AUDIO_CACHE = 'mission-bridge-audio-v1'
 
 // ─── Install: claim clients immediately ───────────────────────────────────────
 self.addEventListener('install', event => {
@@ -66,6 +67,15 @@ self.addEventListener('fetch', event => {
   // 6. Everything else → network, no caching
 })
 
+self.addEventListener('message', event => {
+  if (event.data?.type === 'MISSION_AUDIO_PREDOWNLOAD') {
+    event.waitUntil(caches.open(MISSION_AUDIO_CACHE).then(cache => Promise.allSettled((event.data.urls || []).map(url => cache.add(url)))))
+  }
+  if (event.data?.type === 'CLEAR_MISSION_SENSITIVE_CACHE') {
+    event.waitUntil(caches.delete(MISSION_AUDIO_CACHE))
+  }
+})
+
 // ─── Strategies ───────────────────────────────────────────────────────────────
 
 async function networkFirstHTML(req) {
@@ -103,11 +113,11 @@ async function cacheFirstAsset(req) {
 
 // ─── Web Push: 显示通知 ────────────────────────────────────────────────────────
 self.addEventListener('push', event => {
-  let payload = { title: '属灵星球', body: '有一条新的提醒', url: '/' }
+  let payload = { title: '属灵星球', body: '打开应用查看新的提醒', url: '/' }
   try { if (event.data) payload = { ...payload, ...event.data.json() } } catch (e) {}
   event.waitUntil(
     self.registration.showNotification(payload.title, {
-      body: payload.body,
+      body: payload.sharedDevice ? '打开应用查看新的提醒' : payload.body,
       icon: '/favicon.svg',
       badge: '/favicon.svg',
       data: { url: payload.url || '/' },

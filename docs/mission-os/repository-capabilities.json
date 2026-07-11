@@ -1,0 +1,14 @@
+{
+  "architecture": { "status": "existing", "module": "split React Vite and FastAPI repositories", "reuse": "direct" },
+  "authentication": { "status": "existing", "module": "backend session user", "reuse": "adapter" },
+  "organizations": { "status": "existing", "module": "organization_memberships", "reuse": "adapter" },
+  "formation": { "status": "existing", "module": "spiritual-formation", "reuse": "adapter" },
+  "crisis": { "status": "existing", "module": "crisis and healing features", "reuse": "adapter" },
+  "mission_bridge": { "status": "in_progress", "module": "mission_bridge", "reuse": "extend" },
+  "rls": { "status": "unverified", "reuse": "prove_or_build" },
+  "feature_flags": { "status": "implemented", "module": "mission_os.feature_flags", "reuse": "direct" },
+  "outbox": { "status": "implemented", "module": "mission_os.outbox", "reuse": "direct" },
+  "data_lineage": { "status": "implemented", "module": "mission_os.audit", "reuse": "direct" },
+  "internationalization": { "status": "existing", "module": "src/i18n", "reuse": "direct" },
+  "pwa": { "status": "existing", "module": "public/sw.js", "reuse": "direct" }
+}

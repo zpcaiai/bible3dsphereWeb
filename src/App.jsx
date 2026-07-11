@@ -2695,6 +2695,7 @@ function AppContent() {
               <PrayerWallPage
                 user={user}
                 token={getToken()}
+                organizationId={myChurch?.id}
                 onBack={() => setActivePanel('sphere')}
               />
             ) : showLogin ? renderInlineLogin() : null}

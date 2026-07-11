@@ -6,6 +6,7 @@ import { amenEvangelismPrayer, deleteEvangelismPrayer, fetchEvangelismPrayers, r
 import usePullToRefresh from './hooks/usePullToRefresh'
 import { escapeHtml, escapeHtmlWithBr } from './sanitize'
 import BibleMapPage from './BibleMapPage'
+import MissionBridgePanel from './components/mission-bridge/MissionBridgePanel'
 
 const AMEN_KEY = 'evangelism-amened-v1'
 
@@ -348,7 +349,7 @@ export function SeekersClassView() {
   )
 }
 
-export default function EvangelismPage({ user, token, onBack, onPrayerWall }) {
+export default function EvangelismPage({ user, token, organizationId, onBack, onPrayerWall }) {
   const [items, setItems] = useState([])
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(true)
@@ -356,7 +357,7 @@ export default function EvangelismPage({ user, token, onBack, onPrayerWall }) {
   const [error, setError] = useState('')
   const [amened, setAmened] = useState(loadAmened)
   const [showCompose, setShowCompose] = useState(false)
-  const [subTab, setSubTab] = useState('fy') // 'fy' | 'map'
+  const [subTab, setSubTab] = useState('fy') // 'fy' | 'mission' | 'map' | 'seekers'
   const [draft, setDraft] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [submitDone, setSubmitDone] = useState(false)
@@ -633,8 +634,8 @@ export default function EvangelismPage({ user, token, onBack, onPrayerWall }) {
           </svg>
         </button>
         <div className="pw-header-center">
-          <div className="pw-title">{subTab === 'map' ? '🗺️ 圣经地图' : subTab === 'seekers' ? '📚 慕道班' : '🌍 传FY'}</div>
-          <div className="pw-subtitle">{subTab === 'map' ? '圣经世界地理与宣教足迹' : subTab === 'seekers' ? '慕道班课程 · 文字 / PPT / 视频' : (total > 0 ? `共 ${total} 条祷告` : '为福音传遍天下祷告')}</div>
+          <div className="pw-title">{subTab === 'mission' ? '🌉 宣教 · 邻舍之桥' : subTab === 'map' ? '🗺️ 圣经地图' : subTab === 'seekers' ? '📚 慕道班' : '🌍 传FY'}</div>
+          <div className="pw-subtitle">{subTab === 'mission' ? '关怀 · 探索 · 装备 · 安全同行' : subTab === 'map' ? '圣经世界地理与宣教足迹' : subTab === 'seekers' ? '慕道班课程 · 文字 / PPT / 视频' : (total > 0 ? `共 ${total} 条祷告` : '为福音传遍天下祷告')}</div>
         </div>
         {subTab === 'fy' && onPrayerWall && (
           <button
@@ -661,13 +662,19 @@ export default function EvangelismPage({ user, token, onBack, onPrayerWall }) {
         )}
       </header>
 
-      {/* 子标签：传FY / 圣经地图 */}
+      {/* 子标签：传FY / 宣教 / 圣经地图 / 慕道班 */}
       <div className="ev-subtabs">
         <button
           className={`ev-subtab ${subTab === 'fy' ? 'active' : ''}`}
           onClick={() => setSubTab('fy')}
         >
           {i18nT('🌍 传FY')}
+        </button>
+        <button
+          className={`ev-subtab ${subTab === 'mission' ? 'active' : ''}`}
+          onClick={() => setSubTab('mission')}
+        >
+          {i18nT('🌉 宣教')}
         </button>
         <button
           className={`ev-subtab ${subTab === 'map' ? 'active' : ''}`}
@@ -1238,6 +1245,13 @@ export default function EvangelismPage({ user, token, onBack, onPrayerWall }) {
           </>
         )}
       </div>
+      )}
+
+      {/* 宣教：邻舍之桥 */}
+      {subTab === 'mission' && (
+        <div className="pw-list mission-panel-scroll">
+          <MissionBridgePanel token={token} organizationId={organizationId} />
+        </div>
       )}
 
       {/* 圣经地图：出埃及/保罗/耶路撒冷/支派与王国 */}

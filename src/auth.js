@@ -1,4 +1,5 @@
 import { API_BASE } from './api'
+import { clearSensitiveOfflineData } from './missionBridgeOffline'
 
 const TOKEN_KEY = 'bible-sphere-token'
 const USER_KEY = 'bible-sphere-user'
@@ -72,6 +73,7 @@ export async function logout() {
       // ignore
     }
   }
+  await clearSensitiveOfflineData().catch(() => {})
   clearToken()
 }
 
