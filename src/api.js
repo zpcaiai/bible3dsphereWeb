@@ -1,4 +1,5 @@
 import { getCached, setCached, getManyCached, setManyCached } from './translationCache'
+import { devlog } from './lib/devlog'
 import { getRuntimeLang } from './i18n/runtime'
 const configuredApiBase = import.meta.env.VITE_API_BASE?.trim()
 
@@ -57,44 +58,44 @@ function normalizeScripturePayload(data) {
 }
 
 export async function fetchLayout() {
-  console.log('[api] fetchLayout')
+  devlog('[api] fetchLayout')
   try {
     const response = await fetch(`${API_BASE}/layout`)
     if (!response.ok) throw new Error('Failed to fetch layout')
     const data = await response.json()
-    console.log(`[api] fetchLayout ok: ${data.count} items`)
+    devlog(`[api] fetchLayout ok: ${data.count} items`)
     return data
   } catch (err) {
-    console.log('[api] fetchLayout api failed, fallback to static json', err.message)
+    devlog('[api] fetchLayout api failed, fallback to static json', err.message)
     try {
       const response = await fetch('/emotion_sphere_layout.json')
       if (!response.ok) throw new Error('static fallback not found')
       const items = await response.json()
-      console.log(`[api] fetchLayout static ok: ${items.length} items`)
+      devlog(`[api] fetchLayout static ok: ${items.length} items`)
       return { items, count: items.length }
     } catch (err2) {
-      console.log('[api] fetchLayout static fallback also failed, returning empty', err2.message)
+      devlog('[api] fetchLayout static fallback also failed, returning empty', err2.message)
       return { items: [], count: 0 }
     }
   }
 }
 
 export async function fetchHistory() {
-  console.log('[api] fetchHistory')
+  devlog('[api] fetchHistory')
   const response = await fetch(`${API_BASE}/history`)
   const contentType = response.headers.get('content-type') || ''
   if (!contentType.includes('application/json')) {
-    console.log('[api] fetchHistory backend unavailable, returning empty')
+    devlog('[api] fetchHistory backend unavailable, returning empty')
     return { items: [], total: 0 }
   }
   if (!response.ok) throw new Error('Failed to fetch history')
   const data = await response.json()
-  console.log(`[api] fetchHistory ok: ${data.items?.length ?? 0} records`)
+  devlog(`[api] fetchHistory ok: ${data.items?.length ?? 0} records`)
   return data
 }
 
 export async function fetchStats() {
-  console.log('[api] fetchStats')
+  devlog('[api] fetchStats')
   const response = await fetch(`${API_BASE}/stats`)
   const contentType = response.headers.get('content-type') || ''
   if (!contentType.includes('application/json')) {
@@ -102,12 +103,12 @@ export async function fetchStats() {
   }
   if (!response.ok) throw new Error('Failed to fetch stats')
   const data = await response.json()
-  console.log('[api] fetchStats ok:', data)
+  devlog('[api] fetchStats ok:', data)
   return data
 }
 
 export async function trackStats(visitorId) {
-  console.log(`[api] trackStats visitorId=${visitorId}`)
+  devlog(`[api] trackStats visitorId=${visitorId}`)
   const response = await fetch(`${API_BASE}/stats/track`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -119,12 +120,12 @@ export async function trackStats(visitorId) {
   }
   const data = await response.json()
   if (!response.ok) throw new Error(data.error || 'Failed to track stats')
-  console.log('[api] trackStats ok:', data)
+  devlog('[api] trackStats ok:', data)
   return data
 }
 
 export async function fetchFeatureDetail(featureKey) {
-  console.log(`[api] fetchFeatureDetail key=${featureKey}`)
+  devlog(`[api] fetchFeatureDetail key=${featureKey}`)
   const response = await fetch(`${API_BASE}/feature?key=${encodeURIComponent(featureKey)}`)
   const contentType = response.headers.get('content-type') || ''
   if (!contentType.includes('application/json')) {
@@ -132,12 +133,12 @@ export async function fetchFeatureDetail(featureKey) {
   }
   if (!response.ok) throw new Error('Failed to fetch feature detail')
   const data = await response.json()
-  console.log(`[api] fetchFeatureDetail ok key=${featureKey}`)
+  devlog(`[api] fetchFeatureDetail ok key=${featureKey}`)
   return data
 }
 
 export async function fetchRetrievalEvaluation() {
-  console.log('[api] fetchRetrievalEvaluation')
+  devlog('[api] fetchRetrievalEvaluation')
   const response = await fetch(`${API_BASE}/retrieval/evaluation`)
   const contentType = response.headers.get('content-type') || ''
   if (!contentType.includes('application/json')) {
@@ -149,7 +150,7 @@ export async function fetchRetrievalEvaluation() {
 }
 
 export async function runQuery(payload) {
-  console.log(`[api] runQuery query=${payload.query?.slice(0, 60)} rerank=${payload.enableRerank}`)
+  devlog(`[api] runQuery query=${payload.query?.slice(0, 60)} rerank=${payload.enableRerank}`)
   const response = await fetch(`${API_BASE}/query`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -171,12 +172,12 @@ export async function runQuery(payload) {
     }
     throw new Error(`[HTTP ${response.status}] ${msg}`)
   }
-  console.log(`[api] runQuery ok latency=${data.query_latency_ms}ms features=${data.selected_emotions?.length ?? 0}`)
+  devlog(`[api] runQuery ok latency=${data.query_latency_ms}ms features=${data.selected_emotions?.length ?? 0}`)
   return data
 }
 
 export async function fetchGuidance(query) {
-  console.log(`[api] fetchGuidance query=${query?.slice(0, 60)}`)
+  devlog(`[api] fetchGuidance query=${query?.slice(0, 60)}`)
   const response = await fetch(`${API_BASE}/guidance`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -188,12 +189,12 @@ export async function fetchGuidance(query) {
   }
   const data = await response.json()
   if (!response.ok) throw new Error(data.error || 'Guidance failed')
-  console.log(`[api] fetchGuidance ok emotions=${data.core_emotions}`)
+  devlog(`[api] fetchGuidance ok emotions=${data.core_emotions}`)
   return data
 }
 
 export async function fetchSermon(query) {
-  console.log(`[api] fetchSermon query=${query?.slice(0, 60)}`)
+  devlog(`[api] fetchSermon query=${query?.slice(0, 60)}`)
   const response = await fetch(`${API_BASE}/sermon`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -205,7 +206,7 @@ export async function fetchSermon(query) {
   }
   const data = await response.json()
   if (!response.ok) throw new Error(data.error || 'Sermon failed')
-  console.log(`[api] fetchSermon ok title=${data.title}`)
+  devlog(`[api] fetchSermon ok title=${data.title}`)
   return data
 }
 
@@ -239,7 +240,7 @@ export async function fetchCommunityHeatmap(windowHours = 24, topN = 8) {
 }
 
 export async function fetchMeditationQuestions(reference, text) {
-  console.log(`[api] fetchMeditationQuestions ref=${reference}`)
+  devlog(`[api] fetchMeditationQuestions ref=${reference}`)
   const response = await fetch(`${API_BASE}/meditation-questions`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'X-Lang': getRuntimeLang() },
@@ -400,7 +401,7 @@ export async function fetchTranslate(text, targetLang = 'en') {
   const cachedHit = getCached(text, targetLang)
   if (cachedHit !== undefined) return cachedHit
 
-  console.log(`[api] fetchTranslate target=${targetLang} text=${text?.slice(0, 60)}`)
+  devlog(`[api] fetchTranslate target=${targetLang} text=${text?.slice(0, 60)}`)
   const response = await fetch(`${API_BASE}/translate`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -412,7 +413,7 @@ export async function fetchTranslate(text, targetLang = 'en') {
   }
   const data = await response.json()
   if (!response.ok) throw new Error(data.error || 'Translation failed')
-  console.log(`[api] fetchTranslate ok len=${data.translation?.length}`)
+  devlog(`[api] fetchTranslate ok len=${data.translation?.length}`)
   setCached(text, targetLang, data.translation)
   return data.translation
 }
@@ -460,7 +461,7 @@ export async function translateTexts(texts, targetLang = 'en') {
 }
 
 export async function fetchFaithQA(question) {
-  console.log(`[api] fetchFaithQA question=${question?.slice(0, 60)}`)
+  devlog(`[api] fetchFaithQA question=${question?.slice(0, 60)}`)
   const response = await fetch(`${API_BASE}/faith-qa`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -472,12 +473,12 @@ export async function fetchFaithQA(question) {
   }
   const data = await response.json()
   if (!response.ok) throw new Error(data.error || 'Faith QA failed')
-  console.log(`[api] fetchFaithQA ok summary=${data.question_summary?.slice(0, 40)}`)
+  devlog(`[api] fetchFaithQA ok summary=${data.question_summary?.slice(0, 40)}`)
   return data
 }
 
 export async function fetchVersePrayer(reference, text) {
-  console.log(`[api] fetchVersePrayer ref=${reference}`)
+  devlog(`[api] fetchVersePrayer ref=${reference}`)
   const response = await fetch(`${API_BASE}/verse-prayer`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'X-Lang': getRuntimeLang() },
@@ -489,12 +490,12 @@ export async function fetchVersePrayer(reference, text) {
   }
   const data = await response.json()
   if (!response.ok) throw new Error(data.error || '祷告生成失败')
-  console.log(`[api] fetchVersePrayer ok len=${data.prayer?.length}`)
+  devlog(`[api] fetchVersePrayer ok len=${data.prayer?.length}`)
   return data
 }
 
 export async function fetchBiblicalExample(query) {
-  console.log(`[api] fetchBiblicalExample query=${query?.slice(0, 60)}`)
+  devlog(`[api] fetchBiblicalExample query=${query?.slice(0, 60)}`)
   const response = await fetch(`${API_BASE}/biblical-example`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -506,12 +507,12 @@ export async function fetchBiblicalExample(query) {
   }
   const data = await response.json()
   if (!response.ok) throw new Error(data.error || 'Biblical example failed')
-  console.log(`[api] fetchBiblicalExample ok person=${data.person} era=${data.era}`)
+  devlog(`[api] fetchBiblicalExample ok person=${data.person} era=${data.era}`)
   return data
 }
 
 export async function* sendChat(messages, sessionId, token) {
-  console.log(`[api] sendChat session=${sessionId} msgs=${messages.length}`)
+  devlog(`[api] sendChat session=${sessionId} msgs=${messages.length}`)
   const headers = { 'Content-Type': 'application/json' }
   if (token) headers['Authorization'] = `Bearer ${token}`
   const response = await fetch(`${API_BASE}/chat`, {
@@ -528,7 +529,7 @@ export async function* sendChat(messages, sessionId, token) {
     console.error('[api] sendChat error:', err)
     throw new Error(err.detail || err.error || 'Chat failed')
   }
-  console.log('[api] sendChat stream started')
+  devlog('[api] sendChat stream started')
   const reader = response.body.getReader()
   const decoder = new TextDecoder()
   let buffer = ''
@@ -546,7 +547,7 @@ export async function* sendChat(messages, sessionId, token) {
       try {
         const obj = JSON.parse(raw)
         if (obj.delta) totalChunks++
-        if (obj.done) console.log(`[api] sendChat stream done session=${obj.session_id} chunks=${totalChunks}`)
+        if (obj.done) devlog(`[api] sendChat stream done session=${obj.session_id} chunks=${totalChunks}`)
         yield obj
       } catch { /* ignore malformed */ }
     }
@@ -554,7 +555,7 @@ export async function* sendChat(messages, sessionId, token) {
 }
 
 export async function fetchPrayers(limit = 40, offset = 0, token = null) {
-  console.log(`[api] fetchPrayers limit=${limit} offset=${offset}`)
+  devlog(`[api] fetchPrayers limit=${limit} offset=${offset}`)
   const headers = {}
   if (token) headers['Authorization'] = `Bearer ${token}`
   const response = await fetch(`${API_BASE}/prayers?limit=${limit}&offset=${offset}`, { headers })
@@ -564,12 +565,12 @@ export async function fetchPrayers(limit = 40, offset = 0, token = null) {
   }
   if (!response.ok) throw new Error('Failed to fetch prayers')
   const data = await response.json()
-  console.log(`[api] fetchPrayers ok: ${data.items?.length ?? 0}/${data.total} items`)
+  devlog(`[api] fetchPrayers ok: ${data.items?.length ?? 0}/${data.total} items`)
   return data
 }
 
 export async function submitPrayer(content, isAnonymous, token, isPublic = false) {
-  console.log(`[api] submitPrayer anon=${isAnonymous} len=${content.length}`)
+  devlog(`[api] submitPrayer anon=${isAnonymous} len=${content.length}`)
   const headers = { 'Content-Type': 'application/json' }
   if (token) headers['Authorization'] = `Bearer ${token}`
   const response = await fetch(`${API_BASE}/prayers`, {
@@ -583,12 +584,12 @@ export async function submitPrayer(content, isAnonymous, token, isPublic = false
   }
   const data = await response.json()
   if (!response.ok) throw new Error(data.detail || data.error || 'Submit failed')
-  console.log(`[api] submitPrayer ok id=${data.id}`)
+  devlog(`[api] submitPrayer ok id=${data.id}`)
   return data
 }
 
 export async function amenPrayer(prayerId, token) {
-  console.log(`[api] amenPrayer id=${prayerId}`)
+  devlog(`[api] amenPrayer id=${prayerId}`)
   const headers = {}
   if (token) headers['Authorization'] = `Bearer ${token}`
   const response = await fetch(`${API_BASE}/prayers/${prayerId}/amen`, {
@@ -601,12 +602,12 @@ export async function amenPrayer(prayerId, token) {
   }
   const data = await response.json()
   if (!response.ok) throw new Error(data.detail || data.error || 'Amen failed')
-  console.log(`[api] amenPrayer ok id=${prayerId} count=${data.amen_count}`)
+  devlog(`[api] amenPrayer ok id=${prayerId} count=${data.amen_count}`)
   return data
 }
 
 export async function updatePrayer(prayerId, content, token) {
-  console.log(`[api] updatePrayer id=${prayerId}`)
+  devlog(`[api] updatePrayer id=${prayerId}`)
   const headers = { 'Content-Type': 'application/json' }
   if (token) headers['Authorization'] = `Bearer ${token}`
   const response = await fetch(`${API_BASE}/prayers/${prayerId}`, {
@@ -620,12 +621,12 @@ export async function updatePrayer(prayerId, content, token) {
   }
   const data = await response.json()
   if (!response.ok) throw new Error(data.detail || data.error || 'Update failed')
-  console.log(`[api] updatePrayer ok id=${prayerId}`)
+  devlog(`[api] updatePrayer ok id=${prayerId}`)
   return data
 }
 
 export async function updatePrayerStatus(prayerId, status, token) {
-  console.log(`[api] updatePrayerStatus id=${prayerId} status=${status}`)
+  devlog(`[api] updatePrayerStatus id=${prayerId} status=${status}`)
   const headers = { 'Content-Type': 'application/json' }
   if (token) headers['Authorization'] = `Bearer ${token}`
   const response = await fetch(`${API_BASE}/prayers/${prayerId}/status`, {
@@ -639,7 +640,7 @@ export async function updatePrayerStatus(prayerId, status, token) {
 }
 
 export async function deletePrayer(prayerId, token) {
-  console.log(`[api] deletePrayer id=${prayerId}`)
+  devlog(`[api] deletePrayer id=${prayerId}`)
   const headers = {}
   if (token) headers['Authorization'] = `Bearer ${token}`
   const response = await fetch(`${API_BASE}/prayers/${prayerId}`, {
@@ -652,12 +653,12 @@ export async function deletePrayer(prayerId, token) {
   }
   const data = await response.json()
   if (!response.ok) throw new Error(data.detail || data.error || 'Delete failed')
-  console.log(`[api] deletePrayer ok id=${prayerId}`)
+  devlog(`[api] deletePrayer ok id=${prayerId}`)
   return data
 }
 
 export async function restorePrayer(prayerId, token) {
-  console.log(`[api] restorePrayer id=${prayerId}`)
+  devlog(`[api] restorePrayer id=${prayerId}`)
   const headers = {}
   if (token) headers['Authorization'] = `Bearer ${token}`
   const response = await fetch(`${API_BASE}/prayers/${prayerId}/restore`, {
@@ -670,14 +671,14 @@ export async function restorePrayer(prayerId, token) {
   }
   const data = await response.json()
   if (!response.ok) throw new Error(data.detail || data.error || 'Restore failed')
-  console.log(`[api] restorePrayer ok id=${prayerId}`)
+  devlog(`[api] restorePrayer ok id=${prayerId}`)
   return data
 }
 
 // ── Evangelism Prayers (传福音祷告墙) ─────────────────────────
 
 export async function fetchEvangelismPrayers(limit = 40, offset = 0, token = null) {
-  console.log(`[api] fetchEvangelismPrayers limit=${limit} offset=${offset}`)
+  devlog(`[api] fetchEvangelismPrayers limit=${limit} offset=${offset}`)
   const headers = {}
   if (token) headers['Authorization'] = `Bearer ${token}`
   const response = await fetch(`${API_BASE}/evangelism?limit=${limit}&offset=${offset}`, { headers })
@@ -687,12 +688,12 @@ export async function fetchEvangelismPrayers(limit = 40, offset = 0, token = nul
   }
   if (!response.ok) throw new Error('Failed to fetch evangelism prayers')
   const data = await response.json()
-  console.log(`[api] fetchEvangelismPrayers ok: ${data.items?.length ?? 0}/${data.total} items`)
+  devlog(`[api] fetchEvangelismPrayers ok: ${data.items?.length ?? 0}/${data.total} items`)
   return data
 }
 
 export async function submitEvangelismPrayer(content, isAnonymous, token) {
-  console.log(`[api] submitEvangelismPrayer anon=${isAnonymous} len=${content.length}`)
+  devlog(`[api] submitEvangelismPrayer anon=${isAnonymous} len=${content.length}`)
   const headers = { 'Content-Type': 'application/json' }
   if (token) headers['Authorization'] = `Bearer ${token}`
   const response = await fetch(`${API_BASE}/evangelism`, {
@@ -706,12 +707,12 @@ export async function submitEvangelismPrayer(content, isAnonymous, token) {
   }
   const data = await response.json()
   if (!response.ok) throw new Error(data.detail || data.error || 'Submit failed')
-  console.log(`[api] submitEvangelismPrayer ok id=${data.id}`)
+  devlog(`[api] submitEvangelismPrayer ok id=${data.id}`)
   return data
 }
 
 export async function amenEvangelismPrayer(prayerId, token) {
-  console.log(`[api] amenEvangelismPrayer id=${prayerId}`)
+  devlog(`[api] amenEvangelismPrayer id=${prayerId}`)
   const headers = {}
   if (token) headers['Authorization'] = `Bearer ${token}`
   const response = await fetch(`${API_BASE}/evangelism/${prayerId}/amen`, {
@@ -724,12 +725,12 @@ export async function amenEvangelismPrayer(prayerId, token) {
   }
   const data = await response.json()
   if (!response.ok) throw new Error(data.detail || data.error || 'Amen failed')
-  console.log(`[api] amenEvangelismPrayer ok id=${prayerId} count=${data.amen_count}`)
+  devlog(`[api] amenEvangelismPrayer ok id=${prayerId} count=${data.amen_count}`)
   return data
 }
 
 export async function updateEvangelismPrayer(prayerId, content, token) {
-  console.log(`[api] updateEvangelismPrayer id=${prayerId}`)
+  devlog(`[api] updateEvangelismPrayer id=${prayerId}`)
   const headers = { 'Content-Type': 'application/json' }
   if (token) headers['Authorization'] = `Bearer ${token}`
   const response = await fetch(`${API_BASE}/evangelism/${prayerId}`, {
@@ -743,12 +744,12 @@ export async function updateEvangelismPrayer(prayerId, content, token) {
   }
   const data = await response.json()
   if (!response.ok) throw new Error(data.detail || data.error || 'Update failed')
-  console.log(`[api] updateEvangelismPrayer ok id=${prayerId}`)
+  devlog(`[api] updateEvangelismPrayer ok id=${prayerId}`)
   return data
 }
 
 export async function deleteEvangelismPrayer(prayerId, token) {
-  console.log(`[api] deleteEvangelismPrayer id=${prayerId}`)
+  devlog(`[api] deleteEvangelismPrayer id=${prayerId}`)
   const headers = {}
   if (token) headers['Authorization'] = `Bearer ${token}`
   const response = await fetch(`${API_BASE}/evangelism/${prayerId}`, {
@@ -761,12 +762,12 @@ export async function deleteEvangelismPrayer(prayerId, token) {
   }
   const data = await response.json()
   if (!response.ok) throw new Error(data.detail || data.error || 'Delete failed')
-  console.log(`[api] deleteEvangelismPrayer ok id=${prayerId}`)
+  devlog(`[api] deleteEvangelismPrayer ok id=${prayerId}`)
   return data
 }
 
 export async function restoreEvangelismPrayer(prayerId, token) {
-  console.log(`[api] restoreEvangelismPrayer id=${prayerId}`)
+  devlog(`[api] restoreEvangelismPrayer id=${prayerId}`)
   const headers = {}
   if (token) headers['Authorization'] = `Bearer ${token}`
   const response = await fetch(`${API_BASE}/evangelism/${prayerId}/restore`, {
@@ -779,12 +780,12 @@ export async function restoreEvangelismPrayer(prayerId, token) {
   }
   const data = await response.json()
   if (!response.ok) throw new Error(data.detail || data.error || 'Restore failed')
-  console.log(`[api] restoreEvangelismPrayer ok id=${prayerId}`)
+  devlog(`[api] restoreEvangelismPrayer ok id=${prayerId}`)
   return data
 }
 
 export async function submitCheckin(payload, token) {
-  console.log(`[api] submitCheckin emotion=${payload.emotionLabel} anon=${!token}`)
+  devlog(`[api] submitCheckin emotion=${payload.emotionLabel} anon=${!token}`)
   const headers = { 'Content-Type': 'application/json' }
   if (token) headers['Authorization'] = `Bearer ${token}`
   const response = await fetch(`${API_BASE}/user/checkin`, {
@@ -798,12 +799,12 @@ export async function submitCheckin(payload, token) {
   }
   const data = await response.json()
   if (!response.ok) throw new Error(data.detail || data.error || 'Checkin failed')
-  console.log(`[api] submitCheckin ok tags=${data.tags_extracted}`)
+  devlog(`[api] submitCheckin ok tags=${data.tags_extracted}`)
   return data
 }
 
 export async function fetchJournals(token, limit = 50, offset = 0) {
-  console.log(`[api] fetchJournals limit=${limit} offset=${offset}`)
+  devlog(`[api] fetchJournals limit=${limit} offset=${offset}`)
   const response = await fetch(`${API_BASE}/devotion/journals?limit=${limit}&offset=${offset}`, {
     headers: token ? { 'Authorization': `Bearer ${token}` } : {},
   })
@@ -813,12 +814,12 @@ export async function fetchJournals(token, limit = 50, offset = 0) {
   }
   const data = await response.json()
   if (!response.ok) throw new Error(data.detail || data.error || 'Fetch journals failed')
-  console.log(`[api] fetchJournals ok ${data.items?.length ?? 0}/${data.total}`)
+  devlog(`[api] fetchJournals ok ${data.items?.length ?? 0}/${data.total}`)
   return data
 }
 
 export async function saveJournal(payload, token) {
-  console.log(`[api] saveJournal date=${payload.date} title=${payload.title?.slice(0, 30)}`)
+  devlog(`[api] saveJournal date=${payload.date} title=${payload.title?.slice(0, 30)}`)
   const response = await fetch(`${API_BASE}/devotion/journals`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
@@ -830,12 +831,12 @@ export async function saveJournal(payload, token) {
   }
   const data = await response.json()
   if (!response.ok) throw new Error(data.detail || data.error || 'Save journal failed')
-  console.log(`[api] saveJournal ok id=${data.journal?.id}`)
+  devlog(`[api] saveJournal ok id=${data.journal?.id}`)
   return data
 }
 
 export async function deleteJournal(journalId, token) {
-  console.log(`[api] deleteJournal id=${journalId}`)
+  devlog(`[api] deleteJournal id=${journalId}`)
   const response = await fetch(`${API_BASE}/devotion/journals/${journalId}`, {
     method: 'DELETE',
     headers: token ? { 'Authorization': `Bearer ${token}` } : {},
@@ -846,14 +847,14 @@ export async function deleteJournal(journalId, token) {
   }
   const data = await response.json()
   if (!response.ok) throw new Error(data.detail || data.error || 'Delete journal failed')
-  console.log(`[api] deleteJournal ok id=${journalId}`)
+  devlog(`[api] deleteJournal ok id=${journalId}`)
   return data
 }
 
 // ── Sermon Journal API ─────────────────────────────────────
 
 export async function fetchSermonJournals(token, limit = 50, offset = 0) {
-  console.log(`[api] fetchSermonJournals limit=${limit} offset=${offset}`)
+  devlog(`[api] fetchSermonJournals limit=${limit} offset=${offset}`)
   const response = await fetch(`${API_BASE}/sermon/journals?limit=${limit}&offset=${offset}`, {
     headers: token ? { 'Authorization': `Bearer ${token}` } : {},
   })
@@ -863,12 +864,12 @@ export async function fetchSermonJournals(token, limit = 50, offset = 0) {
   }
   const data = await response.json()
   if (!response.ok) throw new Error(data.detail || data.error || 'Fetch sermon journals failed')
-  console.log(`[api] fetchSermonJournals ok ${data.items?.length ?? 0}/${data.total}`)
+  devlog(`[api] fetchSermonJournals ok ${data.items?.length ?? 0}/${data.total}`)
   return data
 }
 
 export async function saveSermonJournal(payload, token) {
-  console.log(`[api] saveSermonJournal date=${payload.date} title=${payload.title?.slice(0, 30)}`)
+  devlog(`[api] saveSermonJournal date=${payload.date} title=${payload.title?.slice(0, 30)}`)
   const body = {
     date: payload.date || '',
     title: payload.title || '',
@@ -895,12 +896,12 @@ export async function saveSermonJournal(payload, token) {
   }
   const data = await response.json()
   if (!response.ok) throw new Error(data.detail || data.error || 'Save sermon journal failed')
-  console.log(`[api] saveSermonJournal ok id=${data.journal?.id}`)
+  devlog(`[api] saveSermonJournal ok id=${data.journal?.id}`)
   return data
 }
 
 export async function deleteSermonJournal(journalId, token) {
-  console.log(`[api] deleteSermonJournal id=${journalId}`)
+  devlog(`[api] deleteSermonJournal id=${journalId}`)
   const response = await fetch(`${API_BASE}/sermon/journals/${journalId}`, {
     method: 'DELETE',
     headers: token ? { 'Authorization': `Bearer ${token}` } : {},
@@ -911,14 +912,14 @@ export async function deleteSermonJournal(journalId, token) {
   }
   const data = await response.json()
   if (!response.ok) throw new Error(data.detail || data.error || 'Delete sermon journal failed')
-  console.log(`[api] deleteSermonJournal ok id=${journalId}`)
+  devlog(`[api] deleteSermonJournal ok id=${journalId}`)
   return data
 }
 
 // ── Personal Notes API (我的日记) ──────────────────────────
 
 export async function fetchPersonalNotes(token) {
-  console.log(`[api] fetchPersonalNotes`)
+  devlog(`[api] fetchPersonalNotes`)
   const response = await fetch(`${API_BASE}/personal/notes`, {
     headers: token ? { 'Authorization': `Bearer ${token}` } : {},
   })
@@ -928,12 +929,12 @@ export async function fetchPersonalNotes(token) {
   }
   const data = await response.json()
   if (!response.ok) throw new Error(data.detail || data.error || 'Fetch personal notes failed')
-  console.log(`[api] fetchPersonalNotes ok ${data.items?.length ?? 0}`)
+  devlog(`[api] fetchPersonalNotes ok ${data.items?.length ?? 0}`)
   return data
 }
 
 export async function savePersonalNote(payload, token) {
-  console.log(`[api] savePersonalNote id=${payload.id} date=${payload.date}`)
+  devlog(`[api] savePersonalNote id=${payload.id} date=${payload.date}`)
   const response = await fetch(`${API_BASE}/personal/notes`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
@@ -945,12 +946,12 @@ export async function savePersonalNote(payload, token) {
   }
   const data = await response.json()
   if (!response.ok) throw new Error(data.detail || data.error || 'Save personal note failed')
-  console.log(`[api] savePersonalNote ok id=${data.note?.id}`)
+  devlog(`[api] savePersonalNote ok id=${data.note?.id}`)
   return data
 }
 
 export async function deletePersonalNote(noteId, token) {
-  console.log(`[api] deletePersonalNote id=${noteId}`)
+  devlog(`[api] deletePersonalNote id=${noteId}`)
   const response = await fetch(`${API_BASE}/personal/notes/${noteId}`, {
     method: 'DELETE',
     headers: token ? { 'Authorization': `Bearer ${token}` } : {},
@@ -961,12 +962,12 @@ export async function deletePersonalNote(noteId, token) {
   }
   const data = await response.json()
   if (!response.ok) throw new Error(data.detail || data.error || 'Delete personal note failed')
-  console.log(`[api] deletePersonalNote ok id=${noteId}`)
+  devlog(`[api] deletePersonalNote ok id=${noteId}`)
   return data
 }
 
 export async function searchPersonal(kw, token) {
-  console.log(`[api] searchPersonal kw=${kw}`)
+  devlog(`[api] searchPersonal kw=${kw}`)
   const params = new URLSearchParams({ kw: kw.trim() })
   const response = await fetch(`${API_BASE}/personal/search?${params}`, {
     headers: token ? { 'Authorization': `Bearer ${token}` } : {},
@@ -974,8 +975,12 @@ export async function searchPersonal(kw, token) {
   const contentType = response.headers.get('content-type') || ''
   if (!contentType.includes('application/json')) {
     // fallback: 本地搜索 personal notes / journal entries
-    const notes = JSON.parse(localStorage.getItem('personal_notes') || '[]')
-    const entries = JSON.parse(localStorage.getItem('journal_entries') || '[]')
+    // Guard against corrupted localStorage payloads: bad JSON must not throw
+    // and blow up the search fallback — degrade to empty arrays instead.
+    let notes = []
+    let entries = []
+    try { notes = JSON.parse(localStorage.getItem('personal_notes') || '[]') } catch { notes = [] }
+    try { entries = JSON.parse(localStorage.getItem('journal_entries') || '[]') } catch { entries = [] }
     const all = [...notes, ...entries].filter(item => {
       const text = JSON.stringify(item).toLowerCase()
       return text.includes(kw.trim().toLowerCase())
@@ -990,7 +995,7 @@ export async function searchPersonal(kw, token) {
 // ── User Profile API ─────────────────────────────────────────
 
 export async function updateUserProfile(payload, token) {
-  console.log(`[api] updateUserProfile nickname=${payload.nickname}`)
+  devlog(`[api] updateUserProfile nickname=${payload.nickname}`)
   const response = await fetch(`${API_BASE}/user/profile`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
@@ -1002,7 +1007,7 @@ export async function updateUserProfile(payload, token) {
   }
   const data = await response.json()
   if (!response.ok) throw new Error(data.detail || data.error || 'Update profile failed')
-  console.log(`[api] updateUserProfile ok nickname=${data.nickname}`)
+  devlog(`[api] updateUserProfile ok nickname=${data.nickname}`)
   return data
 }
 
@@ -1016,7 +1021,7 @@ export async function fetchScripture(ref) {
 }
 
 export async function fetchTTS(text, language_code = 'zh-CN', voice_name = 'zh-CN-XiaoxiaoNeural') {
-  console.log(`[api] fetchTTS text=${text?.slice(0, 60)}... lang=${language_code}`)
+  devlog(`[api] fetchTTS text=${text?.slice(0, 60)}... lang=${language_code}`)
   const response = await fetch(`${API_BASE}/tts`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -1025,7 +1030,7 @@ export async function fetchTTS(text, language_code = 'zh-CN', voice_name = 'zh-C
   
   // 502/503 表示后端 TTS 未配置或上游不可用，前端应 fallback 到浏览器原生 TTS
   if ([502, 503].includes(response.status)) {
-    console.log('[api] fetchTTS backend unavailable, fallback to native TTS')
+    devlog('[api] fetchTTS backend unavailable, fallback to native TTS')
     throw new Error('TTS_NOT_CONFIGURED')
   }
   
@@ -1036,7 +1041,7 @@ export async function fetchTTS(text, language_code = 'zh-CN', voice_name = 'zh-C
   
   // 返回音频 Blob
   const audioBlob = await response.blob()
-  console.log(`[api] fetchTTS ok blob=${audioBlob.size} bytes`)
+  devlog(`[api] fetchTTS ok blob=${audioBlob.size} bytes`)
   return audioBlob
 }
 
@@ -1044,7 +1049,7 @@ export async function fetchTTS(text, language_code = 'zh-CN', voice_name = 'zh-C
 // ── Share Wall (分享墙) ─────────────────────────────────────
 
 export async function fetchSharedNotes(token = null, page = 1, limit = 20) {
-  console.log(`[api] fetchSharedNotes page=${page}`)
+  devlog(`[api] fetchSharedNotes page=${page}`)
   const headers = {}
   if (token) headers['Authorization'] = `Bearer ${token}`
   const response = await fetch(`${API_BASE}/shared/notes?page=${page}&limit=${limit}`, { headers })
@@ -1053,12 +1058,12 @@ export async function fetchSharedNotes(token = null, page = 1, limit = 20) {
   }
   if (!response.ok) throw new Error('Failed to fetch shared notes')
   const data = await response.json()
-  console.log(`[api] fetchSharedNotes ok: ${data.items?.length ?? 0}/${data.total} items page=${page}`)
+  devlog(`[api] fetchSharedNotes ok: ${data.items?.length ?? 0}/${data.total} items page=${page}`)
   return data
 }
 
 export async function fetchBibleStudy(book, chapter, verses, token = null) {
-  console.log(`[api] fetchBibleStudy ${book} ${chapter}`)
+  devlog(`[api] fetchBibleStudy ${book} ${chapter}`)
   const headers = { 'Content-Type': 'application/json' }
   if (token) headers['Authorization'] = `Bearer ${token}`
   const response = await fetch(`${API_BASE}/bible/study`, {
@@ -1075,7 +1080,7 @@ export async function fetchBibleStudy(book, chapter, verses, token = null) {
 }
 
 export async function toggleShareSermonJournal(journalId, token = null) {
-  console.log(`[api] toggleShareSermonJournal id=${journalId}`)
+  devlog(`[api] toggleShareSermonJournal id=${journalId}`)
   const headers = { 'Content-Type': 'application/json' }
   if (token) headers['Authorization'] = `Bearer ${token}`
   const response = await fetch(`${API_BASE}/sermon/journals/${journalId}/share`, {
@@ -1088,7 +1093,7 @@ export async function toggleShareSermonJournal(journalId, token = null) {
 }
 
 export async function toggleShareNote(noteId, token = null) {
-  console.log(`[api] toggleShareNote id=${noteId}`)
+  devlog(`[api] toggleShareNote id=${noteId}`)
   const headers = { 'Content-Type': 'application/json' }
   if (token) headers['Authorization'] = `Bearer ${token}`
   const response = await fetch(`${API_BASE}/personal/notes/${noteId}/share`, {
@@ -1102,7 +1107,7 @@ export async function toggleShareNote(noteId, token = null) {
 }
 
 export async function amenSharedNote(noteId, token) {
-  console.log(`[api] amenSharedNote id=${noteId}`)
+  devlog(`[api] amenSharedNote id=${noteId}`)
   const headers = { 'Content-Type': 'application/json' }
   if (token) headers['Authorization'] = `Bearer ${token}`
   const response = await fetch(`${API_BASE}/shared/notes/${noteId}/amen`, { method: 'POST', headers })
@@ -1114,7 +1119,7 @@ export async function amenSharedNote(noteId, token) {
 // ── Recycle Bin API ──────────────────────────────────────────
 
 export async function fetchRecycleBin(token) {
-  console.log('[api] fetchRecycleBin')
+  devlog('[api] fetchRecycleBin')
   const headers = {}
   if (token) headers['Authorization'] = `Bearer ${token}`
   const response = await fetch(`${API_BASE}/recycle-bin`, { headers })
@@ -1131,7 +1136,7 @@ export async function fetchRecycleBin(token) {
 }
 
 export async function restoreRecycleItem(type, id, token) {
-  console.log(`[api] restoreRecycleItem type=${type} id=${id}`)
+  devlog(`[api] restoreRecycleItem type=${type} id=${id}`)
   const headers = {}
   if (token) headers['Authorization'] = `Bearer ${token}`
   const response = await fetch(`${API_BASE}/recycle-bin/${type}/${id}/restore`, {
@@ -1149,7 +1154,7 @@ export async function restoreRecycleItem(type, id, token) {
 // ── 人格塑造、习惯养成、行为追踪 API ───────────────────────
 
 export async function regulateBehavior(task, energyLevel = 3, motivation = 5, token = null) {
-  console.log(`[api] regulateBehavior task=${task} energy=${energyLevel}`)
+  devlog(`[api] regulateBehavior task=${task} energy=${energyLevel}`)
   const response = await fetch(`${API_BASE}/behavior/regulate`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
@@ -1161,12 +1166,12 @@ export async function regulateBehavior(task, energyLevel = 3, motivation = 5, to
   }
   const data = await response.json()
   if (!response.ok) throw new Error(data.detail || data.error || '行为调节失败')
-  console.log(`[api] regulateBehavior tier=${data.selected_tier}`)
+  devlog(`[api] regulateBehavior tier=${data.selected_tier}`)
   return data
 }
 
 export async function createHabit(habitName, anchor = '', energyLevel = 3, token) {
-  console.log(`[api] createHabit name=${habitName}`)
+  devlog(`[api] createHabit name=${habitName}`)
   const response = await fetch(`${API_BASE}/habits/create`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
@@ -1178,12 +1183,12 @@ export async function createHabit(habitName, anchor = '', energyLevel = 3, token
   }
   const data = await response.json()
   if (!response.ok) throw new Error(data.detail || data.error || '创建习惯失败')
-  console.log(`[api] createHabit ok id=${data.saved_habit_id}`)
+  devlog(`[api] createHabit ok id=${data.saved_habit_id}`)
   return data
 }
 
 export async function fetchHabits(token) {
-  console.log(`[api] fetchHabits`)
+  devlog(`[api] fetchHabits`)
   const response = await fetch(`${API_BASE}/habits`, {
     headers: token ? { 'Authorization': `Bearer ${token}` } : {}
   })
@@ -1193,12 +1198,12 @@ export async function fetchHabits(token) {
   }
   const data = await response.json()
   if (!response.ok) throw new Error(data.detail || data.error || '获取习惯列表失败')
-  console.log(`[api] fetchHabits ok count=${data.items?.length || 0}`)
+  devlog(`[api] fetchHabits ok count=${data.items?.length || 0}`)
   return data
 }
 
 export async function executeHabit(habitId, energyLevel = 3, token) {
-  console.log(`[api] executeHabit ${habitId} energy=${energyLevel}`)
+  devlog(`[api] executeHabit ${habitId} energy=${energyLevel}`)
   const response = await fetch(`${API_BASE}/habits/${habitId}/execute`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
@@ -1210,12 +1215,12 @@ export async function executeHabit(habitId, energyLevel = 3, token) {
   }
   const data = await response.json()
   if (!response.ok) throw new Error(data.detail || data.error || '执行习惯失败')
-  console.log(`[api] executeHabit tier=${data.selected_tier}`)
+  devlog(`[api] executeHabit tier=${data.selected_tier}`)
   return data
 }
 
 export async function logHabitExecution(habitId, tierExecuted, wasCompleted, completionPercentage, moodBefore, moodAfter, token) {
-  console.log(`[api] logHabitExecution ${habitId} tier=${tierExecuted} completed=${wasCompleted}`)
+  devlog(`[api] logHabitExecution ${habitId} tier=${tierExecuted} completed=${wasCompleted}`)
   const response = await fetch(`${API_BASE}/habits/${habitId}/log`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
@@ -1234,12 +1239,12 @@ export async function logHabitExecution(habitId, tierExecuted, wasCompleted, com
   }
   const data = await response.json()
   if (!response.ok) throw new Error(data.detail || data.error || '记录执行失败')
-  console.log(`[api] logHabitExecution tokens=${data.tokens_earned}`)
+  devlog(`[api] logHabitExecution tokens=${data.tokens_earned}`)
   return data
 }
 
 export async function fetchHabitsDashboard(token) {
-  console.log(`[api] fetchHabitsDashboard`)
+  devlog(`[api] fetchHabitsDashboard`)
   const response = await fetch(`${API_BASE}/habits/dashboard`, {
     headers: token ? { 'Authorization': `Bearer ${token}` } : {}
   })
@@ -1249,14 +1254,14 @@ export async function fetchHabitsDashboard(token) {
   }
   const data = await response.json()
   if (!response.ok) throw new Error(data.detail || data.error || '获取仪表盘失败')
-  console.log(`[api] fetchHabitsDashboard tokens=${data.token_balance}`)
+  devlog(`[api] fetchHabitsDashboard tokens=${data.token_balance}`)
   return data
 }
 
 // ==================== Formation Engine (人格塑造) API ====================
 
 export async function fetchFormationProfile(userId, token) {
-  console.log(`[api] fetchFormationProfile userId=${userId}`)
+  devlog(`[api] fetchFormationProfile userId=${userId}`)
   const response = await fetch(`${API_BASE}/sfds/v3/formation/profile/${userId}`, {
     headers: token ? { 'Authorization': `Bearer ${token}` } : {}
   })
@@ -1266,12 +1271,12 @@ export async function fetchFormationProfile(userId, token) {
   }
   const data = await response.json()
   if (!response.ok) throw new Error(data.detail || data.error || '获取人格塑造档案失败')
-  console.log(`[api] fetchFormationProfile schema=${data.schema}`)
+  devlog(`[api] fetchFormationProfile schema=${data.schema}`)
   return data
 }
 
 export async function fetchFormationDimensions(token) {
-  console.log(`[api] fetchFormationDimensions`)
+  devlog(`[api] fetchFormationDimensions`)
   const response = await fetch(`${API_BASE}/sfds/v3/formation/dimensions`, {
     headers: token ? { 'Authorization': `Bearer ${token}` } : {}
   })
@@ -1281,7 +1286,7 @@ export async function fetchFormationDimensions(token) {
   }
   const data = await response.json()
   if (!response.ok) throw new Error(data.detail || data.error || '获取维度定义失败')
-  console.log(`[api] fetchFormationDimensions dimensions=${data.dimensions?.length}`)
+  devlog(`[api] fetchFormationDimensions dimensions=${data.dimensions?.length}`)
   return data
 }
 
@@ -1317,7 +1322,7 @@ export async function fetchReflectionAnswers(userId, token) {
 // ==================== Behavior Tracking (行为追踪) API ====================
 
 export async function fetchBehaviorHistory(userId, token, limit = 30) {
-  console.log(`[api] fetchBehaviorHistory userId=${userId} limit=${limit}`)
+  devlog(`[api] fetchBehaviorHistory userId=${userId} limit=${limit}`)
   const response = await fetch(`${API_BASE}/behavior/history?user_id=${userId}&limit=${limit}`, {
     headers: token ? { 'Authorization': `Bearer ${token}` } : {}
   })
@@ -1327,12 +1332,12 @@ export async function fetchBehaviorHistory(userId, token, limit = 30) {
   }
   const data = await response.json()
   if (!response.ok) throw new Error(data.detail || data.error || '获取行为历史失败')
-  console.log(`[api] fetchBehaviorHistory count=${data.items?.length}`)
+  devlog(`[api] fetchBehaviorHistory count=${data.items?.length}`)
   return data
 }
 
 export async function fetchBehaviorStats(userId, token) {
-  console.log(`[api] fetchBehaviorStats userId=${userId}`)
+  devlog(`[api] fetchBehaviorStats userId=${userId}`)
   const response = await fetch(`${API_BASE}/behavior/stats?user_id=${userId}`, {
     headers: token ? { 'Authorization': `Bearer ${token}` } : {}
   })
@@ -1342,14 +1347,14 @@ export async function fetchBehaviorStats(userId, token) {
   }
   const data = await response.json()
   if (!response.ok) throw new Error(data.detail || data.error || '获取行为统计失败')
-  console.log(`[api] fetchBehaviorStats total_regulations=${data.total_regulations}`)
+  devlog(`[api] fetchBehaviorStats total_regulations=${data.total_regulations}`)
   return data
 }
 
 // ==================== Formation → Habits Sync API ====================
 
 export async function createHabitsFromFormationPlan(userId, planItems, planType, token) {
-  console.log(`[api] createHabitsFromFormationPlan userId=${userId} items=${planItems.length}`)
+  devlog(`[api] createHabitsFromFormationPlan userId=${userId} items=${planItems.length}`)
   const response = await fetch(`${API_BASE}/habits/create-from-formation`, {
     method: 'POST',
     headers: {
@@ -1368,14 +1373,14 @@ export async function createHabitsFromFormationPlan(userId, planItems, planType,
   }
   const data = await response.json()
   if (!response.ok) throw new Error(data.detail || data.error || '从人格塑造计划创建习惯失败')
-  console.log(`[api] createHabitsFromFormationPlan created=${data.created_count}`)
+  devlog(`[api] createHabitsFromFormationPlan created=${data.created_count}`)
   return data
 }
 
 // ==================== Bible Video Generation ====================
 
 export async function fetchBibleVideo(book, chapter, verses, token = null) {
-  console.log(`[api] fetchBibleVideo ${book} ${chapter} verses=${verses.length}`)
+  devlog(`[api] fetchBibleVideo ${book} ${chapter} verses=${verses.length}`)
   const controller = new AbortController()
   const timeoutId = setTimeout(() => controller.abort(), 5 * 60 * 1000)
   try {
@@ -1394,7 +1399,7 @@ export async function fetchBibleVideo(book, chapter, verses, token = null) {
       throw new Error(msg)
     }
     const blob = await response.blob()
-    console.log(`[api] fetchBibleVideo ok size=${blob.size}`)
+    devlog(`[api] fetchBibleVideo ok size=${blob.size}`)
     return blob
   } finally {
     clearTimeout(timeoutId)
@@ -1404,7 +1409,7 @@ export async function fetchBibleVideo(book, chapter, verses, token = null) {
 // ── Sunday School Videos (主日学视频) ──────────────────────────────────────────
 
 export async function fetchSundaySchoolVideos() {
-  console.log('[api] fetchSundaySchoolVideos')
+  devlog('[api] fetchSundaySchoolVideos')
   const response = await fetch(`${API_BASE}/sunday-school/videos`)
   if (!response.ok) throw new Error(`Failed to load videos: ${response.status}`)
   return response.json()  // { ok, videos: [{id, title, teacher, scripture, description, video_url, thumbnail_url, duration_sec}...] }
@@ -1413,7 +1418,7 @@ export async function fetchSundaySchoolVideos() {
 // ── Seekers Class Courses (慕道班课程：文字/PPT/视频) ──────────────────────────
 
 export async function fetchSeekersClassCourses() {
-  console.log('[api] fetchSeekersClassCourses')
+  devlog('[api] fetchSeekersClassCourses')
   const response = await fetch(`${API_BASE}/seekers-class/courses`)
   if (!response.ok) throw new Error(`Failed to load courses: ${response.status}`)
   return response.json()  // { ok, courses: [{id, title, filename, media_type, url, modified_ts}...] }
@@ -2065,7 +2070,7 @@ const twHeaders = (token, json = false) => ({
 })
 
 export async function fetchTestimonies(limit = 20, offset = 0, token = null) {
-  console.log(`[api] fetchTestimonies limit=${limit} offset=${offset}`)
+  devlog(`[api] fetchTestimonies limit=${limit} offset=${offset}`)
   const res = await fetch(`${API_BASE}/testimonies?limit=${limit}&offset=${offset}`, { headers: twHeaders(token) })
   const contentType = res.headers.get('content-type') || ''
   if (!contentType.includes('application/json')) {
@@ -2073,23 +2078,23 @@ export async function fetchTestimonies(limit = 20, offset = 0, token = null) {
   }
   const data = await res.json()
   if (!res.ok) throw new Error(data.detail || data.error || '加载见证失败')
-  console.log(`[api] fetchTestimonies ok: ${data.items?.length ?? 0}/${data.total} items`)
+  devlog(`[api] fetchTestimonies ok: ${data.items?.length ?? 0}/${data.total} items`)
   return data
 }
 
 export async function submitTestimony(payload, token) {
-  console.log(`[api] submitTestimony title=${payload.title?.slice(0, 30)}`)
+  devlog(`[api] submitTestimony title=${payload.title?.slice(0, 30)}`)
   const res = await fetch(`${API_BASE}/testimonies`, {
     method: 'POST', headers: twHeaders(token, true), body: JSON.stringify(payload),
   })
   const data = await res.json().catch(() => ({}))
   if (!res.ok) throw new Error(data.detail || data.error || '提交见证失败')
-  console.log(`[api] submitTestimony ok id=${data.id}`)
+  devlog(`[api] submitTestimony ok id=${data.id}`)
   return data
 }
 
 export async function amenTestimony(id, token) {
-  console.log(`[api] amenTestimony id=${id}`)
+  devlog(`[api] amenTestimony id=${id}`)
   const res = await fetch(`${API_BASE}/testimonies/${id}/amen`, { method: 'POST', headers: twHeaders(token) })
   const data = await res.json().catch(() => ({}))
   if (!res.ok) throw new Error(data.detail || data.error || '阿们失败')
@@ -2097,7 +2102,7 @@ export async function amenTestimony(id, token) {
 }
 
 export async function deleteTestimony(id, token) {
-  console.log(`[api] deleteTestimony id=${id}`)
+  devlog(`[api] deleteTestimony id=${id}`)
   const res = await fetch(`${API_BASE}/testimonies/${id}`, { method: 'DELETE', headers: twHeaders(token) })
   const data = await res.json().catch(() => ({}))
   if (!res.ok) throw new Error(data.detail || data.error || '删除失败')

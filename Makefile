@@ -9,10 +9,10 @@ test:
 	NODE_OPTIONS=--no-warnings $(NODE) node_modules/vitest/vitest.mjs run
 
 lint:
-	$(NODE) check_parse.mjs
+	npx eslint .
 
 typecheck:
-	$(NODE) check_parse.mjs
+	npx vite build
 
 build:
 	$(NODE) node_modules/vite/bin/vite.js build

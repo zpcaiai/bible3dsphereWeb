@@ -1,9 +1,9 @@
 import { t as i18nT } from '../../../i18n/runtime'
 'use client'
 import { useEffect, useRef } from 'react'
-import mapboxgl from 'mapbox-gl'
-import 'mapbox-gl/dist/mapbox-gl.css'
-import { getMapboxToken, territoriesToFeatureCollection, SOURCE_IDS, LAYER_IDS } from '../lib/mapbox'
+import mapboxgl from 'maplibre-gl'
+import 'maplibre-gl/dist/maplibre-gl.css'
+import { territoriesToFeatureCollection, SOURCE_IDS, LAYER_IDS } from '../lib/mapbox'
 import { featureCollection, feature, point, lineBetween, bboxOf, lineString } from '../lib/geojson'
 // 行程/战役路线统一用前端二次贝塞尔弧线（全站共用 map/arc，离线生成）。
 import { curvedPath } from '../../../map/arc'
@@ -39,15 +39,19 @@ export function MapCanvas({
   const onClickRef = useRef(onTerritoryClick)
   onClickRef.current = onTerritoryClick
 
-  const token = getMapboxToken()
-
   // 初始化（一次）
   useEffect(() => {
-    if (!token || !containerRef.current || mapRef.current) return
-    mapboxgl.accessToken = token
+    if (!containerRef.current || mapRef.current) return
     const map = new mapboxgl.Map({
       container: containerRef.current,
-      style: 'mapbox://styles/mapbox/dark-v11',
+      style: {
+        version: 8,
+        sources: { osm: { type: 'raster', tiles: ['https://a.tile.openstreetmap.org/{z}/{x}/{y}.png'], tileSize: 256 } },
+        layers: [
+          { id: 'background', type: 'background', paint: { 'background-color': '#08101c' } },
+          { id: 'osm', type: 'raster', source: 'osm', paint: { 'raster-opacity': 0.46, 'raster-saturation': -0.75 } },
+        ],
+      },
       center: DEFAULT_CENTER,
       zoom: DEFAULT_ZOOM,
     })
@@ -112,7 +116,7 @@ export function MapCanvas({
       mapRef.current = null
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token])
+  }, [])
 
   // 疆域数据更新
   useEffect(() => {

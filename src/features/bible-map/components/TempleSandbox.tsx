@@ -1,9 +1,8 @@
 import { t as i18nT } from '../../../i18n/runtime'
 'use client'
 import { useEffect, useRef, useState } from 'react'
-import mapboxgl from 'mapbox-gl'
-import 'mapbox-gl/dist/mapbox-gl.css'
-import { getMapboxToken } from '../lib/mapbox'
+import maplibregl from 'maplibre-gl'
+import 'maplibre-gl/dist/maplibre-gl.css'
 import { featureCollection, feature } from '../lib/geojson'
 import {
   TEMPLE_CENTER, TEMPLE_COLORS, templeEras, templeEraForYear,
@@ -29,10 +28,9 @@ interface Props {
 
 export function TempleSandbox({ onBack }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null)
-  const mapRef = useRef<mapboxgl.Map | null>(null)
+  const mapRef = useRef<maplibregl.Map | null>(null)
   const loadedRef = useRef(false)
   const [year, setYear] = useState<number>(-960)
-  const token = getMapboxToken()
   const era = templeEraForYear(year)
 
   function buildData(y: number) {
@@ -49,11 +47,17 @@ export function TempleSandbox({ onBack }: Props) {
   }
 
   useEffect(() => {
-    if (!token || !containerRef.current || mapRef.current) return
-    mapboxgl.accessToken = token
-    const map = new mapboxgl.Map({
+    if (!containerRef.current || mapRef.current) return
+    const map = new maplibregl.Map({
       container: containerRef.current,
-      style: 'mapbox://styles/mapbox/dark-v11',
+      style: {
+        version: 8,
+        sources: { osm: { type: 'raster', tiles: ['https://a.tile.openstreetmap.org/{z}/{x}/{y}.png'], tileSize: 256 } },
+        layers: [
+          { id: 'background', type: 'background', paint: { 'background-color': '#08101c' } },
+          { id: 'osm', type: 'raster', source: 'osm', paint: { 'raster-opacity': 0.42, 'raster-saturation': -0.8 } },
+        ],
+      },
       center: TEMPLE_CENTER,
       zoom: 15.2,
       pitch: 60,
@@ -82,13 +86,13 @@ export function TempleSandbox({ onBack }: Props) {
       mapRef.current = null
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token])
+  }, [])
 
   useEffect(() => {
     const map = mapRef.current
     if (!map || !loadedRef.current) return
     const src = map.getSource(SRC)
-    if (src) (src as mapboxgl.GeoJSONSource).setData(buildData(year))
+    if (src) (src as maplibregl.GeoJSONSource).setData(buildData(year))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [year])
 
@@ -105,13 +109,7 @@ export function TempleSandbox({ onBack }: Props) {
       </header>
 
       <div className="relative flex-1">
-        {token ? (
-          <div ref={containerRef} className="h-full w-full" />
-        ) : (
-          <div className="flex h-full items-center justify-center p-6 text-center">
-            <p className="text-sm text-gray-300">{i18nT('请配置 NEXT_PUBLIC_MAPBOX_TOKEN 以启用 3D 圣殿沙盘。')}</p>
-          </div>
-        )}
+        <div ref={containerRef} className="h-full w-full" />
 
         {/* 时代信息卡 */}
         <div className="absolute left-4 top-4 max-w-sm rounded-xl border border-white/10 bg-black/70 p-4 backdrop-blur">

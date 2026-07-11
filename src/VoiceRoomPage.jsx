@@ -251,6 +251,10 @@ function CallScreen({ group, user, token, onLeave }) {
     setShareOn(!!lp.isScreenShareEnabled)
   }, [user])
 
+  // 保持最新 sync 于 ref，避免其身份变化触发连接 effect 重连（掉线）
+  const syncRef = useRef(sync)
+  useEffect(() => { syncRef.current = sync }, [sync])
+
   useEffect(() => {
     let cancelled = false
     let room = null
@@ -305,7 +309,7 @@ function CallScreen({ group, user, token, onLeave }) {
       const onChange = () => {
         if (!cancelled) {
           tuneRemoteSubscriptionsForVoice(room, LK, netQualityRef.current)
-          sync()
+          syncRef.current()
         }
       }
       const onQualityChange = (quality, participant) => {
@@ -370,7 +374,7 @@ function CallScreen({ group, user, token, onLeave }) {
           }
         } catch { /* 静默回退到浏览器原生降噪 */ }
         onQualityChange(room.localParticipant.connectionQuality, room.localParticipant)
-        if (!cancelled) { setStatus('live'); setMicOn(true); sync() }
+        if (!cancelled) { setStatus('live'); setMicOn(true); syncRef.current() }
       } catch (e) {
         if (!cancelled) {
           setStatus('error')
@@ -391,7 +395,7 @@ function CallScreen({ group, user, token, onLeave }) {
       netQualityRef.current = 'unknown'
       if (audioBin.current) audioBin.current.innerHTML = ''
     }
-  }, [group.id, token, sync, reconnectN])
+  }, [group.id, token, reconnectN])
 
   const toggleMic = async () => {
     const room = roomRef.current

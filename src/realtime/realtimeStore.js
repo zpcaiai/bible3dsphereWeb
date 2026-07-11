@@ -2,7 +2,6 @@
 // 一条 WebSocket 连接为整个 App 服务：在线状态、1对1聊天消息分发、以及**全局来电**
 // （无论用户当前在哪个页面都能收到来电弹窗）。组件通过 subscribe/subscribeState 订阅。
 import { buildWsUrl, fetchDirectVoiceToken, fetchVoiceEnabled } from './realtimeApi'
-import { getToken } from '../auth'
 
 const toast = (m, t = 'info') => window.showToast?.(m, t)
 function shortName(email, nickname) {
@@ -31,7 +30,7 @@ class RealtimeStore {
   // ---- lifecycle ----
   start(user) {
     this.user = user || null
-    const wantEnabled = !!(user && getToken())
+    const wantEnabled = !!user
     if (wantEnabled && this.enabled && this.ws) return // already running
     this.enabled = wantEnabled
     if (!wantEnabled) { this.stop(); return }
@@ -48,10 +47,10 @@ class RealtimeStore {
     this._setState({ connected: false, onlineFriends: new Set() })
   }
 
-  _connect() {
-    if (!this.enabled || !getToken()) return
+  async _connect() {
+    if (!this.enabled) return
     let ws
-    try { ws = new WebSocket(buildWsUrl()) }
+    try { ws = new WebSocket(await buildWsUrl()) }
     catch { this._scheduleReconnect(); return }
     this.ws = ws
     ws.onopen = () => { this.attempts = 0; this._setState({ connected: true }) }

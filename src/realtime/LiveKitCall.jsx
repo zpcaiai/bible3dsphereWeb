@@ -73,6 +73,9 @@ export default function LiveKitCall({ url, token, title, selfName, outgoing, onL
     setShareOn(!!lp.isScreenShareEnabled)
   }, [selfName])
 
+  const syncRef = useRef(sync)
+  useEffect(() => { syncRef.current = sync }, [sync])
+
   useEffect(() => {
     let cancelled = false
     let room = null
@@ -101,7 +104,7 @@ export default function LiveKitCall({ url, token, title, selfName, outgoing, onL
       const onChange = () => {
         if (!cancelled) {
           tuneRemoteSubscriptionsForVoice(room, LK, netQualityRef.current)
-          sync()
+          syncRef.current()
         }
       }
       const onQualityChange = (quality, participant) => {
@@ -175,7 +178,7 @@ export default function LiveKitCall({ url, token, title, selfName, outgoing, onL
           try { await room.localParticipant.setCameraEnabled(true, VOICE_VIDEO_CAPTURE_DEFAULTS, VOICE_PUBLISH_DEFAULTS); if (!cancelled) setCamOn(true) }
           catch { if (!cancelled) setCamOn(false) }
         }
-        if (!cancelled) { setStatus('live'); setMicOn(true); sync() }
+        if (!cancelled) { setStatus('live'); setMicOn(true); syncRef.current() }
       } catch (e) {
         if (!cancelled) {
           setStatus('error')
@@ -193,7 +196,7 @@ export default function LiveKitCall({ url, token, title, selfName, outgoing, onL
       autoDegradeRef.current = false
       if (audioBin.current) audioBin.current.innerHTML = ''
     }
-  }, [url, token, sync, video])
+  }, [url, token, video])
 
   const toggleMic = async () => {
     const room = roomRef.current

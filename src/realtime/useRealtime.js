@@ -1,7 +1,6 @@
 // 圣徒相通 — WebSocket connection hook (presence + signaling + chat transport).
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { buildWsUrl } from './realtimeApi'
-import { getToken } from '../auth'
 
 /**
  * Maintains a single auto-reconnecting WebSocket to /api/ws/rtc.
@@ -28,13 +27,13 @@ export function useRealtime(onMessage, enabled = true) {
   }, [])
 
   useEffect(() => {
-    if (!enabled || !getToken()) return undefined
+    if (!enabled) return undefined
     closedByUs.current = false
 
-    function connect() {
+    async function connect() {
       let ws
       try {
-        ws = new WebSocket(buildWsUrl())
+        ws = new WebSocket(await buildWsUrl())
       } catch (e) {
         scheduleReconnect()
         return

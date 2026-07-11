@@ -1,5 +1,6 @@
 import { t as i18nT } from './i18n/runtime'
 import { useState } from 'react'
+import AccessibleModal from './components/a11y/AccessibleModal'
 
 const DARK_MOMENT_CHARACTERS = [
   {
@@ -33,16 +34,21 @@ export default function SOSModal({ onClose, onPrayerWall }) {
   const [expanded, setExpanded] = useState(null)
 
   return (
-    <div style={{
-      position: 'fixed', inset: 0, zIndex: 500,
-      background: 'rgba(0,0,0,0.85)', display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
-    }} onClick={e => e.target === e.currentTarget && onClose()}>
-      <div style={{
+    <AccessibleModal
+      onClose={onClose}
+      role="alertdialog"
+      label={i18nT('你不是一个人')}
+      overlayStyle={{
+        position: 'fixed', inset: 0, zIndex: 500,
+        background: 'rgba(0,0,0,0.85)', display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
+      }}
+      contentStyle={{
         width: '100%', maxWidth: 560, maxHeight: '85vh', overflow: 'auto',
         background: 'linear-gradient(180deg, #0f0f1e, #0a0a14)',
         border: '1px solid rgba(88,86,214,0.3)', borderRadius: '20px 20px 0 0',
         padding: '24px 20px 40px',
-      }}>
+      }}
+    >
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: 24 }}>
           <div style={{ fontSize: 36, marginBottom: 10 }}>🕯️</div>
@@ -105,7 +111,6 @@ export default function SOSModal({ onClose, onPrayerWall }) {
             {i18nT('我明白了，继续')}
           </button>
         </div>
-      </div>
-    </div>
+    </AccessibleModal>
   )
 }

@@ -1,8 +1,9 @@
 import { API_BASE } from '../../../api'
 
 async function request(path, token, options = {}) {
+  // CSRF: Bearer-token auth only (Authorization header) — cookies are not used, so `credentials:'include'` was removed to shrink the CSRF surface.
   const response = await fetch(`${API_BASE}/v1/mission/features${path}`, {
-    credentials: 'include', ...options,
+    ...options,
     headers: { ...(options.body ? { 'Content-Type': 'application/json' } : {}), ...(token ? { Authorization: `Bearer ${token}` } : {}) },
   })
   const data = await response.json().catch(() => ({}))

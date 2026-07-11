@@ -506,9 +506,10 @@ export function EmotionSphereScene({
   onSelectFeature,
 }) {
   const layoutItems = useEmotionStore((s) => s.layoutItems)
+  const reduceMotion = prefersReducedMotion()
   return (
     <SceneErrorBoundary layoutItems={layoutItems} onSelectFeature={onSelectFeature}>
-      <Canvas style={{ width: '100%', height: '100%', display: 'block' }} camera={{ position: [0, 0, 8.8], fov: 48 }} dpr={[1, 2]}>
+      <Canvas frameloop={reduceMotion ? 'demand' : 'always'} style={{ width: '100%', height: '100%', display: 'block' }} camera={{ position: [0, 0, 8.8], fov: 48 }} dpr={[1, 2]}>
         <color attach="background" args={['#060b18']} />
         <fog attach="fog" args={['#060b18', 8.5, 19]} />
         <ambientLight intensity={0.8} />

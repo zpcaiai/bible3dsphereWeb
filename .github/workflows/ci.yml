@@ -26,6 +26,12 @@ jobs:
       - name: Run unit tests
         run: npm test
 
+      - name: Reject secrets in public assets
+        run: test -z "$(find public -type f -name '.env*' -print -quit)"
+
+      - name: Lint
+        run: npm run lint
+
       - name: MissionBridge UI contract
         run: npx vitest run src/test/MissionBridgePanel.test.jsx
 

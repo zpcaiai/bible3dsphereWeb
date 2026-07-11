@@ -11,7 +11,15 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json-summary'],
-      include: ['src/utils.js', 'src/api.js', 'src/store.js', 'src/sanitize.js'],
+      include: ['src/**/*.{js,jsx}'],
+      exclude: [
+        'src/**/*.{test,spec}.{js,jsx,ts,tsx}',
+        'src/test/**',
+        'src/**/__tests__/**',
+        'src/mirrorData.js',
+        'src/i18n/auto-en.js',
+        'src/i18n/translations.js',
+      ],
     },
   },
 })

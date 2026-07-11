@@ -2,6 +2,7 @@ import { t as i18nT } from './i18n/runtime'
 // ChurchOnboardingModal.jsx — 登录后无教会时的引导弹窗
 import { useState } from 'react'
 import { createChurch, joinChurch } from './api'
+import AccessibleModal from './components/a11y/AccessibleModal'
 
 const ACCENT = '#007aff'
 const toast = (m, t = 'info') => window.showToast?.(m, t)
@@ -64,8 +65,7 @@ export default function ChurchOnboardingModal({ token, onJoined, onSkip }) {
   }
 
   return (
-    <div style={S.overlay} onClick={onSkip}>
-      <div style={S.card} onClick={e => e.stopPropagation()}>
+    <AccessibleModal onClose={onSkip} label={i18nT('⛪ 加入或创建教会')} overlayStyle={S.overlay} contentStyle={S.card}>
         <div style={S.title}>{i18nT('⛪ 加入或创建教会')}</div>
         <div style={S.hint}>{i18nT('社区发帖、代祷等功能需要隶属一个教会。你可以输入邀请码加入现有教会，或创建一个新的。')}</div>
 
@@ -137,8 +137,7 @@ export default function ChurchOnboardingModal({ token, onJoined, onSkip }) {
 
         {/* Skip */}
         <button style={S.skipBtn} onClick={onSkip}>{i18nT('暂时跳过')}</button>
-      </div>
-    </div>
+    </AccessibleModal>
   )
 }
 

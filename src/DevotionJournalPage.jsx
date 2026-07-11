@@ -7,6 +7,7 @@ import { deleteJournal, fetchJournals, saveJournal } from './api'
 import usePullToRefresh from './hooks/usePullToRefresh'
 import { escapeHtml, escapeHtmlWithBr } from './sanitize'
 import EmojiTextarea from './EmojiTextarea'
+import { devlog } from './lib/devlog'
 
 // 读取旧的 localStorage 灵修笔记（来自 ChatPage / DevotionNotePage）
 function getLegacyLocalJournals() {
@@ -548,7 +549,8 @@ export default function DevotionJournalPage({ user, token, onBack, contained = f
           const tb = new Date(a.updated_at || a.created_at || 0).getTime()
           return ta - tb
         })
-        console.log(`[devotion] loaded ${apiItems.length} from API + ${legacy.length} legacy = ${merged.length}`)
+        // Journal counts/content are user data — dev-only, never log in prod.
+        devlog(`[devotion] loaded ${apiItems.length} from API + ${legacy.length} legacy = ${merged.length}`)
         setJournals(merged)
       } else {
         setJournals(prev => [...prev, ...apiItems])

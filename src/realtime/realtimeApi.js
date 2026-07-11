@@ -19,9 +19,14 @@ async function jsonOrThrow(res) {
   return data
 }
 
-/** Build the WebSocket URL for /api/ws/rtc, carrying the auth token as a query param. */
-export function buildWsUrl() {
-  const token = getToken()
+/** Exchange the HttpOnly session cookie for a 30-second, single-use WS ticket. */
+export async function buildWsUrl() {
+  const ticketResponse = await fetch(`${API_BASE}/rtc/ws-ticket`, {
+    method: 'POST',
+    credentials: 'same-origin',
+    headers: { 'Content-Type': 'application/json' },
+  })
+  const ticketData = await jsonOrThrow(ticketResponse)
   let base = API_BASE // e.g. "https://x.hf.space/api" or "/api"
   if (/^https?:\/\//i.test(base)) {
     base = base.replace(/^http/i, 'ws')
@@ -29,7 +34,7 @@ export function buildWsUrl() {
     const proto = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
     base = `${proto}//${window.location.host}${base.startsWith('/') ? base : '/' + base}`
   }
-  return `${base}/ws/rtc?token=${encodeURIComponent(token)}`
+  return `${base}/ws/rtc?ticket=${encodeURIComponent(ticketData.ticket)}`
 }
 
 export async function fetchIceServers() {

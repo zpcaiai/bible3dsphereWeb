@@ -2,6 +2,8 @@ import { t as i18nT } from './i18n/runtime'
 import { Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import BackButton from './BackButton'
 import lazyWithRetry from './lazyWithRetry'
+import AppErrorBoundary from './AppErrorBoundary'
+import AccessibilityGuard from './components/a11y/AccessibilityGuard'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { API_BASE, fetchBiblicalExample, fetchBibleVideo, fetchCommunityHeatmap, fetchDailySnapshot, fetchEmotionTrajectory, fetchFaithQA, fetchFeatureDetail, fetchGuidance, fetchHistory, fetchLayout, fetchMeditationQuestions, fetchSermon, fetchStats, fetchTTS, fetchVersePrayer, runQuery, saveJournal, trackStats, updateUserProfile, fetchMyChurch, regenerateChurchCode, leaveChurch } from './api'
 import ChurchOnboardingModal from './ChurchOnboardingModal'
@@ -15,7 +17,7 @@ import { isIosInstallable, promptInstall, subscribeToInstallPrompt } from './pwa
 import { escapeHtml } from './sanitize'
 import { getOrCreateVisitorId, verseGroupsFromResult, buildComparisonRows, formatLoginTime } from './utils'
 import { useEmotionStore } from './store'
-import { EmotionSphereScene } from './EmotionSphereScene'
+const EmotionSphereScene = lazyWithRetry(() => import('./EmotionSphereScene').then(m => ({ default: m.EmotionSphereScene })))
 import LoginScreen from './LoginScreen'
 import TranslatableParagraph from './TranslatableParagraph'
 import { TTSButton, TTSFullBar } from './useGlobalAudio.jsx'
@@ -1708,14 +1710,16 @@ function AppContent() {
         <main className="mobile-app-main" style={{display: 'block'}}>
           <section className="mobile-pane mobile-sphere-pane" style={{display: 'flex'}}>
             <div className="mobile-sphere-stage">
-              <EmotionSphereScene 
-                onVerseTrigger={handleVerseTrigger}
-                expandedVerseId={expandedVerseId}
-                versePrayers={versePrayers}
-                versePrayerLoading={versePrayerLoading}
-                handleVerseClick={handleVerseClick}
-                onSelectFeature={setSelectedFeature}
-              />
+              <Suspense fallback={<div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#060b18', color: 'rgba(255,255,255,0.45)', fontSize: '13px' }}>{i18nT('加载中…')}</div>}>
+                <EmotionSphereScene
+                  onVerseTrigger={handleVerseTrigger}
+                  expandedVerseId={expandedVerseId}
+                  versePrayers={versePrayers}
+                  versePrayerLoading={versePrayerLoading}
+                  handleVerseClick={handleVerseClick}
+                  onSelectFeature={setSelectedFeature}
+                />
+              </Suspense>
             </div>
 
             <div className="mobile-summary-grid">
@@ -2687,6 +2691,7 @@ function AppContent() {
           </footer>
         </main>
 
+        <AppErrorBoundary>
         <Suspense fallback={<div className="page-overlay" style={{display:'flex',alignItems:'center',justifyContent:'center'}}><span style={{color:'rgba(255,255,255,0.6)',fontSize:'15px'}}>{i18nT('加载中…')}</span></div>}>
         {/* 代祷墙页面 */}
         {activePanel === 'prayer' && (
@@ -3034,6 +3039,7 @@ function AppContent() {
           </div>
         )}
         </Suspense>
+        </AppErrorBoundary>
 
         {/* 底部 Tab Bar */}
         {!suppressGlobalChrome ? <nav className="mobile-bottom-nav glass" aria-label={i18nT('主要导航')}>
@@ -3148,11 +3154,14 @@ export default function App() {
     )
   }
   return (
+    <>
+      <AccessibilityGuard />
     <QueryClientProvider client={queryClient}>
       <AiStatusBanner />
       <AppContent />
       <GlobalToast />
       <ConfirmDialog />
     </QueryClientProvider>
+    </>
   )
 }

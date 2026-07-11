@@ -7,7 +7,12 @@ cd "$(dirname "$0")"
 
 echo "==> 1/4 提交本地修复改动"
 if [ -n "$(git status --porcelain src/)" ]; then
-  git add -A
+  # 显式暂存已知路径，避免 git add -A 误扫瞬时/临时文件（timestamp bundles、.env.local、film_output 等）
+  git add src public scripts index.html \
+    vite.config.js vitest.config.js eslint.config.js \
+    tailwind.config.js postcss.config.js \
+    package.json package-lock.json \
+    vercel.json nginx.conf Dockerfile Makefile .gitignore
   git commit -m "fix(地图): Leaflet flyTo 在容器0尺寸/目标≈当前中心时内部产生(NaN,NaN)崩整页——setView/fitBounds 先invalidateSize并对退化情形改用无动画setView"
   echo "    ✓ 已提交"
 else

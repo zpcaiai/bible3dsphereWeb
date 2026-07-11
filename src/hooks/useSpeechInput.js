@@ -19,7 +19,7 @@
  *   recordingDelayRef,
  *   startRecording(), stopRecording(), cancelRecording()
  */
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback, useEffect } from 'react'
 import { t as i18nT } from '../i18n/runtime'
 import { transcribeAudioBlob } from '../api'
 
@@ -81,6 +81,17 @@ export function useSpeechInput ({
   const shouldTranscribeRef = useRef(true)
   /** Long-press delay handle — exposed so callers can cancel it on mouseLeave */
   const recordingDelayRef = useRef(null)
+
+  // ── Unmount cleanup: release mic + timers to avoid leaks ────────────────────
+  useEffect(() => () => {
+    try { stopStreamTracks(streamRef.current) } catch { /* ignore */ }
+    streamRef.current = null
+    clearInterval(recordingTimerRef.current)
+    recordingTimerRef.current = null
+    clearTimeout(recordingDelayRef.current)
+    recordingDelayRef.current = null
+    try { mediaRecorderRef.current?.stop?.() } catch { /* ignore */ }
+  }, [])
 
   // ── Internal: backend speech transcription ───────────────────────────────
   const _transcribe = useCallback(async (audioBlob, contentType) => {

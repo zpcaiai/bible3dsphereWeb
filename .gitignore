@@ -22,3 +22,10 @@ coverage/
 __cap_*.txt
 src/_bm_dump.mjs
 src/_permtest.tmp
+
+# secrets: never ship env files nested under public/ or any .env.local
+public/**/.env*
+**/.env.local
+
+# local render/output artifacts
+film_output/

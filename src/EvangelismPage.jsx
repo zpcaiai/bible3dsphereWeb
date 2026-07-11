@@ -8,6 +8,7 @@ import { escapeHtml, escapeHtmlWithBr } from './sanitize'
 import BibleMapPage from './BibleMapPage'
 import MissionBridgePanel from './components/mission-bridge/MissionBridgePanel'
 import MissionOSRoadmap from './features/mission-os/roadmap/MissionOSRoadmap'
+import MissionConsole from './features/mission-os/console/MissionConsole'
 
 const AMEN_KEY = 'evangelism-amened-v1'
 
@@ -1261,14 +1262,20 @@ export default function EvangelismPage({ user, token, organizationId, onBack, on
             >{i18nT('🌉 邻舍之桥')}</button>
             <button
               role="tab"
+              aria-selected={missionView === 'console'}
+              className={`mission-view-tab ${missionView === 'console' ? 'active' : ''}`}
+              onClick={() => setMissionView('console')}
+            >{i18nT('🧭 工作台')}</button>
+            <button
+              role="tab"
               aria-selected={missionView === 'roadmap'}
               className={`mission-view-tab ${missionView === 'roadmap' ? 'active' : ''}`}
               onClick={() => setMissionView('roadmap')}
-            >{i18nT('🛰️ Mission OS 路线图')}</button>
+            >{i18nT('🛰️ 路线图')}</button>
           </div>
-          {missionView === 'bridge'
-            ? <MissionBridgePanel token={token} organizationId={organizationId} />
-            : <MissionOSRoadmap />}
+          {missionView === 'bridge' && <MissionBridgePanel token={token} organizationId={organizationId} />}
+          {missionView === 'console' && <MissionConsole token={token} organizationId={organizationId} />}
+          {missionView === 'roadmap' && <MissionOSRoadmap />}
         </div>
       )}
 

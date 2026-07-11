@@ -63,11 +63,10 @@ export function createModelLayer({ glLib, id = 'jeru-3dmodel', origin, altitude 
       this.camera.projectionMatrix = m.multiply(l)
       this.renderer.resetState()
       this.renderer.render(this.scene, this.camera)
-      this.map.triggerRepaint()
     },
     onRemove() {
       try {
-        this.scene && this.scene.traverse(o => { if (o.geometry) o.geometry.dispose(); if (o.material) { const ms = Array.isArray(o.material) ? o.material : [o.material]; ms.forEach(mt => mt.dispose && mt.dispose()) } })
+        this.scene && this.scene.traverse(o => { if (o.geometry) o.geometry.dispose(); if (o.material) { const ms = Array.isArray(o.material) ? o.material : [o.material]; ms.forEach(mt => { for (const value of Object.values(mt)) { if (value?.isTexture) value.dispose() } mt.dispose?.() }) } })
       } catch (_) {}
       // 不 dispose renderer（与地图共享 GL 上下文）
     },

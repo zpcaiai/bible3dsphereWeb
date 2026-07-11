@@ -43,13 +43,12 @@ export default defineConfig({
     // The remaining large files are lazy-loaded specialist surfaces or vendor
     // libraries (maps, 3D, voice denoise, PDF). Keep warnings for abnormal
     // growth while avoiding noise for expected deferred chunks.
-    chunkSizeWarningLimit: 2000,
+    chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
         manualChunks: {
           'three': ['three', '@react-three/fiber', '@react-three/drei'],
           'maplibre-gl': ['maplibre-gl'],
-          'mapbox-gl': ['mapbox-gl'],
           'deck-luma': [
             '@deck.gl/core',
             '@deck.gl/layers',

@@ -7,17 +7,26 @@ const BACKEND_DOWN_MSG = '后端服务不可用，请稍后重试'
 
 const authUrl = (path) => `${API_BASE}/auth${path}`
 
+// Bearer credentials deliberately live only in this JavaScript realm. A reload
+// requires re-authentication; that is preferable to leaving a long-lived account
+// credential available in persistent web storage. Remove legacy persisted tokens
+// eagerly so older deployments cannot keep exposing them.
+try { localStorage.removeItem(TOKEN_KEY); sessionStorage.removeItem(TOKEN_KEY) } catch { /* storage may be disabled */ }
+
 export function getToken() {
-  return localStorage.getItem(TOKEN_KEY) || ''
+  // Compatibility sentinel for older API helpers that conditionally add an
+  // Authorization header. It is not a credential; authentication is cookie-based.
+  return 'cookie-session'
 }
 
-export function setToken(token) {
-  localStorage.setItem(TOKEN_KEY, token)
-}
+export function setToken() { /* HttpOnly cookie is managed by the server */ }
 
 export function clearToken() {
-  localStorage.removeItem(TOKEN_KEY)
-  localStorage.removeItem(USER_KEY)
+  try {
+    localStorage.removeItem(TOKEN_KEY)
+    sessionStorage.removeItem(TOKEN_KEY)
+    localStorage.removeItem(USER_KEY)
+  } catch { /* storage may be disabled */ }
 }
 
 export function getCachedUser() {
@@ -35,11 +44,9 @@ export function setCachedUser(user) {
 }
 
 export async function fetchCurrentUser() {
-  const token = getToken()
-  if (!token) return null
   try {
     const res = await fetch(authUrl('/me'), {
-      headers: { Authorization: `Bearer ${token}` },
+      credentials: 'same-origin',
     })
     const contentType = res.headers.get('content-type') || ''
     if (!contentType.includes('application/json')) {
@@ -62,17 +69,9 @@ export async function fetchCurrentUser() {
 }
 
 export async function logout() {
-  const token = getToken()
-  if (token) {
-    try {
-      await fetch(authUrl('/logout'), {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-      })
-    } catch {
-      // ignore
-    }
-  }
+  try {
+    await fetch(authUrl('/logout'), { method: 'POST', credentials: 'same-origin' })
+  } catch { /* logout remains locally effective when offline */ }
   await clearSensitiveOfflineData().catch(() => {})
   clearToken()
 }
@@ -155,10 +154,7 @@ export async function registerWithEmail(email, code, password, nickname = '') {
   }
   const data = await res.json()
   if (!res.ok) throw new Error(data.detail || 'Registration failed')
-  if (data.token) {
-    setToken(data.token)
-    if (data.user) setCachedUser(data.user)
-  }
+  if (data.user) setCachedUser(data.user)
   return data
 }
 
@@ -174,23 +170,17 @@ export async function loginWithEmail(email, password) {
   }
   const data = await res.json()
   if (!res.ok) throw new Error(data.detail || 'Login failed')
-  if (data.token) {
-    setToken(data.token)
-    if (data.user) setCachedUser(data.user)
-  }
+  if (data.user) setCachedUser(data.user)
   return data
 }
 
 export function extractTokenFromUrl() {
   const params = new URLSearchParams(window.location.search)
-  const token = params.get('token')
-  if (token) {
-    setToken(token)
-    // Clean up URL
+  // Remove legacy callback parameters without ever reading them into JS.
+  if (params.has('token')) {
     const url = new URL(window.location.href)
     url.searchParams.delete('token')
     window.history.replaceState({}, '', url.toString())
-    return token
   }
   return null
 }

@@ -1,8 +1,8 @@
 import { API_BASE } from './api'
 
 async function request(path, token, options = {}) {
+  // CSRF: Bearer-token auth only (Authorization header) — cookies are not used, so `credentials:'include'` was removed to shrink the CSRF surface.
   const response = await fetch(`${API_BASE}/mission-bridge${path}`, {
-    credentials: 'include',
     ...options,
     headers: {
       ...(options.body ? { 'Content-Type': 'application/json' } : {}),
