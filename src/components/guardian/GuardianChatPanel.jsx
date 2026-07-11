@@ -191,7 +191,7 @@ export default function GuardianChatPanel() {
       {/* 语音状态提示 */}
       {(voice.isRecording || voice.isTranscribing || voice.recordingError || callMode) && (
         <div style={{ padding: '0 14px 4px', fontSize: 11.5,
-          color: voice.isRecording ? '#ff8a8a' : C.dim,
+          color: voice.isRecording || voice.recordingError ? '#ff8a8a' : C.dim,
           display: 'flex', alignItems: 'center', gap: 6 }}>
           {voice.isRecording && <span className="guardian-rec-dot" />}
           {voice.isRecording
@@ -207,10 +207,9 @@ export default function GuardianChatPanel() {
         {/* 🎤 单次语音输入 */}
         <VoiceHoldButton
           speech={voice}
-          compact
           variant="guardian"
-          showOverlay={false}
-          style={{ width: 32, height: 32, flex: '0 0 32px', borderRadius: 8 }}
+          showOverlay
+          style={{ minWidth: 0, height: 40, flex: '1 1 170px', borderRadius: 20 }}
           disabled={callMode || voice.isTranscribing || sending}
           onHoldStart={() => {
             voice.stopSpeaking()

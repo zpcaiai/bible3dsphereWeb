@@ -26,6 +26,7 @@
   
   /* Tab Bar 高度 */
   --tab-bar-height: 64px;
+  --subpage-language-height: 44px;
 }
 
 * {
@@ -1667,6 +1668,40 @@ canvas {
 }
 
 /* ── Page Overlay (for full-screen pages like sharewall, prayer, etc.) ───────── */
+.subpage-language-row {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1500;
+  min-height: calc(var(--safe-top) + var(--subpage-language-height));
+  padding: calc(var(--safe-top) + 8px) calc(var(--safe-right) + 10px) 8px calc(var(--safe-left) + 10px);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  background: rgba(8, 8, 16, 0.94);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+}
+
+.has-active-subpage .page-overlay,
+.has-active-subpage .checkin-overlay {
+  top: calc(var(--safe-top) + var(--subpage-language-height));
+}
+
+/* Some legacy pages establish their own fixed viewport inside page-overlay. */
+.has-active-subpage .page-overlay > .pw-page,
+.has-active-subpage .page-overlay > [style*="position: fixed"] {
+  top: calc(var(--safe-top) + var(--subpage-language-height)) !important;
+  height: calc(100dvh - var(--safe-top) - var(--subpage-language-height)) !important;
+  min-height: 0 !important;
+}
+
+.standalone-subpage-shell {
+  padding-top: calc(var(--safe-top) + var(--subpage-language-height));
+}
+
 .page-overlay {
   position: fixed;
   inset: 0;

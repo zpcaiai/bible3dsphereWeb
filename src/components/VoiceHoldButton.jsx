@@ -118,7 +118,7 @@ export default function VoiceHoldButton({
     } else {
       speech?.stopRecording?.()
       onHoldEnd?.()
-      setHint(t('正在转文字…'))
+      setHint('')
     }
   }, [clearStartTimer, isCancelling, isRecording, onHoldCancel, onHoldEnd, speech])
 

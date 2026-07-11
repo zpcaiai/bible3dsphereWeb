@@ -1584,13 +1584,8 @@ function AppContent() {
 
     if (user && activePanel === 'attention') {
       return (
-        <div style={{ minHeight: '100dvh', background: '#0d0d14' }}>
-          <div style={{
-            position: 'fixed',
-            top: 'calc(env(safe-area-inset-top, 0px) + 8px)',
-            right: 'calc(env(safe-area-inset-right, 0px) + 10px)',
-            zIndex: 1500,
-          }}>
+        <div className="standalone-subpage-shell" style={{ minHeight: '100dvh', background: '#0d0d14' }}>
+          <div className="subpage-language-row">
             <LanguageToggle />
           </div>
           <Suspense fallback={<div style={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'rgba(255,255,255,0.7)' }}>{i18nT('加载中…')}</div>}>
@@ -1611,7 +1606,7 @@ function AppContent() {
     const suppressGlobalChrome = showSOS
 
     return (
-      <div className="mobile-app-shell">
+      <div className={`mobile-app-shell ${activePanel !== 'sphere' ? 'has-active-subpage' : ''}`}>
         <header className="mobile-topbar">
           <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
             <span style={{fontSize: '22px', lineHeight: 1}}>🔮</span>
@@ -1694,12 +1689,7 @@ function AppContent() {
 
         {/* 语言切换固定入口：非首页(各 page-overlay 覆盖顶栏)时浮在右上角，z 高于所有 overlay；首页已在顶栏内显示 */}
         {activePanel !== 'sphere' && (
-          <div style={{
-            position: 'fixed',
-            top: 'calc(env(safe-area-inset-top, 0px) + 8px)',
-            right: 'calc(env(safe-area-inset-right, 0px) + 10px)',
-            zIndex: 1500,
-          }}>
+          <div className="subpage-language-row">
             <LanguageToggle />
           </div>
         )}
@@ -3101,13 +3091,6 @@ function AppContent() {
           >
             <span className="mobile-nav-icon">⚖️</span>
             <span className="mobile-nav-label">{i18nT('心迹')}</span>
-          </button>
-          <button
-            className={`mobile-nav-item ${activePanel === 'communion' ? 'active' : ''}`}
-            onClick={() => handlePanelSwitch('communion')}
-          >
-            <span className="mobile-nav-icon">💬</span>
-            <span className="mobile-nav-label">{i18nT('相通')}</span>
           </button>
         </nav> : null}
 

@@ -59,7 +59,7 @@ function ReflectionPanel() {
 
 const POS_KEY = 'guardian-sprite-pos'
 const SPRITE_BOX = 70 // 小精灵按钮可视尺寸（58 + padding）
-const PANEL_WIDTH = 180
+const PANEL_WIDTH = 360
 const PANEL_HEIGHT = 270
 
 function clampPos({ x, y }, width = SPRITE_BOX, height = SPRITE_BOX) {
@@ -111,6 +111,7 @@ export default function GuardianWidget() {
   const onSpritePointerMove = (e) => {
     const d = dragRef.current
     if (!d) return
+    if (e.cancelable) e.preventDefault()
     const dx = e.clientX - d.startX
     const dy = e.clientY - d.startY
     if (!movedRef.current && Math.hypot(dx, dy) < 6) return // 阈值内视为点按
@@ -119,12 +120,28 @@ export default function GuardianWidget() {
     const y = Math.min(Math.max(0, d.originY + dy), Math.max(0, window.innerHeight - (d.h || SPRITE_BOX)))
     setPos({ x, y })
   }
+  const removeWindowDragListeners = () => {
+    window.removeEventListener('pointermove', onSpritePointerMove)
+    window.removeEventListener('pointerup', onSpritePointerUp)
+    window.removeEventListener('pointercancel', onSpritePointerUp)
+  }
   const onSpritePointerUp = () => {
     if (movedRef.current && dragRef.current) {
       setPos((p) => { if (p) savePos(p); return p })
     }
     dragRef.current = null
+    removeWindowDragListeners()
   }
+
+  const beginWindowDrag = (e) => {
+    onSpritePointerDown(e)
+    if (!dragRef.current) return
+    window.addEventListener('pointermove', onSpritePointerMove, { passive: false })
+    window.addEventListener('pointerup', onSpritePointerUp)
+    window.addEventListener('pointercancel', onSpritePointerUp)
+  }
+
+  useEffect(() => () => removeWindowDragListeners(), []) // eslint-disable-line react-hooks/exhaustive-deps
 
   // 展开、收起或转屏后，按真实容器尺寸重新夹紧，避免窗口被留在屏幕外。
   useLayoutEffect(() => {
@@ -177,10 +194,7 @@ export default function GuardianWidget() {
         }}>
           {/* 头部（拖拽手柄：展开状态按住这里也能拖动） */}
           <div
-            onPointerDown={onSpritePointerDown}
-            onPointerMove={onSpritePointerMove}
-            onPointerUp={onSpritePointerUp}
-            onPointerCancel={onSpritePointerUp}
+            onPointerDown={beginWindowDrag}
             data-testid="guardian-drag-handle"
             aria-label={t("拖动守护者窗口")}
             style={{ display: 'flex', alignItems: 'center', gap: 6,
@@ -239,10 +253,7 @@ export default function GuardianWidget() {
       {/* 小鸽子（可拖动，点按开合） */}
       <button type="button" aria-label={t("打开属灵守护者（按住可拖动）")}
         onClick={() => { if (movedRef.current) { movedRef.current = false; return } setWidgetMode(expanded ? 'collapsed' : 'expanded') }}
-        onPointerDown={onSpritePointerDown}
-        onPointerMove={onSpritePointerMove}
-        onPointerUp={onSpritePointerUp}
-        onPointerCancel={onSpritePointerUp}
+        onPointerDown={beginWindowDrag}
         style={{ background: 'none', border: 'none', cursor: 'grab', padding: 6, touchAction: 'none' }}>
         <GuardianSprite state={spriteState} size={58} />
       </button>

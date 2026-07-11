@@ -37,11 +37,11 @@ describe('GuardianWidget', () => {
     })
   })
 
-  it('renders the expanded window at half of its previous dimensions', () => {
+  it('renders the expanded window at the requested double width', () => {
     render(<GuardianWidget />)
 
     const panel = screen.getByTestId('guardian-panel')
-    expect(panel.style.width).toBe('180px')
+    expect(panel.style.width).toBe('360px')
     expect(panel.style.height).toBe('270px')
   })
 
@@ -49,17 +49,17 @@ describe('GuardianWidget', () => {
     const { container } = render(<GuardianWidget />)
     const root = container.querySelector('.guardian-widget-root')
     root.getBoundingClientRect = () => ({
-      left: 100, top: 100, right: 280, bottom: 448,
-      width: 180, height: 348, x: 100, y: 100,
+      left: 100, top: 100, right: 460, bottom: 448,
+      width: 360, height: 348, x: 100, y: 100,
     })
     const handle = screen.getByTestId('guardian-drag-handle')
 
     fireEvent.pointerDown(handle, { pointerId: 1, button: 0, clientX: 120, clientY: 120 })
-    fireEvent.pointerMove(handle, { pointerId: 1, clientX: 1000, clientY: 1000 })
-    fireEvent.pointerUp(handle, { pointerId: 1, clientX: 1000, clientY: 1000 })
+    fireEvent.pointerMove(window, { pointerId: 1, clientX: 1000, clientY: 1000 })
+    fireEvent.pointerUp(window, { pointerId: 1, clientX: 1000, clientY: 1000 })
 
-    expect(root.style.left).toBe('620px')
+    expect(root.style.left).toBe('440px')
     expect(root.style.top).toBe('252px')
-    expect(JSON.parse(localStorage.getItem('guardian-sprite-pos'))).toEqual({ x: 620, y: 252 })
+    expect(JSON.parse(localStorage.getItem('guardian-sprite-pos'))).toEqual({ x: 440, y: 252 })
   })
 })
