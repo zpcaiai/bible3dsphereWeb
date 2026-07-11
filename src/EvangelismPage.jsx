@@ -7,6 +7,7 @@ import usePullToRefresh from './hooks/usePullToRefresh'
 import { escapeHtml, escapeHtmlWithBr } from './sanitize'
 import BibleMapPage from './BibleMapPage'
 import MissionBridgePanel from './components/mission-bridge/MissionBridgePanel'
+import MissionOSRoadmap from './features/mission-os/roadmap/MissionOSRoadmap'
 
 const AMEN_KEY = 'evangelism-amened-v1'
 
@@ -358,6 +359,7 @@ export default function EvangelismPage({ user, token, organizationId, onBack, on
   const [amened, setAmened] = useState(loadAmened)
   const [showCompose, setShowCompose] = useState(false)
   const [subTab, setSubTab] = useState('fy') // 'fy' | 'mission' | 'map' | 'seekers'
+  const [missionView, setMissionView] = useState('bridge') // 'bridge' | 'roadmap'
   const [draft, setDraft] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [submitDone, setSubmitDone] = useState(false)
@@ -1247,10 +1249,26 @@ export default function EvangelismPage({ user, token, organizationId, onBack, on
       </div>
       )}
 
-      {/* 宣教：邻舍之桥 */}
+      {/* 宣教：邻舍之桥 / Mission OS 路线图 */}
       {subTab === 'mission' && (
         <div className="pw-list mission-panel-scroll">
-          <MissionBridgePanel token={token} organizationId={organizationId} />
+          <div className="mission-view-toggle" role="tablist" aria-label={i18nT('宣教视图')}>
+            <button
+              role="tab"
+              aria-selected={missionView === 'bridge'}
+              className={`mission-view-tab ${missionView === 'bridge' ? 'active' : ''}`}
+              onClick={() => setMissionView('bridge')}
+            >{i18nT('🌉 邻舍之桥')}</button>
+            <button
+              role="tab"
+              aria-selected={missionView === 'roadmap'}
+              className={`mission-view-tab ${missionView === 'roadmap' ? 'active' : ''}`}
+              onClick={() => setMissionView('roadmap')}
+            >{i18nT('🛰️ Mission OS 路线图')}</button>
+          </div>
+          {missionView === 'bridge'
+            ? <MissionBridgePanel token={token} organizationId={organizationId} />
+            : <MissionOSRoadmap />}
         </div>
       )}
 
