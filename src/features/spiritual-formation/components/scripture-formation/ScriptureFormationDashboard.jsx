@@ -119,7 +119,7 @@ export function LectioDivinaCard({ userId, session, onSave }) {
           <p className="sf-prayer">{guidance.aiResponse}</p>
           <label>
             Journal
-            <textarea value={draft} onChange={(event) => setDraft(event.target.value)} placeholder="Write your notes, prayer, or obedience action." />
+            <textarea value={draft} onChange={(event) => setDraft(event.target.value)} placeholder="Write your notes, prayer, or obedience action."  aria-label="Write your notes, prayer, or obedience action."/>
           </label>
           <button className="sf-primary" type="button" onClick={submit}>{stage === 'obey' ? 'Complete Lectio' : 'Save and Continue'}</button>
         </article>
@@ -203,11 +203,11 @@ export function ScriptureMemoryTrainer({ userId, items, onSave }) {
               <button type="button" onClick={() => setRevealed((value) => !value)}>{revealed ? 'Hide verse' : 'Reveal verse'}</button>
               <label>
                 Recall attempt
-                <textarea value={recall} onChange={(event) => setRecall(event.target.value)} placeholder="Type as much as you can remember." />
+                <textarea value={recall} onChange={(event) => setRecall(event.target.value)} placeholder="Type as much as you can remember."  aria-label="Type as much as you can remember."/>
               </label>
               <label>
                 Application note
-                <textarea value={applicationNote} onChange={(event) => setApplicationNote(event.target.value)} placeholder="How can this verse shape one action today?" />
+                <textarea value={applicationNote} onChange={(event) => setApplicationNote(event.target.value)} placeholder="How can this verse shape one action today?"  aria-label="How can this verse shape one action today?"/>
               </label>
               <div className="sf-chip-row" role="radiogroup" aria-label="Self rating">
                 {['forgot', 'hard', 'good', 'easy'].map((value) => (
@@ -268,7 +268,7 @@ export function SpiritualExamenForm({ userId, session, onSave }) {
           <p>{examenPrompt(stage)}</p>
           <label>
             Reflection
-            <textarea value={draft} onChange={(event) => setDraft(event.target.value)} placeholder="Short notes are enough. Use one line per item if helpful." />
+            <textarea value={draft} onChange={(event) => setDraft(event.target.value)} placeholder="Short notes are enough. Use one line per item if helpful."  aria-label="Short notes are enough. Use one line per item if helpful."/>
           </label>
           <div className="sf-plan-actions">
             <button className="sf-primary" type="button" onClick={() => submit(false)}>{stage === 'prayer' ? 'Complete Examen' : 'Save and Continue'}</button>
@@ -364,7 +364,7 @@ export function ConfessionRepentanceFlow({ userId, session, onSave }) {
           {stage === 'receive_grace' && <GospelAssuranceCard assurance={assurance} />}
           <label>
             Response
-            <textarea value={draft} onChange={(event) => setDraft(event.target.value)} placeholder="Keep it specific and non-graphic. Do not include unsafe details." />
+            <textarea value={draft} onChange={(event) => setDraft(event.target.value)} placeholder="Keep it specific and non-graphic. Do not include unsafe details."  aria-label="Keep it specific and non-graphic. Do not include unsafe details."/>
           </label>
           {stage === 'walk' && (
             <label className="sf-check">

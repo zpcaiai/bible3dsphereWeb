@@ -14,6 +14,7 @@ import { TTSFullBar, TTSButton } from './useGlobalAudio.jsx'
 import DailyDevotionPage from './DailyDevotionPage.jsx'
 import { API_BASE } from './api.js'
 import { getToken } from './auth.js'
+import { a11yClickProps } from './lib/a11yClick';
 
 // ── 书库（可扩展）──────────────────────────────────────────────────────────────
 export const BOOKS = [
@@ -396,28 +397,28 @@ export default function SpiritualBooksPage({ onBack }) {
                 {b.pdf && <span style={{ color: 'rgba(255,255,255,0.45)' }}>📄 PDF</span>}
               </div>
               {/* 评分 / 想读 / 已读 / 分享 */}
-              <div style={MARK_S.row} onClick={e => e.stopPropagation()}>
+              <div style={MARK_S.row} onClick={e => e.stopPropagation()} {...a11yClickProps(e => e.stopPropagation())}>
                 <span style={{ display: 'flex', gap: 1 }}>
                   {[1, 2, 3, 4, 5].map(n => (
                     <span key={n}
                       onClick={() => saveMark(b.id, { rating: (marks[b.id]?.rating === n ? 0 : n) })}
                       style={{ cursor: 'pointer', fontSize: 13,
                         filter: (marks[b.id]?.rating || 0) >= n ? 'none' : 'grayscale(1)',
-                        opacity: (marks[b.id]?.rating || 0) >= n ? 1 : 0.35 }}>⭐</span>
+                        opacity: (marks[b.id]?.rating || 0) >= n ? 1 : 0.35 }} {...a11yClickProps(() => saveMark(b.id, { rating: (marks[b.id]?.rating === n ? 0 : n) }))}>⭐</span>
                   ))}
                 </span>
                 {stats[b.id]?.rating_count > 0 && (
                   <span style={MARK_S.stat}>{stats[b.id].avg_rating}{i18nT('分·')}{stats[b.id].rating_count}{i18nT('人')}</span>
                 )}
                 <span onClick={() => saveMark(b.id, { status: marks[b.id]?.status === 'want' ? '' : 'want' })}
-                  style={{ ...MARK_S.btn, ...(marks[b.id]?.status === 'want' ? MARK_S.on : {}) }}>
+                  style={{ ...MARK_S.btn, ...(marks[b.id]?.status === 'want' ? MARK_S.on : {}) }} {...a11yClickProps(() => saveMark(b.id, { status: marks[b.id]?.status === 'want' ? '' : 'want' }))}>
                   {i18nT('🔖 想读')}{stats[b.id]?.want ? ` ${stats[b.id].want}` : ''}
                 </span>
                 <span onClick={() => saveMark(b.id, { status: marks[b.id]?.status === 'read' ? '' : 'read' })}
-                  style={{ ...MARK_S.btn, ...(marks[b.id]?.status === 'read' ? MARK_S.on : {}) }}>
+                  style={{ ...MARK_S.btn, ...(marks[b.id]?.status === 'read' ? MARK_S.on : {}) }} {...a11yClickProps(() => saveMark(b.id, { status: marks[b.id]?.status === 'read' ? '' : 'read' }))}>
                   {i18nT('✅ 已读')}{stats[b.id]?.read_cnt ? ` ${stats[b.id].read_cnt}` : ''}
                 </span>
-                <span onClick={() => shareBook(b)} style={MARK_S.btn}>{i18nT('↗ 分享')}</span>
+                <span onClick={() => shareBook(b)} style={MARK_S.btn} {...a11yClickProps(() => shareBook(b))}>{i18nT('↗ 分享')}</span>
               </div>
             </div>
           </div>

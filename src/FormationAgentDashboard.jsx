@@ -49,7 +49,7 @@ export default function FormationAgentDashboard({ user, onBack, go }) {
       {/* 意图路由 */}
       <div style={card}>
         <div style={{ display: 'flex', gap: 8 }}>
-          <input value={intent} onChange={e => setIntent(e.target.value)} placeholder={i18nT('你此刻需要什么？（如：我很焦虑、想祷告、被试探、想读经）')} style={{ ...fld, flex: 1 }} />
+          <input value={intent} onChange={e => setIntent(e.target.value)} placeholder={i18nT('你此刻需要什么？（如：我很焦虑、想祷告、被试探、想读经）')} style={{ ...fld, flex: 1 }}  aria-label={i18nT('你此刻需要什么？（如：我很焦虑、想祷告、被试探、想读经）')}/>
           <button style={btn} onClick={route}>{i18nT('带我去')}</button>
         </div>
         {routed && (

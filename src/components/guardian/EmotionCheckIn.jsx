@@ -79,7 +79,7 @@ export default function EmotionCheckIn({ onDone }) {
 
       <span style={{ position: 'relative', display: 'block' }}>
       <textarea value={note} rows={2} placeholder={t("（可选）是什么带来了这个感受？")}
-        onChange={(e) => setNote(e.target.value)} style={{ ...S.input, paddingRight: 92 }} />
+        onChange={(e) => setNote(e.target.value)} style={{ ...S.input, paddingRight: 92 }}  aria-label={t("（可选）是什么带来了这个感受？")}/>
       <SuggestMenu accent="#a78bfa" top={8} right={8} options={GEC_OPTS} value={note} onChange={setNote} />
       </span>
 

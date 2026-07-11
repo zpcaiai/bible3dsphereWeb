@@ -3,6 +3,7 @@ import { API_BASE } from './api'
 import { getRuntimeLang } from './i18n/runtime'
 import { MIRROR_CHARACTERS } from './mirrorData'
 import { AutoText } from './autoTranslate'
+import { a11yClickProps } from './lib/a11yClick';
 
 // 圣经人物关系图谱 —— 无第三方依赖的力导向图（SVG + requestAnimationFrame）
 // 数据来源：GET /api/characters/knowledge-graph
@@ -291,7 +292,7 @@ export default function RelationshipGraphView({ token, onBack, initialFocus = ''
         <h2 style={{ margin: 0, fontSize: 19, color: '#fff' }}>{en ? 'Relationship Graph' : '关系图谱'}</h2>
         <form onSubmit={(e) => { e.preventDefault(); submitFocus(focusInput) }} style={{ display: 'flex', gap: 6, flex: 1, minWidth: 180 }}>
           <input value={focusInput} onChange={(e) => setFocusInput(e.target.value)} placeholder={en ? 'Focus on a person (e.g. David)' : '聚焦某人物（如 大卫）'}
-            style={{ flex: 1, minWidth: 120, padding: '7px 11px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(255,255,255,0.08)', color: '#fff', fontSize: 13, outline: 'none' }} />
+            style={{ flex: 1, minWidth: 120, padding: '7px 11px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(255,255,255,0.08)', color: '#fff', fontSize: 13, outline: 'none' }}  aria-label={en ? 'Focus on a person (e.g. David)' : '聚焦某人物（如 大卫）'}/>
           <button type="submit" style={{ padding: '7px 12px', borderRadius: 8, border: 'none', background: '#007aff', color: '#fff', fontSize: 13, cursor: 'pointer', fontWeight: 600 }}>{en ? 'Focus' : '聚焦'}</button>
           {focus && <button type="button" onClick={() => { setFocusInput(''); submitFocus('') }} style={{ padding: '7px 10px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.15)', background: 'transparent', color: 'rgba(255,255,255,0.6)', fontSize: 13, cursor: 'pointer' }}>{en ? 'Clear' : '全部'}</button>}
           {focus && (
@@ -376,7 +377,7 @@ export default function RelationshipGraphView({ token, onBack, initialFocus = ''
               <div>
                 {selCard && onOpenChar ? (
                   <div onClick={() => onOpenChar(selCard)} title={en ? 'Open mirror card' : '查看镜鉴卡片'}
-                    style={{ fontSize: 16, fontWeight: 700, color: '#9ecbff', cursor: 'pointer', textDecoration: 'underline', textUnderlineOffset: 3 }}>{nm(selected)}</div>
+                    style={{ fontSize: 16, fontWeight: 700, color: '#9ecbff', cursor: 'pointer', textDecoration: 'underline', textUnderlineOffset: 3 }} {...a11yClickProps(() => onOpenChar(selCard))}>{nm(selected)}</div>
                 ) : (
                   <div style={{ fontSize: 16, fontWeight: 700, color: '#fff' }}>{nm(selected)}</div>
                 )}
@@ -401,7 +402,7 @@ export default function RelationshipGraphView({ token, onBack, initialFocus = ''
                   <div key={r.id} style={{ fontSize: 12, color: 'rgba(255,255,255,0.78)', padding: '3px 0', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
                     <span style={{ color: 'rgba(255,255,255,0.45)' }}>{r.dir === 'out' ? '→ ' : '← '}</span>
                     <span style={{ color: '#9ecbff' }}><AutoText>{r.label}</AutoText></span> · {(rc && onOpenChar)
-                      ? <span onClick={() => onOpenChar(rc)} style={{ cursor: 'pointer', textDecoration: 'underline', textUnderlineOffset: 2 }}>{en && rc ? rc.en : r.otherName}</span>
+                      ? <span onClick={() => onOpenChar(rc)} style={{ cursor: 'pointer', textDecoration: 'underline', textUnderlineOffset: 2 }} {...a11yClickProps(() => onOpenChar(rc))}>{en && rc ? rc.en : r.otherName}</span>
                       : <AutoText>{r.otherName}</AutoText>}
                   </div>
                 )})}

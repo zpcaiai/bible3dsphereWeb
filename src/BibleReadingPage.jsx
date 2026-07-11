@@ -9,6 +9,7 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 import BackButton from './BackButton'
 import { fetchReadingProgress, markChapterRead, fetchBibleStudy, fetchScripture } from './api'
 import { TTSFullBar, TTSButton } from './useGlobalAudio.jsx'
+import { a11yClickProps } from './lib/a11yClick';
 
 // ── 全部 66 卷（旧约 39 + 新约 27）────────────────────────────────────────────
 const BOOKS = [
@@ -565,7 +566,7 @@ function ChapterReader({ book, chapter, doneChapters, onMark, onBack, onNav, use
                       onChange={e => setHighlight(e.target.value)}
                       placeholder={i18nT('可选：摘录一节经文或灵感（可留空）')}
                       style={{ width: '100%', padding: '9px 12px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.12)', background: 'rgba(255,255,255,0.06)', color: '#fff', fontSize: 13, outline: 'none', boxSizing: 'border-box', marginBottom: 12 }}
-                    />
+                     aria-label={i18nT('可选：摘录一节经文或灵感（可留空）')}/>
                     <button onClick={handleMark} disabled={marking}
                       style={{ width: '100%', padding: '11px', borderRadius: 10, border: 'none', background: marking ? 'rgba(0,122,255,0.3)' : 'linear-gradient(135deg,#007aff,#5856d6)', color: '#fff', fontSize: 14, fontWeight: 700, cursor: 'pointer' }}>
                       {marking ? '保存中…' : '✓ 标记本章已读'}
@@ -719,7 +720,7 @@ export default function BibleReadingPage({ user, token, onBack }) {
               const complete = done >= book.chapters
               return (
                 <div key={book.name} style={S.bookCard(complete)}
-                  onClick={() => { setSelectedBook(book); setView('chapters') }}>
+                  onClick={() => { setSelectedBook(book); setView('chapters') }} {...a11yClickProps(() => { setSelectedBook(book); setView('chapters') })}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5 }}>
                     <span style={{ fontSize: 13, fontWeight: 600, color: '#fff' }}>{book.name}</span>
                     {complete && <span style={{ fontSize: 11 }}>✅</span>}

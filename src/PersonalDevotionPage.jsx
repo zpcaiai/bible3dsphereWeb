@@ -9,6 +9,7 @@ import { t as i18nT } from './i18n/runtime'
 import React, { useEffect, useState } from 'react'
 import { TTSButton, TTSFullBar } from './useGlobalAudio.jsx'
 import { API_BASE, fetchScripture } from './api.js'
+import { a11yClickProps } from './lib/a11yClick';
 
 // ── Mobile detection ──────────────────────────────────────────────────────────
 function useIsMobile() {
@@ -80,10 +81,10 @@ function ScriptureVerses({ scriptureRef, initialOpen = false }) {
   return (
     <div style={SV.wrapper}>
       {/* ── Toggle header ── */}
-      <div style={SV.toggleRow} onClick={() => setOpen(o => !o)}>
+      <div style={SV.toggleRow} onClick={() => setOpen(o => !o)} {...a11yClickProps(() => setOpen(o => !o))}>
         <span style={SV.refLabel}>📖 {book} {chapter}{i18nT('章 ·')} {list.length}{i18nT('节')}</span>
         {/* TTS — stop propagation so click doesn't toggle accordion */}
-        <div onClick={e => e.stopPropagation()}>
+        <div onClick={e => e.stopPropagation()} {...a11yClickProps(e => e.stopPropagation())}>
           <TTSButton text={ttsAll} />
         </div>
         <span style={SV.chevron(open)}>▼</span>
@@ -345,14 +346,14 @@ function McCheyneCard() {
               return (
                 <div key={ch.label} style={S.accItem}>
                   {/* ── Accordion header ── */}
-                  <div style={S.accHeader(isOpen)} onClick={() => toggle(idx)}>
+                  <div style={S.accHeader(isOpen)} onClick={() => toggle(idx)} {...a11yClickProps(() => toggle(idx))}>
                     <span style={{ fontSize: 16 }}>{ch.icon}</span>
                     <div style={{ flex: 1 }}>
                       <div style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255,255,255,0.9)' }}>{ch.label}</div>
                       <div style={{ fontSize: 12, color: 'rgba(90,200,250,0.7)', marginTop: 1 }}>{ch.ref}</div>
                     </div>
                     {/* TTS for this chapter ref — stop propagation */}
-                    <div onClick={e => e.stopPropagation()}>
+                    <div onClick={e => e.stopPropagation()} {...a11yClickProps(e => e.stopPropagation())}>
                       <TTSButton text={`${ch.label}：${ch.ref}`} />
                     </div>
                     <span style={S.accChevron(isOpen)}>▼</span>

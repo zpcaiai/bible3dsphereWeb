@@ -72,8 +72,8 @@ export default function SpiritualMemoryPage({ user, onBack }) {
 
       <div style={card}>
         <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 8 }}>{i18nT('成长画像')}</div>
-        <input style={inp} value={season} onChange={e => setSeason(e.target.value)} placeholder={i18nT('当前属灵季节(例如:旷野 / 复苏 / 忙乱)')} maxLength={60} />
-        <input style={inp} value={focus} onChange={e => setFocus(e.target.value)} placeholder={i18nT('主要成长焦点(例如:恢复祷告生活)')} maxLength={120} />
+        <input style={inp} value={season} onChange={e => setSeason(e.target.value)} placeholder={i18nT('当前属灵季节(例如:旷野 / 复苏 / 忙乱)')} maxLength={60}  aria-label={i18nT('当前属灵季节(例如:旷野 / 复苏 / 忙乱)')}/>
+        <input style={inp} value={focus} onChange={e => setFocus(e.target.value)} placeholder={i18nT('主要成长焦点(例如:恢复祷告生活)')} maxLength={120}  aria-label={i18nT('主要成长焦点(例如:恢复祷告生活)')}/>
         <button style={btn} onClick={saveProfile}>{i18nT('保存画像')}</button>
       </div>
 
@@ -87,8 +87,8 @@ export default function SpiritualMemoryPage({ user, onBack }) {
 
       <div style={card}>
         <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 8 }}>{i18nT('新增一条记忆')}</div>
-        <input style={inp} value={draft.title} onChange={e => setDraft({ ...draft, title: e.target.value })} placeholder={i18nT('标题(可选)')} maxLength={200} />
-        <textarea style={{ ...inp, resize: 'none' }} rows={3} value={draft.content} onChange={e => setDraft({ ...draft, content: e.target.value })} placeholder={i18nT('想记住的洞见、模式或祷告…')} maxLength={4000} />
+        <input style={inp} value={draft.title} onChange={e => setDraft({ ...draft, title: e.target.value })} placeholder={i18nT('标题(可选)')} maxLength={200}  aria-label={i18nT('标题(可选)')}/>
+        <textarea style={{ ...inp, resize: 'none' }} rows={3} value={draft.content} onChange={e => setDraft({ ...draft, content: e.target.value })} placeholder={i18nT('想记住的洞见、模式或祷告…')} maxLength={4000}  aria-label={i18nT('想记住的洞见、模式或祷告…')}/>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
           <select value={draft.memory_type} onChange={e => setDraft({ ...draft, memory_type: e.target.value })} style={{ ...inp, width: 'auto', marginBottom: 0 }}>
             {TYPES.map(([v, l]) => <option key={v} value={v}>{l}</option>)}

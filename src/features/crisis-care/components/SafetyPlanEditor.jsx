@@ -24,7 +24,7 @@ function ListEditor({ label, items, onChange, placeholder }) {
         </div>
       ))}
       <div className="cc-list-item">
-        <input className="cc-input" value={draft} placeholder={placeholder} onChange={(e) => setDraft(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && add()} />
+        <input className="cc-input" value={draft} placeholder={placeholder} onChange={(e) => setDraft(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && add()}  aria-label={placeholder}/>
         <button type="button" aria-label={i18nT('新增')} onClick={add} style={{ color: '#34c759' }}>＋</button>
       </div>
     </div>

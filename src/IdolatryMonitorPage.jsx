@@ -11,6 +11,7 @@ import {
   fetchIdolatrySignals, assessIdolatry, fetchIdolatryPatterns,
 } from './api'
 import { getToken } from './auth'
+import { a11yClickProps } from './lib/a11yClick';
 
 const IDOLS = [
   { type: 'success',          emoji: '🏆', name: '成就 / 表现',  mani: '不成功就觉得自己没价值' },
@@ -146,7 +147,7 @@ export default function IdolatryMonitorPage({ user, onBack, onNeedLogin }) {
                 <div style={{ fontSize: 12, color: '#ffd43b', fontWeight: 700, marginBottom: 6 }}>{i18nT('✦ 根据你近期的状态，或许值得先省察：')}</div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                   {suggested.map(t => IDOL_MAP[t] && (
-                    <span key={t} onClick={() => toggleIdol(t)} style={{ padding: '4px 10px', borderRadius: 14, background: 'rgba(255,212,59,0.14)', color: '#ffd43b', fontSize: 12, cursor: 'pointer' }}>
+                    <span key={t} onClick={() => toggleIdol(t)} style={{ padding: '4px 10px', borderRadius: 14, background: 'rgba(255,212,59,0.14)', color: '#ffd43b', fontSize: 12, cursor: 'pointer' }} {...a11yClickProps(() => toggleIdol(t))}>
                       {IDOL_MAP[t].emoji} {IDOL_MAP[t].name}
                     </span>
                   ))}
@@ -160,7 +161,7 @@ export default function IdolatryMonitorPage({ user, onBack, onNeedLogin }) {
               const open = expanded === idol.type
               return (
                 <div key={idol.type} style={{ ...card, borderColor: active ? 'rgba(139,92,246,0.4)' : 'rgba(255,255,255,0.08)' }}>
-                  <div onClick={() => toggleIdol(idol.type)} style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }}>
+                  <div onClick={() => toggleIdol(idol.type)} style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }} {...a11yClickProps(() => toggleIdol(idol.type))}>
                     <span style={{ fontSize: 22 }}>{idol.emoji}</span>
                     <div style={{ flex: 1 }}>
                       <div style={{ fontSize: 14, fontWeight: 600 }}>{idol.name}</div>
@@ -176,7 +177,7 @@ export default function IdolatryMonitorPage({ user, onBack, onNeedLogin }) {
                         onChange={e => setDim(idol.type, 'target_name', e.target.value)}
                         placeholder={i18nT('具体指什么？(可选，如「升职」「某个人」)')}
                         style={input}
-                      />
+                       aria-label={i18nT('具体指什么？(可选，如「升职」「某个人」)')}/>
                       {DIMS.map(d => (
                         <div key={d.key} style={{ marginTop: 12 }}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>

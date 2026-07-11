@@ -155,10 +155,10 @@ export default function MemoryVersePage({ user }) {
       {tab === 'add' && (
         <div style={card}>
           <label style={{ display: 'block', fontSize: 12, color: 'rgba(255,255,255,0.6)', marginBottom: 6 }}>{i18nT('经节出处')}</label>
-          <input value={ref} onChange={e => setRef(e.target.value)} placeholder={i18nT('如：腓立比书 4:6-7')} style={inp} />
+          <input value={ref} onChange={e => setRef(e.target.value)} placeholder={i18nT('如：腓立比书 4:6-7')} style={inp}  aria-label={i18nT('如：腓立比书 4:6-7')}/>
           <label style={{ display: 'block', fontSize: 12, color: 'rgba(255,255,255,0.6)', margin: '14px 0 6px' }}>{i18nT('经文')}</label>
           <span style={{ position: 'relative', display: 'block' }}>
-          <textarea value={text} onChange={e => setText(e.target.value)} rows={4} placeholder={i18nT('把要背诵的经文抄在这里…')} style={{ ...inp, resize: 'vertical', paddingRight: 96 }} />
+          <textarea value={text} onChange={e => setText(e.target.value)} rows={4} placeholder={i18nT('把要背诵的经文抄在这里…')} style={{ ...inp, resize: 'vertical', paddingRight: 96 }}  aria-label={i18nT('把要背诵的经文抄在这里…')}/>
           <SuggestMenu top={8} right={8} options={MV_OPTS} value={text} onChange={setText} />
           </span>
           <button onClick={add} disabled={busy} style={{ width: '100%', marginTop: 14, padding: 13, borderRadius: 12, border: 'none', background: 'linear-gradient(135deg, #8b5cf6, #5ac8fa)', color: '#fff', fontSize: 15, fontWeight: 700, cursor: 'pointer' }}>{i18nT('加入背诵')}</button>

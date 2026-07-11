@@ -53,8 +53,8 @@ export default function PrayerRulePage({ user, onBack }) {
       {active ? (
         <div style={card}>
           <div style={{ fontWeight: 700, marginBottom: 8 }}>{active.slot.display_name}</div>
-          <textarea value={prayerText} onChange={e => setPrayerText(e.target.value)} rows={4} placeholder={i18nT('在神面前的祷告…')} style={{ ...fld, resize: 'vertical' }} />
-          <input value={gratitude} onChange={e => setGratitude(e.target.value)} placeholder={i18nT('一件感恩（可选）')} style={fld} />
+          <textarea value={prayerText} onChange={e => setPrayerText(e.target.value)} rows={4} placeholder={i18nT('在神面前的祷告…')} style={{ ...fld, resize: 'vertical' }}  aria-label={i18nT('在神面前的祷告…')}/>
+          <input value={gratitude} onChange={e => setGratitude(e.target.value)} placeholder={i18nT('一件感恩（可选）')} style={fld}  aria-label={i18nT('一件感恩（可选）')}/>
           <button style={btn} disabled={busy} onClick={finishSlot}>{i18nT('完成这次祷告')}</button>
         </div>
       ) : !data ? <div style={card}>{i18nT('加载中…')}</div> : !data.rule_id ? (

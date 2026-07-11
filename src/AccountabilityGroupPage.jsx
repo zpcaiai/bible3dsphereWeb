@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import BackButton from './BackButton'
 import { communityApi } from './api'
 import { getToken } from './auth'
+import { a11yClickProps } from './lib/a11yClick';
 
 const card = { background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, padding: 14, marginBottom: 12 }
 const btn = { cursor: 'pointer', borderRadius: 10, padding: '8px 12px', border: 'none', color: '#fff', fontWeight: 700, background: 'linear-gradient(135deg, rgba(245,181,63,0.85), rgba(52,199,89,0.6))' }
@@ -44,11 +45,11 @@ export default function AccountabilityGroupPage({ user, onBack }) {
 
       <div style={card}>
         <div style={{ display: 'flex', gap: 8 }}>
-          <input value={name} onChange={e => setName(e.target.value)} placeholder={i18nT('新建小组名称')} style={{ ...fld, marginBottom: 0, flex: 1 }} />
+          <input value={name} onChange={e => setName(e.target.value)} placeholder={i18nT('新建小组名称')} style={{ ...fld, marginBottom: 0, flex: 1 }}  aria-label={i18nT('新建小组名称')}/>
           <button style={btn} onClick={create}>{i18nT('建群')}</button>
         </div>
         {groups.map(g => (
-          <div key={g.id} onClick={() => open(g)} style={{ padding: '8px 0', borderBottom: '1px solid rgba(255,255,255,0.06)', cursor: 'pointer' }}>
+          <div key={g.id} onClick={() => open(g)} style={{ padding: '8px 0', borderBottom: '1px solid rgba(255,255,255,0.06)', cursor: 'pointer' }} {...a11yClickProps(() => open(g))}>
             <div style={{ fontSize: 14 }}>{g.name} <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)' }}>· {g.my_role}</span></div>
           </div>
         ))}
@@ -57,9 +58,9 @@ export default function AccountabilityGroupPage({ user, onBack }) {
       {sel && (
         <div style={card}>
           <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 8 }}>{sel.name} {i18nT('· 本周打卡')}</div>
-          <input value={grat} onChange={e => setGrat(e.target.value)} placeholder={i18nT('本周的恩典')} style={fld} />
-          <input value={strug} onChange={e => setStrug(e.target.value)} placeholder={i18nT('挣扎之处')} style={fld} />
-          <input value={pray} onChange={e => setPray(e.target.value)} placeholder={i18nT('代祷请求')} style={fld} />
+          <input value={grat} onChange={e => setGrat(e.target.value)} placeholder={i18nT('本周的恩典')} style={fld}  aria-label={i18nT('本周的恩典')}/>
+          <input value={strug} onChange={e => setStrug(e.target.value)} placeholder={i18nT('挣扎之处')} style={fld}  aria-label={i18nT('挣扎之处')}/>
+          <input value={pray} onChange={e => setPray(e.target.value)} placeholder={i18nT('代祷请求')} style={fld}  aria-label={i18nT('代祷请求')}/>
           <div style={{ display: 'flex', gap: 8 }}>
             <button style={btn} onClick={checkin}>{i18nT('提交打卡')}</button>
             <button style={{ ...btn, background: 'rgba(125,211,252,0.5)' }} onClick={addPrayer}>{i18nT('加到代祷板')}</button>

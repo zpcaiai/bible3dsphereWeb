@@ -13,6 +13,7 @@ import SoulDashboard from './components/SoulDashboard'
 import SinPatternLibrary from './features/spiritual-formation/components/SinPatternLibrary'
 import CrisisCarePage from './features/crisis-care/app/CrisisCarePage'
 import CrisisHelpButton from './features/crisis-care/components/CrisisHelpButton'
+import { a11yClickProps } from './lib/a11yClick';
 
 const sfdsUrl = (path) => `${API_BASE}/sfds${path}`
 const MVFE_BASE = API_BASE + '/mvfe'
@@ -987,7 +988,7 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
                 lineHeight:1.65, resize:'none', outline:'none',
                 fontFamily:'inherit', marginBottom:16,
               }}
-            />
+             aria-label={i18nT('例如：我收到了另一家公司的工作邀请，薪资更高但离家更远…')}/>
             <SuggestMenu accent="#a78bfa" top={8} right={8} options={DS_SIT_OPTS} value={discernSituation} onChange={setDiscernSituation} />
             </div>
 
@@ -1058,7 +1059,7 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
                     lineHeight:1.6, resize:'none', outline:'none',
                     fontFamily:'inherit',
                   }}
-                />
+                 aria-label={i18nT('例如：每次想到这个方向，内心就感到平安和兴奋；但想到另一个方向，就感到焦虑…')}/>
                 <SuggestMenu accent="#a78bfa" top={8} right={8} options={DS_MOVE_OPTS} value={discernMovementNote} onChange={setDiscernMovementNote} />
                 </div>
               </div>
@@ -1086,7 +1087,7 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
                   borderRadius:8, padding:'10px 12px',
                   color:'#fff', fontSize:13, outline:'none', fontFamily:'inherit',
                 }}
-              />
+               aria-label={i18nT('如：工作、等候、恐惧、信靠、呼召…')}/>
               <button onClick={searchVerses} disabled={!discernKeyword.trim() || discernVersesLoading} style={{
                 padding:'10px 16px', borderRadius:8, border:'none',
                 background: discernKeyword.trim() ? 'rgba(90,200,250,0.2)' : 'rgba(255,255,255,0.07)',
@@ -1570,7 +1571,7 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
               cursor: 'pointer',
               borderLeft: `4px solid ${getCategoryColor(d.category)}`,
             }}
-          >
+           {...a11yClickProps(() => setSelectedDecision(d))}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
               <div style={{ fontWeight: 600, fontSize: '15px', flex: 1, marginRight: '8px' }}>
                 {d.title}

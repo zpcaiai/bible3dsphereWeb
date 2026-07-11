@@ -59,12 +59,12 @@ export default function DecisionDiscernmentPage({ user, onBack, onNeedLogin }) {
             </div>
             <div style={card}>
               <label style={lbl}>{i18nT('我正在面对的决定')}</label>
-              <span style={{ position: 'relative', display: 'block' }}><textarea value={situation} onChange={e => setSituation(e.target.value)} rows={2} placeholder={i18nT('如：要不要换城市 / 接受这份工作 / 结束这段关系…')} style={{ ...inp, paddingRight: 96 }} /><SuggestMenu accent="#a78bfa" top={8} right={8} options={DD_OPTS} value={situation} onChange={setSituation} /></span>
+              <span style={{ position: 'relative', display: 'block' }}><textarea value={situation} onChange={e => setSituation(e.target.value)} rows={2} placeholder={i18nT('如：要不要换城市 / 接受这份工作 / 结束这段关系…')} style={{ ...inp, paddingRight: 96 }}  aria-label={i18nT('如：要不要换城市 / 接受这份工作 / 结束这段关系…')}/><SuggestMenu accent="#a78bfa" top={8} right={8} options={DD_OPTS} value={situation} onChange={setSituation} /></span>
             </div>
             {opts.map((o, i) => (
               <div key={i} style={card}>
                 <div style={{ fontSize: 12, color: '#a78bfa', fontWeight: 700, marginBottom: 8 }}>{i18nT('选项')} {String.fromCharCode(65 + i)}</div>
-                <input value={o.label} onChange={e => setOpt(i, 'label', e.target.value)} placeholder={`第 ${i + 1} 个选项是…`} style={inp} />
+                <input value={o.label} onChange={e => setOpt(i, 'label', e.target.value)} placeholder={`第 ${i + 1} 个选项是…`} style={inp}  aria-label={`第 ${i + 1} 个选项是…`}/>
                 {SLIDERS.map(s => (
                   <div key={s.key} style={{ marginTop: 10 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>

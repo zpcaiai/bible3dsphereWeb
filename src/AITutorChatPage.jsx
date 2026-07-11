@@ -99,7 +99,7 @@ export default function AITutorChatPage({ user, onBack }) {
       <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
         <textarea value={input} onChange={e => setInput(e.target.value)} rows={2} placeholder={i18nT('说点什么…')}
           onKeyDown={e => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) send() }}
-          style={{ flex: 1, resize: 'none', borderRadius: 10, padding: '10px 12px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.12)', color: '#fff', fontSize: 14 }} />
+          style={{ flex: 1, resize: 'none', borderRadius: 10, padding: '10px 12px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.12)', color: '#fff', fontSize: 14 }}  aria-label={i18nT('说点什么…')}/>
         <button style={{ ...btn, opacity: busy ? 0.6 : 1 }} disabled={busy} onClick={send}>{busy ? '…' : '发送'}</button>
       </div>
       <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', marginTop: 8 }}>{i18nT('⌘/Ctrl + Enter 发送 · 记忆共享可在「属灵记忆库」开关')}</div>

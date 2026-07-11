@@ -417,11 +417,11 @@ function AttentionCovenantScreen({ covenant, token, timezone, onSaved, onBack, o
       ) : (
         <form className="attn-form" onSubmit={handleSubmit}>
           <Field label={i18nT("今天你最想把注意力献给什么？")} hint="这不是要写一个完美答案，而是在神面前确认今天的心要朝向哪里。">
-            <textarea rows={3} required value={form.primaryOffering} placeholder={i18nT("例如：完成一个深度工作任务、安静读经祷告、陪伴家人、推进一个重要项目")} onChange={(e) => patch({ primaryOffering: e.target.value })} />
+            <textarea rows={3} required value={form.primaryOffering} placeholder={i18nT("例如：完成一个深度工作任务、安静读经祷告、陪伴家人、推进一个重要项目")} onChange={(e) => patch({ primaryOffering: e.target.value })}  aria-label={i18nT("例如：完成一个深度工作任务、安静读经祷告、陪伴家人、推进一个重要项目")}/>
           </Field>
-          <Field label={i18nT("今天你最重要的使命任务是什么？")}><input value={form.missionFocus} placeholder={i18nT("例如：完成 90 分钟深度工作")} onChange={(e) => patch({ missionFocus: e.target.value })} /></Field>
+          <Field label={i18nT("今天你最重要的使命任务是什么？")}><input value={form.missionFocus} placeholder={i18nT("例如：完成 90 分钟深度工作")} onChange={(e) => patch({ missionFocus: e.target.value })}  aria-label={i18nT("例如：完成 90 分钟深度工作")}/></Field>
           <QuickField label={i18nT("今天你希望怎样先把心归给神？")} field="worshipFocus" value={form.worshipFocus} options={QUICK.worshipFocus} onQuick={(field, value) => patch({ [field]: value })} onChange={patch} />
-          <Field label={i18nT("今天你希望把真实注意力给到谁？")}><input value={form.relationshipFocus} placeholder={i18nT("例如：认真陪伴家人")} onChange={(e) => patch({ relationshipFocus: e.target.value })} /></Field>
+          <Field label={i18nT("今天你希望把真实注意力给到谁？")}><input value={form.relationshipFocus} placeholder={i18nT("例如：认真陪伴家人")} onChange={(e) => patch({ relationshipFocus: e.target.value })}  aria-label={i18nT("例如：认真陪伴家人")}/></Field>
           <QuickField label={i18nT("今天你需要怎样照顾自己的有限？")} field="restorationFocus" value={form.restorationFocus} options={QUICK.restorationFocus} onQuick={(field, value) => patch({ [field]: value })} onChange={patch} />
           <QuickField label={i18nT("今天最可能抢夺你注意力的是什么？")} field="mainRisk" value={form.mainRisk} options={QUICK.mainRisk} hint="诚实看见风险，不是为了定罪，而是为了设立防线。" onQuick={(field, value) => patch({ [field]: value })} onChange={patch} />
           <Field label={i18nT("这背后可能是什么在牵引你？")}><AttentionPullSelector selected={form.riskPulls} onChange={(riskPulls) => patch({ riskPulls })} /></Field>
@@ -539,10 +539,10 @@ function FocusScreen({ token, onBack, openPage }) {
               <span>{i18nT("已进行")} {elapsed} {i18nT("分钟 / 计划")} {active.plannedMinutes} {i18nT("分钟")}</span>
               <p>{active.intention || i18nT('愿这段注意力忠心献上。')}</p>
               <Field label={i18nT("刚才是什么牵引了注意力？")}>
-                <input value={interruptionReason} onChange={(event) => setInterruptionReason(event.target.value)} placeholder={i18nT("只在需要记录中断时填写")} />
+                <input value={interruptionReason} onChange={(event) => setInterruptionReason(event.target.value)} placeholder={i18nT("只在需要记录中断时填写")}  aria-label={i18nT("只在需要记录中断时填写")}/>
               </Field>
               <Field label={i18nT("结束时的一句话复盘")}>
-                <textarea rows={3} value={closingReflection} onChange={(event) => setClosingReflection(event.target.value)} placeholder={i18nT("这段专注结束时，我留意到…")} />
+                <textarea rows={3} value={closingReflection} onChange={(event) => setClosingReflection(event.target.value)} placeholder={i18nT("这段专注结束时，我留意到…")}  aria-label={i18nT("这段专注结束时，我留意到…")}/>
               </Field>
               <div className="attn-footer-actions">
                 <button type="button" className="attn-button" disabled={busy} onClick={end}>{i18nT("结束专注")}</button>
@@ -558,7 +558,7 @@ function FocusScreen({ token, onBack, openPage }) {
               <Field label={i18nT("计划时长")}>
                 <div className="attn-pill-grid">{ATTENTION_DURATION_OPTIONS.map((min) => <button key={min} type="button" aria-pressed={form.plannedMinutes === min} className={`attn-pill ${form.plannedMinutes === min ? 'active' : ''}`} onClick={() => patch({ plannedMinutes: min })}>{min} {i18nT("分钟")}</button>)}</div>
               </Field>
-              <Field label={i18nT("这段专注献给什么？")}><input value={form.intention} onChange={(e) => patch({ intention: e.target.value })} placeholder={i18nT("例如：完成一个核心任务")} /></Field>
+              <Field label={i18nT("这段专注献给什么？")}><input value={form.intention} onChange={(e) => patch({ intention: e.target.value })} placeholder={i18nT("例如：完成一个核心任务")}  aria-label={i18nT("例如：完成一个核心任务")}/></Field>
               <Field label={i18nT("开始祷告")}><textarea rows={4} value={form.openingPrayer} onChange={(e) => patch({ openingPrayer: e.target.value })} /></Field>
               <button type="button" className="attn-button" disabled={busy} onClick={start}>{busy ? i18nT('启动中…') : i18nT('开始专注')}</button>
             </div>
@@ -829,12 +829,12 @@ function DiagnosisScreen({ token, localDate, onBack, openPage }) {
           </div>
         </AttentionCard>
         <AttentionCard title={i18nT("现在被牵引了吗？")}>
-          <Field label={i18nT("当前牵引")}><textarea rows={4} value={quick.currentStruggle} placeholder={i18nT("例如：我现在一直想刷 AI 新闻，停不下来。")} onChange={(e) => setQuick((q) => ({ ...q, currentStruggle: e.target.value }))} /></Field>
+          <Field label={i18nT("当前牵引")}><textarea rows={4} value={quick.currentStruggle} placeholder={i18nT("例如：我现在一直想刷 AI 新闻，停不下来。")} onChange={(e) => setQuick((q) => ({ ...q, currentStruggle: e.target.value }))}  aria-label={i18nT("例如：我现在一直想刷 AI 新闻，停不下来。")}/></Field>
           <AttentionPullSelector selected={quick.pulls} onChange={(pulls) => setQuick((q) => ({ ...q, pulls }))} />
           <button type="button" className="attn-button" disabled={loading || !quick.currentStruggle.trim()} onClick={quickReset}>{i18nT("生成现在归回建议")}</button>
         </AttentionCard>
         <AttentionCard title={i18nT("问守心 Agent")}>
-          <Field label={i18nT("问题")}><textarea rows={4} value={question} placeholder={i18nT("例如：为什么我一焦虑就想刷资讯？")} onChange={(e) => setQuestion(e.target.value)} /></Field>
+          <Field label={i18nT("问题")}><textarea rows={4} value={question} placeholder={i18nT("例如：为什么我一焦虑就想刷资讯？")} onChange={(e) => setQuestion(e.target.value)}  aria-label={i18nT("例如：为什么我一焦虑就想刷资讯？")}/></Field>
           <button type="button" className="attn-button" disabled={loading || !question.trim()} onClick={ask}>{i18nT("询问")}</button>
         </AttentionCard>
       </section>

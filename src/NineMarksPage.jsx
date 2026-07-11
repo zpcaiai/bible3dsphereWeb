@@ -240,7 +240,7 @@ function MembershipTab({ token }) {
       <Notice>本地教会委身面板：把「参加聚会」升级为「委身成员」。这些是你的自我记录，默认仅你可见。</Notice>
       <div style={C.card}>
         <div style={C.label}>本地教会名称</div>
-        <input style={C.input} value={f.church_name || ''} onChange={(e) => set('church_name', e.target.value)} placeholder="例如：恩典归正教会" />
+        <input style={C.input} value={f.church_name || ''} onChange={(e) => set('church_name', e.target.value)} placeholder="例如：恩典归正教会"  aria-label="例如：恩典归正教会"/>
         <div style={{ display: 'flex', gap: 12, marginTop: 12 }}>
           <div style={{ flex: 1 }}>
             <div style={C.label}>成员状态</div>
@@ -257,11 +257,11 @@ function MembershipTab({ token }) {
         </div>
         <div style={{ marginTop: 12 }}>
           <div style={C.label}>小组 / 团契</div>
-          <input style={C.input} value={f.small_group_name || ''} onChange={(e) => set('small_group_name', e.target.value)} placeholder="所属小组名称" />
+          <input style={C.input} value={f.small_group_name || ''} onChange={(e) => set('small_group_name', e.target.value)} placeholder="所属小组名称"  aria-label="所属小组名称"/>
         </div>
         <div style={{ marginTop: 12 }}>
           <div style={C.label}>服事岗位（用逗号分隔）</div>
-          <input style={C.input} value={rolesText} onChange={(e) => set('service_roles', e.target.value)} placeholder="例如：招待、诗班、儿童主日学" />
+          <input style={C.input} value={rolesText} onChange={(e) => set('service_roles', e.target.value)} placeholder="例如：招待、诗班、儿童主日学"  aria-label="例如：招待、诗班、儿童主日学"/>
         </div>
         <div style={{ marginTop: 10, paddingTop: 6, borderTop: '1px solid rgba(255,255,255,0.08)' }}>
           <Toggle label="本周参加了主日敬拜" checked={f.worship_attendance} onChange={(v) => set('worship_attendance', v)} />
@@ -320,11 +320,11 @@ function SermonTab({ token }) {
       <Notice>把主日讲道转化为「主旨 → 悔改 → 相信 → 顺服 → 肢体应用」，而不是脱离经文的属灵建议。</Notice>
       <div style={C.card}>
         <div style={C.label}>讲道经文 *</div>
-        <input style={C.input} value={scripture} onChange={(e) => setScripture(e.target.value)} placeholder="例如：以弗所书 4:1-16" />
+        <input style={C.input} value={scripture} onChange={(e) => setScripture(e.target.value)} placeholder="例如：以弗所书 4:1-16"  aria-label="例如：以弗所书 4:1-16"/>
         <div style={C.label}>讲道标题</div>
-        <input style={C.input} value={title} onChange={(e) => setTitle(e.target.value)} placeholder="选填" />
+        <input style={C.input} value={title} onChange={(e) => setTitle(e.target.value)} placeholder="选填"  aria-label="选填"/>
         <div style={{ ...C.label, marginTop: 12 }}>我的讲道笔记</div>
-        <textarea style={{ ...C.input, minHeight: 80, resize: 'vertical' }} value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="记下讲道的重点、经文、你被触动之处…" />
+        <textarea style={{ ...C.input, minHeight: 80, resize: 'vertical' }} value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="记下讲道的重点、经文、你被触动之处…"  aria-label="记下讲道的重点、经文、你被触动之处…"/>
         <div style={{ ...C.label, marginTop: 8 }}>我的回应/挣扎（选填）</div>
         <textarea style={{ ...C.input, minHeight: 60, resize: 'vertical' }} value={reflection} onChange={(e) => setReflection(e.target.value)} />
         <div style={{ marginTop: 12, display: 'flex', gap: 12, alignItems: 'center' }}>
@@ -390,7 +390,7 @@ function GospelTab({ token }) {
       <Notice>用「神—人—基督—回应」四格检查你的福音表达，防止被道德主义/成功神学/心理化悄悄替换。这不是定罪，而是把根基重新指回基督。</Notice>
       <div style={C.card}>
         <div style={C.label}>写下：你如何理解福音？为什么神接纳你？</div>
-        <textarea style={{ ...C.input, minHeight: 90, resize: 'vertical' }} value={text} onChange={(e) => setText(e.target.value)} placeholder="用自己的话表达…" />
+        <textarea style={{ ...C.input, minHeight: 90, resize: 'vertical' }} value={text} onChange={(e) => setText(e.target.value)} placeholder="用自己的话表达…"  aria-label="用自己的话表达…"/>
         <div style={{ marginTop: 12 }}>
           <button onClick={run} disabled={busy} style={C.btn('#ffd43b')}><span style={{ color: '#1a1a2e' }}>{busy ? '评估中…' : '评估福音清晰度'}</span></button>
         </div>
@@ -464,15 +464,15 @@ function DiscipleshipTab({ token }) {
       <Notice>门训不是上完课程，而是生命共同体：被门训、门训别人、彼此效法。让一位成熟肢体陪你走一段。</Notice>
       <div style={C.card}>
         <div style={C.label}>对方（昵称）</div>
-        <input style={C.input} value={f.counterpart} onChange={(e) => set('counterpart', e.target.value)} placeholder="门训伙伴/前辈/门徒" />
+        <input style={C.input} value={f.counterpart} onChange={(e) => set('counterpart', e.target.value)} placeholder="门训伙伴/前辈/门徒"  aria-label="门训伙伴/前辈/门徒"/>
         <div style={{ ...C.label, marginTop: 12 }}>关系类型</div>
         <select style={C.input} value={f.relation_type} onChange={(e) => set('relation_type', e.target.value)}>
           {REL_TYPE.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
         </select>
         <div style={{ ...C.label, marginTop: 12 }}>见面节律</div>
-        <input style={C.input} value={f.meeting_rhythm} onChange={(e) => set('meeting_rhythm', e.target.value)} placeholder="例如：每两周一次" />
+        <input style={C.input} value={f.meeting_rhythm} onChange={(e) => set('meeting_rhythm', e.target.value)} placeholder="例如：每两周一次"  aria-label="例如：每两周一次"/>
         <div style={{ ...C.label, marginTop: 12 }}>成长目标（逗号分隔）</div>
-        <input style={C.input} value={f.goals} onChange={(e) => set('goals', e.target.value)} placeholder="例如：祷告、圣洁、家庭、传福音" />
+        <input style={C.input} value={f.goals} onChange={(e) => set('goals', e.target.value)} placeholder="例如：祷告、圣洁、家庭、传福音"  aria-label="例如：祷告、圣洁、家庭、传福音"/>
         <div style={{ marginTop: 12, display: 'flex', gap: 10, alignItems: 'center' }}>
           <button onClick={create} style={C.btn('#51cf66')}>添加门训关系</button>
           {msg && <span style={{ color: '#34c759', fontSize: 12 }}>{msg}</span>}
@@ -533,15 +533,15 @@ function RestorationTab({ token }) {
       <Notice tone="warn">恢复性牧养，不是教会纪律的执行。AI 不定罪、不赦罪、不执行纪律；这些记录默认仅你可见。若涉及安全风险，请优先寻求真人帮助。</Notice>
       <div style={C.card}>
         <div style={C.label}>我想诚实面对的罪 / 挣扎 *</div>
-        <input style={C.input} value={f.sin_pattern} onChange={(e) => set('sin_pattern', e.target.value)} placeholder="用你能接受的方式简述" />
+        <input style={C.input} value={f.sin_pattern} onChange={(e) => set('sin_pattern', e.target.value)} placeholder="用你能接受的方式简述"  aria-label="用你能接受的方式简述"/>
         <div style={{ ...C.label, marginTop: 12 }}>触发情境</div>
-        <input style={C.input} value={f.trigger_context} onChange={(e) => set('trigger_context', e.target.value)} placeholder="通常在什么时候/情形下发生" />
+        <input style={C.input} value={f.trigger_context} onChange={(e) => set('trigger_context', e.target.value)} placeholder="通常在什么时候/情形下发生"  aria-label="通常在什么时候/情形下发生"/>
         <div style={{ ...C.label, marginTop: 12 }}>认罪/省察笔记</div>
         <textarea style={{ ...C.input, minHeight: 60, resize: 'vertical' }} value={f.confession_notes} onChange={(e) => set('confession_notes', e.target.value)} />
         <div style={{ ...C.label, marginTop: 8 }}>悔改的具体步骤（逗号/换行分隔）</div>
-        <input style={C.input} value={f.repentance_steps} onChange={(e) => set('repentance_steps', e.target.value)} placeholder="例如：删除应用、约人同行、每日祷告" />
+        <input style={C.input} value={f.repentance_steps} onChange={(e) => set('repentance_steps', e.target.value)} placeholder="例如：删除应用、约人同行、每日祷告"  aria-label="例如：删除应用、约人同行、每日祷告"/>
         <div style={{ ...C.label, marginTop: 12 }}>督责安排</div>
-        <input style={C.input} value={f.accountability_plan} onChange={(e) => set('accountability_plan', e.target.value)} placeholder="例如：每周向门训伙伴汇报" />
+        <input style={C.input} value={f.accountability_plan} onChange={(e) => set('accountability_plan', e.target.value)} placeholder="例如：每周向门训伙伴汇报"  aria-label="例如：每周向门训伙伴汇报"/>
         <div style={{ ...C.label, marginTop: 12 }}>当前状态</div>
         <select style={C.input} value={f.repentance_status} onChange={(e) => set('repentance_status', e.target.value)}>
           {REPENT_STATUS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}

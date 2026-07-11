@@ -5,6 +5,7 @@ import BackButton from './BackButton'
 import { getDeck, getDueCards, reviewCard, removeMemoryCard, deckStats, syncDeckFromCloud } from './lib/memoryDeck'
 import ShareCardModal from './components/ShareCardModal'
 import { t, getRuntimeLang } from './i18n/runtime'
+import { a11yClickProps } from './lib/a11yClick';
 
 const toast = (m, ty = 'info') => window.showToast?.(m, ty)
 
@@ -72,7 +73,7 @@ export default function MemoryDeckPage({ onBack }) {
           {cur && (
             <>
               <div style={S.progress}>{t('今日剩余')} {due.length}</div>
-              <div style={S.card} onClick={() => setFlipped((f) => !f)}>
+              <div style={S.card} onClick={() => setFlipped((f) => !f)} {...a11yClickProps(() => setFlipped((f) => !f))}>
                 <div style={S.cardRef}>{cur.ref}</div>
                 {flipped ? (
                   <p style={S.cardText}>{textOf(cur)}</p>

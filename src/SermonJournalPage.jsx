@@ -15,6 +15,7 @@ import { fetchSermonJournals, saveSermonJournal, deleteSermonJournal, toggleShar
 import usePullToRefresh from './hooks/usePullToRefresh'
 import { TTSFullBar, useGlobalAudio } from './useGlobalAudio.jsx'
 import { escapeHtml, escapeHtmlWithBr } from './sanitize'
+import { a11yClickProps } from './lib/a11yClick';
 
 
 function toISODate(d) {
@@ -524,7 +525,7 @@ export default function SermonJournalPage({ user, token, onBack }) {
             </div>
           ) : (
             journals.map(j => (
-              <div key={j.id} className="sj-card glass" onClick={() => openDetail(j.id)}>
+              <div key={j.id} className="sj-card glass" onClick={() => openDetail(j.id)} {...a11yClickProps(() => openDetail(j.id))}>
                 <div className="sj-card-top">
                   <div className="sj-card-date">{j.date}{j.updated_at ? ` · ${formatDateTime(j.updated_at)}` : ''}</div>
                   <div className="sj-card-progress">{(() => {
@@ -539,7 +540,7 @@ export default function SermonJournalPage({ user, token, onBack }) {
                 {j.scripture && <div className="sj-card-scripture">📜 {j.scripture}</div>}
                 {j.preacher && <div className="sj-card-preacher">🎙 {j.preacher}</div>}
                 {j.summary && <div className="sj-card-preview">{j.summary.slice(0, 60)}{j.summary.length > 60 ? '…' : ''}</div>}
-                <div style={{ display: 'flex', gap: '8px', marginTop: '8px', alignItems: 'center' }} onClick={e => e.stopPropagation()}>
+                <div style={{ display: 'flex', gap: '8px', marginTop: '8px', alignItems: 'center' }} onClick={e => e.stopPropagation()} {...a11yClickProps(e => e.stopPropagation())}>
                   <button
                     onClick={() => handleShare(j)}
                     style={{
@@ -658,7 +659,7 @@ export default function SermonJournalPage({ user, token, onBack }) {
                     value={current.title}
                     onChange={e => updateField('title', e.target.value)}
                     placeholder={i18nT('本次信息的题目')}
-                  />
+                   aria-label={i18nT('本次信息的题目')}/>
                 </div>
                 <div className="sj-field">
                   <label className="sj-label">{i18nT('主要经文')}</label>
@@ -667,7 +668,7 @@ export default function SermonJournalPage({ user, token, onBack }) {
                     value={current.scripture}
                     onChange={e => updateField('scripture', e.target.value)}
                     placeholder={i18nT('如：约翰福音 15:1-17')}
-                  />
+                   aria-label={i18nT('如：约翰福音 15:1-17')}/>
                 </div>
                 <div className="sj-field">
                   <label className="sj-label">{i18nT('讲道者')}</label>
@@ -676,7 +677,7 @@ export default function SermonJournalPage({ user, token, onBack }) {
                     value={current.preacher}
                     onChange={e => updateField('preacher', e.target.value)}
                     placeholder={i18nT('牧师 / 传道人姓名')}
-                  />
+                   aria-label={i18nT('牧师 / 传道人姓名')}/>
                 </div>
               </div>
             </section>
@@ -695,7 +696,7 @@ export default function SermonJournalPage({ user, token, onBack }) {
                   value={current[key]}
                   onChange={e => updateField(key, e.target.value)}
                   rows={rows}
-                />
+                 aria-label={placeholder}/>
                 <SuggestMenu top={8} right={8} options={SJ_OPTS[key] || []} value={current[key]} onChange={(v) => updateField(key, v)} />
                 </span>
               </section>
@@ -715,7 +716,7 @@ export default function SermonJournalPage({ user, token, onBack }) {
                       value={q}
                       onChange={e => updateListField('questions', i, e.target.value)}
                       rows={2}
-                    />
+                     aria-label={i18nT('思考题 {n}…', { n: i + 1 })}/>
                     {current.questions.length > 1 && (
                       <button className="sj-list-del" onClick={() => removeListItem('questions', i)}>×</button>
                     )}
@@ -737,7 +738,7 @@ export default function SermonJournalPage({ user, token, onBack }) {
                       placeholder={i18nT('实践 {n}：具体可执行的行动…', { n: i + 1 })}
                       value={p}
                       onChange={e => updateListField('practices', i, e.target.value)}
-                    />
+                     aria-label={i18nT('实践 {n}：具体可执行的行动…', { n: i + 1 })}/>
                     {current.practices.length > 1 && (
                       <button className="sj-list-del" onClick={() => removeListItem('practices', i)}>×</button>
                     )}

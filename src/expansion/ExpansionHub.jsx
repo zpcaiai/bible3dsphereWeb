@@ -231,13 +231,13 @@ function FeatureRunner({ feature, onBack }) {
                   </>
                 )}
                 <textarea value={text} onChange={(e) => setText(e.target.value)} placeholder={i18nT(feature.placeholder)}
-                  style={ta} rows={4} />
+                  style={ta} rows={4}  aria-label={i18nT(feature.placeholder)}/>
               </>
             )}
             {feature.kind === 'knowgod' && (
               <>
                 <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', marginBottom: 6 }}>{i18nT('说出此刻的需要/惧怕，或直接选一个神的属性默想：')}</div>
-                <textarea value={text} onChange={(e) => setText(e.target.value)} placeholder={i18nT('例如「我好孤单，没人懂我」')} style={ta} rows={3} />
+                <textarea value={text} onChange={(e) => setText(e.target.value)} placeholder={i18nT('例如「我好孤单，没人懂我」')} style={ta} rows={3}  aria-label={i18nT('例如「我好孤单，没人懂我」')}/>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, margin: '8px 0' }}>
                   {attrs.map((a) => (
                     <button key={a.key} type="button" onClick={() => setAttribute(attribute === a.key ? '' : a.key)}

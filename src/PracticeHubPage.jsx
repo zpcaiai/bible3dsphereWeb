@@ -215,7 +215,7 @@ function Accountability({ onNeedLogin }) {
       ))}
       {adding ? (
         <div style={card}>
-          <input value={title} onChange={e => setTitle(e.target.value)} placeholder={i18nT('我的属灵目标（如：每天为家人祷告）')} style={inp} />
+          <input value={title} onChange={e => setTitle(e.target.value)} placeholder={i18nT('我的属灵目标（如：每天为家人祷告）')} style={inp}  aria-label={i18nT('我的属灵目标（如：每天为家人祷告）')}/>
           <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
             {[['daily', '每天'], ['weekly', '每周']].map(([k, l]) => (
               <button key={k} onClick={() => setCadence(k)} style={{ flex: 1, padding: 9, borderRadius: 10, border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 700, background: cadence === k ? 'rgba(90,200,250,0.22)' : 'rgba(255,255,255,0.05)', color: cadence === k ? '#5ac8fa' : 'rgba(255,255,255,0.5)' }}>{l}</button>

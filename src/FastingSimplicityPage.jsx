@@ -39,7 +39,7 @@ export default function FastingSimplicityPage({ user, onBack }) {
       <div style={card}>
         <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 8 }}>{i18nT('① 推荐操练')}</div>
         <div style={{ display: 'flex', gap: 8 }}>
-          <input value={need} onChange={e => setNeed(e.target.value)} placeholder={i18nT('成长需要（如：刷手机分心、攀比、舒适依赖）')} style={{ ...fld, marginBottom: 0, flex: 1 }} />
+          <input value={need} onChange={e => setNeed(e.target.value)} placeholder={i18nT('成长需要（如：刷手机分心、攀比、舒适依赖）')} style={{ ...fld, marginBottom: 0, flex: 1 }}  aria-label={i18nT('成长需要（如：刷手机分心、攀比、舒适依赖）')}/>
           <button style={btn} disabled={busy} onClick={recommend}>{i18nT('推荐')}</button>
         </div>
         {recs && recs.message && <div style={{ marginTop: 10, fontSize: 13, color: '#f5c451' }}>{recs.message}</div>}

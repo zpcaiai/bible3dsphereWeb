@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import BackButton from './BackButton'
 import { communityApi } from './api'
 import { getToken } from './auth'
+import { a11yClickProps } from './lib/a11yClick';
 
 const card = { background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, padding: 14, marginBottom: 12 }
 const btn = { cursor: 'pointer', borderRadius: 10, padding: '10px 14px', border: 'none', color: '#fff', fontWeight: 700, background: 'linear-gradient(135deg, rgba(52,199,89,0.85), rgba(139,92,246,0.6))' }
@@ -67,7 +68,7 @@ export default function DiscipleshipPathwayPage({ user, onBack }) {
         <div style={card}>
           <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 10 }}>{path.title} · {path.current_stage_key} → {path.target_stage_key}</div>
           {(path.steps || []).map(s => (
-            <div key={s.id} onClick={() => toggleStep(s)} style={{ padding: '8px 0', borderBottom: '1px solid rgba(255,255,255,0.06)', cursor: 'pointer' }}>
+            <div key={s.id} onClick={() => toggleStep(s)} style={{ padding: '8px 0', borderBottom: '1px solid rgba(255,255,255,0.06)', cursor: 'pointer' }} {...a11yClickProps(() => toggleStep(s))}>
               <div style={{ fontSize: 14 }}>{s.status === 'completed' ? '✅ ' : '⬜ '}{s.step_title}</div>
               {s.related_module && <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)' }}>→ {s.related_module}</div>}
             </div>

@@ -128,7 +128,7 @@ export default function SinPatternLibrary({ variant = 'full' }) {
               transition: 'all 0.2s',
               boxSizing: 'border-box',
             }}
-          />
+           aria-label={i18nT('搜索名称、核心谎言、症状或经文...')}/>
           {searchQuery && (
             <button
               onClick={() => setSearchQuery('')}

@@ -160,7 +160,7 @@ export default function DailySoulQuestionPage({ user, token, onBack }) {
                         fontSize: 15, padding: '14px 96px 14px 16px', resize: 'vertical', outline: 'none',
                         fontFamily: 'inherit', lineHeight: 1.7, boxSizing: 'border-box',
                       }}
-                    />
+                     aria-label={i18nT('在这里写下你真实的回应...')}/>
                     <SuggestMenu accent="#a78bfa" top={10} right={10} options={DSQ_OPTS} value={answer} onChange={setAnswer} />
                     </span>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 12 }}>

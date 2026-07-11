@@ -243,7 +243,7 @@ export default function GuardianChatPanel() {
           }}
           style={{ ...S.input, flex: 1, padding: '4px 12px', lineHeight: 1.3,
             flexBasis: '100%', order: -1, minHeight: 30, fontSize: 12, maxHeight: 42 }}
-        />
+         aria-label={callMode ? t("对话模式中，也可以打字…") : t("说说你现在的感受…")}/>
         <button type="button" onClick={submit} disabled={sending || !input.trim()}
           style={{ ...S.primaryBtn, width: 43, height: 32, padding: 0, borderRadius: 8,
             fontSize: 11, opacity: sending || !input.trim() ? 0.4 : 1 }}>

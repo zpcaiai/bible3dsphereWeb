@@ -76,7 +76,7 @@ export default function GospelDiagnosticPage({ user, onBack, onNeedLogin }) {
               <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 10 }}>{cur.q}</div>
               <span style={{ position: 'relative', display: 'block' }}>
               <textarea value={vals[cur.key]} onChange={e => set(cur.key, e.target.value)} rows={3} placeholder={cur.ph}
-                style={{ width: '100%', boxSizing: 'border-box', padding: '12px 96px 12px 12px', borderRadius: 8, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', fontSize: 14, resize: 'vertical' }} />
+                style={{ width: '100%', boxSizing: 'border-box', padding: '12px 96px 12px 12px', borderRadius: 8, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', fontSize: 14, resize: 'vertical' }}  aria-label={cur.ph}/>
               <SuggestMenu accent="#a78bfa" top={8} right={8} options={GD_OPTS[cur.key] || []} value={vals[cur.key]} onChange={(v) => set(cur.key, v)} />
               </span>
               <div style={{ display: 'flex', gap: 8, marginTop: 14 }}>

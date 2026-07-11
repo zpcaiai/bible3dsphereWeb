@@ -10,6 +10,7 @@ import { CHARACTER_JOURNEYS, buildCharacterMapConfig } from './data/characterJou
 import { getRuntimeLang } from './i18n/runtime'
 import { useAutoTranslate, AutoText } from './autoTranslate'
 import RelationshipGraphView from './RelationshipGraphView'
+import { a11yClickProps } from './lib/a11yClick';
 
 const ERAS = ['全部', '族长时代', '出埃及时代', '士师时代', '进入迦南时代', '王国时代', '被掳归回时代', '新约时代', '教会时代']
 const ROLES = ['全部', '主&救主', '族长', '君王', '先知', '祭司', '女性', '使徒', '其他']
@@ -186,7 +187,7 @@ function CharacterCard({ char: _rawChar, onClick }) {
     }}
       onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.11)'}
       onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.06)'}
-    >
+     {...a11yClickProps(() => onClick(char))}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
         <CharacterAvatar name={char.name} en={char.en} />
         <div style={{ flex: 1, minWidth: 0 }}>
@@ -285,7 +286,7 @@ function ScriptureChip({ scripture: refStr, color = '#5ac8fa', bg = 'rgba(0,122,
               <span>{displayText}</span>
               {isLong && (
                 <span onClick={() => setExpanded(e => !e)}
-                  style={{ color, cursor: 'pointer', marginLeft: 6, fontSize: 12 }}>
+                  style={{ color, cursor: 'pointer', marginLeft: 6, fontSize: 12 }} {...a11yClickProps(() => setExpanded(e => !e))}>
                   {expanded ? '收起' : '展开'}
                 </span>
               )}
@@ -322,7 +323,7 @@ function CollapsibleText({ text, limit = 100, color }) {
       {displayed}
       {isLong && (
         <span onClick={() => setExpanded(e => !e)}
-          style={{ color: '#5ac8fa', cursor: 'pointer', marginLeft: 4, fontSize: 12, userSelect: 'none' }}>
+          style={{ color: '#5ac8fa', cursor: 'pointer', marginLeft: 4, fontSize: 12, userSelect: 'none' }} {...a11yClickProps(() => setExpanded(e => !e))}>
           {expanded ? '收起' : '展开'}
         </span>
       )}
@@ -622,7 +623,7 @@ function CharacterDetail({ char: _rawChar, onBack, user, token }) {
             fontSize: 14, padding: '10px 96px 10px 12px', resize: 'vertical', outline: 'none',
             fontFamily: 'inherit', lineHeight: 1.6, boxSizing: 'border-box',
           }}
-        />
+         aria-label={L === 'en' ? (char.type === '警戒' ? `e.g. Unlike ${dispName(char)}, when tempted I will watch, pray, and flee from sin...` : `e.g. Like ${dispName(char)}, when afraid I will first seek God, then act...`) : (char.type === '警戒' ? `例：不像${char.name}那样，当面对试探时，我要警醒祷告，远离罪...` : `例：像${char.name}一样，当面对恐惧时，我要先求问神，再行动...`)}/>
         <SuggestMenu accent="#34c759" top={8} right={8} options={MIRROR_OPTS} value={commitment} onChange={setCommitment} />
         </div>
         <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 10, gap: 8, alignItems: 'center' }}>
@@ -887,7 +888,7 @@ export default function MirrorPage({ user, token, guidance, onBack, initialView,
             }}
               onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.11)'}
               onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.06)'}
-            >
+             {...a11yClickProps(() => openTheme(t))}>
               <div style={{ fontSize: 32, marginBottom: 8 }}>{t.emoji}</div>
               <div style={{ fontWeight: 700, fontSize: 16, color: '#fff', marginBottom: 6 }}><AutoText>{t.title}</AutoText></div>
               <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)', lineHeight: 1.5 }}><AutoText>{t.intro.slice(0, 60)}</AutoText>…</div>
@@ -950,7 +951,7 @@ export default function MirrorPage({ user, token, guidance, onBack, initialView,
             placeholder={L === 'en' ? 'Search people' : '搜索人物'}
             style={{ flex: 1, minWidth: 160, padding: '8px 12px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.15)',
               background: 'rgba(255,255,255,0.08)', color: '#fff', fontSize: 14, outline: 'none' }}
-          />
+           aria-label={L === 'en' ? 'Search people' : '搜索人物'}/>
           <select value={sort} onChange={e => setSort(e.target.value)} style={{
             padding: '8px 10px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.15)',
             background: 'rgba(30,30,40,0.9)', color: '#fff', fontSize: 13, cursor: 'pointer'
@@ -1019,7 +1020,7 @@ function FilterGroup({ label, value, options, onChange }) {
           color: value === o ? '#fff' : 'rgba(255,255,255,0.5)',
           background: value === o ? 'rgba(0,122,255,0.3)' : 'transparent',
           marginBottom: 2, whiteSpace: 'nowrap'
-        }}><AutoText>{o}</AutoText></div>
+        }} {...a11yClickProps(() => onChange(o))}><AutoText>{o}</AutoText></div>
       ))}
     </div>
   )

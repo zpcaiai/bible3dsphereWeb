@@ -25,7 +25,8 @@ export default function CrossLamentHopeDashboard({ userId = 'local-user', token 
 
   function save() {
     if (typeof window === 'undefined' || frame.route !== 'cross_lament_hope') return
-    const all = JSON.parse(window.localStorage.getItem(STORAGE_KEY) || '[]')
+    let all = []
+    try { all = JSON.parse(window.localStorage.getItem(STORAGE_KEY) || '[]') } catch { all = [] }
     const record = { id: frame.id, userId, text, categoryKey: frame.categoryKey, createdAt: new Date().toISOString() }
     const next = [record, ...all].slice(0, 60)
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next))

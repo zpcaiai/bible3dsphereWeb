@@ -1,4 +1,4 @@
-// Mission OS 全功能版开发路线图（Batch 0–5）
+// Mission OS 全功能版开发路线图（Batch 0–6）
 // 结构化规划内容，供「宣教」子标签内可折叠路线图页面渲染。
 // 每个 Batch 包含：目标、统一原则、Skill 列表（目标 + 关键规则/交付物）。
 // 完整 Codex 执行 Prompt 见 docs/mission-os 参考文档。
@@ -49,8 +49,8 @@ export const BATCHES = [
     key: 'batch-1',
     title: 'Batch 1：身份、多租户、权限、隐私与同意',
     goal: '建立个人、教会、差会、团队和合作机构之间的安全数据边界。',
-    status: 'partial',
-    statusLabel: '部分已有',
+    status: 'implemented',
+    statusLabel: '已达标',
     principles: [
       '所有租户业务表含 tenant_id；敏感表启用 RLS；字段级授权。',
       '知情同意可撤回；数据保留/导出/删除/匿名化。',
@@ -72,8 +72,8 @@ export const BATCHES = [
     key: 'batch-2',
     title: 'Batch 2：全球宣教禾场情报系统',
     goal: '形成可追溯、可验证、可持续更新的国内及全球禾场知识系统。',
-    status: 'planned',
-    statusLabel: '规划中',
+    status: 'partial',
+    statusLabel: '骨架已落地',
     principles: [
       '群体自我认同优先；不把人简化为单一宗教标签。',
       '数据事实（Observed Fact / Source Claim / Interpretation / Local Confirmation / AI Hypothesis）分离。',
@@ -100,8 +100,8 @@ export const BATCHES = [
     key: 'batch-3',
     title: 'Batch 3：呼召辨识、恩赐画像与工人准备度',
     goal: '避免把一次感动直接等同于长期差派呼召。',
-    status: 'planned',
-    statusLabel: '规划中',
+    status: 'partial',
+    statusLabel: '骨架已落地',
     principles: [
       '呼召辨识不是自动化神谕；AI 不宣告神的个人旨意。',
       '呼召方向 / 角色 / 地点 / 时机分离。',
@@ -125,8 +125,8 @@ export const BATCHES = [
     key: 'batch-4',
     title: 'Batch 4：宣教装备、课程、语言文化与本地实习',
     goal: '把准备度差距转化为 6–24 个月的具体训练、实践、督导与人工认证路径。',
-    status: 'planned',
-    statusLabel: '规划中',
+    status: 'partial',
+    statusLabel: '骨架已落地',
     principles: [
       '知识完成 ≠ 工人预备完成；课程不能取代教会生活。',
       '安全课程不是可选装饰；文化学习不是收集异国知识。',
@@ -153,8 +153,8 @@ export const BATCHES = [
     key: 'batch-5',
     title: 'Batch 5：差派教会、机构、团队、本地伙伴与正式差派',
     goal: '让工人由教会、机构与接收团队共同差派，而非个人独立行动。',
-    status: 'planned',
-    statusLabel: '规划中',
+    status: 'partial',
+    statusLabel: '骨架已落地',
     principles: [
       '差派是教会和群体行为；教会确认不是领袖个人授权。',
       '本地伙伴拥有真实否决权；配偶同意不能被形式化。',
@@ -173,6 +173,33 @@ export const BATCHES = [
       { id: 58, title: 'Skill 58 · 本地伙伴发现、尽职调查与合作评估', body: '尽职调查双向；本地伙伴有真实选择与否决权；财务支持不等于控制权；联系人网络严格保护、高风险用 Alias；Partner 状态可暂停/结束。' },
       { id: 59, title: 'Skill 59 · 合作协议、决策权、资源权与退出安排', body: '决策权/数据/资源/知识产权清晰；Safeguarding 不能被财务方否决；数据共享须同时满足协议+权限+个人 Consent；终止后安全交接；不作压制举报工具。' },
       { id: 60, title: 'Skill 60 · 代祷伙伴、支持教会与沟通网络', body: '支持网络分级可见；通讯经隐私与安全审核；代祷/筹款不消费他人苦难；财务支持不购买治理权；危机期间自动暂停预定通讯。' },
+    ],
+  },
+  {
+    id: 6,
+    key: 'batch-6',
+    title: 'Batch 6：财务、筹款、签证、合规、医疗保险、家庭、数字安全与撤离',
+    goal: '从委员会批准进入部署预备，到具备真实、合法、财务可持续、安全可执行的部署条件。',
+    status: 'partial',
+    statusLabel: '骨架已落地',
+    principles: [
+      '财务预备不是筹到一笔钱；奉献不购买控制权；职业与居留身份必须真实。',
+      '合规不是一次性勾选，有来源/地区/生效日/复核；医疗信息最小化。',
+      '家庭拥有独立主体地位；安全与撤离计划不是违法指南。',
+      'AI 不作最终专业判断；Gate Ready 只解锁 Batch 7，不等于已出发。',
+    ],
+    skills: [
+      { id: 61, title: 'Skill 61 · 宣教全周期预算、现金流与储备', body: 'Baseline/Conservative/Support Loss 场景必备，高风险 Field 需 Evacuation、家庭需教育成本；Pledge≠Receipt、一次性奉献不年化；储备不足阻断；输出 Need/Evidence/Readiness 多信号而非单一筹款%。' },
+      { id: 62, title: 'Skill 62 · 个人支持筹集与筹款伦理', body: '禁恐惧/内疚/属灵等级/虚假倒计时/未证统计/消费苦难；支持者可取消且立即生效；奉献不产生治理权；发布前经事实/隐私/伦理审核。' },
+      { id: 63, title: 'Skill 63 · 教会、机构与项目资金治理', body: '请求者不能自批、大额双人审批、限制资金不可转一般用途、职责分离（请求/审批/支付/对账不集中一人）、应急资金动用可审计。' },
+      { id: 64, title: 'Skill 64 · 财务透明、利益冲突、审计与反欺诈', body: '相关方交易披露；异常检测（重复/分拆/自批/相关方）；Finding≠欺诈定论、被调查者不能自查；举报人反报复；AI 不作刑事结论。' },
+      { id: 65, title: 'Skill 65 · 真实职业、学习、居留与身份路径', body: '申报活动与实际活动一致；禁虚假雇佣/空壳公司/虚假课程/伪造证明；受监管职业需执业资格；家庭成员身份独立评估。' },
+      { id: 66, title: 'Skill 66 · 签证、证件、许可与到期任务', body: '证件号加密/掩码（普通 DTO 只显末位）；关键证件剩余有效期不足阻断部署；分阶段到期提醒；AI 不访问证件文件；遗失触发撤权替换。' },
+      { id: 67, title: 'Skill 67 · 法律、税务、宗教活动与数据合规', body: '法律结论须专业人员确认、AI 不能 Cleared；意见含地区+生效日+有效期、一国意见不跨国复用；跨境数据需处理基础；不提供规避监管方案。' },
+      { id: 68, title: 'Skill 68 · 医疗评估、保险、用药与健康连续性', body: '只存最小医疗状态（委员会/领袖看摘要）；AI 不诊断/不停药；残障不自动拒绝、先评估合理便利；关键用药无法持续或保险缺撤离阻断高风险部署。' },
+      { id: 69, title: 'Skill 69 · 配偶、子女、父母责任与家庭预备', body: '配偶独立提交同意（候选人不能代填，DB CHECK）；配偶不同意不能被属灵化绕过；子女教育合法性检查、Homeschool 非默认；子女照片需监护人同意。' },
+      { id: 70, title: 'Skill 70 · 数字安全、设备、通信与敏感数据', body: 'P4 不得存于未受管设备；设备遗失/退出团队即撤权；安全例外须到期；照片位置元数据处理；安全用于保护而非隐藏违法。' },
+      { id: 71, title: 'Skill 71 · 危机响应、撤离与事工连续性 + Deployment Gate', body: 'Incident Command 角色不集中一人；撤离触发须具体条件、AI 不决定撤离；本地伙伴连续性必备；Deployment Readiness Gate 聚合全部条件、硬阻塞不可绕过、需人工 Panel、Ready 仅解锁 Batch 7 不等于出发。' },
     ],
   },
 ]

@@ -143,14 +143,14 @@ export default function GroupsScreen({ token, onBack, openPage }) {
       <section className="attn-grid">
         <AttentionCard title={i18nT("创建小组")} actionLabel={i18nT("隐私设置")} onAction={() => openPage('privacy')}>
           <div className="attn-inline-form">
-            <input value={name} onChange={(e) => setName(e.target.value)} placeholder={i18nT("例如：周三守心同行")} />
+            <input value={name} onChange={(e) => setName(e.target.value)} placeholder={i18nT("例如：周三守心同行")}  aria-label={i18nT("例如：周三守心同行")}/>
             <button className="attn-button" type="button" disabled={busy || !name.trim()} onClick={createGroup}>{i18nT("创建")}</button>
           </div>
         </AttentionCard>
 
         <AttentionCard title={i18nT("加入小组")}>
           <div className="attn-inline-form">
-            <input value={inviteCode} onChange={(e) => setInviteCode(e.target.value)} placeholder={i18nT("邀请码")} />
+            <input value={inviteCode} onChange={(e) => setInviteCode(e.target.value)} placeholder={i18nT("邀请码")}  aria-label={i18nT("邀请码")}/>
             <button className="attn-button" type="button" disabled={busy || !inviteCode.trim()} onClick={joinGroup}>{i18nT("加入")}</button>
           </div>
         </AttentionCard>

@@ -42,7 +42,7 @@ export default function CreedCatechismGalaxy({ userId = 'local-user', token }) {
         {conn.caution && <p className="sf-warning">{conn.caution}</p>}
         <button className="sf-primary" type="button" onClick={() => done(daily.key)}>{i18nT("标记完成")}</button>
       </article>
-      <label> {i18nT("搜索主题、问题或经文")} <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={i18nT("例如：教会、祷告、神是否爱我")} />
+      <label> {i18nT("搜索主题、问题或经文")} <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={i18nT("例如：教会、祷告、神是否爱我")}  aria-label={i18nT("例如：教会、祷告、神是否爱我")}/>
       </label>
       <div className="sf-home-grid">
         {items.map((item) => (

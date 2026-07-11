@@ -12,6 +12,7 @@ import {
 } from './realtime/realtimeApi'
 import realtimeStore from './realtime/realtimeStore'
 import { useRealtimeState, useRealtimeMessages } from './realtime/useRealtimeStore'
+import { a11yClickProps } from './lib/a11yClick';
 
 const showToast = (m) => window.showToast?.(m, 'info')
 function shortName(email, nickname) {
@@ -202,7 +203,7 @@ export default function CommunionPage({ user, onBack, onOpenVoice }) {
               onChange={(e) => setAddEmail(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && onAddFriend()}
               placeholder={i18nT('输入好友邮箱添加')}
-            />
+             aria-label={i18nT('输入好友邮箱添加')}/>
             <button onClick={onAddFriend}>{i18nT('添加')}</button>
           </div>
 
@@ -229,7 +230,7 @@ export default function CommunionPage({ user, onBack, onOpenVoice }) {
                   className={`communion-friend ${activePeer?.email === f.email ? 'active' : ''}`}
                   onClick={() => openChat(f)}
                   onContextMenu={(e) => { e.preventDefault(); onRemove(f.email) }}
-                >
+                 {...a11yClickProps(() => openChat(f))}>
                   <div className="communion-avatar">
                     {f.avatar ? <img src={f.avatar} alt="" /> : shortName(f.email, f.nickname)[0]}
                     <span className={`communion-dot ${online ? 'online' : ''}`} />
@@ -284,7 +285,7 @@ export default function CommunionPage({ user, onBack, onOpenVoice }) {
                   onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat() } }}
                   placeholder={i18nT('输入消息，Enter 发送')}
                   rows={1}
-                />
+                 aria-label={i18nT('输入消息，Enter 发送')}/>
                 <button onClick={sendChat} disabled={!draft.trim()}>{i18nT('发送')}</button>
               </div>
             </>

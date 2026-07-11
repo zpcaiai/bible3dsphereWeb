@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import realtimeStore from './realtimeStore'
 import { startNotes, stopNotes, getTranscript, clearNotes, getState, subscribe, isSupported } from './callNotes'
 import { getRuntimeLang, t } from '../i18n/runtime'
+import { a11yClickProps } from '../lib/a11yClick';
 
 const toast = (m, ty = 'info') => window.showToast?.(m, ty)
 
@@ -36,8 +37,8 @@ export default function VoicemailModal({ peer, onClose }) {
   function close() { stopNotes(); clearNotes(); realtimeStore.clearMissed(); onClose?.() }
 
   return (
-    <div style={S.overlay} onClick={close}>
-      <div style={S.card} onClick={(e) => e.stopPropagation()}>
+    <div style={S.overlay} onClick={close} {...a11yClickProps(close)}>
+      <div style={S.card} onClick={(e) => e.stopPropagation()} {...a11yClickProps((e) => e.stopPropagation())}>
         <div style={S.head}>
           <span style={{ fontWeight: 700 }}>📩 {t('给')} {peer.name || peer.email} {t('留言')}</span>
           <button style={S.x} onClick={close}>×</button>
@@ -47,7 +48,7 @@ export default function VoicemailModal({ peer, onClose }) {
           style={S.area} rows={5} value={text} maxLength={3800}
           placeholder={rec ? t('正在聆听…说完点「停止」') : t('点 🎙 开始说话，或直接输入')}
           onChange={(e) => setText(e.target.value)}
-        />
+         aria-label={rec ? t('正在聆听…说完点「停止」') : t('点 🎙 开始说话，或直接输入')}/>
         <div style={S.btns}>
           <button style={{ ...S.ghost, ...(rec ? { background: 'rgba(255,107,107,0.25)', borderColor: '#ff6b6b' } : {}) }}
             onClick={toggleRec}>

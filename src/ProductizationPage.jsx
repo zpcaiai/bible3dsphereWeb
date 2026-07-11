@@ -54,7 +54,7 @@ export default function ProductizationPage({ user, onBack }) {
         <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 8 }}>{i18nT('我的组织')}</div>
         {orgs.map(o => <div key={o.id} style={{ fontSize: 13, padding: '4px 0' }}>· {o.name}（{o.my_role}）</div>)}
         <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
-          <input value={orgName} onChange={e => setOrgName(e.target.value)} placeholder={i18nT('新建教会/机构名称')} style={{ ...fld, marginBottom: 0, flex: 1 }} />
+          <input value={orgName} onChange={e => setOrgName(e.target.value)} placeholder={i18nT('新建教会/机构名称')} style={{ ...fld, marginBottom: 0, flex: 1 }}  aria-label={i18nT('新建教会/机构名称')}/>
           <button style={btn} onClick={createOrg}>{i18nT('创建')}</button>
         </div>
       </div>

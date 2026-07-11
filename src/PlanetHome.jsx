@@ -2,6 +2,7 @@ import { t as i18nT } from './i18n/runtime'
 import BackButton from './BackButton'
 import { withExpansionChips, handleExpansionTarget } from './expansion/planetEntries'
 import PastoralPathCard, { PASTORAL_ROUTE_TARGETS } from './components/PastoralPathCard'
+import { a11yClickProps } from './lib/a11yClick';
 /**
  * PlanetHome — 属灵星球 · 成长地图（IA v1，增量、不删现有功能）
  * 把愿景的五大陆作为「人格塑造路径」的导航，路由到已有功能。
@@ -81,7 +82,7 @@ export default function PlanetHome({ onClose, go }) {
       <div style={{ padding: '0 16px 110px', maxWidth: 640, margin: '0 auto' }}>
         <PastoralPathCard compact onOpen={openPastoralRoute} />
         {withExpansionChips(CONTINENTS).map((c, i) => (
-          <div key={i} onClick={() => act(c.chips[0][1])} style={{ cursor: 'pointer', marginBottom: 14, borderRadius: 18, padding: 18, background: `linear-gradient(135deg, ${c.color}22, rgba(255,255,255,0.02))`, border: `1px solid ${c.color}44` }}>
+          <div key={i} onClick={() => act(c.chips[0][1])} style={{ cursor: 'pointer', marginBottom: 14, borderRadius: 18, padding: 18, background: `linear-gradient(135deg, ${c.color}22, rgba(255,255,255,0.02))`, border: `1px solid ${c.color}44` }} {...a11yClickProps(() => act(c.chips[0][1]))}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
               <span style={{ fontSize: 30 }}>{c.icon}</span>
               <div>

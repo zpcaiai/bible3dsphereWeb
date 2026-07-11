@@ -28,7 +28,7 @@ export default function GraceIdentityCard({ inputText = '', compact = false, res
       {!compact && (
         <label>
           {T('此刻压在你身上的身份句子', 'The identity sentence weighing on you now')}
-          <textarea value={draft} onChange={(event) => setDraft(event.target.value)} placeholder={T('例如：我又失败了，所以神不会接纳我。', 'For example: I failed again, so God will not receive me.')} />
+          <textarea value={draft} onChange={(event) => setDraft(event.target.value)} placeholder={T('例如：我又失败了，所以神不会接纳我。', 'For example: I failed again, so God will not receive me.')}  aria-label={T('例如：我又失败了，所以神不会接纳我。', 'For example: I failed again, so God will not receive me.')}/>
         </label>
       )}
       <div className="sf-home-grid">

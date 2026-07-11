@@ -58,7 +58,7 @@ export default function EmojiTextarea({ value, onChange, rows, placeholder, styl
         placeholder={placeholder}
         style={style}
         className={className}
-      />
+       aria-label={placeholder}/>
       <button
         type="button"
         onClick={() => setShowPicker(v => !v)}

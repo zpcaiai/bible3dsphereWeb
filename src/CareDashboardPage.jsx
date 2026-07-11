@@ -78,7 +78,7 @@ export default function CareDashboardPage({ user, token, churchId: churchIdProp,
       {!churchIdProp && (
         <div className="flex gap-2 mb-4">
           <input value={churchId} onChange={(e) => setChurchId(e.target.value)} placeholder={i18nT('小组/教会 ID')}
-                 className="border rounded px-2 py-1 text-sm w-40" />
+                 className="border rounded px-2 py-1 text-sm w-40"  aria-label={i18nT('小组/教会 ID')}/>
           <button onClick={load} className="text-sm bg-slate-800 text-white rounded px-3 py-1">{i18nT('加载')}</button>
         </div>
       )}

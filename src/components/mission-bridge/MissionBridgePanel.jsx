@@ -113,7 +113,7 @@ export default function MissionBridgePanel({ token, organizationId }) {
               <h3>{t(program.title)}</h3><p>{t(program.description)}</p>
               <div className="mb-guardrail">🛡 {t('自愿参与 · 专业转介 · 无羞耻驱动')}</div>
               {enrolled ? <button type="button" onClick={() => setView('journey')}>{t('继续旅程')} →</button> : paused ? <button type="button" onClick={() => run(`resume-${paused.id}`, () => resumeMissionBridgeProgram(token,paused.id), '项目已恢复')}>{t('恢复项目')}</button> : <>
-                <input value={goal[program.id] || ''} maxLength={500} onChange={(e) => setGoal((old) => ({ ...old, [program.id]: e.target.value }))} placeholder={t('写下你希望共同实现的一个目标')} />
+                <input value={goal[program.id] || ''} maxLength={500} onChange={(e) => setGoal((old) => ({ ...old, [program.id]: e.target.value }))} placeholder={t('写下你希望共同实现的一个目标')}  aria-label={t('写下你希望共同实现的一个目标')}/>
                 <button type="button" disabled={!consent || (goal[program.id] || '').trim().length < 2 || busy === program.id} onClick={() => run(program.id, () => enrollMissionBridgeProgram(token, program.id, goal[program.id].trim()), '项目已加入，你仍可随时暂停或退出')}>{busy === program.id ? t('加入中…') : t('自愿加入')}</button>
               </>}
             </article>
@@ -122,7 +122,7 @@ export default function MissionBridgePanel({ token, organizationId }) {
       </>}
 
       {view === 'journey' && <div className="mb-journeys">
-        <form className="mb-goal-form" onSubmit={event=>{event.preventDefault();run('goal',()=>createMissionBridgeGoal(token,newGoal),'目标草案已保存，请确认后生效')}}><h3>{t('共同制定目标')}</h3><input required minLength={3} value={newGoal.title} onChange={e=>setNewGoal({...newGoal,title:e.target.value})} placeholder={t('我希望实现什么？')}/><input required minLength={5} value={newGoal.successDescription} onChange={e=>setNewGoal({...newGoal,successDescription:e.target.value})} placeholder={t('怎样算取得真实进展？')}/><button type="submit">{t('保存目标草案')}</button></form>
+        <form className="mb-goal-form" onSubmit={event=>{event.preventDefault();run('goal',()=>createMissionBridgeGoal(token,newGoal),'目标草案已保存，请确认后生效')}}><h3>{t('共同制定目标')}</h3><input required minLength={3} value={newGoal.title} onChange={e=>setNewGoal({...newGoal,title:e.target.value})} placeholder={t('我希望实现什么？')} aria-label={t('我希望实现什么？')}/><input required minLength={5} value={newGoal.successDescription} onChange={e=>setNewGoal({...newGoal,successDescription:e.target.value})} placeholder={t('怎样算取得真实进展？')} aria-label={t('怎样算取得真实进展？')}/><button type="submit">{t('保存目标草案')}</button></form>
         {journey.goals.map(goal=><article className="mb-goal" key={goal.id}><div><strong>{goal.title}</strong><span>{goal.successDescription}</span></div>{!goal.confirmed&&<button type="button" onClick={()=>run(`confirm-${goal.id}`,()=>confirmMissionBridgeGoal(token,goal.id),'目标已由你确认')}>{t('确认目标')}</button>}</article>)}
         {journey.carePlans.map(plan=><article className="mb-care-plan" key={plan.id}><h3>{plan.title}</h3><p>{plan.rationale}</p>{plan.actions.map(action=><div key={action.id}><span><strong>{action.title}</strong><small>{t('建议原因')}：{action.suggestionReason}</small></span>{action.status!=='completed'&&<button type="button" onClick={()=>run(`action-${action.id}`,()=>completeMissionBridgeAction(token,action.id),'行动已完成')}>✓</button>}</div>)}</article>)}
         {!active.length ? <div className="mb-state">{t('尚未加入项目。先在“项目”中选择适合你的路径。')}</div> : active.map((item) => {
@@ -131,7 +131,7 @@ export default function MissionBridgePanel({ token, organizationId }) {
           return <article className="mb-journey" key={item.id}><div className="mb-journey-title"><div><h3>{t(program?.title || item.programId)}</h3><p>{t('共同目标')}：{item.goal}</p></div><strong>{progress}%</strong></div>
             <div className="mb-progress"><span style={{ width: `${progress}%` }} /></div>
             <div className="mb-checkin"><label>{t('本周状态')}<select value={checkin.wellbeing} onChange={(e) => setCheckin({ ...checkin, wellbeing: Number(e.target.value) })}>{[1,2,3,4,5].map((n) => <option key={n} value={n}>{n} / 5</option>)}</select></label>
-              <textarea value={checkin.reflection} onChange={(e) => setCheckin({ ...checkin, reflection: e.target.value })} placeholder={t('这一周有什么真实进展或困难？')} maxLength={2000} />
+              <textarea value={checkin.reflection} onChange={(e) => setCheckin({ ...checkin, reflection: e.target.value })} placeholder={t('这一周有什么真实进展或困难？')} maxLength={2000}  aria-label={t('这一周有什么真实进展或困难？')}/>
               <label className="mb-inline"><input type="checkbox" checked={checkin.needsSupport} onChange={(e) => setCheckin({ ...checkin, needsSupport: e.target.checked })} />{t('我希望真人同工跟进')}</label>
               <div className="mb-actions"><button type="button" onClick={() => run(`checkin-${item.id}`, () => submitMissionBridgeCheckin(token, item.id, checkin), '签到已保存')}>{t('保存签到')}</button><button className="secondary" type="button" onClick={() => run(`pause-${item.id}`, () => pauseMissionBridgeProgram(token,item.id), '项目已暂停，可在项目列表恢复')}>{t('暂停')}</button><button className="secondary" type="button" onClick={() => run(`exit-${item.id}`, () => exitMissionBridgeProgram(token, item.id), '已退出项目，一般关怀权限保持不变')}>{t('退出项目')}</button></div>
             </div>
@@ -143,7 +143,7 @@ export default function MissionBridgePanel({ token, organizationId }) {
         <div className="mb-alert warning"><strong>{t('紧急危险请先联系当地紧急服务或身边可信任的人。')}</strong><span>{t('AI不能替代医疗、法律、儿童保护或危机专业人员。')}</span></div>
         <label>{t('风险等级')}<select value={incident.riskLevel} onChange={(e) => setIncident({ ...incident, riskLevel: e.target.value })}><option value="L1">L1 · {t('需要支持')}</option><option value="L2">L2 · {t('需要专业升级')}</option><option value="L3">L3 · {t('即时危险')}</option></select></label>
         <label>{t('类别')}<input value={incident.category} onChange={(e) => setIncident({ ...incident, category: e.target.value })} /></label>
-        <label>{t('最少必要说明')}<textarea value={incident.summary} onChange={(e) => setIncident({ ...incident, summary: e.target.value })} maxLength={2000} placeholder={t('请勿填写不必要的身份、住址或家庭敏感信息')} /></label>
+        <label>{t('最少必要说明')}<textarea value={incident.summary} onChange={(e) => setIncident({ ...incident, summary: e.target.value })} maxLength={2000} placeholder={t('请勿填写不必要的身份、住址或家庭敏感信息')}  aria-label={t('请勿填写不必要的身份、住址或家庭敏感信息')}/></label>
         <label className="mb-inline"><input type="checkbox" checked={incident.immediateDanger} onChange={(e) => setIncident({ ...incident, immediateDanger: e.target.checked, riskLevel: e.target.checked ? 'L3' : incident.riskLevel })} />{t('目前存在即时生命或身体危险')}</label>
         <button type="button" disabled={incident.summary.trim().length < 4 || busy === 'incident'} onClick={() => run('incident', () => reportMissionBridgeIncident(token, incident), '安全事件已记录；L2/L3 将进入真人升级流程')}>{t('提交安全求助')}</button>
       </div>}

@@ -90,7 +90,7 @@ export default function ChurchOnboardingModal({ token, onJoined, onSkip }) {
               onChange={e => setCode(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && doJoin()}
               autoFocus
-            />
+             aria-label={i18nT('输入邀请码（如 ABC123）')}/>
             {joinErr && <div style={S.err}>{joinErr}</div>}
             <button style={S.primaryBtn} disabled={joining || !code.trim()} onClick={doJoin}>
               {joining ? '加入中…' : '加入教会'}
@@ -111,7 +111,7 @@ export default function ChurchOnboardingModal({ token, onJoined, onSkip }) {
                   onChange={e => setName(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && doCreate()}
                   autoFocus
-                />
+                 aria-label={i18nT('教会名称，如「恩典河滨教会」')}/>
                 {createErr && <div style={S.err}>{createErr}</div>}
                 <button style={S.primaryBtn} disabled={creating || !name.trim()} onClick={doCreate}>
                   {creating ? '创建中…' : '创建教会'}

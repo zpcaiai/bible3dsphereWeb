@@ -127,13 +127,13 @@ export default function LectioPage({ user, onBack }) {
           <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', marginBottom: 10 }}>{guidance || meta.ph}</div>
           {stage === 'read' && (
             <input value={keywords} onChange={e => setKeywords(e.target.value)} placeholder={i18nT('触动你的字 / 词（用逗号分隔）')}
-              style={{ width: '100%', padding: 10, borderRadius: 10, marginBottom: 10, background: 'rgba(0,0,0,0.3)', color: '#fff', border: '1px solid rgba(255,255,255,0.15)' }} />
+              style={{ width: '100%', padding: 10, borderRadius: 10, marginBottom: 10, background: 'rgba(0,0,0,0.3)', color: '#fff', border: '1px solid rgba(255,255,255,0.15)' }}  aria-label={i18nT('触动你的字 / 词（用逗号分隔）')}/>
           )}
           <textarea value={text} onChange={e => setText(e.target.value)} placeholder={meta.ph} rows={4}
-            style={{ width: '100%', padding: 10, borderRadius: 10, marginBottom: 10, background: 'rgba(0,0,0,0.3)', color: '#fff', border: '1px solid rgba(255,255,255,0.15)', resize: 'vertical' }} />
+            style={{ width: '100%', padding: 10, borderRadius: 10, marginBottom: 10, background: 'rgba(0,0,0,0.3)', color: '#fff', border: '1px solid rgba(255,255,255,0.15)', resize: 'vertical' }}  aria-label={meta.ph}/>
           {stage === 'obey' && (
             <input value={grace} onChange={e => setGrace(e.target.value)} placeholder={i18nT('今天领受到的恩典（可选）')}
-              style={{ width: '100%', padding: 10, borderRadius: 10, marginBottom: 10, background: 'rgba(0,0,0,0.3)', color: '#fff', border: '1px solid rgba(255,255,255,0.15)' }} />
+              style={{ width: '100%', padding: 10, borderRadius: 10, marginBottom: 10, background: 'rgba(0,0,0,0.3)', color: '#fff', border: '1px solid rgba(255,255,255,0.15)' }}  aria-label={i18nT('今天领受到的恩典（可选）')}/>
           )}
           {stage === 'obey'
             ? <button style={btn} disabled={busy} onClick={finish}>{busy ? '…' : '完成默想'}</button>

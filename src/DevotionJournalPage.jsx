@@ -212,7 +212,7 @@ function JournalEditor({ initial, token, onSaved, onCancel }) {
             value={form.title || ''}
             onChange={e => set('title', e.target.value)}
             maxLength={200}
-          />
+           aria-label={i18nT('今天的主题是…')}/>
         </div>
 
         {/* Mood */}
@@ -246,7 +246,7 @@ function JournalEditor({ initial, token, onSaved, onCancel }) {
                   rows={f.rows}
                   value={form[f.key] || ''}
                   onChange={e => set(f.key, e.target.value)}
-                />
+                 aria-label={f.placeholder}/>
               ) : (
                 <EmojiTextarea
                   className="dj-textarea"

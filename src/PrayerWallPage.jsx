@@ -10,6 +10,7 @@ import { escapeHtml, escapeHtmlWithBr } from './sanitize'
 import HymnPlayer from './HymnPlayer'
 import DiscipleFormationView from './DiscipleFormationView'
 import GiftCallingView from './GiftCallingView'
+import { a11yClickProps } from './lib/a11yClick';
 
 const AMEN_KEY = 'pw-amened-v1'
 
@@ -516,7 +517,7 @@ export default function PrayerWallPage({ user, token, onBack }) {
 
       {/* Compose sheet */}
       {showCompose && (
-        <div className="pw-compose-overlay" onClick={e => e.target === e.currentTarget && setShowCompose(false)}>
+        <div className="pw-compose-overlay" onClick={e => e.target === e.currentTarget && setShowCompose(false)} {...a11yClickProps(e => e.target === e.currentTarget && setShowCompose(false))}>
           <div className="pw-compose-sheet glass">
             <div className="pw-compose-title">{i18nT('📝 提交代祷')}</div>
 
@@ -583,7 +584,7 @@ export default function PrayerWallPage({ user, token, onBack }) {
                 onChange={e => setDraft(e.target.value.slice(0, 500))}
                 rows={5}
                 style={{ paddingRight: '80px' }}
-              />
+               aria-label={i18nT('写下你想让弟兄姊妹为你代祷的内容…（最多 500 字）')}/>
               {/* 语音输入按钮 */}
               <button
                 type="button"

@@ -182,7 +182,7 @@ function LoginForm({ email, setEmail, onLogin, onReset }) {
           type="email" required value={email} onChange={e => setEmail(e.target.value)}
           placeholder="you@example.com" autoComplete="email"
           style={inputStyle}
-        />
+         aria-label="you@example.com"/>
       </div>
       <div>
         <label htmlFor="login-password" style={labelStyle}>{i18nT('密码')}</label>
@@ -191,7 +191,7 @@ function LoginForm({ email, setEmail, onLogin, onReset }) {
           type="password" required value={password} onChange={e => setPassword(e.target.value)}
           placeholder={i18nT('输入密码')} autoComplete="current-password"
           style={inputStyle}
-        />
+         aria-label={i18nT('输入密码')}/>
       </div>
       <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: 'rgba(255,255,255,0.5)', cursor: 'pointer' }}>
         <input
@@ -298,7 +298,7 @@ function RegisterForm({ email, setEmail, onDone, onLogin }) {
             type="email" required value={email} onChange={e => handleEmailChange(e.target.value)}
             placeholder="you@example.com" autoComplete="email"
             style={{ ...inputStyle, flex: 1 }}
-          />
+           aria-label="you@example.com"/>
           <button
             type="button"
             onClick={handleSendCode}
@@ -322,7 +322,7 @@ function RegisterForm({ email, setEmail, onDone, onLogin }) {
           type="text" required value={code} onChange={e => setCode(e.target.value)}
           placeholder={i18nT('6位验证码')} maxLength={6} inputMode="numeric"
           style={inputStyle}
-        />
+         aria-label={i18nT('6位验证码')}/>
         {devCode && (
           <p style={{ fontSize: '12px', color: '#34c759', margin: '6px 0 0', textAlign: 'center' }}>
             {i18nT('开发模式 — 验证码:')} <b>{devCode}</b>{i18nT('（请在上方输入）')}
@@ -336,7 +336,7 @@ function RegisterForm({ email, setEmail, onDone, onLogin }) {
           type="password" required value={password} onChange={e => setPassword(e.target.value)}
           placeholder={i18nT('设置登录密码')} autoComplete="new-password" minLength={6}
           style={inputStyle}
-        />
+         aria-label={i18nT('设置登录密码')}/>
       </div>
       <div>
         <label htmlFor="register-nickname" style={labelStyle}>{i18nT('昵称（选填）')}</label>
@@ -345,7 +345,7 @@ function RegisterForm({ email, setEmail, onDone, onLogin }) {
           type="text" value={nickname} onChange={e => setNickname(e.target.value)}
           placeholder={i18nT('你的名字')}
           style={inputStyle}
-        />
+         aria-label={i18nT('你的名字')}/>
       </div>
       {error && <p style={errorText}>{error}</p>}
       <button type="submit" disabled={regLoading || !codeSent} style={primaryBtnStyle(regLoading || !codeSent)}>
@@ -437,7 +437,7 @@ function ResetPasswordForm({ email, setEmail, onDone }) {
             type="email" required value={email} onChange={e => setEmail(e.target.value)}
             placeholder="you@example.com" autoComplete="email"
             style={{ ...inputStyle, flex: 1 }}
-          />
+           aria-label="you@example.com"/>
           <button
             type="button"
             onClick={handleSendCode}
@@ -461,7 +461,7 @@ function ResetPasswordForm({ email, setEmail, onDone }) {
           type="text" required value={code} onChange={e => setCode(e.target.value)}
           placeholder={i18nT('6位验证码')} maxLength={6} inputMode="numeric"
           style={inputStyle}
-        />
+         aria-label={i18nT('6位验证码')}/>
         {devCode && (
           <p style={{ fontSize: '12px', color: '#34c759', margin: '6px 0 0', textAlign: 'center' }}>
             {i18nT('开发模式 — 验证码:')} <b>{devCode}</b>{i18nT('（请在上方输入）')}
@@ -475,7 +475,7 @@ function ResetPasswordForm({ email, setEmail, onDone }) {
           type="password" required value={password} onChange={e => setPassword(e.target.value)}
           placeholder={i18nT('设置新密码')} autoComplete="new-password" minLength={6}
           style={inputStyle}
-        />
+         aria-label={i18nT('设置新密码')}/>
       </div>
       <div>
         <label htmlFor="reset-password-confirm" style={labelStyle}>{i18nT('确认密码')}</label>
@@ -484,7 +484,7 @@ function ResetPasswordForm({ email, setEmail, onDone }) {
           type="password" required value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)}
           placeholder={i18nT('再次输入新密码')} autoComplete="new-password"
           style={inputStyle}
-        />
+         aria-label={i18nT('再次输入新密码')}/>
       </div>
       {error && <p style={errorText}>{error}</p>}
       <button type="submit" disabled={resetLoading || !codeSent} style={primaryBtnStyle(resetLoading || !codeSent)}>

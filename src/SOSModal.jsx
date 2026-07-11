@@ -1,6 +1,7 @@
 import { t as i18nT } from './i18n/runtime'
 import { useState } from 'react'
 import AccessibleModal from './components/a11y/AccessibleModal'
+import { a11yClickProps } from './lib/a11yClick';
 
 const DARK_MOMENT_CHARACTERS = [
   {
@@ -67,7 +68,7 @@ export default function SOSModal({ onClose, onPrayerWall }) {
             <div key={i} style={{
               background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
               borderRadius: 12, padding: '14px', marginBottom: 10, cursor: 'pointer',
-            }} onClick={() => setExpanded(expanded === i ? null : i)}>
+            }} onClick={() => setExpanded(expanded === i ? null : i)} {...a11yClickProps(() => setExpanded(expanded === i ? null : i))}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <div>
                   <div style={{ fontSize: 14, fontWeight: 700, color: '#e0d4ff' }}>{char.name}</div>

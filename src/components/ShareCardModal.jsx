@@ -2,6 +2,7 @@
 // 渐变模板 × 自适应排版（中文按字断行 / 英文按词断行），导出 PNG / 复制图片。
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { t } from '../i18n/runtime'
+import { a11yClickProps } from '../lib/a11yClick';
 
 const toast = (m, ty = 'info') => window.showToast?.(m, ty)
 
@@ -114,8 +115,8 @@ export default function ShareCardModal({ text, reference, onClose }) {
   }
 
   return (
-    <div style={S.overlay} onClick={onClose}>
-      <div style={S.card} onClick={(e) => e.stopPropagation()}>
+    <div style={S.overlay} onClick={onClose} {...a11yClickProps(onClose)}>
+      <div style={S.card} onClick={(e) => e.stopPropagation()} {...a11yClickProps((e) => e.stopPropagation())}>
         <div style={S.head}>
           <span style={{ fontWeight: 700 }}>{t('🖼 经文分享卡')}</span>
           <button style={S.x} onClick={onClose}>×</button>

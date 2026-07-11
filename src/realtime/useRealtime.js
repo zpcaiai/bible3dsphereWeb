@@ -1,3 +1,4 @@
+// DEAD CODE: not imported anywhere; do NOT wire up (would open a 2nd WebSocket). Use realtimeStore.
 // 圣徒相通 — WebSocket connection hook (presence + signaling + chat transport).
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { buildWsUrl } from './realtimeApi'

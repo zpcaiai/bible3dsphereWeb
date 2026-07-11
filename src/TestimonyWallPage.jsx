@@ -181,7 +181,7 @@ export default function TestimonyWallPage({ user, token }) {
             onChange={e => setField('title', e.target.value, TITLE_MAX)}
             placeholder={i18nT('如：祂在病床边遇见了我')}
             style={{ ...inp, resize: 'none' }}
-          />
+           aria-label={i18nT('如：祂在病床边遇见了我')}/>
           <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', textAlign: 'right', marginTop: 4 }}>{form.title.length}/{TITLE_MAX}</div>
 
           {SECTIONS.map(s => (
@@ -197,7 +197,7 @@ export default function TestimonyWallPage({ user, token }) {
                 rows={3}
                 placeholder={`${s.label}：${s.ph}`}
                 style={{ ...inp, paddingRight: 92 }}
-              />
+               aria-label={`${s.label}：${s.ph}`}/>
               <SuggestMenu top={8} right={8} options={TW_OPTS[s.key] || []} value={form[s.key]} onChange={(v) => setField(s.key, v, STORY_MAX)} />
               </span>
               <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', textAlign: 'right', marginTop: 4 }}>{form[s.key].length}/{STORY_MAX}</div>

@@ -7,6 +7,7 @@ import {
   preferredEngine, setPreferredEngine, deepgramAvailable,
 } from './callNotes'
 import { getRuntimeLang, t } from '../i18n/runtime'
+import { a11yClickProps } from '../lib/a11yClick';
 
 const toast = (m, ty = 'info') => window.showToast?.(m, ty)
 
@@ -64,7 +65,7 @@ export default function NotesButton({ className, style = {}, iconStyle = {}, lab
             border: `1px solid ${cloudPref ? '#38bdf8' : 'rgba(255,255,255,0.3)'}`,
             cursor: 'pointer',
           }}
-        >
+         {...a11yClickProps(toggleEngine)}>
           ☁
         </span>
       )}

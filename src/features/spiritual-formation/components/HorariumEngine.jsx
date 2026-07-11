@@ -113,7 +113,7 @@ export default function HorariumEngine({ userId, initialTodayLog, history = [], 
             value={log.note}
             onChange={(event) => updateLog((prev) => ({ ...prev, note: event.target.value }))}
             placeholder={i18nT('今天在固定时辰回到神面前，有什么领受或挣扎？')}
-          />
+           aria-label={i18nT('今天在固定时辰回到神面前，有什么领受或挣扎？')}/>
         </article>
       </div>
 
@@ -138,7 +138,7 @@ export default function HorariumEngine({ userId, initialTodayLog, history = [], 
                   value={entry.reflection}
                   onChange={(event) => updateEntry(hour.id, { reflection: event.target.value })}
                   placeholder={i18nT('写一句此刻的祷告或领受...')}
-                />
+                 aria-label={i18nT('写一句此刻的祷告或领受...')}/>
               </label>
             </article>
           )

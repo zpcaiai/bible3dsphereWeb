@@ -1,6 +1,7 @@
 import { t as i18nT } from './i18n/runtime'
 import { useEffect, useRef, useState } from 'react'
 import { SuggestMenu } from './components/SuggestField'
+import { a11yClickProps } from './lib/a11yClick';
 const DF_JOURNAL = ['今天我感到…', '我心里渴望…', '我在害怕 / 担心…', '我和某人之间…', '神今天提醒我…']
 const DF_PRAYER = ['主啊，谢谢你…', '求你帮助我…', '我把…交托给你', '求你赦免我…', '愿你的旨意成就']
 import {
@@ -419,11 +420,11 @@ function Reflect({ token, onDone, meta, dimZh, idolZh, stateZh }) {
         {i18nT('诚实地写下今天的处境、情绪与挣扎。引擎会从中辨识你的信念、偶像、顺服与呼召，给出今日的一步顺服。')}
       </div>
       <label style={lbl}>{i18nT('今日反思 / 处境 *')}</label>
-      <span style={{ position: 'relative', display: 'block' }}><textarea value={journal} onChange={e => setJournal(e.target.value)} placeholder={i18nT('今天发生了什么？我有什么感受、渴望或害怕？我在挣扎什么？')} style={{ ...ta, minHeight: 130, paddingRight: 96 }} /><SuggestMenu accent="#a78bfa" top={8} right={8} options={DF_JOURNAL} value={journal} onChange={setJournal} /></span>
+      <span style={{ position: 'relative', display: 'block' }}><textarea value={journal} onChange={e => setJournal(e.target.value)} placeholder={i18nT('今天发生了什么？我有什么感受、渴望或害怕？我在挣扎什么？')} style={{ ...ta, minHeight: 130, paddingRight: 96 }}  aria-label={i18nT('今天发生了什么？我有什么感受、渴望或害怕？我在挣扎什么？')}/><SuggestMenu accent="#a78bfa" top={8} right={8} options={DF_JOURNAL} value={journal} onChange={setJournal} /></span>
       <label style={lbl}>{i18nT('今日经文（可选）')}</label>
-      <input value={scripture} onChange={e => setScripture(e.target.value)} placeholder={i18nT('例：马太福音 6:33')} style={inp} />
+      <input value={scripture} onChange={e => setScripture(e.target.value)} placeholder={i18nT('例：马太福音 6:33')} style={inp}  aria-label={i18nT('例：马太福音 6:33')}/>
       <label style={lbl}>{i18nT('今日祷告（可选）')}</label>
-      <span style={{ position: 'relative', display: 'block' }}><textarea value={prayer} onChange={e => setPrayer(e.target.value)} placeholder={i18nT('主啊……')} style={{ ...ta, minHeight: 70, paddingRight: 96 }} /><SuggestMenu accent="#a78bfa" top={8} right={8} options={DF_PRAYER} value={prayer} onChange={setPrayer} /></span>
+      <span style={{ position: 'relative', display: 'block' }}><textarea value={prayer} onChange={e => setPrayer(e.target.value)} placeholder={i18nT('主啊……')} style={{ ...ta, minHeight: 70, paddingRight: 96 }}  aria-label={i18nT('主啊……')}/><SuggestMenu accent="#a78bfa" top={8} right={8} options={DF_PRAYER} value={prayer} onChange={setPrayer} /></span>
       {err && <div style={{ color: '#ff6b6b', fontSize: 12, marginBottom: 8 }}>{err}</div>}
       <button onClick={submit} disabled={submitting} style={{ ...primaryBtn, width: '100%', opacity: submitting ? 0.6 : 1 }}>
         {submitting ? '引擎分析中…' : '🧬 提交并评估'}
@@ -478,7 +479,7 @@ function Engines({ report, engineList, idolZh, dimZh, onReflect }) {
         const isOpen = open === e.key
         return (
           <div key={e.key} style={{ ...card, marginBottom: 10, padding: 0, overflow: 'hidden' }}>
-            <div onClick={() => setOpen(isOpen ? null : e.key)} style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '13px 15px', cursor: 'pointer' }}>
+            <div onClick={() => setOpen(isOpen ? null : e.key)} style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '13px 15px', cursor: 'pointer' }} {...a11yClickProps(() => setOpen(isOpen ? null : e.key))}>
               <div style={{ fontSize: 22 }}>{e.emoji}</div>
               <div style={{ flex: 1 }}>
                 <div style={{ fontSize: 14, fontWeight: 600, color: '#fff' }}>{e.zh}</div>
@@ -592,7 +593,7 @@ function Mentor({ token }) {
       </div>
       <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
         <input value={q} onChange={e => setQ(e.target.value)} onKeyDown={e => e.key === 'Enter' && send()}
-          placeholder={i18nT('向导师提问…')} style={{ ...inp, marginBottom: 0, flex: 1 }} />
+          placeholder={i18nT('向导师提问…')} style={{ ...inp, marginBottom: 0, flex: 1 }}  aria-label={i18nT('向导师提问…')}/>
         <button onClick={send} disabled={loading} style={{ ...primaryBtn, padding: '0 16px' }}>{i18nT('发送')}</button>
       </div>
     </div>
@@ -648,7 +649,7 @@ function Network({ token }) {
       <div style={card}>
         <div style={sectionTitle}>{i18nT('➕ 添加我正在陪伴的人')}</div>
         <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
-          <input value={name} onChange={e => setName(e.target.value)} placeholder={i18nT('门徒姓名')} style={{ ...inp, marginBottom: 0, flex: 1 }} />
+          <input value={name} onChange={e => setName(e.target.value)} placeholder={i18nT('门徒姓名')} style={{ ...inp, marginBottom: 0, flex: 1 }}  aria-label={i18nT('门徒姓名')}/>
           <select value={type} onChange={e => setType(e.target.value)} style={{ ...inp, marginBottom: 0, width: 110 }}>
             <option value="DISCIPLER">{i18nT('我带的门徒')}</option>
             <option value="MENTOR">{i18nT('我的导师')}</option>

@@ -104,7 +104,7 @@ export default function PsalmPrayerPage({ user, onBack }) {
         <div style={card}>
           <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
             <input value={emotion} onChange={e => setEmotion(e.target.value)} placeholder={i18nT('此刻的情绪 / 需要（如：焦虑、愧疚、感恩…）')}
-              style={{ flex: 1, padding: 10, borderRadius: 10, background: 'rgba(0,0,0,0.3)', color: '#fff', border: '1px solid rgba(255,255,255,0.15)' }} />
+              style={{ flex: 1, padding: 10, borderRadius: 10, background: 'rgba(0,0,0,0.3)', color: '#fff', border: '1px solid rgba(255,255,255,0.15)' }}  aria-label={i18nT('此刻的情绪 / 需要（如：焦虑、愧疚、感恩…）')}/>
             <button style={{ ...btn, width: 'auto', padding: '10px 16px' }} disabled={busy} onClick={recommend}>{i18nT('推荐')}</button>
           </div>
           <select value={picked?.psalm_number || ''} onChange={e => setPicked(psalms.find(p => p.psalm_number === Number(e.target.value)) || null)}
@@ -137,7 +137,7 @@ export default function PsalmPrayerPage({ user, onBack }) {
           <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 6 }}>{MOVE_TITLE[movement] || movement}</div>
           <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', marginBottom: 10 }}>{guidance}</div>
           <textarea value={text} onChange={e => setText(e.target.value)} rows={4} placeholder={i18nT('在神面前诚实地写下…')}
-            style={{ width: '100%', padding: 10, borderRadius: 10, marginBottom: 10, background: 'rgba(0,0,0,0.3)', color: '#fff', border: '1px solid rgba(255,255,255,0.15)', resize: 'vertical' }} />
+            style={{ width: '100%', padding: 10, borderRadius: 10, marginBottom: 10, background: 'rgba(0,0,0,0.3)', color: '#fff', border: '1px solid rgba(255,255,255,0.15)', resize: 'vertical' }}  aria-label={i18nT('在神面前诚实地写下…')}/>
           <button style={btn} disabled={busy} onClick={next}>{busy ? '…' : '下一步 ›'}</button>
         </div>
       )}
@@ -148,9 +148,9 @@ export default function PsalmPrayerPage({ user, onBack }) {
           <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 6 }}>{i18nT('🌱 顺服或安息一步')}</div>
           <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', marginBottom: 10 }}>{i18nT('这篇祷告带你走向的一个具体顺服，或一句你愿安息于其中的真理。')}</div>
           <input value={verse} onChange={e => setVerse(e.target.value)} placeholder={i18nT('今天抓住的一节经文（可选）')}
-            style={{ width: '100%', padding: 10, borderRadius: 10, marginBottom: 8, background: 'rgba(0,0,0,0.3)', color: '#fff', border: '1px solid rgba(255,255,255,0.15)' }} />
+            style={{ width: '100%', padding: 10, borderRadius: 10, marginBottom: 8, background: 'rgba(0,0,0,0.3)', color: '#fff', border: '1px solid rgba(255,255,255,0.15)' }}  aria-label={i18nT('今天抓住的一节经文（可选）')}/>
           <textarea value={text} onChange={e => setText(e.target.value)} rows={3} placeholder={i18nT('一个微小的顺服，或一句安息的话…')}
-            style={{ width: '100%', padding: 10, borderRadius: 10, marginBottom: 10, background: 'rgba(0,0,0,0.3)', color: '#fff', border: '1px solid rgba(255,255,255,0.15)', resize: 'vertical' }} />
+            style={{ width: '100%', padding: 10, borderRadius: 10, marginBottom: 10, background: 'rgba(0,0,0,0.3)', color: '#fff', border: '1px solid rgba(255,255,255,0.15)', resize: 'vertical' }}  aria-label={i18nT('一个微小的顺服，或一句安息的话…')}/>
           <button style={btn} disabled={busy} onClick={finish}>{busy ? '…' : '完成诗篇祷告'}</button>
         </div>
       )}

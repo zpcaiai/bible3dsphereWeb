@@ -48,13 +48,13 @@ export default function PracticingPresencePage({ user, onBack }) {
         <div style={card}>
           <div style={{ fontWeight: 700, marginBottom: 6 }}>{checkin.practice.title}</div>
           <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', marginBottom: 10 }}>{checkin.practice.description}</div>
-          <input value={prayer} onChange={e => setPrayer(e.target.value)} placeholder={i18nT('一句短祷（可选）')} style={fld} />
+          <input value={prayer} onChange={e => setPrayer(e.target.value)} placeholder={i18nT('一句短祷（可选）')} style={fld}  aria-label={i18nT('一句短祷（可选）')}/>
           <button style={btn} disabled={busy} onClick={done}>{i18nT('完成')}</button>
         </div>
       ) : (
         <div style={card}>
           <div style={{ display: 'flex', gap: 8 }}>
-            <input value={context} onChange={e => setContext(e.target.value)} placeholder={i18nT('此刻的情境/情绪（如：工作焦虑、通勤、疲惫）')} style={{ ...fld, marginBottom: 0, flex: 1 }} />
+            <input value={context} onChange={e => setContext(e.target.value)} placeholder={i18nT('此刻的情境/情绪（如：工作焦虑、通勤、疲惫）')} style={{ ...fld, marginBottom: 0, flex: 1 }}  aria-label={i18nT('此刻的情境/情绪（如：工作焦虑、通勤、疲惫）')}/>
             <button style={btn} disabled={busy} onClick={recommend}>{i18nT('推荐')}</button>
           </div>
           {recs.map(p => (

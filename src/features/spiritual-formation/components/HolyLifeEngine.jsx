@@ -357,7 +357,7 @@ export default function HolyLifeEngine({ userId, token, initialTodayLog, history
 
       <div className="sf-card holy-life-intention">
         <label>{i18nT('今日奉献意向')}
-          <textarea value={log.intention} onChange={(event) => updateLog((prev) => ({ ...prev, intention: event.target.value }))} placeholder={i18nT('今天我愿意在哪个具体领域承认：每一分钟都属于神？')} />
+          <textarea value={log.intention} onChange={(event) => updateLog((prev) => ({ ...prev, intention: event.target.value }))} placeholder={i18nT('今天我愿意在哪个具体领域承认：每一分钟都属于神？')}  aria-label={i18nT('今天我愿意在哪个具体领域承认：每一分钟都属于神？')}/>
         </label>
       </div>
 
@@ -387,16 +387,16 @@ export default function HolyLifeEngine({ userId, token, initialTodayLog, history
         <article className="sf-card holy-life-purpose">
           <h3>Purpose Review</h3>
           <label>{i18nT('今日呼召陈述')}
-            <textarea value={log.purposeReview?.callingStatement || ''} onChange={(event) => updatePurposeReview('callingStatement', event.target.value)} placeholder={i18nT('今天神托付我的中心责任是什么？')} />
+            <textarea value={log.purposeReview?.callingStatement || ''} onChange={(event) => updatePurposeReview('callingStatement', event.target.value)} placeholder={i18nT('今天神托付我的中心责任是什么？')}  aria-label={i18nT('今天神托付我的中心责任是什么？')}/>
           </label>
           <label>{i18nT('管家职分焦点')}
-            <textarea value={log.purposeReview?.stewardshipFocus || ''} onChange={(event) => updatePurposeReview('stewardshipFocus', event.target.value)} placeholder={i18nT('时间、关系、工作、身体或资源中，哪个领域需要忠心？')} />
+            <textarea value={log.purposeReview?.stewardshipFocus || ''} onChange={(event) => updatePurposeReview('stewardshipFocus', event.target.value)} placeholder={i18nT('时间、关系、工作、身体或资源中，哪个领域需要忠心？')}  aria-label={i18nT('时间、关系、工作、身体或资源中，哪个领域需要忠心？')}/>
           </label>
           <label>{i18nT('偏离警戒')}
-            <textarea value={log.purposeReview?.misalignment || ''} onChange={(event) => updatePurposeReview('misalignment', event.target.value)} placeholder={i18nT('今天最容易把目的从神转向自己的地方是什么？')} />
+            <textarea value={log.purposeReview?.misalignment || ''} onChange={(event) => updatePurposeReview('misalignment', event.target.value)} placeholder={i18nT('今天最容易把目的从神转向自己的地方是什么？')}  aria-label={i18nT('今天最容易把目的从神转向自己的地方是什么？')}/>
           </label>
           <label>{i18nT('下一步忠心')}
-            <textarea value={log.purposeReview?.nextFaithfulAction || ''} onChange={(event) => updatePurposeReview('nextFaithfulAction', event.target.value)} placeholder={i18nT('一个可以执行的顺服动作。')} />
+            <textarea value={log.purposeReview?.nextFaithfulAction || ''} onChange={(event) => updatePurposeReview('nextFaithfulAction', event.target.value)} placeholder={i18nT('一个可以执行的顺服动作。')}  aria-label={i18nT('一个可以执行的顺服动作。')}/>
           </label>
         </article>
       </div>
@@ -407,7 +407,7 @@ export default function HolyLifeEngine({ userId, token, initialTodayLog, history
           <p>{i18nT('暂停。观察此刻的心。必要时悔改。重新开始。')}</p>
         </div>
         <div>
-          <textarea value={presenceDraft} onChange={(event) => setPresenceDraft(event.target.value)} placeholder={i18nT('此刻我归回神的一句话...')} />
+          <textarea value={presenceDraft} onChange={(event) => setPresenceDraft(event.target.value)} placeholder={i18nT('此刻我归回神的一句话...')}  aria-label={i18nT('此刻我归回神的一句话...')}/>
           <button className="sf-primary" type="button" onClick={addPresencePause}>{i18nT('记录一次暂停')}</button>
         </div>
       </div>
@@ -443,7 +443,7 @@ export default function HolyLifeEngine({ userId, token, initialTodayLog, history
               <p>{i18nT(skill.purpose)}</p>
               <div className="holy-life-practice">{i18nT(skill.practice)}</div>
               <label>{i18nT(skill.prompt)}
-                <textarea value={entry.reflection} onChange={(event) => updateEntry(skill.id, { reflection: event.target.value })} placeholder={i18nT(skill.placeholder)} />
+                <textarea value={entry.reflection} onChange={(event) => updateEntry(skill.id, { reflection: event.target.value })} placeholder={i18nT(skill.placeholder)}  aria-label={i18nT(skill.placeholder)}/>
               </label>
               <div className="sf-chip-row">
                 {skill.suggestions.map((suggestion) => (
@@ -470,19 +470,19 @@ export default function HolyLifeEngine({ userId, token, initialTodayLog, history
         </div>
         <div className="holy-life-decision-grid">
           <label>{i18nT('决定')}
-            <textarea value={decisionDraft.decision} onChange={(event) => setDecisionDraft((prev) => ({ ...prev, decision: event.target.value }))} placeholder={i18nT('我要做的决定是什么？')} />
+            <textarea value={decisionDraft.decision} onChange={(event) => setDecisionDraft((prev) => ({ ...prev, decision: event.target.value }))} placeholder={i18nT('我要做的决定是什么？')}  aria-label={i18nT('我要做的决定是什么？')}/>
           </label>
           <label>{i18nT('动机省察')}
-            <textarea value={decisionDraft.motive} onChange={(event) => setDecisionDraft((prev) => ({ ...prev, motive: event.target.value }))} placeholder={i18nT('这是出于爱、真理、谦卑，还是恐惧、骄傲、逃避？')} />
+            <textarea value={decisionDraft.motive} onChange={(event) => setDecisionDraft((prev) => ({ ...prev, motive: event.target.value }))} placeholder={i18nT('这是出于爱、真理、谦卑，还是恐惧、骄傲、逃避？')}  aria-label={i18nT('这是出于爱、真理、谦卑，还是恐惧、骄傲、逃避？')}/>
           </label>
           <label>{i18nT('愿意交托的欲望')}
-            <textarea value={decisionDraft.desireToSurrender} onChange={(event) => setDecisionDraft((prev) => ({ ...prev, desireToSurrender: event.target.value }))} placeholder={i18nT('若神引导不同，我愿意放下什么？')} />
+            <textarea value={decisionDraft.desireToSurrender} onChange={(event) => setDecisionDraft((prev) => ({ ...prev, desireToSurrender: event.target.value }))} placeholder={i18nT('若神引导不同，我愿意放下什么？')}  aria-label={i18nT('若神引导不同，我愿意放下什么？')}/>
           </label>
           <label>{i18nT('经文锚点')}
-            <textarea value={decisionDraft.scriptureAnchor} onChange={(event) => setDecisionDraft((prev) => ({ ...prev, scriptureAnchor: event.target.value }))} placeholder={i18nT('罗马书 12:1-2')} />
+            <textarea value={decisionDraft.scriptureAnchor} onChange={(event) => setDecisionDraft((prev) => ({ ...prev, scriptureAnchor: event.target.value }))} placeholder={i18nT('罗马书 12:1-2')}  aria-label={i18nT('罗马书 12:1-2')}/>
           </label>
           <label>{i18nT('顺服行动')}
-            <textarea value={decisionDraft.obedienceStep} onChange={(event) => setDecisionDraft((prev) => ({ ...prev, obedienceStep: event.target.value }))} placeholder={i18nT('下一步可执行的忠心是什么？')} />
+            <textarea value={decisionDraft.obedienceStep} onChange={(event) => setDecisionDraft((prev) => ({ ...prev, obedienceStep: event.target.value }))} placeholder={i18nT('下一步可执行的忠心是什么？')}  aria-label={i18nT('下一步可执行的忠心是什么？')}/>
           </label>
         </div>
         {(log.decisionSanctificationLogs || []).length ? (
@@ -501,12 +501,12 @@ export default function HolyLifeEngine({ userId, token, initialTodayLog, history
       <div className="holy-life-report-grid">
         <article className="sf-card">
           <h3>Daily Holiness Report</h3>
-          <textarea value={log.dailyReport} onChange={(event) => updateLog((prev) => ({ ...prev, dailyReport: event.target.value }))} placeholder={i18nT('点击生成，或手动记录今天的圣洁生活报告。')} />
+          <textarea value={log.dailyReport} onChange={(event) => updateLog((prev) => ({ ...prev, dailyReport: event.target.value }))} placeholder={i18nT('点击生成，或手动记录今天的圣洁生活报告。')}  aria-label={i18nT('点击生成，或手动记录今天的圣洁生活报告。')}/>
           <button className="sf-primary" type="button" onClick={generateReport}>{i18nT('生成今日报告')}</button>
         </article>
         <article className="sf-card">
           <h3>Tomorrow Formation</h3>
-          <textarea value={log.tomorrowFormation} onChange={(event) => updateLog((prev) => ({ ...prev, tomorrowFormation: event.target.value }))} placeholder={i18nT('明天最重要的一步顺服是什么？')} />
+          <textarea value={log.tomorrowFormation} onChange={(event) => updateLog((prev) => ({ ...prev, tomorrowFormation: event.target.value }))} placeholder={i18nT('明天最重要的一步顺服是什么？')}  aria-label={i18nT('明天最重要的一步顺服是什么？')}/>
         </article>
       </div>
 

@@ -51,7 +51,8 @@ export function markCatechismComplete(userId = 'local-user', itemKey) {
   if (!hasStorage() || !itemKey) return []
   const current = readCatechismCompleted(userId)
   const next = Array.from(new Set([itemKey, ...current]))
-  const all = JSON.parse(window.localStorage.getItem(STORAGE_KEY) || '{}')
+  let all = {}
+  try { all = JSON.parse(window.localStorage.getItem(STORAGE_KEY) || '{}') } catch { all = {} }
   all[userId] = next
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(all))
   return next

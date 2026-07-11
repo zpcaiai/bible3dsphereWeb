@@ -347,7 +347,7 @@ export default function HabitsPage({ user, token: propToken, embedded = false, o
                           fontFamily: 'inherit',
                           boxSizing: 'border-box',
                         }}
-                      />
+                       aria-label={i18nT('今日反思（可选）…')}/>
                     </div>
                   </div>
                 )
@@ -408,7 +408,7 @@ export default function HabitsPage({ user, token: propToken, embedded = false, o
                   outline: 'none',
                   fontFamily: 'inherit',
                 }}
-              />
+               aria-label={i18nT('输入习惯名称…')}/>
               <button onClick={addCustom} disabled={!customName.trim() || addingPreset === 'custom'} style={{
                 padding: '8px 16px',
                 borderRadius: 8,

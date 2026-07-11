@@ -4,6 +4,7 @@ import { API_BASE, submitPrayer } from '../api'
 import { getToken } from '../auth'
 import { getTranscript, clearNotes } from './callNotes'
 import { t } from '../i18n/runtime'
+import { a11yClickProps } from '../lib/a11yClick';
 
 const toast = (m, ty = 'info') => window.showToast?.(m, ty)
 
@@ -70,8 +71,8 @@ export default function MinutesModal({ title, onClose }) {
   function close() { clearNotes(); onClose?.() }
 
   return (
-    <div style={S.overlay} onClick={close}>
-      <div style={S.card} onClick={(e) => e.stopPropagation()}>
+    <div style={S.overlay} onClick={close} {...a11yClickProps(close)}>
+      <div style={S.card} onClick={(e) => e.stopPropagation()} {...a11yClickProps((e) => e.stopPropagation())}>
         <div style={S.head}>
           <span style={{ fontWeight: 700 }}>{t('📝 聚会纪要')}{title ? ` · ${title}` : ''}</span>
           <button style={S.x} onClick={close}>×</button>

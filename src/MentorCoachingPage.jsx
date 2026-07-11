@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import BackButton from './BackButton'
 import { communityApi } from './api'
 import { getToken } from './auth'
+import { a11yClickProps } from './lib/a11yClick';
 
 const card = { background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, padding: 14, marginBottom: 12 }
 const btn = { cursor: 'pointer', borderRadius: 10, padding: '8px 12px', border: 'none', color: '#fff', fontWeight: 700, background: 'linear-gradient(135deg, rgba(139,92,246,0.85), rgba(125,211,252,0.6))' }
@@ -42,7 +43,7 @@ export default function MentorCoachingPage({ user, onBack }) {
 
       <div style={card}>
         <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 8 }}>{i18nT('建立关系')}</div>
-        <input value={cp} onChange={e => setCp(e.target.value)} placeholder={i18nT('对方邮箱')} style={fld} />
+        <input value={cp} onChange={e => setCp(e.target.value)} placeholder={i18nT('对方邮箱')} style={fld}  aria-label={i18nT('对方邮箱')}/>
         <div style={{ display: 'flex', gap: 8 }}>
           <select value={role} onChange={e => setRole(e.target.value)} style={{ ...fld, marginBottom: 0, flex: 1 }}>
             <option value="mentee">{i18nT('我是被陪伴者')}</option><option value="mentor">{i18nT('我是导师')}</option>
@@ -55,7 +56,7 @@ export default function MentorCoachingPage({ user, onBack }) {
         <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 8 }}>{i18nT('我的关系')}</div>
         {rels.length === 0 && <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)' }}>{i18nT('还没有陪跑关系。')}</div>}
         {rels.map(r => (
-          <div key={r.id} onClick={() => openRel(r)} style={{ padding: '8px 0', borderBottom: '1px solid rgba(255,255,255,0.06)', cursor: 'pointer' }}>
+          <div key={r.id} onClick={() => openRel(r)} style={{ padding: '8px 0', borderBottom: '1px solid rgba(255,255,255,0.06)', cursor: 'pointer' }} {...a11yClickProps(() => openRel(r))}>
             <div style={{ fontSize: 14 }}>{r.my_role === 'mentee' ? '导师：' + r.mentor_email : '被陪伴：' + r.mentee_email} <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)' }}>· {r.status}</span></div>
           </div>
         ))}
@@ -70,7 +71,7 @@ export default function MentorCoachingPage({ user, onBack }) {
             <div style={{ marginTop: 6, color: '#8be9c0' }}>{i18nT('提问：')}</div>
             {(rec.suggested_questions || []).map((q, i) => <div key={i}>– {q}</div>)}
           </div>}
-          <textarea value={summary} onChange={e => setSummary(e.target.value)} rows={3} placeholder={i18nT('这次会面的摘要…')} style={{ ...fld, resize: 'vertical' }} />
+          <textarea value={summary} onChange={e => setSummary(e.target.value)} rows={3} placeholder={i18nT('这次会面的摘要…')} style={{ ...fld, resize: 'vertical' }}  aria-label={i18nT('这次会面的摘要…')}/>
           <button style={btn} onClick={addSession}>{i18nT('记录会面')}</button>
           <div style={{ marginTop: 10 }}>
             {sessions.map(s => <div key={s.id} style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)', padding: '4px 0' }}>· {s.summary || s.session_type}</div>)}

@@ -10,6 +10,7 @@ import { useEffect, useMemo, useState } from 'react'
 import BackButton from './BackButton'
 import { API_BASE, fetchScripture } from './api.js'
 import { TTSButton, TTSFullBar } from './useGlobalAudio.jsx'
+import { a11yClickProps } from './lib/a11yClick';
 
 // ── Chinese month / day labels ────────────────────────────────────────────────
 const MONTH_LABELS = ['一月','二月','三月','四月','五月','六月',
@@ -369,7 +370,7 @@ export default function DailyDevotionPage({ onBack }) {
                 key={key}
                 style={S.calDay(isToday, isSel, has)}
                 onClick={() => has && setSelectedKey(key)}
-              >
+               {...a11yClickProps(() => has && setSelectedKey(key))}>
                 {day}
               </div>
             )

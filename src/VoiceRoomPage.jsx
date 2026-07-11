@@ -148,7 +148,7 @@ function GroupList({ enabled, groups, loading, token, onRefresh, onEnter }) {
             placeholder={i18nT('群名称，如「周三晚祷告会」')}
             onChange={e => setNewName(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && doCreate()}
-          />
+           aria-label={i18nT('群名称，如「周三晚祷告会」')}/>
           <button style={S.primaryBtn} disabled={creating} onClick={doCreate}>
             {creating ? '建群中…' : '＋ 建群'}
           </button>
@@ -159,7 +159,7 @@ function GroupList({ enabled, groups, loading, token, onRefresh, onEnter }) {
             value={code} maxLength={12} placeholder={i18nT('输入邀请码加入他人的群')}
             onChange={e => setCode(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && doJoin()}
-          />
+           aria-label={i18nT('输入邀请码加入他人的群')}/>
           <button style={S.ghostBtn} disabled={joining} onClick={doJoin}>
             {joining ? '加入中…' : '加入'}
           </button>
@@ -555,7 +555,7 @@ function CallScreen({ group, user, token, onLeave }) {
               placeholder={i18nT('输入共享口令（留空=关闭加密）')}
               onChange={e => setKeyDraft(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && saveKey()}
-            />
+             aria-label={i18nT('输入共享口令（留空=关闭加密）')}/>
             <div style={S.keyBtns}>
               <button style={S.ghostBtn} onClick={() => setKeyPanel(false)}>{i18nT('取消')}</button>
               <button style={S.primaryBtn} onClick={saveKey}>{i18nT('保存并重连')}</button>

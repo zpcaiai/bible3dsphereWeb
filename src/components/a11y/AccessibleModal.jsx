@@ -1,13 +1,14 @@
 import { useRef } from 'react'
 import useFocusTrap from './useFocusTrap'
+import { a11yClickProps } from '../../lib/a11yClick';
 
 // AccessibleModal —— 可复用的无障碍对话框基元。
 // 提供：role="dialog" + aria-modal、初始聚焦、焦点陷阱（Tab 循环）、
 // Esc 关闭、关闭后焦点归还、点击遮罩关闭。
 //
 // 设计目标是「就地包裹」现有弹层：把原来的
-//   <div style={S.overlay} onClick={onClose}>
-//     <div style={S.card} onClick={e => e.stopPropagation()}> … </div>
+//   <div style={S.overlay} onClick={onClose} {...a11yClickProps(onClose)}>
+//     <div style={S.card} onClick={e => e.stopPropagation()} {...a11yClickProps(e => e.stopPropagation())}> … </div>
 //   </div>
 // 替换为
 //   <AccessibleModal onClose={onClose} overlayStyle={S.overlay} contentStyle={S.card} label="标题">

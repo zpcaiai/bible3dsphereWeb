@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { API_BASE } from './api'
 import { t } from './i18n/runtime'
+import { a11yClickProps } from './lib/a11yClick';
 
 const toast = (m, ty = 'info') => window.showToast?.(m, ty)
 const WEEK = ['周一', '周二', '周三', '周四', '周五', '周六', '主日']
@@ -97,8 +98,8 @@ export default function MeetingScheduleModal({ group, token, onClose }) {
   }
 
   return (
-    <div style={S.overlay} onClick={onClose}>
-      <div style={S.card} onClick={(e) => e.stopPropagation()}>
+    <div style={S.overlay} onClick={onClose} {...a11yClickProps(onClose)}>
+      <div style={S.card} onClick={(e) => e.stopPropagation()} {...a11yClickProps((e) => e.stopPropagation())}>
         <div style={S.head}>
           <span style={{ fontWeight: 700 }}>📅 {group.name} · {t('聚会排期')}</span>
           <button style={S.x} onClick={onClose}>×</button>
@@ -122,7 +123,7 @@ export default function MeetingScheduleModal({ group, token, onClose }) {
         <div style={S.divider} />
         <div style={S.formRow}>
           <input style={{ ...S.input, flex: 1 }} value={title} maxLength={40}
-            placeholder={t('聚会名称，如「周三晚祷告会」')} onChange={(e) => setTitle(e.target.value)} />
+            placeholder={t('聚会名称，如「周三晚祷告会」')} onChange={(e) => setTitle(e.target.value)}  aria-label={t('聚会名称，如「周三晚祷告会」')}/>
         </div>
         <div style={S.formRow}>
           <select style={S.input} value={kind} onChange={(e) => setKind(e.target.value)}>

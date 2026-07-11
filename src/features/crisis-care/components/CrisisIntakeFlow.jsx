@@ -61,7 +61,7 @@ export default function CrisisIntakeFlow({ regionCode = 'TW', onNavigate, canNot
           value={text}
           placeholder={i18nT('例如：我撑不下去了 / 我好想消失 / 我快控制不住了…')}
           onChange={(e) => setText(e.target.value)}
-        />
+         aria-label={i18nT('例如：我撑不下去了 / 我好想消失 / 我快控制不住了…')}/>
         <button className="cc-btn full danger" type="button" onClick={run} disabled={busy} style={{ marginTop: 10 }}>
           {busy ? '在这里…' : '我需要帮助'}
         </button>

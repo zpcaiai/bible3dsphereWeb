@@ -19,6 +19,7 @@ import {
   submitWaitingReflection,
 } from './api'
 import { getToken } from './auth'
+import { a11yClickProps } from './lib/a11yClick';
 
 const SLIDERS = [
   { key: 'anxiety_level',       name: '焦虑程度',   hint: '想到这件事，我有多焦躁不安？' },
@@ -122,7 +123,7 @@ function HomeView({ cases, loading, onOpen, onNew }) {
       {cases.map(c => {
         const t = TYPE[c.waiting_type] || TYPE.unknown
         return (
-          <div key={c.id} onClick={() => onOpen(c.id)} style={{ ...card, cursor: 'pointer' }}>
+          <div key={c.id} onClick={() => onOpen(c.id)} style={{ ...card, cursor: 'pointer' }} {...a11yClickProps(() => onOpen(c.id))}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
               <div style={{ fontSize: 14, fontWeight: 600, flex: 1 }}>{c.waiting_for}</div>
               <span style={{ fontSize: 11, fontWeight: 700, color: t.color, padding: '2px 8px', borderRadius: 10, background: `${t.color}22`, flexShrink: 0 }}>{t.label}</span>
@@ -163,9 +164,9 @@ function CreateView({ onCancel, onCreated, onNeedLogin, setError }) {
     <>
       <div style={card}>
         <label style={lbl}>{i18nT('我正在等什么？')}</label>
-        <input value={waitingFor} onChange={e => setWaitingFor(e.target.value)} placeholder={i18nT('如：一个 offer、一段关系的回应、一个突破…')} style={input} />
+        <input value={waitingFor} onChange={e => setWaitingFor(e.target.value)} placeholder={i18nT('如：一个 offer、一段关系的回应、一个突破…')} style={input}  aria-label={i18nT('如：一个 offer、一段关系的回应、一个突破…')}/>
         <label style={{ ...lbl, marginTop: 14 }}>{i18nT('具体描述（可选）')}</label>
-        <span style={{ position: 'relative', display: 'block' }}><textarea value={desc} onChange={e => setDesc(e.target.value)} rows={3} placeholder={i18nT('发生了什么？你最害怕它不来的原因是什么？')} style={{ ...input, resize: 'vertical', paddingRight: 96 }} /><SuggestMenu accent="#a78bfa" top={8} right={8} options={WP_DESC} value={desc} onChange={setDesc} /></span>
+        <span style={{ position: 'relative', display: 'block' }}><textarea value={desc} onChange={e => setDesc(e.target.value)} rows={3} placeholder={i18nT('发生了什么？你最害怕它不来的原因是什么？')} style={{ ...input, resize: 'vertical', paddingRight: 96 }}  aria-label={i18nT('发生了什么？你最害怕它不来的原因是什么？')}/><SuggestMenu accent="#a78bfa" top={8} right={8} options={WP_DESC} value={desc} onChange={setDesc} /></span>
       </div>
       <div style={card}>
         <div style={{ fontSize: 12, fontWeight: 700, color: 'rgba(255,255,255,0.6)', marginBottom: 6 }}>{i18nT('诚实地为此刻打分（0–10）')}</div>
@@ -317,7 +318,7 @@ function PracticeCard({ p, onSaved, setError, onNeedLogin }) {
 
   return (
     <div style={{ ...card, borderColor: p.completed ? 'rgba(52,199,89,0.35)' : 'rgba(255,255,255,0.08)' }}>
-      <div onClick={() => setOpen(!open)} style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }}>
+      <div onClick={() => setOpen(!open)} style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }} {...a11yClickProps(() => setOpen(!open))}>
         <span style={{ width: 26, height: 26, borderRadius: '50%', background: p.completed ? '#34c759' : 'rgba(255,255,255,0.1)', color: '#fff', fontSize: 12, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>{p.completed ? '✓' : p.day_index}</span>
         <div style={{ flex: 1 }}>
           <div style={{ fontSize: 13.5, fontWeight: 600 }}>Day {p.day_index} · {p.practice_title}</div>
@@ -328,7 +329,7 @@ function PracticeCard({ p, onSaved, setError, onNeedLogin }) {
         <div style={{ marginTop: 10, paddingTop: 10, borderTop: '1px solid rgba(255,255,255,0.06)' }}>
           <div style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.74)', lineHeight: 1.7, marginBottom: 8 }}>{p.practice_content}</div>
           <div style={{ fontSize: 12, color: '#a78bfa', fontStyle: 'italic', marginBottom: 8 }}>💭 {p.reflection_prompt}</div>
-          <span style={{ position: 'relative', display: 'block' }}><textarea value={text} onChange={e => setText(e.target.value)} rows={3} placeholder={i18nT('写下你的反思…')} style={{ ...input, resize: 'vertical', paddingRight: 96 }} /><SuggestMenu accent="#a78bfa" top={8} right={8} options={WP_REFLECT} value={text} onChange={setText} /></span>
+          <span style={{ position: 'relative', display: 'block' }}><textarea value={text} onChange={e => setText(e.target.value)} rows={3} placeholder={i18nT('写下你的反思…')} style={{ ...input, resize: 'vertical', paddingRight: 96 }}  aria-label={i18nT('写下你的反思…')}/><SuggestMenu accent="#a78bfa" top={8} right={8} options={WP_REFLECT} value={text} onChange={setText} /></span>
           <button onClick={complete} disabled={busy} style={{ ...primaryBtn, marginTop: 8, padding: 10, fontSize: 13 }}>{busy ? '保存中…' : (p.completed ? '更新反思' : '完成这一天')}</button>
         </div>
       )}
@@ -360,14 +361,14 @@ function ReflectBox({ caseId, onSaved, setError, onNeedLogin }) {
   return (
     <div style={{ ...card, marginTop: 12 }}>
       <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 10 }}>{i18nT('今天的等待，状态如何？')}</div>
-      <span style={{ position: 'relative', display: 'block' }}><textarea value={text} onChange={e => setText(e.target.value)} rows={3} placeholder={i18nT('今天等待中发生了什么？我的内心如何？')} style={{ ...input, resize: 'vertical', paddingRight: 96 }} /><SuggestMenu accent="#a78bfa" top={8} right={8} options={WP_TODAY} value={text} onChange={setText} /></span>
+      <span style={{ position: 'relative', display: 'block' }}><textarea value={text} onChange={e => setText(e.target.value)} rows={3} placeholder={i18nT('今天等待中发生了什么？我的内心如何？')} style={{ ...input, resize: 'vertical', paddingRight: 96 }}  aria-label={i18nT('今天等待中发生了什么？我的内心如何？')}/><SuggestMenu accent="#a78bfa" top={8} right={8} options={WP_TODAY} value={text} onChange={setText} /></span>
       {[['焦虑', anx, setAnx], ['盼望', hope, setHope], ['信靠', trust, setTrust]].map(([n, v, set]) => (
         <div key={n} style={{ marginTop: 10 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}><span style={{ color: 'rgba(255,255,255,0.7)' }}>{n}</span><span style={{ color: '#5ac8fa', fontWeight: 700 }}>{v}</span></div>
           <input type="range" min="0" max="10" step="1" value={v} onChange={e => set(parseInt(e.target.value))} style={{ width: '100%', accentColor: '#5ac8fa' }} />
         </div>
       ))}
-      <input value={action} onChange={e => setAction(e.target.value)} placeholder={i18nT('今天有没有一个忠心的小行动？')} style={{ ...input, marginTop: 12 }} />
+      <input value={action} onChange={e => setAction(e.target.value)} placeholder={i18nT('今天有没有一个忠心的小行动？')} style={{ ...input, marginTop: 12 }}  aria-label={i18nT('今天有没有一个忠心的小行动？')}/>
       <div style={{ marginTop: 12, fontSize: 12, color: 'rgba(255,255,255,0.6)', marginBottom: 6 }}>{i18nT('此刻我更像——')}</div>
       <div style={{ display: 'flex', gap: 8 }}>
         {[['godot', '等戈多', '#ff8787'], ['mixed', '交织', '#ffd43b'], ['god', '等候上帝', '#34c759']].map(([k, l, color]) => (

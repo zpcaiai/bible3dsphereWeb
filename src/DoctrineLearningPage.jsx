@@ -5,6 +5,7 @@ import BackButton from './BackButton'
 import { communityApi } from './api'
 import { getToken } from './auth'
 import CreedCatechismGalaxy from './features/spiritual-formation/components/creed-catechism/CreedCatechismGalaxy'
+import { a11yClickProps } from './lib/a11yClick';
 
 const card = { background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, padding: 14, marginBottom: 12 }
 const btn = { cursor: 'pointer', borderRadius: 10, padding: '8px 12px', border: 'none', color: '#fff', fontWeight: 700, background: 'linear-gradient(135deg, rgba(139,92,246,0.85), rgba(52,199,89,0.6))' }
@@ -24,7 +25,7 @@ export default function DoctrineLearningPage({ user, onBack }) {
 
   const Topic = ({ tp }) => (
     <div style={{ padding: '8px 0', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-      <div onClick={() => setOpen(open === tp.topic_key ? null : tp.topic_key)} style={{ cursor: 'pointer', fontSize: 14, fontWeight: 600 }}>
+      <div onClick={() => setOpen(open === tp.topic_key ? null : tp.topic_key)} style={{ cursor: 'pointer', fontSize: 14, fontWeight: 600 }} {...a11yClickProps(() => setOpen(open === tp.topic_key ? null : tp.topic_key))}>
         {tp.display_name} <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)' }}>· {tp.difficulty}</span>
       </div>
       {open === tp.topic_key && (
@@ -60,7 +61,7 @@ export default function DoctrineLearningPage({ user, onBack }) {
 
       <div style={card}>
         <div style={{ display: 'flex', gap: 8 }}>
-          <input value={goal} onChange={e => setGoal(e.target.value)} placeholder={i18nT('想学什么 / 在挣扎什么（如：羞耻、苦难、初信、领袖）')} style={{ ...fld, marginBottom: 0, flex: 1 }} />
+          <input value={goal} onChange={e => setGoal(e.target.value)} placeholder={i18nT('想学什么 / 在挣扎什么（如：羞耻、苦难、初信、领袖）')} style={{ ...fld, marginBottom: 0, flex: 1 }}  aria-label={i18nT('想学什么 / 在挣扎什么（如：羞耻、苦难、初信、领袖）')}/>
           <button style={btn} onClick={recommend}>{i18nT('推荐路径')}</button>
         </div>
         {rec && rec.recommended_path && (

@@ -187,7 +187,7 @@ export default function AccountabilityScreen({ token, onBack, openPage }) {
         <AttentionCard title={i18nT("邀请守望伙伴")} actionLabel={i18nT("隐私设置")} onAction={() => openPage('privacy')}>
           <div className="attn-inline-form">
             <label className="attn-sr-only" htmlFor="attention-partner-email">{i18nT("伙伴邮箱")}</label>
-            <input id="attention-partner-email" type="email" value={partnerUserId} onChange={(e) => setPartnerUserId(e.target.value)} placeholder={i18nT("伙伴邮箱")} />
+            <input id="attention-partner-email" type="email" value={partnerUserId} onChange={(e) => setPartnerUserId(e.target.value)} placeholder={i18nT("伙伴邮箱")}  aria-label={i18nT("伙伴邮箱")}/>
             <button className="attn-button" type="button" disabled={busy || !partnerUserId.trim()} onClick={invitePartner}>{i18nT("发送邀请")}</button>
           </div>
         </AttentionCard>
@@ -248,7 +248,7 @@ export default function AccountabilityScreen({ token, onBack, openPage }) {
           <div className="attn-form-grid">
             <label>{i18nT("发送给")}<select value={targetUserId} onChange={(e) => setTargetUserId(e.target.value)}><option value="">{i18nT("选择 active 伙伴")}</option>{activePartners.map((item) => <option key={item.id} value={peerFor(item)?.id}>{peerFor(item)?.displayName || peerFor(item)?.id}</option>)}</select></label>
             <label>{i18nT("分类")}<select value={prayerCategory} onChange={(event) => setPrayerCategory(event.target.value)}>{PrayerCategoryOptions.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
-            <label>{i18nT("代祷标题")}<input value={prayerTitle} onChange={(e) => setPrayerTitle(e.target.value)} placeholder={i18nT("请为我今天的守心节奏祷告")} /></label>
+            <label>{i18nT("代祷标题")}<input value={prayerTitle} onChange={(e) => setPrayerTitle(e.target.value)} placeholder={i18nT("请为我今天的守心节奏祷告")}  aria-label={i18nT("请为我今天的守心节奏祷告")}/></label>
             <label>{i18nT("可选说明")}<textarea rows={3} maxLength={2000} value={prayerBody} onChange={(event) => setPrayerBody(event.target.value)} /></label>
           </div>
           <button className="attn-button" type="button" disabled={busy || !targetUserId || !prayerTitle.trim()} onClick={createPrayer}>{i18nT("发送代祷")}</button>

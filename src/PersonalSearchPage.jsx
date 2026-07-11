@@ -139,7 +139,7 @@ export default function PersonalSearchPage({ token, onBack, onOpenPanel }) {
             border: '1px solid rgba(255,255,255,0.16)', borderRadius: 12,
             padding: '12px 14px', color: '#fff', fontSize: 15, fontFamily: 'inherit', outline: 'none',
           }}
-        />
+         aria-label={t("搜灵修日记、主日笔记、祷告、纪要、背经卡…")}/>
 
         {!q.trim() && (
           <div style={{ textAlign: 'center', color: 'rgba(255,255,255,0.45)', fontSize: 13.5, lineHeight: 2, padding: '40px 16px' }}>

@@ -129,7 +129,7 @@ export default function MissionLifePage({ user, onBack }) {
           <div key={p.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', padding: '8px 0', fontSize: 13 }}>{p.title}</div>
         ))}
         <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
-          <input value={newProject} onChange={e => setNewProject(e.target.value)} placeholder={i18nT('新项目（如：每月款待晚餐）')} style={{ ...fieldStyle, marginBottom: 0, flex: 1 }} />
+          <input value={newProject} onChange={e => setNewProject(e.target.value)} placeholder={i18nT('新项目（如：每月款待晚餐）')} style={{ ...fieldStyle, marginBottom: 0, flex: 1 }}  aria-label={i18nT('新项目（如：每月款待晚餐）')}/>
           <button style={{ ...btn, width: 'auto', padding: '10px 16px' }} disabled={busy} onClick={addProject}>{i18nT('添加')}</button>
         </div>
       </div>

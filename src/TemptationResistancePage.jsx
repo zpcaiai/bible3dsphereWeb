@@ -44,7 +44,7 @@ export default function TemptationResistancePage({ user, onBack }) {
       {error && <div style={{ ...card, color: '#ffb4b4' }}>{error}</div>}
 
       <div style={card}>
-        <textarea value={text} onChange={e => setText(e.target.value)} rows={3} placeholder={i18nT('此刻发生了什么？（不必写露骨细节）')} style={{ ...fld, resize: 'vertical' }} />
+        <textarea value={text} onChange={e => setText(e.target.value)} rows={3} placeholder={i18nT('此刻发生了什么？（不必写露骨细节）')} style={{ ...fld, resize: 'vertical' }}  aria-label={i18nT('此刻发生了什么？（不必写露骨细节）')}/>
         <button style={btn} disabled={busy} onClick={resist}>{busy ? '…' : '现在抵抗'}</button>
       </div>
 

@@ -1392,7 +1392,7 @@ function AppContent() {
                   fontSize: '14px',
                   outline: 'none',
                 }}
-              />
+               aria-label={i18nT('输入昵称')}/>
             </div>
             <div style={{ marginBottom: '20px' }}>
               <label style={{ display: 'block', fontSize: '13px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>{i18nT('头像 URL (可选)')}</label>
@@ -1411,7 +1411,7 @@ function AppContent() {
                   fontSize: '14px',
                   outline: 'none',
                 }}
-              />
+               aria-label="https://..."/>
             </div>
             <div style={{ display: 'flex', gap: '12px' }}>
               <button
@@ -1947,7 +1947,7 @@ function AppContent() {
                       }}
                       placeholder={DEFAULT_QUERY_TEXT}
                       style={{minHeight: '80px'}}
-                    />
+                     aria-label={DEFAULT_QUERY_TEXT}/>
                   </label>
                   {/* 按钮行：录音 + 润色 */}
                   <div style={{

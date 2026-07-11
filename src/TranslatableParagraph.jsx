@@ -2,6 +2,7 @@ import { t as i18nT } from './i18n/runtime'
 import { useRef, useState } from 'react'
 import { fetchTranslate } from './api'
 import { getCached } from './translationCache'
+import { a11yClickProps } from './lib/a11yClick';
 
 export default function TranslatableParagraph({ children, className, style }) {
   const [translation, setTranslation] = useState(null)
@@ -181,7 +182,7 @@ export default function TranslatableParagraph({ children, className, style }) {
           <div
             onClick={hideMenu}
             style={{ position: 'fixed', inset: 0, zIndex: 9998 }}
-          />
+           {...a11yClickProps(hideMenu)}/>
           <div
             style={{
               position: 'fixed',

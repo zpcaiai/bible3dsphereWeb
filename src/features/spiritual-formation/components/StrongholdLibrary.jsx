@@ -59,7 +59,7 @@ export default function StrongholdLibrary({ variant = 'full' }) {
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={T('搜索名称、核心谎言、欲望、恐惧或说法…', 'Search name, core lie, desire, fear, or phrase…')}
             style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', padding: '10px 36px 10px 38px', color: '#fff', fontSize: '13px', outline: 'none', boxSizing: 'border-box' }}
-          />
+           aria-label={T('搜索名称、核心谎言、欲望、恐惧或说法…', 'Search name, core lie, desire, fear, or phrase…')}/>
           {searchQuery && (
             <button onClick={() => setSearchQuery('')} style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', fontSize: '14px', padding: 0 }}>✕</button>
           )}

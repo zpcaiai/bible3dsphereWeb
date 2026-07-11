@@ -77,7 +77,7 @@ export default function AgentChatPage({ onBack, onNeedLogin }) {
 
       <div style={{ display: 'flex', gap: 8, padding: '10px 16px', borderTop: '1px solid rgba(255,255,255,0.1)', background: 'rgba(28,28,30,0.92)', flexShrink: 0 }}>
         <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && send()} placeholder={i18nT('对{name}说…', { name: agentMeta.name })}
-          style={{ flex: 1, padding: '11px 14px', borderRadius: 22, background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)', color: '#fff', fontSize: 14 }} />
+          style={{ flex: 1, padding: '11px 14px', borderRadius: 22, background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)', color: '#fff', fontSize: 14 }}  aria-label={i18nT('对{name}说…', { name: agentMeta.name })}/>
         <button onClick={send} disabled={busy} style={{ width: 64, borderRadius: 22, border: 'none', background: `linear-gradient(135deg, ${agentMeta.color}, #5ac8fa)`, color: '#fff', fontSize: 14, fontWeight: 700, cursor: 'pointer' }}>{i18nT('发送')}</button>
       </div>
     </div>

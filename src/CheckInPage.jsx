@@ -386,7 +386,7 @@ export default function CheckInPage({ user, emotionLabel, emotionQuery, token, o
               value={prayerRequest}
               onChange={e => setPrayerRequest(e.target.value)}
               rows={3}
-            />
+             aria-label={i18nT('今天有什么想交托给神的...')}/>
             <SuggestMenu top={8} right={8} options={CHK_PRAYER_OPTS} value={prayerRequest} onChange={setPrayerRequest} />
             </span>
           </section>
@@ -402,7 +402,7 @@ export default function CheckInPage({ user, emotionLabel, emotionQuery, token, o
               value={gratitude}
               onChange={e => setGratitude(e.target.value)}
               rows={2}
-            />
+             aria-label={i18nT('今天感恩的一件事...')}/>
             <SuggestMenu top={8} right={8} options={CHK_GRAT_OPTS} value={gratitude} onChange={setGratitude} />
             </span>
           </section>

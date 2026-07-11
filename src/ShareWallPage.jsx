@@ -9,6 +9,7 @@ import { escapeHtml, escapeHtmlWithBr } from './sanitize'
 import { fetchSharedNotes, toggleShareNote, amenSharedNote, toggleShareSermonJournal, fetchSundaySchoolVideos } from './api'
 import { getToken } from './auth'
 import TestimonyWallPage from './TestimonyWallPage'
+import { a11yClickProps } from './lib/a11yClick';
 
 // 读取旧的 localStorage 分享记录（来自 ChatPage / DevotionNotePage / SermonJournalPage）
 function getLegacySharedNotes() {
@@ -544,7 +545,7 @@ function SundaySchoolView() {
                   height: 150,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}
-              >
+               {...a11yClickProps(() => setPlaying(v.video_url))}>
                 <div style={{ fontSize: 36, opacity: 0.25 }}>🎬</div>
                 {/* Centred play circle */}
                 <div style={{
@@ -778,7 +779,7 @@ export default function ShareWallPage({ user, onBack }) {
                     border: '1px solid rgba(255,255,255,0.08)',
                     transition: 'background 0.15s',
                   }}
-                >
+                 {...a11yClickProps(() => setSelectedNote(note))}>
                   {/* Author row */}
                   <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 9 }}>
                     {note.avatar ? (

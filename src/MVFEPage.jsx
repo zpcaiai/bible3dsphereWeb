@@ -2,6 +2,7 @@ import { t as i18nT } from './i18n/runtime'
 import { useState, useEffect, useCallback } from 'react'
 import BackButton from './BackButton'
 import { API_BASE } from './api'
+import { a11yClickProps } from './lib/a11yClick';
 
 const MVFE_BASE = API_BASE + '/mvfe'
 
@@ -294,7 +295,7 @@ function DecFlow({data, onSelect}){
   else if(ar<0.4){lbl='趋近主导';col='#51cf66'}
   return <div style={{display:'flex',alignItems:'center',gap:14}}>
     <div style={{flex:1,display:'flex',flexDirection:'column',gap:6}}>
-      <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>{[...data].reverse().slice(0,8).map((d,i)=><div key={i} onClick={()=>onSelect&&onSelect(d)} style={{padding:'3px 8px',borderRadius:8,fontSize:10,fontWeight:600,background:d.type==='approach'?'rgba(81,207,102,0.12)':'rgba(255,107,107,0.12)',color:d.type==='approach'?'#51cf66':'#ff6b6b',border:'1px solid '+(d.type==='approach'?'rgba(81,207,102,0.2)':'rgba(255,107,107,0.2)'),cursor:'pointer',transition:'all 0.2s'}} title={i18nT('点击查看详情')}>{d.type==='approach'?'→':'↔'}</div>)}</div>
+      <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>{[...data].reverse().slice(0,8).map((d,i)=><div key={i} onClick={()=>onSelect&&onSelect(d)} style={{padding:'3px 8px',borderRadius:8,fontSize:10,fontWeight:600,background:d.type==='approach'?'rgba(81,207,102,0.12)':'rgba(255,107,107,0.12)',color:d.type==='approach'?'#51cf66':'#ff6b6b',border:'1px solid '+(d.type==='approach'?'rgba(81,207,102,0.2)':'rgba(255,107,107,0.2)'),cursor:'pointer',transition:'all 0.2s'}} title={i18nT('点击查看详情')} {...a11yClickProps(()=>onSelect&&onSelect(d))}>{d.type==='approach'?'→':'↔'}</div>)}</div>
       <div style={{fontSize:11,color:col,fontWeight:600}}>{lbl} — {total} {i18nT('次决策记录')}</div>
     </div>
     <div style={{width:80,textAlign:'center'}}>
@@ -317,8 +318,8 @@ function DecisionDetailModal({decision, onClose}){
   const typeLabel = decision.type==='approach'?'趋近':'回避'
   const typeColor = decision.type==='approach'?'#51cf66':'#ff6b6b'
   return (
-    <div onClick={onClose} style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.6)',backdropFilter:'blur(4px)',zIndex:100,display:'flex',alignItems:'center',justifyContent:'center',padding:20}}>
-      <div onClick={e=>e.stopPropagation()} style={{background:'#0f1724',border:'1px solid rgba(255,255,255,0.08)',borderRadius:16,padding:20,maxWidth:420,width:'100%',maxHeight:'85vh',overflow:'auto',boxShadow:'0 20px 60px rgba(0,0,0,0.5)'}}>
+    <div onClick={onClose} style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.6)',backdropFilter:'blur(4px)',zIndex:100,display:'flex',alignItems:'center',justifyContent:'center',padding:20}} {...a11yClickProps(onClose)}>
+      <div onClick={e=>e.stopPropagation()} style={{background:'#0f1724',border:'1px solid rgba(255,255,255,0.08)',borderRadius:16,padding:20,maxWidth:420,width:'100%',maxHeight:'85vh',overflow:'auto',boxShadow:'0 20px 60px rgba(0,0,0,0.5)'}} {...a11yClickProps(e=>e.stopPropagation())}>
         <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16}}>
           <div style={{fontSize:15,fontWeight:700,color:'#fff'}}>{i18nT('⚖️ 决策详情')}</div>
           <button onClick={onClose} style={{background:'none',border:'none',color:'rgba(255,255,255,0.4)',fontSize:20,cursor:'pointer',lineHeight:1}}>×</button>

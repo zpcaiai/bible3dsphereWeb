@@ -70,7 +70,7 @@ export default function OnboardingPage({ onBack, onNavigate }) {
               style={{ width: '100%', marginTop: 8, background: 'rgba(0,0,0,0.25)', color: '#fff',
                 border: '1px solid rgba(255,255,255,0.12)', borderRadius: 10, padding: 10,
                 fontSize: 14, lineHeight: 1.6, resize: 'vertical', boxSizing: 'border-box' }}
-            />
+             aria-label={t('例如：最近很焦虑，总想证明自己，读经祷告也提不起劲……')}/>
           </div>
 
           <div style={card}>

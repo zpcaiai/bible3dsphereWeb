@@ -117,7 +117,7 @@ export function PrayerRuleCard({ userId, rules, sessions, onSaveRule, onSaveSess
         <article className="sf-card sf-flow-card">
           <h3>{T('祷告时段', 'Prayer Session')}</h3>
           <label>{T('祷告文本', 'Prayer text')}<textarea value={form.prayerText} onChange={(event) => setForm({ ...form, prayerText: event.target.value })} /></label>
-          <label>{T('感恩', 'Gratitude')}<textarea value={form.gratitude} onChange={(event) => setForm({ ...form, gratitude: event.target.value })} placeholder={T('每行一个，或用逗号分隔。', 'One per line or comma separated.')} /></label>
+          <label>{T('感恩', 'Gratitude')}<textarea value={form.gratitude} onChange={(event) => setForm({ ...form, gratitude: event.target.value })} placeholder={T('每行一个，或用逗号分隔。', 'One per line or comma separated.')}  aria-label={T('每行一个，或用逗号分隔。', 'One per line or comma separated.')}/></label>
           <label>{T('认罪', 'Confession')}<textarea value={form.confession} onChange={(event) => setForm({ ...form, confession: event.target.value })} /></label>
           <label>{T('祈求', 'Petitions')}<textarea value={form.petition} onChange={(event) => setForm({ ...form, petition: event.target.value })} /></label>
           <label>{T('领受的恩典', 'Grace received')}<textarea value={form.graceReceived} onChange={(event) => setForm({ ...form, graceReceived: event.target.value })} /></label>
@@ -279,7 +279,7 @@ export function PsalmPrayerGuide({ userId, sessions, onSaveSession }) {
           <div className="sf-stage-pills">{session.movements.map((movement, index) => <span className={index === session.activeMovementIndex ? 'active' : ''} key={movement.id}>{movement.movementKey.replace(/_/g, ' ')}</span>)}</div>
           <h3>{activeMovement.movementKey.replace(/_/g, ' ')}</h3>
           <p>{activeMovement.aiGuidance}</p>
-          <textarea value={draft} onChange={(event) => setDraft(event.target.value)} placeholder={T('写下一段真实、由诗篇塑造的祷告。', 'Write an honest Psalm-shaped prayer.')} />
+          <textarea value={draft} onChange={(event) => setDraft(event.target.value)} placeholder={T('写下一段真实、由诗篇塑造的祷告。', 'Write an honest Psalm-shaped prayer.')}  aria-label={T('写下一段真实、由诗篇塑造的祷告。', 'Write an honest Psalm-shaped prayer.')}/>
           <button className="sf-primary" type="button" onClick={submit}>{T('保存这一段', 'Save Movement')}</button>
         </article>
       )}

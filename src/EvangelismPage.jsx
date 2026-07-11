@@ -9,6 +9,7 @@ import BibleMapPage from './BibleMapPage'
 import MissionBridgePanel from './components/mission-bridge/MissionBridgePanel'
 import MissionOSRoadmap from './features/mission-os/roadmap/MissionOSRoadmap'
 import MissionConsole from './features/mission-os/console/MissionConsole'
+import { a11yClickProps } from './lib/a11yClick';
 
 const AMEN_KEY = 'evangelism-amened-v1'
 
@@ -278,7 +279,7 @@ export function SeekersClassView() {
                     background: 'linear-gradient(135deg,#12122a,#0d0d20)',
                     height: 150, display: 'flex', alignItems: 'center', justifyContent: 'center',
                   }}
-                >
+                 {...a11yClickProps(() => setPlaying(c.url))}>
                   <div style={{ fontSize: 36, opacity: 0.25 }}>{meta.emoji}</div>
                   <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <div style={{
@@ -700,7 +701,7 @@ export default function EvangelismPage({ user, token, organizationId, onBack, on
 
       {/* Compose Overlay */}
       {showCompose && (
-        <div className="pw-compose-overlay" onClick={(e) => { if (e.target === e.currentTarget) setShowCompose(false) }}>
+        <div className="pw-compose-overlay" onClick={(e) => { if (e.target === e.currentTarget) setShowCompose(false) }} {...a11yClickProps((e) => { if (e.target === e.currentTarget) setShowCompose(false) })}>
           <div className="pw-compose-sheet glass">
             <div className="pw-compose-title">{i18nT('🌍 提交传FY祷告')}</div>
 
@@ -767,7 +768,7 @@ export default function EvangelismPage({ user, token, organizationId, onBack, on
                 onChange={(e) => setDraft(e.target.value.slice(0, 500))}
                 rows={5}
                 style={{ paddingRight: '80px' }}
-              />
+               aria-label={i18nT('为传福音祷告...（例如：为家人信主祷告、为福音事工祷告、为宣教士祷告等）')}/>
               {/* 语音输入按钮 */}
               <button
                 type="button"

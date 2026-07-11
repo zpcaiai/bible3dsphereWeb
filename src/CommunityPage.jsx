@@ -88,7 +88,7 @@ function Comments({ postId, token, user, onCountChange }) {
       {user ? (
         <div className="cmty-comment-compose">
           <input value={text} onChange={e => setText(e.target.value)} maxLength={500}
-            placeholder={i18nT('写下你的回应或祝福…')} onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submit() } }} />
+            placeholder={i18nT('写下你的回应或祝福…')} onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submit() } }}  aria-label={i18nT('写下你的回应或祝福…')}/>
           <button disabled={busy || !text.trim()} onClick={submit}>{busy ? '…' : '评论'}</button>
         </div>
       ) : <div className="cmty-dim">{i18nT('登录后可评论')}</div>}
@@ -225,7 +225,7 @@ export default function CommunityPage({ user, token, onBack }) {
             </div>
           )}
           <textarea className="cmty-textarea" value={content} maxLength={1000}
-            onChange={e => setContent(e.target.value)} placeholder={i18nT('说点什么吧…（也可只发一个状态）')} rows={3} />
+            onChange={e => setContent(e.target.value)} placeholder={i18nT('说点什么吧…（也可只发一个状态）')} rows={3}  aria-label={i18nT('说点什么吧…（也可只发一个状态）')}/>
           <div className="cmty-compose-actions">
             <span className="cmty-count">{content.length}/1000</span>
             <label style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, color: 'rgba(255,255,255,0.55)', cursor: 'pointer', userSelect: 'none' }}>

@@ -41,7 +41,7 @@ export default function IntercessionPage({ user, onBack }) {
       {error && <div style={{ ...card, color: '#ffb4b4' }}>{error}</div>}
 
       <div style={card}>
-        <input value={title} onChange={e => setTitle(e.target.value)} placeholder={i18nT('新的代祷事项（如：为母亲的健康）')} style={fld} />
+        <input value={title} onChange={e => setTitle(e.target.value)} placeholder={i18nT('新的代祷事项（如：为母亲的健康）')} style={fld}  aria-label={i18nT('新的代祷事项（如：为母亲的健康）')}/>
         <div style={{ display: 'flex', gap: 8 }}>
           <select value={urgency} onChange={e => setUrgency(e.target.value)} style={{ ...fld, marginBottom: 0, flex: 1 }}>
             {URG.map(([k, l]) => <option key={k} value={k}>{l}</option>)}

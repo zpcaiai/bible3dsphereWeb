@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { t } from '../i18n/runtime'
+import { a11yClickProps } from '../lib/a11yClick';
 
 /**
  * SuggestField — 通用「常见选项 + 手动输入」组合控件
@@ -45,7 +46,7 @@ function OptionRow({ opt, value, accent, accentDim, onPick }) {
         color: on ? accent : 'rgba(255,255,255,0.85)', background: on ? accentDim : 'transparent',
         borderRadius: 7, cursor: 'pointer', lineHeight: 1.5,
       }}
-    >
+     {...a11yClickProps(() => onPick(opt))}>
       <span style={{ flex: '0 0 12px', color: accent }}>{on ? '✓' : ''}</span>{txt}
     </div>
   )
@@ -92,12 +93,12 @@ export default function SuggestField({
           <textarea
             value={value || ''} onChange={e => onChange(e.target.value)} placeholder={t(placeholder)}
             style={{ ...baseInput, minHeight, resize: 'vertical', lineHeight: 1.6 }}
-          />
+           aria-label={t(placeholder)}/>
         ) : (
           <input
             value={value || ''} onChange={e => onChange(e.target.value)} placeholder={t(placeholder)}
             style={baseInput}
-          />
+           aria-label={t(placeholder)}/>
         )}
         {options.length > 0 && (
           <button

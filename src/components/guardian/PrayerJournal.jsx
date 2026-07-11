@@ -57,7 +57,7 @@ export default function PrayerJournal() {
 
       <span style={{ position: 'relative', display: 'block' }}>
       <textarea value={content} rows={3} placeholder={t("把你的祷告写下来…")}
-        onChange={(e) => setContent(e.target.value)} style={{ ...S.input, paddingRight: 92 }} />
+        onChange={(e) => setContent(e.target.value)} style={{ ...S.input, paddingRight: 92 }}  aria-label={t("把你的祷告写下来…")}/>
       <SuggestMenu accent="#a78bfa" top={8} right={8} options={GPJ_OPTS} value={content} onChange={setContent} />
       </span>
       {error && <p style={{ ...S.dimText, color: '#ff9f8a', margin: 0 }}>{error}</p>}

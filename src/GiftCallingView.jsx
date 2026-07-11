@@ -1,6 +1,7 @@
 import { t as i18nT } from './i18n/runtime'
 import { useEffect, useRef, useState } from 'react'
 import { t } from './i18n/runtime'
+import { a11yClickProps } from './lib/a11yClick';
 import {
   fetchGiftMeta, fetchGiftProfile, assessGift, fetchGiftHistory, fetchGiftAssessment,
   submitGiftFeedback, fetchGiftFeedback, submitGiftReview, fetchGiftReviews,
@@ -336,8 +337,8 @@ function ComboField({ label, value, onChange, placeholder, options = [], multili
       {label && <label style={lbl}>{t(label)}{required ? ' *' : ''}</label>}
       <div style={{ position: 'relative' }}>
         {multiline
-          ? <textarea value={value} onChange={e => onChange(e.target.value)} placeholder={t(placeholder)} style={{ ...ta, minHeight, paddingRight: 92 }} />
-          : <input value={value} onChange={e => onChange(e.target.value)} placeholder={t(placeholder)} style={{ ...inp, paddingRight: 92 }} />}
+          ? <textarea value={value} onChange={e => onChange(e.target.value)} placeholder={t(placeholder)} style={{ ...ta, minHeight, paddingRight: 92 }}  aria-label={t(placeholder)}/>
+          : <input value={value} onChange={e => onChange(e.target.value)} placeholder={t(placeholder)} style={{ ...inp, paddingRight: 92 }}  aria-label={t(placeholder)}/>}
         {options.length > 0 && (
           <button type="button" onClick={() => setOpen(o => !o)} style={comboBtn}>{t('常见选项')} ▾</button>
         )}
@@ -353,7 +354,7 @@ function ComboField({ label, value, onChange, placeholder, options = [], multili
                   onClick={() => pick(opt)}
                   onMouseEnter={e => { e.currentTarget.style.background = ACCENT_DIM }}
                   onMouseLeave={e => { e.currentTarget.style.background = on ? ACCENT_DIM : 'transparent' }}
-                ><span style={{ flex: '0 0 12px', color: ACCENT }}>{on ? '✓' : ''}</span>{t(opt)}</div>
+                 {...a11yClickProps(() => pick(opt))}><span style={{ flex: '0 0 12px', color: ACCENT }}>{on ? '✓' : ''}</span>{t(opt)}</div>
               )
             })}
           </div>
@@ -595,7 +596,7 @@ function HistoryList({ token, onOpen }) {
   return (
     <div>
       {items.map(it => (
-        <div key={it.id} onClick={() => onOpen(it.id)} style={{ ...card, cursor: 'pointer' }}>
+        <div key={it.id} onClick={() => onOpen(it.id)} style={{ ...card, cursor: 'pointer' }} {...a11yClickProps(() => onOpen(it.id))}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
             <span style={{ fontSize: 13, fontWeight: 600, color: '#fff' }}>{it.title || '恩赐与呼召分析'}</span>
             <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)' }}>{(it.completed_at || it.created_at || '').slice(0, 10)}</span>

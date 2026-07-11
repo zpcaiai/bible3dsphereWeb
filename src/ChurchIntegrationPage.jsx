@@ -54,7 +54,7 @@ export default function ChurchIntegrationPage({ user, onBack }) {
         <select value={status} onChange={e => setStatus(e.target.value)} style={fld}>
           {STATUS.map(([k, l]) => <option key={k} value={k}>{l}</option>)}
         </select>
-        <textarea value={notes} onChange={e => setNotes(e.target.value)} rows={2} placeholder={i18nT('备注（若有教会经历的伤害也可写下）')} style={{ ...fld, resize: 'vertical' }} />
+        <textarea value={notes} onChange={e => setNotes(e.target.value)} rows={2} placeholder={i18nT('备注（若有教会经历的伤害也可写下）')} style={{ ...fld, resize: 'vertical' }}  aria-label={i18nT('备注（若有教会经历的伤害也可写下）')}/>
         <div style={{ display: 'flex', gap: 8 }}>
           <button style={btn} onClick={save}>{i18nT('保存')}</button>
           <button style={{ ...btn, background: 'rgba(52,199,89,0.6)' }} onClick={recommend}>{i18nT('推荐下一步')}</button>

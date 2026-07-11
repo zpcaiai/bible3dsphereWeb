@@ -5,6 +5,7 @@ import BackButton from './BackButton'
 import { API_BASE, fetchVoiceGroups } from './api'
 import MeetingScheduleModal from './MeetingScheduleModal'
 import { t } from './i18n/runtime'
+import { a11yClickProps } from './lib/a11yClick';
 
 function authHeaders(token) {
   const h = {}
@@ -91,7 +92,7 @@ export default function GroupHubPage({ user, token, onBack, onOpenPanel }) {
         <div style={{ ...S.body, paddingTop: 0, flex: 'none' }}>
           <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', margin: '6px 2px 8px' }}>📝 {t('历史纪要')}</div>
           {minutes.map((m) => (
-            <div key={m.id} style={{ ...S.card, cursor: 'pointer' }} onClick={() => setOpenMinId(openMinId === m.id ? null : m.id)}>
+            <div key={m.id} style={{ ...S.card, cursor: 'pointer' }} onClick={() => setOpenMinId(openMinId === m.id ? null : m.id)} {...a11yClickProps(() => setOpenMinId(openMinId === m.id ? null : m.id))}>
               <div style={S.cardHead}>
                 <span style={{ fontSize: 14, fontWeight: 600 }}>{m.title || t('聚会纪要')}</span>
                 <span style={S.gmeta}>{(m.createdAt || '').slice(0, 16).replace('T', ' ')} {openMinId === m.id ? '▾' : '▸'}</span>

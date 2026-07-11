@@ -78,7 +78,7 @@ export default function SpiritualCheckIn({ onDone }) {
 
       <span style={{ position: 'relative', display: 'block' }}>
       <textarea value={note} rows={2} placeholder={t("（可选）想对神或对自己说点什么？")}
-        onChange={(e) => setNote(e.target.value)} style={{ ...S.input, paddingRight: 92 }} />
+        onChange={(e) => setNote(e.target.value)} style={{ ...S.input, paddingRight: 92 }}  aria-label={t("（可选）想对神或对自己说点什么？")}/>
       <SuggestMenu accent="#a78bfa" top={8} right={8} options={GCK_OPTS} value={note} onChange={setNote} />
       </span>
 

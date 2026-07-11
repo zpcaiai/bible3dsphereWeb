@@ -76,7 +76,7 @@ export default function BibleSearchPage({ onBack, onOpenMap }) {
             placeholder={t('凭印象搜：压伤的芦苇 / 不要忧虑 / bruised reed…')}
             onChange={(e) => setQ(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && doSearch()}
-          />
+           aria-label={t('凭印象搜：压伤的芦苇 / 不要忧虑 / bruised reed…')}/>
           <button style={S.searchBtn} disabled={loading} onClick={() => doSearch()}>
             {loading ? t('搜索中…') : t('搜索')}
           </button>

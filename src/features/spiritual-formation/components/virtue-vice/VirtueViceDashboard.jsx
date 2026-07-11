@@ -277,7 +277,7 @@ export function FruitOfSpiritTracker({ userId, assessments, feedbackRequests, on
       <article className="sf-card sf-flow-card">
         <h3>{T('自我评估', 'Self Assessment')}</h3>
         <div className="sf-home-grid">{fruitDimensions.map((dimension) => <label key={dimension.key}>{dimension.displayName}: {scores[dimension.key]}<input type="range" min="1" max="10" value={scores[dimension.key]} onChange={(event) => setScores({ ...scores, [dimension.key]: Number(event.target.value) })} /></label>)}</div>
-        <label>{T('证据', 'Evidence')}<textarea value={evidence} onChange={(event) => setEvidence(event.target.value)} placeholder={T('哪里看见了果子，或哪里感到抗拒？', 'Where did fruit appear or feel resisted?')} /></label>
+        <label>{T('证据', 'Evidence')}<textarea value={evidence} onChange={(event) => setEvidence(event.target.value)} placeholder={T('哪里看见了果子，或哪里感到抗拒？', 'Where did fruit appear or feel resisted?')}  aria-label={T('哪里看见了果子，或哪里感到抗拒？', 'Where did fruit appear or feel resisted?')}/></label>
         <button className="sf-primary" type="button" onClick={saveAssessment}>{T('保存果子评估', 'Save Fruit Assessment')}</button>
       </article>
       <div className="sf-home-grid">

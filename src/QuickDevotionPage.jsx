@@ -83,7 +83,7 @@ export default function QuickDevotionPage({ user, token, onBack, onDone }) {
             onChange={e => setQuestionAnswer(e.target.value)}
             placeholder={i18nT('简短地写下你真实的回应（也可以跳过）')}
             style={{ width: '100%', minHeight: 90, background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 10, color: '#fff', fontSize: 14, padding: '12px 96px 12px 12px', resize: 'none', outline: 'none', fontFamily: 'inherit', lineHeight: 1.6, boxSizing: 'border-box' }}
-          />
+           aria-label={i18nT('简短地写下你真实的回应（也可以跳过）')}/>
           <SuggestMenu accent="#c4b5fd" top={8} right={8} options={QD_QUESTION_OPTS} value={questionAnswer} onChange={setQuestionAnswer} />
           </span>
         </div>
@@ -102,7 +102,7 @@ export default function QuickDevotionPage({ user, token, onBack, onDone }) {
             onChange={e => setGratitude(e.target.value)}
             placeholder={i18nT('写下一件，哪怕很小的事...')}
             style={{ width: '100%', minHeight: 80, background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 10, color: '#fff', fontSize: 14, padding: '12px 96px 12px 12px', resize: 'none', outline: 'none', fontFamily: 'inherit', lineHeight: 1.6, boxSizing: 'border-box' }}
-          />
+           aria-label={i18nT('写下一件，哪怕很小的事...')}/>
           <SuggestMenu accent="#c4b5fd" top={8} right={8} options={QD_GRAT_OPTS} value={gratitude} onChange={setGratitude} />
           </span>
         </div>

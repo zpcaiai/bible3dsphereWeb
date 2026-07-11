@@ -183,7 +183,7 @@ export default function SpiritualPartnerPage({ user, token, onBack }) {
                       onChange={e => setPartnerEmail(e.target.value)}
                       placeholder={i18nT('输入对方的注册邮箱')}
                       style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(255,255,255,0.08)', color: '#fff', fontSize: 14, outline: 'none', boxSizing: 'border-box', marginBottom: 10 }}
-                    />
+                     aria-label={i18nT('输入对方的注册邮箱')}/>
                     {error && <div style={{ color: '#ff3b30', fontSize: 12, marginBottom: 8 }}>{error}</div>}
                     <button
                       onClick={handleRequest}

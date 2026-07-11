@@ -60,6 +60,7 @@ import CreedCatechismGalaxy from '../features/spiritual-formation/components/cre
 import RuleDiscernmentDashboard from '../features/spiritual-formation/components/rule-discernment/RuleDiscernmentDashboard'
 import CrossLamentHopeDashboard from '../features/spiritual-formation/components/cross-lament-hope/CrossLamentHopeDashboard'
 import SacramentCalendarOrbit from '../features/spiritual-formation/components/sacrament-calendar/SacramentCalendarOrbit'
+import { a11yClickProps } from '../lib/a11yClick';
 
 const MVFE_BASE = API_BASE + '/mvfe'
 
@@ -1099,7 +1100,7 @@ function DecFlow({data,onSelect}){
   if(ar>0.6){lbl='回避主导';col='#ff6b6b'}else if(ar<0.4){lbl='趋近主导';col='#51cf66'}
   return <div style={{display:'flex',alignItems:'center',gap:14}}>
     <div style={{flex:1,display:'flex',flexDirection:'column',gap:6}}>
-      <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>{[...data].reverse().slice(0,8).map((d,i)=><div key={i} onClick={()=>onSelect&&onSelect(d)} style={{padding:'3px 8px',borderRadius:8,fontSize:10,fontWeight:600,background:d.type==='approach'?'rgba(81,207,102,0.12)':'rgba(255,107,107,0.12)',color:d.type==='approach'?'#51cf66':'#ff6b6b',border:'1px solid '+(d.type==='approach'?'rgba(81,207,102,0.2)':'rgba(255,107,107,0.2)'),cursor:'pointer',transition:'all 0.2s'}} title={i18nT('点击查看详情')}>{d.type==='approach'?'→':'↔'}</div>)}</div>
+      <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>{[...data].reverse().slice(0,8).map((d,i)=><div key={i} onClick={()=>onSelect&&onSelect(d)} style={{padding:'3px 8px',borderRadius:8,fontSize:10,fontWeight:600,background:d.type==='approach'?'rgba(81,207,102,0.12)':'rgba(255,107,107,0.12)',color:d.type==='approach'?'#51cf66':'#ff6b6b',border:'1px solid '+(d.type==='approach'?'rgba(81,207,102,0.2)':'rgba(255,107,107,0.2)'),cursor:'pointer',transition:'all 0.2s'}} title={i18nT('点击查看详情')} {...a11yClickProps(()=>onSelect&&onSelect(d))}>{d.type==='approach'?'→':'↔'}</div>)}</div>
       <div style={{fontSize:11,color:col,fontWeight:600}}>{lbl} — {total} {i18nT('次决策记录')}</div>
     </div>
     <div style={{width:80,textAlign:'center'}}>
@@ -1114,8 +1115,8 @@ function DecFlow({data,onSelect}){
   </div>
 }
 function DecisionDetailModal({decision,onClose}){
-  return <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.6)',backdropFilter:'blur(4px)',zIndex:1000,display:'flex',alignItems:'center',justifyContent:'center',padding:16}} onClick={onClose}>
-    <div style={{background:'linear-gradient(135deg,#1a1a2e 0%,#16213e 100%)',borderRadius:16,padding:20,maxWidth:400,width:'100%',border:'1px solid rgba(255,255,255,0.1)'}} onClick={e=>e.stopPropagation()}>
+  return <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.6)',backdropFilter:'blur(4px)',zIndex:1000,display:'flex',alignItems:'center',justifyContent:'center',padding:16}} onClick={onClose} {...a11yClickProps(onClose)}>
+    <div style={{background:'linear-gradient(135deg,#1a1a2e 0%,#16213e 100%)',borderRadius:16,padding:20,maxWidth:400,width:'100%',border:'1px solid rgba(255,255,255,0.1)'}} onClick={e=>e.stopPropagation()} {...a11yClickProps(e=>e.stopPropagation())}>
       <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16}}>
         <div style={{fontSize:16,fontWeight:700,color:'#fff'}}>{i18nT('决策详情')}</div>
         <button onClick={onClose} style={{background:'none',border:'none',color:'rgba(255,255,255,0.5)',fontSize:20,cursor:'pointer'}}>×</button>
