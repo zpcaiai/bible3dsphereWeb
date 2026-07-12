@@ -33,9 +33,9 @@ export default function GroupHubPage({ user, token, onBack, onOpenPanel }) {
     let alive = true
     fetchVoiceGroups(token).then((d) => { if (alive) setGroups(d.groups || []) }).catch(() => { if (alive) setGroups([]) })
     fetch(`${API_BASE}/meetings/upcoming`, { headers: authHeaders(token) })
-      .then((r) => r.json()).then((j) => { if (alive && j.success) setUpcoming(j.data || []) }).catch(() => {})
+      .then((r) => r.json()).then((j) => { if (alive && j.success) setUpcoming(j.data || []) }).catch((err) => { console.warn('[GroupHubPage.jsx] ignored async error', err) })
     fetch(`${API_BASE}/minutes?limit=20`, { headers: authHeaders(token) })
-      .then((r) => r.json()).then((j) => { if (alive && j.success) setMinutes(j.data || []) }).catch(() => {})
+      .then((r) => r.json()).then((j) => { if (alive && j.success) setMinutes(j.data || []) }).catch((err) => { console.warn('[GroupHubPage.jsx] ignored async error', err) })
     return () => { alive = false }
   }, [token])
 

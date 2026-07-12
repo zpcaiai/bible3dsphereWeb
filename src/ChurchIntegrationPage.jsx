@@ -20,7 +20,7 @@ export default function ChurchIntegrationPage({ user, onBack }) {
   const [error, setError] = useState('')
   const [showCalendar, setShowCalendar] = useState(false)
 
-  useEffect(() => { const t = getToken(); if (t) communityApi.churchCurrent(t).then(r => { if (r.connection) { setConn(r.connection); setStatus(r.connection.connection_status) } }).catch(() => {}) }, [])
+  useEffect(() => { const t = getToken(); if (t) communityApi.churchCurrent(t).then(r => { if (r.connection) { setConn(r.connection); setStatus(r.connection.connection_status) } }).catch((err) => { console.warn('[ChurchIntegrationPage.jsx] ignored async error', err) }) }, [])
 
   async function save() {
     const t = getToken()

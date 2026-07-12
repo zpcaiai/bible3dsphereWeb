@@ -36,9 +36,9 @@ export default function MissionLifePage({ user, onBack }) {
 
   function reload() {
     const t = getToken(); if (!t) return
-    fetchLatestMissionProfile(t).then(r => { if (r.profile) setProfile(r.profile) }).catch(() => {})
-    fetchMissionCommitments(t).then(r => setCommitments(r.commitments || [])).catch(() => {})
-    fetchMissionProjects(t).then(r => setProjects(r.projects || [])).catch(() => {})
+    fetchLatestMissionProfile(t).then(r => { if (r.profile) setProfile(r.profile) }).catch((err) => { console.warn('[MissionLifePage.jsx] ignored async error', err) })
+    fetchMissionCommitments(t).then(r => setCommitments(r.commitments || [])).catch((err) => { console.warn('[MissionLifePage.jsx] ignored async error', err) })
+    fetchMissionProjects(t).then(r => setProjects(r.projects || [])).catch((err) => { console.warn('[MissionLifePage.jsx] ignored async error', err) })
   }
   useEffect(reload, [])
 

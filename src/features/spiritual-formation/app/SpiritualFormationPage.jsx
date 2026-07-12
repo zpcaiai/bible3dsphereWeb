@@ -155,7 +155,7 @@ export default function SpiritualFormationPage({ user, token, onBack, initialTab
       .then((result) => {
         if (!cancelled && result?.hydrated) refresh()
       })
-      .catch(() => {})
+      .catch((err) => { console.warn('[SpiritualFormationPage.jsx] ignored async error', err) })
     return () => { cancelled = true }
   }, [token])
 

@@ -10,7 +10,7 @@ export default function GraceIdentityCard({ inputText = '', compact = false, res
   const data = useMemo(() => response || buildGraceIdentityResponse(draft || inputText || '我必须表现好才被爱'), [draft, inputText, response])
   function logGrace() {
     if (!token) return
-    formationExtApi.graceLog({ input_text: draft || inputText || '', scenario: data.key || '', response: { falseIdentity: data.falseIdentity, inChristTruth: data.inChristTruth, nextStep: data.nextStep }, route: data.route }, token).then(() => setLogged(true)).catch(() => {})
+    formationExtApi.graceLog({ input_text: draft || inputText || '', scenario: data.key || '', response: { falseIdentity: data.falseIdentity, inChristTruth: data.inChristTruth, nextStep: data.nextStep }, route: data.route }, token).then(() => setLogged(true)).catch((err) => { console.warn('[GraceIdentityCard.jsx] ignored async error', err) })
   }
 
   if (data.route !== 'grace_identity') {

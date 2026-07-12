@@ -180,7 +180,7 @@ function FeatureRunner({ feature, onBack }) {
 
   useEffect(() => {
     let alive = true
-    getMeta(feature.prefix).then((m) => { if (alive) setMeta(m) }).catch(() => {})
+    getMeta(feature.prefix).then((m) => { if (alive) setMeta(m) }).catch((err) => { console.warn('[ExpansionHub.jsx] ignored async error', err) })
     return () => { alive = false }
   }, [feature.prefix])
 
@@ -281,7 +281,7 @@ function ResourcesView({ onBack }) {
   const english = getRuntimeLang() === 'en'
   useEffect(() => {
     getBooks().then((d) => { setBooks(d.books || []); if (d.local_only) setLocalOnly(true) }).catch((e) => setErr(e.message))
-    getHymns().then((d) => { setHymns(d.hymns || []); if (d.local_only) setLocalOnly(true) }).catch(() => {})
+    getHymns().then((d) => { setHymns(d.hymns || []); if (d.local_only) setLocalOnly(true) }).catch((err) => { console.warn('[ExpansionHub.jsx] ignored async error', err) })
   }, [])
   const CONT = { A: '认识神', B: '回到福音', C: '心的争战', D: '与神同行', E: '等候与受苦', F: '分辨与呼召', G: '门徒与群体', H: '华人本土灵修' }
   const byCont = {}

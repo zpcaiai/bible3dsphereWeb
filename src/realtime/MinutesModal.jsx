@@ -31,7 +31,7 @@ export default function MinutesModal({ title, onClose }) {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${tok}` },
             body: JSON.stringify({ title, summary: json.data.summary, prayer_items: json.data.prayerItems || [] }),
-          }).catch(() => {})
+          }).catch((err) => { console.warn('[MinutesModal.jsx] ignored async error', err) })
         }
       }
       else toast(json.error || t('生成失败'), 'error')
@@ -65,7 +65,7 @@ export default function MinutesModal({ title, onClose }) {
     const text = result
       ? `${title || t('聚会纪要')}\n\n${result.summary}\n\n${t('代祷事项')}：\n${(result.prayerItems || []).map((x) => `· ${x}`).join('\n')}`
       : transcript
-    navigator.clipboard?.writeText(text).then(() => toast(t('已复制'), 'success')).catch(() => {})
+    navigator.clipboard?.writeText(text).then(() => toast(t('已复制'), 'success')).catch((err) => { console.warn('[MinutesModal.jsx] ignored async error', err) })
   }
 
   function close() { clearNotes(); onClose?.() }

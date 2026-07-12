@@ -57,7 +57,7 @@ export default function ExamenPage({ user, onBack, onNeedLogin }) {
     const t = getToken(); if (!t) { setLoading(false); return }
     fetchExamenToday(t)
       .then(r => { if (r.entry) setVals(v => ({ ...v, ...r.entry })) })
-      .catch(() => {})
+      .catch((err) => { console.warn('[ExamenPage.jsx] ignored async error', err) })
       .finally(() => setLoading(false))
   }, [])
 

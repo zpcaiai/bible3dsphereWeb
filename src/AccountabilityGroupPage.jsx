@@ -24,8 +24,8 @@ export default function AccountabilityGroupPage({ user, onBack }) {
   useEffect(load, [])
   function open(g) {
     const t = getToken(); setSel(g)
-    communityApi.groupCheckins(g.id, t).then(r => setCheckins(r.checkins || [])).catch(() => {})
-    communityApi.groupPrayers(g.id, t).then(r => setPrayers(r.prayer_requests || [])).catch(() => {})
+    communityApi.groupCheckins(g.id, t).then(r => setCheckins(r.checkins || [])).catch((err) => { console.warn('[AccountabilityGroupPage.jsx] ignored async error', err) })
+    communityApi.groupPrayers(g.id, t).then(r => setPrayers(r.prayer_requests || [])).catch((err) => { console.warn('[AccountabilityGroupPage.jsx] ignored async error', err) })
   }
   async function create() { const t = getToken(); if (!name.trim()) return; try { await communityApi.createGroup({ name: name.trim() }, t); setName(''); load() } catch (e) { setError(e.message) } }
   async function checkin() {

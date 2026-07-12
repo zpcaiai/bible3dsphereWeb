@@ -19,8 +19,8 @@ export default function ProductizationPage({ user, onBack }) {
   function load() {
     const t = getToken(); if (!t) return
     prodApi.plans(t).then(r => setPlans(r.plans || [])).catch(e => setError(e.message))
-    prodApi.subscription(t).then(r => setSub(r.subscription)).catch(() => {})
-    prodApi.myOrgs(t).then(r => setOrgs(r.organizations || [])).catch(() => {})
+    prodApi.subscription(t).then(r => setSub(r.subscription)).catch((err) => { console.warn('[ProductizationPage.jsx] ignored async error', err) })
+    prodApi.myOrgs(t).then(r => setOrgs(r.organizations || [])).catch((err) => { console.warn('[ProductizationPage.jsx] ignored async error', err) })
   }
   useEffect(load, [])
   async function subscribe(k) { const t = getToken(); try { await prodApi.subscribe({ plan_key: k }, t); load() } catch (e) { setError(e.message) } }

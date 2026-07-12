@@ -21,7 +21,7 @@ export default function MentorCoachingPage({ user, onBack }) {
 
   function load() { const t = getToken(); if (t) communityApi.mentorRels(t).then(r => setRels(r.relationships || [])).catch(e => setError(e.message)) }
   useEffect(load, [])
-  function openRel(r) { const t = getToken(); setSel(r); communityApi.mentorSessions(r.id, t).then(x => setSessions(x.sessions || [])).catch(() => {}) }
+  function openRel(r) { const t = getToken(); setSel(r); communityApi.mentorSessions(r.id, t).then(x => setSessions(x.sessions || [])).catch((err) => { console.warn('[MentorCoachingPage.jsx] ignored async error', err) }) }
 
   async function createRel() {
     const t = getToken(); if (!cp.trim()) return

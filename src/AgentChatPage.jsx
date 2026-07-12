@@ -18,7 +18,7 @@ export default function AgentChatPage({ onBack, onNeedLogin }) {
   const endRef = useRef(null)
 
   useEffect(() => {
-    fetchAgentMeta(getToken()).then(r => { setAgents(r.agents || []); setConfigured(r.configured) }).catch(() => {})
+    fetchAgentMeta(getToken()).then(r => { setAgents(r.agents || []); setConfigured(r.configured) }).catch((err) => { console.warn('[AgentChatPage.jsx] ignored async error', err) })
   }, [])
   useEffect(() => {
     const a = agents.find(x => x.key === active)

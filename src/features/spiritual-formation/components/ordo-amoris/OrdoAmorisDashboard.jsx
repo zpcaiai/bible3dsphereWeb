@@ -32,7 +32,7 @@ export default function OrdoAmorisDashboard({ userId = 'local-user', token }) {
       if (r && Array.isArray(r.items)) {
         setRecords(r.items.map((it, i) => ({ id: `remote-${i}-${it.created_at}`, userId, date: String(it.created_at || '').slice(0, 10), matches: it.matches || [], route: it.route })))
       }
-    }).catch(() => {})
+    }).catch((err) => { console.warn('[OrdoAmorisDashboard.jsx] ignored async error', err) })
   }, [token, userId])
   const result = useMemo(() => routeOrdoAmorisInput(input), [input])
   const keys = selected.length ? selected : result.matches.map((item) => item.key)
@@ -46,7 +46,7 @@ export default function OrdoAmorisDashboard({ userId = 'local-user', token }) {
     const record = createOrdoAmorisRecord(userId, input, keys)
     setRecords(writeRecord(record))
     if (token) {
-      formationExtApi.ordoRecord({ input_text: input, selected_keys: keys, matches: record.matches || [], response: record.response || {}, love_order_map: record.loveOrderMap || [], route: record.route }, token).catch(() => {})
+      formationExtApi.ordoRecord({ input_text: input, selected_keys: keys, matches: record.matches || [], response: record.response || {}, love_order_map: record.loveOrderMap || [], route: record.route }, token).catch((err) => { console.warn('[OrdoAmorisDashboard.jsx] ignored async error', err) })
     }
   }
 

@@ -233,13 +233,13 @@ function AppContent() {
 
   useEffect(() => {
     fetchLayout().then((data) => setLayoutItems(data.items || [])).catch((err) => setError(String(err)))
-    fetchHistory().then((data) => setHistoryItems(data.items || [])).catch(() => {})
+    fetchHistory().then((data) => setHistoryItems(data.items || [])).catch((err) => { console.warn('[App.jsx] ignored async error', err) })
   }, [setLayoutItems, setHistoryItems, setError])
 
   useEffect(() => {
     if (user) {
-      fetchDailySnapshot(getToken()).then(setDailySnapshot).catch(() => {})
-      fetchEmotionTrajectory(getToken()).then(setEmotionTrajectory).catch(() => {})
+      fetchDailySnapshot(getToken()).then(setDailySnapshot).catch((err) => { console.warn('[App.jsx] ignored async error', err) })
+      fetchEmotionTrajectory(getToken()).then(setEmotionTrajectory).catch((err) => { console.warn('[App.jsx] ignored async error', err) })
       fetchMyChurch(getToken()).then(data => setMyChurch(data.church || null)).catch(() => setMyChurch(null))
     } else {
       setDailySnapshot(null)
@@ -254,7 +254,7 @@ function AppContent() {
     function loadHeatmap () {
       fetchCommunityHeatmap(24, 8).then(data => {
         if (data.emotions?.length) setCommunityHeatmap(data.emotions)
-      }).catch(() => {})
+      }).catch((err) => { console.warn('[App.jsx] ignored async error', err) })
     }
     loadHeatmap()
     const interval = setInterval(loadHeatmap, 5 * 60 * 1000)
@@ -336,15 +336,15 @@ function AppContent() {
       setQueryResult(result)
       setLoading(false)
       if (window.hideLoadingToast) window.hideLoadingToast()
-      fetchHistory().then((h) => setHistoryItems(h.items || [])).catch(() => {})
+      fetchHistory().then((h) => setHistoryItems(h.items || [])).catch((err) => { console.warn('[App.jsx] ignored async error', err) })
       // guidance, biblical example and sermon run in background after results are already shown
       if (includeGuidance) {
-        fetchGuidance(query).then(setGuidance).catch(() => {})
+        fetchGuidance(query).then(setGuidance).catch((err) => { console.warn('[App.jsx] ignored async error', err) })
       }
       if (includeBiblicalExample) {
-        fetchBiblicalExample(query).then(setBiblicalExample).catch(() => {})
+        fetchBiblicalExample(query).then(setBiblicalExample).catch((err) => { console.warn('[App.jsx] ignored async error', err) })
       }
-      fetchSermon(query).then(setSermon).catch(() => {})
+      fetchSermon(query).then(setSermon).catch((err) => { console.warn('[App.jsx] ignored async error', err) })
     } catch (err) {
       setError(String(err.message || err))
       setLoading(false)
@@ -754,7 +754,7 @@ function AppContent() {
           feature_key: feature.feature_key || '',
           intensity: 0.6,
         }),
-      }).catch(() => {})
+      }).catch((err) => { console.warn('[App.jsx] ignored async error', err) })
     }
   }
 
@@ -3019,7 +3019,7 @@ function AppContent() {
             <QuickDevotionPage
               user={user} token={getToken()}
               onBack={() => setShowQuickDevotion(false)}
-              onDone={() => { setShowQuickDevotion(false); fetchDailySnapshot(getToken()).then(setDailySnapshot).catch(() => {}) }}
+              onDone={() => { setShowQuickDevotion(false); fetchDailySnapshot(getToken()).then(setDailySnapshot).catch((err) => { console.warn('[App.jsx] ignored async error', err) }) }}
             />
           </Suspense>
         )}

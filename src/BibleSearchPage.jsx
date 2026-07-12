@@ -49,7 +49,7 @@ export default function BibleSearchPage({ onBack, onOpenMap }) {
 
   function copyVerse(v) {
     navigator.clipboard?.writeText(`${textOf(v)}（${refOf(v)}）`)
-      .then(() => toast(t('已复制经文'), 'success')).catch(() => {})
+      .then(() => toast(t('已复制经文'), 'success')).catch((err) => { console.warn('[BibleSearchPage.jsx] ignored async error', err) })
   }
   function saveCard(v) {
     const added = addMemoryCard({ ref: refOf(v), textCuv: normalizeBibleText(v.textCuv), textEsv: v.textEsv, pkId: v.pkId })

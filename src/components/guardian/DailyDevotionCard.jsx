@@ -17,7 +17,7 @@ export default function DailyDevotionCard() {
   const [error, setError] = useState('')
 
   useEffect(() => {
-    fetchDevotions().then((d) => setScripture(d.scriptureOfTheDay)).catch(() => {})
+    fetchDevotions().then((d) => setScripture(d.scriptureOfTheDay)).catch((err) => { console.warn('[DailyDevotionCard.jsx] ignored async error', err) })
   }, [])
 
   const submit = async () => {

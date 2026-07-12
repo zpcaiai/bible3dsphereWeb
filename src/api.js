@@ -4,20 +4,8 @@ import { getRuntimeLang } from './i18n/runtime'
 const configuredApiBase = import.meta.env.VITE_API_BASE?.trim()
 
 function resolveDefaultApiBase() {
-  if (typeof window === 'undefined') {
-    return '/api'
-  }
-
-  const hostname = window.location.hostname
-  if (hostname === 'localhost' || hostname === '127.0.0.1') {
-    return '/api'  // 本地开发使用 Vite proxy
-  }
-
-  // Hugging Space / Netlify / Render：后端和前端同域名，使用相对路径
-  if (hostname.includes('hf.space') || hostname.includes('netlify.app') || hostname.includes('onrender.com')) {
-    return '/api'
-  }
-
+  // 所有部署环境（本地 Vite proxy / Hugging Space / Netlify / Render）后端与前端同域，
+  // 一律使用相对路径 '/api'。如需跨域后端，请通过 configuredApiBase（环境变量）覆盖。
   return '/api'
 }
 
@@ -2273,7 +2261,7 @@ export async function swr(key, fetcher, ttlMs = 5 * 60 * 1000) {
   const entry = _swrMem.get(key) || _swrLsGet(key)
   if (entry && typeof entry.ts === 'number') {
     const fresh = (Date.now() - entry.ts) < ttlMs
-    if (!fresh) _swrRevalidate(key, fetcher).catch(() => {})
+    if (!fresh) _swrRevalidate(key, fetcher).catch((err) => { console.warn('[api.js] ignored async error', err) })
     return entry.data
   }
   return _swrRevalidate(key, fetcher)

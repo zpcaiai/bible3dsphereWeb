@@ -18,7 +18,7 @@ export default function PracticingPresencePage({ user, onBack }) {
   const [error, setError] = useState('')
   const [reflection, setReflection] = useState(null)
 
-  useEffect(() => { const t = getToken(); if (t) formationApi.presenceReflection(t).then(setReflection).catch(() => {}) }, [])
+  useEffect(() => { const t = getToken(); if (t) formationApi.presenceReflection(t).then(setReflection).catch((err) => { console.warn('[PracticingPresencePage.jsx] ignored async error', err) }) }, [])
 
   async function recommend() {
     const t = getToken(); setBusy(true); setError('')

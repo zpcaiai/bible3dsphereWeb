@@ -22,7 +22,7 @@ export default function PrayerJournal() {
   const [error, setError] = useState('')
 
   const load = () => {
-    fetchPrayers().then((d) => setEntries(d.entries || [])).catch(() => {})
+    fetchPrayers().then((d) => setEntries(d.entries || [])).catch((err) => { console.warn('[PrayerJournal.jsx] ignored async error', err) })
   }
   useEffect(load, [])
 

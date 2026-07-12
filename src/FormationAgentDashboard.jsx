@@ -26,8 +26,8 @@ export default function FormationAgentDashboard({ user, onBack, go }) {
   function load() {
     const t = getToken(); if (!t) return
     agentApi.dashboard(t).then(r => setDash(r.today)).catch(e => setError(e.message))
-    agentApi.todayPlan(t).then(r => setPlan(r.plan)).catch(() => {})
-    agentApi.recommendations(t).then(r => setRecs(r.recommendations || [])).catch(() => {})
+    agentApi.todayPlan(t).then(r => setPlan(r.plan)).catch((err) => { console.warn('[FormationAgentDashboard.jsx] ignored async error', err) })
+    agentApi.recommendations(t).then(r => setRecs(r.recommendations || [])).catch((err) => { console.warn('[FormationAgentDashboard.jsx] ignored async error', err) })
   }
   useEffect(load, [])
 

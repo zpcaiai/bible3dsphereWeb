@@ -42,7 +42,7 @@ export default function StrongholdPage({ userId = 'local-user', token, initialVi
   // 清空：本地 + 云端
   const onClear = useCallback(() => {
     try { clearScanRecords(userId) } catch { /* ignore */ }
-    if (token) clearScansRemote(token).catch(() => {})
+    if (token) clearScansRemote(token).catch((err) => { console.warn('[StrongholdPage.jsx] ignored async error', err) })
     setCloudRecords(token ? [] : null)
     setRefreshKey((k) => k + 1)
   }, [userId, token])

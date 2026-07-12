@@ -317,10 +317,10 @@ export default function SpiritualBooksPage({ onBack }) {
   const book = BOOKS.find(b => b.id === openId)
 
   useEffect(() => {
-    fetch(`${API_BASE}/books/stats`).then(r => r.json()).then(d => setStats(d.stats || {})).catch(() => {})
+    fetch(`${API_BASE}/books/stats`).then(r => r.json()).then(d => setStats(d.stats || {})).catch((err) => { console.warn('[SpiritualBooksPage.jsx] ignored async error', err) })
     if (token) {
       fetch(`${API_BASE}/books/marks`, { headers: { Authorization: `Bearer ${token}` } })
-        .then(r => (r.ok ? r.json() : { marks: {} })).then(d => setMarks(d.marks || {})).catch(() => {})
+        .then(r => (r.ok ? r.json() : { marks: {} })).then(d => setMarks(d.marks || {})).catch((err) => { console.warn('[SpiritualBooksPage.jsx] ignored async error', err) })
     }
   }, [])
 
@@ -344,13 +344,13 @@ export default function SpiritualBooksPage({ onBack }) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify({ book_id: bookId, status: next.status || '', rating: next.rating || 0 }),
-    }).catch(() => {})
+    }).catch((err) => { console.warn('[SpiritualBooksPage.jsx] ignored async error', err) })
   }
 
   const shareBook = (b) => {
     const url = `${window.location.origin}/?share=book:${b.id}`
     const data = { title: `《${b.title}》`, text: `《${b.title}》— ${b.author}，在属灵星球免费在线阅读`, url }
-    if (navigator.share) { navigator.share(data).catch(() => {}) }
+    if (navigator.share) { navigator.share(data).catch((err) => { console.warn('[SpiritualBooksPage.jsx] ignored async error', err) }) }
     else if (navigator.clipboard) {
       navigator.clipboard.writeText(`${data.text} ${url}`)
       window.showToast && window.showToast(i18nT('分享链接已复制'), 'success')

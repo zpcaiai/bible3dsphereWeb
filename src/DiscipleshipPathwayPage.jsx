@@ -17,7 +17,7 @@ export default function DiscipleshipPathwayPage({ user, onBack }) {
   const [path, setPath] = useState(null)
   const [error, setError] = useState('')
 
-  function loadPath() { const t = getToken(); if (t) communityApi.discActivePath(t).then(r => setPath(r.path)).catch(() => {}) }
+  function loadPath() { const t = getToken(); if (t) communityApi.discActivePath(t).then(r => setPath(r.path)).catch((err) => { console.warn('[DiscipleshipPathwayPage.jsx] ignored async error', err) }) }
   useEffect(loadPath, [])
 
   async function assess() {

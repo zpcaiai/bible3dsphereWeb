@@ -16,8 +16,8 @@ export default function FuelLibraryPage({ onClose }) {
   const [loading, setLoading] = useState(false)
   const [rec, setRec] = useState([])
 
-  useEffect(() => { fetchFuelMeta().then(r => setStruggles(r.struggles || [])).catch(() => {}) }, [])
-  useEffect(() => { fetchRecommendedFuel(getToken()).then(r => setRec((r.fuel || []).filter(x => (x.score || 0) > 0).slice(0, 3))).catch(() => {}) }, [])
+  useEffect(() => { fetchFuelMeta().then(r => setStruggles(r.struggles || [])).catch((err) => { console.warn('[FuelLibraryPage.jsx] ignored async error', err) }) }, [])
+  useEffect(() => { fetchRecommendedFuel(getToken()).then(r => setRec((r.fuel || []).filter(x => (x.score || 0) > 0).slice(0, 3))).catch((err) => { console.warn('[FuelLibraryPage.jsx] ignored async error', err) }) }, [])
   async function open(key) { setLoading(true); try { const r = await fetchFuelPack(key, 0); setPack(r.pack) } catch (e) {} finally { setLoading(false) } }
 
   return (

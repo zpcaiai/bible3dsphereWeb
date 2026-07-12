@@ -21,7 +21,7 @@ export default function PrayerRulePage({ user, onBack }) {
   function reload() {
     const t = getToken(); if (!t) return
     formationApi.prayerToday(t).then(setData).catch(e => setError(e.message))
-    formationApi.prayerReview(t).then(setReview).catch(() => {})
+    formationApi.prayerReview(t).then(setReview).catch((err) => { console.warn('[PrayerRulePage.jsx] ignored async error', err) })
   }
   useEffect(reload, [])
 

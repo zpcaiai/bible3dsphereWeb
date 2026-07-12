@@ -14,7 +14,7 @@ export default function CreedCatechismGalaxy({ userId = 'local-user', token }) {
   const [completed, setCompleted] = useState(() => readCatechismCompleted(userId))
   useEffect(() => {
     if (!token) return
-    formationExtApi.creedState(token).then((r) => { if (r && Array.isArray(r.completed)) setCompleted(r.completed) }).catch(() => {})
+    formationExtApi.creedState(token).then((r) => { if (r && Array.isArray(r.completed)) setCompleted(r.completed) }).catch((err) => { console.warn('[CreedCatechismGalaxy.jsx] ignored async error', err) })
   }, [token])
   const daily = useMemo(() => getDailyCatechism(todayKey(), pathway), [pathway])
   const items = useMemo(() => listCatechismItems({ pathway, query }), [pathway, query])
@@ -22,7 +22,7 @@ export default function CreedCatechismGalaxy({ userId = 'local-user', token }) {
 
   function done(key) {
     setCompleted(markCatechismComplete(userId, key))
-    if (token) formationExtApi.creedComplete({ item_key: key, pathway }, token).catch(() => {})
+    if (token) formationExtApi.creedComplete({ item_key: key, pathway }, token).catch((err) => { console.warn('[CreedCatechismGalaxy.jsx] ignored async error', err) })
   }
 
   return (

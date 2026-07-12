@@ -10,7 +10,7 @@ export default function AiStatusBanner() {
     const check = () => fetch(`${API_BASE}/ai-status`)
       .then(r => (r.ok ? r.json() : null))
       .then(d => { if (alive && d) setSt(d) })
-      .catch(() => {})
+      .catch((err) => { console.warn('[AiStatusBanner.jsx] ignored async error', err) })
     check()
     const t = setInterval(check, 120000)
     return () => { alive = false; clearInterval(t) }

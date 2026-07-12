@@ -185,13 +185,13 @@ export default function SoulDashboard({ user }) {
   const [fmNext, setFmNext]        = useState(null)
   const [fmTimeline, setFmTimeline] = useState([])
 
-  useEffect(() => { const t = getToken(); if (!t) return; fetchWeeklyPastoral(t).then(setPastoral).catch(() => {}) }, [])
+  useEffect(() => { const t = getToken(); if (!t) return; fetchWeeklyPastoral(t).then(setPastoral).catch((err) => { console.warn('[SoulDashboard.jsx] ignored async error', err) }) }, [])
 
   useEffect(() => {
     const t = getToken(); if (!t) return
-    fetchFormationState(t).then(d => setFmState(d.state || null)).catch(() => {})
-    fetchFormationNext(t).then(d => setFmNext(d.next || null)).catch(() => {})
-    fetchFormationTimeline(t, 20).then(d => setFmTimeline(d.events || [])).catch(() => {})
+    fetchFormationState(t).then(d => setFmState(d.state || null)).catch((err) => { console.warn('[SoulDashboard.jsx] ignored async error', err) })
+    fetchFormationNext(t).then(d => setFmNext(d.next || null)).catch((err) => { console.warn('[SoulDashboard.jsx] ignored async error', err) })
+    fetchFormationTimeline(t, 20).then(d => setFmTimeline(d.events || [])).catch((err) => { console.warn('[SoulDashboard.jsx] ignored async error', err) })
   }, [])
 
   useEffect(() => {

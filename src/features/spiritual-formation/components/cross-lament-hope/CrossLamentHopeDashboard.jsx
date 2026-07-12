@@ -19,7 +19,7 @@ export default function CrossLamentHopeDashboard({ userId = 'local-user', token 
     if (!token) return
     formationExtApi.lamentHistory(token).then((r) => {
       if (r && Array.isArray(r.items)) setRecords(r.items.map((it, i) => ({ id: `remote-${i}-${it.created_at}`, userId, categoryKey: it.category_key, createdAt: String(it.created_at || '') })))
-    }).catch(() => {})
+    }).catch((err) => { console.warn('[CrossLamentHopeDashboard.jsx] ignored async error', err) })
   }, [token, userId])
   const frame = useMemo(() => buildLamentFrame(text, category || null, { intensity, capacity: intensity === 'heavy' ? 'low' : 'normal' }), [text, category, intensity])
 
@@ -31,7 +31,7 @@ export default function CrossLamentHopeDashboard({ userId = 'local-user', token 
     const next = [record, ...all].slice(0, 60)
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next))
     setRecords(next.filter((item) => item.userId === userId))
-    if (token) formationExtApi.lamentSave({ category_key: frame.categoryKey, input_text: text, frame, route: frame.route }, token).catch(() => {})
+    if (token) formationExtApi.lamentSave({ category_key: frame.categoryKey, input_text: text, frame, route: frame.route }, token).catch((err) => { console.warn('[CrossLamentHopeDashboard.jsx] ignored async error', err) })
   }
 
   return (

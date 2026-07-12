@@ -18,7 +18,7 @@ export default function ReadingPlanPage({ user }) {
   const [busy, setBusy] = useState(false)
   const plan = planById(planId)
 
-  useEffect(() => { fetch('/mccheyne.json').then(r => r.json()).then(setMccheyne).catch(() => {}) }, [])
+  useEffect(() => { fetch('/mccheyne.json').then(r => r.json()).then(setMccheyne).catch((err) => { console.warn('[ReadingPlanPage.jsx] ignored async error', err) }) }, [])
   useEffect(() => { load() }, [planId])
 
   async function load() {

@@ -13,7 +13,7 @@ export default function GuardianMemoryPanel() {
   const [memories, setMemories] = useState([])
 
   useEffect(() => {
-    fetchGuardianMemories().then((d) => setMemories(d.memories || [])).catch(() => {})
+    fetchGuardianMemories().then((d) => setMemories(d.memories || [])).catch((err) => { console.warn('[GuardianMemoryPanel.jsx] ignored async error', err) })
   }, [])
 
   return (

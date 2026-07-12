@@ -461,7 +461,7 @@ function FeedbackForm({ token }) {
   const [err, setErr] = useState('')
   const [data, setData] = useState(null)
 
-  const load = () => fetchGiftFeedback(token).then(setData).catch(() => {})
+  const load = () => fetchGiftFeedback(token).then(setData).catch((err) => { console.warn('[GiftCallingView.jsx] ignored async error', err) })
   useEffect(() => { if (token) load() }, [token])
 
   async function submit() {
@@ -535,7 +535,7 @@ function ReviewForm({ token }) {
   const [err, setErr] = useState('')
   const [items, setItems] = useState([])
 
-  const load = () => fetchGiftReviews(token).then(d => setItems(d.items || [])).catch(() => {})
+  const load = () => fetchGiftReviews(token).then(d => setItems(d.items || [])).catch((err) => { console.warn('[GiftCallingView.jsx] ignored async error', err) })
   useEffect(() => { if (token) load() }, [token])
 
   async function submit() {
@@ -619,7 +619,7 @@ export default function GiftCallingView({ user, token }) {
 
   const loadProfile = () => token && fetchGiftProfile(token)
     .then(d => { setProfile(d.profile); if (d.profile?.has_assessment) setReport(d.profile) })
-    .catch(() => {})
+    .catch((err) => { console.warn('[GiftCallingView.jsx] ignored async error', err) })
 
   useEffect(() => {
     fetchGiftMeta().then(setMeta).catch(() => setErr(i18nT('加载失败')))

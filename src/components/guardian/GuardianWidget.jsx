@@ -40,7 +40,7 @@ function ReflectionPanel() {
   useEffect(() => {
     fetchGuardianInsights()
       .then((d) => { setPatterns(d.patterns || []); setIdolSignals(d.idolSignals || []) })
-      .catch(() => {})
+      .catch((err) => { console.warn('[GuardianWidget.jsx] ignored async error', err) })
   }, [])
 
   return (

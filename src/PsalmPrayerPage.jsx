@@ -46,7 +46,7 @@ export default function PsalmPrayerPage({ user, onBack }) {
 
   useEffect(() => {
     const t = getToken(); if (!t) return
-    fetchPsalms(t).then(r => setPsalms(r.psalms || [])).catch(() => {})
+    fetchPsalms(t).then(r => setPsalms(r.psalms || [])).catch((err) => { console.warn('[PsalmPrayerPage.jsx] ignored async error', err) })
   }, [])
 
   async function recommend() {

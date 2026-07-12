@@ -122,7 +122,7 @@ export default function LiveKitCall({ url, token, title, selfName, outgoing, onL
           notify: window.showToast,
           message: t("网络较弱，已自动暂停视频/屏幕共享，优先保证语音"),
           recoveredMessage: t("网络已恢复，可手动重新开启视频或屏幕共享"),
-        }).catch(() => {})
+        }).catch((err) => { console.warn('[LiveKitCall.jsx] ignored async error', err) })
       }
       room
         .on(RoomEvent.ParticipantConnected, onChange)

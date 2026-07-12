@@ -65,7 +65,7 @@ export default function IdolatryMonitorPage({ user, onBack, onNeedLogin }) {
     if (!token) return
     fetchIdolatrySignals(token)
       .then(r => setSuggested(r.suggested_targets || []))
-      .catch(() => {})
+      .catch((err) => { console.warn('[IdolatryMonitorPage.jsx] ignored async error', err) })
   }, [])
 
   function toggleIdol(type) {

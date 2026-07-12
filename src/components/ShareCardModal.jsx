@@ -91,7 +91,7 @@ export default function ShareCardModal({ text, reference, onClose }) {
   useEffect(() => {
     repaint()
     // 衬线字体可能后到：字体就绪后重绘一次
-    if (document.fonts?.ready) document.fonts.ready.then(() => repaint()).catch(() => {})
+    if (document.fonts?.ready) document.fonts.ready.then(() => repaint()).catch((err) => { console.warn('[ShareCardModal.jsx] ignored async error', err) })
   }, [repaint])
 
   function download() {

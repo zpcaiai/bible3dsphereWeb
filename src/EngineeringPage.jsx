@@ -142,7 +142,7 @@ export default function EngineeringPage({ onBack, user, token }) {
       .then(d => {
         // The endpoint returns focus_dim info but not all 8 scores
         // We'll derive approximate scores from health check data and defaults
-      }).catch(() => {})
+      }).catch((err) => { console.warn('[EngineeringPage.jsx] ignored async error', err) })
   }, [user?.email])
 
   return (

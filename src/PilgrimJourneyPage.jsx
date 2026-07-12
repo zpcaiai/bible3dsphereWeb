@@ -18,8 +18,8 @@ export default function PilgrimJourneyPage({ onClose, go }) {
 
   useEffect(() => {
     const t = getToken()
-    fetchPilgrimCurrent(t).then(setData).catch(() => {}).finally(() => setLoading(false))
-    fetchPilgrimJourney(t).then(r => setJourney(r.visits || [])).catch(() => {})
+    fetchPilgrimCurrent(t).then(setData).catch((err) => { console.warn('[PilgrimJourneyPage.jsx] ignored async error', err) }).finally(() => setLoading(false))
+    fetchPilgrimJourney(t).then(r => setJourney(r.visits || [])).catch((err) => { console.warn('[PilgrimJourneyPage.jsx] ignored async error', err) })
   }, [])
 
   const cur = data?.place

@@ -65,7 +65,7 @@ export default function VoiceRoomPage({ user, token, onBack }) {
   }, [token])
 
   useEffect(() => {
-    fetchVoiceConfig(token).then(c => setEnabled(!!c.enabled)).catch(() => {})
+    fetchVoiceConfig(token).then(c => setEnabled(!!c.enabled)).catch((err) => { console.warn('[VoiceRoomPage.jsx] ignored async error', err) })
     refresh()
   }, [token, refresh])
 
@@ -127,7 +127,7 @@ function GroupList({ enabled, groups, loading, token, onRefresh, onEnter }) {
   }
 
   const copyCode = (c) => {
-    navigator.clipboard?.writeText(c).then(() => toast('邀请码已复制', 'success')).catch(() => {})
+    navigator.clipboard?.writeText(c).then(() => toast('邀请码已复制', 'success')).catch((err) => { console.warn('[VoiceRoomPage.jsx] ignored async error', err) })
   }
 
   return (
@@ -325,7 +325,7 @@ function CallScreen({ group, user, token, onLeave }) {
           setCamOn,
           setShareOn,
           notify: toast,
-        }).catch(() => {})
+        }).catch((err) => { console.warn('[VoiceRoomPage.jsx] ignored async error', err) })
       }
       room
         .on(RoomEvent.ParticipantConnected, onChange)

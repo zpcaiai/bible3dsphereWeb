@@ -43,8 +43,8 @@ export default function ReminderSettings({ onBack }) {
       if (typeof r.morning_on === 'boolean') setMorningOn(r.morning_on)
       if (typeof r.evening_on === 'boolean') setEveningOn(r.evening_on)
       if (typeof r.growth_on === 'boolean') setGrowthOn(r.growth_on)
-    }).catch(() => {})
-    if (t) fetchCareConsent(t).then(r => { if (typeof r.share_formation_flags === 'boolean') setShareCare(r.share_formation_flags) }).catch(() => {})
+    }).catch((err) => { console.warn('[ReminderSettings.jsx] ignored async error', err) })
+    if (t) fetchCareConsent(t).then(r => { if (typeof r.share_formation_flags === 'boolean') setShareCare(r.share_formation_flags) }).catch((err) => { console.warn('[ReminderSettings.jsx] ignored async error', err) })
   }, [])
 
   async function enable() {

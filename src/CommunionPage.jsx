@@ -88,7 +88,7 @@ export default function CommunionPage({ user, onBack, onOpenVoice }) {
         const active = activePeerRef.current
         if (active && active.email === peer) {
           setMessages((m) => dedupe([...m, normMsg(msg)]))
-          if (!msg.self) markRead(peer).catch(() => {})
+          if (!msg.self) markRead(peer).catch((err) => { console.warn('[CommunionPage.jsx] ignored async error', err) })
         } else if (!msg.self) {
           setFriends((fs) => fs.map((f) => f.email === peer
             ? { ...f, unread: (f.unread || 0) + 1, last_message: msg.body } : f))

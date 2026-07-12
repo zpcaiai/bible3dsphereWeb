@@ -1,15 +1,28 @@
 import { t as i18nT } from './i18n/runtime'
-import { useState, useMemo, useCallback, useRef, useEffect } from 'react'
+import { useState, useMemo, useCallback, useRef, useEffect, lazy, Suspense } from 'react'
 import { SuggestMenu } from './components/SuggestField'
 const MIRROR_OPTS = ['当面对试探时，我要警醒祷告，远离罪', '当害怕时，我要先求问神，再行动', '我要在一件具体的事上顺服神', '我要为某个人 / 某件事持续祷告', '我要放下骄傲，谦卑倚靠神', '我要在软弱中支取主的恩典']
 import { useGlobalAudio, TTSButton as _TTSBtn, TTSFullBar as _TTSFullBar } from './useGlobalAudio.jsx'
-import { MIRROR_CHARACTERS, MIRROR_THEMES } from './mirrorData'
+// mirrorData（约 2MB 静态数据）按需加载：组件挂载后再拉取，避免打进 MirrorPage 主 chunk
+let MIRROR_CHARACTERS = []
+let MIRROR_THEMES = []
+let mirrorDataPromise = null
+function loadMirrorData() {
+  if (!mirrorDataPromise) {
+    mirrorDataPromise = import('./mirrorData').then((m) => {
+      MIRROR_CHARACTERS = m.MIRROR_CHARACTERS
+      MIRROR_THEMES = m.MIRROR_THEMES
+      return m
+    })
+  }
+  return mirrorDataPromise
+}
 import { saveJournal } from './api'
 import BibleMap from './BibleMap'
 import { CHARACTER_JOURNEYS, buildCharacterMapConfig } from './data/characterJourneys'
 import { getRuntimeLang } from './i18n/runtime'
 import { useAutoTranslate, AutoText } from './autoTranslate'
-import RelationshipGraphView from './RelationshipGraphView'
+const RelationshipGraphView = lazy(() => import('./RelationshipGraphView'))
 import { a11yClickProps } from './lib/a11yClick';
 
 const ERAS = ['全部', '族长时代', '出埃及时代', '士师时代', '进入迦南时代', '王国时代', '被掳归回时代', '新约时代', '教会时代']
@@ -711,7 +724,7 @@ function ThemeDetail({ theme, characters, onBack, onCharClick }) {
   )
 }
 
-export default function MirrorPage({ user, token, guidance, onBack, initialView, initialCharId, initialThemeId, initialGraphFocus, initialReturnView }) {
+function MirrorPageImpl({ user, token, guidance, onBack, initialView, initialCharId, initialThemeId, initialGraphFocus, initialReturnView }) {
   const [view, setView] = useState(() => {
     if (initialView === 'character') return (initialCharId && MIRROR_CHARACTERS.some(c => c.id === initialCharId)) ? 'character' : 'list'
     if (initialView === 'theme') return (initialThemeId && MIRROR_THEMES.some(t => t.id === initialThemeId)) ? 'theme' : 'list'
@@ -903,7 +916,11 @@ export default function MirrorPage({ user, token, guidance, onBack, initialView,
   }
 
   if (view === 'graph') {
-    return <RelationshipGraphView token={token} onBack={() => setView('list')} onOpenChar={openChar} initialFocus={graphFocus} onFocusChange={setGraphFocus} />
+    return (
+      <Suspense fallback={<div style={{ padding: 40, textAlign: 'center', color: 'rgba(255,255,255,0.6)' }}><AutoText>{i18nT('加载中…')}</AutoText></div>}>
+        <RelationshipGraphView token={token} onBack={() => setView('list')} onOpenChar={openChar} initialFocus={graphFocus} onFocusChange={setGraphFocus} />
+      </Suspense>
+    )
   }
 
   // Main list view
@@ -1026,3 +1043,36 @@ function FilterGroup({ label, value, options, onChange }) {
   )
 }
 
+
+// 网关组件：等 mirrorData 动态加载完成后再渲染主组件
+// （MirrorPageImpl 的 useState 初始化器同步读取 MIRROR_CHARACTERS/MIRROR_THEMES）
+export default function MirrorPage(props) {
+  const [dataState, setDataState] = useState(() => (MIRROR_CHARACTERS.length ? 'ready' : 'loading'))
+  useEffect(() => {
+    if (dataState !== 'loading') return
+    let alive = true
+    loadMirrorData()
+      .then(() => { if (alive) setDataState('ready') })
+      .catch((err) => {
+        console.warn('MirrorPage: mirrorData 加载失败', err)
+        mirrorDataPromise = null
+        if (alive) setDataState('error')
+      })
+    return () => { alive = false }
+  }, [dataState])
+  if (dataState === 'ready') return <MirrorPageImpl {...props} />
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 240, gap: 12, color: 'rgba(255,255,255,0.6)' }}>
+      {dataState === 'error' ? (
+        <>
+          <span><AutoText>{i18nT('数据加载失败，请检查网络后重试')}</AutoText></span>
+          <button onClick={() => setDataState('loading')} style={{ padding: '6px 16px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.1)', color: '#fff', cursor: 'pointer' }}>
+            <AutoText>{i18nT('重试')}</AutoText>
+          </button>
+        </>
+      ) : (
+        <span><AutoText>{i18nT('加载中…')}</AutoText></span>
+      )}
+    </div>
+  )
+}

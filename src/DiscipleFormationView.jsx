@@ -99,7 +99,7 @@ export default function DiscipleFormationView({ user, token }) {
 
   useEffect(() => {
     fetchDiscipleMeta().then(d => setMeta(d)).catch(() => setErr(i18nT('加载失败')))
-    if (token) fetchDiscipleProfile(token).then(d => setProfile(d.profile)).catch(() => {})
+    if (token) fetchDiscipleProfile(token).then(d => setProfile(d.profile)).catch((err) => { console.warn('[DiscipleFormationView.jsx] ignored async error', err) })
   }, [token])
 
   const dimZh = k => (meta?.dimensions || []).find(d => d.key === k)?.zh || k
@@ -148,7 +148,7 @@ export default function DiscipleFormationView({ user, token }) {
 
       <div style={{ flex: 1, overflowY: 'auto', padding: '14px 14px 24px' }}>
         {view === 'dash' && <Dashboard profile={profile} report={report} meta={meta} dimZh={dimZh} idolZh={idolZh} stateZh={stateZh} onReflect={() => setView('reflect')} />}
-        {view === 'reflect' && <Reflect token={token} onDone={(r) => { setReport(r); if (token) fetchDiscipleProfile(token).then(d => setProfile(d.profile)).catch(() => {}) }} meta={meta} dimZh={dimZh} idolZh={idolZh} stateZh={stateZh} />}
+        {view === 'reflect' && <Reflect token={token} onDone={(r) => { setReport(r); if (token) fetchDiscipleProfile(token).then(d => setProfile(d.profile)).catch((err) => { console.warn('[DiscipleFormationView.jsx] ignored async error', err) }) }} meta={meta} dimZh={dimZh} idolZh={idolZh} stateZh={stateZh} />}
         {view === 'engines' && <Engines report={report} engineList={engineList} idolZh={idolZh} dimZh={dimZh} onReflect={() => setView('reflect')} />}
         {view === 'mentor' && <Mentor token={token} />}
         {view === 'network' && <Network token={token} stateZh={stateZh} />}
@@ -282,7 +282,7 @@ function Review({ token, dimZh, stateZh }) {
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(false)
   const [milestones, setMilestones] = useState([])
-  useEffect(() => { if (token) fetchDiscipleMilestones(token).then(d => setMilestones(d.items || [])).catch(() => {}) }, [token])
+  useEffect(() => { if (token) fetchDiscipleMilestones(token).then(d => setMilestones(d.items || [])).catch((err) => { console.warn('[DiscipleFormationView.jsx] ignored async error', err) }) }, [token])
   useEffect(() => {
     let live = true
     setLoading(true); setData(null)
@@ -613,7 +613,7 @@ function Network({ token }) {
   const [err, setErr] = useState('')
 
   const load = () => fetchDiscipleNetwork(token).then(d => { setNet(d.network); setDmi(d.dmi) }).catch(() => setErr(i18nT('加载失败')))
-  useEffect(() => { if (token) { load(); fetchDiscipleGraph(token).then(setGraph).catch(() => {}) } }, [token])
+  useEffect(() => { if (token) { load(); fetchDiscipleGraph(token).then(setGraph).catch((err) => { console.warn('[DiscipleFormationView.jsx] ignored async error', err) }) } }, [token])
 
   async function add() {
     if (!name.trim()) return

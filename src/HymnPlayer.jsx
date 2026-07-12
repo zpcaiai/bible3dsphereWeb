@@ -375,7 +375,7 @@ export default function HymnPlayer() {
             onClick={() => {
               const url = `${window.location.origin}/?share=hymn:${hymn.id}`
               const data = { title: `圣诗《${hymn.title}》`, text: `圣诗《${hymn.title}》— 在属灵星球在线听唱（五线谱+逐句跟唱）`, url }
-              if (navigator.share) { navigator.share(data).catch(() => {}) }
+              if (navigator.share) { navigator.share(data).catch((err) => { console.warn('[HymnPlayer.jsx] ignored async error', err) }) }
               else if (navigator.clipboard) {
                 navigator.clipboard.writeText(`${data.text} ${url}`)
                 if (window.showToast) window.showToast(i18nT('分享链接已复制'), 'success')

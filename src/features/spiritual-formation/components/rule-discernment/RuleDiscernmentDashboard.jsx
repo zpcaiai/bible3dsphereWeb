@@ -21,10 +21,10 @@ export default function RuleDiscernmentDashboard({ userId = 'local-user', token 
   }
   function saveRule() {
     if (typeof window !== 'undefined') window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ userId, ruleInput, rule, savedAt: new Date().toISOString() }))
-    if (token) formationExtApi.ruleSave({ profile: ruleInput, rule }, token).catch(() => {})
+    if (token) formationExtApi.ruleSave({ profile: ruleInput, rule }, token).catch((err) => { console.warn('[RuleDiscernmentDashboard.jsx] ignored async error', err) })
   }
   function saveDiscernment() {
-    if (token) formationExtApi.discernmentSave({ decision_title: decision.decisionTitle, input: decision, result: discernment }, token).catch(() => {})
+    if (token) formationExtApi.discernmentSave({ decision_title: decision.decisionTitle, input: decision, result: discernment }, token).catch((err) => { console.warn('[RuleDiscernmentDashboard.jsx] ignored async error', err) })
   }
 
   return (

@@ -34,7 +34,7 @@ export function makeBoostedStream (stream, gainValue = 2.2) {
     const AC = window.AudioContext || window.webkitAudioContext
     if (!AC) return { stream, ctx: null }
     const ctx = new AC()
-    if (ctx.state === 'suspended') { ctx.resume().catch(() => {}) }
+    if (ctx.state === 'suspended') { ctx.resume().catch((err) => { console.warn('[recorderUtils.js] ignored async error', err) }) }
     const src = ctx.createMediaStreamSource(stream)
     const comp = ctx.createDynamicsCompressor()
     comp.threshold.value = -50

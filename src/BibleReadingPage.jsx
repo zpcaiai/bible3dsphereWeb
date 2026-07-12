@@ -611,7 +611,7 @@ export default function BibleReadingPage({ user, token, onBack }) {
     if (!user) { setLoadingProgress(false); return }
     fetchReadingProgress(token)
       .then(p => setProgress(p))
-      .catch(() => {})
+      .catch((err) => { console.warn('[BibleReadingPage.jsx] ignored async error', err) })
       .finally(() => setLoadingProgress(false))
   }, [user, token])
 

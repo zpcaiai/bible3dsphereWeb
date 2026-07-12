@@ -15,7 +15,7 @@ export default function SacramentCalendarOrbit({ userId = 'local-user', token })
 
   function savePrep() {
     if (typeof window !== 'undefined') window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ userId, lordDay, savedAt: new Date().toISOString() }))
-    if (token) formationExtApi.lordDaySave({ season_key: season.key, prep: lordDay }, token).catch(() => {})
+    if (token) formationExtApi.lordDaySave({ season_key: season.key, prep: lordDay }, token).catch((err) => { console.warn('[SacramentCalendarOrbit.jsx] ignored async error', err) })
   }
 
   return (

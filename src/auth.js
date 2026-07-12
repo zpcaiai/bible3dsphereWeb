@@ -72,7 +72,7 @@ export async function logout() {
   try {
     await fetch(authUrl('/logout'), { method: 'POST', credentials: 'same-origin' })
   } catch { /* logout remains locally effective when offline */ }
-  await clearSensitiveOfflineData().catch(() => {})
+  await clearSensitiveOfflineData().catch((err) => { console.warn('[auth.js] ignored async error', err) })
   clearToken()
 }
 

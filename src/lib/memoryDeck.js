@@ -84,7 +84,7 @@ export function pushDeckToCloud() {
   const h = _auth(); if (!h) return
   clearTimeout(_pushTimer)
   _pushTimer = setTimeout(() => {
-    fetch(`${API_BASE}/memory-cards`, { method: 'PUT', headers: h, body: JSON.stringify({ cards: load() }) }).catch(() => {})
+    fetch(`${API_BASE}/memory-cards`, { method: 'PUT', headers: h, body: JSON.stringify({ cards: load() }) }).catch((err) => { console.warn('[memoryDeck.js] ignored async error', err) })
   }, 1500)
 }
 

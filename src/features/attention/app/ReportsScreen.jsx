@@ -256,7 +256,7 @@ export default function ReportsScreen({ token, timezone, onBack, openPage }) {
   }, [weekStart])
 
   useEffect(() => {
-    loadHistory().catch(() => {})
+    loadHistory().catch((err) => { console.warn('[ReportsScreen.jsx] ignored async error', err) })
   }, [])
 
   useEffect(() => {
