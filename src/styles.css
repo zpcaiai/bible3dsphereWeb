@@ -75,6 +75,13 @@ button:active, a:active, [role="button"]:active {
   opacity: 0.72;
   transform: scale(0.96);
 }
+
+/* Defensive guard: the React mount point is structural and must never animate
+   like a control, even if stale runtime code temporarily assigns button role. */
+#root[role="button"]:active {
+  opacity: 1;
+  transform: none;
+}
 button:disabled, [disabled] {
   opacity: 0.38 !important;
   cursor: not-allowed !important;
