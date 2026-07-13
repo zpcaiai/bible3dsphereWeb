@@ -1984,7 +1984,7 @@ function AppContent() {
                       disabled={loading || isTranscribing}
                       variant="home"
                       showOverlay
-                      style={{ flex: '1 1 190px' }}
+                      style={{ flex: '0 1 168px' }}
                     />
                     {/* 润色按钮 - 微信浏览器隐藏，提示用外部浏览器 */}
                     {!isWeChat && (
