@@ -7885,7 +7885,7 @@
   var MALE = /(yunjian|yunyang|yunxi|yunze|yunhao|kangkang|云健|云扬|云希|云泽|康康|male|男)/i;
   var FEMALE = /(tingting|ting-?ting|huihui|xiaoxiao|xiaoyi|xiaomeng|mei-?jia|sin-?ji|yaoyao|female|女|婷婷|晓晓|慧慧)/i;
   var HQ = /(neural|natural|online|enhanced|premium|plus)/i;
-  var BLOCK = /^\s*(eddy|grandpa|grandma|flo|reed|rocko|sandy|shelley)\b/i;
+  var BLOCK = /^\s*(eddy|grandpa|grandma|flo|reed|rocko|sandy|shelley|mei-?jia|meijia)\b/i;
   function isZh(v) { return /^zh([-_]|$)/i.test(v.lang || ''); }
   function score(v) {
     var n = (v.name || '') + ' ' + (v.lang || ''), s = 0;
