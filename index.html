@@ -7,15 +7,7 @@
     <meta name="theme-color" content="#6d7cff" />
 
     <!-- 语言：在渲染前依据用户偏好（app-lang）修正 <html lang>，利于无障碍与翻译 -->
-    <script>
-      (function () {
-        try {
-          var saved = window.localStorage.getItem('app-lang');
-          var lang = saved || ((navigator.language || '').toLowerCase().indexOf('zh') === 0 ? 'zh' : 'en');
-          document.documentElement.lang = lang === 'en' ? 'en' : 'zh-CN';
-        } catch (e) { /* ignore */ }
-      })();
-    </script>
+    <script src="/js/lang-init.js"></script>
 
     <!-- SEO / 描述 -->
     <meta name="description" content="属灵星球（holiness.uk）——面向华人基督徒的属灵陪伴 PWA：每日灵修、代祷墙、圣经阅读、宣教地图与属灵社区，随时随地被神的话语陪伴。" />
@@ -39,36 +31,7 @@
     <meta name="twitter:description" content="面向华人基督徒的属灵陪伴 PWA：每日灵修、代祷墙、圣经阅读、宣教地图与属灵社区。" />
     <meta name="twitter:image" content="https://holiness.uk/og-image.png" />
 
-    <script>
-      // 清理旧版 Service Worker（仅在检测到旧版本时执行一次）
-      (function () {
-        function lsGet(k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } }
-        function lsSet(k, v) { try { window.localStorage.setItem(k, v); } catch (e) { /* ignore */ } }
-        var CACHE_KEY = 'emotion-sphere-cache-cleared-v1';
-        if (lsGet(CACHE_KEY)) return; // 已清理过，不再执行
-        if ('serviceWorker' in navigator) {
-          navigator.serviceWorker.getRegistrations().then(function (regs) {
-            var hasOldSW = regs.some(function (r) {
-              return r.scope && r.scope.includes(window.location.hostname) &&
-                     r.active && !r.active.scriptURL.includes('emotion-sphere-2025');
-            });
-            if (hasOldSW) {
-              regs.forEach(function (r) {
-                if (r.scope && r.scope.includes(window.location.hostname)) { r.unregister(); }
-              });
-              if ('caches' in window) {
-                caches.keys().then(function (names) {
-                  names.forEach(function (name) { caches.delete(name); });
-                });
-              }
-              lsSet(CACHE_KEY, 'true');
-              window.location.reload(); // 软刷新一次以应用清理
-            }
-          }).catch(function () { /* ignore */ });
-        }
-        lsSet(CACHE_KEY, 'true'); // 标记已执行
-      })();
-    </script>
+    <script src="/js/sw-cleanup.js"></script>
 
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />

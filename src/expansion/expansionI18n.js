@@ -15,7 +15,6 @@ export const EN = {
   '提交失败': 'Submit failed',
   '完整结果': 'Full result',
   '中文': 'Chinese',
-  '点一个常见的，或在下面自己写：': 'Pick a common option, or write your own below:',
   '请先登录后再使用此功能（推荐书目/圣诗无需登录）。': 'Please sign in to use this feature (book/hymn lists need no sign-in).',
   '本地兜底结果：后端未响应，已用前端内置规则生成。连接后端后可获得完整服务端结果。':
     'Local fallback result: the backend did not respond, so the frontend generated this with built-in rules. Connect the backend for full server results.',
@@ -60,7 +59,6 @@ export const EN = {
   '按大陆精选（★ = 填补空白/极高契合）': 'Curated by continent (★ = fills a gap / top fit)',
   '公版': 'Public domain',
   '🎵 圣诗扩充': '🎵 Hymn additions',
-  '认识神': 'Knowing God',
   '回到福音': 'Return to the Gospel',
   '心的争战': 'Battle of the Heart',
   '与神同行': 'Walk with God',
@@ -78,7 +76,6 @@ export const EN = {
   '心意更新': 'Renovation of the Heart',
   '全人塑造 VIM · 魏乐德': 'Whole-person formation, VIM · Willard',
   '心意更新 · 全人塑造': 'Renovation of the Heart · Whole-person formation',
-  '华人本土灵修': 'Chinese Devotional Voices',
   '倪柝声/王明道/唐崇荣': 'Watchman Nee / Wang Mingdao / Stephen Tong',
   '说出你此刻的处境或需要，例如「我为信仰受了很多苦，快撑不住了」': 'Share your situation or need, e.g. "I have suffered much for my faith and can barely hold on."',
   // 结果字段标签 / result labels
