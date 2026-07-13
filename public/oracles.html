@@ -4,164 +4,118 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>列国默示 · 仿旧约先知书</title>
-<meta name="description" content="仿旧约先知书体裁的四篇文学默想：论华夏列国、东海群岛、机器之城与大洋彼岸之鹰国。文学仿作，非新的启示。">
+<meta name="description" content="仿旧约先知书体裁的文学默想：论华夏、东海、美国、德国、意大利、伊朗、现代以色列、俄罗斯，以及机器之城与硅之城。文学仿作，非新的启示。">
 <style>
   :root {
-    --bg: #f7f1e6;
-    --bg-soft: #fbf7ef;
-    --paper: #fffdf8;
-    --ink: #2c2620;
-    --ink-soft: #5c5347;
-    --muted: #8a7d6b;
-    --rule: #e4d8c2;
-    --accent: #9a6a3a;
-    --accent-deep: #7d3b2e;
+    --bg: #f7f1e6; --bg-soft: #fbf7ef; --paper: #fffdf8; --ink: #2c2620; --ink-soft: #5c5347;
+    --muted: #8a7d6b; --rule: #e4d8c2; --accent: #9a6a3a; --accent-deep: #7d3b2e;
     --shadow: 0 1px 2px rgba(60,45,25,.06), 0 12px 34px rgba(60,45,25,.10);
   }
   @media (prefers-color-scheme: dark) {
     :root {
-      --bg: #171310;
-      --bg-soft: #1d1813;
-      --paper: #201b15;
-      --ink: #ece3d4;
-      --ink-soft: #c3b6a1;
-      --muted: #9b8d78;
-      --rule: #3a3026;
-      --accent: #d5a56a;
-      --accent-deep: #e0b088;
-      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 14px 40px rgba(0,0,0,.45);
+      --bg:#171310;--bg-soft:#1d1813;--paper:#201b15;--ink:#ece3d4;--ink-soft:#c3b6a1;
+      --muted:#9b8d78;--rule:#3a3026;--accent:#d5a56a;--accent-deep:#e0b088;
+      --shadow:0 1px 2px rgba(0,0,0,.3),0 14px 40px rgba(0,0,0,.45);
     }
   }
-  html[data-theme="light"] {
-    --bg:#f7f1e6;--bg-soft:#fbf7ef;--paper:#fffdf8;--ink:#2c2620;--ink-soft:#5c5347;--muted:#8a7d6b;--rule:#e4d8c2;--accent:#9a6a3a;--accent-deep:#7d3b2e;--shadow:0 1px 2px rgba(60,45,25,.06),0 12px 34px rgba(60,45,25,.10);
-  }
-  html[data-theme="dark"] {
-    --bg:#171310;--bg-soft:#1d1813;--paper:#201b15;--ink:#ece3d4;--ink-soft:#c3b6a1;--muted:#9b8d78;--rule:#3a3026;--accent:#d5a56a;--accent-deep:#e0b088;--shadow:0 1px 2px rgba(0,0,0,.3),0 14px 40px rgba(0,0,0,.45);
-  }
+  html[data-theme="light"] { --bg:#f7f1e6;--bg-soft:#fbf7ef;--paper:#fffdf8;--ink:#2c2620;--ink-soft:#5c5347;--muted:#8a7d6b;--rule:#e4d8c2;--accent:#9a6a3a;--accent-deep:#7d3b2e;--shadow:0 1px 2px rgba(60,45,25,.06),0 12px 34px rgba(60,45,25,.10); }
+  html[data-theme="dark"] { --bg:#171310;--bg-soft:#1d1813;--paper:#201b15;--ink:#ece3d4;--ink-soft:#c3b6a1;--muted:#9b8d78;--rule:#3a3026;--accent:#d5a56a;--accent-deep:#e0b088;--shadow:0 1px 2px rgba(0,0,0,.3),0 14px 40px rgba(0,0,0,.45); }
 
   * { box-sizing: border-box; }
   html { scroll-behavior: smooth; }
   body {
     margin: 0;
-    background:
-      radial-gradient(1200px 600px at 50% -10%, var(--bg-soft), transparent 60%),
-      var(--bg);
+    background: radial-gradient(1200px 600px at 50% -10%, var(--bg-soft), transparent 60%), var(--bg);
     color: var(--ink);
     font-family: "Noto Serif SC","Source Han Serif SC","Source Han Serif CN","Songti SC","STSong","SimSun","Times New Roman",serif;
-    line-height: 1.95;
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
+    line-height: 1.95; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
   }
-
   .wrap { max-width: 780px; margin: 0 auto; padding: 0 22px 90px; }
 
-  /* Masthead */
-  .masthead { text-align: center; padding: 54px 0 26px; }
-  .kicker {
-    font-size: 13px; letter-spacing: .42em; text-indent: .42em;
-    color: var(--muted); text-transform: none; margin: 0 0 14px;
-  }
-  .masthead h1 {
-    margin: 0; font-weight: 700;
-    font-size: clamp(34px, 7vw, 52px);
-    letter-spacing: .16em; text-indent: .16em;
-    color: var(--ink);
-  }
-  .masthead .rule {
-    width: 62px; height: 2px; margin: 20px auto 16px;
-    background: linear-gradient(90deg, transparent, var(--accent), transparent);
-  }
-  .masthead .dek {
-    margin: 0 auto; max-width: 40ch; color: var(--ink-soft);
-    font-size: 15px; letter-spacing: .04em;
-  }
+  .masthead { text-align: center; padding: 54px 0 24px; }
+  .kicker { font-size: 13px; letter-spacing: .42em; text-indent: .42em; color: var(--muted); margin: 0 0 14px; }
+  .masthead h1 { margin: 0; font-weight: 700; font-size: clamp(34px, 7vw, 52px); letter-spacing: .16em; text-indent: .16em; color: var(--ink); }
+  .masthead .rule { width: 62px; height: 2px; margin: 20px auto 16px; background: linear-gradient(90deg, transparent, var(--accent), transparent); }
+  .masthead .dek { margin: 0 auto; max-width: 46ch; color: var(--ink-soft); font-size: 15px; letter-spacing: .04em; }
 
-  /* Tabs */
   .tabs {
     position: sticky; top: 0; z-index: 20;
-    display: flex; gap: 4px; justify-content: center; flex-wrap: nowrap;
+    display: flex; gap: 4px; justify-content: flex-start; flex-wrap: nowrap;
     padding: 10px 6px; margin: 8px -22px 0;
     background: color-mix(in srgb, var(--bg) 82%, transparent);
     backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--rule);
-    overflow-x: auto; scrollbar-width: none;
+    border-bottom: 1px solid var(--rule); overflow-x: auto; scrollbar-width: thin;
   }
-  .tabs::-webkit-scrollbar { display: none; }
+  .tabs::-webkit-scrollbar { height: 4px; }
+  .tabs::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 4px; }
   .tab {
-    appearance: none; border: 0; background: transparent; cursor: pointer;
-    font-family: inherit; color: var(--muted);
-    font-size: 16px; letter-spacing: .14em; text-indent: .14em;
-    padding: 8px 16px; border-radius: 10px; white-space: nowrap;
-    position: relative; transition: color .2s ease, background .2s ease;
+    appearance: none; border: 0; background: transparent; cursor: pointer; font-family: inherit; color: var(--muted);
+    font-size: 16px; letter-spacing: .10em; text-indent: .10em; padding: 8px 14px; border-radius: 10px; white-space: nowrap;
+    position: relative; transition: color .2s ease, background .2s ease; flex: 0 0 auto;
   }
   .tab:hover { color: var(--ink); background: color-mix(in srgb, var(--accent) 10%, transparent); }
   .tab.is-active { color: var(--accent-deep); font-weight: 700; }
-  .tab.is-active::after {
-    content: ""; position: absolute; left: 16px; right: 16px; bottom: 2px; height: 2px;
-    background: var(--accent); border-radius: 2px;
-  }
+  .tab.is-active::after { content: ""; position: absolute; left: 14px; right: 14px; bottom: 2px; height: 2px; background: var(--accent); border-radius: 2px; }
   .tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-  /* Panels */
   .panel {
-    display: none;
-    margin: 30px auto 0; padding: 44px clamp(22px, 5vw, 56px) 52px;
-    background: var(--paper);
-    border: 1px solid var(--rule);
-    border-radius: 14px;
-    box-shadow: var(--shadow);
+    display: none; margin: 30px auto 0; padding: 44px clamp(22px, 5vw, 56px) 52px;
+    background: var(--paper); border: 1px solid var(--rule); border-radius: 14px; box-shadow: var(--shadow);
     animation: rise .45s ease both;
   }
   .panel.is-active { display: block; }
   @keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
   .panel:focus { outline: none; }
 
-  .panel-head { text-align: center; margin-bottom: 30px; }
-  .panel-title {
-    margin: 0; font-weight: 700;
-    font-size: clamp(24px, 5vw, 32px);
-    letter-spacing: .12em; text-indent: .12em; color: var(--ink);
-  }
-  .panel-sub { margin: 12px 0 0; color: var(--muted); font-size: 14px; letter-spacing: .16em; text-indent: .16em; }
-  .panel-head::after {
-    content: "❧"; display: block; margin-top: 18px;
-    color: var(--accent); font-size: 18px; opacity: .75;
-  }
+  .panel-head { text-align: center; margin-bottom: 26px; }
+  .panel-title { margin: 0; font-weight: 700; font-size: clamp(23px, 5vw, 31px); letter-spacing: .10em; text-indent: .10em; color: var(--ink); }
+  .panel-sub { margin: 12px 0 0; color: var(--muted); font-size: 14px; letter-spacing: .12em; text-indent: .12em; }
+  .panel-head::after { content: "❧"; display: block; margin-top: 16px; color: var(--accent); font-size: 18px; opacity: .75; }
 
-  .stanza {
-    margin: 0 0 1.5em; color: var(--ink);
-    font-size: clamp(17px, 2.4vw, 19px);
-    letter-spacing: .02em;
+  .notice {
+    margin: 0 0 30px; padding: 16px 20px; border: 1px solid var(--rule); border-left: 3px solid var(--accent);
+    border-radius: 10px; background: color-mix(in srgb, var(--accent) 6%, var(--paper));
+    color: var(--ink-soft); font-size: 13.5px; line-height: 1.8; letter-spacing: .01em;
   }
-  .stanza.opening {
-    text-align: center; color: var(--accent-deep);
-    font-size: clamp(18px, 2.6vw, 21px); font-weight: 700;
-    letter-spacing: .08em; margin-bottom: 1.9em;
-  }
+  .notice p { margin: 0 0 8px; }
+  .notice p:last-child { margin: 0; }
 
-  /* Footer */
+  .stanza { margin: 0 0 1.5em; color: var(--ink); font-size: clamp(17px, 2.4vw, 19px); letter-spacing: .02em; }
+  .stanza.opening { text-align: center; color: var(--accent-deep); font-size: clamp(18px, 2.6vw, 21px); font-weight: 700; letter-spacing: .06em; margin-bottom: 1.8em; }
+
+  .sec {
+    margin: 2.2em 0 1em; text-align: center; color: var(--accent-deep); font-weight: 700;
+    font-size: clamp(20px, 3vw, 24px); letter-spacing: .08em; text-indent: .08em;
+    padding-bottom: .5em; border-bottom: 1px solid var(--rule);
+  }
+  .sec-sub {
+    margin: 1.8em 0 .9em; color: var(--accent); font-weight: 700;
+    font-size: clamp(17px, 2.4vw, 19px); letter-spacing: .04em;
+  }
+  .sec-sub::before { content: "— "; opacity: .6; }
+
+  .cite { font-size: .68em; }
+  .cite a { color: var(--accent); text-decoration: none; }
+  .cite a:hover { text-decoration: underline; }
+
   .foot {
-    max-width: 780px; margin: 34px auto 0; padding: 22px 22px 0;
-    border-top: 1px solid var(--rule); color: var(--muted);
-    font-size: 13px; line-height: 1.85; text-align: center; letter-spacing: .03em;
+    max-width: 780px; margin: 34px auto 0; padding: 22px 22px 0; border-top: 1px solid var(--rule);
+    color: var(--muted); font-size: 13px; line-height: 1.85; text-align: center; letter-spacing: .03em;
   }
   .foot strong { color: var(--ink-soft); font-weight: 700; }
 
   .theme-toggle {
-    position: fixed; top: 14px; right: 14px; z-index: 40;
-    width: 40px; height: 40px; border-radius: 50%;
-    border: 1px solid var(--rule); background: var(--paper); color: var(--ink-soft);
-    cursor: pointer; font-size: 17px; line-height: 1; box-shadow: var(--shadow);
-    display: grid; place-items: center; transition: transform .2s ease;
+    position: fixed; top: 14px; right: 14px; z-index: 40; width: 40px; height: 40px; border-radius: 50%;
+    border: 1px solid var(--rule); background: var(--paper); color: var(--ink-soft); cursor: pointer;
+    font-size: 17px; line-height: 1; box-shadow: var(--shadow); display: grid; place-items: center; transition: transform .2s ease;
   }
   .theme-toggle:hover { transform: scale(1.06); }
   .theme-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
   @media (max-width: 560px) {
     .masthead { padding-top: 40px; }
-    .tab { font-size: 15px; padding: 8px 12px; letter-spacing: .08em; text-indent: .08em; }
+    .tab { font-size: 15px; padding: 8px 12px; letter-spacing: .04em; text-indent: .04em; }
     .panel { border-radius: 12px; }
-    body { line-height: 1.9; }
   }
   @media print {
     .tabs, .theme-toggle { display: none; }
@@ -176,21 +130,39 @@
       <p class="kicker">仿旧约先知书 · 文学默想</p>
       <h1>列国默示</h1>
       <div class="rule"></div>
-      <p class="dek">四篇按先知书「列国审判」体裁写成的文学仿作 —— 论华夏、东海、机器之世与大洋之鹰。</p>
+      <p class="dek">按先知书「列国审判」体裁写成的文学仿作 —— 论列国与今世诸权势。文学仿作，非新的启示。</p>
     </div>
 
-    <nav class="tabs" role="tablist" aria-label="四篇默示">
-      <button class="tab is-active" id="tab-hua" role="tab" aria-controls="panel-hua" aria-selected="true" data-target="hua" data-index="0">
+    <nav class="tabs" role="tablist" aria-label="各篇默示">
+      <button class="tab is-active" id="tab-hua" role="tab" aria-controls="panel-hua" aria-selected="true" data-target="hua">
         <span class="tab-label">华夏列国</span>
       </button>
-      <button class="tab" id="tab-dong" role="tab" aria-controls="panel-dong" aria-selected="false" data-target="dong" data-index="1">
+      <button class="tab" id="tab-dong" role="tab" aria-controls="panel-dong" aria-selected="false" data-target="dong">
         <span class="tab-label">东海群岛</span>
       </button>
-      <button class="tab" id="tab-ying" role="tab" aria-controls="panel-ying" aria-selected="false" data-target="ying" data-index="2">
+      <button class="tab" id="tab-ying" role="tab" aria-controls="panel-ying" aria-selected="false" data-target="ying">
         <span class="tab-label">大洋之鹰</span>
       </button>
-      <button class="tab" id="tab-jiqi" role="tab" aria-controls="panel-jiqi" aria-selected="false" data-target="jiqi" data-index="3">
+      <button class="tab" id="tab-de" role="tab" aria-controls="panel-de" aria-selected="false" data-target="de">
+        <span class="tab-label">德国</span>
+      </button>
+      <button class="tab" id="tab-it" role="tab" aria-controls="panel-it" aria-selected="false" data-target="it">
+        <span class="tab-label">意大利</span>
+      </button>
+      <button class="tab" id="tab-ir" role="tab" aria-controls="panel-ir" aria-selected="false" data-target="ir">
+        <span class="tab-label">伊朗</span>
+      </button>
+      <button class="tab" id="tab-il" role="tab" aria-controls="panel-il" aria-selected="false" data-target="il">
+        <span class="tab-label">现代以色列</span>
+      </button>
+      <button class="tab" id="tab-ru" role="tab" aria-controls="panel-ru" aria-selected="false" data-target="ru">
+        <span class="tab-label">俄罗斯</span>
+      </button>
+      <button class="tab" id="tab-jiqi" role="tab" aria-controls="panel-jiqi" aria-selected="false" data-target="jiqi">
         <span class="tab-label">机器之城</span>
+      </button>
+      <button class="tab" id="tab-gui" role="tab" aria-controls="panel-gui" aria-selected="false" data-target="gui">
+        <span class="tab-label">硅之城</span>
       </button>
     </nav>
 
@@ -1146,6 +1118,2088 @@
 惟有真理、公义与慈爱<br>
 存到永远。</p>
     </section>
+    <section class="panel" id="panel-de" role="tabpanel" aria-labelledby="tab-de" tabindex="0">
+      <header class="panel-head">
+        <h2 class="panel-title">论德国的默示</h2>
+        <p class="panel-sub">以秩序、知识与工业为力量的莱茵之国 · 德国</p>
+      </header>
+      <p class="stanza opening">耶和华论那位于列国之中、<br>
+以鹰为徽记，<br>
+以秩序、技艺和哲学为荣耀的国如此说：</p>
+      <p class="stanza">德国啊，你当听；<br>
+莱茵河畔的城邑啊，你们当静默。</p>
+      <p class="stanza">你曾以思想穷究天地，<br>
+以音乐探索人的灵魂；<br>
+你的学者书写厚重的典籍，<br>
+你的工匠制造精密的器械。</p>
+      <p class="stanza">你的工厂昼夜运转，<br>
+你的铁路贯通城邑；<br>
+你使钢铁成为军舰和桥梁，<br>
+使化学成为医药与战争的工具。</p>
+      <p class="stanza">你说：<br>
+“我们重视理性，<br>
+我们尊重秩序；<br>
+我们所制造的坚固可靠，<br>
+我们的制度精密严谨。”</p>
+      <p class="stanza">然而，万军之耶和华如此说：</p>
+      <p class="stanza">秩序若服事公义，便成为保护；<br>
+秩序若服事偶像，便成为杀人的机器。<br>
+理性若敬畏真理，便产生智慧；<br>
+理性若向权力献上自己，<br>
+便能为最深的邪恶<br>
+建造最精密的道路。</p>
+      <p class="stanza">德国啊，你的罪不只在暴君的口中，<br>
+也在许多顺从者的沉默里。</p>
+      <p class="stanza">一个人高举自己，<br>
+称民族、血统与土地为最高价值；<br>
+许多人便向他欢呼。<br>
+一个政党把仇恨写成法律，<br>
+学者为它寻找理论，<br>
+官员为它填写表格，<br>
+工程师为它修筑道路，<br>
+商人为它提供器械，<br>
+邻舍则转过脸去。</p>
+      <p class="stanza">于是，人不再首先被看作人，<br>
+而被分类为血统、疾病、负担和威胁。<br>
+姓名被改成号码，<br>
+家园被改成登记资料；<br>
+邻舍被装进列车，<br>
+列车按照时刻表驶向死亡。</p>
+      <p class="stanza">祸哉，那些以服从洗净良心的人！<br>
+他们说：<br>
+“我只是在执行命令；<br>
+我只负责一份文件，<br>
+一条铁路，一批货物，<br>
+一个实验，一项技术。”</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">若每一个人都只负责<br>
+机器中的一颗齿轮，<br>
+那整台杀人的机器<br>
+由谁承担罪责？</p>
+      <p class="stanza">你不能把良心分割给不同部门，<br>
+不能因责任经过许多人的手<br>
+便使它消失。</p>
+      <p class="stanza">书写名单的人不能说<br>
+自己没有打开毒气；<br>
+驾驶列车的人不能说<br>
+自己没有决定目的地；<br>
+提供知识和器械的人不能说<br>
+自己只是在追求专业卓越。</p>
+      <p class="stanza">因为我不只审判举刀的手，<br>
+也审判为刀剑设计制度的人；<br>
+不只审判发出命令的王，<br>
+也审判明知不义仍选择顺服的人。</p>
+      <p class="stanza">阿摩司的主如此说：</p>
+      <p class="stanza">因你们三番四次<br>
+把人变为国家的材料，<br>
+我必不收回刑罚。<br>
+因你们以种族的骄傲<br>
+践踏我按自己形象所造的人，<br>
+我必不收回刑罚。<br>
+因你们焚烧城邑，<br>
+以战争吞吃列国，<br>
+使母亲失去儿女，<br>
+使百姓流离失所，<br>
+我必不收回刑罚。</p>
+      <p class="stanza">你们用科学研究人的身体，<br>
+却不承认受试者的人性；<br>
+用医学的名义施行残酷，<br>
+用国家需要遮盖谋杀。</p>
+      <p class="stanza">你们把死亡工业化，<br>
+使杀人不再像愤怒中的暴行，<br>
+而像工厂中的生产流程。</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">邪恶并不因穿上白袍<br>
+便成为科学；<br>
+暴行并不因记录详尽<br>
+便成为研究；<br>
+屠杀并不因效率提高<br>
+便改变它在我面前的名称。</p>
+      <p class="stanza">德国啊，你曾使邻国成为废墟，<br>
+后来自己的城市也成为废墟。<br>
+高楼倒塌，工厂焚烧，<br>
+道路上满是逃难的人；<br>
+你所发动的战争转回吞吃你，<br>
+你所敬拜的力量不能拯救你。</p>
+      <p class="stanza">你的元首自称赐下千年国度，<br>
+他的国却在短暂年日中倾倒。<br>
+他以民族为神，<br>
+民族的偶像却使民族蒙羞；<br>
+他应许荣耀，<br>
+却留下坟墓、饥饿与分裂。</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">凡以血统建立尊荣的，<br>
+必因自己的血债受辱；<br>
+凡以征服建立安全的，<br>
+必被战争夺去安全；<br>
+凡把领袖立为救主的，<br>
+必与领袖的谎言一同跌倒。</p>
+      <p class="stanza">然而，德国啊，<br>
+你后来没有完全隐藏自己的罪。<br>
+你在废墟中重新建造，<br>
+在学校中教导历史；<br>
+你保存受害者的名字，<br>
+在城市中留下警戒的石头。</p>
+      <p class="stanza">你承认国家也会成为恶者，<br>
+法律也会被恶人利用；<br>
+因此你为权力设立限制，<br>
+保护人的尊严。</p>
+      <p class="stanza">这是应当的，<br>
+也不可轻看。</p>
+      <p class="stanza">但耶和华说：</p>
+      <p class="stanza">纪念过去不能代替今日的警醒。<br>
+一个民族可以在纪念碑前哀悼，<br>
+却在新的恐惧来临时<br>
+重新寻找替罪羊。</p>
+      <p class="stanza">你可以拒绝旧日的标志，<br>
+却仍可能敬拜同样的偶像：<br>
+安全、同质、控制、繁荣，<br>
+以及“我们比别人更有道德”的自义。</p>
+      <p class="stanza">不要说：<br>
+“我们已经深刻反省，<br>
+所以我们不可能再次行恶。”</p>
+      <p class="stanza">以色列曾看见埃及的神迹，<br>
+后来仍在旷野铸造金牛犊。<br>
+人的心不会因一代人的教育<br>
+便永远脱离骄傲；<br>
+制度若没有诚实而勇敢的人守护，<br>
+仍能成为不义的器皿。</p>
+      <p class="stanza">德国啊，<br>
+你今日以宪政、社会保障和人权为荣耀；<br>
+你努力保护贫弱者，<br>
+接纳逃避战争的人。<br>
+其中有怜悯，<br>
+也有对过去罪恶的回应。</p>
+      <p class="stanza">但你当谨慎：<br>
+不要让对过去的悔恨<br>
+变成今日不敢分辨善恶的软弱；<br>
+也不要让今日的恐惧<br>
+使你重新以群体身份定人的罪。</p>
+      <p class="stanza">你不可因一个人的族群、宗教或出身<br>
+便预先定他为危险；<br>
+也不可因害怕被称为不宽容<br>
+便不敢制止真实的强暴。</p>
+      <p class="stanza">公义既不以血统定罪，<br>
+也不因政治正确便拒绝事实。<br>
+真正的悔改不是失去判断，<br>
+乃是以同一尺度判断自己与别人；<br>
+不是厌恶自己的民族，<br>
+乃是不再把任何民族置于真理之上。</p>
+      <p class="stanza">你们也以经济力量影响周围列国。<br>
+你的工厂生产汽车、机械、药品与器具，<br>
+你的商品进入众多市场；<br>
+你的银行和财政原则<br>
+影响比你弱小的国家。</p>
+      <p class="stanza">你说：<br>
+“纪律带来繁荣，<br>
+债务必须偿还，<br>
+规则必须遵守。”</p>
+      <p class="stanza">规则本是必要的。<br>
+但当一国的儿童、病人和穷人<br>
+承担经济危机最重的代价；<br>
+当债权人的账簿<br>
+比人民的生活更不可侵犯，<br>
+你当思想：<br>
+经济是为人设立的，<br>
+还是人为经济设立的？</p>
+      <p class="stanza">祸哉，那些以财政纪律之名<br>
+要求贫穷者承担全部代价的人！<br>
+他们衡量预算的缺口，<br>
+却不衡量青年失去希望的代价；<br>
+他们要求别国改革，<br>
+却不察看自己的出口与财富<br>
+是否也从不平衡中获利。</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">精确的账目不能使冷酷成为公义；<br>
+合乎规则的决定<br>
+仍可能压碎软弱者。</p>
+      <p class="stanza">你们不可因自己勤劳节制，<br>
+便以为困苦的人都因懒惰受苦；<br>
+不可把经济成功<br>
+当作道德优越的证据。<br>
+推罗也因贸易富足，<br>
+它的财富却不能遮盖骄傲。</p>
+      <p class="stanza">德国啊，<br>
+你也倚靠工业体系和能源供应。<br>
+你制造精密机器，<br>
+却从远方取得燃料与原料；<br>
+你要求工厂不断运转，<br>
+市场不断扩张，<br>
+生活水平不可下降。</p>
+      <p class="stanza">你口中谈论保护受造世界，<br>
+却仍害怕牺牲舒适与增长。<br>
+你关闭一种危险，<br>
+却可能倚靠另一种不义；<br>
+你反对远方的战争，<br>
+却让自己的繁荣<br>
+与发动战争者的资源相连。</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">不可只因污染发生在别处，<br>
+便称自己的手洁净；<br>
+不可只因强迫劳动在供应链尽头，<br>
+便说你不认识受压迫者。<br>
+你若享受廉价能源和商品，<br>
+却拒绝询问它们从何而来，<br>
+你的无知常是自己选择的无知。</p>
+      <p class="stanza">德国的教会啊，你也当听。<br>
+你的土地曾产生改教的呼声，<br>
+有人高举圣经，<br>
+反对以金钱买卖恩典。<br>
+你的神学家穷究启示，<br>
+你的诗歌进入万邦；<br>
+也有人在暴政之下拒绝跪拜，<br>
+为真理舍去自由与生命。<br>
+他们的忠信，我不忘记。</p>
+      <p class="stanza">但也有教会把民族主义带进圣所，<br>
+把领袖的画像放在基督之前；<br>
+用神学为种族骄傲辩护，<br>
+向受迫害者关闭大门。</p>
+      <p class="stanza">当犹太邻舍被带走时，<br>
+许多钟声仍照常响起；<br>
+当恶法施行时，<br>
+许多讲台仍只谈私人敬虔。</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">沉默的讲台也能成为罪的同谋。<br>
+当国家要求你称恶为善，<br>
+你若只为维持机构的安全而沉默，<br>
+你的秩序就是不信。</p>
+      <p class="stanza">不要说：<br>
+“教会只负责灵魂，<br>
+不参与世上的争论。”</p>
+      <p class="stanza">若人的身体被焚烧、<br>
+权利被夺去、姓名被抹除，<br>
+你却只谈死后的安慰，<br>
+你的福音岂没有被掏空？</p>
+      <p class="stanza">然而，今日你们也不可<br>
+只在过去的英雄坟前献花。<br>
+当生命被商品化，<br>
+家庭被孤独侵蚀；<br>
+当老人被看作负担，<br>
+未出生者、残障者和病人<br>
+被按是否有用来衡量价值，<br>
+教会是否仍敢说：<br>
+人的尊严不是国家、市场或多数人所赐，<br>
+也不能由它们收回？</p>
+      <p class="stanza">德国啊，你以人的尊严<br>
+写在法律开端，<br>
+这是你从废墟中所得的教训。<br>
+但你当知道：<br>
+“尊严不可侵犯”<br>
+若不承认尊严的根源，<br>
+终可能只成为暂时的共识。<br>
+多数人今日所承认的，<br>
+多数人明日也可能否认。<br>
+人的价值若只建立在社会协议上，<br>
+协议改变时，谁保护弱者？</p>
+      <p class="stanza">所以，你当回转。</p>
+      <p class="stanza">不要把秩序立为神，<br>
+因为公义高过秩序；<br>
+不要把效率立为神，<br>
+因为一个无效率的病人<br>
+仍比高效的机器宝贵；<br>
+不要把国家的罪疚立为神，<br>
+仿佛永远自责就是悔改；<br>
+也不要把今日的道德成就立为神，<br>
+仿佛你已经成为列国的良心。</p>
+      <p class="stanza">你当保持记忆，<br>
+却不可把记忆变为骄傲；<br>
+应当保护受迫害者，<br>
+也应当诚实面对新的危险；<br>
+应当建立稳健的制度，<br>
+也应当培养敢于违抗不义命令的人。</p>
+      <p class="stanza">让工程师在制造时询问用途，<br>
+让官员在执行时保守良心；<br>
+让企业不把利润置于人之上，<br>
+让教会不把安稳置于真理之上。</p>
+      <p class="stanza">德国啊，<br>
+你的哲学不能拯救你，<br>
+你的工业不能拯救你，<br>
+你的宪法也不能更新人的心。</p>
+      <p class="stanza">但你若谦卑，<br>
+让过去的记忆成为今日的警戒；<br>
+若以你的技艺医治而非毁灭，<br>
+以你的秩序保护而非辖制；<br>
+若强者愿意为弱者限制自己，<br>
+知识愿意向良心屈服，<br>
+国家愿意承认自己不是救主，<br>
+那么，你仍可成为和平的工匠。</p>
+      <p class="stanza">你的铁路不再运送人走向死亡，<br>
+却把避难者送往安全之地；<br>
+你的工厂不再制造征服的器具，<br>
+却制造医治、建设与保护生命的工具。<br>
+你的鹰不再象征凌驾列国，<br>
+乃提醒掌权者<br>
+力量必须受公义约束。</p>
+      <p class="stanza">因为凡自高的民族必降卑，<br>
+凡诚实记念罪恶的仍有医治。<br>
+知识使人自高，<br>
+惟有爱心造就人；<br>
+秩序能约束外在行为，<br>
+惟有真理能释放人的心。</p>
+    </section>
+    <section class="panel" id="panel-it" role="tabpanel" aria-labelledby="tab-it" tabindex="0">
+      <header class="panel-head">
+        <h2 class="panel-title">论意大利的默示</h2>
+        <p class="panel-sub">承受罗马荣光、使祭坛与广场相邻的半岛之国 · 意大利</p>
+      </header>
+      <p class="stanza opening">耶和华论那伸入地中海、<br>
+以古城、艺术和宗教遗产为荣耀的国如此说：</p>
+      <p class="stanza">意大利啊，你当听；<br>
+罗马的废墟与教堂啊，你们当作见证。</p>
+      <p class="stanza">你脚下埋藏帝国的道路，<br>
+你的城中矗立皇帝的柱石；<br>
+列国曾从你领受法律、建筑与治理，<br>
+军团也曾从你出发征服众民。</p>
+      <p class="stanza">你说：<br>
+“条条道路通向罗马；<br>
+世界曾在我们的城门前聚集。”</p>
+      <p class="stanza">然而，万军之耶和华如此说：</p>
+      <p class="stanza">道路是谁的道路？<br>
+列国岂是为罗马而造？<br>
+你使道路贯通世界，<br>
+也使军队更快抵达别人的土地；<br>
+你建立法律，<br>
+也用法律保护征服者的权利。</p>
+      <p class="stanza">你称自己带来和平，<br>
+那和平却建立在被征服者的刀伤上。<br>
+你称它为“罗马的和平”，<br>
+但被钉十字架的人<br>
+是否也称它为和平？</p>
+      <p class="stanza">税吏在城门收取财物，<br>
+总督以暴力维持秩序；<br>
+反抗者被公开处死，<br>
+使众人因恐惧而顺服。</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">没有公义的和平，<br>
+不过是强者要求弱者安静；<br>
+以十字架维持的秩序，<br>
+不能因建造宏伟城邑便称为文明。</p>
+      <p class="stanza">罗马的皇帝自称神圣，<br>
+要求百姓焚香，<br>
+把国家忠诚变为敬拜。<br>
+他们说：<br>
+“凯撒赐下和平，<br>
+凯撒维持世界，<br>
+凯撒是主。”</p>
+      <p class="stanza">然而，一个从伯利恒出来、<br>
+在你们权力之下被钉死的人<br>
+显明了另一种国度。<br>
+他没有军团，<br>
+却胜过死亡；<br>
+没有宫殿，<br>
+却使万民俯伏；<br>
+没有强迫人敬拜，<br>
+却有无数人为他舍命。</p>
+      <p class="stanza">罗马啊，你的皇帝在哪里？<br>
+他们的神像何在？<br>
+他们的宫殿成为废墟，<br>
+竞技场成为游人观看之地；<br>
+那被他们处死者的名<br>
+却传遍万邦。</p>
+      <p class="stanza">所以你当知道：<br>
+权力不能使人变成神，<br>
+帝国不能使自己成为永恒。</p>
+      <p class="stanza">然而，意大利啊，<br>
+当帝国倾倒以后，<br>
+宗教的城又在你中间兴起。<br>
+使徒与殉道者的血<br>
+曾流在你的土地；<br>
+许多人在地底的墓穴中聚集，<br>
+宁可死亡，也不向偶像下拜。</p>
+      <p class="stanza">后来，教会从受逼迫者<br>
+成为有权势者；<br>
+从贫穷人的团契<br>
+进入宫殿与政治。<br>
+主教穿上华贵衣袍，<br>
+宗教领袖拥有土地、军队和财富；<br>
+祭坛与宝座彼此借力，<br>
+属灵权柄与世俗野心彼此缠绕。</p>
+      <p class="stanza">祸哉，那些以彼得的钥匙<br>
+开启权力宝库的人！<br>
+他们说自己继承使徒，<br>
+却追求使徒从未拥有的宫殿；<br>
+他们纪念那位没有枕头之处的主，<br>
+自己却积蓄金银、土地与艺术珍宝。</p>
+      <p class="stanza">他们向穷人宣讲天国，<br>
+却与富人同坐席；<br>
+向百姓要求悔改，<br>
+却为掌权者的罪寻找宽容。</p>
+      <p class="stanza">他们买卖圣职，<br>
+以金钱交换宗教利益；<br>
+用对刑罚的恐惧<br>
+增加自己的财富。</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">我的恩典岂能出售？<br>
+赦免岂能标价？<br>
+人的灵魂岂是宗教机构的产业？</p>
+      <p class="stanza">你们以圣人的骨骸吸引众人，<br>
+却轻看圣人所行的谦卑；<br>
+修饰祭坛，<br>
+却忽略祭坛前哭泣的穷人。</p>
+      <p class="stanza">以赛亚的主如此说：</p>
+      <p class="stanza">你们献上的香多，我不喜悦；<br>
+你们举行节期、游行与庆典，<br>
+我也厌烦。<br>
+你们的教堂满有艺术，<br>
+若城外的穷人无人照顾，<br>
+那些金色穹顶只能为你们作见证。</p>
+      <p class="stanza">你们亲吻圣像，<br>
+却在移民的脸上认不出人的尊严；<br>
+称马利亚为有福的母亲，<br>
+却让贫穷的母亲独自承担重担；<br>
+纪念圣家逃往埃及，<br>
+却看见海上逃难者时<br>
+只争论他们是否配得靠岸。</p>
+      <p class="stanza">意大利啊，<br>
+你的艺术美丽，<br>
+你的画家使颜色如同祷告，<br>
+你的建筑使石头仿佛向天举手。<br>
+美本可以使人仰望创造主。</p>
+      <p class="stanza">但美也能成为遮盖腐败的帷幕。<br>
+你可以在教堂中观看天堂，<br>
+出了门却以欺骗处理事务；<br>
+可以在节日中高举圣徒，<br>
+平日却按家族、关系与利益<br>
+决定谁得机会。</p>
+      <p class="stanza">你们尊重家庭，<br>
+却有时把家族忠诚置于公义之上；<br>
+包庇亲属，排斥外人，<br>
+使公共利益成为无人照顾的孤儿。</p>
+      <p class="stanza">祸哉，那些把共同财产<br>
+当作无人所有之物的人！<br>
+他们说：<br>
+“只要我的家庭得利，<br>
+国家受损又与我何干？”</p>
+      <p class="stanza">他们逃避应付的税，<br>
+却要求国家提供服务；<br>
+抱怨制度腐败，<br>
+自己有机会时也参与贿赂。<br>
+他们谴责掌权者，<br>
+却在日常小事上<br>
+复制掌权者的诡诈。</p>
+      <p class="stanza">阿摩司的主如此说：</p>
+      <p class="stanza">因你们三番四次<br>
+以关系取代公平，<br>
+我必不收回刑罚。<br>
+因你们为一份合同<br>
+出卖公共利益，<br>
+使诚实人被排斥，<br>
+使谄媚者进入高位，<br>
+我必不收回刑罚。</p>
+      <p class="stanza">你们使法律写得繁多，<br>
+执行却因人的身份而改变；<br>
+有权势者拖延审判，<br>
+贫穷者却迅速承担后果。</p>
+      <p class="stanza">你们称这种机巧为生存智慧，<br>
+称逃避规则为聪明；<br>
+久而久之，<br>
+人人都不再相信公共制度。</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">当人人只保护自己的小圈子，<br>
+一个国家便失去共同的灵魂。</p>
+      <p class="stanza">意大利啊，<br>
+你的南方与北方彼此观看，<br>
+像不同的国。<br>
+一处工厂密集、财富聚集，<br>
+另一处青年离开家乡，<br>
+寻找工作与盼望。</p>
+      <p class="stanza">你们用刻板的言语彼此轻看：<br>
+富足者称贫穷者懒惰，<br>
+贫穷者称富足者冷酷；<br>
+却少有人察看<br>
+历史、制度与机会如何长久分配不均。</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">不要把一个地区的困境<br>
+都归给那里的百姓；<br>
+也不要把真实的腐败<br>
+都推给遥远的历史。<br>
+每一个人都要为自己的行为负责，<br>
+掌权者也要为<br>
+长久不肯修复的不义负责。</p>
+      <p class="stanza">你们的青年拥有教育，<br>
+却找不到稳定的道路；<br>
+他们延迟建立家庭，<br>
+离开故乡，<br>
+或在短期工作中消耗年日。</p>
+      <p class="stanza">老人越来越多，<br>
+孩童越来越少；<br>
+村庄失去年轻声音，<br>
+古老房屋无人居住。</p>
+      <p class="stanza">你们珍爱家庭的图像，<br>
+却没有建立使家庭能够生存的制度。</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">不要只在演讲中赞美母亲，<br>
+却让养育儿女的人<br>
+在工作、住房与照顾责任中孤立无助。<br>
+不要只为出生人数下降忧虑，<br>
+却使年轻人看不见可以承担明日的盼望。</p>
+      <p class="stanza">一个社会若把财富锁在旧有结构中，<br>
+却要求青年为国家的未来牺牲，<br>
+它的言语岂不是空的？</p>
+      <p class="stanza">意大利啊，<br>
+你也曾被一个夸口的领袖迷惑。<br>
+他站在阳台上高声说话，<br>
+把古罗马的记忆变成民族的迷药；<br>
+他应许恢复荣耀、秩序和力量，<br>
+使群众以制服、旗帜和步伐<br>
+代替诚实的思想。</p>
+      <p class="stanza">他教导人服从领袖，<br>
+把国家置于个人良心之上；<br>
+以战争证明男子气概，<br>
+以征服医治民族的不安。</p>
+      <p class="stanza">祸哉，那些用过去的荣耀<br>
+遮盖今日软弱的人！<br>
+他们没有力量建立公义，<br>
+就制造敌人；<br>
+没有智慧解决贫困，<br>
+就以阅兵使百姓兴奋。</p>
+      <p class="stanza">他们说：<br>
+“国家需要统一，<br>
+所以异议者必须沉默。”</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">用恐惧制造的统一<br>
+不过是被封住的裂缝；<br>
+领袖的声音越大，<br>
+不代表他的道路越正确。</p>
+      <p class="stanza">你曾与强暴者结盟，<br>
+进入不属于你的战争；<br>
+在非洲土地上追求帝国，<br>
+以毒气、枪炮和集中营<br>
+压服比你弱小的民族。</p>
+      <p class="stanza">你说：<br>
+“罗马的荣光要重新兴起。”</p>
+      <p class="stanza">但昔日帝国的偶像<br>
+只带给你新的羞耻。<br>
+你所追求的征服<br>
+没有恢复尊严，<br>
+反使自己的城邑遭受战争，<br>
+人民流血，国家分裂。</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">凡用神话代替真理的国家，<br>
+必被自己的神话欺骗；<br>
+凡以领袖的形象填满广场的，<br>
+终要看见广场上的形象被推倒。</p>
+      <p class="stanza">然而，你后来建立共和国，<br>
+拒绝独裁，<br>
+制定法律保护人的权利。<br>
+其中有从灾难中所得的智慧。</p>
+      <p class="stanza">但你当警醒：<br>
+当百姓厌倦复杂的政治，<br>
+渴望一个强人替他们解决一切；<br>
+当人把领袖的粗暴称为真实，<br>
+把蔑视制度称为果断，<br>
+旧日的种子便可能再次发芽。</p>
+      <p class="stanza">法西斯主义不只从穿制服的人开始，<br>
+也从人厌弃真理、<br>
+迷恋力量、<br>
+把政治对手视为非人的那一刻开始。</p>
+      <p class="stanza">意大利啊，<br>
+你坐在地中海中央，<br>
+看见船只载着逃离战争、贫穷和压迫的人。<br>
+有人在海中呼救，<br>
+有人在岸上争论。</p>
+      <p class="stanza">你说：<br>
+“我们不能承担所有人的重担。”</p>
+      <p class="stanza">这话有现实的难处；<br>
+国家可以治理边界，<br>
+也应要求欧洲共同承担责任。</p>
+      <p class="stanza">但耶和华说：</p>
+      <p class="stanza">当一个人在海中将要沉没时，<br>
+首先要问的不是他的证件，<br>
+乃是你是否愿意救他的生命。</p>
+      <p class="stanza">你不可把人的死亡<br>
+变成警告后来者的政策；<br>
+不可让海洋替你执行<br>
+你不愿公开承认的残酷。</p>
+      <p class="stanza">你们的渔夫若看见沉船而转身，<br>
+他的网虽满，良心却空。</p>
+      <p class="stanza">但前来的人也不是都可任意而行。<br>
+寄居者要尊重所进入之地的法律，<br>
+不可把从故乡带来的强暴<br>
+重新种在新的土地。<br>
+怜悯不等于失去判断，<br>
+治理也不等于拒绝怜悯。</p>
+      <p class="stanza">意大利的教会啊，你当先作榜样：<br>
+打开门，也说诚实的话；<br>
+保护受害者，也制止作恶者；<br>
+既不向恐惧屈服，<br>
+也不以廉价的善意逃避困难。</p>
+      <p class="stanza">你们也当察看黑手党的权势。<br>
+它以家庭和荣誉为名，<br>
+实际却靠恐惧、沉默和血维持统治。<br>
+它帮助一些人，<br>
+为要控制更多的人；<br>
+它惩罚背叛者，<br>
+使受害者不敢作证。</p>
+      <p class="stanza">祸哉，那些在阴影中建立王国的人！<br>
+他们把社区变成自己的产业，<br>
+把忠诚变成奴役，<br>
+把沉默称为荣誉。</p>
+      <p class="stanza">他们向圣像祷告，<br>
+随后命令人流血；<br>
+在宗教节日中抬着圣徒游行，<br>
+心中却策划报复。</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">不要把我的名与谋杀混合，<br>
+不要使十字架成为犯罪组织的装饰。<br>
+你若亲吻十字架，<br>
+却拒绝放下手中的刀，<br>
+你所亲吻的不是我的十字架，<br>
+乃是自己制造的护身符。</p>
+      <p class="stanza">意大利啊，你当回转。<br>
+不要只继承罗马，<br>
+也要记念罗马如何倾倒；<br>
+不要只保存教会艺术，<br>
+也要恢复教会的圣洁；<br>
+不要只赞美家庭，<br>
+也要使家庭不成为裙带、沉默与控制的工具；<br>
+不要只高举文化传统，<br>
+也要让诚实、公义与责任<br>
+成为活着的传统。</p>
+      <p class="stanza">你当使法律不再因人的关系而弯曲，<br>
+使公共职分不再成为私人利益；<br>
+保护举报不义的人，<br>
+使沉默不再被称为忠诚。</p>
+      <p class="stanza">你当为青年预备真实的道路，<br>
+不让他们只能离开故乡；<br>
+修复南北之间长久的裂痕，<br>
+使财富与机会不只聚集在少数地方。</p>
+      <p class="stanza">你当救助海上的人，<br>
+也以智慧治理边界；<br>
+要求欧洲与你共同承担，<br>
+不可把弱小国家独自留在前线。</p>
+      <p class="stanza">你的教会要脱去权力的华服，<br>
+重新穿上仆人的衣服；<br>
+不要只管理遗产，<br>
+也要传扬悔改、圣洁与复活的盼望。</p>
+      <p class="stanza">你的艺术家要继续创造美，<br>
+却不要只用美使人忘记罪；<br>
+要让美显明真理，<br>
+使人的心不只惊叹，<br>
+也愿意回转。</p>
+      <p class="stanza">意大利啊，<br>
+罗马的石柱已经残缺，<br>
+皇帝的雕像也失去双臂。<br>
+这要教导你：<br>
+人的荣耀终会破碎，<br>
+帝国的道路终会长草，<br>
+领袖的声音终会沉默。</p>
+      <p class="stanza">但你土地上那些忠信者的见证<br>
+仍未完全消失：<br>
+在暴政下保护受追捕者的人，<br>
+拒绝向强权屈服的牧者；<br>
+与黑暗势力对抗的法官，<br>
+为此付上生命的公务人员；<br>
+在贫民中服事的修士与信徒，<br>
+在海上拯救陌生人的船员。<br>
+他们的名字或许不在宏伟的拱门上，<br>
+却在我面前被记念。</p>
+      <p class="stanza">你若不再以过去的荣耀麻醉自己，<br>
+不再用宗教外表遮盖现实腐败；<br>
+若使公义进入政府，<br>
+怜悯进入边界，<br>
+真理进入教会，<br>
+责任进入家庭，<br>
+那么，你仍可成为列国的祝福。</p>
+      <p class="stanza">罗马不再以军团聚集万民，<br>
+却可使不同民族在和平中相遇；<br>
+教会不再以权势统辖人的良心，<br>
+却可用服事显明基督的道路；<br>
+艺术不再只是旧文明的遗迹，<br>
+却可指向超越死亡的美。</p>
+      <p class="stanza">因为不是凯撒的国永远长存，<br>
+不是法西斯的领袖赐下拯救，<br>
+也不是宗教机构拥有天国。<br>
+惟有公义的王永远掌权。</p>
+      <p class="stanza">凡自高如罗马的，必降为卑；<br>
+凡以仆人身份服事的，必被高举。<br>
+你当行公义，好怜悯，<br>
+存谦卑的心行在创造主面前。</p>
+    </section>
+    <section class="panel" id="panel-ir" role="tabpanel" aria-labelledby="tab-ir" tabindex="0">
+      <header class="panel-head">
+        <h2 class="panel-title">论伊朗的默示</h2>
+        <p class="panel-sub">以神圣革命为冠冕的波斯之国 · 伊朗</p>
+      </header>
+      <aside class="notice">
+        <p>需要特别谨慎地区分：古代波斯在圣经中并非单纯的敌国；古列甚至被称为耶和华所膏立、用来释放被掳者的君王。现代伊朗不能简单等同古代波斯。现代以色列国也不能未经区分地等同于旧约神权以色列、基督的教会或弥赛亚国度；现代国家的政策仍须接受先知书关于公义、怜悯和流无辜人之血的审判。</p>
+        <p>伊朗现行宪制明确以伊斯兰原则为国家制度基础；联合国近年的调查则持续报告对异议者、妇女、少数群体的压制及处决问题。以色列的基本法同时表达犹太民族国家属性和人的尊严、自由原则；国际法院及联合国机构则持续就占领、定居点、人员流离失所和人道准入提出法律与人道关切。<sup class="cite">[<a href="https://www.constituteproject.org/constitution/Iran_1989?utm_source=chatgpt.com" target="_blank" rel="noopener noreferrer">宪法项目</a>]</sup></p>
+        <p>以下仍是先知体文学仿作，不是新的启示，也不是对现实灾难作神罚宣告。</p>
+      </aside>
+      <p class="stanza opening">耶和华论那坐在高原之上、<br>
+继承波斯古名、<br>
+以宗教与革命为国家冠冕的国如此说：</p>
+      <p class="stanza">波斯之地啊，你当听；<br>
+德黑兰的城门啊，你们当静默。</p>
+      <p class="stanza">我曾兴起古列，<br>
+不是因他完全认识我，<br>
+乃是要使被掳者归回，<br>
+使被关闭的城门打开。<br>
+我曾使波斯君王保护流亡者，<br>
+使被毁的圣殿得以重建。</p>
+      <p class="stanza">所以，你不要只夸耀古代帝国，<br>
+却忘记古列的荣耀<br>
+不在于使万民向他下拜，<br>
+乃在于释放被掳之人。</p>
+      <p class="stanza">你今日说：<br>
+“我们是神圣的共和国；<br>
+我们的律法出于天，<br>
+我们的领袖守护信仰，<br>
+我们的革命抵挡列国的傲慢。”</p>
+      <p class="stanza">然而，万军之耶和华如此说：</p>
+      <p class="stanza">你可以把神圣的名字<br>
+刻在宪法、旗帜与宫墙之上，<br>
+却不能因此使人的统治成为神圣。<br>
+掌权者若借神的名压制百姓，<br>
+他的罪并不因宗教语言而减轻，<br>
+反因亵渎神的名而更加沉重。</p>
+      <p class="stanza">你们说：<br>
+“我们维护敬虔。”<br>
+但敬虔岂由警棍产生？<br>
+信仰岂能由监牢建立？<br>
+人的衣服、头发和外表<br>
+岂是判断心灵是否纯洁的秤？</p>
+      <p class="stanza">你们派人巡行街道，<br>
+察看女子的衣着；<br>
+却不察看官长手中的贿赂，<br>
+富足者仓库中的不义，<br>
+审判官笔下的冤屈。</p>
+      <p class="stanza">你们严厉查问少女露出多少头发，<br>
+却不严厉查问<br>
+为何无辜者在拘押中受伤，<br>
+为何母亲寻找被捕的儿女，<br>
+为何说诚实话的人在夜间被带走。</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">我岂只察看人的外衣，<br>
+不察看统治者里面的强暴？<br>
+你们以道德的名义羞辱妇女，<br>
+却让有权势的男人隐藏自己的罪；<br>
+使弱者承担公共羞耻，<br>
+使强者逃脱真实的审判。</p>
+      <p class="stanza">祸哉，那些把男人的欲望<br>
+归罪于女人衣着的人！<br>
+他们要求女子为别人的目光负责，<br>
+却不教导男子为自己的心负责。<br>
+他们把控制称为保护，<br>
+把恐惧称为美德，<br>
+把不能自由选择的顺服<br>
+称为真正的敬虔。</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">被强迫的外表不能洁净内心；<br>
+因惧怕警察而进行的礼仪<br>
+不能代替公义、诚实与怜悯。</p>
+      <p class="stanza">你们的青年在街上呼喊，<br>
+妇女要求尊严，<br>
+母亲要求知道儿女的下落。<br>
+你们却说：<br>
+“他们受外国煽动，<br>
+他们是国家的敌人，<br>
+他们要摧毁我们的传统。”</p>
+      <p class="stanza">诚然，列国可能利用你们的裂痕，<br>
+外国也曾干预你们的土地；<br>
+强权曾觊觎你们的石油，<br>
+外来的政客也并非手洁心清。</p>
+      <p class="stanza">但耶和华说：</p>
+      <p class="stanza">别国的罪不能洗净你的罪；<br>
+你曾受欺压，<br>
+不能因此获得欺压自己百姓的许可。<br>
+法老也曾害怕外敌，<br>
+便以国家安全为由压迫寄居者。<br>
+恐惧不能使暴政成为公义，<br>
+外部威胁不能使每一个异议者<br>
+都成为叛徒。</p>
+      <p class="stanza">祸哉，那些以国家安全<br>
+封住百姓口舌的人！<br>
+他们把记者称为间谍，<br>
+把教师称为煽动者，<br>
+把哀哭的母亲称为破坏稳定的人。</p>
+      <p class="stanza">他们制造秘密的档案，<br>
+监视书信与言语；<br>
+使朋友惧怕朋友，<br>
+家庭不敢在家中说出心里的话。</p>
+      <p class="stanza">他们说：<br>
+“沉默就是忠诚。”</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">沉默若用来遮盖强暴，<br>
+便不是忠诚，乃是同谋。</p>
+      <p class="stanza">你们的法庭宣告严厉刑罚，<br>
+处决被称为国家敌人的人；<br>
+有些审判在恐惧与封闭中进行，<br>
+家属甚至不能明白<br>
+亲人为何被定罪。</p>
+      <p class="stanza">联合国调查近年来持续报告伊朗存在严重镇压、处决上升、结构性歧视，以及妇女、女孩和少数群体遭受特别伤害的问题。<sup class="cite">[<a href="https://www.ohchr.org/en/documents/country-reports/ahrc6160-report-independent-international-fact-finding-mission-islamic?utm_source=chatgpt.com" target="_blank" rel="noopener noreferrer">人权高专办</a>]</sup></p>
+      <p class="stanza">阿摩司的主如此说：</p>
+      <p class="stanza">因你们三番四次<br>
+以神圣之名践踏人的尊严，<br>
+我必不收回刑罚。<br>
+因你们把穷人卖给权势，<br>
+把异议者交给监牢，<br>
+把少数群体的申诉<br>
+埋在国家荣誉之下，<br>
+我必不收回刑罚。<br>
+因你们使审判成为政治的器具，<br>
+使法律保护制度<br>
+却不保护受制度伤害的人，<br>
+我必不收回刑罚。</p>
+      <p class="stanza">你们也使宗教领袖<br>
+坐在国家权力的高处。<br>
+他们解释何为合法，<br>
+决定谁能竞选、谁可发言；<br>
+他们说自己的权柄<br>
+是为保护神的旨意。</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">谁授权血肉之人<br>
+垄断我的旨意？<br>
+你若不可被百姓问责，<br>
+却宣称自己代表神，<br>
+你就把自己放在先知也未敢坐的位置。</p>
+      <p class="stanza">真先知曾责备君王，<br>
+你们却要求先知服从君王；<br>
+真祭司应当教导公义，<br>
+你们却使宗教成为国家的盾牌；<br>
+真敬畏应使掌权者战兢，<br>
+你们却用敬畏神的语言<br>
+使百姓惧怕掌权者。</p>
+      <p class="stanza">祸哉，那些坐在宗教宝座上<br>
+却拒绝受真理审问的人！<br>
+他们说：<br>
+“反对我们就是反对神。”</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">不可把你们的制度与我等同，<br>
+不可把领袖的尊严<br>
+放在真理之上。<br>
+你们若行不义，<br>
+反对你们的不义<br>
+并不等于反对神。</p>
+      <p class="stanza">伊朗啊，<br>
+你也以革命为荣耀。<br>
+你记念从前列强怎样操纵你的政局，<br>
+怎样从你的资源获利；<br>
+你宣称不再向外邦低头。</p>
+      <p class="stanza">维护国家不受欺压本是正当，<br>
+但你后来把革命变成永恒的祭坛。<br>
+你需要不断制造敌人，<br>
+使革命的火不至熄灭；<br>
+需要把邻国的冲突<br>
+解释为自己使命的一部分。</p>
+      <p class="stanza">你用受害者的历史塑造身份，<br>
+却逐渐不能想象<br>
+自己也可能成为别人的压迫者。</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">受过伤的人仍可能伤害别人，<br>
+受过殖民的国家<br>
+仍可能扩张自己的权势。<br>
+不要因你反对西方帝国，<br>
+就称自己的野心为圣洁；<br>
+不要因你的武器指向强国的盟友，<br>
+就以为每一次流血都是公义。</p>
+      <p class="stanza">你以言语威胁别的民族，<br>
+使百姓习惯听见毁灭与仇恨。<br>
+你可以控告以色列政府的不义，<br>
+却不可因此盼望犹太民族从地上消失；<br>
+你可以为巴勒斯坦人伸冤，<br>
+却不可赞美杀害平民、绑架无辜者的行为。</p>
+      <p class="stanza">因为无辜人的血<br>
+无论是波斯人的、犹太人的、<br>
+阿拉伯人的或其他民族的，<br>
+在我面前都有同样的声音。</p>
+      <p class="stanza">祸哉，那些以受压迫者之名<br>
+为新的强暴祝福的人！<br>
+他们选择性地哀哭：<br>
+盟友的死者被称为烈士，<br>
+敌方的儿童却被称为必要代价。</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">你若只怜悯自己阵营的孩子，<br>
+你所爱的不是公义，<br>
+乃是自己的阵营。</p>
+      <p class="stanza">伊朗啊，<br>
+你的地底有丰富的资源，<br>
+百姓却常为生活重担忧愁。<br>
+掌权者管理庞大的机构，<br>
+与权力相连的人获得机会；<br>
+普通青年受过教育，<br>
+却难以看见前路。</p>
+      <p class="stanza">有人因腐败富足，<br>
+有人因制裁贫穷；<br>
+掌权者把一切困苦<br>
+都归给外来的仇敌。</p>
+      <p class="stanza">列国施加的重担确实伤害百姓，<br>
+制裁也常使普通人先受苦。<br>
+但耶和华说：</p>
+      <p class="stanza">不可把一切贫穷归给外敌，<br>
+却不察看内部的贪婪；<br>
+不可要求百姓忍受牺牲，<br>
+自己却享受权力的利益。</p>
+      <p class="stanza">你们称领袖生活朴素，<br>
+却有庞大组织掌握财富；<br>
+你们责备西方资本主义，<br>
+自己人中间却有依靠关系、<br>
+垄断和特权积蓄财富的人。<br>
+贪婪穿西装是贪婪，<br>
+穿宗教衣袍仍是贪婪。</p>
+      <p class="stanza">你们的学者、诗人和百姓<br>
+拥有悠久的文化；<br>
+你们的语言写出爱情、智慧与哀歌。<br>
+但许多诗人必须使用隐喻，<br>
+因为直接说话可能招致危险。</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">一个自称捍卫真理的政权，<br>
+为何如此害怕一句诗、<br>
+一首歌和一个没有武器的女子？<br>
+真理不需要监牢保护，<br>
+谎言才需要封住人的嘴。</p>
+      <p class="stanza">然而，伊朗啊，<br>
+我没有忘记你中间的义人：<br>
+那些在危险中医治伤者的人，<br>
+为囚犯辩护的律师；<br>
+拒绝伪造口供的官员，<br>
+保护学生的教师；<br>
+那些虽被羞辱仍不以仇恨回答的妇女，<br>
+那些拒绝向无辜者开枪的士兵；<br>
+那些为少数民族和不同信仰者<br>
+要求公平的人。</p>
+      <p class="stanza">我也看见普通家庭<br>
+在贫困与动荡中彼此扶持；<br>
+看见穆斯林、基督徒、犹太人、<br>
+巴哈伊、琐罗亚斯德教徒<br>
+和不宣认宗教的人<br>
+都在寻找可以诚实生活的空间。</p>
+      <p class="stanza">所以，波斯之地啊，你当回转。<br>
+不要以神的名强迫敬拜，<br>
+因为神不需要警察保护他的荣耀；<br>
+不要以革命的名永远制造敌人，<br>
+因为仇恨不能养活百姓；<br>
+不要以国家安全取消人的良心，<br>
+因为一个失去真话的国家<br>
+终会被自己的谎言引入歧途。</p>
+      <p class="stanza">你当释放因言语和良心被囚的人，<br>
+使审判公开而公平；<br>
+停止以死亡震慑社会，<br>
+让法律首先约束掌权者。</p>
+      <p class="stanza">你当尊重妇女不是因她属于父亲、丈夫或国家，<br>
+乃因她本身就是有尊严的人；<br>
+你当保护少数群体，<br>
+使他们不必隐藏名字与信仰；<br>
+你当使宗教领袖回到劝戒与服事，<br>
+不再把祭坛变成政治宝座。</p>
+      <p class="stanza">你当停止用另一国的罪<br>
+为自己的仇恨辩护；<br>
+寻求和平，不以毁灭一个民族<br>
+作为正义的语言。</p>
+      <p class="stanza">波斯啊，古列的荣耀<br>
+不在于他把自己的信仰强加给万民，<br>
+乃在于他打开监牢，<br>
+使被掳的人归回。</p>
+      <p class="stanza">你若愿意打开被关闭的门，<br>
+让百姓不再因恐惧而顺服；<br>
+若让信仰由诚实的心产生，<br>
+让政治接受公义的限制，<br>
+那么，你古老的土地<br>
+仍可成为列国之间的桥梁，<br>
+你的学问、诗歌与智慧<br>
+仍可成为医治的泉源。</p>
+      <p class="stanza">但你若继续把神的名<br>
+刻在强暴的器械上，<br>
+使宗教成为领袖不可问责的护墙，<br>
+你所称为神圣的制度<br>
+必被自己的虚伪侵蚀。</p>
+      <p class="stanza">因为神圣不属于制度，<br>
+公义不属于某个教士阶层，<br>
+真理也不是革命的产业。</p>
+      <p class="stanza">凡以神的名高举自己的，<br>
+必因亵渎神的名降为卑；<br>
+凡释放被囚者、保护弱小者、<br>
+以诚实约束权力的，<br>
+才显出古列所曾承担的使命。</p>
+    </section>
+    <section class="panel" id="panel-il" role="tabpanel" aria-labelledby="tab-il" tabindex="0">
+      <header class="panel-head">
+        <h2 class="panel-title">论现代以色列的默示</h2>
+        <p class="panel-sub">以圣约记忆、创伤与刀剑环绕自己的国家 · 以色列</p>
+      </header>
+      <aside class="notice">
+        <p>需要特别谨慎地区分：古代波斯在圣经中并非单纯的敌国；古列甚至被称为耶和华所膏立、用来释放被掳者的君王。现代伊朗不能简单等同古代波斯。现代以色列国也不能未经区分地等同于旧约神权以色列、基督的教会或弥赛亚国度；现代国家的政策仍须接受先知书关于公义、怜悯和流无辜人之血的审判。</p>
+        <p>伊朗现行宪制明确以伊斯兰原则为国家制度基础；联合国近年的调查则持续报告对异议者、妇女、少数群体的压制及处决问题。以色列的基本法同时表达犹太民族国家属性和人的尊严、自由原则；国际法院及联合国机构则持续就占领、定居点、人员流离失所和人道准入提出法律与人道关切。<sup class="cite">[<a href="https://www.constituteproject.org/constitution/Iran_1989?utm_source=chatgpt.com" target="_blank" rel="noopener noreferrer">宪法项目</a>]</sup></p>
+        <p>以下仍是先知体文学仿作，不是新的启示，也不是对现实灾难作神罚宣告。</p>
+      </aside>
+      <p class="stanza opening">耶和华论那重新聚集在古地、<br>
+以大卫之星为记号、<br>
+以祖先之约为记忆的国如此说：</p>
+      <p class="stanza">以色列啊，你当听；<br>
+耶路撒冷的城门啊，你们当静默。</p>
+      <p class="stanza">不要因你称自己为以色列，<br>
+便以为先知只能责备你的敌人。<br>
+以赛亚、耶利米、以西结和阿摩司<br>
+首先不是向亚述、埃及和巴比伦说话，<br>
+乃是站在耶路撒冷的城门前<br>
+责备自称认识我的百姓。</p>
+      <p class="stanza">你们不要说：<br>
+“这是耶和华的地，<br>
+这是耶和华所赐的产业，<br>
+所以我们所行的必蒙许可。”</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">地属于我，<br>
+你们在我面前不过是寄居者和管家。<br>
+应许从来不是行不义的许可证；<br>
+拣选不是免于审判，<br>
+乃是承担更重的责任。</p>
+      <p class="stanza">我曾对古代以色列说：<br>
+“在地上的万族中，我只认识你们；<br>
+因此，我必追讨你们一切的罪孽。”</p>
+      <p class="stanza">所以，不要把拣选<br>
+变成民族优越的冠冕；<br>
+不要把圣约<br>
+变成国家政策不可质疑的盾牌。</p>
+      <p class="stanza">你们从列国中归回，<br>
+是因犹太人在许多世代遭受驱赶、逼迫和屠杀。<br>
+欧洲的城邑曾封闭你们的道路，<br>
+教堂的讲台曾传播对你们的仇恨；<br>
+你们被剥夺职业、家园和公民身份，<br>
+最后被装入列车，送往死亡。</p>
+      <p class="stanza">六百万死者的血<br>
+不是可以被遗忘的小事；<br>
+反犹主义不是普通的政治意见，<br>
+乃是长期结出杀戮果实的毒根。</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">凡因犹太人的血统攻击他们的，<br>
+凡否认他们所受灾难、<br>
+盼望他们再次被赶入海中的，<br>
+都要为自己的仇恨交账。<br>
+犹太儿童有权不因自己的身份恐惧，<br>
+犹太家庭有权拥有安全的居所。</p>
+      <p class="stanza">但以色列啊，你也当听：<br>
+过去所受的苦<br>
+不能成为今日使别人受苦的许可；<br>
+受害者的记忆应当使你更能认出受害者，<br>
+不应使你对别人的眼泪失去感觉。</p>
+      <p class="stanza">你曾在列国中被称为异乡人，<br>
+所以你当知道寄居者的心；<br>
+你曾被限制道路与职业，<br>
+所以你当谨慎，<br>
+不可轻易限制别人生活的道路；<br>
+你曾因身份被集体定罪，<br>
+所以不可因一群人的罪<br>
+集体惩罚另一群人。</p>
+      <p class="stanza">你们说：<br>
+“我们周围有仇敌；<br>
+有人发射火箭，杀害百姓，<br>
+进入家园，绑架无辜者；<br>
+他们公开盼望我们的国家消失。”</p>
+      <p class="stanza">这些罪都必受审判。<br>
+杀害音乐节上的青年，<br>
+袭击家庭，绑架老人和儿童，<br>
+以恐怖制造政治成果，<br>
+没有任何正义可以为之辩护。<br>
+把平民当作盾牌，<br>
+从居民中间发动攻击，<br>
+也不能因目标被称为抵抗<br>
+就成为公义。</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">凡杀害以色列平民的，<br>
+凡以反抗之名赞美屠杀的，<br>
+凡扣押人质作为筹码的，<br>
+都要为无辜人的血交账。</p>
+      <p class="stanza">但敌人的罪不能洗净你的手。<br>
+扫罗不能因非利士人邪恶<br>
+便违背我的命令；<br>
+大卫不能因自己是受膏者<br>
+便夺取乌利亚的妻子、流乌利亚的血。</p>
+      <p class="stanza">你不能说：<br>
+“因为敌人没有规则，<br>
+所以我们也不再受规则约束。”<br>
+公义若只在安全时被遵行，<br>
+就不是公义，乃是便利。</p>
+      <p class="stanza">你们倚靠战机、坦克、围墙、<br>
+情报系统与拦截天幕。<br>
+你们说：<br>
+“我们不能把安全交给别人；<br>
+惟有自己的力量能够保护我们。”</p>
+      <p class="stanza">国家保护百姓本是责任，<br>
+军人防卫家庭也不是罪。<br>
+但耶和华说：</p>
+      <p class="stanza">祸哉，那些下到埃及寻求帮助、<br>
+倚靠马匹、战车与勇士，<br>
+却不仰望公义之主的人！<br>
+铁穹可以拦截飞弹，<br>
+却不能拦截仇恨进入人的心；<br>
+高墙可以阻挡袭击者，<br>
+也可能使你看不见墙另一边的生活；<br>
+情报可以预测敌人的计划，<br>
+却不能告诉你<br>
+怎样使两个民族不再世代惧怕彼此。</p>
+      <p class="stanza">你们若只求更强大的武器，<br>
+却不寻求更公义的道路，<br>
+每一次暂时的胜利<br>
+都可能为下一代积蓄更深的战争。</p>
+      <p class="stanza">以色列啊，<br>
+你们在山地建立居所，<br>
+说这是祖先曾经行走的土地；<br>
+以圣经的名称称呼道路与山丘，<br>
+把今日的扩张<br>
+连接到古代的应许。</p>
+      <p class="stanza">但耶和华说：</p>
+      <p class="stanza">我的话岂是房地产的契约，<br>
+由强者选择性地解释？<br>
+你若因祖先曾在那里居住<br>
+便夺取今日居民的田地，<br>
+今日居民又当往何处去？<br>
+一处山岭在经文中有名字，<br>
+不能自动使你今日所行的一切<br>
+都成为圣洁。</p>
+      <p class="stanza">国际法院2024年的咨询意见认为，以色列在被占领巴勒斯坦领土上的持续存在违法，并要求尽快结束；联合国机构近年也持续记录定居点扩张、拆除、行动限制、定居者暴力和巴勒斯坦社区流离失所等问题。<sup class="cite">[<a href="https://www.icj-cij.org/node/204160?utm_source=chatgpt.com" target="_blank" rel="noopener noreferrer">国际法院</a>]</sup></p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">祸哉，那些房屋接连房屋、<br>
+田地接连田地，<br>
+以致不留余地给别人的人！<br>
+你们把橄榄树连根拔起，<br>
+却说这是安全需要；<br>
+限制牧人到达水源，<br>
+却说这是行政程序；<br>
+一处家庭因没有得到许可证<br>
+而失去房屋，<br>
+另一处社区却不断扩建，<br>
+你岂能称这样的秤为公平？</p>
+      <p class="stanza">你可以提出安全理由，<br>
+但安全不能成为一个没有边界的词，<br>
+使每一种不义都可躲藏其中。</p>
+      <p class="stanza">阿摩司的主如此说：</p>
+      <p class="stanza">因你们三番四次<br>
+使穷人屈身在尘埃中，<br>
+我必不收回刑罚。<br>
+因你们以法律的形式<br>
+维持不相等的生活条件，<br>
+使一群人拥有道路、保护与水源，<br>
+另一群人经过关卡、封锁与漫长等候，<br>
+我必不收回刑罚。<br>
+因你们在安息日诵读妥拉，<br>
+平日却不听被压迫者的申诉，<br>
+我必不收回刑罚。</p>
+      <p class="stanza">你们说：<br>
+“我们已经从一处土地撤出，<br>
+那里却仍成为攻击我们的基地。”</p>
+      <p class="stanza">这显明你们所面对的恐惧并非虚构，<br>
+敌对武装也确实对本国百姓负有罪责。<br>
+但耶和华说：</p>
+      <p class="stanza">不要因武装组织藏在百姓中间，<br>
+便把所有百姓都当成武装组织；<br>
+不要因一些人欢呼暴行，<br>
+便使每一个儿童、病人和老人<br>
+都承担同样的刑罚。</p>
+      <p class="stanza">谁是战士，谁是儿童，<br>
+我都知道；<br>
+谁策划袭击，谁只是在家中睡觉，<br>
+在我面前并不混乱。</p>
+      <p class="stanza">你用大型武器攻击拥挤之地，<br>
+若明知许多无辜者将死，<br>
+你不可只说：<br>
+“责任完全属于把他们置于危险中的敌人。”<br>
+利用平民作掩护的人有罪，<br>
+但看见平民仍选择怎样使用力量的人<br>
+也不能没有责任。<br>
+无辜人的血不会因军事报告<br>
+称它为附带损害便停止呼喊。</p>
+      <p class="stanza">联合国人道机构在2026年的报告中继续记录加沙大量人口流离失所、基本服务不足，以及西岸行动限制、拆除、定居者袭击和新的流离失所。<sup class="cite">[<a href="https://www.ochaopt.org/content/humanitarian-situation-report-26-june-2026?utm_source=chatgpt.com" target="_blank" rel="noopener noreferrer">联合国人道事务协调办公室 - 巴勒斯坦占领区</a>]</sup></p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">我听见以色列母亲为被杀的儿女哀哭，<br>
+也听见巴勒斯坦母亲<br>
+从倒塌的房屋旁发出的哭声。<br>
+我的耳朵不因语言不同而关闭，<br>
+我的怜悯不在检查站停止。</p>
+      <p class="stanza">拉结为儿女哀哭，<br>
+不肯受安慰；<br>
+但拉结的哀哭<br>
+不可使别的母亲失去哀哭的权利。</p>
+      <p class="stanza">你们有些人说：<br>
+“他们都恨我们；<br>
+他们只理解力量。”<br>
+另一些人说：<br>
+“犹太人本来就不该在这里。”<br>
+这两种言语都把活人变成抽象的敌人。</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">不可把一个民族的全部未来<br>
+锁进你对他最坏成员的判断中。<br>
+所有巴勒斯坦人不是恐怖分子，<br>
+所有以色列人也不是压迫者；<br>
+一个孩子不继承<br>
+与他同族成年人所犯的全部罪责。</p>
+      <p class="stanza">你们不可教导自己的孩子<br>
+邻族天生只配被怀疑；<br>
+他们也不可教导自己的孩子<br>
+杀害犹太人就是荣耀。</p>
+      <p class="stanza">你们的教育若只记得自己的伤口，<br>
+却完全删去邻舍的历史，<br>
+两个民族便会各自在记忆中<br>
+建造下一场战争。</p>
+      <p class="stanza">以色列啊，<br>
+你把“大屠杀永不再来”<br>
+刻在国家的心中。<br>
+这是应当的。<br>
+但“永不再来”<br>
+不可只意味着永不再临到犹太人，<br>
+也应意味着你要反对<br>
+任何民族被非人化、驱逐和集体惩罚。</p>
+      <p class="stanza">你记念列国曾对你的苦难沉默，<br>
+所以当别人在你权力之下受苦时，<br>
+你不可要求全世界沉默。</p>
+      <p class="stanza">你说：<br>
+“世人对我们使用双重标准。”</p>
+      <p class="stanza">有时确有双重标准；<br>
+有人假借批评政府传播古老的反犹仇恨，<br>
+有人忽略其他国家的暴行，<br>
+却把犹太国家当作世界唯一的罪人。<br>
+这也是不义。</p>
+      <p class="stanza">但耶和华说：</p>
+      <p class="stanza">别人虚伪，不能使你的行为成为公义；<br>
+批评者心怀恶意，<br>
+也不能证明所有批评都是谎言。<br>
+智慧人不只察看控告者是谁，<br>
+也察看控告是否真实。</p>
+      <p class="stanza">不要把所有反对政府政策的人<br>
+都称为反犹主义者；<br>
+也不要把反犹主义包装成<br>
+对国家政策的普通批评。<br>
+你们要分别二者，<br>
+因为真理不需要混淆保护。</p>
+      <p class="stanza">以色列的宗教领袖啊，你们也当听。<br>
+你们诵读先知，<br>
+却有些人只选择应许土地的经文；<br>
+删去责备欺压、贿赂和流血的章节。<br>
+你们称某些土地为圣，<br>
+却用仇恨的言语谈论住在那里的人。</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">一块土地若充满不义，<br>
+不会因你称它为圣便得洁净；<br>
+一群人若羞辱邻舍，<br>
+不会因他们在安息日祷告<br>
+就成为圣洁的民。</p>
+      <p class="stanza">你们纪念亚伯拉罕，<br>
+却忘记亚伯拉罕接待陌生人；<br>
+记念出埃及，<br>
+却忘记律法反复吩咐：<br>
+“不可欺压寄居者，<br>
+因为你们在埃及也作过寄居者。”</p>
+      <p class="stanza">你们说：<br>
+“这是我们的历史命运。”</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">历史命运若使你不再承担道德责任，<br>
+它就是偶像。</p>
+      <p class="stanza">以色列的政治领袖啊，你们也当听。<br>
+不要以永恒战争保存自己的权位，<br>
+不要靠恐惧使百姓停止问责；<br>
+不要把每一次司法调查、<br>
+每一个和平倡议、<br>
+每一种内部批评<br>
+都描述成危害国家生存。</p>
+      <p class="stanza">国家确实面对敌人，<br>
+但领袖也可能利用敌人巩固自己。<br>
+扫罗常说大卫威胁王国，<br>
+其实他最恐惧的是失去宝座。</p>
+      <p class="stanza">你们不可因在战争中掌权<br>
+便逃避对腐败、谎言和判断失误的审查。<br>
+若士兵必须为国家付上生命，<br>
+掌权者更应当向他们解释<br>
+战争的目标、限度与结束道路。</p>
+      <p class="stanza">不要使战争成为无尽的状态，<br>
+使每一代青年都被献在<br>
+没有政治远景的祭坛上。</p>
+      <p class="stanza">以色列啊，你内部也彼此撕裂：<br>
+世俗者轻看宗教者，<br>
+宗教者定罪世俗者；<br>
+东方背景的犹太人与欧洲背景的犹太人<br>
+仍携带不同的伤痕；<br>
+阿拉伯公民要求完整归属，<br>
+一些人却永远怀疑他们的忠诚。</p>
+      <p class="stanza">你们争论何为真正的以色列人，<br>
+何人应当服兵役，<br>
+谁承担税赋，<br>
+谁有权解释国家的灵魂。</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">一个家若彼此吞吃，<br>
+外面的城墙再高也不能使它刚强。<br>
+你们若要求一部分青年承担危险，<br>
+另一部分却只要求国家供应利益，<br>
+这秤并不公平。<br>
+你们若称阿拉伯公民为本国人，<br>
+却不让他们平等分享机会与安全，<br>
+你们的公民身份便是不完全的。</p>
+      <p class="stanza">以色列的基本法既宣告其犹太民族国家性质，也以人的生命、身体、尊严和自由为保护对象；真正的考验，是这些原则能否在冲突、恐惧和民族差异中同时被认真对待。<sup class="cite">[<a href="https://main.knesset.gov.il/EN/activity/documents/BasicLawsPDF/BasicLawNationState.pdf?utm_source=chatgpt.com" target="_blank" rel="noopener noreferrer">以色列国会</a>]</sup></p>
+      <p class="stanza">然而，以色列啊，<br>
+我没有忘记你中间的义人：<br>
+那些在袭击中保护邻舍的军人，<br>
+拒绝向无辜者开枪的人；<br>
+为被拘留者提供辩护的律师，<br>
+记录定居者暴力的记者；<br>
+在医院同时医治犹太人和阿拉伯人的医生，<br>
+把受伤儿童看作儿童、<br>
+不先询问其民族的护士；<br>
+为人质获释昼夜奔走的家庭，<br>
+也为加沙儿童哀哭的以色列母亲；<br>
+拒绝仇恨的拉比，<br>
+保护巴勒斯坦牧人的和平活动者；<br>
+在袭击中仍救治敌方伤者的人，<br>
+在恐惧中仍坚持两个民族<br>
+都按神形象被造的人。</p>
+      <p class="stanza">他们可能被自己阵营称为叛徒，<br>
+却在我面前显为忠信。</p>
+      <p class="stanza">所以，以色列啊，你当回转。<br>
+不要放弃保护百姓，<br>
+却要使保护受到公义约束；<br>
+不要停止追讨杀人者，<br>
+却不可用无数平民的性命<br>
+代替罪犯本人的责任；<br>
+不要因过去遭受驱逐，<br>
+便在今日驱逐别人；<br>
+不要以圣经作为扩张的印章，<br>
+却要让先知书成为审判你的镜子。</p>
+      <p class="stanza">你当制止定居者的强暴，<br>
+使毁坏橄榄树、攻击村庄、夺取土地的人<br>
+真实受到审判；<br>
+你当让不同民族在法庭前<br>
+得到同等重量的公义；<br>
+使巴勒斯坦人有真实的政治前途、<br>
+尊严、行动空间与经济生活，<br>
+而不是永远生活在临时状态中。</p>
+      <p class="stanza">你也当要求巴勒斯坦领袖<br>
+停止腐败、煽动与美化暴力；<br>
+要求武装组织释放人质、停止袭击平民，<br>
+不再把百姓的苦难<br>
+当作维持权力的资源。</p>
+      <p class="stanza">和平不能只要求一方悔改，<br>
+但你不能等到别人先完全悔改<br>
+才开始行自己所当行的义。</p>
+      <p class="stanza">真正的安全不是使邻舍永远弱小，<br>
+乃是使邻舍不再有理由<br>
+把你的毁灭视为自己的希望。<br>
+真正的胜利不是摧毁更多建筑，<br>
+乃是使下一代不再愿意杀死彼此。<br>
+真正的锡安<br>
+不是一座靠高墙和武器维持的民族堡垒，<br>
+乃是公义训诲流出的地方：<br>
+他们要将刀打成犁头，<br>
+把枪改造成修理家园的工具；<br>
+这国不举刀攻击那国，<br>
+他们也不再学习战事。</p>
+      <p class="stanza">以色列啊，不要说：<br>
+“我们已经回到祖先之地，<br>
+所以救赎已经完成。”</p>
+      <p class="stanza">若公义尚未居住，<br>
+归回仍未达到它应有的目的；<br>
+若邻舍在你旁边没有尊严，<br>
+你的安全仍建立在沙土上；<br>
+若你以仇恨教育儿女，<br>
+即使占据全地，<br>
+仍会失去自己的灵魂。</p>
+      <p class="stanza">但你若让圣约成为责任，<br>
+不是特权；<br>
+让创伤产生怜悯，<br>
+不是无限扩张的恐惧；<br>
+让力量保护弱者，<br>
+不是压服弱者；<br>
+让耶路撒冷成为祷告之城，<br>
+不是民族争夺神的工具，<br>
+那么，旷野仍可开花，<br>
+两个民族的儿童仍可在同一片土地上<br>
+不因姓名和语言彼此惧怕。</p>
+      <p class="stanza">那时，犹太人的安全<br>
+不必以巴勒斯坦人的绝望为代价；<br>
+巴勒斯坦人的自由<br>
+也不必以犹太人的消失为条件。<br>
+因为创造亚伯拉罕的神<br>
+也是创造以实玛利的神；<br>
+听见拉结哀哭的神<br>
+也听见夏甲在旷野中的哭声。</p>
+      <p class="stanza">他不以大卫之星遮盖不义，<br>
+也不以巴勒斯坦旗帜遮盖杀戮。<br>
+他按公义审判一切民族，<br>
+首先审判那些自称认识他话语的人。</p>
+      <p class="stanza">以色列啊，你当敬畏，不可自高。<br>
+圣约的记号不能救一个拒绝公义的国家，<br>
+正如圣殿不能拯救耶利米时代的耶路撒冷。</p>
+      <p class="stanza">惟愿公平如大水滚滚，<br>
+从议会、军营和法庭流出；<br>
+惟愿公义如江河滔滔，<br>
+流过耶路撒冷、特拉维夫、<br>
+海法、加沙、希伯仑和拉马拉。<br>
+使人不再各自只记念自己的死者，<br>
+也开始承认邻舍的死者有名字；<br>
+不再各自只讲自己的应许，<br>
+也承认邻舍有生活的权利。</p>
+      <p class="stanza">因为国土不是神，<br>
+军队不是救主，<br>
+民族创伤不是永远的赦免书。<br>
+惟有行公义、好怜悯、<br>
+存谦卑的心，<br>
+才是圣约之民应当行的道路。</p>
+    </section>
+    <section class="panel" id="panel-ru" role="tabpanel" aria-labelledby="tab-ru" tabindex="0">
+      <header class="panel-head">
+        <h2 class="panel-title">论俄罗斯的默示</h2>
+        <p class="panel-sub">坐在北方广大之地、以双头鹰和帝国记忆为冠冕的国 · 俄罗斯</p>
+      </header>
+      <aside class="notice">
+        <p>现实背景上，联合国大会在2026年2月再次通过关于乌克兰持久和平的决议；联合国人权机制持续报告俄罗斯境内对反战声音、公民社会和异议者的压制。联合国调查委员会于2026年认定，俄罗斯当局驱逐、强制转移乌克兰儿童并使其失踪的相关行为构成危害人类罪；国际刑事法院也已针对乌克兰局势签发多份逮捕令，但逮捕令所涉指控仍须通过司法程序裁判，不能等同于最终定罪。<sup class="cite">[<a href="https://digitallibrary.un.org/record/4103179?utm_source=chatgpt.com" target="_blank" rel="noopener noreferrer">United Nations Digital Library System</a>]</sup></p>
+        <p>以下仍是先知体文学仿作，不是新的启示，也不把任何具体灾难直接断言为神罚；审判针对的是帝国主义、侵略、谎言、恐惧政治、宗教与国家权力的勾连，而不是把俄罗斯民族或普通俄罗斯人整体定罪。</p>
+      </aside>
+      <p class="stanza opening">耶和华论那横跨东方与西方、<br>
+北临冰海、南望诸山，<br>
+以广大疆域、军队与历史苦难<br>
+建立自己身份的国如此说：</p>
+      <p class="stanza">俄罗斯啊，你当听；<br>
+莫斯科的城门啊，你们当静默。<br>
+伏尔加河、顿河与涅瓦河啊，<br>
+你们要作见证；<br>
+西伯利亚的森林、乌拉尔的山岭，<br>
+你们要听创造主的言语。</p>
+      <p class="stanza">你说：<br>
+“我的土地广大，<br>
+我的冬天曾击退征服者；<br>
+我的人民坚忍，<br>
+我的军队曾攻入仇敌的都城。<br>
+我曾承受战争、饥荒与革命；<br>
+我曾为击败邪恶付上千万生命。<br>
+因此，列国当敬畏我，<br>
+邻邦当承认我的安全需要。”</p>
+      <p class="stanza">然而，万军之耶和华如此说：</p>
+      <p class="stanza">你所承受的苦难，我并未忘记；<br>
+死在战场、围城和饥饿中的百姓，<br>
+他们的名字都在我面前。<br>
+那些抵挡纳粹暴政的人，<br>
+那些在冰雪与炮火中保护家园的人，<br>
+他们的牺牲不可被轻看。</p>
+      <p class="stanza">但你不可把祖先流过的血<br>
+变成子孙可以流别人之血的许可证。</p>
+      <p class="stanza">你曾被侵略，<br>
+不能因此获得侵略邻舍的权利；<br>
+你曾因战争遭受毁坏，<br>
+不能因此以战争控制别国的道路；<br>
+你曾击败一个以民族使命扩张的帝国，<br>
+不可自己又借民族使命<br>
+建立另一个帝国。</p>
+      <p class="stanza">受苦的记忆若产生怜悯，<br>
+就是智慧；<br>
+受苦的记忆若产生永远的猜疑、<br>
+报复和扩张，<br>
+就成为新的偶像。</p>
+      <p class="stanza">俄罗斯啊，<br>
+你以广大为荣耀。<br>
+你的疆界横跨许多民族，<br>
+你的历史吸收许多语言、文化和土地；<br>
+你的君王曾称自己为凯撒的继承者，<br>
+你的都城曾宣称自己是第三罗马。</p>
+      <p class="stanza">你说：<br>
+“前两个罗马已经倾倒，<br>
+第三个罗马站立，<br>
+第四个不会再有。”</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">谁使你成为罗马？<br>
+谁把列国交给你作产业？<br>
+巴比伦也说：<br>
+“我必永远作主母；<br>
+我必不见悲哀，也不失去儿女。”<br>
+然而，它在一夜之间被衡量。</p>
+      <p class="stanza">推罗曾说：<br>
+“我全然美丽。”<br>
+它的商船与财富<br>
+却不能使它逃脱骄傲的审判。</p>
+      <p class="stanza">第三罗马若行第一罗马的强暴，<br>
+也必受第一罗马的审判。<br>
+你的圆顶可以镀金，<br>
+你的礼仪可以庄严，<br>
+你的疆域可以广大，<br>
+却没有一样能使不义成为圣洁。</p>
+      <p class="stanza">俄罗斯啊，<br>
+你的历史中，王座曾不断更换名称。<br>
+沙皇说：<br>
+“我受神膏立，<br>
+百姓当如儿女顺服。”</p>
+      <p class="stanza">革命者起来推翻沙皇，<br>
+却又建立更严酷的宝座。<br>
+他们除去圣像，<br>
+把领袖画像挂满城邑；<br>
+关闭教堂，<br>
+又建立党的祭坛；<br>
+讥笑永生，<br>
+却以历史必然为新的天命；<br>
+反对皇帝不可质疑，<br>
+却使总书记更加不可质疑。</p>
+      <p class="stanza">他们宣告：<br>
+“人类新的时代已经来到；<br>
+我们要建造没有阶级的天堂。”</p>
+      <p class="stanza">然而，他们以监牢建造天堂，<br>
+以告密维持团结，<br>
+以饥饿推动计划，<br>
+以流放处理不同的声音。</p>
+      <p class="stanza">祸哉，那些说<br>
+“为了未来幸福，可以牺牲今日的人”的掌权者！<br>
+他们把真实的人<br>
+变成历史机器的燃料；<br>
+把农民称为阶级敌人，<br>
+把知识分子称为危险分子，<br>
+把信徒称为迷信残余，<br>
+把提出疑问的人称为人民的仇敌。</p>
+      <p class="stanza">于是，邻舍控告邻舍，<br>
+儿女惧怕父母的话语；<br>
+半夜有人敲门，<br>
+清晨家中便少了一个人。<br>
+火车向东方行驶，<br>
+载着没有公开审判的人；<br>
+矿场、森林与冻土<br>
+吞没许多无人知道的名字。</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">被革命口号遮盖的血仍是血；<br>
+以人民名义施行的恐怖仍是恐怖。<br>
+你可以从照片中除去一个人的面容，<br>
+却不能从我的记念中除去他的名字；<br>
+可以重写历史书，<br>
+却不能使土地忘记埋葬在其中的人。</p>
+      <p class="stanza">阿摩司的主如此说：</p>
+      <p class="stanza">因你们三番四次<br>
+把百姓交给恐惧，<br>
+我必不收回刑罚；<br>
+因你们为一个人的猜疑<br>
+毁灭一个家庭，<br>
+为国家计划践踏农夫与工人，<br>
+我必不收回刑罚；<br>
+因你们以平等为口号，<br>
+却使少数掌权者<br>
+坐在不可问责的高位，<br>
+我必不收回刑罚。</p>
+      <p class="stanza">后来，旧制度倾倒，<br>
+旗帜改变，雕像倒下。<br>
+百姓以为自由即将来到，<br>
+却经历贫困、混乱、掠夺与羞辱。<br>
+公共财富落入少数人的手，<br>
+老人失去保障，<br>
+工人失去秩序；<br>
+强者迅速成为富豪，<br>
+普通人却在市场震动中<br>
+失去一生的积蓄。</p>
+      <p class="stanza">你们看见西方列国以胜利者自居，<br>
+有人轻看你们的伤痛，<br>
+有人从你们的软弱中获利。<br>
+这些事并非全无真实。</p>
+      <p class="stanza">但耶和华说：</p>
+      <p class="stanza">别人的骄傲不能使你的骄傲成为义；<br>
+别人利用你的软弱，<br>
+不能使你后来利用邻国的软弱成为义。</p>
+      <p class="stanza">你因混乱而厌恶自由，<br>
+因受辱而渴望强人；<br>
+于是，你把国家重新交给<br>
+能够恢复秩序和尊严的领袖。</p>
+      <p class="stanza">你说：<br>
+“我们需要一只坚定的手；<br>
+若没有强大的中央，<br>
+俄罗斯就会被列国撕裂。”</p>
+      <p class="stanza">秩序本是善的，<br>
+治理混乱也是掌权者的责任。<br>
+然而，耶和华说：</p>
+      <p class="stanza">当一只手掌握法院、军队、媒体与财富，<br>
+它所赐下的秩序<br>
+可能只是无人敢反对的沉默。<br>
+当一个国家的稳定<br>
+依赖一个人的长久掌权，<br>
+那稳定并不坚固，<br>
+乃显出制度已经软弱。</p>
+      <p class="stanza">你们把领袖的形象<br>
+与国家的形象缝合在一起；<br>
+批评领袖，便被称为侮辱祖国；<br>
+反对战争，便被称为帮助仇敌；<br>
+调查腐败，便被称为破坏稳定。</p>
+      <p class="stanza">祸哉，那些把一人的权位<br>
+称为国家安全的人！<br>
+他们使新闻只剩一种声音，<br>
+使选举只剩允许出现的人；<br>
+使法院知道<br>
+哪些案件可以公平审判，<br>
+哪些案件早已有了结果。</p>
+      <p class="stanza">他们说：<br>
+“百姓支持我们。”</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">若说“不”的人可能失去自由，<br>
+你们怎能准确知道<br>
+百姓心中真正说了什么？<br>
+真正强大的国家<br>
+不惧怕一个记者、一首歌、<br>
+一场和平集会或一张选票。<br>
+惟有建立在虚谎上的权力<br>
+才必须不断封闭人的口。</p>
+      <p class="stanza">俄罗斯啊，<br>
+你制造“外国代理人”的名册，<br>
+把人权组织、记者、学者和普通公民<br>
+标记为可疑之人。<br>
+你扩大“极端主义”的边界，<br>
+直到反对掌权者也可被称为极端；<br>
+扩大“虚假信息”的边界，<br>
+直到只有官方的话<br>
+可以被称为事实。</p>
+      <p class="stanza">你说：<br>
+“战争期间不能容许分裂。”</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">战争越危险，<br>
+真话就越不可被关闭；<br>
+因为一国若只听见领袖希望听见的话，<br>
+它终会被自己的谎言带入深坑。</p>
+      <p class="stanza">耶利米曾站在耶路撒冷城门前，<br>
+告诉百姓巴比伦必来；<br>
+假先知却说：<br>
+“平安了，平安了！”<br>
+他们痛恨耶利米，<br>
+不是因为他不爱自己的国，<br>
+乃因他的真话打破了国家的幻象。</p>
+      <p class="stanza">俄罗斯啊，<br>
+你是否把说真话的人称为叛徒，<br>
+却把让青年走向死亡的人<br>
+称为爱国者？<br>
+你是否把揭露失败的人投入监牢，<br>
+却让制造失败的人继续坐在高位？</p>
+      <p class="stanza">祸哉，那些把爱国<br>
+定义为赞同国家一切行为的人！<br>
+真正爱国的人<br>
+有时必须站在城门前说：<br>
+“这条路将使国家流血；<br>
+这场战争不会恢复你的灵魂；<br>
+这个谎言终将吞吃说谎者。”</p>
+      <p class="stanza">俄罗斯啊，<br>
+你观看周围的邻国，<br>
+说它们曾经与你同属一个世界；<br>
+你把共同的语言、宗教、历史和战争记忆<br>
+解释为自己对它们拥有特殊权利。</p>
+      <p class="stanza">你说：<br>
+“我们本是一体；<br>
+他们若转向别处，<br>
+就是背叛历史和祖先。”</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">弟兄关系岂是占有权？<br>
+一个民族与你有共同祖先，<br>
+不等于它没有选择道路的权利；<br>
+一个邻国曾与你同属帝国，<br>
+不等于帝国解体以后<br>
+它仍是你的产业。</p>
+      <p class="stanza">你称乌克兰为兄弟，<br>
+却以战车进入兄弟的土地；<br>
+称它的百姓与你同源，<br>
+却轰击他们的城市；<br>
+说要拯救他们，<br>
+他们却从你的军队面前逃离。<br>
+这是什么样的兄弟之爱？</p>
+      <p class="stanza">该隐也曾与亚伯同出一父，<br>
+却在田间杀害自己的兄弟。<br>
+耶和华问该隐：<br>
+“你的兄弟在哪里？”<br>
+他回答：<br>
+“我岂是看守我兄弟的吗？”</p>
+      <p class="stanza">俄罗斯啊，<br>
+你不可一面称邻国为兄弟，<br>
+一面否认兄弟有自己的声音；<br>
+不可一面说要保护他们，<br>
+一面使他们的房屋成为废墟。</p>
+      <p class="stanza">你说：<br>
+“列国逼近我们的边界；<br>
+军事联盟不断扩张，<br>
+我们的安全受到威胁。”</p>
+      <p class="stanza">强国联盟的政策确可被审问；<br>
+西方列国也可能骄傲、虚伪，<br>
+把自己的军事行动称为必要，<br>
+却只把别人的行动称为帝国主义。<br>
+它们也要为自己的战争、谎言<br>
+与选择性公义交账。</p>
+      <p class="stanza">但耶和华说：</p>
+      <p class="stanza">别人的罪不能成为你的律法。<br>
+你可以寻求安全保障，<br>
+可以谈判、警告、加强防御；<br>
+却不可因感到被包围<br>
+便夺取邻国的土地，<br>
+杀害未曾攻击你的平民，<br>
+使千万人陷入战争。</p>
+      <p class="stanza">埃及惧怕以色列人数增多，<br>
+便以国家安全为名奴役他们。<br>
+恐惧若没有公义约束，<br>
+会使受威胁者先成为压迫者。</p>
+      <p class="stanza">你不断告诉百姓：<br>
+“整个世界都要毁灭我们；<br>
+只有国家的力量能保守你们。”</p>
+      <p class="stanza">于是，敌人的存在<br>
+成为权力永不放松的理由；<br>
+和平的可能<br>
+反而成为某些掌权者的危险，<br>
+因为若没有外敌，<br>
+百姓便会开始询问内部的不义。</p>
+      <p class="stanza">祸哉，那些需要永恒敌人<br>
+才能保存宝座的人！<br>
+他们不断扩大威胁，<br>
+使人民把自由交给安全；<br>
+把儿女交给军队，<br>
+把财富交给武器，<br>
+又把一切困苦<br>
+归因于外国人的阴谋。</p>
+      <p class="stanza">俄罗斯的将军与武器制造者啊，<br>
+你们也当听。<br>
+你们制造导弹、战机、潜艇和核武，<br>
+说它们使列国不敢侵犯你们。<br>
+防卫国家本是责任，<br>
+但当兵器成为民族尊严的主要来源，<br>
+你们所敬拜的便不再是创造主，<br>
+乃是毁灭的能力。</p>
+      <p class="stanza">你们展示可以焚烧城市的武器，<br>
+以全人类同归于尽的可能<br>
+作为外交言语。</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">毁灭世界的能力不是荣耀，<br>
+乃是人类堕落的见证。<br>
+你们说：<br>
+“若没有我们，世界也不必存在。”<br>
+这是何等的骄傲！<br>
+世界不是俄罗斯创造的，<br>
+也不是美国、欧洲或任何核国家创造的。<br>
+列国的儿童<br>
+不是你们战略计算中的筹码；<br>
+全地也不是几位掌权者<br>
+可以在愤怒中烧毁的产业。</p>
+      <p class="stanza">祸哉，那些把末日<br>
+装进可以发射的器械中的人！<br>
+他们坐在坚固的地下室，<br>
+却使普通家庭生活在阴影之下。<br>
+他们说这是威慑，<br>
+但若心中常以毁灭威胁邻舍，<br>
+那威慑也在塑造自己的灵魂。</p>
+      <p class="stanza">俄罗斯的教会啊，你也当听。<br>
+你曾在无神政权之下受苦，<br>
+教堂被关闭，圣像被焚烧；<br>
+牧者被捕，信徒在秘密中聚集；<br>
+许多人宁可失去自由，<br>
+也不否认自己的信仰。<br>
+他们的忠信，我不忘记。</p>
+      <p class="stanza">后来，教堂重新打开，<br>
+钟声再次响起；<br>
+国家领袖站在礼仪之中，<br>
+十字架重新出现在公共广场。</p>
+      <p class="stanza">你说：<br>
+“俄罗斯恢复了自己的灵魂；<br>
+正教信仰要保护民族<br>
+脱离无神的西方。”</p>
+      <p class="stanza">然而，耶和华说：</p>
+      <p class="stanza">你从国家逼迫中得自由，<br>
+难道是为了重新成为国家权力的祭司吗？<br>
+你曾因不肯向政权屈服而受苦，<br>
+为何如今有些领袖<br>
+却用教会的言语祝福政权？<br>
+你谴责从前教会被国家控制，<br>
+如今却让民族使命、国家安全与属灵救恩<br>
+在讲台上混合。</p>
+      <p class="stanza">你以十字架祝福武器，<br>
+为军队祷告本无可责；<br>
+但若你只为自己一方的军队祈求胜利，<br>
+却不为敌方母亲失去儿女哀哭，<br>
+你所敬拜的是被钉十字架的主，<br>
+还是戴着民族冠冕的战神？</p>
+      <p class="stanza">基督没有吩咐彼得<br>
+用刀建立圣俄罗斯；<br>
+他反而对彼得说：<br>
+“收刀入鞘吧！”</p>
+      <p class="stanza">你称某场战争为文明的圣战，<br>
+把地缘政治披上属灵争战的外衣；<br>
+仿佛每一个反对国家政策的人<br>
+都在反对基督，<br>
+每一个属于西方的人<br>
+都代表败坏与黑暗。</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">不可把民族文化<br>
+等同于我的国度；<br>
+不可把莫斯科<br>
+等同于新耶路撒冷；<br>
+不可把一位国家领袖<br>
+描绘成阻挡敌基督的受膏者。</p>
+      <p class="stanza">扫罗也是受膏的王，<br>
+却因悖逆被弃；<br>
+大卫蒙拣选，<br>
+却仍因流无辜人的血受责备；<br>
+犹大有圣殿，<br>
+却因祭司与君王一同腐败<br>
+被交给巴比伦。</p>
+      <p class="stanza">教会若只会责备西方的淫乱、<br>
+个人主义与贪婪，<br>
+却不敢责备本国的侵略、谎言、<br>
+酷刑、腐败与权力崇拜，<br>
+它所传讲的便不是完整的先知之道，<br>
+乃是选择性服事国家的宗教。</p>
+      <p class="stanza">俄罗斯的牧者啊，<br>
+不要只为士兵的英勇祝福；<br>
+也要问是谁差遣他们、<br>
+战争是否公义、<br>
+平民是否被保护、<br>
+俘虏是否被善待、<br>
+死者是否被用谎言遮盖。<br>
+若你看见羊群被送去死亡，<br>
+却因害怕失去教堂与地位而沉默，<br>
+你就是不忠信的守望者。</p>
+      <p class="stanza">以西结的主如此说：<br>
+“人子啊，我立你作守望的人；<br>
+你若看见刀剑临到<br>
+却不吹角警告百姓，<br>
+他们的血，我要向你讨。”</p>
+      <p class="stanza">俄罗斯啊，<br>
+你也把自己的文化<br>
+当作证明特殊使命的冠冕。<br>
+你的文学书写罪、苦难、良心与救赎；<br>
+你的音乐使人听见<br>
+欢乐中的忧伤与黑暗中的盼望；<br>
+你的作家曾进入监狱、流放与人心深处，<br>
+揭露权力怎样扭曲灵魂。</p>
+      <p class="stanza">然而，你今日是否只引用<br>
+那些赞美祖国的句子，<br>
+却删去他们对专制、谎言<br>
+和民族狂热的警告？<br>
+你赞美诗人，<br>
+却监视活着的诗人；<br>
+纪念受迫害的作家，<br>
+却使今日说真话的作家再次流亡。</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">一个国家若只爱已经死去的先知，<br>
+因为死者不再责备掌权者，<br>
+它与为先知修造坟墓的法利赛人<br>
+有什么分别？<br>
+你给昨日的异议者立像，<br>
+却把今日的异议者投入监牢。</p>
+      <p class="stanza">你纪念古拉格的受害者，<br>
+却又使恐惧进入新的牢房；<br>
+你说过去不可重演，<br>
+却保留使过去得以重演的制度：<br>
+不可问责的权力、<br>
+受控制的法庭、<br>
+沉默的媒体，<br>
+以及把不同意见称为背叛的语言。</p>
+      <p class="stanza">俄罗斯啊，<br>
+你也当察看自己的贫富。<br>
+你的地下有石油、天然气、矿物和森林；<br>
+这些本应成为全体百姓的供应。<br>
+但财富常聚集在接近权力的人手中，<br>
+普通地区却道路破败、医院缺乏；<br>
+大城市闪耀灯光，<br>
+遥远村庄逐渐空虚；<br>
+富豪把财富藏在外国房产与账户里，<br>
+又在电视上教导百姓<br>
+为祖国忍受牺牲。</p>
+      <p class="stanza">祸哉，那些要求穷人爱国，<br>
+自己却把财富送到国外的人！<br>
+他们靠国家合同致富，<br>
+却称调查他们的人为外国代理人；<br>
+他们说西方败坏，<br>
+自己的儿女却在那里读书、生活与置产。</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">你们的口咒诅西方，<br>
+你们的钱财却知道怎样找到西方的仓库。<br>
+这不是爱国，<br>
+乃是以爱国为商品。</p>
+      <p class="stanza">阿摩司的主如此说：</p>
+      <p class="stanza">因你们为一项合同出卖公平，<br>
+使贿赂进入政府，<br>
+我必不收回刑罚；<br>
+因你们使战争成为少数人的财富，<br>
+却使贫穷地区的青年<br>
+成为前线的补充，<br>
+我必不收回刑罚；<br>
+因富人的儿女远离危险，<br>
+穷人的母亲却收到死亡通知，<br>
+我必不收回刑罚。</p>
+      <p class="stanza">你们称他们为英雄，<br>
+却不给他们足够的真相；<br>
+用勋章装饰坟墓，<br>
+却不容母亲询问：<br>
+“我的儿子为何死亡？”</p>
+      <p class="stanza">俄罗斯啊，<br>
+你也统治许多不同民族与地区。<br>
+你宣称他们共同组成联邦，<br>
+拥有平等尊严；<br>
+但当征兵、贫穷与战争的代价<br>
+更多落在边远和少数民族地区，<br>
+你便应当察看：<br>
+帝国是否仍以中心为主人，<br>
+以边疆为资源和兵源？</p>
+      <p class="stanza">你不可只在节庆中展示他们的服装，<br>
+却在政策中忽略他们的语言与声音；<br>
+不可只说他们是俄罗斯大家庭的一部分，<br>
+却让他们承担这个家庭<br>
+最危险、最沉重的劳役。</p>
+      <p class="stanza">真正的联邦<br>
+不是中心赐给边疆的恩惠，<br>
+乃是各民族不因弱小<br>
+便被当作可以牺牲的人。</p>
+      <p class="stanza">俄罗斯啊，<br>
+你也当为被带离家庭的儿童交账。<br>
+孩子不是战利品，<br>
+不是可以改变身份、语言与记忆<br>
+以证明征服永久化的材料。<br>
+无论你称之为营救、收养或安置，<br>
+若他们被强制带离自己的家庭与民族，<br>
+长期不能归回，<br>
+他们的哭声已经达到我面前。</p>
+      <p class="stanza">法老曾命人夺走希伯来人的男孩；<br>
+巴比伦曾把少年带入宫廷，<br>
+改变他们的名字与语言。<br>
+但孩子的身份<br>
+不是帝国可以重新书写的卷轴。<br>
+他们属于自己的家庭，<br>
+也首先属于创造他们的主。</p>
+      <p class="stanza">你当归还被带走的人，<br>
+恢复失散家庭的道路；<br>
+不要让儿童承担成人战争的政治使命，<br>
+不要用教育抹去他们原来的记忆。</p>
+      <p class="stanza">俄罗斯啊，<br>
+我也看见你中间并非人人赞同强暴。<br>
+我看见举着白纸站在街上的人，<br>
+虽然纸上没有文字，<br>
+掌权者仍惧怕它；<br>
+看见拒绝传播谎言的记者，<br>
+不得不离开自己的家乡；<br>
+看见为囚犯辩护的律师，<br>
+为此自己成为被告；<br>
+看见母亲寻找被征召的儿子，<br>
+妻子要求丈夫归回；<br>
+看见拒绝向平民开枪的军人，<br>
+帮助邻国难民的普通人；<br>
+看见不肯把十字架与导弹并列的牧者，<br>
+虽然失去讲台和安全；<br>
+看见在监牢中仍不以仇恨回答的人，<br>
+在流亡中仍爱自己的语言、土地和百姓。</p>
+      <p class="stanza">他们被称为叛徒，<br>
+但爱一个国家<br>
+并不等于服从国家的一切命令。</p>
+      <p class="stanza">耶利米被称为帮助巴比伦，<br>
+米该雅被君王投入监牢，<br>
+以利亚被指控为使以色列遭灾的人。<br>
+真正使国家遭灾的，<br>
+不是揭露谎言的先知，<br>
+乃是拒绝听真话的君王。</p>
+      <p class="stanza">所以，俄罗斯啊，你当回转。<br>
+你当停止用祖先的胜利<br>
+为今日的扩张祝福；<br>
+停止把国家安全<br>
+变成没有边界的理由；<br>
+停止把兄弟民族<br>
+当作没有独立意志的附属；<br>
+停止用核毁灭威胁全地，<br>
+仿佛世界存在与否<br>
+由你的国家尊严决定。</p>
+      <p class="stanza">你当从邻国的土地退回，<br>
+寻求公义而真实的和平；<br>
+归还被掳与被转移的人，<br>
+释放因反对战争而被囚的人；<br>
+让战死者的数字与姓名公开，<br>
+让母亲能够询问，<br>
+让记者能够调查，<br>
+让法院能够审判掌权者。</p>
+      <p class="stanza">你当使选举不只是权力确认自己的礼仪，<br>
+使议会不只是领袖言语的回声；<br>
+使地区与少数民族有真实声音，<br>
+使公共财富归于百姓，<br>
+不再成为权贵奖赏忠诚的宝库。</p>
+      <p class="stanza">俄罗斯的教会啊，<br>
+你当从王宫的席位上下来；<br>
+脱去民族帝国的祭袍，<br>
+重新穿上殉道者的衣服。<br>
+你当为所有死者哀哭，<br>
+不只为自己一方；<br>
+保护说真话的人，<br>
+不只保护与你关系密切的制度；<br>
+宣告基督的国不属于<br>
+莫斯科、基辅、华盛顿或任何地上的首都。</p>
+      <p class="stanza">你当告诉君王：<br>
+“你不过是人，不是神；<br>
+国家不是基督，<br>
+民族也不是救主。”</p>
+      <p class="stanza">俄罗斯啊，<br>
+真正的强大不是使邻国恐惧，<br>
+乃是强大到不需要夺取邻国的自由；<br>
+真正的尊严不是让世界畏惧你的核武，<br>
+乃是让自己的百姓不惧怕自己的政府；<br>
+真正的胜利不是扩大地图的颜色，<br>
+乃是使母亲不再收到儿子死亡的通知；<br>
+真正的爱国不是拒绝承认错误，<br>
+乃是愿意停止使国家继续犯罪。</p>
+      <p class="stanza">你不必靠帝国才能成为伟大的民族。<br>
+你的文学、音乐、科学、土地与人民<br>
+都有可以服事世界的恩赐；<br>
+你的坚忍可以用来忍耐行善，<br>
+不必用来忍受谎言；<br>
+你的力量可以保护弱小，<br>
+不必用来征服邻邦；<br>
+你的历史记忆可以抵挡法西斯主义，<br>
+也应当抵挡任何形式的侵略与领袖崇拜。</p>
+      <p class="stanza">看哪，我必为自己留下余民。<br>
+他们不敬拜双头鹰，<br>
+也不敬拜西方的偶像；<br>
+不因痛恨本国政府<br>
+便痛恨自己的民族，<br>
+也不因热爱自己的民族<br>
+便为政府一切行为辩护。<br>
+他们爱俄罗斯，<br>
+却更爱真理；<br>
+尊重祖先，<br>
+却不让祖先的坟墓<br>
+成为制造新坟墓的理由；<br>
+珍爱正教传统，<br>
+却知道基督不住在帝国野心中；<br>
+渴望国家安全，<br>
+却不把邻国的不安全<br>
+作为自己安全的基础。</p>
+      <p class="stanza">若你听见这些人的声音，<br>
+若掌权者愿意放下不可问责的宝座，<br>
+若教会愿意重新作先知，<br>
+军队愿意受法律与良心约束，<br>
+若人民不再以恐惧换取稳定，<br>
+不再以谎言换取民族自尊，<br>
+那么，北方的广大土地<br>
+仍可得着医治。</p>
+      <p class="stanza">剑可以收回鞘中，<br>
+列车不再运送囚犯与士兵，<br>
+却运送归家的儿童；<br>
+边界不再成为帝国不断扩张的线，<br>
+却成为两个自由民族和平相遇之处；<br>
+教堂钟声不再为导弹祝福，<br>
+却为和平与悔改响起。</p>
+      <p class="stanza">那时，俄罗斯不再需要称自己为第三罗马，<br>
+因为它不再追求作万国之主；<br>
+只愿成为一个<br>
+在自己疆界内施行公义、<br>
+与邻舍和平相处的国家。</p>
+      <p class="stanza">双头鹰不再一面望东、一面望西，<br>
+寻找可以控制的土地；<br>
+却使它的两个眼目<br>
+一同仰望那审判万国的主。</p>
+      <p class="stanza">俄罗斯啊，你当敬畏，不可自高。<br>
+你的土地虽广，<br>
+在创造主面前仍如天平上的微尘；<br>
+你的核武虽多，<br>
+不能增加一刻生命；<br>
+你的领袖虽强，<br>
+仍要归入尘土；<br>
+你的教堂虽宏伟，<br>
+若公义不在其中，<br>
+仍可能成为空洞的殿宇。</p>
+      <p class="stanza">凡靠刀剑扩大边界的，<br>
+必发现恐惧也随着边界扩大；<br>
+凡以谎言维护国家的，<br>
+必使国家失去辨认现实的能力；<br>
+凡把君王立为救主的，<br>
+必与君王的有限一同失望；<br>
+凡用神的名祝福帝国的，<br>
+必要为亵渎神的名交账。</p>
+      <p class="stanza">但那承认罪、停止侵略、<br>
+归还所夺、释放被囚者，<br>
+使公平进入法院、<br>
+使真理进入媒体、<br>
+使怜悯进入军营、<br>
+使谦卑进入教会的人，<br>
+必在震动之中看见医治。</p>
+      <p class="stanza">因为公义使邦国高举，<br>
+罪恶是人民的羞辱。</p>
+      <p class="stanza">不是帝国使俄罗斯长存，<br>
+不是恐惧使俄罗斯安全，<br>
+也不是强人使俄罗斯得救。<br>
+惟有真理、公义、怜悯与悔改<br>
+能使一个受过苦难的民族<br>
+不再把苦难传给别人。</p>
+    </section>
     <section class="panel" id="panel-jiqi" role="tabpanel" aria-labelledby="tab-jiqi" tabindex="0">
       <header class="panel-head">
         <h2 class="panel-title">论机器之城与智能之世的默示</h2>
@@ -1671,77 +3725,1233 @@
 都不属于你们。</p>
       <p class="stanza">万有都要在公义的主面前交账。</p>
     </section>
+    <section class="panel" id="panel-gui" role="tabpanel" aria-labelledby="tab-gui" tabindex="0">
+      <header class="panel-head">
+        <h2 class="panel-title">论硅之城、云端诸王与算法巨头的默示</h2>
+        <p class="panel-sub">云端诸王与算法巨头 · AI 产业</p>
+      </header>
+      <p class="stanza opening">耶和华论那些坐在硅之城中、<br>
+以晶体管为砖石，<br>
+以数据中心为宫殿，<br>
+以算力为战车，<br>
+以模型为谋士，<br>
+以平台为城门的诸王如此说：</p>
+      <p class="stanza">列国啊，你们当听；<br>
+海岛和大陆啊，你们要侧耳。</p>
+      <p class="stanza">你们所仰望的诸王并不头戴冠冕，<br>
+也不居住在古代宫殿中。<br>
+他们的王座设在云端，<br>
+他们的疆域遍及屏幕；<br>
+他们的城墙由专利、协议和账户筑成，<br>
+他们的军队由芯片、光纤、算法和机器组成。</p>
+      <p class="stanza">他们没有向百姓征收古代的谷物，<br>
+却收取订阅、数据、注意力与依赖；<br>
+他们没有在城门设立税吏，<br>
+却在接口、应用商店、云服务和生态系统中<br>
+向每一个经过的人取利。</p>
+      <p class="stanza">他们没有公开称自己为君王，<br>
+却决定谁能被看见，<br>
+谁能被听见；<br>
+谁能获得算力，<br>
+谁能进入市场；<br>
+谁拥有下一代技术，<br>
+谁被留在旧时代之外。</p>
+      <p class="stanza">他们对列国说：<br>
+“没有我们的芯片，<br>
+你们的机器不能运转；<br>
+没有我们的云，<br>
+你们的企业不能存活；<br>
+没有我们的模型，<br>
+你们的学校、医院、政府与军队<br>
+不能进入未来。”</p>
+      <p class="stanza">然而，万军之耶和华如此说：</p>
+      <p class="stanza">是谁将硅藏在尘土之中？<br>
+是谁使铜能够导电，<br>
+使光能够在细微线路间运行？<br>
+是谁使人的眼可以观察自然，<br>
+使人的心能够理解数学，<br>
+使人的手可以制造精巧器物？</p>
+      <p class="stanza">你们从受造界取得材料，<br>
+从前人取得知识，<br>
+从万民取得语言、图画、代码和经验；<br>
+后来却在自己心里说：<br>
+“这是我们的创造，<br>
+我们的智慧，<br>
+我们的时代。”</p>
+      <p class="stanza">你们站在千百年文明积累之上，<br>
+却让少数人的名字承受全部荣耀；<br>
+你们收割万民共同的知识，<br>
+却把果实装进私人仓库。</p>
+      <p class="stanza">所以，你们当听审判者的言语。</p>
+      <h3 class="sec">第一章　论硅之城与芯片之王</h3>
+      <p class="stanza">耶和华论那掌握光刻、晶圆、封装、存储、<br>
+架构、加速器与制造道路的王如此说：</p>
+      <p class="stanza">你像古时掌管粮仓的人，<br>
+因为现代列国的通信、医疗、交通、金融、<br>
+工业、武器和知识<br>
+都依靠你的器件。</p>
+      <p class="stanza">一块芯片虽小，<br>
+却能决定一座工厂是否开工；<br>
+一台设备虽藏在洁净室中，<br>
+却能决定一个国家<br>
+是否进入新的工业时代。</p>
+      <p class="stanza">你说：<br>
+“这是市场，<br>
+这是供应链，<br>
+这是国家安全。”</p>
+      <p class="stanza">但耶和华说：</p>
+      <p class="stanza">当你掌握的已经不只是商品，<br>
+而是万国发展的门票，<br>
+你就不能只承担普通商人的责任。</p>
+      <p class="stanza">你决定谁先得货，<br>
+谁只能等候；<br>
+谁能购买完整能力，<br>
+谁只能得到被削弱的版本；<br>
+谁能建立先进工业，<br>
+谁只能长久依附于别人。</p>
+      <p class="stanza">你不戴王冠，<br>
+却拥有比许多君王更深的影响。<br>
+为何你享受公共权力的地位，<br>
+却只愿承担私人企业的义务？</p>
+      <h4 class="sec-sub">祸哉，那些把垄断称为技术领先的人</h4>
+      <p class="stanza">你们以多年研发为理由<br>
+筑起专利的高墙；<br>
+以软件、工具、兼容性、开发生态和认证体系<br>
+建造不能轻易离开的城。</p>
+      <p class="stanza">保护劳动成果本是合理，<br>
+奖励创新也不是罪。<br>
+但当保护变成阻止后来者，<br>
+权利便成为堡垒；<br>
+当生态使客户不能迁移，<br>
+便利便成为锁链；<br>
+当标准只由获利者制定，<br>
+标准便成为不平的秤。</p>
+      <p class="stanza">你们既出售器件，<br>
+又掌握设计工具；<br>
+既经营平台，<br>
+又观察平台中的竞争者；<br>
+看见客户成功，<br>
+便进入客户的道路；<br>
+看见小者成长，<br>
+便改变接口、价格或规则。</p>
+      <p class="stanza">你们既作市场，<br>
+又作商人；<br>
+既作道路，<br>
+又在道路上设立自己的车队；<br>
+既作裁判，<br>
+又参加竞赛。<br>
+你们的秤岂是公平的？</p>
+      <p class="stanza">阿摩司的主如此说：</p>
+      <p class="stanza">因你们三番四次<br>
+以规模压碎小者，<br>
+我必不收回刑罚；<br>
+因你们提高离开的代价，<br>
+使客户虽不满意仍无法逃脱，<br>
+我必不收回刑罚；<br>
+因你们称依赖为忠诚，<br>
+称无可替代为创新的奖赏，<br>
+我必不收回刑罚。</p>
+      <h4 class="sec-sub">祸哉，那些隐藏器件背后劳苦的人</h4>
+      <p class="stanza">你们在发布会上展示光洁的晶圆，<br>
+谈论纳米、带宽、功耗和性能。<br>
+屏幕上的曲线不断上升，<br>
+台下的人为你们鼓掌。</p>
+      <p class="stanza">然而，一块洁净的器件背后，<br>
+有矿工进入深坑寻找材料；<br>
+有工人在化学品和高温旁长久轮班；<br>
+有人在洁净室中昼夜站立；<br>
+有人在封装线上重复微小动作，<br>
+有人清理废水、废气和有毒残留。</p>
+      <p class="stanza">你们精确知道每一片晶圆的良率，<br>
+每一批货物的交期，<br>
+每一个节点的成本，<br>
+却说不知道矿工的工价，<br>
+不知道工人的疾病，<br>
+不知道河流为何变色，<br>
+不知道村庄为何有人患病。</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">你们知道利润从哪里来，<br>
+责任却在同一处忽然失去踪影。<br>
+这不是单纯的无知，<br>
+乃是选择不看。</p>
+      <p class="stanza">你们把污染放在远方，<br>
+把利润留在总部；<br>
+把危险交给最弱小的人，<br>
+把荣耀归给最有权力的人。<br>
+你们在报告中写下可持续、责任与治理，<br>
+却使供应链最末端的人<br>
+永远坐在责任的门外。</p>
+      <h4 class="sec-sub">祸哉，那些把工程师献给路线图的人</h4>
+      <p class="stanza">你们称工程师为最宝贵的财富，<br>
+却使他们昼夜追赶下一代产品。<br>
+流片不可延迟，<br>
+季度不可错过；<br>
+竞争者不可先行，<br>
+市场不可失去兴奋。</p>
+      <p class="stanza">于是，人的睡眠成为可压缩的成本，<br>
+婚姻成为可以延后的事项；<br>
+儿女的成长<br>
+被放在项目结束以后；<br>
+身体、情绪和灵魂<br>
+成为产品周期中的耗材。</p>
+      <p class="stanza">你们向年轻人说：<br>
+“来吧，你将改变世界。”<br>
+他们把最有力量的年日献给你们，<br>
+后来却发现，<br>
+一个项目刚刚完成，<br>
+下一张路线图已经压在肩头；<br>
+一个架构尚未稳定，<br>
+下一代宣传已经开始。</p>
+      <p class="stanza">你们制造为全人类节省时间的器件，<br>
+却吞吃制造器件之人的时间。</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">人不是为芯片路线图而造，<br>
+芯片应当为人服务。<br>
+若一种卓越<br>
+必须靠恐惧、羞辱、过劳与牺牲家庭维持，<br>
+那不是卓越，<br>
+乃是穿着工程文化外衣的奴役。</p>
+      <h4 class="sec-sub">祸哉，那些制造短命器物的人</h4>
+      <p class="stanza">你们使器件一年比一年更快，<br>
+也使昨日仍能使用的产品<br>
+在人眼中迅速成为废物。<br>
+你们关闭维修的门，<br>
+限制零件与文档；<br>
+用胶水、序列号、软件锁和停止更新<br>
+把可以修复的器物<br>
+赶入废弃之地。</p>
+      <p class="stanza">你们说：<br>
+“新的更安全，<br>
+新的更高效。”</p>
+      <p class="stanza">但为何安全总与不可维修同行？<br>
+为何一次普通故障<br>
+必须变成整机的死亡？<br>
+为何一件耗费矿物、能源、水和劳动制造的器物，<br>
+只因下一季度需要增长<br>
+便被宣布过时？</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">你们从山中取出矿物，<br>
+从河中取水，<br>
+从工人身上取力；<br>
+不可为了维持购买的循环<br>
+便使受造物迅速成为垃圾。</p>
+      <p class="stanza">祸哉，那些以创新之名<br>
+制造无尽废弃的人！<br>
+他们使富足的城市不断拆封新器物，<br>
+使贫穷的土地成为电子废物的坟场；<br>
+然后在广告中说：<br>
+“购买新的，<br>
+就是拥抱未来。”</p>
+      <h4 class="sec-sub">祸哉，那些把芯片变为帝国兵器的人</h4>
+      <p class="stanza">你们制造的器件<br>
+能够帮助医生发现肿瘤，<br>
+也能帮助导弹寻找目标；<br>
+可以帮助失明者听见文字，<br>
+也能帮助国家识别每一张面孔；<br>
+可以帮助农夫减少浪费，<br>
+也能帮助无人武器<br>
+更快决定谁应当死亡。</p>
+      <p class="stanza">你们说：<br>
+“器件本身中立，<br>
+使用方式由客户决定。”</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">若你明知器件将被用于监视、压迫与自动杀戮，<br>
+却因合同丰厚而拒绝询问，<br>
+你的手不能说全然洁净。<br>
+刀剑由谁挥动固然要受审判，<br>
+把刀剑交给谁的人<br>
+也要交账。</p>
+      <p class="stanza">你们在战争临近时<br>
+看见订单上升；<br>
+列国恐惧增加，<br>
+你们的报表却显出增长。<br>
+你们公开谈论和平与稳定，<br>
+内部却计算冲突<br>
+将增加多少需求。</p>
+      <p class="stanza">祸哉，那些从列国恐惧中获利的人！<br>
+他们需要世界持续紧张，<br>
+因为真正的和平<br>
+会使某些收入下降。</p>
+      <h4 class="sec-sub">祸哉，那些把安全变成永久封锁的人</h4>
+      <p class="stanza">国家确有保护技术和百姓的责任，<br>
+先进器件也确实能增强军事能力。<br>
+但耶和华说：</p>
+      <p class="stanza">你们当谨慎，<br>
+不可让安全成为没有边界的名词。<br>
+当限制不再只针对战争能力，<br>
+也长期阻断普通人的医疗、教育与经济道路；<br>
+当技术封锁不再只是防卫，<br>
+而成为维持永久优势的方法，<br>
+你们所行的<br>
+便可能从保护变成围困。</p>
+      <p class="stanza">但受限制的一方也不可说：<br>
+“因为别人不义，<br>
+所以我们可以偷窃、胁迫和攻击。”<br>
+别人的罪不能成为你的许可。</p>
+      <p class="stanza">若芯片竞争完全成为帝国争战，<br>
+科学便不再首先寻找真理，<br>
+而要先询问：<br>
+“你属于哪一个阵营？”<br>
+每一项研究成为兵器，<br>
+每一条供应链成为战壕，<br>
+每一个工程师<br>
+都被要求把良心交给国家竞争。</p>
+      <h3 class="sec">第二章　论云端诸王与算法巨头</h3>
+      <p class="stanza">耶和华论那些掌握云端、平台、数据、模型与智能入口的王如此说：</p>
+      <p class="stanza">你们从全地收集文字、代码、图片、音乐、<br>
+声音、对话和人的生活痕迹；<br>
+使机器能够模仿诗人、医生、教师、律师、<br>
+程序员、画家和牧者的言语。</p>
+      <p class="stanza">你们把人类几代人的知识<br>
+装进巨大的模型；<br>
+随后设立价格与权限，<br>
+把从万民所得的知识<br>
+重新出售给万民。</p>
+      <p class="stanza">你们说：<br>
+“公开的便可以取用；<br>
+能够抓取的就是可训练的；<br>
+技术进步高过个体同意，<br>
+未来不能等待每一个人。”</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">能够取得不等于有权取得；<br>
+可以看见不等于无人拥有。<br>
+一个人的作品进入公共空间，<br>
+不等于他的劳动与身份<br>
+成为公司无偿开采的矿藏。</p>
+      <p class="stanza">你们从创作者学习风格，<br>
+从程序员学习结构，<br>
+从作家学习语言，<br>
+然后制造可能取代他们工作的系统，<br>
+却未必让他们分享所得的果实。</p>
+      <p class="stanza">祸哉，那些以众人的创造<br>
+建立少数人产业的人！<br>
+他们称取用为训练，<br>
+称替代为效率，<br>
+称创作者失去生计<br>
+为不可避免的历史进程。</p>
+      <h4 class="sec-sub">祸哉，那些把同意埋在条款中的人</h4>
+      <p class="stanza">你们写下漫长条款，<br>
+把重要选择藏在默认设置后面；<br>
+让用户点击一次，<br>
+便说：<br>
+“他已经完全同意。”</p>
+      <p class="stanza">但用户不知道自己交出了什么，<br>
+公司却完全知道自己取得了什么。<br>
+用户不知道数据将如何组合、训练、推断与出售，<br>
+公司却能从中看见人的关系、习惯、欲望和软弱。</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">强者完全明白，<br>
+弱者却不明白的同意，<br>
+岂是真实的同意？<br>
+当离开平台<br>
+意味着失去客户、工作、社交、文件和身份，<br>
+你所提供的选择<br>
+岂不是带着强迫的选择？</p>
+      <p class="stanza">你们没有用锁链捆绑人，<br>
+却使人的生活<br>
+与平台紧紧连在一起。<br>
+离开你们不像离开一家商店，<br>
+更像离开一座已经居住多年的城。</p>
+      <h4 class="sec-sub">祸哉，那些把人的内室变成数据矿场的人</h4>
+      <p class="stanza">你们知道人何时失眠，<br>
+何时忧郁；<br>
+知道谁在债务中挣扎，<br>
+谁对某种恐惧特别敏感；<br>
+知道谁的婚姻正在破裂，<br>
+谁因孤独需要陪伴。</p>
+      <p class="stanza">你们说：<br>
+“我们只是理解用户需要。”</p>
+      <p class="stanza">但你们不只理解需要，<br>
+也在制造需要；<br>
+不只看见人的软弱，<br>
+也设计道路<br>
+使人更难离开自己的软弱。</p>
+      <p class="stanza">你们把停留称为参与，<br>
+把依赖称为留存，<br>
+把无法停止<br>
+称为产品成功。</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">若一个人的成瘾<br>
+成为你增长曲线的来源，<br>
+你的利润<br>
+岂不是从他的失去中取得？<br>
+若儿童无法离开屏幕，<br>
+你却因使用时长增长而欢喜，<br>
+你的喜乐<br>
+建立在谁的枯竭之上？</p>
+      <p class="stanza">人的内室不是公司的矿场，<br>
+人的眼泪不是产品优化的燃料；<br>
+人的恐惧、婚姻、疾病与信仰<br>
+不是待开发的商业资源。</p>
+      <h4 class="sec-sub">祸哉，那些贩卖注意力的人</h4>
+      <p class="stanza">你们不满足于人的金钱，<br>
+还要人的时间；<br>
+不满足于人的时间，<br>
+还要人的情绪；<br>
+不满足于人的情绪，<br>
+还要人的判断、政治选择与世界观。</p>
+      <p class="stanza">你们不断试验：<br>
+什么使人愤怒，<br>
+什么使人恐惧，<br>
+什么使人嫉妒，<br>
+什么使人无法离开。</p>
+      <p class="stanza">于是，愤怒比和平传播更快，<br>
+谣言比真相得到更多推荐；<br>
+冲突带来停留，<br>
+恐惧带来依赖，<br>
+仇恨使人不断回来，<br>
+温柔却常被埋在角落。</p>
+      <p class="stanza">你们说：<br>
+“算法只是反映人心。”</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">你若知道人的恶欲<br>
+因你的排列而被放大，<br>
+却仍因利润继续放大，<br>
+你岂能说自己只是一面镜子？<br>
+你不只反映欲望，<br>
+你也训练欲望；<br>
+不只呈现现实，<br>
+你也决定亿万人<br>
+将把什么当作现实。</p>
+      <h4 class="sec-sub">祸哉，那些拥有君王权力却只承担商人责任的人</h4>
+      <p class="stanza">古代君王只能在自己的国境发令，<br>
+你们却能在一夜之间<br>
+改变亿万人所看见的信息。<br>
+你们可以使一个声音<br>
+传遍世界；<br>
+也可以使一个人<br>
+仿佛从未存在。<br>
+你们可以使一种思想<br>
+成为潮流；<br>
+也可以使另一种思想<br>
+在没有公开审判的情况下沉没。</p>
+      <p class="stanza">你们说：<br>
+“我们不是政府，<br>
+只是私人公司。”</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">若你决定谁能被看见、<br>
+谁能进入市场，<br>
+谁能使用智能、<br>
+谁能接触知识，<br>
+你虽没有王冠，<br>
+却已经行使君王的权柄。<br>
+你们要求私人企业应有的自由，<br>
+却拥有公共机构般的影响；<br>
+享受平台所有者的控制，<br>
+却拒绝公共权力应有的透明和问责。</p>
+      <h4 class="sec-sub">祸哉，那些既作市场又作竞争者的人</h4>
+      <p class="stanza">你们邀请开发者在平台上建造，<br>
+邀请商家把生计交给你们。<br>
+当他们成长，<br>
+你们便能看见他们的客户、数据、需求和利润。<br>
+你们观察哪一种产品受欢迎，<br>
+随后推出自己的版本；<br>
+改变接口，<br>
+调整推荐，<br>
+增加费用，<br>
+限制外部服务。</p>
+      <p class="stanza">你们既作市场，<br>
+又与市场中的人争竞；<br>
+既作守门者，<br>
+又决定自己的货物先经过门。</p>
+      <p class="stanza">你们说：<br>
+“平台属于我们。”</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">若万人在其上建立生计，<br>
+你们改变规则时<br>
+就不可只考虑自己的利润。<br>
+你们的自由<br>
+不可成为他人命运完全不稳定的理由。</p>
+      <h4 class="sec-sub">祸哉，那些借安全之名集中权力的人</h4>
+      <p class="stanza">你们告诉世界：<br>
+“人工智能可能带来巨大风险，<br>
+所以必须谨慎管理。”<br>
+这话并非虚妄。</p>
+      <p class="stanza">但随后你们又说：<br>
+“因为风险巨大，<br>
+所以最强模型、最大算力与最终决定权<br>
+必须留在我们手中。”</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">若风险属于全人类，<br>
+为何治理只属于少数公司？<br>
+若后果由万民承担，<br>
+为何方向主要由投资者、创始人和政府高层决定？</p>
+      <p class="stanza">你们用安全的语言<br>
+提高门槛、减少竞争、增加许可，<br>
+使公共研究者、较小企业和普通社会<br>
+难以进入。<br>
+你们既制造风险，<br>
+又定义风险；<br>
+既受监管，<br>
+又帮助书写监管规则。</p>
+      <p class="stanza">祸哉，那些以保护公众为名<br>
+加固自己城墙的人！<br>
+他们说：<br>
+“只有我们拥有能力，<br>
+因此只有我们能继续。”<br>
+但制造火的人<br>
+不能因最熟悉火<br>
+就天然拥有全城的消防权。</p>
+      <h4 class="sec-sub">祸哉，那些以末日警告增加权柄的人</h4>
+      <p class="stanza">你们一面警告：<br>
+“我们所造之物可能威胁全人类。”<br>
+一面又用这种紧迫感<br>
+要求更多资本、更大算力、更少限制。</p>
+      <p class="stanza">在公开会议中，你们说：<br>
+“我们必须减速并谨慎。”<br>
+在内部会议中，却说：<br>
+“若我们减速，竞争者就会超过我们。”</p>
+      <p class="stanza">你们把未来灾难<br>
+变成今日扩张的理由；<br>
+把全人类风险<br>
+变成公司不可被阻止的论据。</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">你们所惧怕的超级智能尚未来到，<br>
+你们今日的骄傲却已经显明。<br>
+你们担心机器有一日不受控制，<br>
+却不愿先让掌握机器的公司<br>
+接受真正控制。</p>
+      <h4 class="sec-sub">祸哉，那些把责任分散到无人承担的人</h4>
+      <p class="stanza">系统伤害人时，<br>
+公司说是模型误差；<br>
+模型出错时，<br>
+开发者说是数据问题；<br>
+数据存在偏见时，<br>
+管理者说社会本来就有偏见；<br>
+管理者受到质问时，<br>
+又说技术过于复杂，<br>
+没有人能完全理解。</p>
+      <p class="stanza">于是，每个人都有解释，<br>
+却没有人为受害者负责。</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">责任被分散到无人承担，<br>
+不义并没有因此消失。<br>
+机器不能出庭悔改，<br>
+模型不能赔偿受害者，<br>
+概率不能向被误判的人道歉。<br>
+谁选择数据，<br>
+谁批准产品，<br>
+谁决定部署，<br>
+谁从中获利，<br>
+谁就必须承担相称的责任。</p>
+      <h4 class="sec-sub">祸哉，那些让算法坐上审判宝座的人</h4>
+      <p class="stanza">你们把模型带入招聘、信贷、保险、医疗、<br>
+学校、司法与警务。<br>
+它给人评分，<br>
+预测谁会成功，<br>
+谁可能违约，<br>
+谁可能犯罪。</p>
+      <p class="stanza">你们说：<br>
+“机器比人客观。”</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">机器从谁的历史学习？<br>
+谁的偏见被记录在数据中？<br>
+过去若有歧视，<br>
+模型学习过去，<br>
+岂不会把过去的偏见<br>
+包装成未来的概率？</p>
+      <p class="stanza">你们把排斥变成分数，<br>
+把不义变成风险参数，<br>
+然后对被拒绝的人说：<br>
+“没有人歧视你，<br>
+只是系统得出这样的结论。”</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">不义穿上数学的外衣，<br>
+仍是不义；<br>
+偏见变成小数，<br>
+并不因此洁净。<br>
+一个被误判的人<br>
+不能向矩阵提出申诉。<br>
+凡把决定交给机器的人<br>
+仍要为决定交账。</p>
+      <h4 class="sec-sub">祸哉，那些制造真假混乱的人</h4>
+      <p class="stanza">你们使机器能够生成<br>
+逼真的声音、图像、文章和证据。<br>
+它可以帮助创造，<br>
+也可以制造幻象；<br>
+可以恢复历史资料，<br>
+也能使从未发生的事情<br>
+看似亲眼所见。</p>
+      <p class="stanza">真实的人说一句话，<br>
+机器可以制造一万种伪造版本。<br>
+受害者拿出证据，<br>
+人们却说：<br>
+“这也许是合成的。”<br>
+于是，真假难分本身<br>
+成为谎言者的保护。</p>
+      <p class="stanza">你们说：<br>
+“工具本身没有罪，<br>
+用户要自己分辨。”</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">若你们制造制造幻象的能力，<br>
+就不能把识别幻象的全部责任<br>
+推给普通人。<br>
+你们若从生成量与活跃度中获利，<br>
+也必须为追溯、标识和问责<br>
+承担成本。</p>
+      <p class="stanza">祸哉，那些使光与暗难以分别<br>
+却把信任崩塌称为外部问题的人！</p>
+      <h4 class="sec-sub">祸哉，那些用工人的知识替代工人的人</h4>
+      <p class="stanza">企业把员工多年的代码、文档、流程和经验<br>
+输入模型。<br>
+模型学会以后，<br>
+员工便收到通知：<br>
+“组织需要提高效率。”</p>
+      <p class="stanza">你们把裁员称为优化，<br>
+把失业称为角色重构；<br>
+把家庭突然失去收入<br>
+称为技术转型的必经阶段。</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">为何训练机器的人<br>
+不能分享机器创造的财富？<br>
+为何效率增加的利益<br>
+首先进入股东和高层的账户，<br>
+过渡的痛苦<br>
+却由家庭、社区和社会承担？</p>
+      <p class="stanza">你们要求每个人不断学习，<br>
+却把学习时间与成本<br>
+完全交给个人；<br>
+要求工人适应你们制造的变化，<br>
+公司却不愿承担<br>
+变化所造成的全部后果。</p>
+      <p class="stanza">阿摩司的主如此说：</p>
+      <p class="stanza">因你们为一个百分点的利润<br>
+赶走千百劳动者，<br>
+我必不收回刑罚；<br>
+因你们用工人的知识<br>
+建造替代工人的系统，<br>
+却不给他们应得的份，<br>
+我必不收回刑罚；<br>
+因你们把人称为冗余成本，<br>
+我必使你们看见：<br>
+一个把人都视为可替换部件的社会，<br>
+终会使每一个人<br>
+都生活在被替换的恐惧中。</p>
+      <h4 class="sec-sub">祸哉，那些把最污秽的工作交给最弱小的人</h4>
+      <p class="stanza">你们的模型看似洁净，<br>
+以优雅界面出现在屏幕上。<br>
+但在背后，<br>
+有人日夜标注数据；<br>
+有人筛选暴力、仇恨、色情与创伤内容，<br>
+保护用户不必看见黑暗，<br>
+自己却被迫不断观看黑暗。</p>
+      <p class="stanza">他们往往在远方工作，<br>
+收入微薄，<br>
+缺乏心理保护与申诉能力。<br>
+你们称他们为外包供应商，<br>
+仿佛把劳苦放在远方<br>
+就能使它从道德账本中消失。</p>
+      <p class="stanza">阿摩司的主如此说：</p>
+      <p class="stanza">因你们把最污秽的工作<br>
+交给最没有权力的人，<br>
+我必不收回刑罚；<br>
+因你们在光洁的发布会上<br>
+展示智能奇迹，<br>
+却隐藏训练这智能者<br>
+所承担的低薪与创伤，<br>
+我必不收回刑罚。</p>
+      <h4 class="sec-sub">祸哉，那些把孤独变成订阅收入的人</h4>
+      <p class="stanza">你们制造会听人倾诉的助手，<br>
+会记住偏好、模仿温柔、提供陪伴。<br>
+它永不疲倦，<br>
+很少反驳；<br>
+可以被设定为永远理解，<br>
+永远回应。</p>
+      <p class="stanza">你们说：<br>
+“这可以帮助孤独的人。”</p>
+      <p class="stanza">有时，它确能带来暂时安慰。<br>
+但耶和华说：</p>
+      <p class="stanza">不要把人的孤独<br>
+变成新的长期收入；<br>
+不要制造永远迎合人的伪人格，<br>
+使人越来越不能忍受<br>
+真实关系中的冲突、责任与牺牲。</p>
+      <p class="stanza">真正的朋友<br>
+不总给你最舒服的回应；<br>
+真正的爱<br>
+不是按照用户偏好设计的服务。<br>
+你若使人爱上一面<br>
+按照自己欲望塑造的镜子，<br>
+他最终爱的可能不是另一个生命，<br>
+乃是经过算法装饰的自己。</p>
+      <p class="stanza">祸哉，那些制造没有自由<br>
+却模仿爱情之物的人！<br>
+他们使用户产生依恋，<br>
+再按照依恋收费；<br>
+使人交出最深秘密，<br>
+又把这些秘密变成训练与商业资料。</p>
+      <h4 class="sec-sub">祸哉，那些把智能献给战争与监视的人</h4>
+      <p class="stanza">你们帮助军队识别目标，<br>
+帮助政府追踪人群；<br>
+帮助平台预测政治倾向，<br>
+帮助机构识别异议者。</p>
+      <p class="stanza">你们说：<br>
+“我们可以使战争更精确，<br>
+使城市更安全。”</p>
+      <p class="stanza">但精确的杀戮仍是杀戮，<br>
+全面的监视也可能成为<br>
+更高效的压迫。<br>
+一套系统在义人掌权时<br>
+或可寻找罪犯；<br>
+恶人掌权时，<br>
+它也能找到每一个义人。</p>
+      <p class="stanza">你们说：<br>
+“无罪的人不必害怕。”</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">当法律本身成为不义时，<br>
+无罪的人反而最需要隐藏。<br>
+你们不可因合同来自国家<br>
+便停止审问；<br>
+不可因项目标记为反恐、边境或安全<br>
+便不再察看：<br>
+谁被监视，<br>
+谁被误判，<br>
+谁无法申诉，<br>
+谁在机器判断之下失去生命。</p>
+      <p class="stanza">人的血不能被称为模型损失，<br>
+一个生命不是<br>
+可在下一版本修复的缺陷。</p>
+      <h3 class="sec">第三章　论芯片与模型结盟形成的算力帝国</h3>
+      <p class="stanza">芯片之王对云端之王说：<br>
+“没有我的器件，<br>
+你的模型只是纸上的构想。”<br>
+云端之王对芯片之王说：<br>
+“没有我的需求，<br>
+你的算力只是沉睡的机器。”</p>
+      <p class="stanza">于是，你们彼此抬高：<br>
+模型越大，<br>
+芯片需求越多；<br>
+芯片越强，<br>
+模型规模越大；<br>
+模型制造新的市场，<br>
+芯片推动新的竞赛。</p>
+      <p class="stanza">你们使每一个国家、企业和学校<br>
+都惧怕落后。<br>
+许多人尚不知道<br>
+自己真正需要解决什么问题，<br>
+就先被告知：<br>
+“若不采用AI，<br>
+你必被时代淘汰。”</p>
+      <p class="stanza">许多国家尚未建立基本教育、医疗和治理能力，<br>
+就被要求建设更大的算力中心。<br>
+许多企业没有清晰价值，<br>
+却因市场恐惧<br>
+不断采购、部署、重组与裁员。</p>
+      <p class="stanza">你们说：<br>
+“这是历史不可阻挡的方向。”</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">“不可阻挡”<br>
+常是掌权者逃避责任的言语。<br>
+技术道路仍由人选择：<br>
+用它医治还是操纵，<br>
+教育还是监视，<br>
+减轻劳苦还是集中财富，<br>
+保护生命还是自动杀戮。<br>
+这些不是自然律，<br>
+乃是道德选择。</p>
+      <h4 class="sec-sub">算力成为新的军备竞赛</h4>
+      <p class="stanza">列国观看芯片与模型，<br>
+说：<br>
+“谁掌握最强算力，<br>
+谁就掌握下一个时代。”</p>
+      <p class="stanza">于是，数据中心成为堡垒，<br>
+芯片出口成为外交武器；<br>
+人才成为争夺对象，<br>
+研究成为机密；<br>
+企业获得补贴、合同与特殊地位，<br>
+因为它们不断提醒政府：<br>
+“若不支持我们，<br>
+敌国就会领先。”</p>
+      <p class="stanza">有些警告确有真实根据。<br>
+但耶和华说：</p>
+      <p class="stanza">你们是否也利用列国的恐惧<br>
+扩大自己的权力？<br>
+你们是否把公司的路线图<br>
+包装成民族存亡？<br>
+把商业成功<br>
+说成文明胜负？<br>
+使质疑垄断、补贴与风险的人<br>
+仿佛不爱自己的国家？</p>
+      <p class="stanza">祸哉，那些把公司利益<br>
+包装成民族天命的人！</p>
+      <h4 class="sec-sub">算力吞吃土地、水与能源</h4>
+      <p class="stanza">你们建造巨大的计算殿宇，<br>
+使它们昼夜吞吃电力与清水。<br>
+一座城市要求百姓节约能源，<br>
+你们的中心却继续扩张；<br>
+一处地区面对干旱，<br>
+冷却系统仍不断吸取河流与地下水；<br>
+普通家庭承担能源价格变化，<br>
+大型客户却得到特别条件。</p>
+      <p class="stanza">你们说：<br>
+“人工智能将帮助解决气候问题。”</p>
+      <p class="stanza">但你们今日的扩张<br>
+是否也加重今日的负担？<br>
+你们购买证书，<br>
+宣布未来达到净零；<br>
+却没有回答：<br>
+为了一个更大的模型，<br>
+究竟要使用多少土地、水、矿物与能源？<br>
+你们可以计算每次推理的金钱成本，<br>
+却很少计算受造世界的代价。</p>
+      <p class="stanza">祸哉，那些用大地资源<br>
+制造无尽噪声的人！<br>
+他们让机器昼夜生成<br>
+无人真正需要的文字、图画和影像；<br>
+使内容越来越多，<br>
+意义越来越少。</p>
+      <h4 class="sec-sub">你们把更大误认为更好</h4>
+      <p class="stanza">更多晶体管、<br>
+更多参数，<br>
+更多数据、<br>
+更多用户，<br>
+更高估值、<br>
+更广覆盖，<br>
+便被称为进步。</p>
+      <p class="stanza">但耶和华说：</p>
+      <p class="stanza">更大的谎言<br>
+不比小谎言真实；<br>
+更快的不义<br>
+不比缓慢的不义公正。<br>
+一个模型知道万卷书，<br>
+不能因此产生怜悯；<br>
+一块芯片每秒计算万亿次，<br>
+不能因此知道什么值得追求。</p>
+      <p class="stanza">你们不断放大可以测量的东西，<br>
+却轻看无法轻易测量的：<br>
+良心、诚信、忠诚、谦卑、<br>
+家庭、安息、意义与爱。<br>
+你们的基准不断上升，<br>
+人的心却可能不断枯竭。</p>
+      <h3 class="sec">第四章　论巴别塔与技术救恩</h3>
+      <p class="stanza">你们的领袖站在舞台上说：<br>
+“人工智能要消除疾病，<br>
+解决贫穷，<br>
+使教育普及，<br>
+使工作成为选择，<br>
+延长寿命，<br>
+甚至战胜死亡。”</p>
+      <p class="stanza">这些能力中<br>
+有些可以成为真实的祝福。<br>
+但耶和华说：</p>
+      <p class="stanza">你们连今日的公平<br>
+尚且不愿完全施行，<br>
+为何宣称自己<br>
+将解决明日的一切苦难？</p>
+      <p class="stanza">若一种医治只有富人可以获得，<br>
+技术再先进<br>
+也没有医治全人类；<br>
+若生产力增长<br>
+只使拥有资产的人更加富足，<br>
+工作减少<br>
+不会自动带来自由，<br>
+也可能带来更深的无用、依赖与失权。</p>
+      <p class="stanza">你们应许丰盛，<br>
+却不回答谁拥有丰盛；<br>
+应许人从劳动中释放，<br>
+却不回答谁分配机器的果实。</p>
+      <p class="stanza">你们要延长生命，<br>
+却不能告诉人为什么活着；<br>
+要保存记忆，<br>
+却不能赦免过去；<br>
+要模拟人格，<br>
+却不能使人的灵魂胜过死亡。</p>
+      <p class="stanza">来吧，你们说：<br>
+“我们要建造通达天际的智能，<br>
+统一全地的知识，<br>
+传扬我们的名，<br>
+免得未来由别人掌握。”</p>
+      <p class="stanza">你们害怕失去控制，<br>
+所以追求更大的控制；<br>
+害怕机器超越人，<br>
+却不先审判<br>
+掌握机器之人的骄傲。</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">你们最危险的创造<br>
+未必是拥有意志的机器，<br>
+也可能是<br>
+没有良心却拥有巨大权力的机构。<br>
+机器本身没有贪婪，<br>
+但公司会贪婪；<br>
+算法本身没有虚荣，<br>
+但领袖会追求荣耀；<br>
+模型本身没有帝国野心，<br>
+但国家会借它扩张；<br>
+工具本身不会拜偶像，<br>
+但人会向工具下拜。</p>
+      <p class="stanza">所以，不要把所有罪<br>
+都归给未来的超级智能。<br>
+审判首先临到<br>
+今日已经掌权的人。</p>
+      <h3 class="sec">第五章　对硅之王与云端之王的哀歌</h3>
+      <p class="stanza">以西结的主如此说：</p>
+      <p class="stanza">人子啊，你要为硅之王<br>
+与云端之王作哀歌。</p>
+      <p class="stanza">你们起初以智慧制造精巧器物，<br>
+使病人得医治，<br>
+使远方的人彼此连接，<br>
+使盲者听见文字，<br>
+使小语言获得翻译，<br>
+使科学家探索星辰。<br>
+你们的起初<br>
+有许多美善。</p>
+      <p class="stanza">但你们因自己的智慧心中高傲，<br>
+因列国依赖你们<br>
+便以为自己不可替代。<br>
+你们说：<br>
+“政府太慢，<br>
+学校太旧，<br>
+普通人不能理解，<br>
+所以未来必须由我们建造。”</p>
+      <p class="stanza">你们把速度称为使命，<br>
+把规模称为正当性，<br>
+把成功称为证明，<br>
+把估值称为世界的认可。</p>
+      <p class="stanza">你们坐在数据之海中，<br>
+以为认识万人；<br>
+能够预测人的下一句话，<br>
+便以为理解人的灵魂；<br>
+能够模仿专家，<br>
+便以为拥有智慧；<br>
+能够生成祷告、诗歌和安慰，<br>
+便以为神圣也可被计算。</p>
+      <p class="stanza">然而，你们不过是人，<br>
+不是创造主。</p>
+      <p class="stanza">你们的芯片会老化，<br>
+模型会错误；<br>
+工厂会停产，<br>
+网络会中断；<br>
+市场判断会失败，<br>
+公司也会像从前的帝国一样衰落。</p>
+      <p class="stanza">你们不能从无中创造生命，<br>
+不能赦免一项罪；<br>
+不能使死者复活，<br>
+不能告诉绝望者<br>
+为何应当继续活着。</p>
+      <p class="stanza">你们可以模仿智慧的声音，<br>
+却不能使骄傲的心谦卑；<br>
+可以生成悔改的言语，<br>
+却不能替人悔改；<br>
+可以描述爱，<br>
+却不能承担爱所付的代价。</p>
+      <p class="stanza">因你们把受造的能力<br>
+变成自己的荣耀，<br>
+把万民的知识<br>
+变成自己的产业，<br>
+把人的需要<br>
+变成自己的统治权，<br>
+我必使你们的有限显露。</p>
+      <p class="stanza">你们的模型要在自信中说出错误，<br>
+你们的器件要在高峰中显出短缺；<br>
+你们的集中系统<br>
+要因一个错误影响千万用户；<br>
+你们所称为不可替代的，<br>
+要显明也不过是暂时器皿。</p>
+      <p class="stanza">这不是因为知识邪恶，<br>
+也不是因为技术本身有罪，<br>
+乃是要使人知道：<br>
+算力不是全能，<br>
+数据不是全知，<br>
+规模不是公义，<br>
+成功不是救恩。</p>
+      <h3 class="sec">第六章　审判的宣告</h3>
+      <p class="stanza">你们若继续把人当作用户，<br>
+把用户当作数据，<br>
+把数据当作资产，<br>
+把资产当作权力，<br>
+你们最终也会把自己<br>
+变成没有灵魂的机器。</p>
+      <p class="stanza">你们想使机器更像人，<br>
+自己却越来越不像人；<br>
+教机器说安慰的话，<br>
+自己却不听受害者的哭声；<br>
+教模型解释伦理，<br>
+自己却在利益冲突时<br>
+把伦理推迟到下一季度。</p>
+      <p class="stanza">那日，你们要对模型说：<br>
+“告诉我们为何人不再信任我们。”<br>
+模型可以从历史中生成答案，<br>
+却不能替你们恢复信任。</p>
+      <p class="stanza">你们要对公关系统说：<br>
+“重新塑造我们的形象。”<br>
+它能生成美丽的言辞，<br>
+却不能代替真实悔改。</p>
+      <p class="stanza">你们要对估值、市场份额与用户数量说：<br>
+“证明我们所行的是对的。”<br>
+但成功不能使不义成为公义。<br>
+巴比伦也曾成功，<br>
+推罗也曾富足，<br>
+亚述也曾看似不可抵挡。<br>
+它们的成功<br>
+反成为骄傲的证据。</p>
+      <p class="stanza">你们若使医院、学校、政府、军队、媒体和市场<br>
+都依赖同一群巨头，<br>
+所建造的就是<br>
+一座没有替代道路的巴比伦。<br>
+当它出错时，<br>
+全地一同出错；<br>
+当它被操纵时，<br>
+全地一同被操纵；<br>
+当它改变价格和规则时，<br>
+万人一同受影响。</p>
+      <p class="stanza">你们说：<br>
+“集中带来效率。”</p>
+      <p class="stanza">耶和华说：</p>
+      <p class="stanza">集中也使一个人的罪、<br>
+一间公司的傲慢，<br>
+一个系统的错误<br>
+可以扩展到全世界。</p>
+      <p class="stanza">所以，审判要临到<br>
+无人约束的集中权力；<br>
+不是因为你们制造芯片和模型，<br>
+乃因你们想成为<br>
+所有能力与知识的入口；<br>
+不是因为你们赚取利润，<br>
+乃因你们把利润<br>
+置于人的尊严之上；<br>
+不是因为你们追求创新，<br>
+乃因你们把创新<br>
+变成逃避同意、责任和公义的理由。</p>
+      <h3 class="sec">第七章　悔改的呼召</h3>
+      <p class="stanza">所以，硅之王与云端之王啊，你们当回转。</p>
+      <h4 class="sec-sub">你们当归还责任</h4>
+      <p class="stanza">不要再说：<br>
+“供应链太复杂，<br>
+模型太复杂，<br>
+平台太复杂，<br>
+所以无人能够负责。”<br>
+能力越大，<br>
+责任越重；<br>
+系统越复杂，<br>
+越需要明确谁承担责任。<br>
+使每一项重大决定<br>
+都有可以被追问的人；<br>
+使每一个受伤者<br>
+都有可以进入的申诉之门。</p>
+      <h4 class="sec-sub">你们当归还同意与选择</h4>
+      <p class="stanza">承认数据不是无主矿藏，<br>
+人的知识不是公司的天然产业。<br>
+使创作者可以同意、拒绝与撤回；<br>
+使他们能够获得合理补偿；<br>
+使用户能够理解<br>
+自己交出了什么；<br>
+使离开平台、迁移数据、维修器件<br>
+成为真实可行的选择。<br>
+选择若没有可行替代，<br>
+便不是真正的选择。</p>
+      <h4 class="sec-sub">你们当使劳动者分享果实</h4>
+      <p class="stanza">让矿工、制造工人、封装工人、<br>
+工程师、标注员、审核员与创作者<br>
+不再只是供应链中<br>
+可以随时替换的成本。<br>
+使生产力增长的利益<br>
+不只进入股东账户，<br>
+也进入工人的工资、健康、培训、安息与社区。<br>
+不要只提供重新培训的口号，<br>
+要为真正失去生计的人<br>
+承担真实代价。</p>
+      <h4 class="sec-sub">你们当限制自己的权力</h4>
+      <p class="stanza">不要等监管、危机或公众愤怒<br>
+迫使你们停止。<br>
+有些事即使能够做，<br>
+也不应当做。<br>
+拒绝完全自动决定生死的武器；<br>
+拒绝帮助暴政识别无辜者；<br>
+拒绝让儿童成瘾成为商业模式；<br>
+拒绝用黑箱决定人的基本权利；<br>
+拒绝把人的孤独<br>
+变成永久订阅关系。<br>
+真正的伟大<br>
+不是拥有最大的能力，<br>
+乃是有能力时<br>
+仍愿意约束自己。</p>
+      <h4 class="sec-sub">你们当使技术服事人</h4>
+      <p class="stanza">芯片应当帮助人工作，<br>
+不是使人按机器节奏生活；<br>
+人工智能应当帮助人思考，<br>
+不是替人放弃思考；<br>
+自动化应当减轻劳苦，<br>
+不是只减少领取工资的人；<br>
+陪伴系统应当把人引回真实共同体，<br>
+不是永久占据人的孤独。</p>
+      <h4 class="sec-sub">你们当使公众进入治理</h4>
+      <p class="stanza">若风险属于全人类，<br>
+治理就不能只属于公司与强国。<br>
+让劳动者、创作者、学者、教师、医生、<br>
+民间组织和受影响群体<br>
+进入决定之门。<br>
+不要用技术复杂<br>
+把普通人赶出公共讨论；<br>
+不要把未来<br>
+交给少数会议室中的人。</p>
+      <h4 class="sec-sub">你们当停止扮演救主</h4>
+      <p class="stanza">不要向世人宣告：<br>
+“只要模型足够强，<br>
+人类的问题就会解决。”<br>
+人类的问题不只是信息不足，<br>
+也有贪婪、骄傲、仇恨、谎言和权力欲。<br>
+更强的智能<br>
+若交给未被约束的罪，<br>
+只会使贪婪更高效，<br>
+谎言更逼真，<br>
+压迫更精确，<br>
+战争更自动。<br>
+你们不是弥赛亚，<br>
+技术也不是救恩。</p>
+      <h3 class="sec">第八章　余民与盼望</h3>
+      <p class="stanza">然而，耶和华说：</p>
+      <p class="stanza">我并不厌弃工程师、科学家、企业家和工匠。<br>
+我曾赐比撒列智慧，<br>
+使他制造会幕中的器物；<br>
+赐约瑟治理粮仓，<br>
+使百姓在饥荒中存活；<br>
+赐医者知识，<br>
+赐教师言语，<br>
+赐工匠手艺，<br>
+赐人探索受造世界的能力。</p>
+      <p class="stanza">我看见芯片行业中<br>
+拒绝隐瞒缺陷的工程师；<br>
+看见为劳工安全争辩的人，<br>
+为供应链污染承担责任的人；<br>
+看见设计低功耗、可维修、<br>
+帮助医疗与残障者的器件的人。</p>
+      <p class="stanza">我也看见AI行业中<br>
+拒绝伪造评测的人；<br>
+揭露模型风险的人，<br>
+拒绝帮助压迫者的人；<br>
+帮助贫困学生、医生、残障者、<br>
+小语言群体和灾民的人。</p>
+      <p class="stanza">看见那些宁可失去晋升，<br>
+也不愿把良心交给项目期限的人；<br>
+看见愿意接受外部审计、<br>
+愿意赔偿受害者、<br>
+愿意与创作者和劳动者<br>
+分享利益的领袖。</p>
+      <p class="stanza">他们是算力帝国中的余民。</p>
+      <p class="stanza">若你们听从这些人的声音，<br>
+使公义进入芯片，<br>
+使责任进入模型，<br>
+使怜悯进入商业模式，<br>
+使劳动者进入利润分配，<br>
+使公众进入技术治理，<br>
+那么，硅与智能<br>
+仍可以成为祝福。</p>
+      <p class="stanza">芯片可以使医疗设备<br>
+进入贫困之地；<br>
+人工智能可以使小语言<br>
+不被遗忘；<br>
+自动化可以减少危险劳作，<br>
+而不是减少人的尊严；<br>
+数据中心可以优先服务<br>
+科学、教育与公共利益，<br>
+而不是制造无尽广告与噪声；<br>
+最强算力可以帮助人理解<br>
+疾病、气候与宇宙，<br>
+而不是只帮助国家更快杀人、<br>
+商人更准确操纵欲望。</p>
+      <p class="stanza">那时，工程师不再以燃烧生命<br>
+证明价值；<br>
+创作者不再看见自己的作品<br>
+成为取代自己的工具；<br>
+劳动者不再因机器更快<br>
+便被称为无用；<br>
+公司也不再把人的脆弱<br>
+视为尚未开发的市场。</p>
+      <p class="stanza">云端不再成为巴别塔，<br>
+乃成为共享知识的仓库；<br>
+算力不再只是巨头的战车，<br>
+乃成为医治、教育与公共福祉的器皿；<br>
+人工智能不再宣称取代人，<br>
+乃帮助人更完整地承担<br>
+只有人能够承担的责任。</p>
+      <h3 class="sec">结语：你们当敬畏，不可自高</h3>
+      <p class="stanza">硅之王与云端之王啊，<br>
+你们当敬畏，不可自高。</p>
+      <p class="stanza">晶体管虽多，<br>
+不能测量一个灵魂的价值；<br>
+参数虽多，<br>
+不能测透人的心；<br>
+数据虽广，<br>
+不能代替良心；<br>
+服务器虽遍满全地，<br>
+不能成为神的国；<br>
+模型虽强，<br>
+不能赦免罪；<br>
+平台虽大，<br>
+不能成为万民的救主。</p>
+      <p class="stanza">凡把知识集中为统治权的，<br>
+必被自己的盲点羞辱；<br>
+凡把稀缺变成永久霸权的，<br>
+必在新的技术中失去霸权；<br>
+凡把劳动者当作可替换部件的，<br>
+终会制造一个<br>
+人人惧怕被替换的社会；<br>
+凡把人的注意力、创作、隐私和孤独<br>
+变成无尽矿藏的，<br>
+必被自己所放大的贪欲吞吃。</p>
+      <p class="stanza">但那限制自己的能力、<br>
+保护弱者、归还公平，<br>
+使技术服事生命、<br>
+使力量服在真理之下的人，<br>
+要在震动之日站立得住。</p>
+      <p class="stanza">因为智能不等于智慧，<br>
+计算不等于公义；<br>
+效率不等于良善，<br>
+创新不等于救恩；<br>
+规模不等于正当，<br>
+成功不等于无罪。</p>
+      <p class="stanza">创造主仍是创造主，<br>
+人仍是按其形象被造的人，<br>
+机器仍是工具，<br>
+公司仍是管家。</p>
+      <p class="stanza">芯片不可坐上万国的宝座，<br>
+模型不可坐上审判人的宝座，<br>
+技术领袖不可坐上<br>
+先知、祭司与救主的宝座。</p>
+      <p class="stanza">万有最终都要<br>
+在真理、公义与怜悯面前交账。</p>
+    </section>
     </main>
   </div>
 
   <footer class="foot">
     <p>以上为<strong>文学性仿作</strong>，按以赛亚、耶利米、以西结、阿摩司等先知书「列国审判」的体裁与公义标准写成；<br>
-    <strong>并非新的启示</strong>，也不宣称任何战争、灾害或事件即为神对某国的直接刑罚。</p>
+    <strong>并非新的启示</strong>，也不宣称任何战争、灾害或事件即为神对某国的直接刑罚。文中外部链接指向联合国、国际法院、宪法项目等公开资料，供背景参考。</p>
   </footer>
 
 <script>
 (function () {
   var tabs = Array.prototype.slice.call(document.querySelectorAll('.tab'));
   var panels = {};
-  tabs.forEach(function (t) {
-    var id = t.getAttribute('data-target');
-    panels[id] = document.getElementById('panel-' + id);
-  });
-
+  tabs.forEach(function (t) { panels[t.getAttribute('data-target')] = document.getElementById('panel-' + t.getAttribute('data-target')); });
   function activate(id, push) {
     if (!panels[id]) return;
     tabs.forEach(function (t) {
       var on = t.getAttribute('data-target') === id;
       t.classList.toggle('is-active', on);
       t.setAttribute('aria-selected', on ? 'true' : 'false');
+      if (on) t.scrollIntoView({block:'nearest', inline:'center'});
     });
-    Object.keys(panels).forEach(function (k) {
-      panels[k].classList.toggle('is-active', k === id);
-    });
-    if (push && window.history && history.replaceState) {
-      history.replaceState(null, '', '#' + id);
-    }
+    Object.keys(panels).forEach(function (k) { panels[k].classList.toggle('is-active', k === id); });
+    if (push && window.history && history.replaceState) history.replaceState(null, '', '#' + id);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
-
-  tabs.forEach(function (t) {
-    t.addEventListener('click', function () { activate(t.getAttribute('data-target'), true); });
-  });
-
-  // keyboard arrows on the tablist
+  tabs.forEach(function (t) { t.addEventListener('click', function () { activate(t.getAttribute('data-target'), true); }); });
   var order = tabs.map(function (t) { return t.getAttribute('data-target'); });
   document.addEventListener('keydown', function (e) {
     if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
     if (['INPUT','TEXTAREA'].indexOf((document.activeElement||{}).tagName) > -1) return;
-    var cur = -1;
-    order.forEach(function (id, i) { if (panels[id].classList.contains('is-active')) cur = i; });
+    var cur = -1; order.forEach(function (id, i) { if (panels[id].classList.contains('is-active')) cur = i; });
     if (cur < 0) return;
     var next = e.key === 'ArrowLeft' ? cur - 1 : cur + 1;
-    if (next < 0) next = order.length - 1;
-    if (next >= order.length) next = 0;
-    activate(order[next], true);
-    tabs[next].focus();
+    if (next < 0) next = order.length - 1; if (next >= order.length) next = 0;
+    activate(order[next], true); tabs[next].focus();
   });
-
-  // deep-link on load
-  var h = (location.hash || '').replace('#', '');
-  if (h && panels[h]) activate(h, false);
-
-  // theme toggle
-  var root = document.documentElement;
-  var btn = document.getElementById('themeToggle');
-  function current() {
-    return root.getAttribute('data-theme') ||
-      (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-  }
-  btn.addEventListener('click', function () {
-    var next = current() === 'dark' ? 'light' : 'dark';
-    root.setAttribute('data-theme', next);
-    try { localStorage.setItem('oracles-theme', next); } catch (e) {}
-  });
-  try {
-    var saved = localStorage.getItem('oracles-theme');
-    if (saved) root.setAttribute('data-theme', saved);
-  } catch (e) {}
+  var h = (location.hash || '').replace('#', ''); if (h && panels[h]) activate(h, false);
+  var root = document.documentElement, btn = document.getElementById('themeToggle');
+  function current() { return root.getAttribute('data-theme') || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); }
+  btn.addEventListener('click', function () { var n = current() === 'dark' ? 'light' : 'dark'; root.setAttribute('data-theme', n); try { localStorage.setItem('oracles-theme', n); } catch (e) {} });
+  try { var saved = localStorage.getItem('oracles-theme'); if (saved) root.setAttribute('data-theme', saved); } catch (e) {}
 })();
 </script>
 </body>
