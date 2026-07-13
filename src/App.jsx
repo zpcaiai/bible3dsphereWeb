@@ -1784,23 +1784,30 @@ function AppContent() {
                 ))}
               </div>
 
-              {/* 今日灵命状态卡：已登录后始终可见，接口抖动不再让整块入口消失 */}
-              {user && (
-                <section className="mobile-card glass" style={{
+              {/* 今日灵命状态卡：访客也能看见入口，登录后加载个人状态 */}
+              <section className="mobile-card glass" style={{
                   background: 'linear-gradient(135deg, rgba(88,86,214,0.18), rgba(0,122,255,0.12))',
                   border: '1px solid rgba(88,86,214,0.3)',
                   padding: '14px 16px',
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, marginBottom: '10px' }}>
                     <div style={{ fontSize: '12px', fontWeight: 700, color: 'rgba(180,180,255,0.7)', letterSpacing: '0.06em' }}>{i18nT('home.snapshot.title')}</div>
-                    {dailySnapshotError && (
+                    {user && dailySnapshotError && (
                       <button type="button" onClick={loadDailySnapshot} disabled={dailySnapshotLoading} style={{
                         border: '1px solid rgba(180,180,255,0.28)', borderRadius: 999, padding: '3px 9px',
                         background: 'rgba(88,86,214,0.14)', color: '#c4b5fd', fontSize: 11, cursor: 'pointer',
                       }}>{i18nT('重新同步')}</button>
                     )}
                   </div>
-                  {!dailySnapshot && (
+                  {!user ? (
+                    <div role="status" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, fontSize: 12, color: 'rgba(255,255,255,0.58)', marginBottom: 10 }}>
+                      <span>{i18nT('登录后查看你的今日灵命状态。')}</span>
+                      <button type="button" onClick={() => setShowLogin(true)} style={{
+                        border: '1px solid rgba(180,180,255,0.28)', borderRadius: 999, padding: '4px 10px',
+                        background: 'rgba(88,86,214,0.18)', color: '#c4b5fd', fontSize: 11, cursor: 'pointer',
+                      }}>{i18nT('登录')}</button>
+                    </div>
+                  ) : !dailySnapshot && (
                     <div role="status" style={{ fontSize: 12, color: 'rgba(255,255,255,0.58)', marginBottom: 10 }}>
                       {dailySnapshotLoading ? i18nT('正在加载今日灵命状态…') : i18nT('暂时无法同步今日状态，快捷入口仍可使用。')}
                     </div>
@@ -1868,8 +1875,7 @@ function AppContent() {
                   <p style={{ marginTop: '12px', marginBottom: 0, fontSize: '12px', lineHeight: 1.7, color: 'rgba(255,255,255,0.62)' }}>
                     {i18nT('稳定的灵修生活是基督徒得力的源泉，也是基督徒生命成长的秘诀。祂的儿女蒙恩的方式，就是建立敬虔的灵修习惯并坚持每日操练灵修。坚持长期主义，必做元帅的精兵。每天太阳照常升起，我们也要每天向着天国奔跑，直到太阳不再升起的日子！')}
                   </p>
-                </section>
-              )}
+              </section>
 
               <PastoralPathCard compact onOpen={handlePastoralRoute} />
 

@@ -21,6 +21,6 @@ describe('3D runtime security policy', () => {
 
     expect(nginx.match(/script-src 'self' blob:/g)).toHaveLength(2)
     expect(nginx).not.toMatch(/script-src[^;]*'unsafe-inline'/)
-    expect(serviceWorker).toContain("CACHE_VERSION = 'emotion-sphere-2025-v5'")
+    expect(serviceWorker).toContain("CACHE_VERSION = 'emotion-sphere-2025-v6'")
   })
 })

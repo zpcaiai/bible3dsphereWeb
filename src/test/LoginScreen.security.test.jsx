@@ -28,6 +28,12 @@ describe('LoginScreen credential safety', () => {
     localStorage.clear()
   })
 
+  it('uses the Spirit Emotion Sphere product subtitle', () => {
+    render(<LoginScreen />)
+    expect(screen.getByText('Spirit Emotion Sphere')).toBeTruthy()
+    expect(screen.queryByText('Bible Emotion Sphere')).toBeNull()
+  })
+
   it('removes legacy plaintext credentials and never prefills a password', () => {
     localStorage.setItem('bs_remember_creds', JSON.stringify({
       email: 'legacy@example.com',

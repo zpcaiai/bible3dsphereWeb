@@ -88,7 +88,7 @@ export default function LoginScreen({ onLogin, onBack, message }) {
       <div style={{ textAlign: 'center', marginTop: 'auto', marginBottom: '32px' }}>
         <div style={{ fontSize: '64px', lineHeight: 1, marginBottom: '12px' }}>🔮</div>
         <h1 style={{ margin: 0, fontSize: '26px', fontWeight: 700, color: '#fff', letterSpacing: '-0.02em' }}>{i18nT('属灵星球')}</h1>
-        <p style={{ margin: '6px 0 0', fontSize: '14px', color: 'rgba(255,255,255,0.4)' }}>Bible Emotion Sphere</p>
+        <p style={{ margin: '6px 0 0', fontSize: '14px', color: 'rgba(255,255,255,0.4)' }}>Spirit Emotion Sphere</p>
       </div>
 
       <div style={cardStyle}>
