@@ -462,6 +462,8 @@ button, input, textarea {
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
+  touch-action: pan-y pinch-zoom;
+  overscroll-behavior-y: contain;
   scroll-behavior: smooth;
 }
 
@@ -1586,6 +1588,14 @@ canvas {
   .mobile-sphere-stage {
     height: 55vh;
     border-radius: 20px;
+    /* The 3D orbit controller listens for pointer gestures. On touch screens,
+       keep vertical one-finger movement owned by the page scroll container. */
+    touch-action: pan-y pinch-zoom;
+  }
+
+  .mobile-sphere-stage > div,
+  .mobile-sphere-stage canvas {
+    touch-action: pan-y pinch-zoom !important;
   }
 
   .brand-block h1 {
