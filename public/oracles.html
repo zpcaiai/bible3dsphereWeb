@@ -7844,9 +7844,9 @@
   var rateBtn = document.getElementById('ttsRate');
   var voiceSel = document.getElementById('ttsVoice');
   if (!synth || !bar || !('SpeechSynthesisUtterance' in window)) { if (bar) bar.style.display = 'none'; return; }
-  var rates = [0.8, 0.9, 1.0, 1.1, 1.2];
+  var rates = [0.6, 0.7, 0.8, 0.9, 1.0, 1.1];
   var rateIdx = 2;
-  var PITCH = 0.9;
+  var PITCH = 0.82;
   var queue = [], qi = 0, speaking = false, paused = false, curEl = null;
   var voices = [], chosen = null, userPicked = false;
   var engine = 'cloud';
@@ -7855,21 +7855,22 @@
   var audio = new Audio();
   audio.preload = 'auto';
   var cloudFailed = false;
-  function cloudSrc(t) { return CLOUD_URL + '?voice=' + encodeURIComponent(CLOUD_VOICE) + '&text=' + encodeURIComponent(t); }
+  function edgeRate() { var pct = Math.round((rates[rateIdx] - 1) * 100); return (pct >= 0 ? '+' : '') + pct + '%'; }
+  function cloudSrc(t) { return CLOUD_URL + '?voice=' + encodeURIComponent(CLOUD_VOICE) + '&rate=' + encodeURIComponent(edgeRate()) + '&pitch=' + encodeURIComponent('-4Hz') + '&text=' + encodeURIComponent(t); }
   function prefetch(idx) { if (idx < queue.length) { try { fetch(cloudSrc(queue[idx].text)).catch(function () {}); } catch (e) {} } }
   function playCloud() {
     if (!speaking) return;
     if (qi >= queue.length) { stop(); return; }
     var item = queue[qi];
     highlight(item.el);
-    audio.playbackRate = rates[rateIdx];
+    audio.playbackRate = 1;
     audio.src = cloudSrc(item.text);
     prefetch(qi + 1);
     var p = audio.play(); if (p && p.catch) p.catch(function () {});
   }
   function previewCloud() {
     try { synth.cancel(); } catch (e) {} try { audio.pause(); } catch (e) {}
-    audio.playbackRate = rates[rateIdx];
+    audio.playbackRate = 1;
     audio.src = cloudSrc('公义如大水滚滚，公义如江河滔滔。');
     var p = audio.play(); if (p && p.catch) p.catch(function () {});
   }
@@ -7991,7 +7992,7 @@
   }
   toggleBtn.addEventListener('click', function () { if (!speaking) start(); else if (paused) resumeSpeak(); else pauseSpeak(); });
   stopBtn.addEventListener('click', stop);
-  rateBtn.addEventListener('click', function () { rateIdx = (rateIdx + 1) % rates.length; try { audio.playbackRate = rates[rateIdx]; } catch (e) {} setUI(); });
+  rateBtn.addEventListener('click', function () { rateIdx = (rateIdx + 1) % rates.length; setUI(); });
   var mo = new MutationObserver(function (muts) { for (var i = 0; i < muts.length; i++) { if (muts[i].attributeName === 'class') { if (speaking) stop(); return; } } });
   Array.prototype.slice.call(document.querySelectorAll('.panel')).forEach(function (p) { mo.observe(p, { attributes: true, attributeFilter: ['class'] }); });
   setInterval(function () { if (speaking && !paused) { try { synth.resume(); } catch (e) {} } }, 9000);
