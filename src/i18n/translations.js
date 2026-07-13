@@ -36,7 +36,10 @@ const namespacedZh = {
   'home.quick.communion': '群聊',
   'home.quick.bibleMaps': '圣经地图',
 
-  'home.snapshot.title': '今日灵命快照',
+  'home.snapshot.title': '今日灵命状态',
+  '重新同步': '重新同步',
+  '正在加载今日灵命状态…': '正在加载今日灵命状态…',
+  '暂时无法同步今日状态，快捷入口仍可使用。': '暂时无法同步今日状态，快捷入口仍可使用。',
   'home.snapshot.devotionDone': '今日已灵修',
   'home.snapshot.devotionNone': '今日未灵修',
   'home.snapshot.pendingPrayers': '{n} 个待代祷',
@@ -137,7 +140,10 @@ const namespacedEn = {
   'home.quick.communion': 'Group Chat',
   'home.quick.bibleMaps': 'Bible Maps',
 
-  'home.snapshot.title': "Today's Spiritual Snapshot",
+  'home.snapshot.title': "Today's Spiritual Status",
+  '重新同步': 'Retry sync',
+  '正在加载今日灵命状态…': "Loading today's spiritual status…",
+  '暂时无法同步今日状态，快捷入口仍可使用。': 'Unable to sync right now. Quick actions are still available.',
   'home.snapshot.devotionDone': 'Devotion done today',
   'home.snapshot.devotionNone': 'No devotion yet today',
   'home.snapshot.pendingPrayers': '{n} prayers awaiting',

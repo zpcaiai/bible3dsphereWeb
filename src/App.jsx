@@ -1,5 +1,5 @@
 import { t as i18nT } from './i18n/runtime'
-import { Suspense, useEffect, useMemo, useRef, useState } from 'react'
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import BackButton from './BackButton'
 import lazyWithRetry from './lazyWithRetry'
 import AppErrorBoundary from './AppErrorBoundary'
@@ -148,6 +148,8 @@ function AppContent() {
   const [videoInputErr, setVideoInputErr]     = useState('')
   const [savingJournal, setSavingJournal] = useState(false)
   const [dailySnapshot, setDailySnapshot] = useState(null)
+  const [dailySnapshotLoading, setDailySnapshotLoading] = useState(false)
+  const [dailySnapshotError, setDailySnapshotError] = useState(false)
   const [emotionTrajectory, setEmotionTrajectory] = useState(null)
   const [navRestore] = useState(() => {
     try {
@@ -243,18 +245,35 @@ function AppContent() {
     fetchHistory().then((data) => setHistoryItems(data.items || [])).catch((err) => { console.warn('[App.jsx] ignored async error', err) })
   }, [setLayoutItems, setHistoryItems, setError])
 
+  const loadDailySnapshot = useCallback(async () => {
+    setDailySnapshotLoading(true)
+    setDailySnapshotError(false)
+    try {
+      const snapshot = await fetchDailySnapshot(getToken())
+      if (!snapshot) throw new Error('daily snapshot unavailable')
+      setDailySnapshot(snapshot)
+    } catch (err) {
+      console.warn('[App.jsx] daily snapshot unavailable', err)
+      setDailySnapshotError(true)
+    } finally {
+      setDailySnapshotLoading(false)
+    }
+  }, [])
+
   useEffect(() => {
     if (user) {
-      fetchDailySnapshot(getToken()).then(setDailySnapshot).catch((err) => { console.warn('[App.jsx] ignored async error', err) })
+      loadDailySnapshot()
       fetchEmotionTrajectory(getToken()).then(setEmotionTrajectory).catch((err) => { console.warn('[App.jsx] ignored async error', err) })
       fetchMyChurch(getToken()).then(data => setMyChurch(data.church || null)).catch(() => setMyChurch(null))
     } else {
       setDailySnapshot(null)
+      setDailySnapshotLoading(false)
+      setDailySnapshotError(false)
       setEmotionTrajectory(null)
       setMyChurch(undefined)
       setChurchSkipped(false)
     }
-  }, [user])
+  }, [loadDailySnapshot, user])
 
   // Community heatmap — fetch on mount and every 5 minutes (no auth required)
   useEffect(() => {
@@ -1765,43 +1784,56 @@ function AppContent() {
                 ))}
               </div>
 
-              {/* 今日灵命快照卡 */}
-              {user && dailySnapshot && (
+              {/* 今日灵命状态卡：已登录后始终可见，接口抖动不再让整块入口消失 */}
+              {user && (
                 <section className="mobile-card glass" style={{
                   background: 'linear-gradient(135deg, rgba(88,86,214,0.18), rgba(0,122,255,0.12))',
                   border: '1px solid rgba(88,86,214,0.3)',
                   padding: '14px 16px',
                 }}>
-                  <div style={{ fontSize: '12px', fontWeight: 700, color: 'rgba(180,180,255,0.7)', letterSpacing: '0.06em', marginBottom: '10px' }}>{i18nT('今日灵命快照')}</div>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, marginBottom: '10px' }}>
+                    <div style={{ fontSize: '12px', fontWeight: 700, color: 'rgba(180,180,255,0.7)', letterSpacing: '0.06em' }}>{i18nT('home.snapshot.title')}</div>
+                    {dailySnapshotError && (
+                      <button type="button" onClick={loadDailySnapshot} disabled={dailySnapshotLoading} style={{
+                        border: '1px solid rgba(180,180,255,0.28)', borderRadius: 999, padding: '3px 9px',
+                        background: 'rgba(88,86,214,0.14)', color: '#c4b5fd', fontSize: 11, cursor: 'pointer',
+                      }}>{i18nT('重新同步')}</button>
+                    )}
+                  </div>
+                  {!dailySnapshot && (
+                    <div role="status" style={{ fontSize: 12, color: 'rgba(255,255,255,0.58)', marginBottom: 10 }}>
+                      {dailySnapshotLoading ? i18nT('正在加载今日灵命状态…') : i18nT('暂时无法同步今日状态，快捷入口仍可使用。')}
+                    </div>
+                  )}
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '10px' }}>
-                    {dailySnapshot.trajectory_label && (
+                    {dailySnapshot?.trajectory_label && (
                       <span style={{ fontSize: '12px', background: 'rgba(88,86,214,0.25)', border: '1px solid rgba(88,86,214,0.4)', borderRadius: '20px', padding: '3px 10px', color: '#c4b5fd' }}>
                         {dailySnapshot.trajectory_icon} {dailySnapshot.trajectory_label}
                       </span>
                     )}
-                    {dailySnapshot.last_emotion && (
+                    {dailySnapshot?.last_emotion && (
                       <span style={{ fontSize: '12px', background: 'rgba(0,122,255,0.18)', border: '1px solid rgba(0,122,255,0.3)', borderRadius: '20px', padding: '3px 10px', color: '#5eb0ff' }}>
                         💭 {dailySnapshot.last_emotion}
                       </span>
                     )}
-                    {dailySnapshot.has_devotion_today ? (
-                      <span style={{ fontSize: '12px', background: 'rgba(52,199,89,0.18)', border: '1px solid rgba(52,199,89,0.3)', borderRadius: '20px', padding: '3px 10px', color: '#34c759' }}>
-                        {i18nT('📔 今日已灵修')}
-                      </span>
-                    ) : (
-                      <span
-                        style={{ fontSize: '12px', background: 'rgba(255,159,64,0.18)', border: '1px solid rgba(255,159,64,0.3)', borderRadius: '20px', padding: '3px 10px', color: '#ff9f40', cursor: 'pointer' }}
-                        onClick={() => handlePanelSwitch('devotion')}
-                      >
-                        {i18nT('📔 今日未灵修')}
-                      </span>
-                    )}
-                    {dailySnapshot.pending_prayers > 0 && (
+                    {dailySnapshot && (dailySnapshot.has_devotion_today ? (
+                        <span style={{ fontSize: '12px', background: 'rgba(52,199,89,0.18)', border: '1px solid rgba(52,199,89,0.3)', borderRadius: '20px', padding: '3px 10px', color: '#34c759' }}>
+                          {i18nT('📔 今日已灵修')}
+                        </span>
+                      ) : (
+                        <span
+                          style={{ fontSize: '12px', background: 'rgba(255,159,64,0.18)', border: '1px solid rgba(255,159,64,0.3)', borderRadius: '20px', padding: '3px 10px', color: '#ff9f40', cursor: 'pointer' }}
+                          onClick={() => handlePanelSwitch('devotion')}
+                        >
+                          {i18nT('📔 今日未灵修')}
+                        </span>
+                      ))}
+                    {dailySnapshot?.pending_prayers > 0 && (
                       <span
                         style={{ fontSize: '12px', background: 'rgba(255,215,0,0.14)', border: '1px solid rgba(255,215,0,0.3)', borderRadius: '20px', padding: '3px 10px', color: '#ffd700', cursor: 'pointer' }}
                         onClick={() => handlePanelSwitch('prayer')}
                       >
-                        🙏 {dailySnapshot.pending_prayers} {i18nT('个待代祷')}
+                        🙏 {dailySnapshot?.pending_prayers} {i18nT('个待代祷')}
                       </span>
                     )}
                   </div>
@@ -3027,7 +3059,7 @@ function AppContent() {
             <QuickDevotionPage
               user={user} token={getToken()}
               onBack={() => setShowQuickDevotion(false)}
-              onDone={() => { setShowQuickDevotion(false); fetchDailySnapshot(getToken()).then(setDailySnapshot).catch((err) => { console.warn('[App.jsx] ignored async error', err) }) }}
+              onDone={() => { setShowQuickDevotion(false); loadDailySnapshot() }}
             />
           </Suspense>
         )}
