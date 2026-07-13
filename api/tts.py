@@ -57,6 +57,19 @@ class handler(BaseHTTPRequestHandler):
         rate = q.get("rate", [""])[0]
         pitch = q.get("pitch", [""])[0]
         probe = q.get("probe", [""])[0]
+        # Light anti-hotlink guard: block foreign embeds; allow same-site and direct hits.
+        ref = self.headers.get("Referer") or self.headers.get("Origin") or ""
+        if ref:
+            host = (urlparse(ref).hostname or "").lower()
+            allowed = (
+                host == "holiness.uk"
+                or host.endswith(".holiness.uk")
+                or host.endswith(".vercel.app")
+                or host in ("localhost", "127.0.0.1")
+            )
+            if not allowed:
+                self._json(403, {"ok": False, "error": "forbidden origin"})
+                return
         if not text:
             self._json(200, {"ok": True, "service": "edge-tts", "voice": DEFAULT_VOICE})
             return

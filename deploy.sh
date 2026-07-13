@@ -6,9 +6,9 @@ set -euo pipefail
 cd "$(dirname "$0")"
 
 echo "==> 1/4 提交本地修复改动"
-if [ -n "$(git status --porcelain src/)" ]; then
+if [ -n "$(git status --porcelain src public api scripts requirements.txt index.html vercel.json .gitignore)" ]; then
   # 显式暂存已知路径，避免 git add -A 误扫瞬时/临时文件（timestamp bundles、.env.local、film_output 等）
-  git add src public scripts index.html \
+  git add src public api scripts requirements.txt index.html \
     vite.config.js vitest.config.js eslint.config.js \
     tailwind.config.js postcss.config.js \
     package.json package-lock.json \
