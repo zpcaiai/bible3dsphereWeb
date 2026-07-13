@@ -121,10 +121,46 @@
     .tabs, .theme-toggle { display: none; }
     .panel { display: block !important; box-shadow: none; border: 0; page-break-after: always; }
   }
+
+  .tts-bar {
+    position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%);
+    display: flex; align-items: center; gap: 2px; z-index: 50;
+    padding: 5px 6px; border: 1px solid var(--rule); border-radius: 999px;
+    background: color-mix(in srgb, var(--paper) 90%, transparent);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    box-shadow: var(--shadow);
+  }
+  .tts-btn {
+    appearance: none; border: 0; background: transparent; cursor: pointer;
+    font-family: inherit; color: var(--ink-soft); font-size: 14px;
+    padding: 8px 12px; border-radius: 999px; line-height: 1; white-space: nowrap;
+    transition: background .2s ease, color .2s ease;
+  }
+  .tts-btn:hover { background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--ink); }
+  .tts-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .tts-main { font-weight: 700; color: var(--accent-deep); letter-spacing: .04em; }
+  .tts-sep { width: 1px; height: 18px; background: var(--rule); margin: 0 2px; }
+  .reading {
+    background: color-mix(in srgb, var(--accent) 15%, transparent);
+    box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent) 15%, transparent);
+    border-radius: 4px; transition: background .25s ease, box-shadow .25s ease;
+  }
+  @media (max-width: 560px) {
+    .tts-bar { bottom: 12px; gap: 0; }
+    .tts-btn { padding: 8px 10px; font-size: 13px; }
+  }
+  @media print { .tts-bar { display: none; } }
+
 </style>
 </head>
 <body>
   <button class="theme-toggle" id="themeToggle" title="切换明暗" aria-label="切换明暗主题">◐</button>
+  <div class="tts-bar" id="ttsBar" role="group" aria-label="语音朗读">
+    <button class="tts-btn tts-main" id="ttsToggle" aria-label="朗读本篇">▶ 朗读</button>
+    <button class="tts-btn" id="ttsStop" aria-label="停止朗读" title="停止">■</button>
+    <span class="tts-sep"></span>
+    <button class="tts-btn" id="ttsRate" aria-label="调整语速" title="语速">1.0×</button>
+  </div>
   <div class="wrap">
     <div class="masthead">
       <p class="kicker">仿旧约先知书 · 文学默想</p>
@@ -7786,6 +7822,94 @@
   function current() { return root.getAttribute('data-theme') || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); }
   btn.addEventListener('click', function () { var n = current() === 'dark' ? 'light' : 'dark'; root.setAttribute('data-theme', n); try { localStorage.setItem('oracles-theme', n); } catch (e) {} });
   try { var saved = localStorage.getItem('oracles-theme'); if (saved) root.setAttribute('data-theme', saved); } catch (e) {}
+})();
+</script>
+<script>
+(function () {
+  var synth = window.speechSynthesis;
+  var bar = document.getElementById('ttsBar');
+  var toggleBtn = document.getElementById('ttsToggle');
+  var stopBtn = document.getElementById('ttsStop');
+  var rateBtn = document.getElementById('ttsRate');
+  if (!synth || !bar || !('SpeechSynthesisUtterance' in window)) { if (bar) bar.style.display = 'none'; return; }
+  var rates = [0.8, 0.9, 1.0, 1.1, 1.2];
+  var rateIdx = 2;
+  var queue = [], qi = 0, speaking = false, paused = false, curEl = null, zhVoice = null;
+  function pickVoice() {
+    var vs = synth.getVoices() || [], i;
+    zhVoice = null;
+    for (i = 0; i < vs.length; i++) { if (/zh[-_]?(CN|Hans|SG)/i.test(vs[i].lang)) { zhVoice = vs[i]; break; } }
+    if (!zhVoice) { for (i = 0; i < vs.length; i++) { if (/^zh/i.test(vs[i].lang)) { zhVoice = vs[i]; break; } } }
+  }
+  pickVoice();
+  if (typeof synth.onvoiceschanged !== 'undefined') synth.onvoiceschanged = pickVoice;
+  function activePanel() { return document.querySelector('.panel.is-active'); }
+  function chunkText(text, max) {
+    var out = [], buf = '', i, ch, ender;
+    for (i = 0; i < text.length; i++) {
+      ch = text.charAt(i); buf += ch;
+      ender = (ch === '。' || ch === '！' || ch === '？' || ch === '；' || ch === '：' || ch === '…' || ch === '”');
+      if (buf.length >= max && ender) { out.push(buf); buf = ''; }
+    }
+    if (buf) out.push(buf);
+    var fin = [], k, c;
+    for (k = 0; k < out.length; k++) { c = out[k]; while (c.length > max * 1.8) { fin.push(c.slice(0, max)); c = c.slice(max); } if (c) fin.push(c); }
+    return fin;
+  }
+  function buildQueue(panel) {
+    queue = []; qi = 0;
+    if (!panel) return;
+    var els = Array.prototype.slice.call(panel.querySelectorAll('.panel-title, .notice p, .sec, .sec-sub, .stanza'));
+    els.forEach(function (el) {
+      var clone = el.cloneNode(true);
+      Array.prototype.slice.call(clone.querySelectorAll('.cite')).forEach(function (c) { if (c.parentNode) c.parentNode.removeChild(c); });
+      var text = (clone.textContent || '').replace(/\s+/g, '').trim();
+      if (!text) return;
+      chunkText(text, 150).forEach(function (t) { queue.push({ el: el, text: t }); });
+    });
+  }
+  function highlight(el) {
+    if (curEl && curEl !== el) curEl.classList.remove('reading');
+    curEl = el;
+    if (!el) return;
+    el.classList.add('reading');
+    var r = el.getBoundingClientRect();
+    if (r.top < 76 || r.bottom > (window.innerHeight - 96)) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+  function speakNext() {
+    if (!speaking) return;
+    if (qi >= queue.length) { stop(); return; }
+    var item = queue[qi];
+    highlight(item.el);
+    var u = new SpeechSynthesisUtterance(item.text);
+    u.lang = 'zh-CN'; if (zhVoice) u.voice = zhVoice; u.rate = rates[rateIdx]; u.pitch = 1;
+    u.onend = function () { qi++; if (speaking && !paused) speakNext(); };
+    u.onerror = function () { qi++; if (speaking && !paused) speakNext(); };
+    synth.speak(u);
+  }
+  function start() {
+    try { synth.cancel(); } catch (e) {}
+    buildQueue(activePanel());
+    if (!queue.length) return;
+    speaking = true; paused = false; qi = 0; setUI(); speakNext();
+  }
+  function pauseSpeak() { if (speaking && !paused) { paused = true; try { synth.pause(); } catch (e) {} setUI(); } }
+  function resumeSpeak() { if (speaking && paused) { paused = false; try { synth.resume(); } catch (e) {} setUI(); } }
+  function stop() { speaking = false; paused = false; try { synth.cancel(); } catch (e) {} if (curEl) { curEl.classList.remove('reading'); curEl = null; } qi = 0; queue = []; setUI(); }
+  function setUI() {
+    if (!speaking) { toggleBtn.textContent = '▶ 朗读'; bar.classList.remove('active'); }
+    else if (paused) { toggleBtn.textContent = '▶ 继续'; bar.classList.add('active'); }
+    else { toggleBtn.textContent = '⏸ 暂停'; bar.classList.add('active'); }
+    rateBtn.textContent = rates[rateIdx].toFixed(1) + '×';
+  }
+  toggleBtn.addEventListener('click', function () { if (!speaking) start(); else if (paused) resumeSpeak(); else pauseSpeak(); });
+  stopBtn.addEventListener('click', stop);
+  rateBtn.addEventListener('click', function () { rateIdx = (rateIdx + 1) % rates.length; setUI(); });
+  var mo = new MutationObserver(function (muts) { for (var i = 0; i < muts.length; i++) { if (muts[i].attributeName === 'class') { if (speaking) stop(); return; } } });
+  Array.prototype.slice.call(document.querySelectorAll('.panel')).forEach(function (p) { mo.observe(p, { attributes: true, attributeFilter: ['class'] }); });
+  setInterval(function () { if (speaking && !paused) { try { synth.resume(); } catch (e) {} } }, 9000);
+  window.addEventListener('beforeunload', function () { try { synth.cancel(); } catch (e) {} });
+  setUI();
 })();
 </script>
 </body>
