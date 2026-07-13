@@ -7849,6 +7849,39 @@
   var PITCH = 0.9;
   var queue = [], qi = 0, speaking = false, paused = false, curEl = null;
   var voices = [], chosen = null, userPicked = false;
+  var engine = 'cloud';
+  var CLOUD_URL = '/api/tts';
+  var CLOUD_VOICE = 'zh-CN-YunjianNeural';
+  var audio = new Audio();
+  audio.preload = 'auto';
+  var cloudFailed = false;
+  function cloudSrc(t) { return CLOUD_URL + '?voice=' + encodeURIComponent(CLOUD_VOICE) + '&text=' + encodeURIComponent(t); }
+  function prefetch(idx) { if (idx < queue.length) { try { fetch(cloudSrc(queue[idx].text)).catch(function () {}); } catch (e) {} } }
+  function playCloud() {
+    if (!speaking) return;
+    if (qi >= queue.length) { stop(); return; }
+    var item = queue[qi];
+    highlight(item.el);
+    audio.playbackRate = rates[rateIdx];
+    audio.src = cloudSrc(item.text);
+    prefetch(qi + 1);
+    var p = audio.play(); if (p && p.catch) p.catch(function () {});
+  }
+  function previewCloud() {
+    try { synth.cancel(); } catch (e) {} try { audio.pause(); } catch (e) {}
+    audio.playbackRate = rates[rateIdx];
+    audio.src = cloudSrc('公义如大水滚滚，公义如江河滔滔。');
+    var p = audio.play(); if (p && p.catch) p.catch(function () {});
+  }
+  function fallbackToLocal() {
+    cloudFailed = true; engine = 'local';
+    if (!chosen) chosen = voices[0] || null;
+    var ix = chosen ? voices.indexOf(chosen) : -1;
+    if (ix >= 0) voiceSel.value = String(ix);
+    if (speaking && !paused) speakNext();
+  }
+  audio.addEventListener('ended', function () { if (engine === 'cloud' && speaking && !paused) { qi++; playCloud(); } });
+  audio.addEventListener('error', function () { if (engine === 'cloud' && speaking) fallbackToLocal(); });
   var MALE = /(yunjian|yunyang|yunxi|yunze|yunhao|kangkang|云健|云扬|云希|云泽|康康|male|男)/i;
   var FEMALE = /(tingting|ting-?ting|huihui|xiaoxiao|xiaoyi|xiaomeng|mei-?jia|sin-?ji|yaoyao|female|女|婷婷|晓晓|慧慧)/i;
   var HQ = /(neural|natural|online|enhanced|premium|plus)/i;
@@ -7868,6 +7901,7 @@
     if (!voices.length) voices = all.slice();
     voices.sort(function (a, b) { return score(b) - score(a); });
     voiceSel.innerHTML = '';
+    var oc = document.createElement('option'); oc.value = 'cloud'; oc.textContent = '☁ 云健·云端男声'; voiceSel.appendChild(oc);
     voices.forEach(function (v, i) {
       var o = document.createElement('option');
       o.value = String(i);
@@ -7876,7 +7910,9 @@
       o.textContent = tag + nm + (HQ.test(v.name) ? ' ·高清' : '');
       voiceSel.appendChild(o);
     });
-    if (!userPicked) { chosen = voices[0] || null; if (voices.length) voiceSel.value = '0'; }
+    if (!chosen && voices.length) chosen = voices[0];
+    if (!userPicked) { engine = 'cloud'; voiceSel.value = 'cloud'; }
+    else if (engine === 'cloud') { voiceSel.value = 'cloud'; }
     else if (chosen) { var ix = voices.indexOf(chosen); if (ix >= 0) voiceSel.value = String(ix); }
   }
   loadVoices();
@@ -7887,7 +7923,11 @@
     u.lang = 'zh-CN'; if (chosen) u.voice = chosen; u.rate = rates[rateIdx]; u.pitch = PITCH;
     synth.speak(u);
   }
-  voiceSel.addEventListener('change', function () { userPicked = true; chosen = voices[parseInt(voiceSel.value, 10)] || null; if (!speaking) previewVoice(); });
+  voiceSel.addEventListener('change', function () {
+    userPicked = true;
+    if (voiceSel.value === 'cloud') { engine = 'cloud'; cloudFailed = false; if (!speaking) previewCloud(); return; }
+    engine = 'local'; chosen = voices[parseInt(voiceSel.value, 10)] || null; if (!speaking) previewVoice();
+  });
   function activePanel() { return document.querySelector('.panel.is-active'); }
   function chunkText(text, max) {
     var out = [], buf = '', i, ch, ender;
@@ -7933,14 +7973,15 @@
     synth.speak(u);
   }
   function start() {
-    try { synth.cancel(); } catch (e) {}
+    try { synth.cancel(); } catch (e) {} try { audio.pause(); } catch (e) {}
     buildQueue(activePanel());
     if (!queue.length) return;
-    speaking = true; paused = false; qi = 0; setUI(); speakNext();
+    speaking = true; paused = false; qi = 0; setUI();
+    if (engine === 'cloud' && !cloudFailed) playCloud(); else speakNext();
   }
-  function pauseSpeak() { if (speaking && !paused) { paused = true; try { synth.pause(); } catch (e) {} setUI(); } }
-  function resumeSpeak() { if (speaking && paused) { paused = false; try { synth.resume(); } catch (e) {} setUI(); } }
-  function stop() { speaking = false; paused = false; try { synth.cancel(); } catch (e) {} if (curEl) { curEl.classList.remove('reading'); curEl = null; } qi = 0; queue = []; setUI(); }
+  function pauseSpeak() { if (speaking && !paused) { paused = true; try { synth.pause(); } catch (e) {} try { audio.pause(); } catch (e) {} setUI(); } }
+  function resumeSpeak() { if (speaking && paused) { paused = false; try { synth.resume(); } catch (e) {} if (engine === 'cloud') { var p = audio.play(); if (p && p.catch) p.catch(function () {}); } setUI(); } }
+  function stop() { speaking = false; paused = false; try { synth.cancel(); } catch (e) {} try { audio.pause(); } catch (e) {} if (curEl) { curEl.classList.remove('reading'); curEl = null; } qi = 0; queue = []; setUI(); }
   function setUI() {
     if (!speaking) { toggleBtn.textContent = '▶ 朗读'; bar.classList.remove('active'); }
     else if (paused) { toggleBtn.textContent = '▶ 继续'; bar.classList.add('active'); }
@@ -7949,7 +7990,7 @@
   }
   toggleBtn.addEventListener('click', function () { if (!speaking) start(); else if (paused) resumeSpeak(); else pauseSpeak(); });
   stopBtn.addEventListener('click', stop);
-  rateBtn.addEventListener('click', function () { rateIdx = (rateIdx + 1) % rates.length; setUI(); });
+  rateBtn.addEventListener('click', function () { rateIdx = (rateIdx + 1) % rates.length; try { audio.playbackRate = rates[rateIdx]; } catch (e) {} setUI(); });
   var mo = new MutationObserver(function (muts) { for (var i = 0; i < muts.length; i++) { if (muts[i].attributeName === 'class') { if (speaking) stop(); return; } } });
   Array.prototype.slice.call(document.querySelectorAll('.panel')).forEach(function (p) { mo.observe(p, { attributes: true, attributeFilter: ['class'] }); });
   setInterval(function () { if (speaking && !paused) { try { synth.resume(); } catch (e) {} } }, 9000);
