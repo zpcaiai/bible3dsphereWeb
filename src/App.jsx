@@ -32,6 +32,8 @@ import ExpansionLauncher from './expansion/ExpansionLauncher'
 import VoiceHoldButton from './components/VoiceHoldButton'
 import PastoralPathCard, { PASTORAL_ROUTE_TARGETS } from './components/PastoralPathCard'
 import { useGuardianStore } from './components/guardian/guardianStore'
+import { curateAnthropicEmotionLayout } from './data/anthropicEmotionConcepts'
+import { getCuratedEmotionScriptureDetail } from './data/emotionScriptureDetail'
 
 const CheckInPage = lazyWithRetry(() => import('./CheckInPage'))
 const ShareWallPage = lazyWithRetry(() => import('./ShareWallPage'))
@@ -232,7 +234,12 @@ function AppContent() {
   const [showQuickDevotion, setShowQuickDevotion] = useState(false)
 
   useEffect(() => {
-    fetchLayout().then((data) => setLayoutItems(data.items || [])).catch((err) => setError(String(err)))
+    fetchLayout()
+      .then((data) => setLayoutItems(curateAnthropicEmotionLayout(data.items || [])))
+      .catch((err) => {
+        setLayoutItems(curateAnthropicEmotionLayout([]))
+        setError(String(err))
+      })
     fetchHistory().then((data) => setHistoryItems(data.items || [])).catch((err) => { console.warn('[App.jsx] ignored async error', err) })
   }, [setLayoutItems, setHistoryItems, setError])
 
@@ -728,8 +735,9 @@ function AppContent() {
     try {
       const parts = [feature.explanation, feature.zh_label].filter(Boolean)
       const q = parts.join('，')
+      const curatedScriptures = getCuratedEmotionScriptureDetail(feature)
       const [detail, g, be] = await Promise.all([
-        fetchFeatureDetail(feature.feature_key).catch(() => null),
+        curatedScriptures || fetchFeatureDetail(feature.feature_key).catch(() => null),
         fetchGuidance(q).catch(() => null),
         fetchBiblicalExample(q).catch(() => null),
       ])

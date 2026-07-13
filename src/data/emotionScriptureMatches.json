@@ -1,0 +1,5570 @@
+{
+  "at ease": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "peace",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B43-014-027",
+          "book_name": "约翰福音",
+          "chapter": 14,
+          "verse": 27,
+          "raw_text": "我留下平安给你们；我将我的平安赐给你们。我所赐的，不像世人所赐的。你们心里不要忧愁，也不要胆怯。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-004-007",
+          "book_name": "腓立比书",
+          "chapter": 4,
+          "verse": 7,
+          "raw_text": "神所赐、出人意外的平安必在基督耶稣里保守你们的心怀意念。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-004-008",
+          "book_name": "诗篇",
+          "chapter": 4,
+          "verse": 8,
+          "raw_text": "我必安然躺下睡觉，因为独有你─耶和华使我安然居住。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B43-014-027",
+          "book_name": "John",
+          "chapter": 14,
+          "verse": 27,
+          "raw_text": "Peace I leave with you; my peace I give to you. Not as the world gives do I give to you. Let not your hearts be troubled, neither let them be afraid.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-004-007",
+          "book_name": "Philippians",
+          "chapter": 4,
+          "verse": 7,
+          "raw_text": "And the peace of God, which surpasses all understanding, will guard your hearts and your minds in Christ Jesus.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-004-008",
+          "book_name": "Psalms",
+          "chapter": 4,
+          "verse": 8,
+          "raw_text": "In peace I will both lie down and sleep; for you alone, O LORD, make me dwell in safety.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "awestruck": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "wonder",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B19-139-014",
+          "book_name": "诗篇",
+          "chapter": 139,
+          "verse": 14,
+          "raw_text": "我要称谢你，因我受造，奇妙可畏；你的作为奇妙，这是我心深知道的。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-011-033",
+          "book_name": "罗马书",
+          "chapter": 11,
+          "verse": 33,
+          "raw_text": "深哉，神丰富的智慧和知识！他的判断何其难测！他的踪迹何其难寻！",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-008-004",
+          "book_name": "诗篇",
+          "chapter": 8,
+          "verse": 4,
+          "raw_text": "便说：人算甚麽，你竟顾念他？世人算甚麽，你竟眷顾他？",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B19-139-014",
+          "book_name": "Psalms",
+          "chapter": 139,
+          "verse": 14,
+          "raw_text": "I praise you, for I am fearfully and wonderfully made. Wonderful are your works; my soul knows it very well.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-011-033",
+          "book_name": "Romans",
+          "chapter": 11,
+          "verse": 33,
+          "raw_text": "Oh, the depth of the riches and wisdom and knowledge of God! How unsearchable are his judgments and how inscrutable his ways!",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-008-004",
+          "book_name": "Psalms",
+          "chapter": 8,
+          "verse": 4,
+          "raw_text": "what is man that you are mindful of him, and the son of man that you care for him?",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "calm": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "peace",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B43-014-027",
+          "book_name": "约翰福音",
+          "chapter": 14,
+          "verse": 27,
+          "raw_text": "我留下平安给你们；我将我的平安赐给你们。我所赐的，不像世人所赐的。你们心里不要忧愁，也不要胆怯。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-004-007",
+          "book_name": "腓立比书",
+          "chapter": 4,
+          "verse": 7,
+          "raw_text": "神所赐、出人意外的平安必在基督耶稣里保守你们的心怀意念。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-004-008",
+          "book_name": "诗篇",
+          "chapter": 4,
+          "verse": 8,
+          "raw_text": "我必安然躺下睡觉，因为独有你─耶和华使我安然居住。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B43-014-027",
+          "book_name": "John",
+          "chapter": 14,
+          "verse": 27,
+          "raw_text": "Peace I leave with you; my peace I give to you. Not as the world gives do I give to you. Let not your hearts be troubled, neither let them be afraid.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-004-007",
+          "book_name": "Philippians",
+          "chapter": 4,
+          "verse": 7,
+          "raw_text": "And the peace of God, which surpasses all understanding, will guard your hearts and your minds in Christ Jesus.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-004-008",
+          "book_name": "Psalms",
+          "chapter": 4,
+          "verse": 8,
+          "raw_text": "In peace I will both lie down and sleep; for you alone, O LORD, make me dwell in safety.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "cheerful": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "joy",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B19-016-011",
+          "book_name": "诗篇",
+          "chapter": 16,
+          "verse": 11,
+          "raw_text": "你必将生命的道路指示我。在你面前有满足的喜乐；在你右手中有永远的福乐。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-004-004",
+          "book_name": "腓立比书",
+          "chapter": 4,
+          "verse": 4,
+          "raw_text": "你们要靠主常常喜乐。我再说，你们要喜乐。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-015-013",
+          "book_name": "罗马书",
+          "chapter": 15,
+          "verse": 13,
+          "raw_text": "但愿使人有盼望的神，因信将诸般的喜乐、平安充满你们的心，使你们藉着圣灵的能力大有盼望。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B19-016-011",
+          "book_name": "Psalms",
+          "chapter": 16,
+          "verse": 11,
+          "raw_text": "You make known to me the path of life; in your presence there is fullness of joy; at your right hand are pleasures forevermore.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-004-004",
+          "book_name": "Philippians",
+          "chapter": 4,
+          "verse": 4,
+          "raw_text": "Rejoice in the Lord always; again I will say, Rejoice.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-015-013",
+          "book_name": "Romans",
+          "chapter": 15,
+          "verse": 13,
+          "raw_text": "May the God of hope fill you with all joy and peace in believing, so that by the power of the Holy Spirit you may abound in hope.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "compassionate": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "care",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B51-003-012",
+          "book_name": "歌罗西书",
+          "chapter": 3,
+          "verse": 12,
+          "raw_text": "所以，你们既是神的选民，圣洁蒙爱的人，就要存（原文作穿；下同）怜悯、恩慈、谦虚、温柔、忍耐的心。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-012-015",
+          "book_name": "罗马书",
+          "chapter": 12,
+          "verse": 15,
+          "raw_text": "与喜乐的人要同乐；与哀哭的人要同哭。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B46-013-004",
+          "book_name": "哥林多前书",
+          "chapter": 13,
+          "verse": 4,
+          "raw_text": "爱是恒久忍耐，又有恩慈；爱是不嫉妒；爱是不自夸，不张狂，",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B51-003-012",
+          "book_name": "Colossians",
+          "chapter": 3,
+          "verse": 12,
+          "raw_text": "Put on then, as God's chosen ones, holy and beloved, compassion, kindness, humility, meekness, and patience,",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-012-015",
+          "book_name": "Romans",
+          "chapter": 12,
+          "verse": 15,
+          "raw_text": "Rejoice with those who rejoice, weep with those who weep.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B46-013-004",
+          "book_name": "1 Corinthians",
+          "chapter": 13,
+          "verse": 4,
+          "raw_text": "Love is patient and kind; love does not envy or boast; it is not arrogant",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "content": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "peace",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B43-014-027",
+          "book_name": "约翰福音",
+          "chapter": 14,
+          "verse": 27,
+          "raw_text": "我留下平安给你们；我将我的平安赐给你们。我所赐的，不像世人所赐的。你们心里不要忧愁，也不要胆怯。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-004-007",
+          "book_name": "腓立比书",
+          "chapter": 4,
+          "verse": 7,
+          "raw_text": "神所赐、出人意外的平安必在基督耶稣里保守你们的心怀意念。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-004-008",
+          "book_name": "诗篇",
+          "chapter": 4,
+          "verse": 8,
+          "raw_text": "我必安然躺下睡觉，因为独有你─耶和华使我安然居住。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B43-014-027",
+          "book_name": "John",
+          "chapter": 14,
+          "verse": 27,
+          "raw_text": "Peace I leave with you; my peace I give to you. Not as the world gives do I give to you. Let not your hearts be troubled, neither let them be afraid.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-004-007",
+          "book_name": "Philippians",
+          "chapter": 4,
+          "verse": 7,
+          "raw_text": "And the peace of God, which surpasses all understanding, will guard your hearts and your minds in Christ Jesus.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-004-008",
+          "book_name": "Psalms",
+          "chapter": 4,
+          "verse": 8,
+          "raw_text": "In peace I will both lie down and sleep; for you alone, O LORD, make me dwell in safety.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "delighted": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "joy",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B19-016-011",
+          "book_name": "诗篇",
+          "chapter": 16,
+          "verse": 11,
+          "raw_text": "你必将生命的道路指示我。在你面前有满足的喜乐；在你右手中有永远的福乐。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-004-004",
+          "book_name": "腓立比书",
+          "chapter": 4,
+          "verse": 4,
+          "raw_text": "你们要靠主常常喜乐。我再说，你们要喜乐。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-015-013",
+          "book_name": "罗马书",
+          "chapter": 15,
+          "verse": 13,
+          "raw_text": "但愿使人有盼望的神，因信将诸般的喜乐、平安充满你们的心，使你们藉着圣灵的能力大有盼望。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B19-016-011",
+          "book_name": "Psalms",
+          "chapter": 16,
+          "verse": 11,
+          "raw_text": "You make known to me the path of life; in your presence there is fullness of joy; at your right hand are pleasures forevermore.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-004-004",
+          "book_name": "Philippians",
+          "chapter": 4,
+          "verse": 4,
+          "raw_text": "Rejoice in the Lord always; again I will say, Rejoice.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-015-013",
+          "book_name": "Romans",
+          "chapter": 15,
+          "verse": 13,
+          "raw_text": "May the God of hope fill you with all joy and peace in believing, so that by the power of the Holy Spirit you may abound in hope.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "eager": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "energy_and_hope",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B23-040-031",
+          "book_name": "以赛亚书",
+          "chapter": 40,
+          "verse": 31,
+          "raw_text": "但那等候耶和华的必从新得力。他们必如鹰展翅上腾；他们奔跑却不困倦，行走却不疲乏。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-015-013",
+          "book_name": "罗马书",
+          "chapter": 15,
+          "verse": 13,
+          "raw_text": "但愿使人有盼望的神，因信将诸般的喜乐、平安充满你们的心，使你们藉着圣灵的能力大有盼望。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-003-014",
+          "book_name": "腓立比书",
+          "chapter": 3,
+          "verse": 14,
+          "raw_text": "向着标竿直跑，要得神在基督耶稣里从上面召我来得的奖赏。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B23-040-031",
+          "book_name": "Isaiah",
+          "chapter": 40,
+          "verse": 31,
+          "raw_text": "but they who wait for the LORD shall renew their strength; they shall mount up with wings like eagles; they shall run and not be weary; they shall walk and not faint.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-015-013",
+          "book_name": "Romans",
+          "chapter": 15,
+          "verse": 13,
+          "raw_text": "May the God of hope fill you with all joy and peace in believing, so that by the power of the Holy Spirit you may abound in hope.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-003-014",
+          "book_name": "Philippians",
+          "chapter": 3,
+          "verse": 14,
+          "raw_text": "I press on toward the goal for the prize of the upward call of God in Christ Jesus.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "elated": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "joy",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B19-016-011",
+          "book_name": "诗篇",
+          "chapter": 16,
+          "verse": 11,
+          "raw_text": "你必将生命的道路指示我。在你面前有满足的喜乐；在你右手中有永远的福乐。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-004-004",
+          "book_name": "腓立比书",
+          "chapter": 4,
+          "verse": 4,
+          "raw_text": "你们要靠主常常喜乐。我再说，你们要喜乐。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-015-013",
+          "book_name": "罗马书",
+          "chapter": 15,
+          "verse": 13,
+          "raw_text": "但愿使人有盼望的神，因信将诸般的喜乐、平安充满你们的心，使你们藉着圣灵的能力大有盼望。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B19-016-011",
+          "book_name": "Psalms",
+          "chapter": 16,
+          "verse": 11,
+          "raw_text": "You make known to me the path of life; in your presence there is fullness of joy; at your right hand are pleasures forevermore.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-004-004",
+          "book_name": "Philippians",
+          "chapter": 4,
+          "verse": 4,
+          "raw_text": "Rejoice in the Lord always; again I will say, Rejoice.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-015-013",
+          "book_name": "Romans",
+          "chapter": 15,
+          "verse": 13,
+          "raw_text": "May the God of hope fill you with all joy and peace in believing, so that by the power of the Holy Spirit you may abound in hope.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "empathetic": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "care",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B51-003-012",
+          "book_name": "歌罗西书",
+          "chapter": 3,
+          "verse": 12,
+          "raw_text": "所以，你们既是神的选民，圣洁蒙爱的人，就要存（原文作穿；下同）怜悯、恩慈、谦虚、温柔、忍耐的心。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-012-015",
+          "book_name": "罗马书",
+          "chapter": 12,
+          "verse": 15,
+          "raw_text": "与喜乐的人要同乐；与哀哭的人要同哭。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B46-013-004",
+          "book_name": "哥林多前书",
+          "chapter": 13,
+          "verse": 4,
+          "raw_text": "爱是恒久忍耐，又有恩慈；爱是不嫉妒；爱是不自夸，不张狂，",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B51-003-012",
+          "book_name": "Colossians",
+          "chapter": 3,
+          "verse": 12,
+          "raw_text": "Put on then, as God's chosen ones, holy and beloved, compassion, kindness, humility, meekness, and patience,",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-012-015",
+          "book_name": "Romans",
+          "chapter": 12,
+          "verse": 15,
+          "raw_text": "Rejoice with those who rejoice, weep with those who weep.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B46-013-004",
+          "book_name": "1 Corinthians",
+          "chapter": 13,
+          "verse": 4,
+          "raw_text": "Love is patient and kind; love does not envy or boast; it is not arrogant",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "energized": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "energy_and_hope",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B23-040-031",
+          "book_name": "以赛亚书",
+          "chapter": 40,
+          "verse": 31,
+          "raw_text": "但那等候耶和华的必从新得力。他们必如鹰展翅上腾；他们奔跑却不困倦，行走却不疲乏。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-015-013",
+          "book_name": "罗马书",
+          "chapter": 15,
+          "verse": 13,
+          "raw_text": "但愿使人有盼望的神，因信将诸般的喜乐、平安充满你们的心，使你们藉着圣灵的能力大有盼望。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-003-014",
+          "book_name": "腓立比书",
+          "chapter": 3,
+          "verse": 14,
+          "raw_text": "向着标竿直跑，要得神在基督耶稣里从上面召我来得的奖赏。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B23-040-031",
+          "book_name": "Isaiah",
+          "chapter": 40,
+          "verse": 31,
+          "raw_text": "but they who wait for the LORD shall renew their strength; they shall mount up with wings like eagles; they shall run and not be weary; they shall walk and not faint.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-015-013",
+          "book_name": "Romans",
+          "chapter": 15,
+          "verse": 13,
+          "raw_text": "May the God of hope fill you with all joy and peace in believing, so that by the power of the Holy Spirit you may abound in hope.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-003-014",
+          "book_name": "Philippians",
+          "chapter": 3,
+          "verse": 14,
+          "raw_text": "I press on toward the goal for the prize of the upward call of God in Christ Jesus.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "enthusiastic": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "energy_and_hope",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B23-040-031",
+          "book_name": "以赛亚书",
+          "chapter": 40,
+          "verse": 31,
+          "raw_text": "但那等候耶和华的必从新得力。他们必如鹰展翅上腾；他们奔跑却不困倦，行走却不疲乏。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-015-013",
+          "book_name": "罗马书",
+          "chapter": 15,
+          "verse": 13,
+          "raw_text": "但愿使人有盼望的神，因信将诸般的喜乐、平安充满你们的心，使你们藉着圣灵的能力大有盼望。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-003-014",
+          "book_name": "腓立比书",
+          "chapter": 3,
+          "verse": 14,
+          "raw_text": "向着标竿直跑，要得神在基督耶稣里从上面召我来得的奖赏。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B23-040-031",
+          "book_name": "Isaiah",
+          "chapter": 40,
+          "verse": 31,
+          "raw_text": "but they who wait for the LORD shall renew their strength; they shall mount up with wings like eagles; they shall run and not be weary; they shall walk and not faint.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-015-013",
+          "book_name": "Romans",
+          "chapter": 15,
+          "verse": 13,
+          "raw_text": "May the God of hope fill you with all joy and peace in believing, so that by the power of the Holy Spirit you may abound in hope.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-003-014",
+          "book_name": "Philippians",
+          "chapter": 3,
+          "verse": 14,
+          "raw_text": "I press on toward the goal for the prize of the upward call of God in Christ Jesus.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "excited": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "joy",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B19-016-011",
+          "book_name": "诗篇",
+          "chapter": 16,
+          "verse": 11,
+          "raw_text": "你必将生命的道路指示我。在你面前有满足的喜乐；在你右手中有永远的福乐。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-004-004",
+          "book_name": "腓立比书",
+          "chapter": 4,
+          "verse": 4,
+          "raw_text": "你们要靠主常常喜乐。我再说，你们要喜乐。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-015-013",
+          "book_name": "罗马书",
+          "chapter": 15,
+          "verse": 13,
+          "raw_text": "但愿使人有盼望的神，因信将诸般的喜乐、平安充满你们的心，使你们藉着圣灵的能力大有盼望。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B19-016-011",
+          "book_name": "Psalms",
+          "chapter": 16,
+          "verse": 11,
+          "raw_text": "You make known to me the path of life; in your presence there is fullness of joy; at your right hand are pleasures forevermore.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-004-004",
+          "book_name": "Philippians",
+          "chapter": 4,
+          "verse": 4,
+          "raw_text": "Rejoice in the Lord always; again I will say, Rejoice.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-015-013",
+          "book_name": "Romans",
+          "chapter": 15,
+          "verse": 13,
+          "raw_text": "May the God of hope fill you with all joy and peace in believing, so that by the power of the Holy Spirit you may abound in hope.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "fulfilled": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "gratitude",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B52-005-018",
+          "book_name": "帖撒罗尼迦前书",
+          "chapter": 5,
+          "verse": 18,
+          "raw_text": "凡事谢恩；因为这是神在基督耶稣里向你们所定的旨意。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-107-001",
+          "book_name": "诗篇",
+          "chapter": 107,
+          "verse": 1,
+          "raw_text": "你们要称谢耶和华，因他本为善；他的慈爱永远长存！",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-004-011",
+          "book_name": "腓立比书",
+          "chapter": 4,
+          "verse": 11,
+          "raw_text": "我并不是因缺乏说这话；我无论在甚麽景况都可以知足，这是我已经学会了。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B52-005-018",
+          "book_name": "1 Thessalonians",
+          "chapter": 5,
+          "verse": 18,
+          "raw_text": "give thanks in all circumstances; for this is the will of God in Christ Jesus for you.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-107-001",
+          "book_name": "Psalms",
+          "chapter": 107,
+          "verse": 1,
+          "raw_text": "Oh give thanks to the LORD, for he is good, for his steadfast love endures forever!",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-004-011",
+          "book_name": "Philippians",
+          "chapter": 4,
+          "verse": 11,
+          "raw_text": "Not that I am speaking of being in need, for I have learned in whatever situation I am to be content.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "grateful": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "gratitude",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B52-005-018",
+          "book_name": "帖撒罗尼迦前书",
+          "chapter": 5,
+          "verse": 18,
+          "raw_text": "凡事谢恩；因为这是神在基督耶稣里向你们所定的旨意。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-107-001",
+          "book_name": "诗篇",
+          "chapter": 107,
+          "verse": 1,
+          "raw_text": "你们要称谢耶和华，因他本为善；他的慈爱永远长存！",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-004-011",
+          "book_name": "腓立比书",
+          "chapter": 4,
+          "verse": 11,
+          "raw_text": "我并不是因缺乏说这话；我无论在甚麽景况都可以知足，这是我已经学会了。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B52-005-018",
+          "book_name": "1 Thessalonians",
+          "chapter": 5,
+          "verse": 18,
+          "raw_text": "give thanks in all circumstances; for this is the will of God in Christ Jesus for you.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-107-001",
+          "book_name": "Psalms",
+          "chapter": 107,
+          "verse": 1,
+          "raw_text": "Oh give thanks to the LORD, for he is good, for his steadfast love endures forever!",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-004-011",
+          "book_name": "Philippians",
+          "chapter": 4,
+          "verse": 11,
+          "raw_text": "Not that I am speaking of being in need, for I have learned in whatever situation I am to be content.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "happy": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "joy",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B19-016-011",
+          "book_name": "诗篇",
+          "chapter": 16,
+          "verse": 11,
+          "raw_text": "你必将生命的道路指示我。在你面前有满足的喜乐；在你右手中有永远的福乐。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-004-004",
+          "book_name": "腓立比书",
+          "chapter": 4,
+          "verse": 4,
+          "raw_text": "你们要靠主常常喜乐。我再说，你们要喜乐。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-015-013",
+          "book_name": "罗马书",
+          "chapter": 15,
+          "verse": 13,
+          "raw_text": "但愿使人有盼望的神，因信将诸般的喜乐、平安充满你们的心，使你们藉着圣灵的能力大有盼望。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B19-016-011",
+          "book_name": "Psalms",
+          "chapter": 16,
+          "verse": 11,
+          "raw_text": "You make known to me the path of life; in your presence there is fullness of joy; at your right hand are pleasures forevermore.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-004-004",
+          "book_name": "Philippians",
+          "chapter": 4,
+          "verse": 4,
+          "raw_text": "Rejoice in the Lord always; again I will say, Rejoice.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-015-013",
+          "book_name": "Romans",
+          "chapter": 15,
+          "verse": 13,
+          "raw_text": "May the God of hope fill you with all joy and peace in believing, so that by the power of the Holy Spirit you may abound in hope.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "hopeful": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "energy_and_hope",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B23-040-031",
+          "book_name": "以赛亚书",
+          "chapter": 40,
+          "verse": 31,
+          "raw_text": "但那等候耶和华的必从新得力。他们必如鹰展翅上腾；他们奔跑却不困倦，行走却不疲乏。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-015-013",
+          "book_name": "罗马书",
+          "chapter": 15,
+          "verse": 13,
+          "raw_text": "但愿使人有盼望的神，因信将诸般的喜乐、平安充满你们的心，使你们藉着圣灵的能力大有盼望。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-003-014",
+          "book_name": "腓立比书",
+          "chapter": 3,
+          "verse": 14,
+          "raw_text": "向着标竿直跑，要得神在基督耶稣里从上面召我来得的奖赏。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B23-040-031",
+          "book_name": "Isaiah",
+          "chapter": 40,
+          "verse": 31,
+          "raw_text": "but they who wait for the LORD shall renew their strength; they shall mount up with wings like eagles; they shall run and not be weary; they shall walk and not faint.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-015-013",
+          "book_name": "Romans",
+          "chapter": 15,
+          "verse": 13,
+          "raw_text": "May the God of hope fill you with all joy and peace in believing, so that by the power of the Holy Spirit you may abound in hope.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-003-014",
+          "book_name": "Philippians",
+          "chapter": 3,
+          "verse": 14,
+          "raw_text": "I press on toward the goal for the prize of the upward call of God in Christ Jesus.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "inspired": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "energy_and_hope",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B23-040-031",
+          "book_name": "以赛亚书",
+          "chapter": 40,
+          "verse": 31,
+          "raw_text": "但那等候耶和华的必从新得力。他们必如鹰展翅上腾；他们奔跑却不困倦，行走却不疲乏。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-015-013",
+          "book_name": "罗马书",
+          "chapter": 15,
+          "verse": 13,
+          "raw_text": "但愿使人有盼望的神，因信将诸般的喜乐、平安充满你们的心，使你们藉着圣灵的能力大有盼望。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-003-014",
+          "book_name": "腓立比书",
+          "chapter": 3,
+          "verse": 14,
+          "raw_text": "向着标竿直跑，要得神在基督耶稣里从上面召我来得的奖赏。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B23-040-031",
+          "book_name": "Isaiah",
+          "chapter": 40,
+          "verse": 31,
+          "raw_text": "but they who wait for the LORD shall renew their strength; they shall mount up with wings like eagles; they shall run and not be weary; they shall walk and not faint.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-015-013",
+          "book_name": "Romans",
+          "chapter": 15,
+          "verse": 13,
+          "raw_text": "May the God of hope fill you with all joy and peace in believing, so that by the power of the Holy Spirit you may abound in hope.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-003-014",
+          "book_name": "Philippians",
+          "chapter": 3,
+          "verse": 14,
+          "raw_text": "I press on toward the goal for the prize of the upward call of God in Christ Jesus.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "invigorated": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "energy_and_hope",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B23-040-031",
+          "book_name": "以赛亚书",
+          "chapter": 40,
+          "verse": 31,
+          "raw_text": "但那等候耶和华的必从新得力。他们必如鹰展翅上腾；他们奔跑却不困倦，行走却不疲乏。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-015-013",
+          "book_name": "罗马书",
+          "chapter": 15,
+          "verse": 13,
+          "raw_text": "但愿使人有盼望的神，因信将诸般的喜乐、平安充满你们的心，使你们藉着圣灵的能力大有盼望。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-003-014",
+          "book_name": "腓立比书",
+          "chapter": 3,
+          "verse": 14,
+          "raw_text": "向着标竿直跑，要得神在基督耶稣里从上面召我来得的奖赏。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B23-040-031",
+          "book_name": "Isaiah",
+          "chapter": 40,
+          "verse": 31,
+          "raw_text": "but they who wait for the LORD shall renew their strength; they shall mount up with wings like eagles; they shall run and not be weary; they shall walk and not faint.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-015-013",
+          "book_name": "Romans",
+          "chapter": 15,
+          "verse": 13,
+          "raw_text": "May the God of hope fill you with all joy and peace in believing, so that by the power of the Holy Spirit you may abound in hope.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-003-014",
+          "book_name": "Philippians",
+          "chapter": 3,
+          "verse": 14,
+          "raw_text": "I press on toward the goal for the prize of the upward call of God in Christ Jesus.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "joyful": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "joy",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B19-016-011",
+          "book_name": "诗篇",
+          "chapter": 16,
+          "verse": 11,
+          "raw_text": "你必将生命的道路指示我。在你面前有满足的喜乐；在你右手中有永远的福乐。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-004-004",
+          "book_name": "腓立比书",
+          "chapter": 4,
+          "verse": 4,
+          "raw_text": "你们要靠主常常喜乐。我再说，你们要喜乐。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-015-013",
+          "book_name": "罗马书",
+          "chapter": 15,
+          "verse": 13,
+          "raw_text": "但愿使人有盼望的神，因信将诸般的喜乐、平安充满你们的心，使你们藉着圣灵的能力大有盼望。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B19-016-011",
+          "book_name": "Psalms",
+          "chapter": 16,
+          "verse": 11,
+          "raw_text": "You make known to me the path of life; in your presence there is fullness of joy; at your right hand are pleasures forevermore.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-004-004",
+          "book_name": "Philippians",
+          "chapter": 4,
+          "verse": 4,
+          "raw_text": "Rejoice in the Lord always; again I will say, Rejoice.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-015-013",
+          "book_name": "Romans",
+          "chapter": 15,
+          "verse": 13,
+          "raw_text": "May the God of hope fill you with all joy and peace in believing, so that by the power of the Holy Spirit you may abound in hope.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "loving": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "care",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B51-003-012",
+          "book_name": "歌罗西书",
+          "chapter": 3,
+          "verse": 12,
+          "raw_text": "所以，你们既是神的选民，圣洁蒙爱的人，就要存（原文作穿；下同）怜悯、恩慈、谦虚、温柔、忍耐的心。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-012-015",
+          "book_name": "罗马书",
+          "chapter": 12,
+          "verse": 15,
+          "raw_text": "与喜乐的人要同乐；与哀哭的人要同哭。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B46-013-004",
+          "book_name": "哥林多前书",
+          "chapter": 13,
+          "verse": 4,
+          "raw_text": "爱是恒久忍耐，又有恩慈；爱是不嫉妒；爱是不自夸，不张狂，",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B51-003-012",
+          "book_name": "Colossians",
+          "chapter": 3,
+          "verse": 12,
+          "raw_text": "Put on then, as God's chosen ones, holy and beloved, compassion, kindness, humility, meekness, and patience,",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-012-015",
+          "book_name": "Romans",
+          "chapter": 12,
+          "verse": 15,
+          "raw_text": "Rejoice with those who rejoice, weep with those who weep.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B46-013-004",
+          "book_name": "1 Corinthians",
+          "chapter": 13,
+          "verse": 4,
+          "raw_text": "Love is patient and kind; love does not envy or boast; it is not arrogant",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "optimistic": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "energy_and_hope",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B23-040-031",
+          "book_name": "以赛亚书",
+          "chapter": 40,
+          "verse": 31,
+          "raw_text": "但那等候耶和华的必从新得力。他们必如鹰展翅上腾；他们奔跑却不困倦，行走却不疲乏。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-015-013",
+          "book_name": "罗马书",
+          "chapter": 15,
+          "verse": 13,
+          "raw_text": "但愿使人有盼望的神，因信将诸般的喜乐、平安充满你们的心，使你们藉着圣灵的能力大有盼望。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-003-014",
+          "book_name": "腓立比书",
+          "chapter": 3,
+          "verse": 14,
+          "raw_text": "向着标竿直跑，要得神在基督耶稣里从上面召我来得的奖赏。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B23-040-031",
+          "book_name": "Isaiah",
+          "chapter": 40,
+          "verse": 31,
+          "raw_text": "but they who wait for the LORD shall renew their strength; they shall mount up with wings like eagles; they shall run and not be weary; they shall walk and not faint.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-015-013",
+          "book_name": "Romans",
+          "chapter": 15,
+          "verse": 13,
+          "raw_text": "May the God of hope fill you with all joy and peace in believing, so that by the power of the Holy Spirit you may abound in hope.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-003-014",
+          "book_name": "Philippians",
+          "chapter": 3,
+          "verse": 14,
+          "raw_text": "I press on toward the goal for the prize of the upward call of God in Christ Jesus.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "peaceful": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "peace",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B43-014-027",
+          "book_name": "约翰福音",
+          "chapter": 14,
+          "verse": 27,
+          "raw_text": "我留下平安给你们；我将我的平安赐给你们。我所赐的，不像世人所赐的。你们心里不要忧愁，也不要胆怯。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-004-007",
+          "book_name": "腓立比书",
+          "chapter": 4,
+          "verse": 7,
+          "raw_text": "神所赐、出人意外的平安必在基督耶稣里保守你们的心怀意念。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-004-008",
+          "book_name": "诗篇",
+          "chapter": 4,
+          "verse": 8,
+          "raw_text": "我必安然躺下睡觉，因为独有你─耶和华使我安然居住。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B43-014-027",
+          "book_name": "John",
+          "chapter": 14,
+          "verse": 27,
+          "raw_text": "Peace I leave with you; my peace I give to you. Not as the world gives do I give to you. Let not your hearts be troubled, neither let them be afraid.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-004-007",
+          "book_name": "Philippians",
+          "chapter": 4,
+          "verse": 7,
+          "raw_text": "And the peace of God, which surpasses all understanding, will guard your hearts and your minds in Christ Jesus.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-004-008",
+          "book_name": "Psalms",
+          "chapter": 4,
+          "verse": 8,
+          "raw_text": "In peace I will both lie down and sleep; for you alone, O LORD, make me dwell in safety.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "pleased": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "joy",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B19-016-011",
+          "book_name": "诗篇",
+          "chapter": 16,
+          "verse": 11,
+          "raw_text": "你必将生命的道路指示我。在你面前有满足的喜乐；在你右手中有永远的福乐。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-004-004",
+          "book_name": "腓立比书",
+          "chapter": 4,
+          "verse": 4,
+          "raw_text": "你们要靠主常常喜乐。我再说，你们要喜乐。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-015-013",
+          "book_name": "罗马书",
+          "chapter": 15,
+          "verse": 13,
+          "raw_text": "但愿使人有盼望的神，因信将诸般的喜乐、平安充满你们的心，使你们藉着圣灵的能力大有盼望。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B19-016-011",
+          "book_name": "Psalms",
+          "chapter": 16,
+          "verse": 11,
+          "raw_text": "You make known to me the path of life; in your presence there is fullness of joy; at your right hand are pleasures forevermore.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-004-004",
+          "book_name": "Philippians",
+          "chapter": 4,
+          "verse": 4,
+          "raw_text": "Rejoice in the Lord always; again I will say, Rejoice.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-015-013",
+          "book_name": "Romans",
+          "chapter": 15,
+          "verse": 13,
+          "raw_text": "May the God of hope fill you with all joy and peace in believing, so that by the power of the Holy Spirit you may abound in hope.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "relaxed": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "peace",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B43-014-027",
+          "book_name": "约翰福音",
+          "chapter": 14,
+          "verse": 27,
+          "raw_text": "我留下平安给你们；我将我的平安赐给你们。我所赐的，不像世人所赐的。你们心里不要忧愁，也不要胆怯。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-004-007",
+          "book_name": "腓立比书",
+          "chapter": 4,
+          "verse": 7,
+          "raw_text": "神所赐、出人意外的平安必在基督耶稣里保守你们的心怀意念。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-004-008",
+          "book_name": "诗篇",
+          "chapter": 4,
+          "verse": 8,
+          "raw_text": "我必安然躺下睡觉，因为独有你─耶和华使我安然居住。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B43-014-027",
+          "book_name": "John",
+          "chapter": 14,
+          "verse": 27,
+          "raw_text": "Peace I leave with you; my peace I give to you. Not as the world gives do I give to you. Let not your hearts be troubled, neither let them be afraid.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-004-007",
+          "book_name": "Philippians",
+          "chapter": 4,
+          "verse": 7,
+          "raw_text": "And the peace of God, which surpasses all understanding, will guard your hearts and your minds in Christ Jesus.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-004-008",
+          "book_name": "Psalms",
+          "chapter": 4,
+          "verse": 8,
+          "raw_text": "In peace I will both lie down and sleep; for you alone, O LORD, make me dwell in safety.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "relieved": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "peace",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B43-014-027",
+          "book_name": "约翰福音",
+          "chapter": 14,
+          "verse": 27,
+          "raw_text": "我留下平安给你们；我将我的平安赐给你们。我所赐的，不像世人所赐的。你们心里不要忧愁，也不要胆怯。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-004-007",
+          "book_name": "腓立比书",
+          "chapter": 4,
+          "verse": 7,
+          "raw_text": "神所赐、出人意外的平安必在基督耶稣里保守你们的心怀意念。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-004-008",
+          "book_name": "诗篇",
+          "chapter": 4,
+          "verse": 8,
+          "raw_text": "我必安然躺下睡觉，因为独有你─耶和华使我安然居住。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B43-014-027",
+          "book_name": "John",
+          "chapter": 14,
+          "verse": 27,
+          "raw_text": "Peace I leave with you; my peace I give to you. Not as the world gives do I give to you. Let not your hearts be troubled, neither let them be afraid.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-004-007",
+          "book_name": "Philippians",
+          "chapter": 4,
+          "verse": 7,
+          "raw_text": "And the peace of God, which surpasses all understanding, will guard your hearts and your minds in Christ Jesus.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-004-008",
+          "book_name": "Psalms",
+          "chapter": 4,
+          "verse": 8,
+          "raw_text": "In peace I will both lie down and sleep; for you alone, O LORD, make me dwell in safety.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "safe": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "peace",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B43-014-027",
+          "book_name": "约翰福音",
+          "chapter": 14,
+          "verse": 27,
+          "raw_text": "我留下平安给你们；我将我的平安赐给你们。我所赐的，不像世人所赐的。你们心里不要忧愁，也不要胆怯。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-004-007",
+          "book_name": "腓立比书",
+          "chapter": 4,
+          "verse": 7,
+          "raw_text": "神所赐、出人意外的平安必在基督耶稣里保守你们的心怀意念。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-004-008",
+          "book_name": "诗篇",
+          "chapter": 4,
+          "verse": 8,
+          "raw_text": "我必安然躺下睡觉，因为独有你─耶和华使我安然居住。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B43-014-027",
+          "book_name": "John",
+          "chapter": 14,
+          "verse": 27,
+          "raw_text": "Peace I leave with you; my peace I give to you. Not as the world gives do I give to you. Let not your hearts be troubled, neither let them be afraid.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-004-007",
+          "book_name": "Philippians",
+          "chapter": 4,
+          "verse": 7,
+          "raw_text": "And the peace of God, which surpasses all understanding, will guard your hearts and your minds in Christ Jesus.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-004-008",
+          "book_name": "Psalms",
+          "chapter": 4,
+          "verse": 8,
+          "raw_text": "In peace I will both lie down and sleep; for you alone, O LORD, make me dwell in safety.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "satisfied": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "peace",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B43-014-027",
+          "book_name": "约翰福音",
+          "chapter": 14,
+          "verse": 27,
+          "raw_text": "我留下平安给你们；我将我的平安赐给你们。我所赐的，不像世人所赐的。你们心里不要忧愁，也不要胆怯。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-004-007",
+          "book_name": "腓立比书",
+          "chapter": 4,
+          "verse": 7,
+          "raw_text": "神所赐、出人意外的平安必在基督耶稣里保守你们的心怀意念。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-004-008",
+          "book_name": "诗篇",
+          "chapter": 4,
+          "verse": 8,
+          "raw_text": "我必安然躺下睡觉，因为独有你─耶和华使我安然居住。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B43-014-027",
+          "book_name": "John",
+          "chapter": 14,
+          "verse": 27,
+          "raw_text": "Peace I leave with you; my peace I give to you. Not as the world gives do I give to you. Let not your hearts be troubled, neither let them be afraid.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-004-007",
+          "book_name": "Philippians",
+          "chapter": 4,
+          "verse": 7,
+          "raw_text": "And the peace of God, which surpasses all understanding, will guard your hearts and your minds in Christ Jesus.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-004-008",
+          "book_name": "Psalms",
+          "chapter": 4,
+          "verse": 8,
+          "raw_text": "In peace I will both lie down and sleep; for you alone, O LORD, make me dwell in safety.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "serene": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "peace",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B43-014-027",
+          "book_name": "约翰福音",
+          "chapter": 14,
+          "verse": 27,
+          "raw_text": "我留下平安给你们；我将我的平安赐给你们。我所赐的，不像世人所赐的。你们心里不要忧愁，也不要胆怯。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-004-007",
+          "book_name": "腓立比书",
+          "chapter": 4,
+          "verse": 7,
+          "raw_text": "神所赐、出人意外的平安必在基督耶稣里保守你们的心怀意念。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-004-008",
+          "book_name": "诗篇",
+          "chapter": 4,
+          "verse": 8,
+          "raw_text": "我必安然躺下睡觉，因为独有你─耶和华使我安然居住。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B43-014-027",
+          "book_name": "John",
+          "chapter": 14,
+          "verse": 27,
+          "raw_text": "Peace I leave with you; my peace I give to you. Not as the world gives do I give to you. Let not your hearts be troubled, neither let them be afraid.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-004-007",
+          "book_name": "Philippians",
+          "chapter": 4,
+          "verse": 7,
+          "raw_text": "And the peace of God, which surpasses all understanding, will guard your hearts and your minds in Christ Jesus.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-004-008",
+          "book_name": "Psalms",
+          "chapter": 4,
+          "verse": 8,
+          "raw_text": "In peace I will both lie down and sleep; for you alone, O LORD, make me dwell in safety.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "thankful": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "gratitude",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B52-005-018",
+          "book_name": "帖撒罗尼迦前书",
+          "chapter": 5,
+          "verse": 18,
+          "raw_text": "凡事谢恩；因为这是神在基督耶稣里向你们所定的旨意。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-107-001",
+          "book_name": "诗篇",
+          "chapter": 107,
+          "verse": 1,
+          "raw_text": "你们要称谢耶和华，因他本为善；他的慈爱永远长存！",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-004-011",
+          "book_name": "腓立比书",
+          "chapter": 4,
+          "verse": 11,
+          "raw_text": "我并不是因缺乏说这话；我无论在甚麽景况都可以知足，这是我已经学会了。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B52-005-018",
+          "book_name": "1 Thessalonians",
+          "chapter": 5,
+          "verse": 18,
+          "raw_text": "give thanks in all circumstances; for this is the will of God in Christ Jesus for you.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-107-001",
+          "book_name": "Psalms",
+          "chapter": 107,
+          "verse": 1,
+          "raw_text": "Oh give thanks to the LORD, for he is good, for his steadfast love endures forever!",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-004-011",
+          "book_name": "Philippians",
+          "chapter": 4,
+          "verse": 11,
+          "raw_text": "Not that I am speaking of being in need, for I have learned in whatever situation I am to be content.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "alert": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "alert",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B60-005-008",
+          "book_name": "彼得前书",
+          "chapter": 5,
+          "verse": 8,
+          "raw_text": "务要谨守，儆醒。因为你们的仇敌魔鬼，如同吼叫的狮子，遍地游行，寻找可吞吃的人。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B41-014-038",
+          "book_name": "马可福音",
+          "chapter": 14,
+          "verse": 38,
+          "raw_text": "总要儆醒祷告，免得入了迷惑。你们心灵固然愿意，肉体却软弱了。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B49-006-018",
+          "book_name": "以弗所书",
+          "chapter": 6,
+          "verse": 18,
+          "raw_text": "靠着圣灵，随时多方祷告祈求；并要在此儆醒不倦，为众圣徒祈求，",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B60-005-008",
+          "book_name": "1 Peter",
+          "chapter": 5,
+          "verse": 8,
+          "raw_text": "Be sober-minded; be watchful. Your adversary the devil prowls around like a roaring lion, seeking someone to devour.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B41-014-038",
+          "book_name": "Mark",
+          "chapter": 14,
+          "verse": 38,
+          "raw_text": "Watch and pray that you may not enter into temptation. The spirit indeed is willing, but the flesh is weak.\"",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B49-006-018",
+          "book_name": "Ephesians",
+          "chapter": 6,
+          "verse": 18,
+          "raw_text": "praying at all times in the Spirit, with all prayer and supplication. To that end keep alert with all perseverance, making supplication for all the saints,",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "amazed": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "wonder",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B19-139-014",
+          "book_name": "诗篇",
+          "chapter": 139,
+          "verse": 14,
+          "raw_text": "我要称谢你，因我受造，奇妙可畏；你的作为奇妙，这是我心深知道的。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-011-033",
+          "book_name": "罗马书",
+          "chapter": 11,
+          "verse": 33,
+          "raw_text": "深哉，神丰富的智慧和知识！他的判断何其难测！他的踪迹何其难寻！",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-008-004",
+          "book_name": "诗篇",
+          "chapter": 8,
+          "verse": 4,
+          "raw_text": "便说：人算甚麽，你竟顾念他？世人算甚麽，你竟眷顾他？",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B19-139-014",
+          "book_name": "Psalms",
+          "chapter": 139,
+          "verse": 14,
+          "raw_text": "I praise you, for I am fearfully and wonderfully made. Wonderful are your works; my soul knows it very well.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-011-033",
+          "book_name": "Romans",
+          "chapter": 11,
+          "verse": 33,
+          "raw_text": "Oh, the depth of the riches and wisdom and knowledge of God! How unsearchable are his judgments and how inscrutable his ways!",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-008-004",
+          "book_name": "Psalms",
+          "chapter": 8,
+          "verse": 4,
+          "raw_text": "what is man that you are mindful of him, and the son of man that you care for him?",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "bewildered": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "confusion",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B20-003-005",
+          "book_name": "箴言",
+          "chapter": 3,
+          "verse": 5,
+          "raw_text": "你要专心仰赖耶和华，不可倚靠自己的聪明，",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-025-004",
+          "book_name": "诗篇",
+          "chapter": 25,
+          "verse": 4,
+          "raw_text": "耶和华啊，求你将你的道指示我，将你的路教训我！",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B43-014-001",
+          "book_name": "约翰福音",
+          "chapter": 14,
+          "verse": 1,
+          "raw_text": "你们心里不要忧愁；你们信神，也当信我。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B20-003-005",
+          "book_name": "Proverbs",
+          "chapter": 3,
+          "verse": 5,
+          "raw_text": "Trust in the LORD with all your heart, and do not lean on your own understanding.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-025-004",
+          "book_name": "Psalms",
+          "chapter": 25,
+          "verse": 4,
+          "raw_text": "Make me to know your ways, O LORD; teach me your paths.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B43-014-001",
+          "book_name": "John",
+          "chapter": 14,
+          "verse": 1,
+          "raw_text": "\"Let not your hearts be troubled. Believe in God; believe also in me.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "embarrassed": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "exposed_identity",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B19-034-005",
+          "book_name": "诗篇",
+          "chapter": 34,
+          "verse": 5,
+          "raw_text": "凡仰望他的，便有光荣；他们的脸必不蒙羞。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-008-001",
+          "book_name": "罗马书",
+          "chapter": 8,
+          "verse": 1,
+          "raw_text": "如今，那些在基督耶稣里的就不定罪了。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B23-043-004",
+          "book_name": "以赛亚书",
+          "chapter": 43,
+          "verse": 4,
+          "raw_text": "因我看你为宝为尊；又因我爱你，所以我使人代替你，使列邦人替换你的生命。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B19-034-005",
+          "book_name": "Psalms",
+          "chapter": 34,
+          "verse": 5,
+          "raw_text": "Those who look to him are radiant, and their faces shall never be ashamed.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-008-001",
+          "book_name": "Romans",
+          "chapter": 8,
+          "verse": 1,
+          "raw_text": "There is therefore now no condemnation for those who are in Christ Jesus.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B23-043-004",
+          "book_name": "Isaiah",
+          "chapter": 43,
+          "verse": 4,
+          "raw_text": "Because you are precious in my eyes, and honored, and I love you, I give men in return for you, peoples in exchange for your life.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "infatuated": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "attachment",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B20-004-023",
+          "book_name": "箴言",
+          "chapter": 4,
+          "verse": 23,
+          "raw_text": "你要保守你心，胜过保守一切（或译：你要切切保守你心），因为一生的果效是由心发出。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B46-013-004",
+          "book_name": "哥林多前书",
+          "chapter": 13,
+          "verse": 4,
+          "raw_text": "爱是恒久忍耐，又有恩慈；爱是不嫉妒；爱是不自夸，不张狂，",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B59-003-016",
+          "book_name": "雅各书",
+          "chapter": 3,
+          "verse": 16,
+          "raw_text": "在何处有嫉妒、分争，就在何处有扰乱和各样的坏事。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B20-004-023",
+          "book_name": "Proverbs",
+          "chapter": 4,
+          "verse": 23,
+          "raw_text": "Keep your heart with all vigilance, for from it flow the springs of life.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B46-013-004",
+          "book_name": "1 Corinthians",
+          "chapter": 13,
+          "verse": 4,
+          "raw_text": "Love is patient and kind; love does not envy or boast; it is not arrogant",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B59-003-016",
+          "book_name": "James",
+          "chapter": 3,
+          "verse": 16,
+          "raw_text": "For where jealousy and selfish ambition exist, there will be disorder and every vile practice.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "nostalgic": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "memory",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B19-077-011",
+          "book_name": "诗篇",
+          "chapter": 77,
+          "verse": 11,
+          "raw_text": "我要提说耶和华所行的；我要记念你古时的奇事。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-143-005",
+          "book_name": "诗篇",
+          "chapter": 143,
+          "verse": 5,
+          "raw_text": "我追想古时之日，思想你的一切作为，默念你手的工作。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B42-002-019",
+          "book_name": "路加福音",
+          "chapter": 2,
+          "verse": 19,
+          "raw_text": "马利亚却把这一切的事存在心里，反复思想。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B19-077-011",
+          "book_name": "Psalms",
+          "chapter": 77,
+          "verse": 11,
+          "raw_text": "I will remember the deeds of the LORD; yes, I will remember your wonders of old.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-143-005",
+          "book_name": "Psalms",
+          "chapter": 143,
+          "verse": 5,
+          "raw_text": "I remember the days of old; I meditate on all that you have done; I ponder the work of your hands.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B42-002-019",
+          "book_name": "Luke",
+          "chapter": 2,
+          "verse": 19,
+          "raw_text": "But Mary treasured up all these things, pondering them in her heart.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "reflective": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "memory",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B19-077-011",
+          "book_name": "诗篇",
+          "chapter": 77,
+          "verse": 11,
+          "raw_text": "我要提说耶和华所行的；我要记念你古时的奇事。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-143-005",
+          "book_name": "诗篇",
+          "chapter": 143,
+          "verse": 5,
+          "raw_text": "我追想古时之日，思想你的一切作为，默念你手的工作。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B42-002-019",
+          "book_name": "路加福音",
+          "chapter": 2,
+          "verse": 19,
+          "raw_text": "马利亚却把这一切的事存在心里，反复思想。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B19-077-011",
+          "book_name": "Psalms",
+          "chapter": 77,
+          "verse": 11,
+          "raw_text": "I will remember the deeds of the LORD; yes, I will remember your wonders of old.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-143-005",
+          "book_name": "Psalms",
+          "chapter": 143,
+          "verse": 5,
+          "raw_text": "I remember the days of old; I meditate on all that you have done; I ponder the work of your hands.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B42-002-019",
+          "book_name": "Luke",
+          "chapter": 2,
+          "verse": 19,
+          "raw_text": "But Mary treasured up all these things, pondering them in her heart.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "self-conscious": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "exposed_identity",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B19-034-005",
+          "book_name": "诗篇",
+          "chapter": 34,
+          "verse": 5,
+          "raw_text": "凡仰望他的，便有光荣；他们的脸必不蒙羞。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-008-001",
+          "book_name": "罗马书",
+          "chapter": 8,
+          "verse": 1,
+          "raw_text": "如今，那些在基督耶稣里的就不定罪了。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B23-043-004",
+          "book_name": "以赛亚书",
+          "chapter": 43,
+          "verse": 4,
+          "raw_text": "因我看你为宝为尊；又因我爱你，所以我使人代替你，使列邦人替换你的生命。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B19-034-005",
+          "book_name": "Psalms",
+          "chapter": 34,
+          "verse": 5,
+          "raw_text": "Those who look to him are radiant, and their faces shall never be ashamed.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-008-001",
+          "book_name": "Romans",
+          "chapter": 8,
+          "verse": 1,
+          "raw_text": "There is therefore now no condemnation for those who are in Christ Jesus.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B23-043-004",
+          "book_name": "Isaiah",
+          "chapter": 43,
+          "verse": 4,
+          "raw_text": "Because you are precious in my eyes, and honored, and I love you, I give men in return for you, peoples in exchange for your life.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "surprised": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "wonder",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B19-139-014",
+          "book_name": "诗篇",
+          "chapter": 139,
+          "verse": 14,
+          "raw_text": "我要称谢你，因我受造，奇妙可畏；你的作为奇妙，这是我心深知道的。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-011-033",
+          "book_name": "罗马书",
+          "chapter": 11,
+          "verse": 33,
+          "raw_text": "深哉，神丰富的智慧和知识！他的判断何其难测！他的踪迹何其难寻！",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-008-004",
+          "book_name": "诗篇",
+          "chapter": 8,
+          "verse": 4,
+          "raw_text": "便说：人算甚麽，你竟顾念他？世人算甚麽，你竟眷顾他？",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B19-139-014",
+          "book_name": "Psalms",
+          "chapter": 139,
+          "verse": 14,
+          "raw_text": "I praise you, for I am fearfully and wonderfully made. Wonderful are your works; my soul knows it very well.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-011-033",
+          "book_name": "Romans",
+          "chapter": 11,
+          "verse": 33,
+          "raw_text": "Oh, the depth of the riches and wisdom and knowledge of God! How unsearchable are his judgments and how inscrutable his ways!",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-008-004",
+          "book_name": "Psalms",
+          "chapter": 8,
+          "verse": 4,
+          "raw_text": "what is man that you are mindful of him, and the son of man that you care for him?",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "unsettled": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "confusion",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B20-003-005",
+          "book_name": "箴言",
+          "chapter": 3,
+          "verse": 5,
+          "raw_text": "你要专心仰赖耶和华，不可倚靠自己的聪明，",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-025-004",
+          "book_name": "诗篇",
+          "chapter": 25,
+          "verse": 4,
+          "raw_text": "耶和华啊，求你将你的道指示我，将你的路教训我！",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B43-014-001",
+          "book_name": "约翰福音",
+          "chapter": 14,
+          "verse": 1,
+          "raw_text": "你们心里不要忧愁；你们信神，也当信我。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B20-003-005",
+          "book_name": "Proverbs",
+          "chapter": 3,
+          "verse": 5,
+          "raw_text": "Trust in the LORD with all your heart, and do not lean on your own understanding.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-025-004",
+          "book_name": "Psalms",
+          "chapter": 25,
+          "verse": 4,
+          "raw_text": "Make me to know your ways, O LORD; teach me your paths.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B43-014-001",
+          "book_name": "John",
+          "chapter": 14,
+          "verse": 1,
+          "raw_text": "\"Let not your hearts be troubled. Believe in God; believe also in me.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "vulnerable": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "exposed_identity",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B19-034-005",
+          "book_name": "诗篇",
+          "chapter": 34,
+          "verse": 5,
+          "raw_text": "凡仰望他的，便有光荣；他们的脸必不蒙羞。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-008-001",
+          "book_name": "罗马书",
+          "chapter": 8,
+          "verse": 1,
+          "raw_text": "如今，那些在基督耶稣里的就不定罪了。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B23-043-004",
+          "book_name": "以赛亚书",
+          "chapter": 43,
+          "verse": 4,
+          "raw_text": "因我看你为宝为尊；又因我爱你，所以我使人代替你，使列邦人替换你的生命。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B19-034-005",
+          "book_name": "Psalms",
+          "chapter": 34,
+          "verse": 5,
+          "raw_text": "Those who look to him are radiant, and their faces shall never be ashamed.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-008-001",
+          "book_name": "Romans",
+          "chapter": 8,
+          "verse": 1,
+          "raw_text": "There is therefore now no condemnation for those who are in Christ Jesus.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B23-043-004",
+          "book_name": "Isaiah",
+          "chapter": 43,
+          "verse": 4,
+          "raw_text": "Because you are precious in my eyes, and honored, and I love you, I give men in return for you, peoples in exchange for your life.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "amused": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "joy",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B19-016-011",
+          "book_name": "诗篇",
+          "chapter": 16,
+          "verse": 11,
+          "raw_text": "你必将生命的道路指示我。在你面前有满足的喜乐；在你右手中有永远的福乐。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-004-004",
+          "book_name": "腓立比书",
+          "chapter": 4,
+          "verse": 4,
+          "raw_text": "你们要靠主常常喜乐。我再说，你们要喜乐。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-015-013",
+          "book_name": "罗马书",
+          "chapter": 15,
+          "verse": 13,
+          "raw_text": "但愿使人有盼望的神，因信将诸般的喜乐、平安充满你们的心，使你们藉着圣灵的能力大有盼望。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B19-016-011",
+          "book_name": "Psalms",
+          "chapter": 16,
+          "verse": 11,
+          "raw_text": "You make known to me the path of life; in your presence there is fullness of joy; at your right hand are pleasures forevermore.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-004-004",
+          "book_name": "Philippians",
+          "chapter": 4,
+          "verse": 4,
+          "raw_text": "Rejoice in the Lord always; again I will say, Rejoice.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-015-013",
+          "book_name": "Romans",
+          "chapter": 15,
+          "verse": 13,
+          "raw_text": "May the God of hope fill you with all joy and peace in believing, so that by the power of the Holy Spirit you may abound in hope.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "disoriented": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "confusion",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B20-003-005",
+          "book_name": "箴言",
+          "chapter": 3,
+          "verse": 5,
+          "raw_text": "你要专心仰赖耶和华，不可倚靠自己的聪明，",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-025-004",
+          "book_name": "诗篇",
+          "chapter": 25,
+          "verse": 4,
+          "raw_text": "耶和华啊，求你将你的道指示我，将你的路教训我！",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B43-014-001",
+          "book_name": "约翰福音",
+          "chapter": 14,
+          "verse": 1,
+          "raw_text": "你们心里不要忧愁；你们信神，也当信我。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B20-003-005",
+          "book_name": "Proverbs",
+          "chapter": 3,
+          "verse": 5,
+          "raw_text": "Trust in the LORD with all your heart, and do not lean on your own understanding.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-025-004",
+          "book_name": "Psalms",
+          "chapter": 25,
+          "verse": 4,
+          "raw_text": "Make me to know your ways, O LORD; teach me your paths.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B43-014-001",
+          "book_name": "John",
+          "chapter": 14,
+          "verse": 1,
+          "raw_text": "\"Let not your hearts be troubled. Believe in God; believe also in me.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "proud": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "pride",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B48-006-014",
+          "book_name": "加拉太书",
+          "chapter": 6,
+          "verse": 14,
+          "raw_text": "但我断不以别的夸口，只夸我们主耶稣基督的十字架；因这十字架，就我而论，世界已经钉在十字架上；就世界而论，我已经钉在十字架上。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B46-001-031",
+          "book_name": "哥林多前书",
+          "chapter": 1,
+          "verse": 31,
+          "raw_text": "如经上所记：夸口的，当指着主夸口。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B59-004-006",
+          "book_name": "雅各书",
+          "chapter": 4,
+          "verse": 6,
+          "raw_text": "但他赐更多的恩典，所以经上说：神阻挡骄傲的人，赐恩给谦卑的人。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B48-006-014",
+          "book_name": "Galatians",
+          "chapter": 6,
+          "verse": 14,
+          "raw_text": "But far be it from me to boast except in the cross of our Lord Jesus Christ, by which the world has been crucified to me, and I to the world.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B46-001-031",
+          "book_name": "1 Corinthians",
+          "chapter": 1,
+          "verse": 31,
+          "raw_text": "Therefore, as it is written, \"Let the one who boasts, boast in the Lord.\"",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B59-004-006",
+          "book_name": "James",
+          "chapter": 4,
+          "verse": 6,
+          "raw_text": "But he gives more grace. Therefore it says, \"God opposes the proud, but gives grace to the humble.\"",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "shocked": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "wonder",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B19-139-014",
+          "book_name": "诗篇",
+          "chapter": 139,
+          "verse": 14,
+          "raw_text": "我要称谢你，因我受造，奇妙可畏；你的作为奇妙，这是我心深知道的。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-011-033",
+          "book_name": "罗马书",
+          "chapter": 11,
+          "verse": 33,
+          "raw_text": "深哉，神丰富的智慧和知识！他的判断何其难测！他的踪迹何其难寻！",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-008-004",
+          "book_name": "诗篇",
+          "chapter": 8,
+          "verse": 4,
+          "raw_text": "便说：人算甚麽，你竟顾念他？世人算甚麽，你竟眷顾他？",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B19-139-014",
+          "book_name": "Psalms",
+          "chapter": 139,
+          "verse": 14,
+          "raw_text": "I praise you, for I am fearfully and wonderfully made. Wonderful are your works; my soul knows it very well.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-011-033",
+          "book_name": "Romans",
+          "chapter": 11,
+          "verse": 33,
+          "raw_text": "Oh, the depth of the riches and wisdom and knowledge of God! How unsearchable are his judgments and how inscrutable his ways!",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-008-004",
+          "book_name": "Psalms",
+          "chapter": 8,
+          "verse": 4,
+          "raw_text": "what is man that you are mindful of him, and the son of man that you care for him?",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "ashamed": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "exposed_identity",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B19-034-005",
+          "book_name": "诗篇",
+          "chapter": 34,
+          "verse": 5,
+          "raw_text": "凡仰望他的，便有光荣；他们的脸必不蒙羞。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-008-001",
+          "book_name": "罗马书",
+          "chapter": 8,
+          "verse": 1,
+          "raw_text": "如今，那些在基督耶稣里的就不定罪了。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B23-043-004",
+          "book_name": "以赛亚书",
+          "chapter": 43,
+          "verse": 4,
+          "raw_text": "因我看你为宝为尊；又因我爱你，所以我使人代替你，使列邦人替换你的生命。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B19-034-005",
+          "book_name": "Psalms",
+          "chapter": 34,
+          "verse": 5,
+          "raw_text": "Those who look to him are radiant, and their faces shall never be ashamed.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-008-001",
+          "book_name": "Romans",
+          "chapter": 8,
+          "verse": 1,
+          "raw_text": "There is therefore now no condemnation for those who are in Christ Jesus.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B23-043-004",
+          "book_name": "Isaiah",
+          "chapter": 43,
+          "verse": 4,
+          "raw_text": "Because you are precious in my eyes, and honored, and I love you, I give men in return for you, peoples in exchange for your life.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "bitter": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "resentment",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B58-012-015",
+          "book_name": "希伯来书",
+          "chapter": 12,
+          "verse": 15,
+          "raw_text": "又要谨慎，恐怕有人失了神的恩；恐怕有毒根生出来扰乱你们，因此叫众人沾染污秽；",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B49-004-031",
+          "book_name": "以弗所书",
+          "chapter": 4,
+          "verse": 31,
+          "raw_text": "一切苦毒、恼恨、忿怒、嚷闹、毁谤，并一切的恶毒（或作：阴毒），都当从你们中间除掉；",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B51-003-013",
+          "book_name": "歌罗西书",
+          "chapter": 3,
+          "verse": 13,
+          "raw_text": "倘若这人与那人有嫌隙，总要彼此包容，彼此饶恕；主怎样饶恕了你们，你们也要怎样饶恕人。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B58-012-015",
+          "book_name": "Hebrews",
+          "chapter": 12,
+          "verse": 15,
+          "raw_text": "See to it that no one fails to obtain the grace of God; that no \"root of bitterness\" springs up and causes trouble, and by it many become defiled;",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B49-004-031",
+          "book_name": "Ephesians",
+          "chapter": 4,
+          "verse": 31,
+          "raw_text": "Let all bitterness and wrath and anger and clamor and slander be put away from you, along with all malice.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B51-003-013",
+          "book_name": "Colossians",
+          "chapter": 3,
+          "verse": 13,
+          "raw_text": "bearing with one another and, if one has a complaint against another, forgiving each other; as the Lord has forgiven you, so you also must forgive.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "bored": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "boredom",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B51-003-023",
+          "book_name": "歌罗西书",
+          "chapter": 3,
+          "verse": 23,
+          "raw_text": "无论做甚麽，都要从心里做，像是给主做的，不是给人做的，",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B21-009-010",
+          "book_name": "传道书",
+          "chapter": 9,
+          "verse": 10,
+          "raw_text": "凡你手所当做的事要尽力去做；因为在你所必去的阴间没有工作，没有谋算，没有知识，也没有智慧。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-012-011",
+          "book_name": "罗马书",
+          "chapter": 12,
+          "verse": 11,
+          "raw_text": "殷勤不可懒惰。要心里火热，常常服事主。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B51-003-023",
+          "book_name": "Colossians",
+          "chapter": 3,
+          "verse": 23,
+          "raw_text": "Whatever you do, work heartily, as for the Lord and not for men,",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B21-009-010",
+          "book_name": "Ecclesiastes",
+          "chapter": 9,
+          "verse": 10,
+          "raw_text": "Whatever your hand finds to do, do it with your might, for there is no work or thought or knowledge or wisdom in Sheol, to which you are going.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-012-011",
+          "book_name": "Romans",
+          "chapter": 12,
+          "verse": 11,
+          "raw_text": "Do not be slothful in zeal, be fervent in spirit, serve the Lord.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "brooding": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "brooding",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B50-004-008",
+          "book_name": "腓立比书",
+          "chapter": 4,
+          "verse": 8,
+          "raw_text": "弟兄们，我还有未尽的话：凡是真实的、可敬的、公义的、清洁的、可爱的、有美名的，若有甚麽德行，若有甚麽称赞，这些事你们都要思念。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B47-010-005",
+          "book_name": "哥林多后书",
+          "chapter": 10,
+          "verse": 5,
+          "raw_text": "将各样的计谋，各样拦阻人认识神的那些自高之事，一概攻破了，又将人所有的心意夺回，使他都顺服基督。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-139-023",
+          "book_name": "诗篇",
+          "chapter": 139,
+          "verse": 23,
+          "raw_text": "神啊，求你鉴察我，知道我的心思，试炼我，知道我的意念，",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B50-004-008",
+          "book_name": "Philippians",
+          "chapter": 4,
+          "verse": 8,
+          "raw_text": "Finally, brothers, whatever is true, whatever is honorable, whatever is just, whatever is pure, whatever is lovely, whatever is commendable, if there is any excellence, if there is anything worthy of praise, think about these things.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B47-010-005",
+          "book_name": "2 Corinthians",
+          "chapter": 10,
+          "verse": 5,
+          "raw_text": "We destroy arguments and every lofty opinion raised against the knowledge of God, and take every thought captive to obey Christ,",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-139-023",
+          "book_name": "Psalms",
+          "chapter": 139,
+          "verse": 23,
+          "raw_text": "Search me, O God, and know my heart! Try me and know my thoughts!",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "depressed": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "sadness",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B19-042-011",
+          "book_name": "诗篇",
+          "chapter": 42,
+          "verse": 11,
+          "raw_text": "我的心哪，你为何忧闷？为何在我里面烦躁？应当仰望神，因我还要称赞他。他是我脸上的光荣（原文是帮助），是我的神。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-034-018",
+          "book_name": "诗篇",
+          "chapter": 34,
+          "verse": 18,
+          "raw_text": "耶和华靠近伤心的人，拯救灵性痛悔的人。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B40-005-004",
+          "book_name": "马太福音",
+          "chapter": 5,
+          "verse": 4,
+          "raw_text": "哀恸的人有福了！因为他们必得安慰。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B19-042-011",
+          "book_name": "Psalms",
+          "chapter": 42,
+          "verse": 11,
+          "raw_text": "Why are you cast down, O my soul, and why are you in turmoil within me? Hope in God; for I shall again praise him, my salvation and my God.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-034-018",
+          "book_name": "Psalms",
+          "chapter": 34,
+          "verse": 18,
+          "raw_text": "The LORD is near to the brokenhearted and saves the crushed in spirit.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B40-005-004",
+          "book_name": "Matthew",
+          "chapter": 5,
+          "verse": 4,
+          "raw_text": "\"Blessed are those who mourn, for they shall be comforted.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "desperate": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "despair",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B19-040-002",
+          "book_name": "诗篇",
+          "chapter": 40,
+          "verse": 2,
+          "raw_text": "他从祸坑里，从淤泥中，把我拉上来，使我的脚立在磐石上，使我脚步稳当。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-130-001",
+          "book_name": "诗篇",
+          "chapter": 130,
+          "verse": 1,
+          "raw_text": "（上行之诗。）耶和华啊，我从深处向你求告！",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B47-004-008",
+          "book_name": "哥林多后书",
+          "chapter": 4,
+          "verse": 8,
+          "raw_text": "我们四面受敌，却不被困住；心里作难，却不至失望；",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B19-040-002",
+          "book_name": "Psalms",
+          "chapter": 40,
+          "verse": 2,
+          "raw_text": "He drew me up from the pit of destruction, out of the miry bog, and set my feet upon a rock, making my steps secure.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-130-001",
+          "book_name": "Psalms",
+          "chapter": 130,
+          "verse": 1,
+          "raw_text": "Out of the depths I cry to you, O LORD!",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B47-004-008",
+          "book_name": "2 Corinthians",
+          "chapter": 4,
+          "verse": 8,
+          "raw_text": "We are afflicted in every way, but not crushed; perplexed, but not driven to despair;",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "dispirited": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "sadness",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B19-042-011",
+          "book_name": "诗篇",
+          "chapter": 42,
+          "verse": 11,
+          "raw_text": "我的心哪，你为何忧闷？为何在我里面烦躁？应当仰望神，因我还要称赞他。他是我脸上的光荣（原文是帮助），是我的神。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-034-018",
+          "book_name": "诗篇",
+          "chapter": 34,
+          "verse": 18,
+          "raw_text": "耶和华靠近伤心的人，拯救灵性痛悔的人。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B40-005-004",
+          "book_name": "马太福音",
+          "chapter": 5,
+          "verse": 4,
+          "raw_text": "哀恸的人有福了！因为他们必得安慰。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B19-042-011",
+          "book_name": "Psalms",
+          "chapter": 42,
+          "verse": 11,
+          "raw_text": "Why are you cast down, O my soul, and why are you in turmoil within me? Hope in God; for I shall again praise him, my salvation and my God.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-034-018",
+          "book_name": "Psalms",
+          "chapter": 34,
+          "verse": 18,
+          "raw_text": "The LORD is near to the brokenhearted and saves the crushed in spirit.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B40-005-004",
+          "book_name": "Matthew",
+          "chapter": 5,
+          "verse": 4,
+          "raw_text": "\"Blessed are those who mourn, for they shall be comforted.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "grief-stricken": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "grief",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B19-147-003",
+          "book_name": "诗篇",
+          "chapter": 147,
+          "verse": 3,
+          "raw_text": "他医好伤心的人，裹好他们的伤处。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B43-011-035",
+          "book_name": "约翰福音",
+          "chapter": 11,
+          "verse": 35,
+          "raw_text": "耶稣哭了。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B66-021-004",
+          "book_name": "启示录",
+          "chapter": 21,
+          "verse": 4,
+          "raw_text": "神要擦去他们一切的眼泪；不再有死亡，也不再有悲哀、哭号、疼痛，因为以前的事都过去了。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B19-147-003",
+          "book_name": "Psalms",
+          "chapter": 147,
+          "verse": 3,
+          "raw_text": "He heals the brokenhearted and binds up their wounds.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B43-011-035",
+          "book_name": "John",
+          "chapter": 11,
+          "verse": 35,
+          "raw_text": "Jesus wept.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B66-021-004",
+          "book_name": "Revelation",
+          "chapter": 21,
+          "verse": 4,
+          "raw_text": "He will wipe away every tear from their eyes, and death shall be no more, neither shall there be mourning nor crying nor pain anymore, for the former things have passed away.\"",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "guilty": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "guilt",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B62-001-009",
+          "book_name": "约翰一书",
+          "chapter": 1,
+          "verse": 9,
+          "raw_text": "我们若认自己的罪，神是信实的，是公义的，必要赦免我们的罪，洗净我们一切的不义。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B47-007-010",
+          "book_name": "哥林多后书",
+          "chapter": 7,
+          "verse": 10,
+          "raw_text": "因为依着神的意思忧愁，就生出没有後悔的懊悔来。以致得救；但世俗的忧愁是叫人死。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-051-017",
+          "book_name": "诗篇",
+          "chapter": 51,
+          "verse": 17,
+          "raw_text": "神所要的祭就是忧伤的灵；神啊，忧伤痛悔的心，你必不轻看。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B62-001-009",
+          "book_name": "1 John",
+          "chapter": 1,
+          "verse": 9,
+          "raw_text": "If we confess our sins, he is faithful and just to forgive us our sins and to cleanse us from all unrighteousness.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B47-007-010",
+          "book_name": "2 Corinthians",
+          "chapter": 7,
+          "verse": 10,
+          "raw_text": "For godly grief produces a repentance that leads to salvation without regret, whereas worldly grief produces death.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-051-017",
+          "book_name": "Psalms",
+          "chapter": 51,
+          "verse": 17,
+          "raw_text": "The sacrifices of God are a broken spirit; a broken and contrite heart, O God, you will not despise.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "heartbroken": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "grief",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B19-147-003",
+          "book_name": "诗篇",
+          "chapter": 147,
+          "verse": 3,
+          "raw_text": "他医好伤心的人，裹好他们的伤处。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B43-011-035",
+          "book_name": "约翰福音",
+          "chapter": 11,
+          "verse": 35,
+          "raw_text": "耶稣哭了。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B66-021-004",
+          "book_name": "启示录",
+          "chapter": 21,
+          "verse": 4,
+          "raw_text": "神要擦去他们一切的眼泪；不再有死亡，也不再有悲哀、哭号、疼痛，因为以前的事都过去了。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B19-147-003",
+          "book_name": "Psalms",
+          "chapter": 147,
+          "verse": 3,
+          "raw_text": "He heals the brokenhearted and binds up their wounds.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B43-011-035",
+          "book_name": "John",
+          "chapter": 11,
+          "verse": 35,
+          "raw_text": "Jesus wept.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B66-021-004",
+          "book_name": "Revelation",
+          "chapter": 21,
+          "verse": 4,
+          "raw_text": "He will wipe away every tear from their eyes, and death shall be no more, neither shall there be mourning nor crying nor pain anymore, for the former things have passed away.\"",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "hurt": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "grief",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B19-147-003",
+          "book_name": "诗篇",
+          "chapter": 147,
+          "verse": 3,
+          "raw_text": "他医好伤心的人，裹好他们的伤处。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B43-011-035",
+          "book_name": "约翰福音",
+          "chapter": 11,
+          "verse": 35,
+          "raw_text": "耶稣哭了。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B66-021-004",
+          "book_name": "启示录",
+          "chapter": 21,
+          "verse": 4,
+          "raw_text": "神要擦去他们一切的眼泪；不再有死亡，也不再有悲哀、哭号、疼痛，因为以前的事都过去了。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B19-147-003",
+          "book_name": "Psalms",
+          "chapter": 147,
+          "verse": 3,
+          "raw_text": "He heals the brokenhearted and binds up their wounds.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B43-011-035",
+          "book_name": "John",
+          "chapter": 11,
+          "verse": 35,
+          "raw_text": "Jesus wept.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B66-021-004",
+          "book_name": "Revelation",
+          "chapter": 21,
+          "verse": 4,
+          "raw_text": "He will wipe away every tear from their eyes, and death shall be no more, neither shall there be mourning nor crying nor pain anymore, for the former things have passed away.\"",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "listless": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "fatigue",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B40-011-028",
+          "book_name": "马太福音",
+          "chapter": 11,
+          "verse": 28,
+          "raw_text": "凡劳苦担重担的人可以到我这里来，我就使你们得安息。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B23-040-029",
+          "book_name": "以赛亚书",
+          "chapter": 40,
+          "verse": 29,
+          "raw_text": "疲乏的，他赐能力；软弱的，他加力量。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-061-002",
+          "book_name": "诗篇",
+          "chapter": 61,
+          "verse": 2,
+          "raw_text": "我心里发昏的时候，我要从地极求告你。求你领我到那比我更高的磐石！",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B40-011-028",
+          "book_name": "Matthew",
+          "chapter": 11,
+          "verse": 28,
+          "raw_text": "Come to me, all who labor and are heavy laden, and I will give you rest.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B23-040-029",
+          "book_name": "Isaiah",
+          "chapter": 40,
+          "verse": 29,
+          "raw_text": "He gives power to the faint, and to him who has no might he increases strength.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-061-002",
+          "book_name": "Psalms",
+          "chapter": 61,
+          "verse": 2,
+          "raw_text": "from the end of the earth I call to you when my heart is faint. Lead me to the rock that is higher than I,",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "lonely": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "loneliness",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B19-027-010",
+          "book_name": "诗篇",
+          "chapter": 27,
+          "verse": 10,
+          "raw_text": "我父母离弃我，耶和华必收留我。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-068-006",
+          "book_name": "诗篇",
+          "chapter": 68,
+          "verse": 6,
+          "raw_text": "神叫孤独的有家，使被囚的出来享福；惟有悖逆的住在乾燥之地。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B58-013-005",
+          "book_name": "希伯来书",
+          "chapter": 13,
+          "verse": 5,
+          "raw_text": "你们存心不可贪爱钱财，要以自己所有的为足；因为主曾说：我总不撇下你，也不丢弃你。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B19-027-010",
+          "book_name": "Psalms",
+          "chapter": 27,
+          "verse": 10,
+          "raw_text": "For my father and my mother have forsaken me, but the LORD will take me in.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-068-006",
+          "book_name": "Psalms",
+          "chapter": 68,
+          "verse": 6,
+          "raw_text": "God settles the solitary in a home; he leads out the prisoners to prosperity, but the rebellious dwell in a parched land.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B58-013-005",
+          "book_name": "Hebrews",
+          "chapter": 13,
+          "verse": 5,
+          "raw_text": "Keep your life free from love of money, and be content with what you have, for he has said, \"I will never leave you nor forsake you.\"",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "miserable": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "sadness",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B19-042-011",
+          "book_name": "诗篇",
+          "chapter": 42,
+          "verse": 11,
+          "raw_text": "我的心哪，你为何忧闷？为何在我里面烦躁？应当仰望神，因我还要称赞他。他是我脸上的光荣（原文是帮助），是我的神。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-034-018",
+          "book_name": "诗篇",
+          "chapter": 34,
+          "verse": 18,
+          "raw_text": "耶和华靠近伤心的人，拯救灵性痛悔的人。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B40-005-004",
+          "book_name": "马太福音",
+          "chapter": 5,
+          "verse": 4,
+          "raw_text": "哀恸的人有福了！因为他们必得安慰。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B19-042-011",
+          "book_name": "Psalms",
+          "chapter": 42,
+          "verse": 11,
+          "raw_text": "Why are you cast down, O my soul, and why are you in turmoil within me? Hope in God; for I shall again praise him, my salvation and my God.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-034-018",
+          "book_name": "Psalms",
+          "chapter": 34,
+          "verse": 18,
+          "raw_text": "The LORD is near to the brokenhearted and saves the crushed in spirit.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B40-005-004",
+          "book_name": "Matthew",
+          "chapter": 5,
+          "verse": 4,
+          "raw_text": "\"Blessed are those who mourn, for they shall be comforted.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "regretful": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "guilt",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B62-001-009",
+          "book_name": "约翰一书",
+          "chapter": 1,
+          "verse": 9,
+          "raw_text": "我们若认自己的罪，神是信实的，是公义的，必要赦免我们的罪，洗净我们一切的不义。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B47-007-010",
+          "book_name": "哥林多后书",
+          "chapter": 7,
+          "verse": 10,
+          "raw_text": "因为依着神的意思忧愁，就生出没有後悔的懊悔来。以致得救；但世俗的忧愁是叫人死。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-051-017",
+          "book_name": "诗篇",
+          "chapter": 51,
+          "verse": 17,
+          "raw_text": "神所要的祭就是忧伤的灵；神啊，忧伤痛悔的心，你必不轻看。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B62-001-009",
+          "book_name": "1 John",
+          "chapter": 1,
+          "verse": 9,
+          "raw_text": "If we confess our sins, he is faithful and just to forgive us our sins and to cleanse us from all unrighteousness.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B47-007-010",
+          "book_name": "2 Corinthians",
+          "chapter": 7,
+          "verse": 10,
+          "raw_text": "For godly grief produces a repentance that leads to salvation without regret, whereas worldly grief produces death.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-051-017",
+          "book_name": "Psalms",
+          "chapter": 51,
+          "verse": 17,
+          "raw_text": "The sacrifices of God are a broken spirit; a broken and contrite heart, O God, you will not despise.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "remorseful": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "guilt",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B62-001-009",
+          "book_name": "约翰一书",
+          "chapter": 1,
+          "verse": 9,
+          "raw_text": "我们若认自己的罪，神是信实的，是公义的，必要赦免我们的罪，洗净我们一切的不义。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B47-007-010",
+          "book_name": "哥林多后书",
+          "chapter": 7,
+          "verse": 10,
+          "raw_text": "因为依着神的意思忧愁，就生出没有後悔的懊悔来。以致得救；但世俗的忧愁是叫人死。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-051-017",
+          "book_name": "诗篇",
+          "chapter": 51,
+          "verse": 17,
+          "raw_text": "神所要的祭就是忧伤的灵；神啊，忧伤痛悔的心，你必不轻看。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B62-001-009",
+          "book_name": "1 John",
+          "chapter": 1,
+          "verse": 9,
+          "raw_text": "If we confess our sins, he is faithful and just to forgive us our sins and to cleanse us from all unrighteousness.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B47-007-010",
+          "book_name": "2 Corinthians",
+          "chapter": 7,
+          "verse": 10,
+          "raw_text": "For godly grief produces a repentance that leads to salvation without regret, whereas worldly grief produces death.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-051-017",
+          "book_name": "Psalms",
+          "chapter": 51,
+          "verse": 17,
+          "raw_text": "The sacrifices of God are a broken spirit; a broken and contrite heart, O God, you will not despise.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "sad": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "sadness",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B19-042-011",
+          "book_name": "诗篇",
+          "chapter": 42,
+          "verse": 11,
+          "raw_text": "我的心哪，你为何忧闷？为何在我里面烦躁？应当仰望神，因我还要称赞他。他是我脸上的光荣（原文是帮助），是我的神。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-034-018",
+          "book_name": "诗篇",
+          "chapter": 34,
+          "verse": 18,
+          "raw_text": "耶和华靠近伤心的人，拯救灵性痛悔的人。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B40-005-004",
+          "book_name": "马太福音",
+          "chapter": 5,
+          "verse": 4,
+          "raw_text": "哀恸的人有福了！因为他们必得安慰。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B19-042-011",
+          "book_name": "Psalms",
+          "chapter": 42,
+          "verse": 11,
+          "raw_text": "Why are you cast down, O my soul, and why are you in turmoil within me? Hope in God; for I shall again praise him, my salvation and my God.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-034-018",
+          "book_name": "Psalms",
+          "chapter": 34,
+          "verse": 18,
+          "raw_text": "The LORD is near to the brokenhearted and saves the crushed in spirit.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B40-005-004",
+          "book_name": "Matthew",
+          "chapter": 5,
+          "verse": 4,
+          "raw_text": "\"Blessed are those who mourn, for they shall be comforted.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "sorry": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "guilt",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B62-001-009",
+          "book_name": "约翰一书",
+          "chapter": 1,
+          "verse": 9,
+          "raw_text": "我们若认自己的罪，神是信实的，是公义的，必要赦免我们的罪，洗净我们一切的不义。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B47-007-010",
+          "book_name": "哥林多后书",
+          "chapter": 7,
+          "verse": 10,
+          "raw_text": "因为依着神的意思忧愁，就生出没有後悔的懊悔来。以致得救；但世俗的忧愁是叫人死。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-051-017",
+          "book_name": "诗篇",
+          "chapter": 51,
+          "verse": 17,
+          "raw_text": "神所要的祭就是忧伤的灵；神啊，忧伤痛悔的心，你必不轻看。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B62-001-009",
+          "book_name": "1 John",
+          "chapter": 1,
+          "verse": 9,
+          "raw_text": "If we confess our sins, he is faithful and just to forgive us our sins and to cleanse us from all unrighteousness.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B47-007-010",
+          "book_name": "2 Corinthians",
+          "chapter": 7,
+          "verse": 10,
+          "raw_text": "For godly grief produces a repentance that leads to salvation without regret, whereas worldly grief produces death.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-051-017",
+          "book_name": "Psalms",
+          "chapter": 51,
+          "verse": 17,
+          "raw_text": "The sacrifices of God are a broken spirit; a broken and contrite heart, O God, you will not despise.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "tired": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "fatigue",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B40-011-028",
+          "book_name": "马太福音",
+          "chapter": 11,
+          "verse": 28,
+          "raw_text": "凡劳苦担重担的人可以到我这里来，我就使你们得安息。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B23-040-029",
+          "book_name": "以赛亚书",
+          "chapter": 40,
+          "verse": 29,
+          "raw_text": "疲乏的，他赐能力；软弱的，他加力量。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-061-002",
+          "book_name": "诗篇",
+          "chapter": 61,
+          "verse": 2,
+          "raw_text": "我心里发昏的时候，我要从地极求告你。求你领我到那比我更高的磐石！",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B40-011-028",
+          "book_name": "Matthew",
+          "chapter": 11,
+          "verse": 28,
+          "raw_text": "Come to me, all who labor and are heavy laden, and I will give you rest.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B23-040-029",
+          "book_name": "Isaiah",
+          "chapter": 40,
+          "verse": 29,
+          "raw_text": "He gives power to the faint, and to him who has no might he increases strength.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-061-002",
+          "book_name": "Psalms",
+          "chapter": 61,
+          "verse": 2,
+          "raw_text": "from the end of the earth I call to you when my heart is faint. Lead me to the rock that is higher than I,",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "troubled": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "confusion",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B20-003-005",
+          "book_name": "箴言",
+          "chapter": 3,
+          "verse": 5,
+          "raw_text": "你要专心仰赖耶和华，不可倚靠自己的聪明，",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-025-004",
+          "book_name": "诗篇",
+          "chapter": 25,
+          "verse": 4,
+          "raw_text": "耶和华啊，求你将你的道指示我，将你的路教训我！",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B43-014-001",
+          "book_name": "约翰福音",
+          "chapter": 14,
+          "verse": 1,
+          "raw_text": "你们心里不要忧愁；你们信神，也当信我。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B20-003-005",
+          "book_name": "Proverbs",
+          "chapter": 3,
+          "verse": 5,
+          "raw_text": "Trust in the LORD with all your heart, and do not lean on your own understanding.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-025-004",
+          "book_name": "Psalms",
+          "chapter": 25,
+          "verse": 4,
+          "raw_text": "Make me to know your ways, O LORD; teach me your paths.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B43-014-001",
+          "book_name": "John",
+          "chapter": 14,
+          "verse": 1,
+          "raw_text": "\"Let not your hearts be troubled. Believe in God; believe also in me.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "weary": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "fatigue",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B40-011-028",
+          "book_name": "马太福音",
+          "chapter": 11,
+          "verse": 28,
+          "raw_text": "凡劳苦担重担的人可以到我这里来，我就使你们得安息。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B23-040-029",
+          "book_name": "以赛亚书",
+          "chapter": 40,
+          "verse": 29,
+          "raw_text": "疲乏的，他赐能力；软弱的，他加力量。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-061-002",
+          "book_name": "诗篇",
+          "chapter": 61,
+          "verse": 2,
+          "raw_text": "我心里发昏的时候，我要从地极求告你。求你领我到那比我更高的磐石！",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B40-011-028",
+          "book_name": "Matthew",
+          "chapter": 11,
+          "verse": 28,
+          "raw_text": "Come to me, all who labor and are heavy laden, and I will give you rest.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B23-040-029",
+          "book_name": "Isaiah",
+          "chapter": 40,
+          "verse": 29,
+          "raw_text": "He gives power to the faint, and to him who has no might he increases strength.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-061-002",
+          "book_name": "Psalms",
+          "chapter": 61,
+          "verse": 2,
+          "raw_text": "from the end of the earth I call to you when my heart is faint. Lead me to the rock that is higher than I,",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "worthless": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "exposed_identity",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B19-034-005",
+          "book_name": "诗篇",
+          "chapter": 34,
+          "verse": 5,
+          "raw_text": "凡仰望他的，便有光荣；他们的脸必不蒙羞。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-008-001",
+          "book_name": "罗马书",
+          "chapter": 8,
+          "verse": 1,
+          "raw_text": "如今，那些在基督耶稣里的就不定罪了。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B23-043-004",
+          "book_name": "以赛亚书",
+          "chapter": 43,
+          "verse": 4,
+          "raw_text": "因我看你为宝为尊；又因我爱你，所以我使人代替你，使列邦人替换你的生命。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B19-034-005",
+          "book_name": "Psalms",
+          "chapter": 34,
+          "verse": 5,
+          "raw_text": "Those who look to him are radiant, and their faces shall never be ashamed.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-008-001",
+          "book_name": "Romans",
+          "chapter": 8,
+          "verse": 1,
+          "raw_text": "There is therefore now no condemnation for those who are in Christ Jesus.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B23-043-004",
+          "book_name": "Isaiah",
+          "chapter": 43,
+          "verse": 4,
+          "raw_text": "Because you are precious in my eyes, and honored, and I love you, I give men in return for you, peoples in exchange for your life.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "afraid": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "fear",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B23-041-010",
+          "book_name": "以赛亚书",
+          "chapter": 41,
+          "verse": 10,
+          "raw_text": "你不要害怕，因为我与你同在；不要惊惶，因为我是你的神。我必坚固你，我必帮助你；我必用我公义的右手扶持你。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-004-006",
+          "book_name": "腓立比书",
+          "chapter": 4,
+          "verse": 6,
+          "raw_text": "应当一无挂虑，只要凡事藉着祷告、祈求，和感谢，将你们所要的告诉神。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B60-005-007",
+          "book_name": "彼得前书",
+          "chapter": 5,
+          "verse": 7,
+          "raw_text": "你们要将一切的忧虑卸给神，因为他顾念你们。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B23-041-010",
+          "book_name": "Isaiah",
+          "chapter": 41,
+          "verse": 10,
+          "raw_text": "fear not, for I am with you; be not dismayed, for I am your God; I will strengthen you, I will help you, I will uphold you with my righteous right hand.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-004-006",
+          "book_name": "Philippians",
+          "chapter": 4,
+          "verse": 6,
+          "raw_text": "do not be anxious about anything, but in everything by prayer and supplication with thanksgiving let your requests be made known to God.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B60-005-007",
+          "book_name": "1 Peter",
+          "chapter": 5,
+          "verse": 7,
+          "raw_text": "casting all your anxieties on him, because he cares for you.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "alarmed": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "panic",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B19-056-003",
+          "book_name": "诗篇",
+          "chapter": 56,
+          "verse": 3,
+          "raw_text": "我惧怕的时候要倚靠你。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-046-002",
+          "book_name": "诗篇",
+          "chapter": 46,
+          "verse": 2,
+          "raw_text": "所以，地虽改变，山虽摇动到海心，",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B41-004-040",
+          "book_name": "马可福音",
+          "chapter": 4,
+          "verse": 40,
+          "raw_text": "耶稣对他们说：为甚麽胆怯？你们还没有信心麽？",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B19-056-003",
+          "book_name": "Psalms",
+          "chapter": 56,
+          "verse": 3,
+          "raw_text": "When I am afraid, I put my trust in you.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-046-002",
+          "book_name": "Psalms",
+          "chapter": 46,
+          "verse": 2,
+          "raw_text": "Therefore we will not fear though the earth gives way, though the mountains be moved into the heart of the sea,",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B41-004-040",
+          "book_name": "Mark",
+          "chapter": 4,
+          "verse": 40,
+          "raw_text": "He said to them, \"Why are you so afraid? Have you still no faith?\"",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "anxious": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "fear",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B23-041-010",
+          "book_name": "以赛亚书",
+          "chapter": 41,
+          "verse": 10,
+          "raw_text": "你不要害怕，因为我与你同在；不要惊惶，因为我是你的神。我必坚固你，我必帮助你；我必用我公义的右手扶持你。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-004-006",
+          "book_name": "腓立比书",
+          "chapter": 4,
+          "verse": 6,
+          "raw_text": "应当一无挂虑，只要凡事藉着祷告、祈求，和感谢，将你们所要的告诉神。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B60-005-007",
+          "book_name": "彼得前书",
+          "chapter": 5,
+          "verse": 7,
+          "raw_text": "你们要将一切的忧虑卸给神，因为他顾念你们。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B23-041-010",
+          "book_name": "Isaiah",
+          "chapter": 41,
+          "verse": 10,
+          "raw_text": "fear not, for I am with you; be not dismayed, for I am your God; I will strengthen you, I will help you, I will uphold you with my righteous right hand.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-004-006",
+          "book_name": "Philippians",
+          "chapter": 4,
+          "verse": 6,
+          "raw_text": "do not be anxious about anything, but in everything by prayer and supplication with thanksgiving let your requests be made known to God.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B60-005-007",
+          "book_name": "1 Peter",
+          "chapter": 5,
+          "verse": 7,
+          "raw_text": "casting all your anxieties on him, because he cares for you.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "distressed": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "fear",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B23-041-010",
+          "book_name": "以赛亚书",
+          "chapter": 41,
+          "verse": 10,
+          "raw_text": "你不要害怕，因为我与你同在；不要惊惶，因为我是你的神。我必坚固你，我必帮助你；我必用我公义的右手扶持你。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-004-006",
+          "book_name": "腓立比书",
+          "chapter": 4,
+          "verse": 6,
+          "raw_text": "应当一无挂虑，只要凡事藉着祷告、祈求，和感谢，将你们所要的告诉神。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B60-005-007",
+          "book_name": "彼得前书",
+          "chapter": 5,
+          "verse": 7,
+          "raw_text": "你们要将一切的忧虑卸给神，因为他顾念你们。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B23-041-010",
+          "book_name": "Isaiah",
+          "chapter": 41,
+          "verse": 10,
+          "raw_text": "fear not, for I am with you; be not dismayed, for I am your God; I will strengthen you, I will help you, I will uphold you with my righteous right hand.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-004-006",
+          "book_name": "Philippians",
+          "chapter": 4,
+          "verse": 6,
+          "raw_text": "do not be anxious about anything, but in everything by prayer and supplication with thanksgiving let your requests be made known to God.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B60-005-007",
+          "book_name": "1 Peter",
+          "chapter": 5,
+          "verse": 7,
+          "raw_text": "casting all your anxieties on him, because he cares for you.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "frightened": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "panic",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B19-056-003",
+          "book_name": "诗篇",
+          "chapter": 56,
+          "verse": 3,
+          "raw_text": "我惧怕的时候要倚靠你。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-046-002",
+          "book_name": "诗篇",
+          "chapter": 46,
+          "verse": 2,
+          "raw_text": "所以，地虽改变，山虽摇动到海心，",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B41-004-040",
+          "book_name": "马可福音",
+          "chapter": 4,
+          "verse": 40,
+          "raw_text": "耶稣对他们说：为甚麽胆怯？你们还没有信心麽？",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B19-056-003",
+          "book_name": "Psalms",
+          "chapter": 56,
+          "verse": 3,
+          "raw_text": "When I am afraid, I put my trust in you.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-046-002",
+          "book_name": "Psalms",
+          "chapter": 46,
+          "verse": 2,
+          "raw_text": "Therefore we will not fear though the earth gives way, though the mountains be moved into the heart of the sea,",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B41-004-040",
+          "book_name": "Mark",
+          "chapter": 4,
+          "verse": 40,
+          "raw_text": "He said to them, \"Why are you so afraid? Have you still no faith?\"",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "nervous": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "fear",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B23-041-010",
+          "book_name": "以赛亚书",
+          "chapter": 41,
+          "verse": 10,
+          "raw_text": "你不要害怕，因为我与你同在；不要惊惶，因为我是你的神。我必坚固你，我必帮助你；我必用我公义的右手扶持你。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-004-006",
+          "book_name": "腓立比书",
+          "chapter": 4,
+          "verse": 6,
+          "raw_text": "应当一无挂虑，只要凡事藉着祷告、祈求，和感谢，将你们所要的告诉神。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B60-005-007",
+          "book_name": "彼得前书",
+          "chapter": 5,
+          "verse": 7,
+          "raw_text": "你们要将一切的忧虑卸给神，因为他顾念你们。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B23-041-010",
+          "book_name": "Isaiah",
+          "chapter": 41,
+          "verse": 10,
+          "raw_text": "fear not, for I am with you; be not dismayed, for I am your God; I will strengthen you, I will help you, I will uphold you with my righteous right hand.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-004-006",
+          "book_name": "Philippians",
+          "chapter": 4,
+          "verse": 6,
+          "raw_text": "do not be anxious about anything, but in everything by prayer and supplication with thanksgiving let your requests be made known to God.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B60-005-007",
+          "book_name": "1 Peter",
+          "chapter": 5,
+          "verse": 7,
+          "raw_text": "casting all your anxieties on him, because he cares for you.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "on edge": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "panic",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B19-056-003",
+          "book_name": "诗篇",
+          "chapter": 56,
+          "verse": 3,
+          "raw_text": "我惧怕的时候要倚靠你。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-046-002",
+          "book_name": "诗篇",
+          "chapter": 46,
+          "verse": 2,
+          "raw_text": "所以，地虽改变，山虽摇动到海心，",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B41-004-040",
+          "book_name": "马可福音",
+          "chapter": 4,
+          "verse": 40,
+          "raw_text": "耶稣对他们说：为甚麽胆怯？你们还没有信心麽？",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B19-056-003",
+          "book_name": "Psalms",
+          "chapter": 56,
+          "verse": 3,
+          "raw_text": "When I am afraid, I put my trust in you.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-046-002",
+          "book_name": "Psalms",
+          "chapter": 46,
+          "verse": 2,
+          "raw_text": "Therefore we will not fear though the earth gives way, though the mountains be moved into the heart of the sea,",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B41-004-040",
+          "book_name": "Mark",
+          "chapter": 4,
+          "verse": 40,
+          "raw_text": "He said to them, \"Why are you so afraid? Have you still no faith?\"",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "overwhelmed": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "fatigue",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B40-011-028",
+          "book_name": "马太福音",
+          "chapter": 11,
+          "verse": 28,
+          "raw_text": "凡劳苦担重担的人可以到我这里来，我就使你们得安息。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B23-040-029",
+          "book_name": "以赛亚书",
+          "chapter": 40,
+          "verse": 29,
+          "raw_text": "疲乏的，他赐能力；软弱的，他加力量。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-061-002",
+          "book_name": "诗篇",
+          "chapter": 61,
+          "verse": 2,
+          "raw_text": "我心里发昏的时候，我要从地极求告你。求你领我到那比我更高的磐石！",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B40-011-028",
+          "book_name": "Matthew",
+          "chapter": 11,
+          "verse": 28,
+          "raw_text": "Come to me, all who labor and are heavy laden, and I will give you rest.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B23-040-029",
+          "book_name": "Isaiah",
+          "chapter": 40,
+          "verse": 29,
+          "raw_text": "He gives power to the faint, and to him who has no might he increases strength.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-061-002",
+          "book_name": "Psalms",
+          "chapter": 61,
+          "verse": 2,
+          "raw_text": "from the end of the earth I call to you when my heart is faint. Lead me to the rock that is higher than I,",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "panicked": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "panic",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B19-056-003",
+          "book_name": "诗篇",
+          "chapter": 56,
+          "verse": 3,
+          "raw_text": "我惧怕的时候要倚靠你。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-046-002",
+          "book_name": "诗篇",
+          "chapter": 46,
+          "verse": 2,
+          "raw_text": "所以，地虽改变，山虽摇动到海心，",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B41-004-040",
+          "book_name": "马可福音",
+          "chapter": 4,
+          "verse": 40,
+          "raw_text": "耶稣对他们说：为甚麽胆怯？你们还没有信心麽？",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B19-056-003",
+          "book_name": "Psalms",
+          "chapter": 56,
+          "verse": 3,
+          "raw_text": "When I am afraid, I put my trust in you.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-046-002",
+          "book_name": "Psalms",
+          "chapter": 46,
+          "verse": 2,
+          "raw_text": "Therefore we will not fear though the earth gives way, though the mountains be moved into the heart of the sea,",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B41-004-040",
+          "book_name": "Mark",
+          "chapter": 4,
+          "verse": 40,
+          "raw_text": "He said to them, \"Why are you so afraid? Have you still no faith?\"",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "restless": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "restlessness",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B19-062-001",
+          "book_name": "诗篇",
+          "chapter": 62,
+          "verse": 1,
+          "raw_text": "（大卫的诗，照耶杜顿的作法，交与伶长。）我的心默默无声，专等候神；我的救恩是从他而来。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-131-002",
+          "book_name": "诗篇",
+          "chapter": 131,
+          "verse": 2,
+          "raw_text": "我的心平稳安静，好像断过奶的孩子在他母亲的怀中；我的心在我里面真像断过奶的孩子。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B40-006-034",
+          "book_name": "马太福音",
+          "chapter": 6,
+          "verse": 34,
+          "raw_text": "所以，不要为明天忧虑，因为明天自有明天的忧虑；一天的难处一天当就够了。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B19-062-001",
+          "book_name": "Psalms",
+          "chapter": 62,
+          "verse": 1,
+          "raw_text": "For God alone my soul waits in silence; from him comes my salvation.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-131-002",
+          "book_name": "Psalms",
+          "chapter": 131,
+          "verse": 2,
+          "raw_text": "But I have calmed and quieted my soul, like a weaned child with its mother; like a weaned child is my soul within me.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B40-006-034",
+          "book_name": "Matthew",
+          "chapter": 6,
+          "verse": 34,
+          "raw_text": "\"Therefore do not be anxious about tomorrow, for tomorrow will be anxious for itself. Sufficient for the day is its own trouble.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "stressed": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "fatigue",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B40-011-028",
+          "book_name": "马太福音",
+          "chapter": 11,
+          "verse": 28,
+          "raw_text": "凡劳苦担重担的人可以到我这里来，我就使你们得安息。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B23-040-029",
+          "book_name": "以赛亚书",
+          "chapter": 40,
+          "verse": 29,
+          "raw_text": "疲乏的，他赐能力；软弱的，他加力量。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-061-002",
+          "book_name": "诗篇",
+          "chapter": 61,
+          "verse": 2,
+          "raw_text": "我心里发昏的时候，我要从地极求告你。求你领我到那比我更高的磐石！",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B40-011-028",
+          "book_name": "Matthew",
+          "chapter": 11,
+          "verse": 28,
+          "raw_text": "Come to me, all who labor and are heavy laden, and I will give you rest.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B23-040-029",
+          "book_name": "Isaiah",
+          "chapter": 40,
+          "verse": 29,
+          "raw_text": "He gives power to the faint, and to him who has no might he increases strength.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-061-002",
+          "book_name": "Psalms",
+          "chapter": 61,
+          "verse": 2,
+          "raw_text": "from the end of the earth I call to you when my heart is faint. Lead me to the rock that is higher than I,",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "tense": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "panic",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B19-056-003",
+          "book_name": "诗篇",
+          "chapter": 56,
+          "verse": 3,
+          "raw_text": "我惧怕的时候要倚靠你。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-046-002",
+          "book_name": "诗篇",
+          "chapter": 46,
+          "verse": 2,
+          "raw_text": "所以，地虽改变，山虽摇动到海心，",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B41-004-040",
+          "book_name": "马可福音",
+          "chapter": 4,
+          "verse": 40,
+          "raw_text": "耶稣对他们说：为甚麽胆怯？你们还没有信心麽？",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B19-056-003",
+          "book_name": "Psalms",
+          "chapter": 56,
+          "verse": 3,
+          "raw_text": "When I am afraid, I put my trust in you.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-046-002",
+          "book_name": "Psalms",
+          "chapter": 46,
+          "verse": 2,
+          "raw_text": "Therefore we will not fear though the earth gives way, though the mountains be moved into the heart of the sea,",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B41-004-040",
+          "book_name": "Mark",
+          "chapter": 4,
+          "verse": 40,
+          "raw_text": "He said to them, \"Why are you so afraid? Have you still no faith?\"",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "trapped": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "despair",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B19-040-002",
+          "book_name": "诗篇",
+          "chapter": 40,
+          "verse": 2,
+          "raw_text": "他从祸坑里，从淤泥中，把我拉上来，使我的脚立在磐石上，使我脚步稳当。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-130-001",
+          "book_name": "诗篇",
+          "chapter": 130,
+          "verse": 1,
+          "raw_text": "（上行之诗。）耶和华啊，我从深处向你求告！",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B47-004-008",
+          "book_name": "哥林多后书",
+          "chapter": 4,
+          "verse": 8,
+          "raw_text": "我们四面受敌，却不被困住；心里作难，却不至失望；",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B19-040-002",
+          "book_name": "Psalms",
+          "chapter": 40,
+          "verse": 2,
+          "raw_text": "He drew me up from the pit of destruction, out of the miry bog, and set my feet upon a rock, making my steps secure.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-130-001",
+          "book_name": "Psalms",
+          "chapter": 130,
+          "verse": 1,
+          "raw_text": "Out of the depths I cry to you, O LORD!",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B47-004-008",
+          "book_name": "2 Corinthians",
+          "chapter": 4,
+          "verse": 8,
+          "raw_text": "We are afflicted in every way, but not crushed; perplexed, but not driven to despair;",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "worried": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "fear",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B23-041-010",
+          "book_name": "以赛亚书",
+          "chapter": 41,
+          "verse": 10,
+          "raw_text": "你不要害怕，因为我与你同在；不要惊惶，因为我是你的神。我必坚固你，我必帮助你；我必用我公义的右手扶持你。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-004-006",
+          "book_name": "腓立比书",
+          "chapter": 4,
+          "verse": 6,
+          "raw_text": "应当一无挂虑，只要凡事藉着祷告、祈求，和感谢，将你们所要的告诉神。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B60-005-007",
+          "book_name": "彼得前书",
+          "chapter": 5,
+          "verse": 7,
+          "raw_text": "你们要将一切的忧虑卸给神，因为他顾念你们。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B23-041-010",
+          "book_name": "Isaiah",
+          "chapter": 41,
+          "verse": 10,
+          "raw_text": "fear not, for I am with you; be not dismayed, for I am your God; I will strengthen you, I will help you, I will uphold you with my righteous right hand.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B50-004-006",
+          "book_name": "Philippians",
+          "chapter": 4,
+          "verse": 6,
+          "raw_text": "do not be anxious about anything, but in everything by prayer and supplication with thanksgiving let your requests be made known to God.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B60-005-007",
+          "book_name": "1 Peter",
+          "chapter": 5,
+          "verse": 7,
+          "raw_text": "casting all your anxieties on him, because he cares for you.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "angry": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "anger",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B49-004-026",
+          "book_name": "以弗所书",
+          "chapter": 4,
+          "verse": 26,
+          "raw_text": "生气却不要犯罪；不可含怒到日落，",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B59-001-020",
+          "book_name": "雅各书",
+          "chapter": 1,
+          "verse": 20,
+          "raw_text": "因为人的怒气并不成就神的义。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B20-015-001",
+          "book_name": "箴言",
+          "chapter": 15,
+          "verse": 1,
+          "raw_text": "回答柔和，使怒消退；言语暴戾，触动怒气。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B49-004-026",
+          "book_name": "Ephesians",
+          "chapter": 4,
+          "verse": 26,
+          "raw_text": "Be angry and do not sin; do not let the sun go down on your anger,",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B59-001-020",
+          "book_name": "James",
+          "chapter": 1,
+          "verse": 20,
+          "raw_text": "for the anger of man does not produce the righteousness that God requires.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B20-015-001",
+          "book_name": "Proverbs",
+          "chapter": 15,
+          "verse": 1,
+          "raw_text": "A soft answer turns away wrath, but a harsh word stirs up anger.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "annoyed": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "anger",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B49-004-026",
+          "book_name": "以弗所书",
+          "chapter": 4,
+          "verse": 26,
+          "raw_text": "生气却不要犯罪；不可含怒到日落，",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B59-001-020",
+          "book_name": "雅各书",
+          "chapter": 1,
+          "verse": 20,
+          "raw_text": "因为人的怒气并不成就神的义。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B20-015-001",
+          "book_name": "箴言",
+          "chapter": 15,
+          "verse": 1,
+          "raw_text": "回答柔和，使怒消退；言语暴戾，触动怒气。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B49-004-026",
+          "book_name": "Ephesians",
+          "chapter": 4,
+          "verse": 26,
+          "raw_text": "Be angry and do not sin; do not let the sun go down on your anger,",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B59-001-020",
+          "book_name": "James",
+          "chapter": 1,
+          "verse": 20,
+          "raw_text": "for the anger of man does not produce the righteousness that God requires.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B20-015-001",
+          "book_name": "Proverbs",
+          "chapter": 15,
+          "verse": 1,
+          "raw_text": "A soft answer turns away wrath, but a harsh word stirs up anger.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "contemptuous": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "contempt",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B40-007-003",
+          "book_name": "马太福音",
+          "chapter": 7,
+          "verse": 3,
+          "raw_text": "为甚麽看见你弟兄眼中有刺，却不想自己眼中有梁木呢？",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B42-006-037",
+          "book_name": "路加福音",
+          "chapter": 6,
+          "verse": 37,
+          "raw_text": "你们不要论断人，就不被论断；你们不要定人的罪，就不被定罪；你们要饶恕人，就必蒙饶恕（饶恕：原文作释放）；",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-012-018",
+          "book_name": "罗马书",
+          "chapter": 12,
+          "verse": 18,
+          "raw_text": "若是能行，总要尽力与众人和睦。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B40-007-003",
+          "book_name": "Matthew",
+          "chapter": 7,
+          "verse": 3,
+          "raw_text": "Why do you see the speck that is in your brother's eye, but do not notice the log that is in your own eye?",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B42-006-037",
+          "book_name": "Luke",
+          "chapter": 6,
+          "verse": 37,
+          "raw_text": "\"Judge not, and you will not be judged; condemn not, and you will not be condemned; forgive, and you will be forgiven;",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-012-018",
+          "book_name": "Romans",
+          "chapter": 12,
+          "verse": 18,
+          "raw_text": "If possible, so far as it depends on you, live peaceably with all.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "disgusted": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "contempt",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B40-007-003",
+          "book_name": "马太福音",
+          "chapter": 7,
+          "verse": 3,
+          "raw_text": "为甚麽看见你弟兄眼中有刺，却不想自己眼中有梁木呢？",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B42-006-037",
+          "book_name": "路加福音",
+          "chapter": 6,
+          "verse": 37,
+          "raw_text": "你们不要论断人，就不被论断；你们不要定人的罪，就不被定罪；你们要饶恕人，就必蒙饶恕（饶恕：原文作释放）；",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-012-018",
+          "book_name": "罗马书",
+          "chapter": 12,
+          "verse": 18,
+          "raw_text": "若是能行，总要尽力与众人和睦。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B40-007-003",
+          "book_name": "Matthew",
+          "chapter": 7,
+          "verse": 3,
+          "raw_text": "Why do you see the speck that is in your brother's eye, but do not notice the log that is in your own eye?",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B42-006-037",
+          "book_name": "Luke",
+          "chapter": 6,
+          "verse": 37,
+          "raw_text": "\"Judge not, and you will not be judged; condemn not, and you will not be condemned; forgive, and you will be forgiven;",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-012-018",
+          "book_name": "Romans",
+          "chapter": 12,
+          "verse": 18,
+          "raw_text": "If possible, so far as it depends on you, live peaceably with all.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "enraged": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "anger",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B49-004-026",
+          "book_name": "以弗所书",
+          "chapter": 4,
+          "verse": 26,
+          "raw_text": "生气却不要犯罪；不可含怒到日落，",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B59-001-020",
+          "book_name": "雅各书",
+          "chapter": 1,
+          "verse": 20,
+          "raw_text": "因为人的怒气并不成就神的义。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B20-015-001",
+          "book_name": "箴言",
+          "chapter": 15,
+          "verse": 1,
+          "raw_text": "回答柔和，使怒消退；言语暴戾，触动怒气。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B49-004-026",
+          "book_name": "Ephesians",
+          "chapter": 4,
+          "verse": 26,
+          "raw_text": "Be angry and do not sin; do not let the sun go down on your anger,",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B59-001-020",
+          "book_name": "James",
+          "chapter": 1,
+          "verse": 20,
+          "raw_text": "for the anger of man does not produce the righteousness that God requires.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B20-015-001",
+          "book_name": "Proverbs",
+          "chapter": 15,
+          "verse": 1,
+          "raw_text": "A soft answer turns away wrath, but a harsh word stirs up anger.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "envious": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "attachment",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B20-004-023",
+          "book_name": "箴言",
+          "chapter": 4,
+          "verse": 23,
+          "raw_text": "你要保守你心，胜过保守一切（或译：你要切切保守你心），因为一生的果效是由心发出。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B46-013-004",
+          "book_name": "哥林多前书",
+          "chapter": 13,
+          "verse": 4,
+          "raw_text": "爱是恒久忍耐，又有恩慈；爱是不嫉妒；爱是不自夸，不张狂，",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B59-003-016",
+          "book_name": "雅各书",
+          "chapter": 3,
+          "verse": 16,
+          "raw_text": "在何处有嫉妒、分争，就在何处有扰乱和各样的坏事。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B20-004-023",
+          "book_name": "Proverbs",
+          "chapter": 4,
+          "verse": 23,
+          "raw_text": "Keep your heart with all vigilance, for from it flow the springs of life.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B46-013-004",
+          "book_name": "1 Corinthians",
+          "chapter": 13,
+          "verse": 4,
+          "raw_text": "Love is patient and kind; love does not envy or boast; it is not arrogant",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B59-003-016",
+          "book_name": "James",
+          "chapter": 3,
+          "verse": 16,
+          "raw_text": "For where jealousy and selfish ambition exist, there will be disorder and every vile practice.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "frustrated": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "frustration",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B48-006-009",
+          "book_name": "加拉太书",
+          "chapter": 6,
+          "verse": 9,
+          "raw_text": "我们行善，不可丧志；若不灰心，到了时候就要收成。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B20-016-003",
+          "book_name": "箴言",
+          "chapter": 16,
+          "verse": 3,
+          "raw_text": "你所做的，要交托耶和华，你所谋的，就必成立。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-005-003",
+          "book_name": "罗马书",
+          "chapter": 5,
+          "verse": 3,
+          "raw_text": "不但如此，就是在患难中也是欢欢喜喜的；因为知道患难生忍耐，",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B48-006-009",
+          "book_name": "Galatians",
+          "chapter": 6,
+          "verse": 9,
+          "raw_text": "And let us not grow weary of doing good, for in due season we will reap, if we do not give up.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B20-016-003",
+          "book_name": "Proverbs",
+          "chapter": 16,
+          "verse": 3,
+          "raw_text": "Commit your work to the LORD, and your plans will be established.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-005-003",
+          "book_name": "Romans",
+          "chapter": 5,
+          "verse": 3,
+          "raw_text": "More than that, we rejoice in our sufferings, knowing that suffering produces endurance,",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "humiliated": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "exposed_identity",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B19-034-005",
+          "book_name": "诗篇",
+          "chapter": 34,
+          "verse": 5,
+          "raw_text": "凡仰望他的，便有光荣；他们的脸必不蒙羞。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-008-001",
+          "book_name": "罗马书",
+          "chapter": 8,
+          "verse": 1,
+          "raw_text": "如今，那些在基督耶稣里的就不定罪了。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B23-043-004",
+          "book_name": "以赛亚书",
+          "chapter": 43,
+          "verse": 4,
+          "raw_text": "因我看你为宝为尊；又因我爱你，所以我使人代替你，使列邦人替换你的生命。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B19-034-005",
+          "book_name": "Psalms",
+          "chapter": 34,
+          "verse": 5,
+          "raw_text": "Those who look to him are radiant, and their faces shall never be ashamed.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-008-001",
+          "book_name": "Romans",
+          "chapter": 8,
+          "verse": 1,
+          "raw_text": "There is therefore now no condemnation for those who are in Christ Jesus.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B23-043-004",
+          "book_name": "Isaiah",
+          "chapter": 43,
+          "verse": 4,
+          "raw_text": "Because you are precious in my eyes, and honored, and I love you, I give men in return for you, peoples in exchange for your life.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "impatient": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "anger",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B49-004-026",
+          "book_name": "以弗所书",
+          "chapter": 4,
+          "verse": 26,
+          "raw_text": "生气却不要犯罪；不可含怒到日落，",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B59-001-020",
+          "book_name": "雅各书",
+          "chapter": 1,
+          "verse": 20,
+          "raw_text": "因为人的怒气并不成就神的义。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B20-015-001",
+          "book_name": "箴言",
+          "chapter": 15,
+          "verse": 1,
+          "raw_text": "回答柔和，使怒消退；言语暴戾，触动怒气。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B49-004-026",
+          "book_name": "Ephesians",
+          "chapter": 4,
+          "verse": 26,
+          "raw_text": "Be angry and do not sin; do not let the sun go down on your anger,",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B59-001-020",
+          "book_name": "James",
+          "chapter": 1,
+          "verse": 20,
+          "raw_text": "for the anger of man does not produce the righteousness that God requires.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B20-015-001",
+          "book_name": "Proverbs",
+          "chapter": 15,
+          "verse": 1,
+          "raw_text": "A soft answer turns away wrath, but a harsh word stirs up anger.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "irritated": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "anger",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B49-004-026",
+          "book_name": "以弗所书",
+          "chapter": 4,
+          "verse": 26,
+          "raw_text": "生气却不要犯罪；不可含怒到日落，",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B59-001-020",
+          "book_name": "雅各书",
+          "chapter": 1,
+          "verse": 20,
+          "raw_text": "因为人的怒气并不成就神的义。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B20-015-001",
+          "book_name": "箴言",
+          "chapter": 15,
+          "verse": 1,
+          "raw_text": "回答柔和，使怒消退；言语暴戾，触动怒气。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B49-004-026",
+          "book_name": "Ephesians",
+          "chapter": 4,
+          "verse": 26,
+          "raw_text": "Be angry and do not sin; do not let the sun go down on your anger,",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B59-001-020",
+          "book_name": "James",
+          "chapter": 1,
+          "verse": 20,
+          "raw_text": "for the anger of man does not produce the righteousness that God requires.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B20-015-001",
+          "book_name": "Proverbs",
+          "chapter": 15,
+          "verse": 1,
+          "raw_text": "A soft answer turns away wrath, but a harsh word stirs up anger.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "jealous": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "attachment",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B20-004-023",
+          "book_name": "箴言",
+          "chapter": 4,
+          "verse": 23,
+          "raw_text": "你要保守你心，胜过保守一切（或译：你要切切保守你心），因为一生的果效是由心发出。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B46-013-004",
+          "book_name": "哥林多前书",
+          "chapter": 13,
+          "verse": 4,
+          "raw_text": "爱是恒久忍耐，又有恩慈；爱是不嫉妒；爱是不自夸，不张狂，",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B59-003-016",
+          "book_name": "雅各书",
+          "chapter": 3,
+          "verse": 16,
+          "raw_text": "在何处有嫉妒、分争，就在何处有扰乱和各样的坏事。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B20-004-023",
+          "book_name": "Proverbs",
+          "chapter": 4,
+          "verse": 23,
+          "raw_text": "Keep your heart with all vigilance, for from it flow the springs of life.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B46-013-004",
+          "book_name": "1 Corinthians",
+          "chapter": 13,
+          "verse": 4,
+          "raw_text": "Love is patient and kind; love does not envy or boast; it is not arrogant",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B59-003-016",
+          "book_name": "James",
+          "chapter": 3,
+          "verse": 16,
+          "raw_text": "For where jealousy and selfish ambition exist, there will be disorder and every vile practice.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "indignant": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "indignation",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B49-004-026",
+          "book_name": "以弗所书",
+          "chapter": 4,
+          "verse": 26,
+          "raw_text": "生气却不要犯罪；不可含怒到日落，",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B33-006-008",
+          "book_name": "弥迦书",
+          "chapter": 6,
+          "verse": 8,
+          "raw_text": "世人哪，耶和华已指示你何为善。他向你所要的是甚麽呢？只要你行公义，好怜悯，存谦卑的心，与你的神同行。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-012-019",
+          "book_name": "罗马书",
+          "chapter": 12,
+          "verse": 19,
+          "raw_text": "亲爱的弟兄，不要自己伸冤，宁可让步，听凭主怒（或作：让人发怒）；因为经上记着：主说：伸冤在我；我必报应。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B49-004-026",
+          "book_name": "Ephesians",
+          "chapter": 4,
+          "verse": 26,
+          "raw_text": "Be angry and do not sin; do not let the sun go down on your anger,",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B33-006-008",
+          "book_name": "Micah",
+          "chapter": 6,
+          "verse": 8,
+          "raw_text": "He has told you, O man, what is good; and what does the LORD require of you but to do justice, and to love kindness, and to walk humbly with your God?",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-012-019",
+          "book_name": "Romans",
+          "chapter": 12,
+          "verse": 19,
+          "raw_text": "Beloved, never avenge yourselves, but leave it to the wrath of God, for it is written, \"Vengeance is mine, I will repay, says the Lord.\"",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "offended": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "contempt",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B40-007-003",
+          "book_name": "马太福音",
+          "chapter": 7,
+          "verse": 3,
+          "raw_text": "为甚麽看见你弟兄眼中有刺，却不想自己眼中有梁木呢？",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B42-006-037",
+          "book_name": "路加福音",
+          "chapter": 6,
+          "verse": 37,
+          "raw_text": "你们不要论断人，就不被论断；你们不要定人的罪，就不被定罪；你们要饶恕人，就必蒙饶恕（饶恕：原文作释放）；",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-012-018",
+          "book_name": "罗马书",
+          "chapter": 12,
+          "verse": 18,
+          "raw_text": "若是能行，总要尽力与众人和睦。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B40-007-003",
+          "book_name": "Matthew",
+          "chapter": 7,
+          "verse": 3,
+          "raw_text": "Why do you see the speck that is in your brother's eye, but do not notice the log that is in your own eye?",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B42-006-037",
+          "book_name": "Luke",
+          "chapter": 6,
+          "verse": 37,
+          "raw_text": "\"Judge not, and you will not be judged; condemn not, and you will not be condemned; forgive, and you will be forgiven;",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B45-012-018",
+          "book_name": "Romans",
+          "chapter": 12,
+          "verse": 18,
+          "raw_text": "If possible, so far as it depends on you, live peaceably with all.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "resentful": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "resentment",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B58-012-015",
+          "book_name": "希伯来书",
+          "chapter": 12,
+          "verse": 15,
+          "raw_text": "又要谨慎，恐怕有人失了神的恩；恐怕有毒根生出来扰乱你们，因此叫众人沾染污秽；",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B49-004-031",
+          "book_name": "以弗所书",
+          "chapter": 4,
+          "verse": 31,
+          "raw_text": "一切苦毒、恼恨、忿怒、嚷闹、毁谤，并一切的恶毒（或作：阴毒），都当从你们中间除掉；",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B51-003-013",
+          "book_name": "歌罗西书",
+          "chapter": 3,
+          "verse": 13,
+          "raw_text": "倘若这人与那人有嫌隙，总要彼此包容，彼此饶恕；主怎样饶恕了你们，你们也要怎样饶恕人。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B58-012-015",
+          "book_name": "Hebrews",
+          "chapter": 12,
+          "verse": 15,
+          "raw_text": "See to it that no one fails to obtain the grace of God; that no \"root of bitterness\" springs up and causes trouble, and by it many become defiled;",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B49-004-031",
+          "book_name": "Ephesians",
+          "chapter": 4,
+          "verse": 31,
+          "raw_text": "Let all bitterness and wrath and anger and clamor and slander be put away from you, along with all malice.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B51-003-013",
+          "book_name": "Colossians",
+          "chapter": 3,
+          "verse": 13,
+          "raw_text": "bearing with one another and, if one has a complaint against another, forgiving each other; as the Lord has forgiven you, so you also must forgive.",
+          "score": 1.0
+        }
+      ]
+    }
+  },
+  "upset": {
+    "source": "curated-biblical-pastoral-map-v1",
+    "pastoral_group": "upset",
+    "matches": {
+      "cuv": [
+        {
+          "pk_id": "B19-055-022",
+          "book_name": "诗篇",
+          "chapter": 55,
+          "verse": 22,
+          "raw_text": "你要把你的重担卸给耶和华，他必抚养你；他永不叫义人动摇。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B43-014-001",
+          "book_name": "约翰福音",
+          "chapter": 14,
+          "verse": 1,
+          "raw_text": "你们心里不要忧愁；你们信神，也当信我。",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-131-002",
+          "book_name": "诗篇",
+          "chapter": 131,
+          "verse": 2,
+          "raw_text": "我的心平稳安静，好像断过奶的孩子在他母亲的怀中；我的心在我里面真像断过奶的孩子。",
+          "score": 1.0
+        }
+      ],
+      "esv": [
+        {
+          "pk_id": "B19-055-022",
+          "book_name": "Psalms",
+          "chapter": 55,
+          "verse": 22,
+          "raw_text": "Cast your burden on the LORD, and he will sustain you; he will never permit the righteous to be moved.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B43-014-001",
+          "book_name": "John",
+          "chapter": 14,
+          "verse": 1,
+          "raw_text": "\"Let not your hearts be troubled. Believe in God; believe also in me.",
+          "score": 1.0
+        },
+        {
+          "pk_id": "B19-131-002",
+          "book_name": "Psalms",
+          "chapter": 131,
+          "verse": 2,
+          "raw_text": "But I have calmed and quieted my soul, like a weaned child with its mother; like a weaned child is my soul within me.",
+          "score": 1.0
+        }
+      ]
+    }
+  }
+}

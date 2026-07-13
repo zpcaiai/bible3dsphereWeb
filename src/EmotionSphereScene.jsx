@@ -9,7 +9,7 @@ import { useEmotionStore } from './store'
 import TranslatableParagraph from './TranslatableParagraph'
 
 const SPHERE_RADIUS = 4.18
-// Generate a visually distinct color for each of the 171 points
+// Generate a visually distinct color for the curated homepage points.
 function pointColor(index, total) {
   const hue = (index / total) * 360
   const sat = 70 + (index % 5) * 4
@@ -203,7 +203,7 @@ function InstancedPoints({ items, onHover, onSelect, selectedKey, hoveredKey }) 
 function itemLabel(item) {
   const zh = item.zh_label || ''
   const en = item.short_en || item.source_keyword || ''
-  if (zh && en) return `${zh}(${en})`
+  if (zh && en) return `${zh}（${en}）`
   return zh || en || ''
 }
 
@@ -281,7 +281,7 @@ function VersePopover3D({
         <div className="vp-header">
           <span className="vp-key">
             {feature.zh_label
-              ? <>{feature.zh_label} <small style={{opacity:0.5, fontWeight:400}}>#{feature.feature_id}</small></>
+              ? <>{feature.zh_label} {feature.label_origin !== 'anthropic-emotions-2026-curated' && <small style={{opacity:0.5, fontWeight:400}}>#{feature.feature_id}</small>}</>
               : `${feature.layer}:${feature.feature_id}`}
           </span>
         </div>
