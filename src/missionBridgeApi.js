@@ -22,6 +22,7 @@ async function request(path, token, options = {}) {
   return data
 }
 
+export const fetchMissionBridgeCapabilities = (token) => request('/capabilities', token)
 export const fetchMissionBridgeDashboard = (token) => request('/dashboard', token)
 export const updateMissionBridgeConsent = (token, consentType, granted) => request('/consents', token, { method: 'PUT', body: JSON.stringify({ consentType, granted, policyVersion: '1.0.0' }) })
 export const enrollMissionBridgeProgram = (token, programId, participantGoal) => request('/enrollments', token, { method: 'POST', body: JSON.stringify({ programId, participantGoal }) })

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import {
+  fetchMissionBridgeCapabilities,
   acknowledgeMissionBridgePolicy, enrollMissionBridgeProgram, exitMissionBridgeProgram,
   fetchMissionBridgeDashboard, fetchMissionBridgeIncidents, fetchMissionBridgePolicy,
   fetchMissionBridgeConsents, reportMissionBridgeIncident, requestMissionBridgeDeletion,
@@ -48,6 +49,7 @@ export default function MissionBridgePanel({ token, organizationId }) {
   const [journey,setJourney]=useState({goals:[],carePlans:[],strengths:[]})
   const [newGoal,setNewGoal]=useState({title:'',successDescription:''})
   const [view, setView] = useState('programs')
+  const [caps, setCaps] = useState(null) // 渐进披露：participant / leader / admin
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [goal, setGoal] = useState({})
@@ -65,6 +67,7 @@ export default function MissionBridgePanel({ token, organizationId }) {
       fetchMissionBridgeConsents(token).then((result) => setPrivacyConsents(result.items)).catch(() => setPrivacyConsents([]))
       fetchMissionBridgeProposals(token).then((result) => setProposals(result.items)).catch(() => setProposals(null))
       fetchMissionBridgeJourney(token).then(setJourney).catch(()=>setJourney({goals:[],carePlans:[],strengths:[]}))
+      fetchMissionBridgeCapabilities(token).then(setCaps).catch(() => setCaps({ level: 'participant', tabs: [] }))
     }
     catch (err) { setError(err.message) }
     finally { setLoading(false) }
@@ -97,7 +100,24 @@ export default function MissionBridgePanel({ token, organizationId }) {
       {policy && !policy.acknowledged && <div className="mb-policy"><div><strong>{t('安全政策确认')} · v{policy.policy.version}</strong><p>{t('我了解高风险事件需要真人和专业机构介入，平台不能承诺绝对保密。')}</p></div><button type="button" disabled={busy === 'policy'} onClick={() => run('policy', () => acknowledgeMissionBridgePolicy(token), '安全政策确认已记录')}>{t('阅读并确认')}</button></div>}
 
       <nav className="mb-tabs" aria-label={t('邻舍之桥功能')}>
-        {[['programs','项目'],['journey','我的旅程'],...(missionOrgId ? [['organizations','宣教组织']] : []),['leader','带领者工作台'],['attention-pilot','注意力30天'],['ai-faith','AI信仰探索'],['mobile-worker','司机同行'],['night-shift','夜班同行'],['mobile-family','流动家庭'],['specialized','专项支持'],['content','可信资料'],['agents','AI 辅助'],['safety','安全求助'],['privacy','隐私与同意'],...(proposals ? [['discovery','群体发现'],['designer','项目设计'],['training','导师小组'],['operations','运营后台']] : []),...(adminIncidents ? [['incidents','事件处理']] : [])].map(([key,label]) => <button type="button" key={key} className={view === key ? 'active' : ''} onClick={() => setView(key)}>{t(label)}</button>)}
+        {(() => {
+          const LABELS = {
+            programs: '项目', journey: '我的旅程', 'specialized-directory': '专项支持', content: '可信资料',
+            safety: '安全求助', privacy: '隐私与同意',
+            leader: '带领者工作台', training: '导师小组', agents: 'AI 辅助',
+            organizations: '宣教组织', discovery: '群体发现', designer: '项目设计', operations: '运营后台', incidents: '事件处理',
+          }
+          const PARTICIPANT_TABS = ['programs', 'journey', 'specialized-directory', 'content', 'safety', 'privacy']
+          let tabs = caps?.tabs?.length ? caps.tabs.filter((key) => LABELS[key]) : PARTICIPANT_TABS
+          // 组织控制台需要组织上下文；事件处理沿用后端可见性
+          tabs = tabs.filter((key) => (key === 'organizations' ? Boolean(missionOrgId) : true))
+          if (adminIncidents && !tabs.includes('incidents')) tabs = [...tabs, 'incidents']
+          const DIRECTORY_KEYS = ['attention-pilot', 'ai-faith', 'mobile-worker', 'night-shift', 'mobile-family', 'specialized']
+          const activeKey = DIRECTORY_KEYS.includes(view) ? 'specialized-directory' : view
+          return tabs.map((key) => (
+            <button type="button" key={key} className={activeKey === key ? 'active' : ''} onClick={() => setView(key)}>{t(LABELS[key])}</button>
+          ))
+        })()}
       </nav>
 
       {error && <div className="mb-alert error" role="alert">{error}</div>}
@@ -177,6 +197,29 @@ export default function MissionBridgePanel({ token, organizationId }) {
       {view === 'training' && <TrainingConsole token={token} programs={data?.programs || []} />}
       {view === 'content' && <ContentLibrary token={token} canManage={Boolean(proposals)} />}
       {view === 'agents' && <AgentWorkbench token={token} aiConsented={Boolean(privacyConsents.find((item) => item.consentType === 'ai_assistance')?.granted)} onOpenPrivacy={() => setView('privacy')} />}
+      {view === 'specialized-directory' && (
+        <div className="mb-program-grid">
+          {[
+            ['attention-pilot', '🌿', '注意力30天', '重建注意力与安静的 30 天同行'],
+            ['ai-faith', '💡', 'AI信仰探索', '带着真实问题，与可信的信仰内容对话'],
+            ['mobile-worker', '🚚', '司机同行', '为长途/网约司机设计的音频陪伴'],
+            ['night-shift', '🌙', '夜班同行', '夜班工作者的签到与复盘'],
+            ['mobile-family', '🏠', '流动家庭', '流动家庭与孩子的属灵支持'],
+            ['specialized', '🤝', '更多专项支持', '照护者、康复期、特殊处境的支持'],
+          ].map(([key, icon, title, desc]) => (
+            <article className="mb-program" key={key} style={{ cursor: 'pointer' }} onClick={() => setView(key)}>
+              <div className="mb-program-top"><span>{icon}</span></div>
+              <h3>{t(title)}</h3><p>{t(desc)}</p>
+              <button type="button" onClick={(e) => { e.stopPropagation(); setView(key) }}>{t('进入')} →</button>
+            </article>
+          ))}
+        </div>
+      )}
+      {['attention-pilot', 'ai-faith', 'mobile-worker', 'night-shift', 'mobile-family', 'specialized'].includes(view) && (
+        <button type="button" className="mb-back-to-directory" onClick={() => setView('specialized-directory')}
+          style={{ margin: '0 0 10px', padding: '6px 12px', borderRadius: 9, border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.7)', fontSize: 12.5, cursor: 'pointer' }}
+        >← {t('专项支持')}</button>
+      )}
       {view === 'organizations' && <MissionOrganizationConsole token={token} organizationId={missionOrgId} />}
       {view === 'leader' && <LocalLeaderWorkspace token={token} />}
       {view === 'attention-pilot' && <AttentionPilotWorkspace token={token} />}

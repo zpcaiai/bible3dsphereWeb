@@ -680,14 +680,14 @@ export async function fetchEvangelismPrayers(limit = 40, offset = 0, token = nul
   return data
 }
 
-export async function submitEvangelismPrayer(content, isAnonymous, token) {
-  devlog(`[api] submitEvangelismPrayer anon=${isAnonymous} len=${content.length}`)
+export async function submitEvangelismPrayer(content, isAnonymous, token, kind = 'prayer') {
+  devlog(`[api] submitEvangelismPrayer anon=${isAnonymous} kind=${kind} len=${content.length}`)
   const headers = { 'Content-Type': 'application/json' }
   if (token) headers['Authorization'] = `Bearer ${token}`
   const response = await fetch(`${API_BASE}/evangelism`, {
     method: 'POST',
     headers,
-    body: JSON.stringify({ content: content.trim(), is_anonymous: isAnonymous }),
+    body: JSON.stringify({ content: content.trim(), is_anonymous: isAnonymous, kind }),
   })
   const contentType = response.headers.get('content-type') || ''
   if (!contentType.includes('application/json')) {
@@ -771,6 +771,28 @@ export async function restoreEvangelismPrayer(prayerId, token) {
   devlog(`[api] restoreEvangelismPrayer ok id=${prayerId}`)
   return data
 }
+
+// ── 传FY 闭环：我的挂念（contacts） ──────────────────────────────
+async function evangelismRequest(path, token, options = {}) {
+  const headers = { ...(options.body ? { 'Content-Type': 'application/json' } : {}) }
+  if (token && token !== 'cookie-session') headers['Authorization'] = `Bearer ${token}`
+  const response = await fetch(`${API_BASE}/evangelism${path}`, { credentials: 'same-origin', ...options, headers })
+  const data = await response.json().catch(() => ({}))
+  if (!response.ok) throw new Error(data.detail || data.error || '服务暂时不可用')
+  return data
+}
+
+export const fetchEvangelismContacts = (token) => evangelismRequest('/contacts', token)
+export const createEvangelismContact = (token, displayName, notes = '') =>
+  evangelismRequest('/contacts', token, { method: 'POST', body: JSON.stringify({ display_name: displayName, notes }) })
+export const updateEvangelismContact = (token, id, patch) =>
+  evangelismRequest(`/contacts/${id}`, token, { method: 'PUT', body: JSON.stringify(patch) })
+export const deleteEvangelismContact = (token, id) =>
+  evangelismRequest(`/contacts/${id}`, token, { method: 'DELETE' })
+export const prayForEvangelismContact = (token, id) =>
+  evangelismRequest(`/contacts/${id}/pray`, token, { method: 'POST' })
+export const reviewEvangelismTestimony = (token, id, approve) =>
+  evangelismRequest(`/${id}/review`, token, { method: 'POST', body: JSON.stringify({ approve }) })
 
 export async function submitCheckin(payload, token) {
   devlog(`[api] submitCheckin emotion=${payload.emotionLabel} anon=${!token}`)

@@ -2,7 +2,7 @@ import { t as i18nT } from './i18n/runtime'
 import { useEffect, useRef, useState } from 'react'
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
-import { amenEvangelismPrayer, deleteEvangelismPrayer, fetchEvangelismPrayers, restoreEvangelismPrayer, submitEvangelismPrayer, updateEvangelismPrayer, runQuery, fetchSeekersClassCourses, transcribeAudioBlob } from './api'
+import { amenEvangelismPrayer, deleteEvangelismPrayer, fetchEvangelismPrayers, restoreEvangelismPrayer, submitEvangelismPrayer, updateEvangelismPrayer, runQuery, fetchSeekersClassCourses, transcribeAudioBlob, fetchEvangelismContacts, createEvangelismContact, updateEvangelismContact, deleteEvangelismContact, prayForEvangelismContact, reviewEvangelismTestimony } from './api'
 import usePullToRefresh from './hooks/usePullToRefresh'
 import { escapeHtml, escapeHtmlWithBr } from './sanitize'
 import BibleMapPage from './BibleMapPage'
@@ -352,6 +352,159 @@ export function SeekersClassView() {
   )
 }
 
+
+// ── 我的挂念：挂念名单 → 每日代祷 → 阶段推进 → 见证 ──────────────────
+const STAGE_META = [
+  ['not_yet', '未信', '#8e8e93'],
+  ['curious', '留心', '#5ac8fa'],
+  ['seeking', '慕道', '#ffb347'],
+  ['decided', '决志', '#ff6b6b'],
+  ['baptized', '受洗', '#34c759'],
+  ['walking', '同行', '#5e5ce6'],
+]
+const STAGE_ORDER = Object.fromEntries(STAGE_META.map(([k], i) => [k, i]))
+
+function MyCarePanel({ token, onShareTestimony }) {
+  const [contacts, setContacts] = useState(null)
+  const [limit, setLimit] = useState(20)
+  const [err, setErr] = useState('')
+  const [name, setName] = useState('')
+  const [notes, setNotes] = useState('')
+  const [busy, setBusy] = useState('')
+  const [celebrate, setCelebrate] = useState(null) // {id, name, stageLabel}
+
+  const load = async () => {
+    try {
+      const data = await fetchEvangelismContacts(token)
+      setContacts(data.items || [])
+      setLimit(data.limit || 20)
+      setErr('')
+    } catch (e) { setErr(e.message); setContacts([]) }
+  }
+  useEffect(() => { load() }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const run = async (key, fn) => {
+    setBusy(key)
+    try { await fn(); await load() } catch (e) { setErr(e.message) } finally { setBusy('') }
+  }
+
+  const addContact = () => {
+    if (!name.trim()) return
+    run('add', async () => { await createEvangelismContact(token, name.trim(), notes.trim()); setName(''); setNotes('') })
+  }
+
+  const changeStage = (contact, stage) => {
+    const advanced = STAGE_ORDER[stage] > STAGE_ORDER[contact.stage]
+    run(`stage-${contact.id}`, async () => {
+      await updateEvangelismContact(token, contact.id, { stage })
+      if (advanced) {
+        const label = (STAGE_META.find(([k]) => k === stage) || [])[1] || stage
+        setCelebrate({ id: contact.id, name: contact.display_name, stageLabel: label })
+      }
+    })
+  }
+
+  const cardStyle = { background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.09)', borderRadius: 12, padding: '12px 14px', marginBottom: 10 }
+
+  if (contacts === null) return <div className="pw-loading">{i18nT('加载中...')}</div>
+
+  return (
+    <div style={{ padding: '4px 2px 30px' }}>
+      <div style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.55)', lineHeight: 1.6, margin: '2px 2px 10px' }}>
+        {i18nT('写下你挂念的朋友（只填称呼，不要填全名或联系方式），每天为他们祷告，看着神在他们生命中的工作。')}
+      </div>
+      {err && <div className="pw-error" role="alert">{err}</div>}
+
+      {/* 添加 */}
+      {contacts.length < limit && (
+        <div style={cardStyle}>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <input
+              value={name}
+              onChange={(e) => setName(e.target.value.slice(0, 20))}
+              placeholder={i18nT('称呼，如：老王、表妹')}
+              aria-label={i18nT('朋友称呼')}
+              style={{ flex: 1, padding: '9px 10px', borderRadius: 9, background: 'rgba(0,0,0,0.3)', color: '#fff', border: '1px solid rgba(255,255,255,0.15)', fontSize: 13.5 }}
+            />
+            <button
+              onClick={addContact}
+              disabled={!name.trim() || busy === 'add'}
+              style={{ padding: '9px 16px', borderRadius: 9, border: 'none', color: '#fff', fontWeight: 700, fontSize: 13.5, cursor: 'pointer', opacity: !name.trim() || busy === 'add' ? 0.5 : 1, background: 'linear-gradient(135deg, #ff6b6b, #ff9f0a)' }}
+            >{i18nT('+ 挂念')}</button>
+          </div>
+          <input
+            value={notes}
+            onChange={(e) => setNotes(e.target.value.slice(0, 100))}
+            placeholder={i18nT('备注（可选）：怎么认识的、最近的光景…')}
+            aria-label={i18nT('备注')}
+            style={{ width: '100%', boxSizing: 'border-box', marginTop: 8, padding: '8px 10px', borderRadius: 9, background: 'rgba(0,0,0,0.25)', color: '#fff', border: '1px solid rgba(255,255,255,0.1)', fontSize: 12.5 }}
+          />
+          <div style={{ marginTop: 6, fontSize: 11, color: 'rgba(255,255,255,0.35)' }}>{contacts.length}/{limit}</div>
+        </div>
+      )}
+
+      {/* 名单 */}
+      {contacts.length === 0 ? (
+        <div className="pw-empty">{i18nT('还没有挂念的朋友')}<br />{i18nT('从一位开始，每天为TA祷告')}</div>
+      ) : contacts.map((c) => {
+        const meta = STAGE_META.find(([k]) => k === c.stage) || STAGE_META[0]
+        return (
+          <div key={c.id} style={cardStyle}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{ width: 34, height: 34, borderRadius: '50%', flexShrink: 0, background: 'linear-gradient(135deg, #ff6b6b, #ff9f0a)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 700, color: '#fff' }}>
+                {c.display_name[0]}
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: 14.5, fontWeight: 700, color: '#fff' }}>
+                  {c.display_name}
+                  <span style={{ marginLeft: 8, fontSize: 11, fontWeight: 700, color: meta[2], background: `${meta[2]}22`, border: `1px solid ${meta[2]}55`, borderRadius: 999, padding: '1px 8px' }}>{i18nT(meta[1])}</span>
+                </div>
+                <div style={{ fontSize: 11.5, color: 'rgba(255,255,255,0.45)', marginTop: 2 }}>
+                  {c.streak > 0 && <span>🔥 {i18nT('连续')} {c.streak} {i18nT('天')} · </span>}
+                  {i18nT('累计代祷')} {c.total_days} {i18nT('天')}
+                  {c.notes && <span> · {c.notes}</span>}
+                </div>
+              </div>
+              <button
+                onClick={() => !c.prayed_today && run(`pray-${c.id}`, () => prayForEvangelismContact(token, c.id))}
+                disabled={c.prayed_today || busy === `pray-${c.id}`}
+                style={{ flexShrink: 0, padding: '8px 14px', borderRadius: 10, border: 'none', fontSize: 13, fontWeight: 700, cursor: c.prayed_today ? 'default' : 'pointer', color: '#fff', background: c.prayed_today ? 'rgba(52,199,89,0.25)' : 'linear-gradient(135deg, #007aff, #5e5ce6)' }}
+              >{c.prayed_today ? i18nT('🙏 已祷告') : i18nT('为TA祷告')}</button>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 9 }}>
+              <select
+                value={c.stage}
+                onChange={(e) => changeStage(c, e.target.value)}
+                aria-label={i18nT('属灵阶段')}
+                style={{ flex: 1, padding: '6px 8px', borderRadius: 8, background: 'rgba(0,0,0,0.3)', color: '#fff', border: '1px solid rgba(255,255,255,0.12)', fontSize: 12 }}
+              >
+                {STAGE_META.map(([k, zh]) => <option key={k} value={k}>{i18nT(zh)}</option>)}
+              </select>
+              <button
+                onClick={() => { if (window.confirm(i18nT('不再挂念这位朋友？（代祷记录会一并隐藏）'))) run(`del-${c.id}`, () => deleteEvangelismContact(token, c.id)) }}
+                title={i18nT('移除')}
+                style={{ padding: '6px 10px', borderRadius: 8, border: '1px solid rgba(239,68,68,0.3)', background: 'rgba(239,68,68,0.12)', color: '#ef4444', fontSize: 12, cursor: 'pointer' }}
+              >🗑️</button>
+            </div>
+            {celebrate?.id === c.id && (
+              <div style={{ marginTop: 9, padding: '9px 11px', borderRadius: 10, background: 'rgba(52,199,89,0.1)', border: '1px solid rgba(52,199,89,0.3)', fontSize: 12.5, color: 'rgba(255,255,255,0.85)' }}>
+                🎉 {i18nT('感谢主！')}{celebrate.name} {i18nT('进入了')}「{celebrate.stageLabel}」{i18nT('阶段')}
+                <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+                  <button
+                    onClick={() => { onShareTestimony(`感谢神！我为${celebrate.name}祷告了一段时间，TA最近${celebrate.stageLabel === '同行' ? '开始与主同行' : `进入了${celebrate.stageLabel}的阶段`}。`); setCelebrate(null) }}
+                    style={{ padding: '6px 12px', borderRadius: 8, border: 'none', background: 'linear-gradient(135deg, #34c759, #30d158)', color: '#fff', fontSize: 12, fontWeight: 700, cursor: 'pointer' }}
+                  >{i18nT('✨ 写见证分享到祷告墙')}</button>
+                  <button onClick={() => setCelebrate(null)} style={{ padding: '6px 12px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.15)', background: 'transparent', color: 'rgba(255,255,255,0.6)', fontSize: 12, cursor: 'pointer' }}>{i18nT('先不用')}</button>
+                </div>
+              </div>
+            )}
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
 export default function EvangelismPage({ user, token, organizationId, onBack, onPrayerWall }) {
   const [items, setItems] = useState([])
   const [total, setTotal] = useState(0)
@@ -370,6 +523,8 @@ export default function EvangelismPage({ user, token, organizationId, onBack, on
   const [deletingId, setDeletingId] = useState(null)
   const [isAdmin, setIsAdmin] = useState(false)
   const [isAnonymous, setIsAnonymous] = useState(false)
+  const [fyView, setFyView] = useState('care') // 'care' 我的挂念 | 'wall' 祷告墙
+  const [composeKind, setComposeKind] = useState('prayer') // 'prayer' | 'testimony'
   const textareaRef = useRef(null)
   const editTextareaRef = useRef(null)
   const listRef = useRef(null)
@@ -419,15 +574,23 @@ export default function EvangelismPage({ user, token, organizationId, onBack, on
     try { await amenEvangelismPrayer(id, token) } catch { /* optimistic */ }
   }
 
+  function openTestimonyCompose(prefill) {
+    setComposeKind('testimony')
+    setDraft(prefill || '')
+    setShowCompose(true)
+  }
+
   async function handleSubmit() {
     if (!draft.trim() || submitting) return
     setSubmitting(true)
     try {
-      await submitEvangelismPrayer(draft.trim(), isAnonymous, token)
+      await submitEvangelismPrayer(draft.trim(), isAnonymous, token, composeKind)
       setDraft('')
       setIsAnonymous(false)
+      setComposeKind('prayer')
       setSubmitDone(true)
       setShowCompose(false)
+      setFyView('wall')
       await load(true)
       setTimeout(() => setSubmitDone(false), 3000)
     } catch (e) {
@@ -475,6 +638,15 @@ export default function EvangelismPage({ user, token, organizationId, onBack, on
       setItems(prev => prev.map(p => p.id === deletingId ? { ...p, deleted_at: new Date().toISOString() } : p))
       setTotal(prev => prev - 1)
       setDeletingId(null)
+    } catch (e) {
+      setError(e.message)
+    }
+  }
+
+  async function handleReview(id, approve) {
+    try {
+      await reviewEvangelismTestimony(token, id, approve)
+      setItems(prev => prev.map(p => p.id === id ? { ...p, review_status: approve ? 'approved' : 'rejected' } : p))
     } catch (e) {
       setError(e.message)
     }
@@ -707,7 +879,7 @@ export default function EvangelismPage({ user, token, organizationId, onBack, on
       {showCompose && (
         <div className="pw-compose-overlay" onClick={(e) => { if (e.target === e.currentTarget) setShowCompose(false) }} {...a11yClickProps((e) => { if (e.target === e.currentTarget) setShowCompose(false) })}>
           <div className="pw-compose-sheet glass">
-            <div className="pw-compose-title">{i18nT('🌍 提交传FY祷告')}</div>
+            <div className="pw-compose-title">{composeKind === 'testimony' ? i18nT('✨ 分享见证（同工审核后上墙）') : i18nT('🌍 提交传FY祷告')}</div>
 
             {/* Current User Info */}
             <div style={{
@@ -978,7 +1150,22 @@ export default function EvangelismPage({ user, token, organizationId, onBack, on
       {subTab === 'fy' && (
       <div className="pw-list" ref={listRef} style={{ position: 'relative' }}>
         <div style={indicatorStyle}>{indicatorText}</div>
-        {loading ? (
+        {/* 我的挂念 / 祷告墙 切换 */}
+        {user && (
+          <div role="tablist" aria-label={i18nT('传FY视图')} style={{ display: 'flex', gap: 6, margin: '2px 2px 10px', background: 'rgba(255,255,255,0.06)', borderRadius: 11, padding: 4 }}>
+            {[['care', '💗 我的挂念'], ['wall', '🌍 祷告墙']].map(([key, label]) => (
+              <button
+                key={key}
+                role="tab"
+                aria-selected={fyView === key}
+                onClick={() => setFyView(key)}
+                style={{ flex: 1, padding: '8px 0', borderRadius: 8, border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 700, color: fyView === key ? '#fff' : 'rgba(255,255,255,0.55)', background: fyView === key ? 'linear-gradient(135deg, rgba(255,107,107,0.8), rgba(255,159,10,0.7))' : 'transparent' }}
+              >{i18nT(label)}</button>
+            ))}
+          </div>
+        )}
+        {user && fyView === 'care' && <MyCarePanel token={token} onShareTestimony={openTestimonyCompose} />}
+        {(!user || fyView === 'wall') && (loading ? (
           <div className="pw-loading">{i18nT('加载中...')}</div>
         ) : error ? (
           <div className="pw-error">{error}</div>
@@ -999,6 +1186,15 @@ export default function EvangelismPage({ user, token, organizationId, onBack, on
                       <div className="pw-card-meta">
                         <div className="pw-card-name">
                           {prayer.nickname}
+                          {prayer.kind === 'testimony' && (
+                            <span style={{ marginLeft: '8px', fontSize: '11px', color: '#34c759', background: 'rgba(52,199,89,0.15)', padding: '2px 6px', borderRadius: '4px' }}>✨ {i18nT('见证')}</span>
+                          )}
+                          {prayer.review_status === 'pending' && (
+                            <span style={{ marginLeft: '6px', fontSize: '11px', color: '#ffb347', background: 'rgba(255,179,71,0.15)', padding: '2px 6px', borderRadius: '4px' }}>{i18nT('待审核')}</span>
+                          )}
+                          {prayer.review_status === 'rejected' && (
+                            <span style={{ marginLeft: '6px', fontSize: '11px', color: '#ef4444', background: 'rgba(239,68,68,0.15)', padding: '2px 6px', borderRadius: '4px' }}>{i18nT('未通过')}</span>
+                          )}
                           {prayer.deleted_at && (
                             <span style={{ 
                               marginLeft: '8px', 
@@ -1019,6 +1215,20 @@ export default function EvangelismPage({ user, token, organizationId, onBack, on
                         <div style={{ display: 'flex', gap: '8px', marginLeft: 'auto', marginRight: '12px' }}>
                           {!prayer.deleted_at ? (
                             <>
+                                {isAdmin && prayer.kind === 'testimony' && prayer.review_status === 'pending' && (
+                                  <>
+                                    <button
+                                      onClick={() => handleReview(prayer.id, true)}
+                                      title={i18nT('通过见证')}
+                                      style={{ padding: '6px', background: 'rgba(52,199,94,0.15)', border: '1px solid rgba(52,199,94,0.3)', borderRadius: '6px', color: '#22c55e', fontSize: '14px', cursor: 'pointer', minWidth: '32px', minHeight: '32px' }}
+                                    >✔</button>
+                                    <button
+                                      onClick={() => handleReview(prayer.id, false)}
+                                      title={i18nT('拒绝见证')}
+                                      style={{ padding: '6px', background: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: '6px', color: '#ef4444', fontSize: '14px', cursor: 'pointer', minWidth: '32px', minHeight: '32px' }}
+                                    >✖</button>
+                                  </>
+                                )}
                                 {prayer.is_own && <button
                                   onClick={() => startEdit(prayer)}
                                   title={i18nT('编辑')}
@@ -1265,7 +1475,7 @@ export default function EvangelismPage({ user, token, organizationId, onBack, on
               </div>
             )}
           </>
-        )}
+        ))}
       </div>
       )}
 
@@ -1305,7 +1515,7 @@ export default function EvangelismPage({ user, token, organizationId, onBack, on
       {subTab === 'seekers' && <SeekersClassView />}
 
       {/* Export Bar */}
-      {subTab === 'fy' && !loading && !error && items.length > 0 && (
+      {subTab === 'fy' && fyView === 'wall' && !loading && !error && items.length > 0 && (
         <div className="sj-export-bar">
           <button className="sj-export-btn-bottom" onClick={() => exportAllPrayersToTxt(items)} title={i18nT('导出TXT')}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

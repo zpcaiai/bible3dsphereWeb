@@ -4,6 +4,7 @@ import MissionBridgePanel from '../components/mission-bridge/MissionBridgePanel'
 import * as api from '../missionBridgeApi'
 
 vi.mock('../missionBridgeApi', () => ({
+  fetchMissionBridgeCapabilities: vi.fn(),
   fetchMissionBridgeDashboard: vi.fn(),
   updateMissionBridgeConsent: vi.fn(),
   enrollMissionBridgeProgram: vi.fn(),
@@ -107,6 +108,7 @@ const dashboard = {
 
 describe('MissionBridgePanel', () => {
   beforeEach(() => {
+    api.fetchMissionBridgeCapabilities.mockResolvedValue({ level: 'admin', tabs: ['programs','journey','specialized-directory','content','safety','privacy','leader','training','agents','organizations','discovery','designer','operations','incidents'] })
     api.fetchMissionBridgeDashboard.mockResolvedValue(dashboard)
     api.fetchMissionBridgePolicy.mockResolvedValue({ acknowledged: true, policy: { version: '1.0.0' } })
     api.fetchMissionBridgeIncidents.mockRejectedValue(new Error('forbidden'))
@@ -180,7 +182,8 @@ describe('MissionBridgePanel', () => {
   it('opens the private attention recovery flow', async () => {
     render(<MissionBridgePanel token="token" />)
     await screen.findByText('邻舍之桥')
-    fireEvent.click(screen.getByText('注意力30天'))
+    fireEvent.click(screen.getByText('专项支持'))
+    fireEvent.click(await screen.findByText('注意力30天'))
     expect(await screen.findByText('30天流程')).toBeTruthy()
     expect(screen.getByText(/不保存具体搜索词/)).toBeTruthy()
   })
@@ -188,7 +191,8 @@ describe('MissionBridgePanel', () => {
   it('opens the balanced AI faith discussion path', async () => {
     render(<MissionBridgePanel token="token" />)
     await screen.findByText('邻舍之桥')
-    fireEvent.click(screen.getByText('AI信仰探索'))
+    fireEvent.click(screen.getByText('专项支持'))
+    fireEvent.click(await screen.findByText('AI信仰探索'))
     expect(await screen.findByText('AI能否理解，还是只是在预测？')).toBeTruthy()
     expect(screen.getByText(/公平呈现重要反对意见/)).toBeTruthy()
     expect(screen.getByText('匿名提问')).toBeTruthy()
@@ -198,7 +202,8 @@ describe('MissionBridgePanel', () => {
     api.updateMobileWorkerProfile.mockResolvedValue({ ok: true })
     render(<MissionBridgePanel token="token" />)
     await screen.findByText('邻舍之桥')
-    fireEvent.click(screen.getByText('司机同行'))
+    fireEvent.click(screen.getByText('专项支持'))
+    fireEvent.click(await screen.findByText('司机同行'))
     expect(await screen.findByText(/行驶中禁止文本输入/)).toBeTruthy()
     fireEvent.click(screen.getByText('正在驾驶'))
     await waitFor(() => expect(api.updateMobileWorkerProfile).toHaveBeenCalled())
@@ -207,7 +212,8 @@ describe('MissionBridgePanel', () => {
   it('uses shift cadence rather than daily streaks', async () => {
     render(<MissionBridgePanel token="token" />)
     await screen.findByText('邻舍之桥')
-    fireEvent.click(screen.getByText('夜班同行'))
+    fireEvent.click(screen.getByText('专项支持'))
+    fireEvent.click(await screen.findByText('夜班同行'))
     expect(await screen.findByText('按班次记录，不按自然日计算连续签到')).toBeTruthy()
     expect(screen.getByText('班前3分钟')).toBeTruthy()
   })
@@ -215,7 +221,8 @@ describe('MissionBridgePanel', () => {
   it('keeps children separated and out of marketing flows', async () => {
     render(<MissionBridgePanel token="token" />)
     await screen.findByText('邻舍之桥')
-    fireEvent.click(screen.getByText('流动家庭'))
+    fireEvent.click(screen.getByText('专项支持'))
+    fireEvent.click(await screen.findByText('流动家庭'))
     expect(await screen.findByText(/儿童不得被单独营销或邀请/)).toBeTruthy()
     expect(screen.getByText('儿童阅读')).toBeTruthy()
   })
@@ -224,6 +231,7 @@ describe('MissionBridgePanel', () => {
     render(<MissionBridgePanel token="token" />)
     await screen.findByText('邻舍之桥')
     fireEvent.click(screen.getByText('专项支持'))
+    fireEvent.click(await screen.findByText('更多专项支持'))
     expect(await screen.findByText(/不诊断失智/)).toBeTruthy()
     expect(screen.getByText('照护压力自评')).toBeTruthy()
   })
@@ -232,6 +240,7 @@ describe('MissionBridgePanel', () => {
     render(<MissionBridgePanel token="token" />)
     await screen.findByText('邻舍之桥')
     fireEvent.click(screen.getByText('专项支持'))
+    fireEvent.click(await screen.findByText('更多专项支持'))
     fireEvent.click(await screen.findByText('过渡青年'))
     expect(await screen.findByText(/尚未建立有效的儿童福利/)).toBeTruthy()
   })
