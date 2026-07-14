@@ -1,10 +1,14 @@
 import { API_BASE } from '../../../api'
 
+const realToken = (token) => (token && token !== 'cookie-session' ? token : null)
+
 async function request(path, token, options = {}) {
-  // CSRF: Bearer-token auth only (Authorization header) — cookies are not used, so `credentials:'include'` was removed to shrink the CSRF surface.
+  // Auth: HttpOnly session cookie (same-origin, primary) + in-memory Bearer fallback.
+  const bearer = realToken(token)
   const response = await fetch(`${API_BASE}/v1/mission/features${path}`, {
+    credentials: 'same-origin',
     ...options,
-    headers: { ...(options.body ? { 'Content-Type': 'application/json' } : {}), ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+    headers: { ...(options.body ? { 'Content-Type': 'application/json' } : {}), ...(bearer ? { Authorization: `Bearer ${bearer}` } : {}) },
   })
   const data = await response.json().catch(() => ({}))
   if (!response.ok) {

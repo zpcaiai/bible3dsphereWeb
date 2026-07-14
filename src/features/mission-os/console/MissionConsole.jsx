@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { t } from '../../../i18n/runtime'
 import * as api from '../api/missionApi'
+import { listMyOrganizations, createOrganization } from '../api/organizations'
 
 /**
  * MissionConsole — Mission OS 工作台
@@ -354,26 +355,96 @@ const PANELS = {
   compliance: CompliancePanel, vault: VaultPanel, gate: GatePanel,
 }
 
+const ORG_STORE_KEY = 'mission-os-selected-org'
+const ORG_TYPES = [['church', '教会'], ['mission_agency', '差会'], ['team', '团队'], ['training_provider', '培训机构']]
+
+function OrgGate({ token, orgs, loading, error, onSelect, onCreated, reload }) {
+  const [name, setName] = useState('')
+  const [orgType, setOrgType] = useState('church')
+  const [busy, setBusy] = useState(false)
+  const [msg, setMsg] = useState('')
+  async function create() {
+    setBusy(true); setMsg('')
+    try {
+      const r = await createOrganization(token, { name: name.trim(), organization_type: orgType })
+      setName(''); setMsg(t('组织已创建'))
+      onCreated(r.organization_id)
+    } catch (e) { setMsg(e.detail || e.message) } finally { setBusy(false) }
+  }
+  return (
+    <div style={{ padding: 18 }}>
+      <div style={card}>
+        <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 6 }}>{t('选择组织上下文')}</div>
+        <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)', lineHeight: 1.6, marginBottom: 10 }}>
+          {t('Mission OS 工作台按组织（教会 / 差会 / 团队）隔离数据。请选择你所属的组织，或创建一个新组织。')}
+        </div>
+        <StateBlock loading={loading} error={error} empty={!loading && !error && orgs.length === 0} emptyText={t('你还不属于任何组织，请在下方创建')} />
+        {orgs.map((o) => (
+          <Row key={o.id}>
+            <span style={{ flex: 1 }}>{o.name}</span>
+            <span style={pill('rgba(255,255,255,0.6)', 'rgba(255,255,255,0.06)')}>{o.organization_type}</span>
+            <span style={pill('#8fd6ff', 'rgba(90,200,250,0.12)')}>{o.my_role}</span>
+            <button style={{ ...btn, padding: '6px 12px' }} onClick={() => onSelect(o.id)}>{t('进入')}</button>
+          </Row>
+        ))}
+      </div>
+      <div style={card}>
+        <div style={{ fontWeight: 700, marginBottom: 8 }}>{t('创建新组织')}</div>
+        <div style={label}>{t('组织名称')}</div>
+        <input style={inp} value={name} onChange={(e) => setName(e.target.value)} placeholder={t('例如：恩典教会宣教部')} aria-label={t('组织名称')} />
+        <div style={label}>{t('组织类型')}</div>
+        <select style={inp} value={orgType} onChange={(e) => setOrgType(e.target.value)}>
+          {ORG_TYPES.map(([v, zh]) => <option key={v} value={v}>{t(zh)}</option>)}
+        </select>
+        <button style={{ ...btn, opacity: busy || name.trim().length < 2 ? 0.5 : 1 }} disabled={busy || name.trim().length < 2} onClick={create}>{busy ? t('创建中…') : t('创建组织')}</button>
+        {msg && <div style={{ marginTop: 8, fontSize: 12.5, color: '#8fd6ff' }}>{msg}</div>}
+        <div style={{ marginTop: 8 }}>
+          <button style={{ ...btn, background: 'rgba(255,255,255,0.08)' }} onClick={reload}>{t('刷新组织列表')}</button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function MissionConsole({ token, organizationId }) {
   const [active, setActive] = useState('field')
+  const [org, setOrg] = useState(() => {
+    try { return organizationId || localStorage.getItem(ORG_STORE_KEY) || '' } catch { return organizationId || '' }
+  })
+  const [orgs, setOrgs] = useState([])
+  const [orgsLoading, setOrgsLoading] = useState(true)
+  const [orgsError, setOrgsError] = useState(null)
+  const loadOrgs = useCallback(() => {
+    if (!token) return
+    setOrgsLoading(true); setOrgsError(null)
+    listMyOrganizations(token)
+      .then((r) => { setOrgs(r.organizations || []); setOrgsLoading(false) })
+      .catch((e) => { setOrgsError(e); setOrgsLoading(false) })
+  }, [token])
+  useEffect(() => { loadOrgs() }, [loadOrgs])
+  const selectOrg = (id) => {
+    setOrg(id)
+    try { localStorage.setItem(ORG_STORE_KEY, id) } catch { /* storage may be disabled */ }
+  }
   if (!token) {
     return <div style={{ padding: 24, textAlign: 'center', color: 'rgba(255,255,255,0.6)' }}>{t('请先登录以使用 Mission OS 工作台。')}</div>
   }
-  if (!organizationId) {
-    return (
-      <div style={{ padding: 18 }}>
-        <div style={{ ...card, textAlign: 'center' }}>
-          <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 6 }}>{t('需要组织上下文')}</div>
-          <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)', lineHeight: 1.6 }}>
-            {t('Mission OS 工作台按组织（教会 / 差会 / 团队）隔离数据。请先在「组织控制台」创建或选择一个组织后再进入。')}
-          </div>
-        </div>
-      </div>
-    )
+  if (!org) {
+    return <OrgGate token={token} orgs={orgs} loading={orgsLoading} error={orgsError} onSelect={selectOrg} onCreated={selectOrg} reload={loadOrgs} />
   }
+  const currentOrg = orgs.find((o) => o.id === org)
   const Panel = PANELS[active]
   return (
     <div style={{ padding: '4px 2px 40px' }}>
+      {/* 组织上下文 */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '2px 0 10px', fontSize: 12.5 }}>
+        <span style={{ color: 'rgba(255,255,255,0.5)' }}>{t('组织')}:</span>
+        <strong style={{ color: '#8fd6ff' }}>{currentOrg?.name || org}</strong>
+        <button
+          style={{ cursor: 'pointer', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 8, padding: '3px 10px', background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.7)', fontSize: 12 }}
+          onClick={() => { setOrg(''); try { localStorage.removeItem(ORG_STORE_KEY) } catch { /* noop */ } }}
+        >{t('切换组织')}</button>
+      </div>
       {/* 生命周期主线 */}
       <div style={{ display: 'flex', gap: 6, overflowX: 'auto', padding: '4px 0 12px' }}>
         {STAGES.map((s, i) => (
@@ -390,7 +461,7 @@ export default function MissionConsole({ token, organizationId }) {
       <div style={{ fontSize: 11.5, color: 'rgba(255,255,255,0.4)', margin: '0 2px 12px', lineHeight: 1.5 }}>
         {t('主线：禾场情报 → 呼召辨识 → 准备度 → 装备训练 → 差派与团队 → 财务/身份/家庭 → Deployment Gate。上游未达标不能进下游；任何自动阶段都不会把工人标记为「已出发」。')}
       </div>
-      <Panel token={token} org={organizationId} />
+      <Panel token={token} org={org} />
     </div>
   )
 }

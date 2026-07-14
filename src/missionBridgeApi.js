@@ -1,12 +1,19 @@
 import { API_BASE } from './api'
 
+// The 'cookie-session' sentinel means "auth via HttpOnly cookie" — it must not
+// be sent as a Bearer credential, otherwise the backend rejects it with 401.
+const realToken = (token) => (token && token !== 'cookie-session' ? token : null)
+
 async function request(path, token, options = {}) {
-  // CSRF: Bearer-token auth only (Authorization header) — cookies are not used, so `credentials:'include'` was removed to shrink the CSRF surface.
+  // Auth: HttpOnly session cookie (same-origin, primary) with in-memory Bearer
+  // token fallback for contexts where the cookie is unavailable.
+  const bearer = realToken(token)
   const response = await fetch(`${API_BASE}/mission-bridge${path}`, {
+    credentials: 'same-origin',
     ...options,
     headers: {
       ...(options.body ? { 'Content-Type': 'application/json' } : {}),
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...(bearer ? { Authorization: `Bearer ${bearer}` } : {}),
       ...options.headers,
     },
   })

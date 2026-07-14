@@ -368,6 +368,8 @@ export default function EvangelismPage({ user, token, organizationId, onBack, on
   const [editingId, setEditingId] = useState(null)
   const [editDraft, setEditDraft] = useState('')
   const [deletingId, setDeletingId] = useState(null)
+  const [isAdmin, setIsAdmin] = useState(false)
+  const [isAnonymous, setIsAnonymous] = useState(false)
   const textareaRef = useRef(null)
   const editTextareaRef = useRef(null)
   const listRef = useRef(null)
@@ -385,6 +387,7 @@ export default function EvangelismPage({ user, token, organizationId, onBack, on
       replace ? setLoading(true) : setLoadingMore(true)
       const data = await fetchEvangelismPrayers(PAGE, replace ? 0 : items.length, token)
       setTotal(data.total || 0)
+      setIsAdmin(Boolean(data.is_admin))
       const sortedItems = (data.items || []).sort((a, b) => {
         const ta = new Date(b.updated_at || b.created_at || 0).getTime()
         const tb = new Date(a.updated_at || a.created_at || 0).getTime()
@@ -420,8 +423,9 @@ export default function EvangelismPage({ user, token, organizationId, onBack, on
     if (!draft.trim() || submitting) return
     setSubmitting(true)
     try {
-      await submitEvangelismPrayer(draft.trim(), false, token)
+      await submitEvangelismPrayer(draft.trim(), isAnonymous, token)
       setDraft('')
+      setIsAnonymous(false)
       setSubmitDone(true)
       setShowCompose(false)
       await load(true)
@@ -754,10 +758,24 @@ export default function EvangelismPage({ user, token, organizationId, onBack, on
                   fontSize: '11px',
                   color: 'rgba(255,255,255,0.4)',
                 }}>
-                  {`以${user?.nickname || '我'}的名义提交祷告`}
+                  {isAnonymous ? i18nT('以匿名方式提交祷告') : `以${user?.nickname || '我'}的名义提交祷告`}
                 </div>
               </div>
             </div>
+
+            {/* 匿名提交选项 */}
+            <label style={{
+              display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px',
+              fontSize: '13px', color: 'rgba(255,255,255,0.75)', cursor: 'pointer', userSelect: 'none',
+            }}>
+              <input
+                type="checkbox"
+                checked={isAnonymous}
+                onChange={(e) => setIsAnonymous(e.target.checked)}
+                style={{ width: '16px', height: '16px', accentColor: '#ff6b6b' }}
+              />
+              {i18nT('匿名提交（其他弟兄姊妹将看不到你的名字）')}
+            </label>
 
             <div style={{ position: 'relative' }}>
               <textarea
@@ -997,11 +1015,11 @@ export default function EvangelismPage({ user, token, organizationId, onBack, on
                         <div className="pw-card-time">{formatDateTime(prayer.updated_at || prayer.created_at)}</div>
                       </div>
                       {/* Edit/Delete/Restore buttons for owner or admin */}
-                      {user && (prayer.nickname === user.nickname || user.email === 'zpclord@sina.com') && (
+                      {user && (prayer.is_own || isAdmin) && (
                         <div style={{ display: 'flex', gap: '8px', marginLeft: 'auto', marginRight: '12px' }}>
                           {!prayer.deleted_at ? (
                             <>
-                                <button
+                                {prayer.is_own && <button
                                   onClick={() => startEdit(prayer)}
                                   title={i18nT('编辑')}
                                   style={{
@@ -1020,7 +1038,7 @@ export default function EvangelismPage({ user, token, organizationId, onBack, on
                                   }}
                                 >
                                   ✏️
-                                </button>
+                                </button>}
                                 <button
                                   onClick={() => confirmDelete(prayer.id)}
                                   title={i18nT('删除')}
@@ -1044,7 +1062,7 @@ export default function EvangelismPage({ user, token, organizationId, onBack, on
                             </>
                           ) : (
                             <>
-                              {user.email === 'zpclord@sina.com' && (
+                              {isAdmin && (
                                 <button
                                   onClick={() => handleRestore(prayer.id)}
                                   title={i18nT('恢复')}

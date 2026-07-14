@@ -13,15 +13,30 @@ const authUrl = (path) => `${API_BASE}/auth${path}`
 // eagerly so older deployments cannot keep exposing them.
 try { localStorage.removeItem(TOKEN_KEY); sessionStorage.removeItem(TOKEN_KEY) } catch { /* storage may be disabled */ }
 
+// In-memory session token (never persisted). Set from the login/register
+// response so API helpers can fall back to Bearer auth when the HttpOnly
+// cookie is unavailable (e.g. cross-origin API base). Cookie remains primary.
+let sessionToken = null
+
+export const COOKIE_SESSION_SENTINEL = 'cookie-session'
+
 export function getToken() {
-  // Compatibility sentinel for older API helpers that conditionally add an
-  // Authorization header. It is not a credential; authentication is cookie-based.
-  return 'cookie-session'
+  // Real token when we have one (this JS realm only); otherwise a sentinel for
+  // older API helpers that conditionally add an Authorization header.
+  return sessionToken || COOKIE_SESSION_SENTINEL
 }
 
-export function setToken() { /* HttpOnly cookie is managed by the server */ }
+export function hasRealToken() {
+  return Boolean(sessionToken)
+}
+
+export function setToken(token) {
+  // HttpOnly cookie is managed by the server; we only mirror it in memory.
+  sessionToken = typeof token === 'string' && token ? token : null
+}
 
 export function clearToken() {
+  sessionToken = null
   try {
     localStorage.removeItem(TOKEN_KEY)
     sessionStorage.removeItem(TOKEN_KEY)
@@ -155,6 +170,7 @@ export async function registerWithEmail(email, code, password, nickname = '') {
   const data = await res.json()
   if (!res.ok) throw new Error(data.detail || 'Registration failed')
   if (data.user) setCachedUser(data.user)
+  if (data.token) setToken(data.token)
   return data
 }
 
@@ -171,6 +187,7 @@ export async function loginWithEmail(email, password) {
   const data = await res.json()
   if (!res.ok) throw new Error(data.detail || 'Login failed')
   if (data.user) setCachedUser(data.user)
+  if (data.token) setToken(data.token)
   return data
 }
 

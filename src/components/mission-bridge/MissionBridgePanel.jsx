@@ -34,6 +34,10 @@ const PROGRAM_META = {
 }
 
 export default function MissionBridgePanel({ token, organizationId }) {
+  // 宣教组织上下文：优先使用外部传入，否则沿用工作台中选择的组织
+  let storedOrg = ''
+  try { storedOrg = localStorage.getItem('mission-os-selected-org') || '' } catch { /* storage may be disabled */ }
+  const missionOrgId = organizationId || storedOrg
   const [data, setData] = useState(null)
   const [policy, setPolicy] = useState(null)
   const [adminIncidents, setAdminIncidents] = useState(null)
@@ -93,7 +97,7 @@ export default function MissionBridgePanel({ token, organizationId }) {
       {policy && !policy.acknowledged && <div className="mb-policy"><div><strong>{t('安全政策确认')} · v{policy.policy.version}</strong><p>{t('我了解高风险事件需要真人和专业机构介入，平台不能承诺绝对保密。')}</p></div><button type="button" disabled={busy === 'policy'} onClick={() => run('policy', () => acknowledgeMissionBridgePolicy(token), '安全政策确认已记录')}>{t('阅读并确认')}</button></div>}
 
       <nav className="mb-tabs" aria-label={t('邻舍之桥功能')}>
-        {[['programs','项目'],['journey','我的旅程'],...(organizationId ? [['organizations','宣教组织']] : []),['leader','带领者工作台'],['attention-pilot','注意力30天'],['ai-faith','AI信仰探索'],['mobile-worker','司机同行'],['night-shift','夜班同行'],['mobile-family','流动家庭'],['specialized','专项支持'],['content','可信资料'],['agents','AI 辅助'],['safety','安全求助'],['privacy','隐私与同意'],...(proposals ? [['discovery','群体发现'],['designer','项目设计'],['training','导师小组'],['operations','运营后台']] : []),...(adminIncidents ? [['incidents','事件处理']] : [])].map(([key,label]) => <button type="button" key={key} className={view === key ? 'active' : ''} onClick={() => setView(key)}>{t(label)}</button>)}
+        {[['programs','项目'],['journey','我的旅程'],...(missionOrgId ? [['organizations','宣教组织']] : []),['leader','带领者工作台'],['attention-pilot','注意力30天'],['ai-faith','AI信仰探索'],['mobile-worker','司机同行'],['night-shift','夜班同行'],['mobile-family','流动家庭'],['specialized','专项支持'],['content','可信资料'],['agents','AI 辅助'],['safety','安全求助'],['privacy','隐私与同意'],...(proposals ? [['discovery','群体发现'],['designer','项目设计'],['training','导师小组'],['operations','运营后台']] : []),...(adminIncidents ? [['incidents','事件处理']] : [])].map(([key,label]) => <button type="button" key={key} className={view === key ? 'active' : ''} onClick={() => setView(key)}>{t(label)}</button>)}
       </nav>
 
       {error && <div className="mb-alert error" role="alert">{error}</div>}
@@ -173,7 +177,7 @@ export default function MissionBridgePanel({ token, organizationId }) {
       {view === 'training' && <TrainingConsole token={token} programs={data?.programs || []} />}
       {view === 'content' && <ContentLibrary token={token} canManage={Boolean(proposals)} />}
       {view === 'agents' && <AgentWorkbench token={token} aiConsented={Boolean(privacyConsents.find((item) => item.consentType === 'ai_assistance')?.granted)} onOpenPrivacy={() => setView('privacy')} />}
-      {view === 'organizations' && <MissionOrganizationConsole token={token} organizationId={organizationId} />}
+      {view === 'organizations' && <MissionOrganizationConsole token={token} organizationId={missionOrgId} />}
       {view === 'leader' && <LocalLeaderWorkspace token={token} />}
       {view === 'attention-pilot' && <AttentionPilotWorkspace token={token} />}
       {view === 'ai-faith' && <AiFaithWorkspace token={token} />}

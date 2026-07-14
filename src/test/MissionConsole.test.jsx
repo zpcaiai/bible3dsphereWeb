@@ -25,8 +25,11 @@ describe('MissionConsole full lifecycle', () => {
     expect(screen.getByRole('button',{name:'加密保存'}).disabled).toBe(true)
   })
 
-  it('fails closed without organization context', () => {
+  it('offers organization selection/creation without organization context', async () => {
     render(<MissionConsole token="token" organizationId="" />)
-    expect(screen.getByText('需要组织上下文')).toBeTruthy()
+    expect(screen.getByText('选择组织上下文')).toBeTruthy()
+    expect(screen.getByText('创建新组织')).toBeTruthy()
+    await waitFor(()=>expect(global.fetch).toHaveBeenCalled())
+    expect(global.fetch.mock.calls[0][0]).toContain('/productization/orgs')
   })
 })
