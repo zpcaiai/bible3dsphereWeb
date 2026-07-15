@@ -1,223 +1,228 @@
-import { useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { t } from '../../../i18n/runtime'
-import { ROADMAP_META, BATCHES, STATUS_STYLES } from './missionOsRoadmapData'
+import { getMissionRoadmap } from '../api/missionApi'
 
-/**
- * MissionOSRoadmap — Mission OS 全功能版开发路线图（Batch 0–5）
- * 在「宣教」子标签内以可折叠的 Batch → Skill 分层视图呈现规划内容。
- * 纯前端、无外部依赖；轻量 markdown 渲染（标题/列表/粗体/行内代码/代码块）。
- */
+const ORG_STORE_KEY = 'mission-os-selected-org'
 
-// ---- 轻量 markdown 行内渲染：**粗体** 与 `行内代码` ----
-function renderInline(text, keyPrefix) {
-  const nodes = []
-  const regex = /(\*\*[^*]+\*\*|`[^`]+`)/g
-  let last = 0
-  let m
-  let i = 0
-  while ((m = regex.exec(text)) !== null) {
-    if (m.index > last) nodes.push(text.slice(last, m.index))
-    const tok = m[0]
-    if (tok.startsWith('**')) {
-      nodes.push(<strong key={`${keyPrefix}-b${i}`} style={{ color: '#fff' }}>{tok.slice(2, -2)}</strong>)
-    } else {
-      nodes.push(
-        <code key={`${keyPrefix}-c${i}`} style={{
-          background: 'rgba(255,255,255,0.10)', borderRadius: 5, padding: '1px 5px',
-          fontSize: '0.86em', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-        }}>{tok.slice(1, -1)}</code>
-      )
-    }
-    last = m.index + tok.length
-    i++
-  }
-  if (last < text.length) nodes.push(text.slice(last))
-  return nodes
+const STATUS_META = {
+  complete: { label: '已完成', icon: '✓' },
+  active: { label: '进行中', icon: '→' },
+  blocked: { label: '需处理', icon: '!' },
+  upcoming: { label: '未开始', icon: '·' },
 }
 
-// ---- 轻量 markdown 块渲染：标题 / 列表 / 代码块 / 段落 ----
-function Markdown({ text }) {
-  const lines = String(text || '').split('\n')
-  const blocks = []
-  let i = 0
-  let listBuf = null
-  const flushList = () => {
-    if (listBuf && listBuf.length) {
-      blocks.push(
-        <ul key={`ul-${blocks.length}`} style={{ margin: '6px 0 8px', paddingLeft: 20 }}>
-          {listBuf.map((it, idx) => (
-            <li key={idx} style={{ margin: '3px 0', lineHeight: 1.55, color: 'rgba(255,255,255,0.82)' }}>
-              {renderInline(it, `li-${blocks.length}-${idx}`)}
-            </li>
-          ))}
-        </ul>
-      )
-    }
-    listBuf = null
-  }
-  while (i < lines.length) {
-    const line = lines[i]
-    if (line.trim().startsWith('```')) {
-      flushList()
-      const code = []
-      i++
-      while (i < lines.length && !lines[i].trim().startsWith('```')) { code.push(lines[i]); i++ }
-      i++
-      blocks.push(
-        <pre key={`pre-${blocks.length}`} style={{
-          background: 'rgba(0,0,0,0.35)', border: '1px solid rgba(255,255,255,0.08)',
-          borderRadius: 10, padding: '10px 12px', overflowX: 'auto', margin: '8px 0',
-          fontSize: 12.5, lineHeight: 1.5, color: 'rgba(255,255,255,0.85)',
-          fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-        }}>{code.join('\n')}</pre>
-      )
-      continue
-    }
-    if (/^\s*[-*]\s+/.test(line)) {
-      if (!listBuf) listBuf = []
-      listBuf.push(line.replace(/^\s*[-*]\s+/, ''))
-      i++
-      continue
-    }
-    flushList()
-    if (line.trim() === '') { i++; continue }
-    blocks.push(
-      <p key={`p-${blocks.length}`} style={{ margin: '4px 0 8px', lineHeight: 1.6, color: 'rgba(255,255,255,0.82)' }}>
-        {renderInline(line, `p-${blocks.length}`)}
-      </p>
-    )
-    i++
-  }
-  flushList()
-  return <div>{blocks}</div>
+const DETAIL_LABELS = {
+  active_discernment: '辨识中', ready_for_readiness_assessment: '可进入准备度评估', completed: '已完成',
+  self_assessment: '自我评估', evidence_collection: '收集证据', mentor_review: '导师评审', church_review: '教会评审', panel_review: '小组评审',
+  deployment_candidate: '部署候选', team_discernment_ready: '可进入团队辨识', pause_and_restore: '暂停与恢复',
+  draft: '草稿', active: '进行中', approved: '已批准', committee_ready: '待委员会评审',
+  approved_for_next_stage: '批准进入下一阶段', conditionally_approved: '有条件批准', revision_required: '需要修订', declined_current_application: '本次申请未通过',
+  provisional: '暂定成员', probation: '考察期', research: '研究中', professional_review: '专业评审',
+  cleared_for_next_stage: '合规放行', underfunded: '资金不足', blocked: '已阻塞',
+  ready_for_deployment_planning: '可进入部署规划', review_required: '需要人工复核',
 }
 
-function StatusPill({ status }) {
-  const s = STATUS_STYLES[status] || STATUS_STYLES.planned
+function statusMeta(status) {
+  return STATUS_META[status] || STATUS_META.upcoming
+}
+
+function readableDetail(detail) {
+  if (!detail) return ''
+  return DETAIL_LABELS[detail] || detail
+}
+
+function RoadmapSkeleton() {
   return (
-    <span style={{
-      fontSize: 11, fontWeight: 700, color: s.color, background: s.bg,
-      borderRadius: 999, padding: '2px 9px', whiteSpace: 'nowrap',
-    }}>{t(s.label)}</span>
-  )
-}
-
-function SkillRow({ skill }) {
-  const [open, setOpen] = useState(false)
-  return (
-    <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-      <button
-        onClick={() => setOpen(o => !o)}
-        style={{
-          width: '100%', display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer',
-          background: 'transparent', border: 'none', color: '#fff', textAlign: 'left',
-          padding: '10px 4px', fontSize: 14, fontWeight: 600,
-        }}
-        aria-expanded={open}
-      >
-        <span style={{ opacity: 0.6, fontSize: 12, transform: open ? 'rotate(90deg)' : 'none', transition: 'transform .15s' }}>▶</span>
-        <span style={{ flex: 1 }}>{skill.title}</span>
-      </button>
-      {open && (
-        <div style={{ padding: '0 4px 12px 24px', fontSize: 13.5 }}>
-          <Markdown text={skill.body} />
-        </div>
-      )}
+    <div className="mission-roadmap-skeleton" aria-label={t('正在加载宣教旅程')}>
+      <div className="mission-roadmap-skeleton-hero" />
+      <div className="mission-roadmap-skeleton-track" />
+      <div className="mission-roadmap-skeleton-grid"><span /><span /></div>
     </div>
   )
 }
 
-function BatchCard({ batch, defaultOpen }) {
-  const [open, setOpen] = useState(!!defaultOpen)
+function RoadmapState({ title, description, actionLabel, onAction }) {
   return (
-    <div style={{
-      background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
-      borderRadius: 14, padding: 14, marginBottom: 12,
-    }}>
-      <button
-        onClick={() => setOpen(o => !o)}
-        style={{
-          width: '100%', display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer',
-          background: 'transparent', border: 'none', color: '#fff', textAlign: 'left', padding: 0,
-        }}
-        aria-expanded={open}
+    <div className="mission-roadmap-state">
+      <span className="mission-roadmap-state-mark" aria-hidden="true">⌁</span>
+      <h2>{t(title)}</h2>
+      <p>{t(description)}</p>
+      {onAction ? <button className="mission-roadmap-primary" onClick={onAction}>{t(actionLabel)}</button> : null}
+    </div>
+  )
+}
+
+function StageTrack({ stages, selectedKey, onSelect }) {
+  return (
+    <nav className="mission-roadmap-track" aria-label={t('宣教旅程阶段')}>
+      {stages.map((stage, index) => {
+        const meta = statusMeta(stage.status)
+        return (
+          <button
+            key={stage.key}
+            className={`mission-roadmap-node is-${stage.status} ${selectedKey === stage.key ? 'is-selected' : ''}`}
+            onClick={() => onSelect(stage.key)}
+            aria-current={selectedKey === stage.key ? 'step' : undefined}
+            aria-label={`${stage.number}. ${t(stage.title)}，${t(meta.label)}`}
+          >
+            <span className="mission-roadmap-node-index">{stage.status === 'complete' ? '✓' : stage.number}</span>
+            <span className="mission-roadmap-node-copy">
+              <strong>{t(stage.title)}</strong>
+              <small>{t(meta.label)}</small>
+            </span>
+            {index < stages.length - 1 ? <span className="mission-roadmap-node-line" aria-hidden="true" /> : null}
+          </button>
+        )
+      })}
+    </nav>
+  )
+}
+
+function StageDetail({ stage, onOpenWorkspace }) {
+  const meta = statusMeta(stage.status)
+  return (
+    <article className={`mission-roadmap-detail is-${stage.status}`}>
+      <header className="mission-roadmap-detail-header">
+        <div>
+          <span className="mission-roadmap-kicker">{t(`第 ${stage.number} 站`)}</span>
+          <h2>{t(stage.title)}</h2>
+          <p className="mission-roadmap-eyebrow">{t(stage.eyebrow)}</p>
+        </div>
+        <span className={`mission-roadmap-status is-${stage.status}`}><i>{meta.icon}</i>{t(meta.label)}</span>
+      </header>
+      <p className="mission-roadmap-description">{t(stage.description)}</p>
+
+      <div
+        className="mission-roadmap-stage-progress"
+        role="progressbar"
+        aria-label={t('阶段进度')}
+        aria-valuemin="0"
+        aria-valuemax="100"
+        aria-valuenow={stage.progress}
       >
-        <span style={{ opacity: 0.6, fontSize: 13, transform: open ? 'rotate(90deg)' : 'none', transition: 'transform .15s' }}>▶</span>
-        <span style={{ flex: 1, fontSize: 15.5, fontWeight: 800 }}>{batch.title}</span>
-        <StatusPill status={batch.status} />
-      </button>
-      <div style={{ margin: '8px 0 0 24px', fontSize: 13, color: 'rgba(255,255,255,0.68)', lineHeight: 1.55 }}>
-        🎯 {batch.goal}
+        <span style={{ width: `${stage.progress}%` }} />
       </div>
-      {open && (
-        <div style={{ marginTop: 10 }}>
-          {batch.principles?.length > 0 && (
-            <div style={{
-              background: 'rgba(90,200,250,0.07)', border: '1px solid rgba(90,200,250,0.15)',
-              borderRadius: 10, padding: '8px 12px', margin: '4px 0 10px',
-            }}>
-              <div style={{ fontSize: 12, fontWeight: 700, color: '#8fd6ff', marginBottom: 4 }}>{t('统一原则')}</div>
-              <ul style={{ margin: 0, paddingLeft: 18 }}>
-                {batch.principles.map((p, idx) => (
-                  <li key={idx} style={{ margin: '2px 0', fontSize: 12.5, lineHeight: 1.5, color: 'rgba(255,255,255,0.78)' }}>{p}</li>
-                ))}
-              </ul>
+
+      <div className="mission-roadmap-checklist">
+        {stage.items.map((item) => {
+          const itemMeta = statusMeta(item.status)
+          return (
+            <div className={`mission-roadmap-check is-${item.status}`} key={item.key}>
+              <span className="mission-roadmap-check-icon" aria-hidden="true">{itemMeta.icon}</span>
+              <span className="mission-roadmap-check-copy">
+                <strong>{t(item.label)}</strong>
+                <small>{t(itemMeta.label)}{item.optional ? ` · ${t('按情况')}` : ''}</small>
+              </span>
+              {item.detail ? <span className="mission-roadmap-check-detail">{t(readableDetail(item.detail))}</span> : null}
             </div>
-          )}
-          <div>
-            {batch.skills.map(sk => <SkillRow key={sk.id} skill={sk} />)}
-          </div>
-        </div>
-      )}
-    </div>
+          )
+        })}
+      </div>
+
+      <footer className="mission-roadmap-detail-footer">
+        <p><span aria-hidden="true">◉</span>{t('进度来自真实记录，安全与差派 Gate 不能手动跳过。')}</p>
+        <button className="mission-roadmap-primary" onClick={() => onOpenWorkspace(stage.workspacePanel)}>
+          {t(stage.actionLabel)} <span aria-hidden="true">→</span>
+        </button>
+      </footer>
+    </article>
   )
 }
 
-export default function MissionOSRoadmap() {
-  const [showStack, setShowStack] = useState(false)
+export default function MissionOSRoadmap({ token, organizationId, onOpenWorkspace = () => {} }) {
+  const org = useMemo(() => {
+    if (organizationId) return organizationId
+    try { return localStorage.getItem(ORG_STORE_KEY) || '' } catch { return '' }
+  }, [organizationId])
+  const [roadmap, setRoadmap] = useState(null)
+  const [selectedKey, setSelectedKey] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+
+  const load = useCallback(async () => {
+    if (!token || !org) return
+    setLoading(true); setError('')
+    try {
+      const result = await getMissionRoadmap(token, org)
+      const next = result.roadmap
+      setRoadmap(next)
+      setSelectedKey((current) => next.stages.some((stage) => stage.key === current) ? current : next.summary.currentStageKey)
+    } catch (err) {
+      setError(err.detail || err.message || t('路线图暂时不可用'))
+    } finally {
+      setLoading(false)
+    }
+  }, [token, org])
+
+  useEffect(() => { load() }, [load])
+
+  if (!token) {
+    return <RoadmapState title="先登录，再开始这段旅程" description="你的呼召反思、教会反馈与准备记录只会在登录后按权限读取。" />
+  }
+  if (!org) {
+    return <RoadmapState title="先选择所属组织" description="宣教旅程按教会、差会或团队隔离。请先在工作台选择组织上下文。" actionLabel="前往工作台选择" onAction={() => onOpenWorkspace('calling')} />
+  }
+  if (loading && !roadmap) return <RoadmapSkeleton />
+  if (error && !roadmap) {
+    return <RoadmapState title="暂时无法读取路线图" description={error} actionLabel="重新加载" onAction={load} />
+  }
+  if (!roadmap) return null
+
+  const selected = roadmap.stages.find((stage) => stage.key === selectedKey) || roadmap.stages[0]
+  const current = roadmap.stages.find((stage) => stage.key === roadmap.summary.currentStageKey) || roadmap.stages[0]
   return (
-    <div style={{ padding: '4px 2px 40px' }}>
-      {/* 头部 */}
-      <div style={{
-        background: 'linear-gradient(135deg, rgba(94,92,230,0.18), rgba(52,199,89,0.10))',
-        border: '1px solid rgba(255,255,255,0.10)', borderRadius: 16, padding: 16, marginBottom: 14,
-      }}>
-        <div style={{ fontSize: 18, fontWeight: 800, color: '#fff' }}>🛰️ {ROADMAP_META.title}</div>
-        <div style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.66)', marginTop: 6, lineHeight: 1.55 }}>
-          {ROADMAP_META.subtitle}
-        </div>
-        <button
-          onClick={() => setShowStack(s => !s)}
-          style={{
-            marginTop: 10, cursor: 'pointer', background: 'rgba(255,255,255,0.08)',
-            border: '1px solid rgba(255,255,255,0.12)', borderRadius: 8, color: '#fff',
-            fontSize: 12, fontWeight: 600, padding: '6px 12px',
-          }}
-        >
-          {showStack ? t('隐藏技术栈与完成定义') : t('技术栈与完成定义')}
-        </button>
-        {showStack && (
-          <div style={{ marginTop: 10, fontSize: 12.5, color: 'rgba(255,255,255,0.78)' }}>
-            <div style={{ fontWeight: 700, color: '#fff', margin: '4px 0' }}>{t('每个 Skill 完成定义')}</div>
-            <div style={{ lineHeight: 1.6 }}>{ROADMAP_META.dod.join(' · ')}</div>
-            <div style={{ fontWeight: 700, color: '#fff', margin: '10px 0 4px' }}>{t('技术栈')}</div>
-            <ul style={{ margin: 0, paddingLeft: 18 }}>
-              {Object.entries(ROADMAP_META.stack).map(([k, v]) => (
-                <li key={k} style={{ margin: '2px 0', lineHeight: 1.55 }}><strong style={{ color: '#fff' }}>{k}</strong>：{v}</li>
-              ))}
-            </ul>
+    <section className="mission-roadmap" aria-labelledby="mission-roadmap-title">
+      <header className="mission-roadmap-hero">
+        <div className="mission-roadmap-hero-copy">
+          <span className="mission-roadmap-overline">MISSION JOURNEY</span>
+          <h1 id="mission-roadmap-title">{t('我的宣教旅程')}</h1>
+          <p>{t('不是一张催促你出发的清单，而是一条由祷告、群体辨识、真实证据与持续关怀共同铺成的路。')}</p>
+          <div className="mission-roadmap-current">
+            <span>{t(roadmap.hasJourney ? '当前阶段' : '建议从这里开始')}</span>
+            <strong>{t(current.title)}</strong>
+            {roadmap.summary.blockedItems > 0 ? <em>{roadmap.summary.blockedItems} {t('项需要处理')}</em> : null}
           </div>
-        )}
-      </div>
+        </div>
+        <div
+          className="mission-roadmap-score"
+          style={{ '--roadmap-progress': `${roadmap.summary.progress * 3.6}deg` }}
+          role="progressbar"
+          aria-label={t('宣教旅程证据进度')}
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-valuenow={roadmap.summary.progress}
+        >
+          <div><strong>{roadmap.summary.progress}%</strong><span>{t('旅程证据')}</span></div>
+          <small>{roadmap.summary.completedItems}/{roadmap.summary.totalItems} {t('个关键项')}</small>
+        </div>
+      </header>
 
-      {/* Batch 列表 */}
-      {BATCHES.map((b, idx) => (
-        <BatchCard key={b.id} batch={b} defaultOpen={idx === 0} />
-      ))}
+      {error ? (
+        <div className="mission-roadmap-inline-error" role="status">
+          <span>{error}</span><button onClick={load}>{t('重试')}</button>
+        </div>
+      ) : null}
 
-      <div style={{ textAlign: 'center', fontSize: 11.5, color: 'rgba(255,255,255,0.4)', marginTop: 8 }}>
-        {t('完整 Codex 执行 Prompt 见 docs/mission-os 参考文档')}
+      <StageTrack stages={roadmap.stages} selectedKey={selected.key} onSelect={setSelectedKey} />
+
+      <div className="mission-roadmap-content">
+        <StageDetail stage={selected} onOpenWorkspace={onOpenWorkspace} />
+        <aside className="mission-roadmap-guardrails">
+          <span className="mission-roadmap-guardrail-icon" aria-hidden="true">✦</span>
+          <h2>{t('这条路如何保护人')}</h2>
+          <ul>
+            {roadmap.principles.map((principle) => <li key={principle}>{t(principle)}</li>)}
+          </ul>
+          <div className="mission-roadmap-legend" aria-label={t('状态说明')}>
+            {Object.entries(STATUS_META).map(([key, meta]) => (
+              <span key={key} className={`is-${key}`}><i>{meta.icon}</i>{t(meta.label)}</span>
+            ))}
+          </div>
+          <button className="mission-roadmap-refresh" onClick={load} disabled={loading}>
+            {loading ? t('同步中…') : t('同步最新记录')}
+          </button>
+        </aside>
       </div>
-    </div>
+    </section>
   )
 }

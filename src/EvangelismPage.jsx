@@ -514,7 +514,8 @@ export default function EvangelismPage({ user, token, organizationId, onBack, on
   const [amened, setAmened] = useState(loadAmened)
   const [showCompose, setShowCompose] = useState(false)
   const [subTab, setSubTab] = useState('fy') // 'fy' | 'mission' | 'map' | 'seekers'
-  const [missionView, setMissionView] = useState('bridge') // 'bridge' | 'roadmap'
+  const [missionView, setMissionView] = useState('bridge') // 'bridge' | 'console' | 'roadmap'
+  const [missionConsolePanel, setMissionConsolePanel] = useState('field')
   const [draft, setDraft] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [submitDone, setSubmitDone] = useState(false)
@@ -814,8 +815,8 @@ export default function EvangelismPage({ user, token, organizationId, onBack, on
           </svg>
         </button>
         <div className="pw-header-center">
-          <div className="pw-title">{subTab === 'mission' ? '🌉 宣教 · 邻舍之桥' : subTab === 'map' ? '🗺️ 圣经地图' : subTab === 'seekers' ? '📚 慕道班' : '🌍 传FY'}</div>
-          <div className="pw-subtitle">{subTab === 'mission' ? '关怀 · 探索 · 装备 · 安全同行' : subTab === 'map' ? '圣经世界地理与宣教足迹' : subTab === 'seekers' ? '慕道班课程 · 文字 / PPT / 视频' : (total > 0 ? `共 ${total} 条祷告` : '为福音传遍天下祷告')}</div>
+          <div className="pw-title">{subTab === 'mission' ? (missionView === 'roadmap' ? '🧭 宣教 · 我的旅程' : missionView === 'console' ? '🛠️ 宣教 · 工作台' : '🌉 宣教 · 邻舍之桥') : subTab === 'map' ? '🗺️ 圣经地图' : subTab === 'seekers' ? '📚 慕道班' : '🌍 传FY'}</div>
+          <div className="pw-subtitle">{subTab === 'mission' ? (missionView === 'roadmap' ? '聆听 · 辨识 · 装备 · 差派 · 整全预备' : missionView === 'console' ? '按真实记录推进宣教生命周期' : '关怀 · 探索 · 装备 · 安全同行') : subTab === 'map' ? '圣经世界地理与宣教足迹' : subTab === 'seekers' ? '慕道班课程 · 文字 / PPT / 视频' : (total > 0 ? `共 ${total} 条祷告` : '为福音传遍天下祷告')}</div>
         </div>
         {subTab === 'fy' && onPrayerWall && (
           <button
@@ -1500,11 +1501,17 @@ export default function EvangelismPage({ user, token, organizationId, onBack, on
               aria-selected={missionView === 'roadmap'}
               className={`mission-view-tab ${missionView === 'roadmap' ? 'active' : ''}`}
               onClick={() => setMissionView('roadmap')}
-            >{i18nT('🛰️ 路线图')}</button>
+            >{i18nT('🧭 路线图')}</button>
           </div>
           {missionView === 'bridge' && <MissionBridgePanel token={token} organizationId={organizationId} />}
-          {missionView === 'console' && <MissionConsole token={token} organizationId={organizationId} />}
-          {missionView === 'roadmap' && <MissionOSRoadmap />}
+          {missionView === 'console' && <MissionConsole token={token} organizationId={organizationId} initialPanel={missionConsolePanel} />}
+          {missionView === 'roadmap' && (
+            <MissionOSRoadmap
+              token={token}
+              organizationId={organizationId}
+              onOpenWorkspace={(panel) => { setMissionConsolePanel(panel); setMissionView('console') }}
+            />
+          )}
         </div>
       )}
 

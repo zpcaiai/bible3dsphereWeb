@@ -406,8 +406,8 @@ function OrgGate({ token, orgs, loading, error, onSelect, onCreated, reload }) {
   )
 }
 
-export default function MissionConsole({ token, organizationId }) {
-  const [active, setActive] = useState('field')
+export default function MissionConsole({ token, organizationId, initialPanel = 'field' }) {
+  const [active, setActive] = useState(() => PANELS[initialPanel] ? initialPanel : 'field')
   const [org, setOrg] = useState(() => {
     try { return organizationId || localStorage.getItem(ORG_STORE_KEY) || '' } catch { return organizationId || '' }
   })
@@ -422,6 +422,9 @@ export default function MissionConsole({ token, organizationId }) {
       .catch((e) => { setOrgsError(e); setOrgsLoading(false) })
   }, [token])
   useEffect(() => { loadOrgs() }, [loadOrgs])
+  useEffect(() => {
+    if (PANELS[initialPanel]) setActive(initialPanel)
+  }, [initialPanel])
   const selectOrg = (id) => {
     setOrg(id)
     try { localStorage.setItem(ORG_STORE_KEY, id) } catch { /* storage may be disabled */ }

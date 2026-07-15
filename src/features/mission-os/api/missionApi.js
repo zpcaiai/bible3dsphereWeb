@@ -31,6 +31,11 @@ const qs = (obj) => Object.entries(obj)
   .filter(([, v]) => v !== undefined && v !== null && v !== '')
   .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join('&')
 
+// ---- Evidence-backed journey roadmap ----
+export const getMissionRoadmap = (token, org) => request(`/roadmap?${qs({ organizationId: org })}`, token, {
+  headers: { 'X-Tenant-Id': org },
+})
+
 // ---- Fields (Batch 2) ----
 export const listFields = (token, org) => request(`/fields?${qs({ organizationId: org })}`, token)
 export const createField = (token, org, body) =>
