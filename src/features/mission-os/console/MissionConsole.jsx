@@ -2,6 +2,8 @@ import { useEffect, useState, useCallback } from 'react'
 import { t } from '../../../i18n/runtime'
 import * as api from '../api/missionApi'
 import { listMyOrganizations, createOrganization } from '../api/organizations'
+import GuidedInput from '../../../components/mission-bridge/GuidedInput'
+import { missionOptionLabel } from '../../../components/mission-bridge/optionLabels'
 
 /**
  * MissionConsole — Mission OS 工作台
@@ -38,6 +40,17 @@ const FIELD_TYPES = [
 const SCENARIOS = ['baseline', 'conservative', 'support_loss', 'evacuation', 'education_cost_increase', 'currency_depreciation']
 const FIELD_HARD_BLOCKS = ['no_legal_entry_path', 'no_local_partner_when_required', 'unmitigated_high_risk', 'data_quality_too_low', 'local_partner_opposed']
 const GATE_HARD_BLOCKS = ['sending_decision_expired', 'financial_underfunded', 'credential_invalid', 'medical_not_cleared', 'spouse_not_consenting', 'no_emergency_plan', 'critical_finding_open']
+const FIELD_NAME_OPTIONS = ['城市留学生群体', '跨文化家庭', '流动务工群体', '专业人士社群', '线上探索者社群']
+const FIELD_INTEREST_OPTIONS = ['南亚留学生', '城市新移民', '跨文化家庭', '青年专业人士', '数字社群']
+const CALLING_QUESTION_OPTIONS = ['我应当先倾听和学习什么？', '本地教会与伙伴如何参与辨识？', '家庭与长期委身是否预备好？', '我的恩赐如何回应真实需要？']
+const TEAM_NAME_OPTIONS = ['跨文化同行团队', '城市关怀团队', '青年与学生团队', '数字宣教团队']
+const PARTNER_ALIAS_OPTIONS = ['本地教会伙伴', '社区服务伙伴', '专业转介伙伴', '校园同行伙伴']
+const ACTIVITY_OPTIONS = ['语言学习与文化适应', '专业工作与职场服务', '社区关怀与关系建立', '教会装备与门训支持', '研究、翻译与内容支持']
+const ORG_NAME_OPTIONS = ['教会宣教部', '跨文化差派团队', '城市关怀中心', '宣教培训中心']
+const PLAN_TYPES = ['foundational_formation', 'cross_cultural_preparation', 'language_and_culture', 'professional_readiness', 'member_care']
+const IDENTITY_TYPES = ['employment', 'self_employment', 'business_owner', 'student', 'researcher', 'dependent', 'family_reunification', 'volunteer_where_legal', 'religious_worker_where_legal', 'retirement', 'digital_nomad_where_legal', 'professional_secondment', 'humanitarian_worker', 'local_citizen_or_permanent_resident']
+const HOUSEHOLD_TYPES = ['family', 'couple', 'single_parent_family', 'single_adult', 'multigenerational_family']
+const CREDENTIAL_TYPES = ['passport', 'visa', 'residence_permit', 'work_permit', 'student_permit', 'dependent_permit', 'professional_license', 'business_registration', 'tax_registration', 'driver_license', 'marriage_certificate', 'custody_document', 'vaccination_certificate', 'insurance_card', 'background_check']
 
 // ---- styles ----
 const card = { background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, padding: 14, marginBottom: 12 }
@@ -95,7 +108,7 @@ function MultiSelect({ options, value, onChange }) {
         return (
           <button key={o} type="button" onClick={() => onChange(on ? value.filter(x => x !== o) : [...value, o])}
             style={{ ...pill(on ? '#fff' : 'rgba(255,255,255,0.6)', on ? 'rgba(94,92,230,0.5)' : 'rgba(255,255,255,0.06)'), cursor: 'pointer', border: '1px solid rgba(255,255,255,0.12)', padding: '4px 9px' }}>
-            {o}
+            {missionOptionLabel(o)}
           </button>
         )
       })}
@@ -122,14 +135,14 @@ function FieldsPanel({ token, org }) {
         <div style={{ fontWeight: 700, marginBottom: 8 }}>{t('新建禾场')} <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)' }}>Skill 16</span></div>
         <div style={label}>{t('类型')}</div>
         <select style={inp} value={form.fieldType} onChange={e => setForm({ ...form, fieldType: e.target.value })}>
-          {FIELD_TYPES.map(x => <option key={x} value={x}>{x}</option>)}
+          {FIELD_TYPES.map(x => <option key={x} value={x}>{missionOptionLabel(x)}</option>)}
         </select>
         <div style={label}>{t('名称')}</div>
-        <input style={inp} value={form.canonicalName} onChange={e => setForm({ ...form, canonicalName: e.target.value })} placeholder={t('例如：某城市留学生群体')}  aria-label={t('例如：某城市留学生群体')}/>
+        <GuidedInput style={inp} options={FIELD_NAME_OPTIONS} value={form.canonicalName} onChange={canonicalName => setForm({ ...form, canonicalName })} placeholder={t('例如：某城市留学生群体')} aria-label={t('禾场名称')} />
         <div style={{ display: 'flex', gap: 8 }}>
           <div style={{ flex: 1 }}><div style={label}>{t('国家码(可选)')}</div><input style={inp} maxLength={2} value={form.countryCode} onChange={e => setForm({ ...form, countryCode: e.target.value.toUpperCase() })} placeholder="CN"  aria-label="CN"/></div>
           <div style={{ flex: 1 }}><div style={label}>{t('敏感级')}</div>
-            <select style={inp} value={form.sensitivityLevel} onChange={e => setForm({ ...form, sensitivityLevel: e.target.value })}>{['P0', 'P1', 'P2', 'P3', 'P4'].map(x => <option key={x}>{x}</option>)}</select>
+            <select style={inp} value={form.sensitivityLevel} onChange={e => setForm({ ...form, sensitivityLevel: e.target.value })}>{['P0', 'P1', 'P2', 'P3', 'P4'].map(x => <option key={x} value={x}>{missionOptionLabel(x)}</option>)}</select>
           </div>
         </div>
         <button style={{ ...btn, opacity: busy || !form.canonicalName ? 0.5 : 1 }} disabled={busy || !form.canonicalName} onClick={submit}>{t('创建')}</button>
@@ -167,12 +180,12 @@ function CallingPanel({ token, org }) {
         <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', marginBottom: 8 }}>{t('本工具不替代教会与群体辨识，不宣告呼召。感动/异象仅作为非决定性证据记录。')}</div>
         <div style={label}>{t('呼召方向（可多次探索）')}</div>
         <select style={inp} value={form.callingOrientation} onChange={e => setForm({ ...form, callingOrientation: e.target.value })}>
-          {ORIENTATIONS.map(x => <option key={x} value={x}>{x}</option>)}
+          {ORIENTATIONS.map(x => <option key={x} value={x}>{missionOptionLabel(x)}</option>)}
         </select>
         <div style={label}>{t('禾场兴趣（与方向分开）')}</div>
-        <input style={inp} value={form.fieldInterest} onChange={e => setForm({ ...form, fieldInterest: e.target.value })} placeholder={t('例如：南亚留学生')}  aria-label={t('例如：南亚留学生')}/>
+        <GuidedInput style={inp} options={FIELD_INTEREST_OPTIONS} value={form.fieldInterest} onChange={fieldInterest => setForm({ ...form, fieldInterest })} placeholder={t('例如：南亚留学生')} aria-label={t('禾场兴趣')} />
         <div style={label}>{t('核心问题')}</div>
-        <input style={inp} value={form.primaryQuestion} onChange={e => setForm({ ...form, primaryQuestion: e.target.value })} />
+        <GuidedInput style={inp} options={CALLING_QUESTION_OPTIONS} value={form.primaryQuestion} onChange={primaryQuestion => setForm({ ...form, primaryQuestion })} aria-label={t('核心问题')} />
         <button style={{ ...btn, opacity: busy ? 0.5 : 1 }} disabled={busy} onClick={submit}>{t('开始')}</button>
         {msg && <div style={{ marginTop: 8, fontSize: 12.5, color: '#8fd6ff' }}>{msg}</div>}
       </div>
@@ -242,7 +255,7 @@ function FinancePanel({ token, org }) {
         <div style={label}>{t('工人 Profile ID')}</div>
         <input style={inp} value={form.workerProfileId} onChange={e => setForm({ ...form, workerProfileId: e.target.value })} placeholder="worker-profile-id"  aria-label="worker-profile-id"/>
         <div style={{ display: 'flex', gap: 8 }}>
-          <div style={{ flex: 1 }}><div style={label}>{t('币种')}</div><input style={inp} value={form.baseCurrency} onChange={e => setForm({ ...form, baseCurrency: e.target.value.toUpperCase() })} /></div>
+          <div style={{ flex: 1 }}><div style={label}>{t('币种')}</div><select style={inp} value={form.baseCurrency} onChange={e => setForm({ ...form, baseCurrency: e.target.value })}>{['USD','CNY','EUR','GBP','HKD','SGD','JPY'].map(x=><option key={x} value={x}>{missionOptionLabel(x)}</option>)}</select></div>
           <div style={{ flex: 1 }}><div style={label}>{t('家庭人数')}</div><input style={inp} type="number" min={1} value={form.householdSize} onChange={e => setForm({ ...form, householdSize: e.target.value })} /></div>
         </div>
         <div style={{ display: 'flex', gap: 14, margin: '4px 0 9px', fontSize: 13 }}>
@@ -273,22 +286,22 @@ function CompactPanel({ title, skill, note, fields, initial, listCall, createCal
   const { loading,error,items,reload }=useList(listCall,[listCall])
   const [form,setForm]=useState(initial);const [busy,setBusy]=useState(false);const [msg,setMsg]=useState('')
   async function submit(){setBusy(true);setMsg('');try{await createCall(form);setMsg(t('已创建'));reload()}catch(e){setMsg(e.detail||e.message)}finally{setBusy(false)}}
-  return <div><div style={card}><div style={{fontWeight:700,marginBottom:8}}>{t(title)} <span style={{fontSize:11,opacity:.45}}>{skill}</span></div><div style={{fontSize:12,opacity:.55,marginBottom:8}}>{t(note)}</div>{fields.map(f=><div key={f.key}><div style={label}>{t(f.label)}</div><input style={inp} value={form[f.key]||''} onChange={e=>setForm({...form,[f.key]:e.target.value})} placeholder={f.placeholder||''} aria-label={f.placeholder||''}/></div>)}<button style={{...btn,opacity:busy?.5:1}} disabled={busy} onClick={submit}>{t('创建')}</button>{msg&&<div style={{marginTop:8,fontSize:12.5,color:'#8fd6ff'}}>{msg}</div>}</div><div style={card}><div style={{fontWeight:700,marginBottom:4}}>{t('记录列表')}</div><StateBlock loading={loading} error={error} empty={!loading&&!error&&!items.length}/>{items.map(renderRow)}</div></div>
+  return <div><div style={card}><div style={{fontWeight:700,marginBottom:8}}>{t(title)} <span style={{fontSize:11,opacity:.45}}>{skill}</span></div><div style={{fontSize:12,opacity:.55,marginBottom:8}}>{t(note)}</div>{fields.map(f=><div key={f.key}><div style={label}>{t(f.label)}</div>{f.options?<GuidedInput style={inp} options={f.options} value={form[f.key]||''} onChange={value=>setForm({...form,[f.key]:value})} placeholder={f.placeholder||''} aria-label={t(f.label)}/>:f.selectOptions?<select style={inp} value={form[f.key]||''} onChange={e=>setForm({...form,[f.key]:e.target.value})} aria-label={t(f.label)}>{f.selectOptions.map(option=><option key={option} value={option}>{missionOptionLabel(option)}</option>)}</select>:<input style={inp} type={f.type||'text'} value={form[f.key]||''} onChange={e=>setForm({...form,[f.key]:e.target.value})} placeholder={f.placeholder||''} aria-label={t(f.label)}/>}</div>)}<button style={{...btn,opacity:busy?.5:1}} disabled={busy} onClick={submit}>{t('创建')}</button>{msg&&<div style={{marginTop:8,fontSize:12.5,color:'#8fd6ff'}}>{msg}</div>}</div><div style={card}><div style={{fontWeight:700,marginBottom:4}}>{t('记录列表')}</div><StateBlock loading={loading} error={error} empty={!loading&&!error&&!items.length}/>{items.map(renderRow)}</div></div>
 }
 
-function TrainingPanel({token,org}){return <CompactPanel title="创建个性化装备计划" skill="Skill 37" note="训练由准备度缺口驱动；课程不能单独解除硬阻塞。" fields={[{key:'workerProfileId',label:'工人 Profile ID'},{key:'planType',label:'计划类型'}]} initial={{workerProfileId:'',planType:'foundational_formation',durationMonths:12,gaps:[]}} listCall={useCallback(()=>api.listTrainingPlans(token,org),[token,org])} createCall={b=>api.createTrainingPlan(token,org,b)} renderRow={p=><Row key={p.id}><span style={{flex:1}}>{p.workerProfileId} · {p.planType}</span>{statusPill(p.planStatus)}</Row>}/>}
+function TrainingPanel({token,org}){return <CompactPanel title="创建个性化装备计划" skill="Skill 37" note="训练由准备度缺口驱动；课程不能单独解除硬阻塞。" fields={[{key:'workerProfileId',label:'工人 Profile ID'},{key:'planType',label:'计划类型',selectOptions:PLAN_TYPES}]} initial={{workerProfileId:'',planType:'foundational_formation',durationMonths:12,gaps:[]}} listCall={useCallback(()=>api.listTrainingPlans(token,org),[token,org])} createCall={b=>api.createTrainingPlan(token,org,b)} renderRow={p=><Row key={p.id}><span style={{flex:1}}>{p.workerProfileId} · {p.planType}</span>{statusPill(p.planStatus)}</Row>}/>}
 
 function SendingPanel({token,org}){return <CompactPanel title="创建候选人差派申请" skill="Skill 52" note="创建草稿不等于通过；提交、委员会决定与 Deployment Gate 均为独立人工阶段。" fields={[{key:'workerProfileId',label:'工人 Profile ID'},{key:'targetFieldId',label:'目标禾场 ID'},{key:'targetRoleId',label:'目标角色 ID'}]} initial={{workerProfileId:'',targetFieldId:'',targetRoleId:''}} listCall={useCallback(()=>api.listSendingApplications(token,org),[token,org])} createCall={b=>api.createSendingApplication(token,org,b)} renderRow={a=><Row key={a.id}><span style={{flex:1}}>{a.workerProfileId} · {a.targetFieldId||t('未定禾场')}</span>{statusPill(a.applicationStatus)}</Row>}/>}
 
 function CommitteePanel({token,org}){const data=useList(()=>api.listCommitteeDecisions(token,org),[token,org]);return <div><div style={card}><div style={{fontWeight:700,marginBottom:8}}>{t('差派委员会审核队列')} <span style={{fontSize:11,opacity:.45}}>Skill 53</span></div><div style={{fontSize:12,opacity:.55}}>{t('最终决定要求多方 quorum、禁止自审、AI 无投票权；配偶或本地伙伴反对与未解除硬阻塞均不可被覆盖。')}</div></div><div style={card}><StateBlock loading={data.loading} error={data.error} empty={!data.loading&&!data.error&&!data.items.length}/>{data.items.map(d=><Row key={d.id}><span style={{flex:1}}>{d.applicationId}</span>{statusPill(d.decisionType)}<span style={pill('#8fd6ff','rgba(90,200,250,.12)')}>{d.unlocks}</span></Row>)}</div></div>}
 
-function TeamPanel({token,org}){const teams=useList(()=>api.listTeams(token,org),[token,org]);const partners=useList(()=>api.listPartners(token,org),[token,org]);const [name,setName]=useState('');const [alias,setAlias]=useState('');return <div><div style={card}><div style={{fontWeight:700,marginBottom:8}}>{t('团队与本地伙伴')} <span style={{fontSize:11,opacity:.45}}>Skill 54–59</span></div><input style={inp} value={name} onChange={e=>setName(e.target.value)} placeholder={t('团队名称')} aria-label={t('团队名称')}/><button style={btn} onClick={async()=>{await api.createTeam(token,org,{name});setName('');teams.reload()}}>{t('创建团队')}</button><div style={{height:12}}/><input style={inp} value={alias} onChange={e=>setAlias(e.target.value)} placeholder={t('伙伴内部别名（敏感信息不公开）')} aria-label={t('伙伴内部别名（敏感信息不公开）')}/><button style={btn} onClick={async()=>{await api.createPartner(token,org,{internalAlias:alias});setAlias('');partners.reload()}}>{t('登记伙伴')}</button></div><div style={card}><StateBlock loading={teams.loading} error={teams.error} empty={!teams.loading&&!teams.items.length}/>{teams.items.map(x=><Row key={x.id}><span style={{flex:1}}>{x.name}</span>{statusPill(x.teamStatus)}</Row>)}{partners.items.map(x=><Row key={x.id}><span style={{flex:1}}>{x.internalAlias}</span>{statusPill(x.profileStatus)}</Row>)}</div></div>}
+function TeamPanel({token,org}){const teams=useList(()=>api.listTeams(token,org),[token,org]);const partners=useList(()=>api.listPartners(token,org),[token,org]);const [name,setName]=useState('');const [alias,setAlias]=useState('');return <div><div style={card}><div style={{fontWeight:700,marginBottom:8}}>{t('团队与本地伙伴')} <span style={{fontSize:11,opacity:.45}}>Skill 54–59</span></div><GuidedInput style={inp} options={TEAM_NAME_OPTIONS} value={name} onChange={setName} placeholder={t('团队名称')} aria-label={t('团队名称')}/><button style={btn} onClick={async()=>{await api.createTeam(token,org,{name});setName('');teams.reload()}}>{t('创建团队')}</button><div style={{height:12}}/><GuidedInput style={inp} options={PARTNER_ALIAS_OPTIONS} value={alias} onChange={setAlias} placeholder={t('伙伴内部别名（敏感信息不公开）')} aria-label={t('伙伴内部别名（敏感信息不公开）')}/><button style={btn} onClick={async()=>{await api.createPartner(token,org,{internalAlias:alias});setAlias('');partners.reload()}}>{t('登记伙伴')}</button></div><div style={card}><StateBlock loading={teams.loading} error={teams.error} empty={!teams.loading&&!teams.items.length}/>{teams.items.map(x=><Row key={x.id}><span style={{flex:1}}>{x.name}</span>{statusPill(x.teamStatus)}</Row>)}{partners.items.map(x=><Row key={x.id}><span style={{flex:1}}>{x.internalAlias}</span>{statusPill(x.profileStatus)}</Row>)}</div></div>}
 
-function IdentityPanel({token,org}){return <CompactPanel title="建立合法身份路径" skill="Skill 65–69" note="申报活动必须与真实活动一致；普通字段只展示脱敏信息，家庭意见独立保密。" fields={[{key:'workerProfileId',label:'工人 Profile ID'},{key:'identityType',label:'合法身份类型'},{key:'declaredActivity',label:'申报活动'},{key:'actualActivity',label:'真实活动'}]} initial={{workerProfileId:'',identityType:'employment',declaredActivity:'',actualActivity:'',intent:'real'}} listCall={useCallback(()=>api.listIdentityPaths(token,org),[token,org])} createCall={b=>api.createIdentityPath(token,org,b)} renderRow={p=><Row key={p.id}><span style={{flex:1}}>{p.workerProfileId} · {p.identityType}</span>{statusPill(p.pathStatus)}</Row>}/>}
+function IdentityPanel({token,org}){return <CompactPanel title="建立合法身份路径" skill="Skill 65–69" note="申报活动必须与真实活动一致；普通字段只展示脱敏信息，家庭意见独立保密。" fields={[{key:'workerProfileId',label:'工人 Profile ID'},{key:'identityType',label:'合法身份类型',selectOptions:IDENTITY_TYPES},{key:'declaredActivity',label:'申报活动',options:ACTIVITY_OPTIONS},{key:'actualActivity',label:'真实活动',options:ACTIVITY_OPTIONS}]} initial={{workerProfileId:'',identityType:'employment',declaredActivity:'',actualActivity:'',intent:'real'}} listCall={useCallback(()=>api.listIdentityPaths(token,org),[token,org])} createCall={b=>api.createIdentityPath(token,org,b)} renderRow={p=><Row key={p.id}><span style={{flex:1}}>{p.workerProfileId} · {p.identityType}</span>{statusPill(p.pathStatus)}</Row>}/>}
 
-function FamilyPanel({token,org}){return <CompactPanel title="建立家庭准备度计划" skill="Skill 69" note="配偶拥有独立表达、撤回与隐私权；不支持不得被改写为候选人的失败。" fields={[{key:'workerProfileId',label:'工人 Profile ID'},{key:'householdType',label:'家庭类型'},{key:'sendingJourneyId',label:'Sending Journey ID'},{key:'targetFieldId',label:'目标禾场 ID'},{key:'intendedMoveDate',label:'预期迁移日期（YYYY-MM-DD）'}]} initial={{workerProfileId:'',householdType:'family',sendingJourneyId:'',targetFieldId:'',intendedMoveDate:''}} listCall={useCallback(()=>api.listFamilyPlans(token,org),[token,org])} createCall={b=>api.createFamilyPlan(token,org,b)} renderRow={p=><Row key={p.id}><span style={{flex:1}}>{p.householdId} · {p.targetFieldId||t('未定禾场')}</span>{statusPill(p.planStatus)}</Row>}/>}
+function FamilyPanel({token,org}){return <CompactPanel title="建立家庭准备度计划" skill="Skill 69" note="配偶拥有独立表达、撤回与隐私权；不支持不得被改写为候选人的失败。" fields={[{key:'workerProfileId',label:'工人 Profile ID'},{key:'householdType',label:'家庭类型',selectOptions:HOUSEHOLD_TYPES},{key:'sendingJourneyId',label:'Sending Journey ID'},{key:'targetFieldId',label:'目标禾场 ID'},{key:'intendedMoveDate',label:'预期迁移日期（YYYY-MM-DD）',type:'date'}]} initial={{workerProfileId:'',householdType:'family',sendingJourneyId:'',targetFieldId:'',intendedMoveDate:''}} listCall={useCallback(()=>api.listFamilyPlans(token,org),[token,org])} createCall={b=>api.createFamilyPlan(token,org,b)} renderRow={p=><Row key={p.id}><span style={{flex:1}}>{p.householdId} · {p.targetFieldId||t('未定禾场')}</span>{statusPill(p.planStatus)}</Row>}/>}
 
-function CompliancePanel({token,org}){return <CompactPanel title="创建多领域合规审核" skill="Skill 67" note="移民、税务、雇佣与跨境数据分别由合格专业人员审查；系统不替代法律意见。" fields={[{key:'sendingJourneyId',label:'Sending Journey ID'},{key:'targetFieldId',label:'目标禾场 ID'},{key:'activityScope',label:'真实活动范围'}]} initial={{sendingJourneyId:'',targetFieldId:'',activityScope:'',domains:['immigration','tax','employment','data_transfer']}} listCall={useCallback(()=>api.listComplianceCases(token,org),[token,org])} createCall={b=>api.createComplianceCase(token,org,b)} renderRow={p=><Row key={p.id}><span style={{flex:1}}>{p.activityScope} · {p.domainCount} {t('领域')}</span>{statusPill(p.caseStatus)}</Row>}/>}
+function CompliancePanel({token,org}){return <CompactPanel title="创建多领域合规审核" skill="Skill 67" note="移民、税务、雇佣与跨境数据分别由合格专业人员审查；系统不替代法律意见。" fields={[{key:'sendingJourneyId',label:'Sending Journey ID'},{key:'targetFieldId',label:'目标禾场 ID'},{key:'activityScope',label:'真实活动范围',options:ACTIVITY_OPTIONS}]} initial={{sendingJourneyId:'',targetFieldId:'',activityScope:'',domains:['immigration','tax','employment','data_transfer']}} listCall={useCallback(()=>api.listComplianceCases(token,org),[token,org])} createCall={b=>api.createComplianceCase(token,org,b)} renderRow={p=><Row key={p.id}><span style={{flex:1}}>{p.activityScope} · {p.domainCount} {t('领域')}</span>{statusPill(p.caseStatus)}</Row>}/>}
 
 function VaultPanel({token,org}) {
   const [form,setForm]=useState({portfolioId:'',credentialType:'passport',identifier:'',secureFileBase64:null,secureFileName:null,secureFileMediaType:'application/octet-stream'})
@@ -297,7 +310,7 @@ function VaultPanel({token,org}) {
   async function save(){setBusy(true);setMsg('');try{const r=await api.addCredential(token,org,form);setCredential(r);setForm({...form,identifier:''});setMsg(t('证件号和文件已使用 AES-256-GCM 加密保存'))}catch(e){setMsg(e.detail||e.message)}finally{setBusy(false)}}
   async function stepUp(){try{const r=await api.openVaultSession(token,org);setSession(r.secureSessionId);setMsg(t('二次认证安全会话已开启，有效期 10 分钟'))}catch(e){setMsg(e.detail||e.message)}}
   async function download(){try{const r=await api.downloadCredentialFile(token,org,credential.credentialId,session);const bytes=Uint8Array.from(atob(r.contentBase64),c=>c.charCodeAt(0));const url=URL.createObjectURL(new Blob([bytes],{type:r.mediaType}));const a=document.createElement('a');a.href=url;a.download=r.fileName;a.click();URL.revokeObjectURL(url);setMsg(t('安全文件下载已审计'))}catch(e){setMsg(e.detail||e.message)}}
-  return <div><div style={card}><div style={{fontWeight:700,marginBottom:8}}>{t('加密证件 Vault')} <span style={{fontSize:11,opacity:.45}}>Skill 65 / 15</span></div><div style={{fontSize:12,opacity:.55,marginBottom:8}}>{t('原始证件号与文件只以密文保存；下载要求最近 10 分钟真实 MFA，并写入不可变审计。')}</div>{[['portfolioId','Credential Portfolio ID'],['credentialType','证件类型'],['identifier','证件号（保存后仅显示掩码）']].map(([key,txt])=><div key={key}><div style={label}>{t(txt)}</div><input style={inp} type={key==='identifier'?'password':'text'} value={form[key]} onChange={e=>setForm({...form,[key]:e.target.value})}/></div>)}<input type="file" onChange={chooseFile} style={{marginBottom:10,color:'rgba(255,255,255,.7)'}}/><br/><button style={{...btn,opacity:busy?.5:1}} disabled={busy||!form.portfolioId||!form.identifier} onClick={save}>{t('加密保存')}</button>{credential&&<div style={{marginTop:10,fontSize:13}}>{t('掩码')}: {credential.maskedIdentifier} · {credential.secureFileStored?t('已存安全文件'):t('无文件')}</div>}{msg&&<div style={{marginTop:8,fontSize:12.5,color:'#8fd6ff'}}>{msg}</div>}</div>{credential?.secureFileStored&&<div style={card}><div style={{fontWeight:700,marginBottom:8}}>{t('Step-up 安全下载')}</div><button style={btn} onClick={stepUp}>{t('验证近期 MFA 并开启会话')}</button>{session&&<button style={{...btn,marginLeft:8}} onClick={download}>{t('下载并记录审计')}</button>}</div>}</div>
+  return <div><div style={card}><div style={{fontWeight:700,marginBottom:8}}>{t('加密证件 Vault')} <span style={{fontSize:11,opacity:.45}}>Skill 65 / 15</span></div><div style={{fontSize:12,opacity:.55,marginBottom:8}}>{t('原始证件号与文件只以密文保存；下载要求最近 10 分钟真实 MFA，并写入不可变审计。')}</div><div><div style={label}>{t('Credential Portfolio ID')}</div><input style={inp} value={form.portfolioId} onChange={e=>setForm({...form,portfolioId:e.target.value})}/></div><div><div style={label}>{t('证件类型')}</div><select style={inp} value={form.credentialType} onChange={e=>setForm({...form,credentialType:e.target.value})}>{CREDENTIAL_TYPES.map(type=><option key={type} value={type}>{missionOptionLabel(type)}</option>)}</select></div><div><div style={label}>{t('证件号（保存后仅显示掩码）')}</div><input style={inp} type="password" value={form.identifier} onChange={e=>setForm({...form,identifier:e.target.value})}/></div><input type="file" onChange={chooseFile} style={{marginBottom:10,color:'rgba(255,255,255,.7)'}}/><br/><button style={{...btn,opacity:busy?.5:1}} disabled={busy||!form.portfolioId||!form.identifier} onClick={save}>{t('加密保存')}</button>{credential&&<div style={{marginTop:10,fontSize:13}}>{t('掩码')}: {credential.maskedIdentifier} · {credential.secureFileStored?t('已存安全文件'):t('无文件')}</div>}{msg&&<div style={{marginTop:8,fontSize:12.5,color:'#8fd6ff'}}>{msg}</div>}</div>{credential?.secureFileStored&&<div style={card}><div style={{fontWeight:700,marginBottom:8}}>{t('Step-up 安全下载')}</div><button style={btn} onClick={stepUp}>{t('验证近期 MFA 并开启会话')}</button>{session&&<button style={{...btn,marginLeft:8}} onClick={download}>{t('下载并记录审计')}</button>}</div>}</div>
 }
 
 function GatePanel({ token, org }) {
@@ -391,7 +404,7 @@ function OrgGate({ token, orgs, loading, error, onSelect, onCreated, reload }) {
       <div style={card}>
         <div style={{ fontWeight: 700, marginBottom: 8 }}>{t('创建新组织')}</div>
         <div style={label}>{t('组织名称')}</div>
-        <input style={inp} value={name} onChange={(e) => setName(e.target.value)} placeholder={t('例如：恩典教会宣教部')} aria-label={t('组织名称')} />
+        <GuidedInput style={inp} options={ORG_NAME_OPTIONS} value={name} onChange={setName} placeholder={t('例如：恩典教会宣教部')} aria-label={t('组织名称')} />
         <div style={label}>{t('组织类型')}</div>
         <select style={inp} value={orgType} onChange={(e) => setOrgType(e.target.value)}>
           {ORG_TYPES.map(([v, zh]) => <option key={v} value={v}>{t(zh)}</option>)}

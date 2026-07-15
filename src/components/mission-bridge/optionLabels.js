@@ -1,0 +1,60 @@
+const LABELS = {
+  country: '国家（Country）', city: '城市（City）', people_group: '族群（People group）',
+  diaspora_community: '散居社群（Diaspora community）', international_student_community: '国际学生社群（International student community）',
+  professional_community: '专业人士社群（Professional community）', digital_community: '数字社群（Digital community）', ministry_network: '事工网络（Ministry network）',
+  cross_cultural_mission: '跨文化宣教（Cross-cultural mission）', local_evangelism: '本地传福音（Local evangelism）',
+  diaspora_ministry: '散居群体事工（Diaspora ministry）', church_equipping: '教会装备（Church equipping）',
+  bible_translation_support: '圣经翻译支持（Bible translation support）', professional_mission: '专业宣教（Professional mission）',
+  member_care: '宣教士关怀（Member care）', prayer_and_mobilization: '祷告与动员（Prayer and mobilization）',
+  mission_research: '宣教研究（Mission research）', digital_mission_infrastructure: '数字宣教基础设施（Digital mission infrastructure）', undetermined: '尚未确定（Undetermined）',
+  baseline: '基准情景（Baseline）', conservative: '保守情景（Conservative）', support_loss: '支持流失（Support loss）',
+  evacuation: '紧急撤离（Evacuation）', education_cost_increase: '教育成本上升（Education cost increase）', currency_depreciation: '货币贬值（Currency depreciation）',
+  no_legal_entry_path: '没有合法入境路径（No legal entry path）', no_local_partner_when_required: '需要但缺少本地伙伴（No local partner when required）',
+  unmitigated_high_risk: '高风险尚未缓解（Unmitigated high risk）', data_quality_too_low: '资料质量不足（Data quality too low）', local_partner_opposed: '本地伙伴反对（Local partner opposed）',
+  sending_decision_expired: '差派决定已过期（Sending decision expired）', financial_underfunded: '资金不足（Financial underfunded）',
+  credential_invalid: '证件无效（Credential invalid）', medical_not_cleared: '医疗评估未通过（Medical not cleared）', spouse_not_consenting: '配偶未同意（Spouse not consenting）',
+  no_emergency_plan: '缺少应急计划（No emergency plan）', critical_finding_open: '关键问题尚未关闭（Critical finding open）',
+  foundational_formation: '基础塑造（Foundational formation）', cross_cultural_preparation: '跨文化预备（Cross-cultural preparation）',
+  language_and_culture: '语言与文化（Language and culture）', professional_readiness: '专业准备（Professional readiness）',
+  employment: '受雇工作（Employment）', self_employment: '个体经营（Self-employment）', business_owner: '企业经营者（Business owner）',
+  student: '学生（Student）', researcher: '研究人员（Researcher）', dependent: '家属身份（Dependent）', family_reunification: '家庭团聚（Family reunification）',
+  volunteer_where_legal: '合法志愿服务（Volunteer where legal）', religious_worker_where_legal: '合法宗教工作者（Religious worker where legal）',
+  retirement: '退休（Retirement）', digital_nomad_where_legal: '合法数字游民（Digital nomad where legal）',
+  professional_secondment: '专业派驻（Professional secondment）', humanitarian_worker: '人道援助工作者（Humanitarian worker）',
+  local_citizen_or_permanent_resident: '当地公民或永久居民（Local citizen or permanent resident）',
+  family: '家庭（Family）', couple: '夫妻（Couple）', single_parent_family: '单亲家庭（Single-parent family）',
+  single_adult: '单身成人（Single adult）', multigenerational_family: '多代同堂家庭（Multigenerational family）',
+  passport: '护照（Passport）', visa: '签证（Visa）', residence_permit: '居留许可（Residence permit）', work_permit: '工作许可（Work permit）',
+  student_permit: '学生许可（Student permit）', dependent_permit: '家属许可（Dependent permit）', professional_license: '专业执照（Professional license）',
+  business_registration: '商业登记（Business registration）', tax_registration: '税务登记（Tax registration）', driver_license: '驾驶证（Driver license）',
+  marriage_certificate: '结婚证（Marriage certificate）', custody_document: '监护文件（Custody document）', vaccination_certificate: '疫苗接种证明（Vaccination certificate）',
+  insurance_card: '保险卡（Insurance card）', background_check: '背景审查证明（Background check）',
+  church: '教会（Church）', mission_agency: '差会（Mission agency）', receiving_church: '接待教会（Receiving church）', team: '团队（Team）',
+  training_provider: '培训机构（Training provider）', care_provider: '关怀机构（Care provider）', professional_partner: '专业伙伴（Professional partner）', funding_partner: '资助伙伴（Funding partner）',
+  discussion_guide: '讨论指南（Discussion guide）', scripture: '经文（Scripture）', professional_resource: '专业资源（Professional resource）', referral_guide: '转介指南（Referral guide）',
+  application: '应用材料（Application）', scripture_text: '经文原文（Scripture text）', interpretation: '释经材料（Interpretation）', professional_advice: '专业建议（Professional advice）',
+  weekly: '每周（Weekly）', daily: '每日（Daily）', hybrid: '混合形式（Hybrid）', online: '线上（Online）', offline: '线下（Offline）', async: '异步（Asynchronous）',
+  required: '必需步骤（Required）', optional: '可选步骤（Optional）', conditional: '条件步骤（Conditional）',
+  standard_text: '标准文本（Standard text）', plain_text: '简明文本（Plain text）', audio_only: '纯音频（Audio only）',
+  captioned_video: '带字幕视频（Captioned video）', sign_language_video: '手语视频（Sign-language video）', large_print: '大字版（Large print）',
+  intake: '需求接收助手（Intake Agent）', program_recommendation: '项目推荐助手（Program Recommendation Agent）',
+  content_adaptation: '内容适配助手（Content Adaptation Agent）', facilitator_copilot: '带领者协作助手（Facilitator Copilot）',
+  follow_up_planner: '跟进计划助手（Follow-up Planner）', risk_triage: '风险分流助手（Risk Triage Agent）',
+  referral_assistant: '转介助手（Referral Assistant）', quality_audit: '质量审核助手（Quality Audit Agent）',
+  'local-leader-90': '基层小组长 90 天装备（Local Leader 90）', 'attention-reset-30': '青年注意力重建 30 天（Attention Reset 30）',
+  'ai-faith-dialogue-8': 'AI 时代信仰探索 8 次讨论（AI Faith Dialogue 8）',
+  couple_relationship: '夫妻关系（Couple relationship）', parent_child: '亲子关系（Parent-child relationship）', child_reading: '儿童阅读（Child reading）',
+  city_adaptation: '城市适应（City adaptation）', return_home: '返乡适应（Return home）', career_growth: '职业成长（Career growth）',
+  family_finance: '家庭财务（Family finance）', faith_exploration: '信仰探索（Faith exploration）', family_group: '家庭小组（Family group）',
+  P0: 'P0 · 公开（Public）', P1: 'P1 · 内部（Internal）', P2: 'P2 · 敏感（Sensitive）', P3: 'P3 · 高敏感（Highly sensitive）', P4: 'P4 · 严格受限（Strictly restricted）',
+  USD: '美元（USD）', CNY: '人民币（CNY）', EUR: '欧元（EUR）', GBP: '英镑（GBP）', HKD: '港元（HKD）', SGD: '新加坡元（SGD）', JPY: '日元（JPY）',
+}
+
+const HAS_CHINESE = /[\u3400-\u9fff]/
+
+export function missionOptionLabel(value, fallback = '') {
+  const key = String(value || '')
+  if (LABELS[key]) return LABELS[key]
+  const text = String(fallback || key)
+  return HAS_CHINESE.test(text) ? text : `其他选项（${text}）`
+}

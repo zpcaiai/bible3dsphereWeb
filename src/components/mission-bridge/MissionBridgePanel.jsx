@@ -27,12 +27,23 @@ import MobileFamilyWorkspace from './MobileFamilyWorkspace'
 import SpecializedSupportWorkspace from './SpecializedSupportWorkspace'
 import OperationsConsole from './OperationsConsole'
 import MissionOrganizationConsole from '../../features/mission-os/components/MissionOrganizationConsole'
+import GuidedInput from './GuidedInput'
 
 const PROGRAM_META = {
   'local-leader-90': { icon: '🧭', duration: '90 天', accent: '#5ac8fa' },
   'attention-reset-30': { icon: '🌿', duration: '30 天', accent: '#34c759' },
   'ai-faith-dialogue-8': { icon: '💡', duration: '8 次讨论', accent: '#ffb347' },
 }
+
+const GOAL_OPTIONS = ['建立稳定的灵修节奏', '更清楚地辨识下一步', '改善关系与同行支持', '完成一次具体服事行动', '建立可持续的生活节奏']
+const SUCCESS_OPTIONS = ['连续四周稳定实践', '与一位可信同工完成复盘', '形成一份可执行的下一步计划', '完成行动并记录真实反馈']
+const REFLECTION_OPTIONS = ['本周按计划完成了行动', '遇到阻力，需要调整节奏', '有新的看见或问题', '需要真人同工跟进']
+const INCIDENT_CATEGORY_OPTIONS = ['情绪与心理支持', '身体或医疗风险', '家庭与关系安全', '儿童或弱势群体保护', '隐私或数据安全', '其他需要真人跟进']
+const INCIDENT_SUMMARY_OPTIONS = ['我需要尽快获得真人支持', '目前没有即时危险，但需要专业转介', '我希望只记录最少必要信息']
+const GROUP_TITLE_OPTIONS = ['城市新移民群体', '跨文化家庭', '青年专业人士', '国际学生群体', '流动务工家庭']
+const GROUP_DESCRIPTION_OPTIONS = ['居住在城市、正在适应新环境的人群', '跨文化婚姻及其家庭成员', '处于学习、就业与身份转换期的青年', '工作与居住地点经常变化的家庭']
+const NEED_CLAIMED_BY_OPTIONS = ['群体成员本人', '本地教会与社区伙伴', '专业服务人员', '初步访谈参与者']
+const COMMUNITY_VOICE_OPTIONS = ['希望有人先倾听真实处境', '需要更稳定的关系与支持网络', '希望获得可信、可选择的资源', '希望参与共同设计，而不是被替代决定']
 
 export default function MissionBridgePanel({ token, organizationId }) {
   // 宣教组织上下文：优先使用外部传入，否则沿用工作台中选择的组织
@@ -137,7 +148,7 @@ export default function MissionBridgePanel({ token, organizationId }) {
               <h3>{t(program.title)}</h3><p>{t(program.description)}</p>
               <div className="mb-guardrail">🛡 {t('自愿参与 · 专业转介 · 无羞耻驱动')}</div>
               {enrolled ? <button type="button" onClick={() => setView('journey')}>{t('继续旅程')} →</button> : paused ? <button type="button" onClick={() => run(`resume-${paused.id}`, () => resumeMissionBridgeProgram(token,paused.id), '项目已恢复')}>{t('恢复项目')}</button> : <>
-                <input value={goal[program.id] || ''} maxLength={500} onChange={(e) => setGoal((old) => ({ ...old, [program.id]: e.target.value }))} placeholder={t('写下你希望共同实现的一个目标')}  aria-label={t('写下你希望共同实现的一个目标')}/>
+                <GuidedInput options={GOAL_OPTIONS} value={goal[program.id] || ''} maxLength={500} onChange={(value) => setGoal((old) => ({ ...old, [program.id]: value }))} placeholder={t('写下你希望共同实现的一个目标')} aria-label={t('写下你希望共同实现的一个目标')}/>
                 <button type="button" disabled={!consent || (goal[program.id] || '').trim().length < 2 || busy === program.id} onClick={() => run(program.id, () => enrollMissionBridgeProgram(token, program.id, goal[program.id].trim()), '项目已加入，你仍可随时暂停或退出')}>{busy === program.id ? t('加入中…') : t('自愿加入')}</button>
               </>}
             </article>
@@ -146,7 +157,7 @@ export default function MissionBridgePanel({ token, organizationId }) {
       </>}
 
       {view === 'journey' && <div className="mb-journeys">
-        <form className="mb-goal-form" onSubmit={event=>{event.preventDefault();run('goal',()=>createMissionBridgeGoal(token,newGoal),'目标草案已保存，请确认后生效')}}><h3>{t('共同制定目标')}</h3><input required minLength={3} value={newGoal.title} onChange={e=>setNewGoal({...newGoal,title:e.target.value})} placeholder={t('我希望实现什么？')} aria-label={t('我希望实现什么？')}/><input required minLength={5} value={newGoal.successDescription} onChange={e=>setNewGoal({...newGoal,successDescription:e.target.value})} placeholder={t('怎样算取得真实进展？')} aria-label={t('怎样算取得真实进展？')}/><button type="submit">{t('保存目标草案')}</button></form>
+        <form className="mb-goal-form" onSubmit={event=>{event.preventDefault();run('goal',()=>createMissionBridgeGoal(token,newGoal),'目标草案已保存，请确认后生效')}}><h3>{t('共同制定目标')}</h3><GuidedInput options={GOAL_OPTIONS} required minLength={3} value={newGoal.title} onChange={title=>setNewGoal({...newGoal,title})} placeholder={t('我希望实现什么？')} aria-label={t('我希望实现什么？')}/><GuidedInput options={SUCCESS_OPTIONS} required minLength={5} value={newGoal.successDescription} onChange={successDescription=>setNewGoal({...newGoal,successDescription})} placeholder={t('怎样算取得真实进展？')} aria-label={t('怎样算取得真实进展？')}/><button type="submit">{t('保存目标草案')}</button></form>
         {journey.goals.map(goal=><article className="mb-goal" key={goal.id}><div><strong>{goal.title}</strong><span>{goal.successDescription}</span></div>{!goal.confirmed&&<button type="button" onClick={()=>run(`confirm-${goal.id}`,()=>confirmMissionBridgeGoal(token,goal.id),'目标已由你确认')}>{t('确认目标')}</button>}</article>)}
         {journey.carePlans.map(plan=><article className="mb-care-plan" key={plan.id}><h3>{plan.title}</h3><p>{plan.rationale}</p>{plan.actions.map(action=><div key={action.id}><span><strong>{action.title}</strong><small>{t('建议原因')}：{action.suggestionReason}</small></span>{action.status!=='completed'&&<button type="button" onClick={()=>run(`action-${action.id}`,()=>completeMissionBridgeAction(token,action.id),'行动已完成')}>✓</button>}</div>)}</article>)}
         {!active.length ? <div className="mb-state">{t('尚未加入项目。先在“项目”中选择适合你的路径。')}</div> : active.map((item) => {
@@ -154,8 +165,8 @@ export default function MissionBridgePanel({ token, organizationId }) {
           const total = Number(program?.definition?.steps || 1); const progress = Math.min(100, Math.round(item.currentStep / total * 100))
           return <article className="mb-journey" key={item.id}><div className="mb-journey-title"><div><h3>{t(program?.title || item.programId)}</h3><p>{t('共同目标')}：{item.goal}</p></div><strong>{progress}%</strong></div>
             <div className="mb-progress"><span style={{ width: `${progress}%` }} /></div>
-            <div className="mb-checkin"><label>{t('本周状态')}<select value={checkin.wellbeing} onChange={(e) => setCheckin({ ...checkin, wellbeing: Number(e.target.value) })}>{[1,2,3,4,5].map((n) => <option key={n} value={n}>{n} / 5</option>)}</select></label>
-              <textarea value={checkin.reflection} onChange={(e) => setCheckin({ ...checkin, reflection: e.target.value })} placeholder={t('这一周有什么真实进展或困难？')} maxLength={2000}  aria-label={t('这一周有什么真实进展或困难？')}/>
+            <div className="mb-checkin"><label>{t('本周状态')}<select value={checkin.wellbeing} onChange={(e) => setCheckin({ ...checkin, wellbeing: Number(e.target.value) })}>{[['1','1 分 · 很困难'],['2','2 分 · 比较困难'],['3','3 分 · 一般'],['4','4 分 · 良好'],['5','5 分 · 很好']].map(([value,text]) => <option key={value} value={value}>{text}</option>)}</select></label>
+              <GuidedInput multiline options={REFLECTION_OPTIONS} value={checkin.reflection} onChange={(reflection) => setCheckin({ ...checkin, reflection })} placeholder={t('这一周有什么真实进展或困难？')} maxLength={2000} aria-label={t('这一周有什么真实进展或困难？')}/>
               <label className="mb-inline"><input type="checkbox" checked={checkin.needsSupport} onChange={(e) => setCheckin({ ...checkin, needsSupport: e.target.checked })} />{t('我希望真人同工跟进')}</label>
               <div className="mb-actions"><button type="button" onClick={() => run(`checkin-${item.id}`, () => submitMissionBridgeCheckin(token, item.id, checkin), '签到已保存')}>{t('保存签到')}</button><button className="secondary" type="button" onClick={() => run(`pause-${item.id}`, () => pauseMissionBridgeProgram(token,item.id), '项目已暂停，可在项目列表恢复')}>{t('暂停')}</button><button className="secondary" type="button" onClick={() => run(`exit-${item.id}`, () => exitMissionBridgeProgram(token, item.id), '已退出项目，一般关怀权限保持不变')}>{t('退出项目')}</button></div>
             </div>
@@ -166,8 +177,8 @@ export default function MissionBridgePanel({ token, organizationId }) {
       {view === 'safety' && <div className="mb-incident">
         <div className="mb-alert warning"><strong>{t('紧急危险请先联系当地紧急服务或身边可信任的人。')}</strong><span>{t('AI不能替代医疗、法律、儿童保护或危机专业人员。')}</span></div>
         <label>{t('风险等级')}<select value={incident.riskLevel} onChange={(e) => setIncident({ ...incident, riskLevel: e.target.value })}><option value="L1">L1 · {t('需要支持')}</option><option value="L2">L2 · {t('需要专业升级')}</option><option value="L3">L3 · {t('即时危险')}</option></select></label>
-        <label>{t('类别')}<input value={incident.category} onChange={(e) => setIncident({ ...incident, category: e.target.value })} /></label>
-        <label>{t('最少必要说明')}<textarea value={incident.summary} onChange={(e) => setIncident({ ...incident, summary: e.target.value })} maxLength={2000} placeholder={t('请勿填写不必要的身份、住址或家庭敏感信息')}  aria-label={t('请勿填写不必要的身份、住址或家庭敏感信息')}/></label>
+        <label>{t('类别')}<GuidedInput options={INCIDENT_CATEGORY_OPTIONS} value={incident.category} onChange={(category) => setIncident({ ...incident, category })} aria-label={t('安全事件类别')} /></label>
+        <label>{t('最少必要说明')}<GuidedInput multiline options={INCIDENT_SUMMARY_OPTIONS} value={incident.summary} onChange={(summary) => setIncident({ ...incident, summary })} maxLength={2000} placeholder={t('请勿填写不必要的身份、住址或家庭敏感信息')} aria-label={t('请勿填写不必要的身份、住址或家庭敏感信息')}/></label>
         <label className="mb-inline"><input type="checkbox" checked={incident.immediateDanger} onChange={(e) => setIncident({ ...incident, immediateDanger: e.target.checked, riskLevel: e.target.checked ? 'L3' : incident.riskLevel })} />{t('目前存在即时生命或身体危险')}</label>
         <button type="button" disabled={incident.summary.trim().length < 4 || busy === 'incident'} onClick={() => run('incident', () => reportMissionBridgeIncident(token, incident), '安全事件已记录；L2/L3 将进入真人升级流程')}>{t('提交安全求助')}</button>
       </div>}
@@ -185,10 +196,10 @@ export default function MissionBridgePanel({ token, organizationId }) {
       {view === 'discovery' && <div className="mb-discovery">
         <div className="mb-alert warning">{t('先倾听群体本人，再设计项目。“未信”本身不能被定义为社会问题。AI 主题必须由研究员确认。')}</div>
         <div className="mb-discovery-grid"><form onSubmit={(event) => { event.preventDefault(); run('proposal', () => createMissionBridgeProposal(token,proposal), '群体提案已创建，下一步请完成 10–20 次访谈') }}><h3>{t('新建群体提案')}</h3>
-          <label>{t('群体名称')}<input required minLength={3} value={proposal.title} onChange={(e) => setProposal({...proposal,title:e.target.value})} /></label>
-          <label>{t('群体是谁')}<textarea required minLength={10} value={proposal.groupDescription} onChange={(e) => setProposal({...proposal,groupDescription:e.target.value})} /></label>
-          <label>{t('谁认为他们有需要')}<input required value={proposal.needClaimedBy} onChange={(e) => setProposal({...proposal,needClaimedBy:e.target.value})} /></label>
-          <label>{t('群体自己如何描述需要')}<textarea required value={proposal.communitySelfDescription} onChange={(e) => setProposal({...proposal,communitySelfDescription:e.target.value})} /></label>
+          <label>{t('群体名称')}<GuidedInput options={GROUP_TITLE_OPTIONS} required minLength={3} value={proposal.title} onChange={(title) => setProposal({...proposal,title})} aria-label={t('群体名称')} /></label>
+          <label>{t('群体是谁')}<GuidedInput multiline options={GROUP_DESCRIPTION_OPTIONS} required minLength={10} value={proposal.groupDescription} onChange={(groupDescription) => setProposal({...proposal,groupDescription})} aria-label={t('群体是谁')} /></label>
+          <label>{t('谁认为他们有需要')}<GuidedInput options={NEED_CLAIMED_BY_OPTIONS} required value={proposal.needClaimedBy} onChange={(needClaimedBy) => setProposal({...proposal,needClaimedBy})} aria-label={t('谁认为他们有需要')} /></label>
+          <label>{t('群体自己如何描述需要')}<GuidedInput multiline options={COMMUNITY_VOICE_OPTIONS} required value={proposal.communitySelfDescription} onChange={(communitySelfDescription) => setProposal({...proposal,communitySelfDescription})} aria-label={t('群体自己如何描述需要')} /></label>
           <button type="submit">{t('建立发现计划')}</button></form>
           <div><h3>{t('发现项目')}</h3>{!proposals?.length ? <div className="mb-state">{t('还没有群体提案')}</div> : proposals.map((item) => <button type="button" className="mb-proposal" key={item.id} onClick={async () => { try { setDiscoveryReport(await fetchMissionBridgeDiscoveryReport(token,item.id)) } catch (err) { setError(err.message) } }}><strong>{item.title}</strong><span>{item.status}</span></button>)}</div></div>
         {discoveryReport && <article className="mb-report"><h3>{discoveryReport.proposal.title}</h3><p>{discoveryReport.proposal.communityVoice}</p><div><strong>{discoveryReport.interviews.total}</strong>{t('次访谈')} · <strong>{Math.round(discoveryReport.interviews.communityMemberRatio*100)}%</strong>{t('来自群体成员')}</div><p>{discoveryReport.readyForPilot ? t('已具备小规模试点条件') : t('尚未达到 10 次访谈或缺少已确认需求')}</p></article>}
