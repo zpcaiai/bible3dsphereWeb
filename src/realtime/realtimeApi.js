@@ -1,9 +1,9 @@
 // 圣徒相通 — REST helpers for friends, chat history, and ICE servers.
 import { API_BASE } from '../api'
-import { getToken } from '../auth'
+import { getToken, hasRealToken } from '../auth'
 
 function authHeaders(extra = {}) {
-  const token = getToken()
+  const token = hasRealToken() ? getToken() : null
   return {
     'Content-Type': 'application/json',
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -13,9 +13,21 @@ function authHeaders(extra = {}) {
 
 async function jsonOrThrow(res) {
   const ct = res.headers.get('content-type') || ''
-  if (!ct.includes('application/json')) throw new Error('后端服务不可用')
+  if (!ct.includes('application/json')) {
+    const error = new Error('后端服务不可用')
+    error.status = res.status
+    throw error
+  }
   const data = await res.json()
-  if (!res.ok) throw new Error(data.detail || '请求失败')
+  if (!res.ok) {
+    const error = new Error(data.detail || '请求失败')
+    error.status = res.status
+    const retryAfterSeconds = Number(res.headers.get('retry-after'))
+    if (Number.isFinite(retryAfterSeconds) && retryAfterSeconds > 0) {
+      error.retryAfterMs = retryAfterSeconds * 1000
+    }
+    throw error
+  }
   return data
 }
 
@@ -24,7 +36,7 @@ export async function buildWsUrl() {
   const ticketResponse = await fetch(`${API_BASE}/rtc/ws-ticket`, {
     method: 'POST',
     credentials: 'same-origin',
-    headers: { 'Content-Type': 'application/json' },
+    headers: authHeaders(),
   })
   const ticketData = await jsonOrThrow(ticketResponse)
   let base = API_BASE // e.g. "https://x.hf.space/api" or "/api"

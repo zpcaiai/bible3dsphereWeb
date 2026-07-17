@@ -8,7 +8,7 @@ function shortName(email, nickname) {
   return nickname || (email ? email.split('@')[0] : '弟兄姐妹')
 }
 
-class RealtimeStore {
+export class RealtimeStore {
   constructor() {
     this.ws = null
     this.user = null
@@ -16,6 +16,8 @@ class RealtimeStore {
     this.reconnectTimer = null
     this.attempts = 0
     this.closedByUs = false
+    this.lifecycleId = 0
+    this.connectingLifecycle = null
 
     // shared state
     this.connected = false
@@ -31,27 +33,49 @@ class RealtimeStore {
   start(user) {
     this.user = user || null
     const wantEnabled = !!user
-    if (wantEnabled && this.enabled && this.ws) return // already running
-    this.enabled = wantEnabled
+    const alreadyRunning = this.enabled && (
+      this.ws || this.reconnectTimer || this.connectingLifecycle === this.lifecycleId
+    )
+    if (wantEnabled && alreadyRunning) return
     if (!wantEnabled) { this.stop(); return }
+    this.enabled = true
     this.closedByUs = false
-    this._connect()
+    this.attempts = 0
+    this.lifecycleId += 1
+    this._connect(this.lifecycleId)
   }
 
   stop() {
     this.enabled = false
     this.closedByUs = true
+    this.lifecycleId += 1
+    this.connectingLifecycle = null
     if (this.reconnectTimer) clearTimeout(this.reconnectTimer)
-    if (this.ws) { try { this.ws.close() } catch (e) { /* noop */ } }
+    this.reconnectTimer = null
+    const ws = this.ws
     this.ws = null
+    if (ws) { try { ws.close() } catch { /* noop */ } }
     this._setState({ connected: false, onlineFriends: new Set() })
   }
 
-  async _connect() {
-    if (!this.enabled) return
+  async _connect(lifecycleId = this.lifecycleId) {
+    if (!this.enabled || lifecycleId !== this.lifecycleId) return
+    if (this.ws || this.connectingLifecycle === lifecycleId) return
+    this.connectingLifecycle = lifecycleId
     let ws
-    try { ws = new WebSocket(await buildWsUrl()) }
-    catch { this._scheduleReconnect(); return }
+    try {
+      const url = await buildWsUrl()
+      if (!this.enabled || lifecycleId !== this.lifecycleId) return
+      ws = new WebSocket(url)
+    } catch (error) {
+      if (this.enabled && lifecycleId === this.lifecycleId) {
+        if (error?.status === 401 || error?.status === 403) this._haltForAuthFailure(lifecycleId)
+        else this._scheduleReconnect(error?.retryAfterMs, lifecycleId)
+      }
+      return
+    } finally {
+      if (this.connectingLifecycle === lifecycleId) this.connectingLifecycle = null
+    }
     this.ws = ws
     ws.onopen = () => { this.attempts = 0; this._setState({ connected: true }) }
     ws.onmessage = (ev) => {
@@ -59,17 +83,39 @@ class RealtimeStore {
       try { msg = JSON.parse(ev.data) } catch { return }
       this._handle(msg)
     }
-    ws.onclose = () => {
+    ws.onclose = (event) => {
+      if (this.ws === ws) this.ws = null
       this._setState({ connected: false })
-      if (!this.closedByUs) this._scheduleReconnect()
+      if (this.closedByUs || lifecycleId !== this.lifecycleId) return
+      if (event?.code === 4401 || event?.code === 4403) {
+        this._haltForAuthFailure(lifecycleId)
+        return
+      }
+      this._scheduleReconnect(undefined, lifecycleId)
     }
-    ws.onerror = () => { try { ws.close() } catch (e) { /* noop */ } }
+    ws.onerror = () => { try { ws.close() } catch { /* noop */ } }
   }
 
-  _scheduleReconnect() {
+  _scheduleReconnect(retryAfterMs, lifecycleId = this.lifecycleId) {
+    if (!this.enabled || this.closedByUs || lifecycleId !== this.lifecycleId) return
+    if (this.reconnectTimer) clearTimeout(this.reconnectTimer)
     this.attempts += 1
-    const delay = Math.min(15000, 1000 * 2 ** Math.min(this.attempts, 4))
-    this.reconnectTimer = setTimeout(() => this._connect(), delay)
+    const backoff = Math.min(15000, 1000 * 2 ** Math.min(this.attempts, 4))
+    const delay = Math.max(backoff, Number.isFinite(retryAfterMs) ? retryAfterMs : 0)
+    this.reconnectTimer = setTimeout(() => {
+      this.reconnectTimer = null
+      this._connect(lifecycleId)
+    }, delay)
+  }
+
+  _haltForAuthFailure(lifecycleId) {
+    if (lifecycleId !== this.lifecycleId) return
+    this.enabled = false
+    this.closedByUs = true
+    this.lifecycleId += 1
+    if (this.reconnectTimer) clearTimeout(this.reconnectTimer)
+    this.reconnectTimer = null
+    this._setState({ connected: false, onlineFriends: new Set() })
   }
 
   // ---- message handling ----
@@ -98,7 +144,7 @@ class RealtimeStore {
         break
     }
     // forward everything to subscribers (chat/typing/friend events handled there)
-    this.msgListeners.forEach((cb) => { try { cb(msg) } catch (e) { /* noop */ } })
+    this.msgListeners.forEach((cb) => { try { cb(msg) } catch { /* noop */ } })
   }
 
   // optional resolver set by CommunionPage to label incoming caller nicely
@@ -167,7 +213,7 @@ class RealtimeStore {
   _setState(patch) {
     Object.assign(this, patch)
     const snap = this.getState()
-    this.stateListeners.forEach((cb) => { try { cb(snap) } catch (e) { /* noop */ } })
+    this.stateListeners.forEach((cb) => { try { cb(snap) } catch { /* noop */ } })
   }
 }
 
