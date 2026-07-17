@@ -80,6 +80,32 @@ export default function PlanetHome({ onClose, go }) {
       </div>
 
       <div style={{ padding: '0 16px 110px', maxWidth: 640, margin: '0 auto' }}>
+        <button type="button" onClick={() => act('spiritual-planet')} style={{
+          width: '100%', display: 'flex', alignItems: 'center', gap: 13, textAlign: 'left', cursor: 'pointer',
+          margin: '0 0 12px', padding: '17px', borderRadius: 18, color: '#fff',
+          background: 'radial-gradient(circle at 14% 20%, rgba(232,184,107,0.2), transparent 35%), linear-gradient(135deg, rgba(93,76,166,0.32), rgba(31,70,103,0.22))',
+          border: '1px solid rgba(232,184,107,0.35)',
+        }}>
+          <span style={{ width: 44, height: 44, display: 'grid', placeItems: 'center', borderRadius: '50%', fontSize: 25, background: 'radial-gradient(circle at 35% 30%, #a58cf2, #29254f 70%)', boxShadow: '0 0 24px rgba(232,184,107,0.22)' }} aria-hidden="true">🪐</span>
+          <span style={{ flex: 1 }}>
+            <strong style={{ display: 'block', fontSize: 15 }}>{i18nT('属灵星球 · 统一门户')}</strong>
+            <small style={{ display: 'block', marginTop: 4, color: 'rgba(255,255,255,0.56)', fontSize: 10.5, lineHeight: 1.5 }}>{i18nT('一个镜像 · 一个问题 · 一个可选行动 · 跨模块来源透明')}</small>
+          </span>
+          <span style={{ color: '#efd59d', fontSize: 20 }} aria-hidden="true">›</span>
+        </button>
+        <button type="button" onClick={() => act('formation-twin')} style={{
+          width: '100%', display: 'flex', alignItems: 'center', gap: 13, textAlign: 'left', cursor: 'pointer',
+          margin: '0 0 14px', padding: '16px', borderRadius: 18, color: '#fff',
+          background: 'linear-gradient(135deg, rgba(139,92,246,0.23), rgba(90,200,250,0.13))',
+          border: '1px solid rgba(167,139,250,0.34)',
+        }}>
+          <span style={{ width: 44, height: 44, display: 'grid', placeItems: 'center', borderRadius: '50%', fontSize: 25, background: 'radial-gradient(circle at 35% 30%, #786eea, #252a58 70%)', boxShadow: '0 0 24px rgba(139,92,246,0.35)' }} aria-hidden="true">✦</span>
+          <span style={{ flex: 1 }}>
+            <strong style={{ display: 'block', fontSize: 15 }}>{i18nT('情感—属灵形成孪生')}</strong>
+            <small style={{ display: 'block', marginTop: 4, color: 'rgba(255,255,255,0.52)', fontSize: 10.5, lineHeight: 1.5 }}>{i18nT('生命状态中枢 · 连接现有记录、操练、回顾与安全关系')}</small>
+          </span>
+          <span style={{ color: '#c6c9ff', fontSize: 20 }} aria-hidden="true">›</span>
+        </button>
         <PastoralPathCard compact onOpen={openPastoralRoute} />
         {withExpansionChips(CONTINENTS).map((c, i) => (
           <div key={i} onClick={() => act(c.chips[0][1])} style={{ cursor: 'pointer', marginBottom: 14, borderRadius: 18, padding: 18, background: `linear-gradient(135deg, ${c.color}22, rgba(255,255,255,0.02))`, border: `1px solid ${c.color}44` }} {...a11yClickProps(() => act(c.chips[0][1]))}>

@@ -60,6 +60,8 @@ import CreedCatechismGalaxy from '../features/spiritual-formation/components/cre
 import RuleDiscernmentDashboard from '../features/spiritual-formation/components/rule-discernment/RuleDiscernmentDashboard'
 import CrossLamentHopeDashboard from '../features/spiritual-formation/components/cross-lament-hope/CrossLamentHopeDashboard'
 import SacramentCalendarOrbit from '../features/spiritual-formation/components/sacrament-calendar/SacramentCalendarOrbit'
+import FormationTwinPage from '../features/formation-twin/FormationTwinPage'
+import SpiritualPlanetPlatformPage from '../features/spiritual-planet/SpiritualPlanetPlatformPage'
 import { a11yClickProps } from '../lib/a11yClick';
 
 const MVFE_BASE = API_BASE + '/mvfe'
@@ -561,6 +563,32 @@ export default function SoulDashboard({ user }) {
         </div>
       </button>
 
+      {/* ── 情感—属灵形成孪生 ── */}
+      <button onClick={() => setOverlay('spiritual-planet')} style={{ display: 'block', width: 'calc(100% - 32px)', textAlign: 'left', cursor: 'pointer', margin: '0 16px 12px', borderRadius: 14, padding: '14px 16px',
+        background: 'radial-gradient(circle at 15% 25%, rgba(232,184,107,0.15), transparent 35%), linear-gradient(135deg, rgba(93,76,166,0.24), rgba(35,82,112,0.16))', border: '1px solid rgba(232,184,107,0.3)', color: '#fff' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <span style={{ fontSize: 24 }}>🪐</span>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 14, fontWeight: 700 }}>{i18nT('属灵星球 · 统一门户')}</div>
+            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>{i18nT('今日镜像 · 统一行动 · 时间线 · 隐私审计')}</div>
+          </div>
+          <span style={{ fontSize: 18, color: '#efd59d' }}>›</span>
+        </div>
+      </button>
+
+      {/* ── 情感—属灵形成孪生 ── */}
+      <button onClick={() => setOverlay('formation-twin')} style={{ display: 'block', width: 'calc(100% - 32px)', textAlign: 'left', cursor: 'pointer', margin: '0 16px 12px', borderRadius: 14, padding: '14px 16px',
+        background: 'linear-gradient(135deg, rgba(90,200,250,0.18), rgba(139,92,246,0.18))', border: '1px solid rgba(167,139,250,0.32)', color: '#fff' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <span style={{ fontSize: 24 }}>✦</span>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 14, fontWeight: 700 }}>{i18nT('情感—属灵形成孪生')}</div>
+            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>{i18nT('整合现有生命记录 · 标注证据与不确定性 · 危机优先')}</div>
+          </div>
+          <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)' }}>›</span>
+        </div>
+      </button>
+
       {/* ── 今日成长统一面板 ── */}
       <button onClick={() => setOverlay('formation-home')} style={{ display: 'block', width: 'calc(100% - 32px)', textAlign: 'left', cursor: 'pointer', margin: '0 16px 12px', borderRadius: 14, padding: '14px 16px',
         background: 'linear-gradient(135deg, rgba(139,92,246,0.22), rgba(245,181,63,0.14))', border: '1px solid rgba(139,92,246,0.35)', color: '#fff' }}>
@@ -858,6 +886,31 @@ export default function SoulDashboard({ user }) {
           {overlay === 'org-console' && <OrgConsolePage user={user} onBack={() => setOverlay(null)} />}
           {overlay === 'billing' && <BillingPage user={user} onBack={() => setOverlay(null)} />}
           {overlay === 'platform-admin' && <PlatformAdminPage user={user} onBack={() => setOverlay(null)} />}
+          {overlay === 'formation-twin' && <FormationTwinPage user={user} onBack={() => setOverlay(null)} onOpen={(target) => {
+            const twinTarget = {
+              checkin: 'mvfe',
+              innerlife: 'mvfe',
+              'soul-question': 'formation-home',
+              devotion: 'hub',
+              'spiritual-formation': 'spiritual-formation',
+              attention: 'attention',
+              'growth-map': 'charts',
+              'personal-search': 'spiritual-memory',
+              'export-data': 'spiritual-memory',
+              sos: 'checkup',
+              partner: 'mentor',
+              communion: 'church-life',
+            }[target]
+            if (twinTarget) setOverlay(twinTarget)
+          }} />}
+          {overlay === 'spiritual-planet' && <SpiritualPlanetPlatformPage user={user} onBack={() => setOverlay(null)} onOpen={(target) => {
+            const platformTarget = {
+              checkin: 'mvfe', prayer: 'prayer-rule', devotion: 'hub', 'formation-twin': 'formation-twin',
+              'spiritual-formation': 'spiritual-formation', attention: 'attention', 'growth-map': 'charts',
+              'mission-life': 'mission-life', 'personal-search': 'spiritual-memory', partner: 'mentor', communion: 'church-life', sos: 'checkup',
+            }[target]
+            if (platformTarget) setOverlay(platformTarget)
+          }} />}
           {overlay === 'ai-tutor' && <AITutorChatPage user={user} onBack={() => setOverlay(null)} />}
           {overlay === 'spiritual-memory' && <SpiritualMemoryPage user={user} onBack={() => setOverlay(null)} />}
           {overlay === 'mvfe' && <MVFEPage user={user} onBack={() => setOverlay(null)} />}

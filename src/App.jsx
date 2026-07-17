@@ -71,6 +71,8 @@ const BibleSearchPage = lazyWithRetry(() => import('./BibleSearchPage'))
 const ExportDataPage = lazyWithRetry(() => import('./ExportDataPage'))
 const SpiritualFormationPage = lazyWithRetry(() => import('./features/spiritual-formation/app/SpiritualFormationPage'))
 const AttentionPage = lazyWithRetry(() => import('./features/attention/app/AttentionPage'))
+const FormationTwinPage = lazyWithRetry(() => import('./features/formation-twin/FormationTwinPage'))
+const SpiritualPlanetPlatformPage = lazyWithRetry(() => import('./features/spiritual-planet/SpiritualPlanetPlatformPage'))
 
 // React Query client for HabitsPage
 const queryClient = new QueryClient({
@@ -493,25 +495,25 @@ function AppContent() {
       'Google 普通话',
       'Google 國語',
     ]
-    
+
     // 首先尝试找中文女声
     for (const name of preferredVoices) {
-      const voice = voices.find(v => 
+      const voice = voices.find(v =>
         v.name.includes(name) || v.voiceURI.includes(name)
       )
       if (voice) return voice
     }
-    
+
     // fallback: 任何中文女声
-    const zhFemale = voices.find(v => 
+    const zhFemale = voices.find(v =>
       v.lang?.startsWith('zh') && (v.name.includes('Female') || v.name.includes('女'))
     )
     if (zhFemale) return zhFemale
-    
+
     // fallback: 任何中文语音
     const zhVoice = voices.find(v => v.lang?.startsWith('zh'))
     if (zhVoice) return zhVoice
-    
+
     // 最后选择默认语音
     return voices[0] || null
   }
@@ -523,7 +525,7 @@ function AppContent() {
       (window.showToast || window.alert)(i18nT('您的浏览器不支持文字转语音功能'), 'error')
       return
     }
-    
+
     window.speechSynthesis.cancel()
     const utter = new SpeechSynthesisUtterance(text)
     // 按文本实际语言挑嗓音：英文内容用英文嗓音，中文用中文女声
@@ -536,7 +538,7 @@ function AppContent() {
       utter.voice = bestVoice
       console.log('[TTS Native] 使用语音:', bestVoice.name)
     }
-    
+
     utter.onstart = () => setTtsState('playing')
     utter.onend = () => setTtsState('idle')
     utter.onerror = (e) => {
@@ -549,7 +551,7 @@ function AppContent() {
   async function speakContent() {
     const text = buildSpeakText()
     if (!text.trim()) return
-    
+
     // 暂停/继续控制
     if (ttsState === 'playing') {
       if (googleTTSAudioRef.current) {
@@ -569,22 +571,22 @@ function AppContent() {
       setTtsState('playing')
       return
     }
-    
+
     // 停止之前的播放
     stopSpeaking()
     setTtsState('playing')
-    
+
     try {
       // 优先后端高质量 TTS（ElevenLabs/Edge Neural）；按文本语言统一选嗓音
       const [lang, voiceName] = ttsServerParamsFor(text)
       console.log('[TTS] 尝试后端 TTS...', lang, voiceName)
       const audioBlob = await fetchTTS(text, lang, voiceName)
-      
+
       // 创建音频元素播放
       const audioUrl = URL.createObjectURL(audioBlob)
       const audio = new Audio(audioUrl)
       googleTTSAudioRef.current = audio
-      
+
       audio.onended = () => {
         setTtsState('idle')
         googleTTSAudioRef.current = null
@@ -595,14 +597,14 @@ function AppContent() {
         setTtsState('idle')
         googleTTSAudioRef.current = null
       }
-      
+
       await audio.play()
       console.log('[TTS] 使用 Google Cloud TTS 播放')
-      
+
     } catch (error) {
       console.log('[TTS] Google Cloud 失败，fallback 到浏览器原生 TTS:', error.message)
       googleTTSAudioRef.current = null
-      
+
       // Fallback 到浏览器原生 TTS
       speakWithNativeTTS(text)
     }
@@ -625,7 +627,7 @@ function AppContent() {
   // 使用后端 API 进行语义标点添加
   async function addSemanticPunctuation(text) {
     if (!text) return text
-    
+
     console.log('[punctuation] 开始语义标点处理，原文:', text)
     try {
       const response = await fetch('/api/punctuation', {
@@ -1164,7 +1166,7 @@ function AppContent() {
         await addBlockToPdf(versesHtml)
       }
 
-      
+
       // Watermark on all pages
       const totalPages = pdf.internal.getNumberOfPages()
       for (let pg = 1; pg <= totalPages; pg++) {
@@ -1292,7 +1294,7 @@ function AppContent() {
   }, [authLoading])
 
   function handlePanelSwitch(panel) {
-    const needsLogin = ['mydevotion', 'prayer', 'devotion', 'journal', 'evangelism', 'checkin', 'sharewall', 'innerlife', 'soul-question', 'growth-map', 'partner', 'bible-reading', 'communion', 'voice', 'attention']
+    const needsLogin = ['mydevotion', 'prayer', 'devotion', 'journal', 'evangelism', 'checkin', 'sharewall', 'innerlife', 'soul-question', 'growth-map', 'partner', 'bible-reading', 'communion', 'voice', 'attention', 'formation-twin', 'spiritual-planet']
     if (needsLogin.includes(panel) && !user) {
       const messages = {
         mydevotion: i18nT('登录后记录和分享你的灵修日记'),
@@ -1311,6 +1313,8 @@ function AppContent() {
         'communion': i18nT('登录后与弟兄姊妹聊天和语音通话'),
         'voice': i18nT('登录后创建群并发起多人实时语音通话'),
         attention: i18nT('登录后使用守心模块，保存每日注意力立约'),
+        'formation-twin': i18nT('登录后查看由你现有记录形成的情感—属灵生命镜像'),
+        'spiritual-planet': i18nT('登录后进入统一的属灵星球门户'),
       }
       setLoginMessage(messages[panel])
       setPendingPanel(panel)
@@ -1337,6 +1341,42 @@ function AppContent() {
       setFormationInitialTab(route === 'waiting' ? 'cross-lament-hope' : route === 'examen' ? 'daily' : 'home')
     }
     if (target) handlePanelSwitch(target)
+  }
+
+  function openFormationTwinTarget(target) {
+    if (target === 'sos') {
+      setShowSOS(true)
+      return
+    }
+
+    const existingPanel = {
+      'spiritual-formation': 'spiritual-formation',
+      attention: 'attention',
+      checkin: 'checkin',
+      innerlife: 'innerlife',
+      'soul-question': 'soul-question',
+      devotion: 'devotion',
+      'growth-map': 'growth-map',
+      'personal-search': 'personal-search',
+      'export-data': 'export-data',
+      partner: 'partner',
+      communion: 'communion',
+    }[target]
+
+    if (existingPanel) handlePanelSwitch(existingPanel)
+  }
+
+  function openSpiritualPlanetTarget(target) {
+    if (target === 'sos') {
+      setShowSOS(true)
+      return
+    }
+    const existingPanel = {
+      checkin: 'checkin', prayer: 'prayer', devotion: 'devotion', 'formation-twin': 'formation-twin',
+      'spiritual-formation': 'spiritual-formation', attention: 'attention', 'growth-map': 'growth-map',
+      'mission-life': 'evangelism', 'personal-search': 'personal-search', partner: 'partner', communion: 'communion',
+    }[target]
+    if (existingPanel) handlePanelSwitch(existingPanel)
   }
 
   function handleLoginSuccess(u) {
@@ -1844,6 +1884,23 @@ function AppContent() {
                       </span>
                     )}
                   </div>
+                  <button
+                    type="button"
+                    onClick={() => handlePanelSwitch('formation-twin')}
+                    style={{
+                      width: '100%', display: 'flex', alignItems: 'center', gap: 10, textAlign: 'left',
+                      margin: '0 0 10px', padding: '10px 12px', borderRadius: 13, cursor: 'pointer',
+                      color: '#ececff', background: 'linear-gradient(135deg, rgba(139,92,246,0.2), rgba(90,200,250,0.1))',
+                      border: '1px solid rgba(167,139,250,0.24)', fontFamily: 'inherit',
+                    }}
+                  >
+                    <span style={{ fontSize: 20 }} aria-hidden="true">✦</span>
+                    <span style={{ flex: 1 }}>
+                      <strong style={{ display: 'block', fontSize: 12 }}>{i18nT('情感—属灵形成孪生')}</strong>
+                      <small style={{ display: 'block', marginTop: 2, color: 'rgba(255,255,255,0.48)', fontSize: 10 }}>{i18nT('汇总现有记录 · 查看证据 · 选择下一步')}</small>
+                    </span>
+                    <span style={{ color: '#aeb2ff', fontSize: 18 }} aria-hidden="true">›</span>
+                  </button>
                   {/* 快捷入口按钮行 */}
                   <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                     {[
@@ -2028,7 +2085,7 @@ function AppContent() {
                     {!isWeChat && (
                     <button
                       type="button"
-                      onClick={() => { 
+                      onClick={() => {
                         const prev = query
                         // 不清空输入框，保持原文显示，润色完成后直接替换
                         polishQueryText(prev, (text) => {
@@ -2434,7 +2491,7 @@ function AppContent() {
                   {(biblicalExample?.application || guidance?.coping_suggestions?.length > 0) && (
                     <div className="result-block">
                       <div className="result-block-title">{i18nT('应用建议 (Application from Biblical Example)')}</div>
-                      
+
                       {guidance?.coping_suggestions?.length > 0 && (
                         <div style={{ marginBottom: '12px' }}>
                           <div className="result-sub-label">{i18nT('日常应对')}</div>
@@ -3042,6 +3099,34 @@ function AppContent() {
             <Suspense fallback={null}>
               <ExportDataPage onBack={() => setActivePanel('sphere')} />
             </Suspense>
+          </div>
+        )}
+
+        {/* 情感—属灵形成孪生：聚合现有生命状态与形成模块 */}
+        {activePanel === 'spiritual-planet' && (
+          <div className="page-overlay">
+            {user ? (
+              <Suspense fallback={null}>
+                <SpiritualPlanetPlatformPage user={user} onBack={() => setActivePanel('sphere')} onOpen={openSpiritualPlanetTarget} />
+              </Suspense>
+            ) : showLogin ? renderInlineLogin() : null}
+          </div>
+        )}
+
+        {/* 情感—属灵形成孪生：聚合现有生命状态与形成模块 */}
+        {activePanel === 'formation-twin' && (
+          <div className="page-overlay">
+            {user ? (
+              <Suspense fallback={null}>
+                <FormationTwinPage
+                  user={user}
+                  dailySnapshot={dailySnapshot}
+                  emotionTrajectory={emotionTrajectory}
+                  onBack={() => setActivePanel('sphere')}
+                  onOpen={openFormationTwinTarget}
+                />
+              </Suspense>
+            ) : showLogin ? renderInlineLogin() : null}
           </div>
         )}
 

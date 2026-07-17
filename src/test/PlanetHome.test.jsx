@@ -33,6 +33,8 @@ describe('PlanetHome', () => {
     renderPlanetHome()
 
     expect(document.body.textContent).toContain('属灵星球')
+    expect(document.body.textContent).toContain('情感—属灵形成孪生')
+    expect(document.body.textContent).toContain('属灵星球 · 统一门户')
     expect(document.body.textContent).toContain('今日牧养路径')
     expect(document.body.textContent).toContain('认识自己')
     expect(document.body.textContent).toContain('回到福音')
@@ -70,6 +72,22 @@ describe('PlanetHome', () => {
     expect(go).toHaveBeenNthCalledWith(5, 'pilgrim')
     expect(go).toHaveBeenNthCalledWith(6, 'spiritual-formation')
     expect(onClose).not.toHaveBeenCalled()
+  })
+
+  it('opens the formation twin as the planet life-state hub', () => {
+    const { getByText, go } = renderPlanetHome()
+
+    fireEvent.click(getByText('情感—属灵形成孪生'))
+
+    expect(go).toHaveBeenCalledWith('formation-twin')
+  })
+
+  it('opens the unified Spiritual Planet portal', () => {
+    const { getByText, go } = renderPlanetHome()
+
+    fireEvent.click(getByText('属灵星球 · 统一门户'))
+
+    expect(go).toHaveBeenCalledWith('spiritual-planet')
   })
 
   it('closes for close chips and the back button', () => {

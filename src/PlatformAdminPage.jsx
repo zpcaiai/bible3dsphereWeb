@@ -5,6 +5,8 @@ import { useEffect, useState } from 'react'
 import BackButton from './BackButton'
 import { platformApi } from './api'
 import { getToken } from './auth'
+import IntegrationHealthPanel from './features/spiritual-planet/IntegrationHealthPanel'
+import ProductionGovernancePanel from './features/spiritual-planet/ProductionGovernancePanel'
 
 const card = { background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, padding: 14, marginBottom: 12 }
 const small = { cursor: 'pointer', borderRadius: 8, padding: '4px 10px', border: '1px solid rgba(255,255,255,0.18)', color: '#fff', background: 'transparent', fontSize: 12 }
@@ -73,6 +75,10 @@ export default function PlatformAdminPage({ user, onBack }) {
           </div>
         </div>
       )}
+
+      <IntegrationHealthPanel />
+
+      <ProductionGovernancePanel />
 
       <div style={card}>
         <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 8 }}>{i18nT('危机复核队列 ·')} {queue.length}</div>
