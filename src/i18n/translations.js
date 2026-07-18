@@ -1,4 +1,5 @@
 // 国际化文案字典 / i18n message dictionary
+import curatedEn from './curated-en'
 //
 // 两部分组成：
 //   1) namespaced —— 首页/顶栏/导航等手工命名空间键（zh + en 都需要）
@@ -28,13 +29,15 @@ const namespacedZh = {
 
   'home.quick.bibleSearch': '经文搜索',
   'home.quick.groupHub': '小组中心',
-  'home.snapshot.memoryDeck': '背经卡',
-  'home.snapshot.mccheyne': '麦琴计划',
-  'home.snapshot.exportData': '数据导出',
-  'home.snapshot.personalSearch': '我的搜索',
-  'home.quick.voice': '音视频通话',
-  'home.quick.communion': '群聊',
+  'home.snapshot.memoryDeck': '记忆卡',
+  'home.snapshot.mccheyne': '麦琴读经',
+  'home.snapshot.exportData': '导出数据',
+  'home.snapshot.personalSearch': '个人检索',
+  'home.quick.voice': '语音通话',
+  'home.quick.communion': '圣徒相通',
+  'home.quick.mirrorGraph': '人物图谱',
   'home.quick.bibleMaps': '圣经地图',
+  'home.quick.pilgrimProgress': '天路历程',
 
   'home.snapshot.title': '今日灵命状态',
   '重新同步': '重新同步',
@@ -44,12 +47,33 @@ const namespacedZh = {
   'home.snapshot.devotionDone': '今日已灵修',
   'home.snapshot.devotionNone': '今日未灵修',
   'home.snapshot.pendingPrayers': '{n} 个待代祷',
-  'home.snapshot.soulQuestion': '今日一问',
+  'home.snapshot.formationTwinTitle': '情感—属灵形成孪生',
+  'home.snapshot.formationTwinSubtitle': '汇总现有记录 · 查看证据 · 选择下一步',
+  'home.snapshot.soulQuestion': '每日一问',
+  'home.snapshot.worldview': '世界观',
   'home.snapshot.quickDevotion': '2分钟灵修',
   'home.snapshot.growthMap': '灵命图谱',
   'home.snapshot.growth': '灵命成长',
   'home.snapshot.partner': '属灵伙伴',
   'home.snapshot.bibleReading': '读经&查经',
+
+  'home.pour.prompt.pain': '我感到很痛苦，也很想被安慰，但仍然想抓住一点盼望',
+  'home.pour.prompt.anxiety': '我最近感到很焦虑，不知道神是否在乎我',
+  'home.pour.prompt.injustice': '我在工作中遭遇不公平，很难饶恕那个人',
+  'home.pour.prompt.prayerFatigue': '我对祷告感到疲惫，感觉神沉默不语',
+  'home.pour.prompt.marriage': '我和配偶之间有很深的隔阂，不知道怎么办',
+  'home.pour.prompt.repeatedSin': '我重复犯同样的罪，非常自责',
+  'home.pour.prompt.closerToGod': '我想更亲近神，但不知从哪里开始',
+  'home.pour.polishing': '润色中…',
+  'home.pour.polish': '润色',
+  'home.pour.praying': '⏳ 祷告中...',
+  'home.pour.wordOfGrace': '🌿 求赐恩言',
+  'home.pour.thinking': '⏳ 思考中...',
+  'home.pour.ask': '📖 提问',
+  'home.pour.bibleSearch': '🔍 经文搜索（凭印象找经文）',
+  'home.pour.question.scripture': '面对这个需要，圣经如何回应？',
+  'home.pour.question.presence': '当我有这些感受时，神在哪里？',
+  'home.pour.question.suffering': '神允许痛苦存在，祂的目的是什么？',
 
   'home.trajectory.title': '近30天情感轨迹',
 
@@ -72,9 +96,9 @@ const namespacedZh = {
 }
 
 const namespacedEn = {
-  'lang.zh': '中文',
+  'lang.zh': 'Chinese',
   'lang.en': 'EN',
-  'lang.switchTitle': '切换语言 / Switch language',
+  'lang.switchTitle': 'Switch language',
   '以为“因信称义”会让人轻看顺服与善行。': 'Thinking justification by faith makes obedience and good works unimportant.',
 
   '本地兜底结果：后端未响应，已用前端内置规则生成。连接后端后可获得完整服务端结果。': 'Local fallback result: the backend did not respond, so the frontend generated this with built-in rules. Connect the backend for full server results.',
@@ -134,12 +158,14 @@ const namespacedEn = {
   'home.quick.bibleSearch': 'Verse Search',
   'home.quick.groupHub': 'Groups',
   'home.snapshot.memoryDeck': 'Memory Cards',
-  'home.snapshot.mccheyne': "M'Cheyne Plan",
-  'home.snapshot.exportData': 'Export',
-  'home.snapshot.personalSearch': 'My Search',
-  'home.quick.voice': 'Voice & Video',
-  'home.quick.communion': 'Group Chat',
+  'home.snapshot.mccheyne': "M'Cheyne Reading",
+  'home.snapshot.exportData': 'Export Data',
+  'home.snapshot.personalSearch': 'Personal Search',
+  'home.quick.voice': 'Voice Call',
+  'home.quick.communion': 'Communion of Saints',
+  'home.quick.mirrorGraph': 'People Graph',
   'home.quick.bibleMaps': 'Bible Maps',
+  'home.quick.pilgrimProgress': "The Pilgrim's Progress",
 
   'home.snapshot.title': "Today's Spiritual Status",
   '重新同步': 'Retry sync',
@@ -149,12 +175,33 @@ const namespacedEn = {
   'home.snapshot.devotionDone': 'Devotion done today',
   'home.snapshot.devotionNone': 'No devotion yet today',
   'home.snapshot.pendingPrayers': '{n} prayers awaiting',
-  'home.snapshot.soulQuestion': "Today's Question",
+  'home.snapshot.formationTwinTitle': 'Emotional-Spiritual Formation Twin',
+  'home.snapshot.formationTwinSubtitle': 'Review records · Inspect evidence · Choose the next step',
+  'home.snapshot.soulQuestion': 'Daily Question',
+  'home.snapshot.worldview': 'Worldview',
   'home.snapshot.quickDevotion': '2-min Devotion',
   'home.snapshot.growthMap': 'Growth Map',
   'home.snapshot.growth': 'Spiritual Growth',
   'home.snapshot.partner': 'Prayer Partner',
   'home.snapshot.bibleReading': 'Bible Reading & Study',
+
+  'home.pour.prompt.pain': "I'm in pain and long for comfort, yet still want to hold on to hope",
+  'home.pour.prompt.anxiety': "I've felt anxious lately and wonder whether God cares",
+  'home.pour.prompt.injustice': 'I faced unfairness at work and struggle to forgive',
+  'home.pour.prompt.prayerFatigue': 'I feel weary in prayer, and God seems silent',
+  'home.pour.prompt.marriage': "There's a deep rift with my spouse, and I don't know what to do",
+  'home.pour.prompt.repeatedSin': 'I keep falling into the same sin and feel deeply ashamed',
+  'home.pour.prompt.closerToGod': "I want to draw closer to God but don't know where to begin",
+  'home.pour.polishing': 'Polishing…',
+  'home.pour.polish': 'Polish',
+  'home.pour.praying': '⏳ Praying...',
+  'home.pour.wordOfGrace': '🌿 A Word of Grace',
+  'home.pour.thinking': '⏳ Thinking...',
+  'home.pour.ask': '📖 Ask',
+  'home.pour.bibleSearch': '🔍 Search Scripture by Memory',
+  'home.pour.question.scripture': 'How does Scripture respond to this need?',
+  'home.pour.question.presence': 'Where is God when I feel this way?',
+  'home.pour.question.suffering': 'Why does God allow suffering?',
 
   'home.trajectory.title': 'Emotional Journey (last 30 days)',
 
@@ -178,7 +225,7 @@ const namespacedEn = {
 
 export const translations = {
   zh: namespacedZh,
-  en: { ...namespacedEn },
+  en: { ...curatedEn, ...namespacedEn },
 }
 
 export const SUPPORTED_LANGS = ['zh', 'en']

@@ -1,0 +1,16 @@
+{
+  "name": "Soul Planet · Spiritual Awareness and Companionship",
+  "short_name": "Soul Planet",
+  "description": "Bible emotion sphere, spiritual discernment, devotional practice, and Christian fellowship",
+  "lang": "en",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a0d18",
+  "theme_color": "#6d7cff",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/apple-touch-icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+  ]
+}

@@ -1,13 +1,15 @@
 // ShareCardModal — 经文分享卡生成器（Canvas，无水印）。
 // 渐变模板 × 自适应排版（中文按字断行 / 英文按词断行），导出 PNG / 复制图片。
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { t } from '../i18n/runtime'
+import { getRuntimeLang, t } from '../i18n/runtime'
+import { useAutoTranslate } from '../autoTranslate'
 import { a11yClickProps } from '../lib/a11yClick';
 
 const toast = (m, ty = 'info') => window.showToast?.(m, ty)
 
 const W = 1080
 const H = 1350 // 4:5，朋友圈/小红书友好
+const CJK = /[一-鿿]/
 
 const TEMPLATES = [
   { id: 'dawn', name: '晨光', stops: [[0, '#2b1d4f'], [0.55, '#7a3b67'], [1, '#e8945a']], ink: '#fff7ec', sub: 'rgba(255,247,236,0.72)' },
@@ -83,10 +85,19 @@ export default function ShareCardModal({ text, reference, onClose }) {
   const canvasRef = useRef(null)
   const [tplId, setTplId] = useState('dawn')
   const tpl = TEMPLATES.find((x) => x.id === tplId) || TEMPLATES[0]
+  const translate = useAutoTranslate([text, reference])
+  const translatedText = translate(text)
+  const translatedReference = translate(reference)
+  const displayText = getRuntimeLang() === 'en' && CJK.test(String(translatedText || ''))
+    ? 'Translation pending…'
+    : translatedText
+  const displayReference = getRuntimeLang() === 'en' && CJK.test(String(translatedReference || ''))
+    ? 'Scripture reference'
+    : translatedReference
 
   const repaint = useCallback(() => {
-    if (canvasRef.current) render(canvasRef.current, { text, reference, tpl })
-  }, [text, reference, tpl])
+    if (canvasRef.current) render(canvasRef.current, { text: displayText, reference: displayReference, tpl })
+  }, [displayText, displayReference, tpl])
 
   useEffect(() => {
     repaint()

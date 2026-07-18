@@ -15,7 +15,9 @@ import url from 'node:url'
 const ROOT = path.resolve(path.dirname(url.fileURLToPath(import.meta.url)), '..')
 const SRC = path.join(ROOT, 'src')
 const AUTOEN = path.join(SRC, 'i18n', 'auto-en.js')
+const CURATED_EN = path.join(SRC, 'i18n', 'curated-en.js')
 const DRY = process.argv.includes('--dry-run')
+const CHECK = process.argv.includes('--check')
 
 const GLOSSARY = {
   '以法莲': 'Ephraim', '玛拿西': 'Manasseh', '犹大': 'Judah', '便雅悯': 'Benjamin',
@@ -28,9 +30,16 @@ function loadExisting() {
   const raw = fs.readFileSync(AUTOEN, 'utf8')
   const m = raw.match(/export\s+default\s+(\{[\s\S]*\})\s*;?\s*$/)
   if (!m) throw new Error('auto-en.js 格式无法解析')
+  const curatedRaw = fs.readFileSync(CURATED_EN, 'utf8')
+  const curatedMatch = curatedRaw.match(/export\s+default\s+(\{[\s\S]*\})\s*;?\s*$/)
+  if (!curatedMatch) throw new Error('curated-en.js 格式无法解析')
   // 安全 eval 对象字面量
   // eslint-disable-next-line no-new-func
-  return { map: Function(`return (${m[1]})`)(), raw }
+  return {
+    map: Function(`return (${m[1]})`)(),
+    curated: Function(`return (${curatedMatch[1]})`)(),
+    raw,
+  }
 }
 
 // ── 2. 扫描源码收集 t() 中文键 ──
@@ -91,14 +100,23 @@ async function translateBatch(items, p) {
 }
 
 async function main() {
-  const { map } = loadExisting()
+  const { map, curated } = loadExisting()
   const keys = collectKeys()
-  const missing = [...keys].filter((k) => !(k in map) && !(k in GLOSSARY))
+  const missing = [...keys].filter((k) => !(k in map) && !(k in curated) && !(k in GLOSSARY))
   // 词表直填
   for (const k of keys) if (k in GLOSSARY && !(k in map)) map[k] = GLOSSARY[k]
   console.log(`扫描到 t() 中文键 ${keys.size} 个，缺失 ${missing.length} 个`)
+  if (CHECK) {
+    if (missing.length > 0) {
+      console.error('EN 子页面词库缺失：', missing)
+      process.exitCode = 1
+    } else {
+      console.log('EN 子页面词库审计通过')
+    }
+    return
+  }
   if (missing.length === 0) { console.log('无需翻译'); return }
-  if (DRY) { console.log('（dry-run）示例缺失：', missing.slice(0, 20)); return }
+  if (DRY) { console.log('（dry-run）全部缺失：', missing); return }
 
   if (!process.env.DEEPSEEK_API_KEY && !process.env.SILICONFLOW_API_KEY && !process.env.GEMINI_API_KEY) {
     console.warn(`\u26a0 \u8df3\u8fc7 auto-en \u56de\u586b\uff1a\u672a\u8bbe API key\uff08\u7f3a ${missing.length} \u6761\uff0c\u7531\u8fd0\u884c\u65f6\u5b9e\u65f6\u7ffb\u8bd1\u515c\u5e95\uff09`)

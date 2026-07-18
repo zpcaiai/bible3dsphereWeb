@@ -1,4 +1,4 @@
-import { t as i18nT } from './i18n/runtime'
+import { featureLabel, t as i18nT } from './i18n/runtime'
 import { Component, useMemo, useRef, useEffect, useCallback, useState } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { prefersReducedMotion } from './prefersReducedMotion'
@@ -74,7 +74,7 @@ class SceneErrorBoundary extends Component {
                   whiteSpace: 'nowrap',
                 }}
               >
-                {item.label || item.description?.slice(0, 18) || item.feature_key}
+                {featureLabel(item, { withEn: true }) || item.label || item.description?.slice(0, 18) || item.feature_key}
               </button>
             ))}
           </div>
@@ -200,13 +200,6 @@ function InstancedPoints({ items, onHover, onSelect, selectedKey, hoveredKey }) 
   )
 }
 
-function itemLabel(item) {
-  const zh = item.zh_label || ''
-  const en = item.short_en || item.source_keyword || ''
-  if (zh && en) return `${zh}（${en}）`
-  return zh || en || ''
-}
-
 // ─── All Point Labels — 3D Text, always visible, uniform sphere coverage ──────
 function AllPointLabels({ items, hoveredKey, selectedKey, onHover, onSelect }) {
   const zoomLevel = useEmotionStore((s) => s.zoomLevel)
@@ -240,7 +233,7 @@ function AllPointLabels({ items, hoveredKey, selectedKey, onHover, onSelect }) {
           onClick={(e) => { e.stopPropagation(); onSelect?.(item) }}
           cursor="pointer"
         >
-          {itemLabel(item)}
+          {featureLabel(item, { withEn: true })}
         </Text>
       </Billboard>
     )
@@ -280,8 +273,8 @@ function VersePopover3D({
         <div className="vp-scroll-body" style={{ maxHeight: `${cssMaxHeight}px` }}>
         <div className="vp-header">
           <span className="vp-key">
-            {feature.zh_label
-              ? <>{feature.zh_label} {feature.label_origin !== 'anthropic-emotions-2026-curated' && <small style={{opacity:0.5, fontWeight:400}}>#{feature.feature_id}</small>}</>
+            {featureLabel(feature)
+              ? <>{featureLabel(feature)} {feature.label_origin !== 'anthropic-emotions-2026-curated' && <small style={{opacity:0.5, fontWeight:400}}>#{feature.feature_id}</small>}</>
               : `${feature.layer}:${feature.feature_id}`}
           </span>
         </div>

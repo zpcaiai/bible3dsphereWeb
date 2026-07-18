@@ -63,6 +63,12 @@ function notify() {
   listeners.forEach((fn) => { try { fn() } catch { /* ignore */ } })
 }
 
+export function subscribeTranslationUpdates(listener) {
+  if (typeof listener !== 'function') return () => {}
+  listeners.add(listener)
+  return () => { listeners.delete(listener) }
+}
+
 function flush() {
   scheduled = false
   const batch = [...pending].filter((s) => !cache.has(s) && !inflight.has(s))

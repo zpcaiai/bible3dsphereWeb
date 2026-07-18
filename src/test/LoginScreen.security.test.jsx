@@ -69,7 +69,7 @@ describe('LoginScreen credential safety', () => {
     localizedContent.querySelector('[role="group"]')?.remove()
 
     expect(localizedContent.textContent).not.toMatch(/[\u3400-\u9fff]/)
-    expect(screen.getByRole('button', { name: '中文' })).toBeTruthy()
+    expect(screen.getByRole('button', { name: 'Chinese' })).toBeTruthy()
     expect(screen.getByRole('tab', { name: 'Log in' })).toBeTruthy()
     expect(screen.getByLabelText('Email')).toBeTruthy()
   })

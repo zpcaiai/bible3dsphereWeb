@@ -1,6 +1,6 @@
-// emotion-sphere-2025 — Service Worker v7
+// emotion-sphere-2025 — Service Worker v8
 // Cache name includes a version token — change it to bust all caches on next deploy
-const CACHE_VERSION = 'emotion-sphere-2025-v7'
+const CACHE_VERSION = 'emotion-sphere-2025-v8'
 const ASSET_EXTS = ['.js', '.css', '.woff2', '.woff', '.ttf', '.png', '.svg', '.ico', '.webp', '.json']
 const MISSION_AUDIO_CACHE = 'mission-bridge-audio-v1'
 

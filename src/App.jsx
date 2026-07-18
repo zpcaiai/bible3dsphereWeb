@@ -1803,11 +1803,11 @@ function AppContent() {
               {/* 圣经地图 / 语音通话 快捷入口（置于今日灵命快照上方）*/}
               <div style={{ display: 'flex', gap: '4px', margin: '0 0 4px' }}>
                 {[
-                  { icon: '🎙', label: '语音通话', panel: 'voice' },
-                  { icon: '💬', label: '圣徒相通', panel: 'communion' },
-                  { icon: '🕸', label: '人物图谱', panel: 'mirror-graph' },
-                  { icon: '🗺', label: '圣经地图', panel: 'bible-maps' },
-                  { icon: '🚶', label: '天路历程', url: 'https://pilgrims.holiness.uk/' },
+                  { icon: '🎙', labelKey: 'home.quick.voice', panel: 'voice' },
+                  { icon: '💬', labelKey: 'home.quick.communion', panel: 'communion' },
+                  { icon: '🕸', labelKey: 'home.quick.mirrorGraph', panel: 'mirror-graph' },
+                  { icon: '🗺', labelKey: 'home.quick.bibleMaps', panel: 'bible-maps' },
+                  { icon: '🚶', labelKey: 'home.quick.pilgrimProgress', url: 'https://pilgrims.holiness.uk/' },
                 ].map((item) => (
                   <button key={item.panel || item.url}
                     onClick={() => item.url ? window.open(item.url, '_blank', 'noopener,noreferrer') : handlePanelSwitch(item.panel)}
@@ -1819,7 +1819,7 @@ function AppContent() {
                       whiteSpace: 'nowrap',
                     }}
                   >
-                    <span style={{ fontSize: 'clamp(12px, 3vw, 16px)' }}>{item.icon}</span>{item.label}
+                    <span style={{ fontSize: 'clamp(12px, 3vw, 16px)' }}>{item.icon}</span>{i18nT(item.labelKey)}
                   </button>
                 ))}
               </div>
@@ -1845,7 +1845,7 @@ function AppContent() {
                       <button type="button" onClick={() => setShowLogin(true)} style={{
                         border: '1px solid rgba(180,180,255,0.28)', borderRadius: 999, padding: '4px 10px',
                         background: 'rgba(88,86,214,0.18)', color: '#c4b5fd', fontSize: 11, cursor: 'pointer',
-                      }}>{i18nT('登录')}</button>
+                      }}>{i18nT('topbar.login')}</button>
                     </div>
                   ) : !dailySnapshot && (
                     <div role="status" style={{ fontSize: 12, color: 'rgba(255,255,255,0.58)', marginBottom: 10 }}>
@@ -1896,25 +1896,25 @@ function AppContent() {
                   >
                     <span style={{ fontSize: 20 }} aria-hidden="true">✦</span>
                     <span style={{ flex: 1 }}>
-                      <strong style={{ display: 'block', fontSize: 12 }}>{i18nT('情感—属灵形成孪生')}</strong>
-                      <small style={{ display: 'block', marginTop: 2, color: 'rgba(255,255,255,0.48)', fontSize: 10 }}>{i18nT('汇总现有记录 · 查看证据 · 选择下一步')}</small>
+                      <strong style={{ display: 'block', fontSize: 12 }}>{i18nT('home.snapshot.formationTwinTitle')}</strong>
+                      <small style={{ display: 'block', marginTop: 2, color: 'rgba(255,255,255,0.48)', fontSize: 10 }}>{i18nT('home.snapshot.formationTwinSubtitle')}</small>
                     </span>
                     <span style={{ color: '#aeb2ff', fontSize: 18 }} aria-hidden="true">›</span>
                   </button>
                   {/* 快捷入口按钮行 */}
                   <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                     {[
-                      { icon: '🔍', label: '每日一问', panel: 'soul-question' },
-                      { icon: '🧭', label: '世界观', panel: 'worldview' },
-                      { icon: '⏱', label: '2分钟灵修', action: () => setShowQuickDevotion(true) },
-                      { icon: '📊', label: '灵命图谱', panel: 'growth-map' },
-                      { icon: '📈', label: '灵命成长', panel: 'engineering' },
-                      { icon: '🤝', label: '属灵伙伴', panel: 'partner' },
-                      { icon: '📖', label: '读经&查经', panel: 'bible-reading' },
-                      { icon: '📅', label: '麦琴读经', panel: 'mccheyne' },
-                      { icon: '🃏', label: '记忆卡', panel: 'memory-deck' },
-                      { icon: '🗃', label: '个人检索', panel: 'personal-search' },
-                      { icon: '📦', label: '导出数据', panel: 'export-data' },
+                      { icon: '🔍', labelKey: 'home.snapshot.soulQuestion', panel: 'soul-question' },
+                      { icon: '🧭', labelKey: 'home.snapshot.worldview', panel: 'worldview' },
+                      { icon: '⏱', labelKey: 'home.snapshot.quickDevotion', action: () => setShowQuickDevotion(true) },
+                      { icon: '📊', labelKey: 'home.snapshot.growthMap', panel: 'growth-map' },
+                      { icon: '📈', labelKey: 'home.snapshot.growth', panel: 'engineering' },
+                      { icon: '🤝', labelKey: 'home.snapshot.partner', panel: 'partner' },
+                      { icon: '📖', labelKey: 'home.snapshot.bibleReading', panel: 'bible-reading' },
+                      { icon: '📅', labelKey: 'home.snapshot.mccheyne', panel: 'mccheyne' },
+                      { icon: '🃏', labelKey: 'home.snapshot.memoryDeck', panel: 'memory-deck' },
+                      { icon: '🗃', labelKey: 'home.snapshot.personalSearch', panel: 'personal-search' },
+                      { icon: '📦', labelKey: 'home.snapshot.exportData', panel: 'export-data' },
                     ].map((item, i) => (
                       <button key={i}
                         onClick={() => item.action ? item.action() : handlePanelSwitch(item.panel)}
@@ -1924,7 +1924,7 @@ function AppContent() {
                           borderRadius: '20px', color: 'rgba(255,255,255,0.7)', cursor: 'pointer',
                         }}
                       >
-                        {item.icon} {item.label}
+                        {item.icon} {i18nT(item.labelKey)}
                       </button>
                     ))}
                   </div>
@@ -2008,18 +2008,18 @@ function AppContent() {
                     <div style={{fontSize: '12px', color: 'rgba(255,255,255,0.5)', marginBottom: '8px'}}>{i18nT('✨ 你可以这样开始：')}</div>
                     <div style={{display: 'flex', flexWrap: 'wrap', gap: '8px'}}>
                       {[
-                        '我感到很痛苦，也很想被安慰，但仍然想抓住一点盼望',
-                        '我最近感到很焦虑，不知道神是否在乎我',
-                        '我在工作中遭遇不公平，很难饶恕那个人',
-                        '我对祷告感到疲惫，感觉神沉默不语',
-                        '我和配偶之间有很深的隔阂，不知道怎么办',
-                        '我重复犯同样的罪，非常自责',
-                        '我想更亲近神，但不知从哪里开始',
-                      ].map((s) => (
+                        'home.pour.prompt.pain',
+                        'home.pour.prompt.anxiety',
+                        'home.pour.prompt.injustice',
+                        'home.pour.prompt.prayerFatigue',
+                        'home.pour.prompt.marriage',
+                        'home.pour.prompt.repeatedSin',
+                        'home.pour.prompt.closerToGod',
+                      ].map((labelKey) => (
                         <button
-                          key={s}
+                          key={labelKey}
                           type="button"
-                          onClick={() => setQuery(s)}
+                          onClick={() => setQuery(i18nT(labelKey))}
                           style={{
                             fontSize: '12px',
                             padding: '6px 12px',
@@ -2032,7 +2032,7 @@ function AppContent() {
                             lineHeight: 1.4,
                           }}
                         >
-                          {s}
+                          {i18nT(labelKey)}
                         </button>
                       ))}
                     </div>
@@ -2119,7 +2119,7 @@ function AppContent() {
                       title={i18nT('润色文字：使用AI优化表达，使其更流畅、有属灵深度')}
                     >
                       <span>{isPolishing ? '✨' : '✏️'}</span>
-                      <span>{isPolishing ? '润色中…' : '润色'}</span>
+                      <span>{i18nT(isPolishing ? 'home.pour.polishing' : 'home.pour.polish')}</span>
                     </button>
                     )}
                     {/* 微信内置浏览器提示 */}
@@ -2205,7 +2205,7 @@ function AppContent() {
                         }
                       }}
                     >
-                      {loading ? '⏳ 祷告中...' : '🌿 求赐恩言'}
+                      {i18nT(loading ? 'home.pour.praying' : 'home.pour.wordOfGrace')}
                     </button>
                     {/* 从情绪/引导结果中提炼神学问题建议 */}
                     {guidance && !faithQa && (
@@ -2213,14 +2213,14 @@ function AppContent() {
                         <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', marginBottom: '6px' }}>{i18nT('💡 可以这样提问：')}</div>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
                           {[
-                            guidance.core_need ? `面对"${guidance.core_need.slice(0, 20)}"，圣经如何回应？` : null,
-                            guidance.core_emotions?.length ? `当我感到${guidance.core_emotions.slice(0, 2).join('、')}时，神在哪里？` : null,
-                            guidance.spiritual_guidance ? '神允许痛苦存在，祂的目的是什么？' : null,
-                          ].filter(Boolean).slice(0, 2).map((suggestion, i) => (
+                            guidance.core_need ? 'home.pour.question.scripture' : null,
+                            guidance.core_emotions?.length ? 'home.pour.question.presence' : null,
+                            guidance.spiritual_guidance ? 'home.pour.question.suffering' : null,
+                          ].filter(Boolean).slice(0, 2).map((labelKey, i) => (
                             <button
                               key={i}
                               type="button"
-                              onClick={() => setQuery(suggestion)}
+                              onClick={() => setQuery(i18nT(labelKey))}
                               style={{
                                 fontSize: '12px', textAlign: 'left', background: 'rgba(88,86,214,0.15)',
                                 border: '1px solid rgba(88,86,214,0.3)', borderRadius: '8px',
@@ -2228,7 +2228,7 @@ function AppContent() {
                                 lineHeight: 1.4,
                               }}
                             >
-                              {suggestion}
+                              {i18nT(labelKey)}
                             </button>
                           ))}
                         </div>
@@ -2255,7 +2255,7 @@ function AppContent() {
                         }
                       }}
                     >
-                      {faithQaLoading ? '⏳ 思考中...' : '📖 提问'}
+                      {i18nT(faithQaLoading ? 'home.pour.thinking' : 'home.pour.ask')}
                     </button>
                     {/* 经文搜索：凭印象找经文（语义检索），置于提问按钮之下，同款蓝色 */}
                     <button
@@ -2264,7 +2264,7 @@ function AppContent() {
                       style={{ width: '100%', marginTop: '8px' }}
                       onClick={() => handlePanelSwitch('bible-search')}
                     >
-                      {i18nT('🔍 经文搜索（凭印象找经文）')}
+                      {i18nT('home.pour.bibleSearch')}
                     </button>
                     {/* 短视频功能已隐藏 */}
                   </div>

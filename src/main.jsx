@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 import App from './App'
 import AppErrorBoundary from './AppErrorBoundary'
 import { LanguageProvider } from './i18n/LanguageContext'
+import EnglishVisibleTextGuard from './i18n/EnglishVisibleTextGuard'
 import { getRuntimeLang } from './i18n/runtime'
 import { mergeAutoEn } from './i18n/translations'
 import { registerServiceWorker } from './pwa'
@@ -27,6 +28,7 @@ prepareI18n().finally(() => {
     <React.StrictMode>
       <AppErrorBoundary>
         <LanguageProvider>
+          <EnglishVisibleTextGuard />
           <App />
         </LanguageProvider>
       </AppErrorBoundary>

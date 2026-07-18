@@ -6,9 +6,6 @@
     <meta name="theme-color" content="#0a0d18" media="(prefers-color-scheme: dark)" />
     <meta name="theme-color" content="#6d7cff" />
 
-    <!-- 语言：在渲染前依据用户偏好（app-lang）修正 <html lang>，利于无障碍与翻译 -->
-    <script src="/js/lang-init.js"></script>
-
     <!-- SEO / 描述 -->
     <meta name="description" content="属灵星球（holiness.uk）——面向华人基督徒的属灵陪伴 PWA：每日灵修、代祷墙、圣经阅读、宣教地图与属灵社区，随时随地被神的话语陪伴。" />
     <link rel="canonical" href="https://holiness.uk/" />
@@ -41,6 +38,8 @@
     <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.svg" />
     <title>属灵星球 · 属灵感知与陪伴</title>
+    <!-- 在首屏绘制前切换 lang、标题、元数据与对应 manifest。 -->
+    <script src="/js/lang-init.js"></script>
 
     <!-- 首屏启动占位（React 挂载后自动替换），避免重型 3D 包加载期间白屏 -->
     <style id="boot-splash-style">
@@ -48,6 +47,8 @@
       #boot-splash .ring{width:56px;height:56px;border-radius:50%;border:3px solid rgba(109,124,255,.25);border-top-color:#8b5cf6;animation:boot-spin .9s linear infinite}
       #boot-splash .name{font-size:20px;font-weight:700;letter-spacing:.14em}
       #boot-splash .sub{font-size:12.5px;color:rgba(219,226,255,.55);letter-spacing:.06em}
+      html[lang="en"] .lang-zh{display:none}
+      html:not([lang="en"]) .lang-en{display:none}
       @keyframes boot-spin{to{transform:rotate(360deg)}}
       @media (prefers-reduced-motion: reduce){#boot-splash .ring{animation:none;border-top-color:#8b5cf6}}
     </style>
@@ -57,14 +58,13 @@
     <div id="root">
       <div id="boot-splash" role="status" aria-live="polite">
         <div class="ring"></div>
-        <div class="name">属灵星球</div>
-        <div class="sub">载入中 · Loading…</div>
+        <div class="name"><span class="lang-zh">属灵星球</span><span class="lang-en">Soul Planet</span></div>
+        <div class="sub"><span class="lang-zh">载入中…</span><span class="lang-en">Loading…</span></div>
       </div>
     </div>
     <noscript>
       <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:#0a0d18;color:#eef1ff;font-family:sans-serif;text-align:center;line-height:1.7">
-        属灵星球需要启用 JavaScript 才能运行。<br />
-        Please enable JavaScript to use 属灵星球 (holiness.uk).
+        Please enable JavaScript to use Soul Planet (holiness.uk).
       </div>
     </noscript>
   </body>
