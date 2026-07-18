@@ -24,13 +24,6 @@ const DARK_MOMENT_CHARACTERS = [
   },
 ]
 
-const SOS_KEYWORDS = ['绝望', '放弃', '活不下去', '不想活', '失去信仰', '看不见神', '神在哪里', '抛弃']
-
-export function checkSOSKeywords(text) {
-  if (!text) return false
-  return SOS_KEYWORDS.some(kw => text.includes(kw))
-}
-
 export default function SOSModal({ onClose, onPrayerWall }) {
   const [expanded, setExpanded] = useState(null)
 

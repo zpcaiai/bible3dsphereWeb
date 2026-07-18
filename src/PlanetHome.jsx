@@ -54,10 +54,10 @@ const CONTINENTS = [
   },
 ]
 
-export default function PlanetHome({ onClose, go }) {
+export default function PlanetHome({ onClose, go, openExpansion }) {
   const act = (target) => {
     if (target === '_close') return onClose()
-    if (handleExpansionTarget(target)) return
+    if (handleExpansionTarget(target, openExpansion)) return
     go(target)
   }
   const openPastoralRoute = (route) => {

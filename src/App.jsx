@@ -7,7 +7,8 @@ import AccessibilityGuard from './components/a11y/AccessibilityGuard'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { API_BASE, fetchBiblicalExample, fetchBibleVideo, fetchCommunityHeatmap, fetchDailySnapshot, fetchEmotionTrajectory, fetchFaithQA, fetchFeatureDetail, fetchGuidance, fetchHistory, fetchLayout, fetchMeditationQuestions, fetchSermon, fetchStats, fetchTTS, fetchVersePrayer, runQuery, saveJournal, trackStats, updateUserProfile, fetchMyChurch, regenerateChurchCode, leaveChurch } from './api'
 import ChurchOnboardingModal from './ChurchOnboardingModal'
-import SOSModal, { checkSOSKeywords } from './SOSModal'
+import SOSModal from './SOSModal'
+import { checkSOSKeywords } from './sosKeywords'
 import { getToken, setCachedUser } from './auth'
 import RealtimeRoot from './realtime/RealtimeRoot'
 const GuardianWidget = lazyWithRetry(() => import('./components/guardian/GuardianWidget'))
@@ -28,7 +29,6 @@ import ConfirmDialog from './components/ConfirmDialog'
 import AiStatusBanner from './components/AiStatusBanner'
 import SeekersStandalonePage from './components/SeekersStandalonePage'
 import DevotionTabContainer from './components/DevotionTabContainer'
-import ExpansionLauncher from './expansion/ExpansionLauncher'
 import VoiceHoldButton from './components/VoiceHoldButton'
 import PastoralPathCard, { PASTORAL_ROUTE_TARGETS } from './components/PastoralPathCard'
 import { useGuardianStore } from './components/guardian/guardianStore'
@@ -172,6 +172,8 @@ function AppContent() {
   const [pendingPanel, setPendingPanel] = useState(null)
   const [loginMessage, setLoginMessage] = useState('')
   const [formationInitialTab, setFormationInitialTab] = useState('home')
+  const [devotionInitialSection, setDevotionInitialSection] = useState('today')
+  const [devotionInitialFeature, setDevotionInitialFeature] = useState(null)
   const [attentionInitialSection, setAttentionInitialSection] = useState('dashboard')
   const [gardenClickCount, setGardenClickCount] = useState(0)
   const [sermonClickCount, setSermonClickCount] = useState(0)
@@ -1326,6 +1328,12 @@ function AppContent() {
     setActivePanel(panel)
   }
 
+  function openDevotionTopics(featureKey = null) {
+    setDevotionInitialSection('topics')
+    setDevotionInitialFeature(featureKey)
+    handlePanelSwitch('devotion')
+  }
+
   function handlePastoralRoute(route) {
     const target = PASTORAL_ROUTE_TARGETS.app[route]
     if (route === 'crisis' || target === 'sos') {
@@ -1363,6 +1371,10 @@ function AppContent() {
       communion: 'communion',
     }[target]
 
+    if (target === 'devotion') {
+      openDevotionTopics()
+      return
+    }
     if (existingPanel) handlePanelSwitch(existingPanel)
   }
 
@@ -1376,6 +1388,10 @@ function AppContent() {
       'spiritual-formation': 'spiritual-formation', attention: 'attention', 'growth-map': 'growth-map',
       'mission-life': 'evangelism', 'personal-search': 'personal-search', partner: 'partner', communion: 'communion',
     }[target]
+    if (target === 'devotion') {
+      openDevotionTopics()
+      return
+    }
     if (existingPanel) handlePanelSwitch(existingPanel)
   }
 
@@ -1907,6 +1923,7 @@ function AppContent() {
                       { icon: '🔍', labelKey: 'home.snapshot.soulQuestion', panel: 'soul-question' },
                       { icon: '🧭', labelKey: 'home.snapshot.worldview', panel: 'worldview' },
                       { icon: '⏱', labelKey: 'home.snapshot.quickDevotion', action: () => setShowQuickDevotion(true) },
+                      { icon: '🕯️', labelKey: 'home.snapshot.topicDevotion', action: () => openDevotionTopics() },
                       { icon: '📊', labelKey: 'home.snapshot.growthMap', panel: 'growth-map' },
                       { icon: '📈', labelKey: 'home.snapshot.growth', panel: 'engineering' },
                       { icon: '🤝', labelKey: 'home.snapshot.partner', panel: 'partner' },
@@ -2861,6 +2878,12 @@ function AppContent() {
               showLogin={showLogin}
               renderInlineLogin={renderInlineLogin}
               onBack={() => setActivePanel('sphere')}
+              dailySnapshot={dailySnapshot}
+              initialSection={devotionInitialSection}
+              initialFeatureKey={devotionInitialFeature}
+              onOpenFormationTwin={() => handlePanelSwitch('formation-twin')}
+              onOpenSafety={() => setShowSOS(true)}
+              onJournalSaved={loadDailySnapshot}
             />
           </div>
         )}
@@ -2902,6 +2925,7 @@ function AppContent() {
                 user={user}
                 onBack={() => setActivePanel('sphere')}
                 onNeedLogin={handleNeedLogin}
+                onOpenDevotion={openDevotionTopics}
               />
             ) : showLogin ? renderInlineLogin() : null}
           </div>
@@ -3237,12 +3261,9 @@ function AppContent() {
 
         {/* 属灵守护者·和平鸽精灵（右下角常驻） */}
         {!suppressGlobalChrome ? (
-          <>
-            <Suspense fallback={null}>
-              <GuardianWidget />
-            </Suspense>
-            <ExpansionLauncher />
-          </>
+          <Suspense fallback={null}>
+            <GuardianWidget />
+          </Suspense>
         ) : null}
 
         {/* 浮动登录遮罩 — 保持当前页面挂载，不清空用户输入 */}

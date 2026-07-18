@@ -265,7 +265,7 @@ const spiritualPrinciples = [
   { id: '12', text: '患难生忍耐，忍耐生老练', ref: '罗5:3-4' },
 ]
 
-export default function DecisionSupportPage({ user, onBack, embedded = false, onNeedLogin }) {
+export default function DecisionSupportPage({ user, onBack, embedded = false, onNeedLogin, onOpenDevotion }) {
   const [renderError, setRenderError] = useState(null)
   const [activeTab, setActiveTab] = useState('dashboard') // 心迹默认打开「今日心镜」
   const [loading, setLoading] = useState(false)
@@ -1740,7 +1740,7 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
 
       {/* 内容区域 */}
       <div style={{ paddingBottom: embedded ? '0' : '80px' }}>
-        {activeTab === 'dashboard' && <SoulDashboard user={user} />}
+        {activeTab === 'dashboard' && <SoulDashboard user={user} onOpenDevotion={onOpenDevotion} />}
         {activeTab === 'personality' && <PersonalityPage user={user} embedded={true} onSyncToHabits={() => setActiveTab('habits')} />}
         {activeTab === 'habits' && <HabitsPage user={user} token={getToken()} embedded={true} onNeedLogin={onNeedLogin} onNavigateToLibrary={() => setActiveTab('library')} />}
         {activeTab === 'library' && <SinPatternLibrary />}

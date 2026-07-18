@@ -10,6 +10,8 @@ import React, { useEffect, useState } from 'react'
 import { TTSButton, TTSFullBar } from './useGlobalAudio.jsx'
 import { API_BASE, fetchScripture } from './api.js'
 import { a11yClickProps } from './lib/a11yClick';
+import { needsSafetyFirst, recommendExpansionTopics } from './components/devotionTopicRecommendations.js'
+import './expansion/expansionI18n.js'
 
 // ── Mobile detection ──────────────────────────────────────────────────────────
 function useIsMobile() {
@@ -20,6 +22,45 @@ function useIsMobile() {
     return () => window.removeEventListener('resize', fn)
   }, [])
   return mobile
+}
+
+export function DevotionTopicEntryCard({ dailySnapshot, onOpenTopic, onOpenTopics, onOpenSafety }) {
+  const recommendations = recommendExpansionTopics(dailySnapshot).slice(0, 2)
+  const hasSignal = Boolean(dailySnapshot?.last_emotion || dailySnapshot?.trajectory_label)
+  const safetyFirst = needsSafetyFirst(dailySnapshot)
+
+  return (
+    <section style={{ ...S.section, padding: 14, background: 'linear-gradient(135deg, rgba(139,92,246,0.12), rgba(90,200,250,0.06))', borderColor: 'rgba(167,139,250,0.2)' }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, marginBottom: 11 }}>
+        <span aria-hidden="true" style={{ fontSize: 24 }}>🧭</span>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: 14, fontWeight: 750 }}>{i18nT('按今日状态继续专题灵修')}</div>
+          <div style={{ marginTop: 3, fontSize: 11.5, lineHeight: 1.55, color: 'rgba(255,255,255,0.5)' }}>
+            {hasSignal
+              ? i18nT('建议只基于你可见的今日记录，不是属灵评分；请选择更贴近此刻处境的一项。')
+              : i18nT('还没有足够的今日记录，可以从基础专题开始，也可以查看全部处境。')}
+          </div>
+        </div>
+      </div>
+      {safetyFirst && onOpenSafety && (
+        <button type="button" onClick={onOpenSafety} style={{ width: '100%', marginBottom: 9, padding: '11px 12px', borderRadius: 12, textAlign: 'left', border: '1px solid rgba(255,159,64,0.4)', color: '#ffe1c2', background: 'rgba(255,159,64,0.12)', cursor: 'pointer', fontFamily: 'inherit' }}>
+          <strong style={{ display: 'block', fontSize: 12.5 }}>{i18nT('先照顾安全，再继续灵修')}</strong>
+          <span style={{ display: 'block', marginTop: 3, fontSize: 10.8, lineHeight: 1.5, color: 'rgba(255,230,205,0.76)' }}>{i18nT('专题灵修不能替代即时帮助，请先打开安全支持。')}</span>
+        </button>
+      )}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 8 }}>
+        {recommendations.map((topic) => (
+          <button key={topic.key} type="button" onClick={() => onOpenTopic?.(topic.key)} aria-label={`${i18nT(topic.name)} · ${i18nT(topic.sub)}`} style={{ minWidth: 0, minHeight: 72, padding: '10px', borderRadius: 12, textAlign: 'left', border: '1px solid rgba(167,139,250,0.18)', background: 'rgba(255,255,255,0.045)', color: '#fff', cursor: 'pointer', fontFamily: 'inherit' }}>
+            <span aria-hidden="true" style={{ display: 'block', fontSize: 20 }}>{topic.emoji}</span>
+            <strong style={{ display: 'block', marginTop: 5, fontSize: 12.5, overflow: 'hidden', textOverflow: 'ellipsis' }}>{i18nT(topic.name)}</strong>
+          </button>
+        ))}
+      </div>
+      <button type="button" onClick={onOpenTopics} style={{ width: '100%', minHeight: 38, marginTop: 9, border: 'none', background: 'transparent', color: '#b9b8ff', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>
+        {i18nT('查看全部专题与处境')} ›
+      </button>
+    </section>
+  )
 }
 
 const API = API_BASE
@@ -381,10 +422,11 @@ function McCheyneCard() {
 }
 
 // ── Main export ───────────────────────────────────────────────────────────────
-export default function PersonalDevotionPage({ user, token }) {
+export default function PersonalDevotionPage({ user, token, dailySnapshot, onOpenTopic, onOpenTopics, onOpenSafety }) {
   return (
     <div style={S.page}>
       <PersonalCard user={user} token={token} />
+      <DevotionTopicEntryCard dailySnapshot={dailySnapshot} onOpenTopic={onOpenTopic} onOpenTopics={onOpenTopics} onOpenSafety={onOpenSafety} />
       <McCheyneCard />
     </div>
   )

@@ -12,8 +12,9 @@ import autoEn from '../i18n/auto-en'
 const renderPlanetHome = () => {
   const onClose = vi.fn()
   const go = vi.fn()
-  const view = render(<PlanetHome onClose={onClose} go={go} />)
-  return { ...view, onClose, go }
+  const openExpansion = vi.fn()
+  const view = render(<PlanetHome onClose={onClose} go={go} openExpansion={openExpansion} />)
+  return { ...view, onClose, go, openExpansion }
 }
 
 describe('PlanetHome', () => {
@@ -25,8 +26,6 @@ describe('PlanetHome', () => {
   afterEach(() => {
     cleanup()
     setRuntimeLang('zh')
-    try { delete window.__expansionOpen } catch { window.__expansionOpen = undefined }
-    try { delete window.__pendingExpansionOpen } catch { window.__pendingExpansionOpen = undefined }
   })
 
   it('renders the full growth-map entry list', () => {
@@ -124,13 +123,12 @@ describe('PlanetHome', () => {
     expect(go).toHaveBeenNthCalledWith(3, 'checkup')
   })
 
-  it('routes expansion chips through the expansion launcher', () => {
-    window.__expansionOpen = vi.fn()
-    const { getByText, go } = renderPlanetHome()
+  it('routes expansion chips through the devotion topics callback', () => {
+    const { getByText, go, openExpansion } = renderPlanetHome()
 
     fireEvent.click(getByText('扩充灵修 · 全部 ›'))
 
-    expect(window.__expansionOpen).toHaveBeenCalledWith('')
+    expect(openExpansion).toHaveBeenCalledWith('')
     expect(go).not.toHaveBeenCalled()
   })
 })

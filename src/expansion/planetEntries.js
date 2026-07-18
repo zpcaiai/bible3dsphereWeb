@@ -1,7 +1,7 @@
 // planetEntries.js — 属灵星球「大陆入口」延迟接线注册表（content-theology-expansion 批次）
 //
 // 机制：新 chip 的 target 用 'exp:<featureKey>' 前缀；PlanetHome 的 act() 认出该前缀，
-//       调用 window.__expansionOpen(featureKey)（由 ExpansionLauncher 暴露），绕过既有 go()。
+//       交给现有灵修导航打开「专题」分区，不再使用全局悬浮宿主。
 import './expansionI18n'
 
 // 用户指定的三个大陆入口（哀歌 / 联合 / 知足）
@@ -71,7 +71,7 @@ export const EXPANSION_CHIPS_DEFAULT = {
   '天路客': [['主再来 · 儆醒地活', 'exp:secondcoming'], ['年老 · 善始善终', 'exp:aging']],
 }
 
-// 「扩充灵修 · 全部」根入口：挂到「与神同行」大陆；target='exp:' → window.__expansionOpen('')
+// 「扩充灵修 · 全部」根入口：挂到「与神同行」大陆；target='exp:' 打开专题灵修根页。
 // 打开全部模块网格（含未单独挂 chip 的 认识神/心意更新/以神为乐/情感健康 等，避免入口被移除后成为孤儿）。
 export const EXPANSION_ROOT_ENTRY = {
   '与神同行': [['扩充灵修 · 全部', 'exp:']],
@@ -97,16 +97,11 @@ export function withExpansionChips(continents, opts = {}) {
   return (continents || []).map((c) => (map[c.name] ? { ...c, chips: [...c.chips, ...map[c.name]] } : c))
 }
 
-// 在 PlanetHome 的 act() 里最先调用；命中 'exp:' 前缀则深链打开扩充面板并返回 true。
-export function handleExpansionTarget(target) {
+// 在 PlanetHome 的 act() 里最先调用；命中 'exp:' 前缀则交给正式导航回调并返回 true。
+export function handleExpansionTarget(target, openExpansion) {
   if (typeof target === 'string' && target.startsWith('exp:')) {
     const key = target.slice(4)
-    if (typeof window !== 'undefined' && typeof window.__expansionOpen === 'function') {
-      window.__expansionOpen(key)
-    } else if (typeof window !== 'undefined') {
-      window.__pendingExpansionOpen = key
-      try { window.dispatchEvent(new CustomEvent('expansion:open', { detail: { key } })) } catch { /* noop */ }
-    }
+    openExpansion?.(key)
     return true
   }
   return false

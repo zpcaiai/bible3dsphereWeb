@@ -52,6 +52,7 @@ const namespacedZh = {
   'home.snapshot.soulQuestion': '每日一问',
   'home.snapshot.worldview': '世界观',
   'home.snapshot.quickDevotion': '2分钟灵修',
+  'home.snapshot.topicDevotion': '专题灵修',
   'home.snapshot.growthMap': '灵命图谱',
   'home.snapshot.growth': '灵命成长',
   'home.snapshot.partner': '属灵伙伴',
@@ -93,6 +94,10 @@ const namespacedZh = {
   'devotion.tab.memory': '背经',
   'devotion.tab.books': '属灵书籍',
   'devotion.tab.journal': '灵修日记',
+  'devotion.section.today': '今日',
+  'devotion.section.scripture': '读经',
+  'devotion.section.topics': '专题',
+  'devotion.section.journal': '记录',
 }
 
 const namespacedEn = {
@@ -180,6 +185,7 @@ const namespacedEn = {
   'home.snapshot.soulQuestion': 'Daily Question',
   'home.snapshot.worldview': 'Worldview',
   'home.snapshot.quickDevotion': '2-min Devotion',
+  'home.snapshot.topicDevotion': 'Topic Devotion',
   'home.snapshot.growthMap': 'Growth Map',
   'home.snapshot.growth': 'Spiritual Growth',
   'home.snapshot.partner': 'Prayer Partner',
@@ -221,6 +227,10 @@ const namespacedEn = {
   'devotion.tab.memory': 'Memorize',
   'devotion.tab.books': 'Books',
   'devotion.tab.journal': 'Journal',
+  'devotion.section.today': 'Today',
+  'devotion.section.scripture': 'Scripture',
+  'devotion.section.topics': 'Topics',
+  'devotion.section.journal': 'Journal',
 }
 
 export const translations = {

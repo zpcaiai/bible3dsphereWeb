@@ -1,9 +1,10 @@
 // ExpansionHub.jsx — 内容与神学扩充 · 聚合面板（content-theology-expansion 批次）
 // 聚合全部内容与神学扩充模块 + 推荐书目/圣诗；调用自包含 expansionApi。
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { getRuntimeLang, t as i18nT } from '../i18n/runtime'
 import TranslatableParagraph from '../TranslatableParagraph'
 import BackButton from '../BackButton'
+import { checkSOSKeywords } from '../sosKeywords'
 import { getMeta, runAction, getBooks, getHymns } from './expansionApi'
 import './expansionI18n'
 
@@ -168,7 +169,7 @@ function Framework({ meta }) {
   return <div style={quote}><TranslatableParagraph style={{ fontSize: 13, lineHeight: 1.8, color: 'rgba(255,255,255,0.82)' }}>{String(blurb)}</TranslatableParagraph></div>
 }
 
-function FeatureRunner({ feature, onBack }) {
+function FeatureRunner({ feature, onBack, onSaveJournal, onOpenJournal, onOpenFormationTwin, onOpenSafety }) {
   const [meta, setMeta] = useState(null)
   const [text, setText] = useState('')
   const [ratings, setRatings] = useState({})
@@ -177,6 +178,8 @@ function FeatureRunner({ feature, onBack }) {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const [runId, setRunId] = useState(0)
+  const [saveState, setSaveState] = useState('idle')
+  const [saveError, setSaveError] = useState('')
 
   useEffect(() => {
     let alive = true
@@ -194,7 +197,12 @@ function FeatureRunner({ feature, onBack }) {
   async function submit(override) {
     const val = (typeof override === 'string') ? override : text
     if (typeof override === 'string' && override !== text) setText(override)
-    setBusy(true); setError(''); setResult(null)
+    if (val && checkSOSKeywords(val)) {
+      setError(i18nT('检测到需要优先确认安全的内容。专题灵修不能替代即时帮助，请先使用安全支持。'))
+      onOpenSafety?.()
+      return
+    }
+    setBusy(true); setError(''); setResult(null); setSaveState('idle'); setSaveError('')
     setRunId((n) => n + 1)
     try {
       let body = { use_ai: true }
@@ -205,6 +213,19 @@ function FeatureRunner({ feature, onBack }) {
       const r = await runAction(feature.prefix, feature.action, body)
       setResult(r); window.scrollTo({ top: 0 })
     } catch (e) { setError(i18nT(e.message || '提交失败')) } finally { setBusy(false) }
+  }
+
+  async function saveResult() {
+    if (!onSaveJournal || !result || saveState === 'saving' || saveState === 'saved') return
+    setSaveState('saving'); setSaveError('')
+    try {
+      const input = feature.kind === 'ratings' ? ratings : (feature.kind === 'knowgod' ? (attribute || text) : text)
+      await onSaveJournal({ feature, input, result })
+      setSaveState('saved')
+    } catch (saveFailure) {
+      setSaveState('error')
+      setSaveError(i18nT(saveFailure?.message || '保存失败，请稍后重试'))
+    }
   }
 
   const attrs = (feature.kind === 'knowgod' && meta && Array.isArray(meta.attributes)) ? meta.attributes : []
@@ -267,7 +288,34 @@ function FeatureRunner({ feature, onBack }) {
               {busy ? i18nT('生成中…') : i18nT('开始')}
             </button>
           </>
-        ) : <ResultBoundary key={runId} data={result}><RenderResult data={result} /></ResultBoundary>}
+        ) : (
+          <>
+            <ResultBoundary key={runId} data={result}><RenderResult data={result} /></ResultBoundary>
+            {onSaveJournal && (
+              <div style={{ ...card, marginTop: 14, borderColor: saveState === 'saved' ? 'rgba(52,199,89,0.35)' : 'rgba(167,139,250,0.24)', background: saveState === 'saved' ? 'rgba(52,199,89,0.07)' : 'rgba(139,92,246,0.07)' }}>
+                <div style={{ fontSize: 13.5, fontWeight: 700, marginBottom: 5 }}>
+                  {saveState === 'saved' ? i18nT('已写入今天的灵修日记') : i18nT('把这次操练留在成长记录里')}
+                </div>
+                <div style={{ fontSize: 11.5, color: 'rgba(255,255,255,0.52)', lineHeight: 1.6, marginBottom: 10 }}>
+                  {saveState === 'saved'
+                    ? i18nT('你可以查看完整日记，或回到 Formation Twin 观察这段记录如何进入后续回顾。')
+                    : i18nT('保存前由你确认；结果会进入现有灵修日记，不会另建一套生命记录。')}
+                </div>
+                {saveError && <div role="alert" style={{ color: '#ff9f9f', fontSize: 12, marginBottom: 8 }}>{saveError}</div>}
+                {saveState !== 'saved' ? (
+                  <button type="button" onClick={saveResult} disabled={saveState === 'saving'} style={{ ...primaryBtn, marginTop: 0, opacity: saveState === 'saving' ? 0.65 : 1 }}>
+                    {saveState === 'saving' ? i18nT('正在写入日记…') : i18nT('📔 写入灵修日记')}
+                  </button>
+                ) : (
+                  <div style={{ display: 'grid', gridTemplateColumns: onOpenFormationTwin ? 'repeat(2, minmax(0, 1fr))' : '1fr', gap: 8 }}>
+                    <button type="button" onClick={onOpenJournal} style={secondaryBtn}>{i18nT('查看灵修日记')}</button>
+                    {onOpenFormationTwin && <button type="button" onClick={onOpenFormationTwin} style={secondaryBtn}>{i18nT('Formation Twin 回顾')}</button>}
+                  </div>
+                )}
+              </div>
+            )}
+          </>
+        )}
       </div>
     </div>
   )
@@ -337,27 +385,42 @@ function Header({ title, sub, onBack }) {
   )
 }
 
-export default function ExpansionHub({ onClose, initialFeatureKey }) {
+export default function ExpansionHub({ onClose, initialFeatureKey, onSaveJournal, onOpenJournal, onOpenFormationTwin, onOpenSafety, onSelectFeature }) {
   const [selected, setSelected] = useState(() => (initialFeatureKey ? (FEATURES.find((f) => f.key === initialFeatureKey) || null) : null))
+  const [search, setSearch] = useState('')
+  const visibleFeatures = useMemo(() => {
+    const query = search.trim().toLowerCase()
+    if (!query) return FEATURES
+    return FEATURES.filter((feature) => [feature.name, feature.sub, feature.key].some((value) => String(value || '').toLowerCase().includes(query)))
+  }, [search])
+  const selectFeature = (feature) => {
+    setSelected(feature)
+    onSelectFeature?.(feature)
+  }
   const wrap = { width: '100%', height: '100%', background: '#000', color: '#fff', overflowY: 'auto', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }
   if (selected && selected.kind === 'resources') return <div style={wrap}><ResourcesView onBack={() => setSelected(null)} /></div>
-  if (selected) return <div style={wrap}><FeatureRunner feature={selected} onBack={() => setSelected(null)} /></div>
+  if (selected) return <div style={wrap}><FeatureRunner feature={selected} onBack={() => setSelected(null)} onSaveJournal={onSaveJournal} onOpenJournal={onOpenJournal} onOpenFormationTwin={onOpenFormationTwin} onOpenSafety={onOpenSafety} /></div>
   return (
     <div style={wrap}>
-      <Header title="内容与神学扩充" sub="属灵星球 · 新增养料（自包含增量）" onBack={onClose} />
+      <Header title="专题灵修" sub="按当前处境选择 · 完成操练后进入日记与回顾" onBack={onClose} />
       <div style={{ padding: '14px 16px 120px', maxWidth: 660, margin: '0 auto' }}>
         <div style={{ ...quote }}>
-          <div style={{ fontSize: 12.5, lineHeight: 1.8, color: 'rgba(255,255,255,0.8)' }}>{i18nT('补足神学光谱空白的新养料：认识神、与基督联合、以神为乐、知足、情感真伪、基督的慈心、文化礼仪、情感健康，以及一份分大陆的推荐书目与圣诗。')}</div>
+          <div style={{ fontSize: 12.5, lineHeight: 1.8, color: 'rgba(255,255,255,0.8)' }}>{i18nT('这些专题是现有灵修体系的延伸养料。请选择与你此刻处境相近的一项；建议不是评判，你始终可以更换或停止。')}</div>
         </div>
+        <label style={{ display: 'block', marginBottom: 12 }}>
+          <span style={{ display: 'block', fontSize: 11.5, color: 'rgba(255,255,255,0.5)', marginBottom: 6 }}>{i18nT('搜索专题')}</span>
+          <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder={i18nT('例如：焦虑、饶恕、祷告、盼望')} style={{ ...ta, minHeight: 44, resize: 'none', boxSizing: 'border-box' }} />
+        </label>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(152px, 1fr))', gap: 10 }}>
-          {FEATURES.map((f) => (
-            <button key={f.key} type="button" aria-label={`${i18nT(f.name)} · ${i18nT(f.sub)}`} onClick={() => setSelected(f)} style={tile}>
+          {visibleFeatures.map((f) => (
+            <button key={f.key} type="button" aria-label={`${i18nT(f.name)} · ${i18nT(f.sub)}`} onClick={() => selectFeature(f)} style={tile}>
               <div style={{ fontSize: 26 }}>{f.emoji}</div>
               <div style={{ fontSize: 14, fontWeight: 600, marginTop: 6 }}>{i18nT(f.name)}</div>
               <div style={{ fontSize: 10.5, color: 'rgba(255,255,255,0.45)', marginTop: 2, lineHeight: 1.5 }}>{i18nT(f.sub)}</div>
             </button>
           ))}
         </div>
+        {visibleFeatures.length === 0 && <div role="status" style={{ padding: '32px 12px', textAlign: 'center', color: 'rgba(255,255,255,0.5)', fontSize: 13 }}>{i18nT('没有找到匹配专题，请换一个关键词。')}</div>}
       </div>
     </div>
   )
@@ -368,3 +431,4 @@ const primaryBtn = { width: '100%', marginTop: 14, padding: '13px', borderRadius
 const chip = { background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.14)', color: 'rgba(255,255,255,0.85)', borderRadius: 20, padding: '6px 12px', fontSize: 12.5, cursor: 'pointer' }
 const chipOn = { background: 'linear-gradient(135deg,#7b2ff7,#5ac8fa)', borderColor: 'transparent', color: '#fff' }
 const tile = { textAlign: 'left', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.09)', borderRadius: 16, padding: '16px 14px', cursor: 'pointer', color: '#fff' }
+const secondaryBtn = { minHeight: 42, padding: '9px 10px', borderRadius: 11, border: '1px solid rgba(167,139,250,0.28)', background: 'rgba(139,92,246,0.1)', color: '#e7e5ff', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }

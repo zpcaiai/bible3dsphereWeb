@@ -175,7 +175,7 @@ function todayLabel() {
   return `${d.getMonth()+1}月${d.getDate()}日 · 周${WEEKDAYS[d.getDay()]}`
 }
 
-export default function SoulDashboard({ user }) {
+export default function SoulDashboard({ user, onOpenDevotion }) {
   const [dashData, setDashData]    = useState(null)
   const [overlay, setOverlay]      = useState(null) // 'idolatry' | 'waiting'
   const [pastoral, setPastoral]    = useState(null)
@@ -939,7 +939,9 @@ export default function SoulDashboard({ user }) {
           {overlay === 'reminder' && <ReminderSettings onBack={() => setOverlay(null)} />}
           {overlay === 'hub' && <PracticeHubPage user={user} onBack={() => setOverlay(null)} />}
           {overlay === 'gospel' && <GospelDiagnosticPage user={user} onBack={() => setOverlay(null)} />}
-          {overlay === 'planet' && <PlanetHome onClose={() => setOverlay(null)} go={(t) => setOverlay(t)} />}
+          {overlay === 'planet' && <PlanetHome onClose={() => setOverlay(null)} go={(t) => setOverlay(t)} openExpansion={(key) => {
+            onOpenDevotion?.(key || null)
+          }} />}
           {overlay === 'pilgrim' && <PilgrimJourneyPage onClose={() => setOverlay(null)} go={(t) => setOverlay(t)} />}
           {overlay === 'fhl' && <FaithHopeLovePage user={user} onClose={() => setOverlay(null)} />}
           {overlay === 'discern' && <DecisionDiscernmentPage user={user} onBack={() => setOverlay(null)} />}
