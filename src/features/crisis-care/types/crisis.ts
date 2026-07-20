@@ -106,6 +106,8 @@ export interface SafetyPlan {
   emergencyNumber?: string | null;
   status?: string;
   updatedAt?: string;
+  lastReviewedAt?: string;
+  rehearsedAt?: string;
 }
 
 export interface Followup {

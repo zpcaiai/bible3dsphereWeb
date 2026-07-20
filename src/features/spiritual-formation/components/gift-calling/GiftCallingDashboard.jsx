@@ -29,6 +29,7 @@ import {
 } from '../../lib/giftCallingEngine'
 import { GIFT_CALLING_STORAGE_KEYS as KEYS, loadGiftCallingData, saveGiftCallingEntry } from '../../lib/giftCallingStorage'
 import { MODULE_DISCLAIMER } from '../../lib/pastoralSafety'
+import PlanExecutionPanel from '../../../../components/PlanExecutionPanel'
 
 function MiniTabs({ active, onChange }) {
   const tabs = [
@@ -112,13 +113,12 @@ export function SpiritualGiftsAssessment({ userId, data, onRefresh }) {
   const [notice, setNotice] = useState('')
   const latestProfile = first(data.giftProfiles)
   const topItems = listGiftAssessmentItems().slice(0, 12)
+  const [answers, setAnswers] = useState(() => Object.fromEntries(topItems.map((item) => [item.key, 3])))
+  const [feedbackText, setFeedbackText] = useState('')
+  const [feedbackGifts, setFeedbackGifts] = useState('')
 
   function createAssessment() {
     const assessment = startGiftAssessment(userId, { contextNote: context })
-    const answers = Object.fromEntries(giftAssessmentItems.map((item) => {
-      const isStrong = /teaching|encouragement|service|helps/.test(item.key)
-      return [item.key, isStrong ? 5 : item.category === 'risk' ? 2 : 3]
-    }))
     const result = submitGiftAssessment(userId, assessment, answers)
     saveMany([
       [KEYS.giftAssessments, result.assessment],
@@ -130,16 +130,19 @@ export function SpiritualGiftsAssessment({ userId, data, onRefresh }) {
   }
 
   function addFeedbackAndRegenerate() {
+    const observedGiftKeys = feedbackGifts.split(',').map((item) => item.trim()).filter(Boolean)
+    if (!feedbackText.trim() || !observedGiftKeys.length) return
     const feedback = addGiftFeedback(userId, {
-      observedGiftKeys: ['teaching', 'encouragement'],
-      evidenceText: 'A mentor noticed clarity, warmth, and teachability in a small group context.',
-      ministryContext: 'small group',
+      observedGiftKeys,
+      evidenceText: feedbackText.trim(),
+      ministryContext: context,
     })
     const assessment = first(data.giftAssessments) || startGiftAssessment(userId, { contextNote: context })
     const scores = data.giftScores.filter((score) => score.assessmentId === assessment.id)
     const profile = generateGiftProfile(userId, assessment, scores, [feedback, ...data.giftFeedbackEntries])
     saveMany([[KEYS.giftFeedbackEntries, feedback], [KEYS.giftProfiles, profile]])
     setNotice('Community feedback added and gift profile regenerated.')
+    setFeedbackText('')
     onRefresh()
   }
 
@@ -148,7 +151,11 @@ export function SpiritualGiftsAssessment({ userId, data, onRefresh }) {
       <div className="sf-section-heading"><h2>{T('属灵恩赐评估', 'Spiritual Gifts Assessment')}</h2><p>Gifts are possible evidence to test in love, character, service, fruit, and community confirmation.</p></div>
       <article className="sf-card sf-flow-card">
         <label>Assessment context<textarea value={context} onChange={(event) => setContext(event.target.value)} /></label>
-        <div className="sf-plan-actions"><button className="sf-primary" type="button" onClick={createAssessment}>Complete Gift Assessment</button><button type="button" onClick={addFeedbackAndRegenerate}>Add Mentor Feedback</button></div>
+        {topItems.map((item) => <label key={item.key}>{item.questionText}<input aria-label={item.key} type="range" min="1" max="5" value={answers[item.key]} onChange={(event) => setAnswers((current) => ({ ...current, [item.key]: Number(event.target.value) }))} /><span>{answers[item.key]}</span></label>)}
+        <button className="sf-primary" type="button" onClick={createAssessment}>Complete Gift Assessment</button>
+        <label>Mentor-observed gift keys<input value={feedbackGifts} onChange={(event) => setFeedbackGifts(event.target.value)} placeholder="teaching, encouragement" /></label>
+        <label>Mentor feedback actually received<textarea value={feedbackText} onChange={(event) => setFeedbackText(event.target.value)} /></label>
+        <button type="button" disabled={!feedbackText.trim() || !feedbackGifts.trim()} onClick={addFeedbackAndRegenerate}>Add Mentor Feedback</button>
       </article>
       <div className="sf-home-grid">
         <SummaryCard title="Seed catalog" items={[
@@ -174,14 +181,13 @@ export function CallingDiscernmentWizard({ userId, data, onRefresh }) {
   const session = first(data.callingSessions)
   const pattern = first(data.callingPatterns)
   const experiment = first(data.callingExperiments)
+  const [energyLevel, setEnergyLevel] = useState(6)
+  const [fruitObserved, setFruitObserved] = useState('')
+  const [feedbackReceived, setFeedbackReceived] = useState('')
 
   function createSessionAndPattern() {
     const createdSession = createCallingSession(userId, { title: 'Teaching discernment', discernmentQuestion: context })
-    const inputs = [
-      addCallingInput(userId, createdSession, { inputType: 'burden', title: 'Burden for new believers', description: context }),
-      addCallingInput(userId, createdSession, { inputType: 'fruit_evidence', title: 'Small group fruit', description: 'People understood Scripture more clearly after a conversation.' }),
-      addCallingInput(userId, createdSession, { inputType: 'community_feedback', title: 'Mentor feedback', description: 'Mentor sees teachability and clarity.' }),
-    ]
+    const inputs = [addCallingInput(userId, createdSession, { inputType: 'burden', title: 'User-described burden', description: context })]
     const analysis = analyzeCalling(userId, createdSession, inputs, latestProfile)
     const createdPattern = createCallingPattern(userId, analysis)
     saveMany([[KEYS.callingSessions, createdSession], ...inputs.map((input) => [KEYS.callingInputs, input]), [KEYS.callingPatterns, createdPattern]])
@@ -198,9 +204,9 @@ export function CallingDiscernmentWizard({ userId, data, onRefresh }) {
   }
 
   function reviewExperimentFlow() {
-    const activeExperiment = experiment || createCallingExperiment(userId, pattern || null, {})
-    const review = reviewCallingExperiment(userId, activeExperiment, { energyLevel: 6 })
-    saveMany([[KEYS.callingExperiments, activeExperiment], [KEYS.callingExperimentReviews, review]])
+    if (!experiment || !fruitObserved.trim()) return
+    const review = reviewCallingExperiment(userId, experiment, { energyLevel, fruitObserved: [fruitObserved.trim()], feedbackReceived: feedbackReceived.trim() ? [feedbackReceived.trim()] : [] })
+    saveMany([[KEYS.callingExperimentReviews, review]])
     setNotice(review.summary)
     onRefresh()
   }
@@ -210,7 +216,11 @@ export function CallingDiscernmentWizard({ userId, data, onRefresh }) {
       <div className="sf-section-heading"><h2>{T('呼召分辨', 'Calling Discernment')}</h2><p>Calling is clarified through faithful experiments, fruit, community confirmation, and wisdom.</p></div>
       <article className="sf-card sf-flow-card">
         <label>Discernment question<textarea value={context} onChange={(event) => setContext(event.target.value)} /></label>
-        <div className="sf-plan-actions"><button className="sf-primary" type="button" onClick={createSessionAndPattern}>Analyze Calling Pattern</button><button type="button" onClick={createExperimentFlow}>Create Calling Experiment</button><button type="button" onClick={reviewExperimentFlow}>Review Calling Experiment</button></div>
+        <div className="sf-plan-actions"><button className="sf-primary" type="button" onClick={createSessionAndPattern}>Analyze Calling Pattern</button><button type="button" onClick={createExperimentFlow}>Create Calling Experiment</button></div>
+        <label>Experiment energy level<input type="range" min="1" max="10" value={energyLevel} onChange={(event) => setEnergyLevel(Number(event.target.value))} /><span>{energyLevel}</span></label>
+        <label>Fruit actually observed<textarea value={fruitObserved} onChange={(event) => setFruitObserved(event.target.value)} /></label>
+        <label>Feedback actually received (optional)<textarea value={feedbackReceived} onChange={(event) => setFeedbackReceived(event.target.value)} /></label>
+        <button type="button" disabled={!experiment || !fruitObserved.trim()} onClick={reviewExperimentFlow}>Review Calling Experiment</button>
       </article>
       <div className="sf-home-grid">
         <SummaryCard title="Calling state" items={[
@@ -223,6 +233,7 @@ export function CallingDiscernmentWizard({ userId, data, onRefresh }) {
         <article className="sf-card"><h3>Latest pattern</h3>{pattern ? <><p><b>{pattern.title}</b></p><p>{pattern.confidenceLevel} · {pattern.status}</p><ul>{pattern.cautions.map((item) => <li key={item}>{item}</li>)}</ul></> : <p className="sf-empty">No calling pattern yet.</p>}</article>
         <article className="sf-card"><h3>Domains</h3><div className="sf-chip-row">{callingDomains.slice(0, 10).map((domain) => <span className="sf-chip" key={domain.key}>{domain.key}</span>)}</div></article>
       </div>
+      {experiment ? <PlanExecutionPanel userId={userId} planId={`calling-experiment:${experiment.id}`} title="Calling experiment execution" actions={(experiment.successCriteria || []).map((title, index) => ({ id: `criterion-${index + 1}`, title, cadence: 'once' }))} /> : null}
       <Notice text={notice} />
     </section>
   )
@@ -235,6 +246,7 @@ export function MinistryMatchPanel({ userId, data, onRefresh }) {
   const capacity = first(data.capacityProfiles)
   const match = first(data.ministryMatches)
   const trial = first(data.serviceTrials)
+  const [trialFruit, setTrialFruit] = useState('')
 
   function createCapacityAndMatches() {
     const capacityProfile = createCapacityProfile(userId, { weeklyAvailableHours: burnout >= 7 ? 1 : 3, currentBurnoutLevel: burnout, emotionalCapacity: burnout >= 7 ? 3 : 7, leadershipReadiness: 4 })
@@ -255,9 +267,9 @@ export function MinistryMatchPanel({ userId, data, onRefresh }) {
   }
 
   function reviewTrialFlow() {
-    const activeTrial = trial || createServiceTrial(userId, match || generateMinistryMatches(userId, [ministryOpportunityTemplates[0]], profile, data.callingPatterns, capacity)[0], {})
-    const review = reviewServiceTrial(userId, activeTrial, { energyCostScore: burnout >= 7 ? 8 : 4 })
-    saveMany([[KEYS.serviceTrials, activeTrial], [KEYS.serviceReviews, review]])
+    if (!trial || !trialFruit.trim()) return
+    const review = reviewServiceTrial(userId, trial, { energyCostScore: burnout, fruitEvidence: [trialFruit.trim()] })
+    saveMany([[KEYS.serviceReviews, review]])
     setNotice(review.summary)
     onRefresh()
   }
@@ -267,7 +279,8 @@ export function MinistryMatchPanel({ userId, data, onRefresh }) {
       <div className="sf-section-heading"><h2>{T('服事匹配', 'Ministry Match')}</h2><p>Matching uses gifts, calling, maturity, capacity, church need, and safety boundaries.</p></div>
       <article className="sf-card sf-flow-card">
         <label>Burnout level <input type="range" min="1" max="10" value={burnout} onChange={(event) => setBurnout(Number(event.target.value))} /><span>{burnout}</span></label>
-        <div className="sf-plan-actions"><button className="sf-primary" type="button" onClick={createCapacityAndMatches}>Generate Ministry Matches</button><button type="button" onClick={createOpportunityAndTrial}>Create Service Trial</button><button type="button" onClick={reviewTrialFlow}>Review Service Trial</button></div>
+        <div className="sf-plan-actions"><button className="sf-primary" type="button" onClick={createCapacityAndMatches}>Generate Ministry Matches</button><button type="button" onClick={createOpportunityAndTrial}>Create Service Trial</button></div>
+        <label>Fruit or concern actually observed<textarea value={trialFruit} onChange={(event) => setTrialFruit(event.target.value)} /></label><button type="button" disabled={!trial || !trialFruit.trim()} onClick={reviewTrialFlow}>Review Service Trial</button>
       </article>
       <div className="sf-home-grid">
         <SummaryCard title="Ministry state" items={[
@@ -280,6 +293,7 @@ export function MinistryMatchPanel({ userId, data, onRefresh }) {
         <article className="sf-card"><h3>Top match</h3>{match ? <><p><b>{match.opportunity?.title}</b></p><p>Score {match.matchScore}</p><ul>{match.reasons.map((item) => <li key={item}>{item}</li>)}</ul><div className="sf-chip-row">{match.cautions.map((item) => <span className="sf-chip" key={item}>{item}</span>)}</div></> : <p className="sf-empty">No ministry match yet.</p>}</article>
         <article className="sf-card"><h3>Capacity guardrail</h3><p>{capacity?.boundaryNotes || 'Create capacity profile before matching. Burned-out users should not be matched into high-demand roles.'}</p></article>
       </div>
+      {trial ? <PlanExecutionPanel userId={userId} planId={`service-trial:${trial.id}`} title="Service trial execution" actions={(trial.successCriteria || []).map((title, index) => ({ id: `criterion-${index + 1}`, title, cadence: 'once' }))} /> : null}
       <Notice text={notice} />
     </section>
   )
@@ -292,6 +306,7 @@ export function MissionLifeDesigner({ userId, data, onRefresh }) {
   const profile = first(data.missionProfiles)
   const project = first(data.missionProjects)
   const design = profile ? designMissionLife(userId, profile, first(data.giftProfiles), data.callingPatterns, context) : null
+  const [actionTaken, setActionTaken] = useState('')
 
   function createProfileAndCommitments() {
     const missionProfile = createMissionLifeProfile(userId, { lifeSeason, vocationSummary: context, workContext: context })
@@ -306,12 +321,20 @@ export function MissionLifeDesigner({ userId, data, onRefresh }) {
     onRefresh()
   }
 
-  function createProjectAndLog() {
+  function createProject() {
     const activeProfile = profile || createMissionLifeProfile(userId, { lifeSeason, vocationSummary: context })
     const missionProject = createMissionProject(userId, activeProfile, {})
-    const log = addMissionProjectLog(userId, missionProject, { actionTaken: 'Sent one simple invitation and prayed for love.' })
-    saveMany([[KEYS.missionProfiles, activeProfile], [KEYS.missionProjects, missionProject], [KEYS.missionProjectLogs, log]])
-    setNotice('Mission project and log created.')
+    saveMany([[KEYS.missionProfiles, activeProfile], [KEYS.missionProjects, missionProject]])
+    setNotice('Mission project created; no action is counted until you record it.')
+    onRefresh()
+  }
+
+  function saveProjectLog() {
+    if (!project || !actionTaken.trim()) return
+    const log = addMissionProjectLog(userId, project, { actionTaken: actionTaken.trim(), fruitObserved: [], prayerNeeds: [], nextStep: '' })
+    saveMany([[KEYS.missionProjectLogs, log]])
+    setActionTaken('')
+    setNotice('Mission action log saved from your entry.')
     onRefresh()
   }
 
@@ -331,7 +354,8 @@ export function MissionLifeDesigner({ userId, data, onRefresh }) {
           <label>Life season<select value={lifeSeason} onChange={(event) => setLifeSeason(event.target.value)}>{['student', 'single_worker', 'married', 'parent', 'caregiver', 'ministry_worker', 'entrepreneur', 'academic', 'retired', 'transition', 'suffering', 'rebuilding', 'custom'].map((item) => <option key={item} value={item}>{item}</option>)}</select></label>
           <label>Mission context<textarea value={context} onChange={(event) => setContext(event.target.value)} /></label>
         </div>
-        <div className="sf-plan-actions"><button className="sf-primary" type="button" onClick={createProfileAndCommitments}>Design Mission Life</button><button type="button" onClick={createProjectAndLog}>Create Project and Log</button><button type="button" onClick={createReview}>Generate Mission Review</button></div>
+        <div className="sf-plan-actions"><button className="sf-primary" type="button" onClick={createProfileAndCommitments}>Design Mission Life</button><button type="button" onClick={createProject}>Create Project</button><button type="button" onClick={createReview}>Generate Mission Review</button></div>
+        <label>Mission action actually taken<textarea value={actionTaken} onChange={(event) => setActionTaken(event.target.value)} /></label><button type="button" disabled={!project || !actionTaken.trim()} onClick={saveProjectLog}>Save Mission Action Log</button>
       </article>
       <div className="sf-home-grid">
         <SummaryCard title="Mission state" items={[
@@ -345,6 +369,7 @@ export function MissionLifeDesigner({ userId, data, onRefresh }) {
         <article className="sf-card"><h3>Mission design</h3>{design ? <><p>{design.missionSummary}</p><ul>{design.recommendedDomains.map((domain) => <li key={domain.domain}>{domain.domain}: {domain.minimumViableAction}</li>)}</ul></> : <p className="sf-empty">Create mission profile to see design.</p>}</article>
         <article className="sf-card"><h3>Active project</h3>{project ? <p>{project.title} · {project.status}</p> : <p className="sf-empty">No mission project yet.</p>}</article>
       </div>
+      {data.missionCommitments.length > 0 ? <PlanExecutionPanel userId={userId} planId={`mission-commitments:${profile?.id || 'current'}`} title="Mission commitments execution" actions={data.missionCommitments.map((commitment) => ({ id: commitment.id, title: commitment.commitmentDescription, cadence: commitment.practiceFrequency || 'weekly', minimum: commitment.minimumViableAction }))} /> : null}
       <Notice text={notice} />
     </section>
   )

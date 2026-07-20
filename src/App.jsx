@@ -1951,7 +1951,7 @@ function AppContent() {
                   </p>
               </section>
 
-              <PastoralPathCard compact onOpen={handlePastoralRoute} />
+              <PastoralPathCard user={user} compact onOpen={handlePastoralRoute} />
 
               {/* 情感轨迹卡 — 30天心路历程摘要 */}
               {user && emotionTrajectory && emotionTrajectory.count > 0 && (
@@ -3021,7 +3021,7 @@ function AppContent() {
         {activePanel === 'worldview' && (
           <div className="page-overlay">
             <Suspense fallback={null}>
-              <WorldviewPage onBack={() => setActivePanel('sphere')} />
+              <WorldviewPage user={user} onBack={() => setActivePanel('sphere')} />
             </Suspense>
           </div>
         )}
@@ -3082,7 +3082,7 @@ function AppContent() {
         {activePanel === 'mccheyne' && (
           <div className="page-overlay">
             <Suspense fallback={null}>
-              <MccheynePage onBack={() => setActivePanel('sphere')} onOpenPanel={(p) => { setActivePanel(p); if (p === 'bible-reading') { try { sessionStorage.setItem('bible-reading-open', JSON.stringify({ book: 'Genesis', chapter: 1 })) } catch {} } }} />
+              <MccheynePage user={user} onBack={() => setActivePanel('sphere')} onOpenPanel={(p) => { setActivePanel(p); if (p === 'bible-reading') { try { sessionStorage.setItem('bible-reading-open', JSON.stringify({ book: 'Genesis', chapter: 1 })) } catch {} } }} />
             </Suspense>
           </div>
         )}

@@ -24,7 +24,6 @@ import {
   emitFormationEvent,
   findBibleRelationshipPath,
   generateDailyFormationPlan,
-  generateWeeklyFormationReview,
   getBibleCharacterProfile,
   registerAllModules,
   registerAllSkills,
@@ -35,6 +34,7 @@ import {
 import { PLATFORM_INTEGRATION_STORAGE_KEYS as KEYS, loadPlatformIntegrationData, savePlatformIntegrationEntry } from '../../lib/platformIntegrationStorage'
 import { hydratePlatformIntegrationRemote, platformIntegrationApi } from '../../lib/platformIntegrationApi'
 import { MODULE_DISCLAIMER } from '../../lib/pastoralSafety'
+import PlanExecutionPanel from '../../../../components/PlanExecutionPanel'
 
 function MiniTabs({ active, onChange }) {
   const tabs = [
@@ -77,6 +77,7 @@ export function BibleDoctrinePanel({ userId, token, data, onRefresh }) {
   const profile = getBibleCharacterProfile(query)
   const path = findBibleRelationshipPath('David', 'Jesus')
   const dashboard = buildBibleDoctrineDashboard(data, userId)
+  const doctrinePath = first(data.doctrinePaths)
 
   function createLearningArtifacts() {
     const doctrinePath = createDoctrineLearningPath(userId, 'christology')
@@ -114,6 +115,7 @@ export function BibleDoctrinePanel({ userId, token, data, onRefresh }) {
         <article className="sf-card"><h3>David to Jesus Path</h3>{path.path.length ? <ul>{path.path.map((step) => <li key={`${step.from}-${step.to}`}>{step.from} {step.relationship} {step.to} · {step.confidence}</li>)}</ul> : <p>{path.notes}</p>}</article>
         <article className="sf-card"><h3>Search results</h3><div className="sf-chip-row">{results.slice(0, 10).map((item) => <span className="sf-chip" key={item.id}>{item.displayName}</span>)}</div></article>
       </div>
+      {doctrinePath ? <PlanExecutionPanel userId={userId} planId={`doctrine-path:${doctrinePath.id}`} title="Doctrine path execution" defaultCadence="once" actions={(doctrinePath.lessons || []).map((lesson) => ({ id: lesson.id, title: lesson.title, cadence: 'once' }))} /> : null}
       <Notice text={notice} />
     </section>
   )
@@ -128,12 +130,11 @@ export function AIFormationAgentPanel({ userId, token, data, onRefresh }) {
 
   function createAgentArtifacts() {
     const spiritualProfile = profile || createSpiritualProfile(userId, { primaryGrowthFocus: 'prayerful stability' })
-    const memory = createMemoryItem(userId, { title: 'Returned to prayer', content: 'A small faithful prayer practice was restored.' })
+    const memory = createMemoryItem(userId, { title: 'Formation intention recorded', content: intent.trim() })
     const dailyPlan = generateDailyFormationPlan(userId, {}, intent)
-    const review = generateWeeklyFormationReview(userId, { graceEvidence: ['Received grace in small practices.'] })
     const conversation = createTutorConversation(userId, intent)
-    saveMany([[KEYS.spiritualProfiles, spiritualProfile], [KEYS.memoryItems, memory], [KEYS.dailyPlans, dailyPlan], [KEYS.weeklyReviews, review], [KEYS.tutorConversations, conversation]])
-    setNotice(dailyPlan.status === 'blocked' ? 'Safety route blocked normal formation.' : 'AI tutor profile, memory, plan, review, and conversation created.')
+    saveMany([[KEYS.spiritualProfiles, spiritualProfile], [KEYS.memoryItems, memory], [KEYS.dailyPlans, dailyPlan], [KEYS.tutorConversations, conversation]])
+    setNotice(dailyPlan.status === 'blocked' ? 'Safety route blocked normal formation.' : 'AI tutor profile, intention, plan, and conversation created. A review will only exist after you record one.')
     onRefresh()
     if (token) {
       void Promise.all([
@@ -170,7 +171,7 @@ export function AIFormationAgentPanel({ userId, token, data, onRefresh }) {
           { label: 'Weekly reviews', value: String(data.weeklyReviews.length) },
           { label: 'Tutor conversations', value: String(data.tutorConversations.length) },
         ]} />
-        <article className="sf-card"><h3>Today plan</h3>{plan ? <ul>{plan.practices.map((practice) => <li key={practice.title}>{practice.title} · {practice.minimumVersion}</li>)}</ul> : <p className="sf-empty">No plan yet.</p>}</article>
+        <article className="sf-card"><h3>Today plan</h3>{plan ? <><ul>{plan.practices.map((practice) => <li key={practice.title}>{practice.title} · {practice.minimumVersion}</li>)}</ul><PlanExecutionPanel userId={userId} planId={`agent-daily:${plan.id}`} title="Today plan execution" defaultCadence="daily" actions={plan.practices.map((practice, index) => ({ id: `${practice.skill || 'practice'}-${index + 1}`, title: practice.title, cadence: 'daily', minimum: practice.minimumVersion, estimatedMinutes: practice.durationMinutes }))} /></> : <p className="sf-empty">No plan yet.</p>}</article>
       </div>
       <Notice text={notice} />
     </section>
@@ -179,29 +180,33 @@ export function AIFormationAgentPanel({ userId, token, data, onRefresh }) {
 
 export function AnalyticsPanel({ userId, token, data, onRefresh }) {
   const [notice, setNotice] = useState('')
+  const [prayerCount, setPrayerCount] = useState(0)
+  const [overloadCount, setOverloadCount] = useState(0)
+  const [graceText, setGraceText] = useState('')
   const report = first(data.analyticsReports)
   const audit = first(data.integrityAudits)
 
   function createAnalyticsArtifacts() {
-    const aggregated = aggregateFormationMetrics(userId, { prayer_sessions_completed: 3, active_overload_signal_count: 1 })
-    const grace = createGraceEvidence(userId, { title: 'Grace before metrics' })
-    const reportEntry = createAnalyticsReport(userId, aggregated.values, [grace, ...aggregated.graceEvidence], aggregated.overloadSignals)
+    const aggregated = aggregateFormationMetrics(userId, { prayer_sessions_completed: prayerCount, active_overload_signal_count: overloadCount })
+    const grace = graceText.trim() ? createGraceEvidence(userId, { title: graceText.trim(), description: graceText.trim(), evidenceType: 'user_recorded' }) : null
+    const graceEvidence = [grace, ...aggregated.graceEvidence].filter(Boolean)
+    const reportEntry = createAnalyticsReport(userId, aggregated.values, graceEvidence, aggregated.overloadSignals)
     const auditEntry = createSafetyIntegrityAudit(userId, {})
     saveMany([
       ...aggregated.values.map((value) => [KEYS.metricValues, value]),
       ...aggregated.overloadSignals.map((signal) => [KEYS.overloadSignals, signal]),
-      [KEYS.graceEvidence, grace],
+      ...(grace ? [[KEYS.graceEvidence, grace]] : []),
       ...aggregated.graceEvidence.map((item) => [KEYS.graceEvidence, item]),
       [KEYS.analyticsReports, reportEntry],
       [KEYS.integrityAudits, auditEntry],
     ])
-    setNotice('Analytics, grace evidence, overload signal, report, and integrity audit created.')
+    setNotice('Analytics report created from the values entered above; no completion or grace evidence was inferred.')
     onRefresh()
     if (token) {
       void Promise.all([
         platformIntegrationApi.createMetricSnapshot(token, {
           metrics: Object.fromEntries(aggregated.values.map((value) => [value.metricKey, value.numericValue ?? value.textValue ?? value.jsonValue ?? true])),
-          grace_evidence: [grace.title, ...aggregated.graceEvidence.map((item) => item.title)],
+          grace_evidence: graceEvidence.map((item) => item.title),
           period_key: 'week',
         }),
         platformIntegrationApi.createReport(token, { title: reportEntry.title, report_scope: 'private', content: { summary: reportEntry.summary, cautions: reportEntry.cautions }, mentor_safe: false }),
@@ -216,6 +221,7 @@ export function AnalyticsPanel({ userId, token, data, onRefresh }) {
   return (
     <section className="sf-section">
       <div className="sf-section-heading"><h2>{T('成长分析与生命果效指标系统', 'Analytics, Progress & Formation Metrics OS')}</h2><p>Metrics are indicators, not spiritual rank. Grace evidence appears before performance metrics.</p></div>
+      <article className="sf-card sf-flow-card"><label>Prayer sessions actually recorded<input type="number" min="0" value={prayerCount} onChange={(event) => setPrayerCount(Math.max(0, Number(event.target.value) || 0))} /></label><label>Active overload signals actually noticed<input type="number" min="0" value={overloadCount} onChange={(event) => setOverloadCount(Math.max(0, Number(event.target.value) || 0))} /></label><label>Grace evidence (optional)<textarea value={graceText} onChange={(event) => setGraceText(event.target.value)} placeholder="Record only something you actually noticed." /></label></article>
       <button className="sf-primary" type="button" onClick={createAnalyticsArtifacts}>Aggregate Formation Metrics</button>
       <div className="sf-home-grid">
         <SummaryCard title="Analytics state" items={[

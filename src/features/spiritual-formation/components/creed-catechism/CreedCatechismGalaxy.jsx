@@ -18,6 +18,8 @@ export default function CreedCatechismGalaxy({ userId = 'local-user', token }) {
   }, [token])
   const daily = useMemo(() => getDailyCatechism(todayKey(), pathway), [pathway])
   const items = useMemo(() => listCatechismItems({ pathway, query }), [pathway, query])
+  const pathwayItems = useMemo(() => listCatechismItems({ pathway }), [pathway])
+  const completedCount = pathwayItems.filter((item) => completed.includes(item.key)).length
   const conn = buildDoctrineFormationConnection(daily)
 
   function done(key) {
@@ -30,6 +32,10 @@ export default function CreedCatechismGalaxy({ userId = 'local-user', token }) {
       <div className="sf-section-heading"><h2>{i18nT("信经与教理问答星系")}</h2><p>{i18nT("问题 → 经文 → 教义 → 生命应用 → 操练 → 祷告。")}</p></div>
       <div className="sf-chip-row">
         {catechismPathways.map((item) => <button key={item.key} type="button" className={`sf-chip-btn ${pathway === item.key ? 'active' : ''}`} onClick={() => setPathway(item.key)}>{item.label}</button>)}
+      </div>
+      <div className="sf-card" style={{ padding: 12 }}>
+        <div className="sf-card-head"><b>{i18nT('当前路径进度')}</b><span>{completedCount}/{pathwayItems.length}</span></div>
+        <div style={{ height: 6, overflow: 'hidden', borderRadius: 99, background: 'rgba(255,255,255,.08)' }}><div style={{ width: `${pathwayItems.length ? Math.round((completedCount / pathwayItems.length) * 100) : 0}%`, height: '100%', background: '#34c759' }} /></div>
       </div>
       <article className="sf-card sf-flow-card">
         <div className="sf-card-head"><div><h3>{i18nT("今日一问")}</h3><p>{daily.category}</p></div><span className="sf-status">{completed.includes(daily.key) ? i18nT('已完成') : i18nT('今日')}</span></div>

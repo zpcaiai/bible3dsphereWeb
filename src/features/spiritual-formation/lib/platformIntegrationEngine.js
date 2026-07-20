@@ -233,7 +233,7 @@ export function createTutorConversation(userId, prompt = 'Help me choose one fai
 }
 
 export function aggregateFormationMetrics(userId, sourceData = {}) {
-  const values = analyticsMetricDefinitions.map((definition, index) => ({
+  const values = analyticsMetricDefinitions.map((definition) => ({
     id: uid('metric_value'),
     userId,
     metricKey: definition.key,
@@ -242,18 +242,18 @@ export function aggregateFormationMetrics(userId, sourceData = {}) {
     periodType: 'weekly',
     periodStart: dateDaysFromNow(-7),
     periodEnd: todayKey(),
-    numericValue: definition.valueType === 'count' ? Number(sourceData[definition.key] || index % 4) : definition.valueType === 'percentage' ? Number(sourceData[definition.key] || 66) : null,
-    textValue: definition.valueType === 'text' ? 'Indicator only' : null,
-    jsonValue: definition.valueType === 'json' ? { love: 6, joy: 5, peace: 6 } : null,
-    confidenceScore: 0.72,
-    sourceSummary: { note: 'Generated from available local module activity.' },
+    numericValue: ['count', 'percentage'].includes(definition.valueType) ? Number(sourceData[definition.key] ?? 0) : null,
+    textValue: definition.valueType === 'text' ? String(sourceData[definition.key] || '') : null,
+    jsonValue: definition.valueType === 'json' ? (sourceData[definition.key] || {}) : null,
+    confidenceScore: sourceData[definition.key] === undefined ? 0 : 1,
+    sourceSummary: { note: sourceData[definition.key] === undefined ? 'No source record supplied; zero/empty value used.' : 'User-entered or recorded module value.' },
     createdAt: nowIso(),
     updatedAt: nowIso(),
   }))
   const overloadSignals = values.some((value) => value.metricKey === 'active_overload_signal_count' && value.numericValue > 0)
     ? [createOverloadSignal(userId, 'too_many_habits', 'moderate')]
     : []
-  return { values, overloadSignals, graceEvidence: [createGraceEvidence(userId, { title: 'Grace noticed before performance metrics.' })] }
+  return { values, overloadSignals, graceEvidence: [] }
 }
 
 export function createGraceEvidence(userId, data = {}) {

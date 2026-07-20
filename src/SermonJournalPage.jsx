@@ -16,6 +16,7 @@ import usePullToRefresh from './hooks/usePullToRefresh'
 import { TTSFullBar, useGlobalAudio } from './useGlobalAudio.jsx'
 import { escapeHtml, escapeHtmlWithBr } from './sanitize'
 import { a11yClickProps } from './lib/a11yClick';
+import PlanExecutionPanel from './components/PlanExecutionPanel'
 
 
 function toISODate(d) {
@@ -461,9 +462,7 @@ export default function SermonJournalPage({ user, token, onBack }) {
             <div className="sj-subtitle">{journals.length > 0 ? `共 ${journals.length} 篇` : '记录你的属灵成长'}</div>
           )}
           {view === 'edit' && current && (
-            <div className="sj-progress-bar">
-              <div className="sj-progress-fill" style={{ width: `${progress}%` }} />
-            </div>
+            <><div className="sj-subtitle">{i18nT('笔记完整度')} {progress}%</div><div className="sj-progress-bar" aria-label={`${i18nT('笔记完整度')} ${progress}%`}><div className="sj-progress-fill" style={{ width: `${progress}%` }} /></div></>
           )}
         </div>
         {view === 'list' ? (
@@ -866,12 +865,7 @@ export default function SermonJournalPage({ user, token, onBack }) {
             {current.practices.some(p => p.trim()) && (
               <div className="sj-detail-block glass">
                 <div className="sj-detail-block-title">{i18nT('🚶 本周实践行道')}</div>
-                {current.practices.filter(p => p.trim()).map((p, i) => (
-                  <div key={i} className="sj-detail-practice-row">
-                    <span className="sj-detail-check">○</span>
-                    <span>{p}</span>
-                  </div>
-                ))}
+                <PlanExecutionPanel user={user} planId={`sermon-journal:${current.id || current.date || activeId}`} title="本周讲道实践" defaultCadence="weekly" actions={current.practices.filter(p => p.trim()).map((title, index) => ({ id: `practice-${index + 1}`, title, cadence: 'weekly' }))} compact />
               </div>
             )}
 

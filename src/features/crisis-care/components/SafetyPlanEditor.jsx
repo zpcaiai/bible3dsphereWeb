@@ -45,17 +45,20 @@ export default function SafetyPlanEditor({ plan, regionCode = 'TW', onSave, sync
   }
 
   function save() {
+    if (!hasPerson) return
     const resources = getResources(draft.regionCode || regionCode).resources
     const finalPlan = {
       ...draft,
       professionalResources: resources,
       emergencyMessageTemplate: draft.emergencyMessageTemplate || EMERGENCY_COPY_TEXT,
+      lastReviewedAt: new Date().toISOString(),
     }
     onSave && onSave(finalPlan)
     setSaved(true)
   }
 
   const hasPerson = (draft.safePeople || []).some((p) => p && p.trim())
+  const readiness = [hasPerson, (draft.safePlaces || []).some(Boolean), (draft.meansRestrictionSteps || []).some(Boolean), Boolean(draft.emergencyMessageTemplate?.trim())].filter(Boolean).length
 
   return (
     <div className="cc-card">
@@ -69,13 +72,20 @@ export default function SafetyPlanEditor({ plan, regionCode = 'TW', onSave, sync
       <ListEditor label={i18nT('减少危险物品接触')} items={draft.meansRestrictionSteps} onChange={(v) => patch('meansRestrictionSteps', v)} placeholder={i18nT('例如：把药交给家人保管')} />
 
       <div className="cc-field">
+        <label>{i18nT('计划就绪度')}：{readiness}/4</label>
+        <p className="cc-muted">{i18nT('联系人、安全地点、限制危险物品、求助文本均准备好后才算就绪。')}</p>
+        <label><input type="checkbox" checked={Boolean(draft.rehearsedAt)} onChange={(event) => patch('rehearsedAt', event.target.checked ? new Date().toISOString() : '')} /> {i18nT('我已在平静时演练过：联系真人、前往安全地点、复制求助文本')}</label>
+        {draft.lastReviewedAt ? <p className="cc-muted">{i18nT('上次复核：')}{new Date(draft.lastReviewedAt).toLocaleString()}</p> : null}
+      </div>
+
+      <div className="cc-field">
         <label>{i18nT('我的紧急求助文本（可一键复制给真人）')}</label>
         <span style={{ position: 'relative', display: 'block' }}><textarea className="cc-input" style={{ paddingRight: 92 }} rows={3} value={draft.emergencyMessageTemplate || ''} onChange={(e) => patch('emergencyMessageTemplate', e.target.value)} /><SuggestMenu accent="#7dd3fc" top={8} right={8} options={SP_MSG_OPTS} value={draft.emergencyMessageTemplate || ''} onChange={(v) => patch('emergencyMessageTemplate', v)} /></span>
       </div>
 
       {!hasPerson && <p className="cc-muted" style={{ color: '#ff9f8a' }}>{i18nT('建议至少填一位可以联系的真人 —— 危机中，被真实的人接住很重要。')}</p>}
 
-      <button className="cc-btn full" type="button" onClick={save} disabled={syncing}>{syncing ? '保存中…' : '保存安全计划'}</button>
+      <button className="cc-btn full" type="button" onClick={save} disabled={syncing || !hasPerson}>{syncing ? '保存中…' : '保存安全计划'}</button>
       <div className="cc-toast">{saved ? '已保存。' : ''}</div>
     </div>
   )

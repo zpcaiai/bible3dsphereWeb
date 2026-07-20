@@ -11,6 +11,7 @@ import { TTSButton, TTSFullBar } from './useGlobalAudio.jsx'
 import { API_BASE, fetchScripture } from './api.js'
 import { a11yClickProps } from './lib/a11yClick';
 import { needsSafetyFirst, recommendExpansionTopics } from './components/devotionTopicRecommendations.js'
+import { mccheyneDayKey, mccheyneStreak, readMccheyneProgress, toggleMccheyneSlot } from './mccheyneProgress.js'
 import './expansion/expansionI18n.js'
 
 // ── Mobile detection ──────────────────────────────────────────────────────────
@@ -326,19 +327,23 @@ function PersonalCard({ user, token }) {
 }
 
 // ── McCheyne reading plan card ────────────────────────────────────────────────
-function McCheyneCard() {
+function McCheyneCard({ user }) {
   const reading = useMcCheyne()
   const [openSet, setOpenSet] = useState(new Set())   // track which chapters are expanded
+  const [done, setDone] = useState(() => readMccheyneProgress(window.localStorage, user))
 
   const today  = new Date()
   const dayStr = `${today.getMonth() + 1}月${today.getDate()}日`
 
   const chapters = reading ? [
-    { label: '家庭晨读', icon: '🌅', ref: reading.f1 },
-    { label: '家庭晚读', icon: '🌙', ref: reading.f2 },
-    { label: '个人新约', icon: '✝️',  ref: reading.n1 },
-    { label: '个人诗篇', icon: '🎵', ref: reading.ps },
+    { id: 'f1', label: '家庭晨读', icon: '🌅', ref: reading.f1 },
+    { id: 'f2', label: '家庭晚读', icon: '🌙', ref: reading.f2 },
+    { id: 'n1', label: '个人新约', icon: '✝️',  ref: reading.n1 },
+    { id: 'ps', label: '个人诗篇', icon: '🎵', ref: reading.ps },
   ] : []
+  const dayKey = mccheyneDayKey(today)
+  const doneToday = done[dayKey] || []
+  const streak = mccheyneStreak(done)
 
   const ttsFull = reading
     ? `今日麦琴读经计划，${dayStr}。家庭晨读：${reading.f1}。家庭晚读：${reading.f2}。个人新约：${reading.n1}。个人诗篇：${reading.ps}。`
@@ -380,6 +385,9 @@ function McCheyneCard() {
                 </div>
               ))}
             </div>
+            <div style={{ marginBottom: 10, color: '#7ee2a0', fontSize: 12, textAlign: 'center' }}>
+              {i18nT('今日进度')} {doneToday.length}/4 · 🔥{streak}{i18nT('天')}
+            </div>
 
             {/* Accordion items — each chapter */}
             {chapters.map((ch, idx) => {
@@ -388,6 +396,7 @@ function McCheyneCard() {
                 <div key={ch.label} style={S.accItem}>
                   {/* ── Accordion header ── */}
                   <div style={S.accHeader(isOpen)} onClick={() => toggle(idx)} {...a11yClickProps(() => toggle(idx))}>
+                    <button type="button" aria-label={doneToday.includes(ch.id) ? i18nT('取消完成') : i18nT('标记完成')} onClick={(event) => { event.stopPropagation(); setDone(toggleMccheyneSlot(window.localStorage, user, today, ch.id)) }} style={{ border: 0, background: 'transparent', padding: 0, fontSize: 18, cursor: 'pointer' }}>{doneToday.includes(ch.id) ? '✅' : '⬜'}</button>
                     <span style={{ fontSize: 16 }}>{ch.icon}</span>
                     <div style={{ flex: 1 }}>
                       <div style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255,255,255,0.9)' }}>{ch.label}</div>
@@ -427,7 +436,7 @@ export default function PersonalDevotionPage({ user, token, dailySnapshot, onOpe
     <div style={S.page}>
       <PersonalCard user={user} token={token} />
       <DevotionTopicEntryCard dailySnapshot={dailySnapshot} onOpenTopic={onOpenTopic} onOpenTopics={onOpenTopics} onOpenSafety={onOpenSafety} />
-      <McCheyneCard />
+      <McCheyneCard user={user} />
     </div>
   )
 }

@@ -44,6 +44,7 @@ import {
   saveValueWeight,
 } from '../../lib/worldviewFormationStorage'
 import { MODULE_DISCLAIMER } from '../../lib/pastoralSafety'
+import PlanExecutionPanel from '../../../../components/PlanExecutionPanel'
 
 function MiniTabs({ active, onChange }) {
   const tabs = [
@@ -176,6 +177,7 @@ export function IdolMappingPanel({ userId, data, onRefresh }) {
           {analysis.possibleIdols?.map((idol) => <div className="sf-insight-row" key={idol.idolKey}><b>{idol.idolKey}</b><p>{idol.possiblePromise}</p><p>Fear: {idol.possibleFear}</p><span>{Math.round(idol.confidence * 100)}% possible</span></div>)}
           <p>{analysis.gospelCounterTruth}</p>
           {practices.map((practice) => <article className="sf-prayer" key={practice.id}><b>{practice.title}</b><p>{practice.instructions}</p><span>{practice.practiceType} · {practice.durationMinutes} min</span></article>)}
+          {practices.length > 0 ? <PlanExecutionPanel userId={userId} planId={`worldview-surrender:${primaryKey}`} title="Surrender practice execution" actions={practices.map((practice) => ({ id: practice.id, title: practice.instructions, cadence: 'daily', estimatedMinutes: practice.durationMinutes }))} /> : null}
           {analysis.possibleIdols?.length > 0 && <button type="button" onClick={confirm}>Confirm and Save Idol Pattern</button>}
         </article>
       )}
@@ -217,6 +219,11 @@ export function GospelReframingPanel({ userId, data, onRefresh }) {
     onRefresh()
   }
 
+  function toggleSavedAction(action) {
+    saveGospelAction({ ...action, status: action.status === 'completed' ? 'planned' : 'completed', completedAt: action.status === 'completed' ? null : new Date().toISOString(), updatedAt: new Date().toISOString() })
+    onRefresh()
+  }
+
   return (
     <section className="sf-section">
       <div className="sf-section-heading"><h2>{T('福音重构', 'Gospel Reframing')}</h2><p>Creation, Fall, Redemption, Restoration. Lament is allowed; cheap positivity is not.</p></div>
@@ -238,6 +245,7 @@ export function GospelReframingPanel({ userId, data, onRefresh }) {
         </article>
       )}
       <SummaryCard title="Reframing History" items={[{ label: 'Sessions', value: String(data.gospelSessions.length) }, { label: 'Response actions', value: String(data.gospelActions.length) }]} />
+      {data.gospelActions.length > 0 ? <article className="sf-card"><h3>Saved response actions</h3>{data.gospelActions.map((action) => <button key={action.id} type="button" className="sf-card-button" onClick={() => toggleSavedAction(action)}><span>{action.status === 'completed' ? '✅' : '⬜'} {action.description}</span><small>{action.actionType}</small></button>)}</article> : null}
       <Notice text={notice} />
     </section>
   )
@@ -249,6 +257,7 @@ export function DecisionDiscernmentPanel({ userId, data, onRefresh }) {
   const [session, setSession] = useState(data.decisionSessions[0] || null)
   const [summary, setSummary] = useState(null)
   const [notice, setNotice] = useState('')
+  const [counselDraft, setCounselDraft] = useState('')
   const options = session ? data.decisionOptions.filter((option) => option.sessionId === session.id) : []
   const valueWeights = session ? data.valueWeights.filter((weight) => weight.sessionId === session.id) : []
   const scores = session ? scoreDecisionOptions(userId, session, options, valueWeights) : []
@@ -283,12 +292,13 @@ export function DecisionDiscernmentPanel({ userId, data, onRefresh }) {
   }
 
   function addCounselAndSummarize() {
-    if (!session) return
-    const counsel = addCounselInput(userId, session, { counselSourceType: 'mentor', summary: 'Ask one mature believer and one relevant professional contact.' })
+    if (!session || !counselDraft.trim()) return
+    const counsel = addCounselInput(userId, session, { counselSourceType: 'mentor', summary: counselDraft.trim() })
     saveCounselInput(counsel)
     const nextSummary = generateDecisionSummary(userId, session, options, data.motiveChecks.filter((check) => check.sessionId === session.id), valueWeights, [...data.counselInputs, counsel])
     saveDecisionSummary(nextSummary)
     setNotice(nextSummary.recommendedPath)
+    setCounselDraft('')
     onRefresh()
   }
 
@@ -311,7 +321,8 @@ export function DecisionDiscernmentPanel({ userId, data, onRefresh }) {
           <article className="sf-card sf-flow-card">
             <h3>Value scoring</h3>
             {scores.length ? scores.map((score) => <div className="sf-insight-row" key={score.optionId}><b>{score.label}</b><p>{score.evidence}</p><span>{score.score} / 10</span></div>) : <p className="sf-empty">Add options to score by weighted values.</p>}
-            <button type="button" onClick={addCounselAndSummarize}>Add Counsel and Summarize</button>
+            <label>Counsel actually received<textarea value={counselDraft} onChange={(event) => setCounselDraft(event.target.value)} placeholder="Record what a real mentor or relevant professional said." /></label>
+            <button type="button" disabled={!counselDraft.trim()} onClick={addCounselAndSummarize}>Save Counsel and Summarize</button>
           </article>
         </div>
       )}

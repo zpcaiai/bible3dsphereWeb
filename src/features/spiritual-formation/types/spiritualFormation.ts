@@ -209,6 +209,13 @@ export type TransformationPlan = {
   startDate: string;
   endDate: string;
   status: "active" | "completed" | "paused";
+  executionSummary?: {
+    currentCompleted: number;
+    currentTotal: number;
+    totalCheckins: number;
+    updatedAt: string;
+  };
+  /** @deprecated Kept only for migration from the former one-time checkbox model. */
   completedPracticeIds?: string[];
   createdAt: string;
   updatedAt: string;

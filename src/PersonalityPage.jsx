@@ -2,6 +2,7 @@ import { t as i18nT } from './i18n/runtime'
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { fetchFormationProfile, fetchFormationDimensions, saveReflectionAnswers, fetchReflectionAnswers, createHabitsFromFormationPlan } from './api'
 import { getToken } from './auth'
+import PlanExecutionPanel from './components/PlanExecutionPanel'
 
 const REFLECTION_CATEGORIES = [
   {
@@ -498,6 +499,16 @@ export default function PersonalityPage({ user, embedded = false, onSyncToHabits
               {i18nT('✅ 已成功同步到习惯养成！请在习惯页面查看并执行。')}
             </div>
           )}
+          <PlanExecutionPanel
+            user={user}
+            planId="personality-formation-plan"
+            title="个人灵修计划执行"
+            description="无需等待同步到习惯页面；这里也会按每日、每周和一次性行动记录。"
+            actions={[
+              ...shortPlan.map((item, index) => ({ id: `short-${index}`, title: item, cadence: item.includes('每周') || item.includes('本周') ? 'weekly' : item.includes('每天') ? 'daily' : 'once' })),
+              ...midPlan.map((item, index) => ({ id: `mid-${index}`, title: item, cadence: item.includes('每周') || item.includes('每月') ? 'weekly' : 'once' })),
+            ]}
+          />
           {syncStatus === 'error' && (
             <div style={{ marginTop: '10px', padding: '8px 12px', background: 'rgba(239,68,68,0.15)', borderRadius: '8px', color: '#f87171', fontSize: '12px', textAlign: 'center' }}>
               {i18nT('⚠️ 同步失败，请检查网络或登录状态后重试。')}

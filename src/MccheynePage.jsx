@@ -3,16 +3,15 @@
 import { useEffect, useMemo, useState } from 'react'
 import BackButton from './BackButton'
 import { t } from './i18n/runtime'
+import { mccheyneDayKey, mccheyneStreak, readMccheyneProgress, toggleMccheyneSlot } from './mccheyneProgress'
 
-const DONE_KEY = 'mccheyne-done-v1' // { 'YYYY-MM-DD': ['f1','f2','n1','ps'] }
 const SLOTS = [['f1', '家庭读经 ①'], ['f2', '家庭读经 ②'], ['n1', '个人读经 ①'], ['ps', '个人读经 ②']]
 
-const loadDone = () => { try { return JSON.parse(localStorage.getItem(DONE_KEY) || '{}') } catch { return {} } }
 const parseRef = (ref) => { const m = /^(.+?)(\d+)$/.exec(String(ref || '').trim()); return m ? { book: m[1], chapter: Number(m[2]) } : null }
 
-export default function MccheynePage({ onBack, onOpenPanel }) {
+export default function MccheynePage({ user, onBack, onOpenPanel }) {
   const [plan, setPlan] = useState(null)
-  const [done, setDone] = useState(loadDone)
+  const [done, setDone] = useState(() => readMccheyneProgress(window.localStorage, user))
   const [date, setDate] = useState(() => new Date())
 
   useEffect(() => {
@@ -20,14 +19,12 @@ export default function MccheynePage({ onBack, onOpenPanel }) {
   }, [])
 
   const key = `${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
-  const dayKey = `${date.getFullYear()}-${key}`
+  const dayKey = mccheyneDayKey(date)
   const today = plan?.[key]
   const doneToday = done[dayKey] || []
 
   function toggle(slot) {
-    const next = { ...done, [dayKey]: doneToday.includes(slot) ? doneToday.filter((x) => x !== slot) : [...doneToday, slot] }
-    setDone(next)
-    try { localStorage.setItem(DONE_KEY, JSON.stringify(next)) } catch { /* ignore */ }
+    setDone(toggleMccheyneSlot(window.localStorage, user, date, slot))
   }
   function openReading(ref) {
     const p = parseRef(ref)
@@ -38,16 +35,7 @@ export default function MccheynePage({ onBack, onOpenPanel }) {
   const shiftDay = (d) => setDate(new Date(date.getTime() + d * 86400000))
 
   // 连续天数（含今天，向前数全勤日）
-  const streak = useMemo(() => {
-    let n = 0
-    for (let i = 0; i < 366; i++) {
-      const d = new Date(Date.now() - i * 86400000)
-      const k = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
-      if ((done[k] || []).length === 4) n++
-      else if (i > 0) break
-    }
-    return n
-  }, [done])
+  const streak = useMemo(() => mccheyneStreak(done), [done])
 
   return (
     <div style={S.page}>

@@ -33,6 +33,7 @@ import {
 } from '../../lib/communityDiscipleshipEngine'
 import { COMMUNITY_DISCIPLESHIP_STORAGE_KEYS as KEYS, loadCommunityDiscipleshipData, saveCommunityEntry } from '../../lib/communityDiscipleshipStorage'
 import { communityDiscipleshipApi, hydrateCommunityDiscipleshipRemote } from '../../lib/communityDiscipleshipApi'
+import PlanExecutionPanel from '../../../../components/PlanExecutionPanel'
 import { MODULE_DISCLAIMER } from '../../lib/pastoralSafety'
 
 function MiniTabs({ active, onChange }) {
@@ -165,7 +166,7 @@ export function DiscipleshipPathwayPanel({ userId, token, data, onRefresh }) {
   function completeNextStep() {
     const next = pathSteps.find((step) => step.status !== 'completed')
     if (!next) return
-    saveCommunityEntry(KEYS.discipleshipSteps, updateDiscipleshipStep(next, { status: 'completed', completionNotes: 'Completed with grace, not performance pressure.' }))
+    saveCommunityEntry(KEYS.discipleshipSteps, updateDiscipleshipStep(next, { status: 'completed', completionNotes: '' }))
     setNotice('One discipleship step marked complete.')
     onRefresh()
     if (token) void communityDiscipleshipApi.completeStep(token, next.id).then(() => setNotice('One discipleship step marked complete and synced.')).catch(() => setNotice('Step saved locally; backend sync failed.'))
@@ -201,6 +202,7 @@ export function DiscipleshipPathwayPanel({ userId, token, data, onRefresh }) {
         </article>
         <article className="sf-card"><h3>Stage map</h3><div className="sf-stage-pills">{discipleshipStages.map((stage) => <span className={stage.key === stageKey ? 'active' : ''} key={stage.key}>{stage.key}</span>)}</div></article>
       </div>
+      {activePath ? <PlanExecutionPanel userId={userId} planId={`discipleship-path:${activePath.id}`} title="Discipleship path execution" actions={pathSteps.map((step) => ({ id: step.id, title: step.stepTitle, cadence: 'once' }))} /> : null}
       <Notice text={notice} />
     </section>
   )
@@ -212,6 +214,9 @@ export function AccountabilityGroupPanel({ userId, token, data, onRefresh }) {
   const [notice, setNotice] = useState('')
   const group = getFirst(data.accountabilityGroups)
   const latestCheckin = getFirst(data.accountabilityCheckins)
+  const [prayerRequest, setPrayerRequest] = useState('')
+  const [responseText, setResponseText] = useState('')
+  const [supportNeeded, setSupportNeeded] = useState(false)
 
   function ensureGroup() {
     if (group) return group
@@ -241,7 +246,7 @@ export function AccountabilityGroupPanel({ userId, token, data, onRefresh }) {
   function createGoalAndCheckin() {
     const activeGroup = ensureGroup()
     const goal = createAccountabilityGoal(userId, activeGroup, { title: 'Weekly honest check-in', description: context })
-    const result = createAccountabilityCheckin(userId, activeGroup, { struggle: context, prayerRequest: 'Please pray for humility and steady practice.', supportNeeded: true })
+    const result = createAccountabilityCheckin(userId, activeGroup, { gratitude: '', struggle: context, prayerRequest: prayerRequest.trim(), supportNeeded })
     saveMany([[KEYS.accountabilityGoals, goal], [KEYS.accountabilityCheckins, result.checkin]])
     setNotice(result.routed ? 'Check-in saved with care route flag.' : 'Accountability goal and check-in created.')
     onRefresh()
@@ -254,22 +259,22 @@ export function AccountabilityGroupPanel({ userId, token, data, onRefresh }) {
         })
         const groupId = remoteGroup.group_id || activeGroup.id
         await communityDiscipleshipApi.createGoal(token, groupId, { title: goal.title, description: goal.description, goal_type: goal.goalType || 'prayer' })
-        await communityDiscipleshipApi.createCheckin(token, groupId, { struggle: context, prayer_request: 'Please pray for humility and steady practice.', support_needed: true })
+        await communityDiscipleshipApi.createCheckin(token, groupId, { struggle: context, prayer_request: prayerRequest.trim(), support_needed: supportNeeded })
         setNotice('Accountability goal and check-in synced to backend.')
       })().catch(() => setNotice('Goal/check-in saved locally; backend sync failed.'))
     }
   }
 
   function respondAndPray() {
-    const activeGroup = ensureGroup()
-    const checkin = latestCheckin || createAccountabilityCheckin(userId, activeGroup, { struggle: context }).checkin
-    const response = addAccountabilityResponse(userId, checkin, { responseText: 'I hear you. I will pray and follow up without pressure.' })
-    const prayer = createGroupPrayerRequest(userId, activeGroup, { title: 'Grace for honest obedience', requestText: context })
-    saveMany([[KEYS.accountabilityCheckins, checkin], [KEYS.accountabilityResponses, response], [KEYS.groupPrayerRequests, prayer]])
+    if (!group || !latestCheckin || !responseText.trim()) return
+    const response = addAccountabilityResponse(userId, latestCheckin, { responseText: responseText.trim() })
+    const prayer = createGroupPrayerRequest(userId, group, { title: 'Prayer request', requestText: prayerRequest.trim() || context })
+    saveMany([[KEYS.accountabilityResponses, response], [KEYS.groupPrayerRequests, prayer]])
+    setResponseText('')
     setNotice('Response and prayer request saved.')
     onRefresh()
     if (token) {
-      void communityDiscipleshipApi.createPrayer(token, activeGroup.id, { title: prayer.title, request_text: prayer.requestText || context }).then(() => setNotice('Prayer request synced to backend.')).catch(() => setNotice('Prayer request saved locally; backend sync failed.'))
+      void communityDiscipleshipApi.createPrayer(token, group.id, { title: prayer.title, request_text: prayer.requestText || context }).then(() => setNotice('Prayer request synced to backend.')).catch(() => setNotice('Prayer request saved locally; backend sync failed.'))
     }
   }
 
@@ -288,6 +293,9 @@ export function AccountabilityGroupPanel({ userId, token, data, onRefresh }) {
       <article className="sf-card sf-flow-card">
         <label>Group type<select value={groupType} onChange={(event) => setGroupType(event.target.value)}>{accountabilityGroupTemplates.map((template) => <option key={template.key} value={template.key}>{template.title}</option>)}</select></label>
         <label>Check-in context<textarea value={context} onChange={(event) => setContext(event.target.value)} /></label>
+        <label>Prayer request<textarea value={prayerRequest} onChange={(event) => setPrayerRequest(event.target.value)} /></label>
+        <label><input type="checkbox" checked={supportNeeded} onChange={(event) => setSupportNeeded(event.target.checked)} /> Support is needed</label>
+        <label>Response actually given<textarea value={responseText} onChange={(event) => setResponseText(event.target.value)} /></label>
         <div className="sf-plan-actions"><button className="sf-primary" type="button" onClick={createGroup}>Create Accountability Group</button><button type="button" onClick={createGoalAndCheckin}>Create Goal and Check-In</button><button type="button" onClick={respondAndPray}>Add Response and Prayer</button><button type="button" onClick={createReview}>Generate Group Review</button></div>
       </article>
       <div className="sf-home-grid">
@@ -300,6 +308,7 @@ export function AccountabilityGroupPanel({ userId, token, data, onRefresh }) {
         ]} />
         <article className="sf-card"><h3>Confidentiality rule</h3><p>{group?.confidentialityCommitment || 'Members choose what to share; crisis or abuse routes to care, not gossip.'}</p></article>
       </div>
+      {data.accountabilityGoals.length > 0 ? <PlanExecutionPanel userId={userId} planId={`accountability-goals:${group?.id || 'current'}`} title="Accountability goals execution" actions={data.accountabilityGoals.map((goal) => ({ id: goal.id, title: goal.description || goal.title, cadence: 'weekly' }))} /> : null}
       <Notice text={notice} />
     </section>
   )
@@ -308,6 +317,8 @@ export function AccountabilityGroupPanel({ userId, token, data, onRefresh }) {
 export function MentorCoachingPanel({ userId, token, data, onRefresh }) {
   const [context, setContext] = useState('I want a mentor conversation about prayer, calling, and ordinary faithfulness.')
   const [notice, setNotice] = useState('')
+  const [observationText, setObservationText] = useState('')
+  const [planActions, setPlanActions] = useState('')
   const relationship = getFirst(data.mentorRelationships)
   const recommendation = relationship ? recommendMentorSession(userId, relationship, context) : null
   const questions = recommendMentorQuestions().slice(0, 6)
@@ -356,11 +367,15 @@ export function MentorCoachingPanel({ userId, token, data, onRefresh }) {
   }
 
   function addObservationAndPlan() {
+    const actions = planActions.split('\n').map((item) => item.trim()).filter(Boolean)
+    if (!observationText.trim() || !actions.length) return
     const rel = ensureRelationship()
-    const observation = addMentorObservation('mentor-demo', rel, { title: 'Steady desire for prayer', evidence: ['asked for help', 'named next step'] })
-    const plan = createMentorActionPlan('mentor-demo', rel, { title: 'Two-week prayer follow-up', actions: ['pray morning prayer three times', 'send one honest check-in'] })
+    const observation = addMentorObservation('mentor-demo', rel, { title: 'Mentor observation', description: observationText.trim(), evidence: [observationText.trim()], recommendedNextStep: actions[0] })
+    const plan = createMentorActionPlan('mentor-demo', rel, { title: 'Mentor follow-up plan', actions })
     saveMany([[KEYS.mentorObservations, observation], [KEYS.mentorActionPlans, plan]])
     setNotice('Mentor observation and action plan saved.')
+    setObservationText('')
+    setPlanActions('')
     onRefresh()
     if (token) {
       void Promise.all([
@@ -384,6 +399,8 @@ export function MentorCoachingPanel({ userId, token, data, onRefresh }) {
       <div className="sf-section-heading"><h2>{T('导师陪跑', 'Mentor Coaching')}</h2><p>Mentoring supports discernment and action without control, surveillance, or hidden authority.</p></div>
       <article className="sf-card sf-flow-card">
         <label>Mentor context<textarea value={context} onChange={(event) => setContext(event.target.value)} /></label>
+        <label>Mentor observation actually made<textarea value={observationText} onChange={(event) => setObservationText(event.target.value)} /></label>
+        <label>Agreed actions (one per line)<textarea value={planActions} onChange={(event) => setPlanActions(event.target.value)} /></label>
         <div className="sf-plan-actions"><button className="sf-primary" type="button" onClick={createRelationship}>Create Mentor Relationship</button><button type="button" onClick={createSession}>Create Mentor Session</button><button type="button" onClick={addObservationAndPlan}>Add Observation and Action Plan</button><button type="button" onClick={createReview}>Generate Mentor Review</button></div>
       </article>
       <div className="sf-home-grid">
@@ -396,6 +413,7 @@ export function MentorCoachingPanel({ userId, token, data, onRefresh }) {
         <article className="sf-card"><h3>Suggested agenda</h3>{recommendation ? <ul>{recommendation.suggestedAgenda.map((item) => <li key={item}>{item}</li>)}</ul> : <p className="sf-empty">Create a relationship to see agenda.</p>}</article>
         <article className="sf-card"><h3>Question library</h3><ul>{questions.map((question) => <li key={question.id}>{question.questionText}</li>)}</ul></article>
       </div>
+      {data.mentorActionPlans[0] ? <PlanExecutionPanel userId={userId} planId={`mentor-action-plan:${data.mentorActionPlans[0].id}`} title="Mentor action plan execution" actions={(data.mentorActionPlans[0].actions || []).map((title, index) => ({ id: `action-${index + 1}`, title, cadence: 'weekly' }))} /> : null}
       <Notice text={notice} />
     </section>
   )
@@ -406,6 +424,8 @@ export function ChurchIntegrationPanel({ userId, token, data, onRefresh }) {
   const [templateKey, setTemplateKey] = useState('lord_day_worship')
   const [ministryArea, setMinistryArea] = useState('hospitality')
   const [notice, setNotice] = useState('')
+  const [checkinReflection, setCheckinReflection] = useState('')
+  const [attended, setAttended] = useState(false)
   const profile = getFirst(data.churchProfiles)
   const connection = getFirst(data.churchConnections)
   const rhythm = getFirst(data.churchRhythms)
@@ -426,25 +446,30 @@ export function ChurchIntegrationPanel({ userId, token, data, onRefresh }) {
     }
   }
 
-  function createRhythmAndCheckin() {
+  function createRhythm() {
     const activeConnection = connection || createChurchConnection(userId, { connectionStatus: 'exploring', notes: context })
     const createdRhythm = createChurchRhythm(userId, { churchConnectionId: activeConnection.id, templateKey })
-    const checkin = createChurchCheckin(userId, createdRhythm, { reflection: context })
-    saveMany([[KEYS.churchConnections, activeConnection], [KEYS.churchRhythms, createdRhythm], [KEYS.churchCheckins, checkin]])
-    setNotice('Church rhythm and check-in created.')
+    saveMany([[KEYS.churchConnections, activeConnection], [KEYS.churchRhythms, createdRhythm]])
+    setNotice('Church rhythm created; attendance is not counted until you record a check-in.')
     onRefresh()
     if (token) {
       void communityDiscipleshipApi.createChurchRhythm(token, {
         rhythm_type: createdRhythm.rhythmType || 'worship',
         title: createdRhythm.title,
         frequency_type: createdRhythm.frequencyType || 'weekly',
-      }).then((remote) => communityDiscipleshipApi.createChurchCheckin(token, {
-        rhythm_id: remote.rhythm_id,
-        checkin_type: createdRhythm.rhythmType || 'worship',
-        attended: true,
-        reflection: context,
-      })).then(() => setNotice('Church rhythm and check-in synced to backend.')).catch(() => setNotice('Church rhythm saved locally; backend sync failed.'))
+      }).then(() => setNotice('Church rhythm synced to backend.')).catch(() => setNotice('Church rhythm saved locally; backend sync failed.'))
     }
+  }
+
+  function saveRhythmCheckin() {
+    if (!rhythm || (!attended && !checkinReflection.trim())) return
+    const checkin = createChurchCheckin(userId, rhythm, { attendedOrPracticed: attended, reflection: checkinReflection.trim(), nextStep: '' })
+    saveMany([[KEYS.churchCheckins, checkin]])
+    setNotice('Church rhythm check-in saved from your entry.')
+    setCheckinReflection('')
+    setAttended(false)
+    onRefresh()
+    if (token) void communityDiscipleshipApi.createChurchCheckin(token, { rhythm_id: rhythm.id, checkin_type: rhythm.rhythmType || 'worship', attended, reflection: checkinReflection.trim() }).then(() => setNotice('Church check-in synced to backend.')).catch(() => setNotice('Church check-in saved locally; backend sync failed.'))
   }
 
   function createMinistryMatchFlow() {
@@ -481,7 +506,9 @@ export function ChurchIntegrationPanel({ userId, token, data, onRefresh }) {
           <label>Church rhythm<select value={templateKey} onChange={(event) => setTemplateKey(event.target.value)}>{churchRhythmTemplates.map((template) => <option key={template.key} value={template.key}>{template.title}</option>)}</select></label>
           <label>Ministry area<select value={ministryArea} onChange={(event) => setMinistryArea(event.target.value)}>{ministryAreas.map((area) => <option key={area} value={area}>{area}</option>)}</select></label>
         </div>
-        <div className="sf-plan-actions"><button className="sf-primary" type="button" onClick={createConnection}>Create Church Connection</button><button type="button" onClick={createRhythmAndCheckin}>Create Rhythm and Check-In</button><button type="button" onClick={createMinistryMatchFlow}>Create Ministry Match</button><button type="button" onClick={createReentryPlan}>Create Re-Entry Plan</button></div>
+        <label><input type="checkbox" checked={attended} onChange={(event) => setAttended(event.target.checked)} /> Attended or practiced this rhythm</label>
+        <label>Church rhythm reflection<textarea value={checkinReflection} onChange={(event) => setCheckinReflection(event.target.value)} /></label>
+        <div className="sf-plan-actions"><button className="sf-primary" type="button" onClick={createConnection}>Create Church Connection</button><button type="button" onClick={createRhythm}>Create Rhythm</button><button type="button" disabled={!rhythm || (!attended && !checkinReflection.trim())} onClick={saveRhythmCheckin}>Save Rhythm Check-In</button><button type="button" onClick={createMinistryMatchFlow}>Create Ministry Match</button><button type="button" onClick={createReentryPlan}>Create Re-Entry Plan</button></div>
       </article>
       <div className="sf-home-grid">
         <SummaryCard title="Church state" items={[
@@ -495,6 +522,8 @@ export function ChurchIntegrationPanel({ userId, token, data, onRefresh }) {
         <article className="sf-card"><div className="sf-card-head"><h3>Integration recommendation</h3><span className="sf-status">{recommendation.route}</span></div><p>{recommendation.message}</p><ul>{recommendation.steps.map((step) => <li key={step}>{step}</li>)}</ul></article>
         <article className="sf-card"><h3>Active rhythm</h3>{rhythm ? <p>{rhythm.title} · {rhythm.frequencyType}</p> : <p className="sf-empty">No church rhythm yet.</p>}</article>
       </div>
+      {rhythm ? <PlanExecutionPanel userId={userId} planId={`church-rhythm:${rhythm.id}`} title="Church rhythm execution" actions={[{ id: 'rhythm', title: rhythm.description || rhythm.title, cadence: rhythm.frequencyType || 'weekly' }]} /> : null}
+      {data.churchReentryPlans[0] ? <PlanExecutionPanel userId={userId} planId={`church-reentry:${data.churchReentryPlans[0].id}`} title="Safe church re-entry steps" actions={(data.churchReentryPlans[0].firstSteps || []).map((title, index) => ({ id: `step-${index + 1}`, title, cadence: 'once' }))} /> : null}
       <Notice text={notice} />
     </section>
   )

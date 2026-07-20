@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { t } from '../i18n/runtime'
+import PlanExecutionPanel from './PlanExecutionPanel'
 
 export const PASTORAL_ROUTE_TARGETS = {
   app: {
@@ -115,7 +116,7 @@ const baseButton = {
   WebkitUserSelect: 'none',
 }
 
-export default function PastoralPathCard({ onOpen, compact = false, className = '', style }) {
+export default function PastoralPathCard({ user, userId, onOpen, compact = false, className = '', style }) {
   const [selectedId, setSelectedId] = useState(PASTORAL_PATH_OPTIONS[0].id)
   const selected = useMemo(
     () => PASTORAL_PATH_OPTIONS.find((item) => item.id === selectedId) || PASTORAL_PATH_OPTIONS[0],
@@ -273,6 +274,7 @@ export default function PastoralPathCard({ onOpen, compact = false, className = 
             {t('和守护者聊聊')}
           </button>
         </div>
+        {!selected.urgent ? <PlanExecutionPanel user={user} userId={userId} planId={`pastoral-path:${selected.id}`} title={selected.actionTitle} actions={[{ id: 'today-action', title: selected.action, cadence: 'daily' }]} showReview={false} compact /> : null}
       </article>
 
       <p style={{ margin: '10px 2px 0', fontSize: 11.5, color: 'rgba(255,255,255,0.48)', lineHeight: 1.6 }}>

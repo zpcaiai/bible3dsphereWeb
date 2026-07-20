@@ -37,7 +37,10 @@ describe('CommunityDiscipleshipDashboard', () => {
 
     fireEvent.click(screen.getByText('Accountability'))
     fireEvent.click(screen.getByText('Create Accountability Group'))
+    fireEvent.change(screen.getByLabelText('Prayer request'), { target: { value: 'Please pray for steady practice.' } })
+    fireEvent.click(screen.getByLabelText('Support is needed'))
     fireEvent.click(screen.getByText('Create Goal and Check-In'))
+    fireEvent.change(screen.getByLabelText('Response actually given'), { target: { value: 'I hear you and will pray.' } })
     fireEvent.click(screen.getByText('Add Response and Prayer'))
     fireEvent.click(screen.getByText('Generate Group Review'))
 
@@ -54,12 +57,14 @@ describe('CommunityDiscipleshipDashboard', () => {
     fireEvent.click(screen.getByText('Mentor'))
     fireEvent.click(screen.getByText('Create Mentor Relationship'))
     fireEvent.click(screen.getByText('Create Mentor Session'))
+    fireEvent.change(screen.getByLabelText('Mentor observation actually made'), { target: { value: 'A steady desire for prayer was described.' } })
+    fireEvent.change(screen.getByLabelText('Agreed actions (one per line)'), { target: { value: 'pray morning prayer three times\nsend one honest check-in' } })
     fireEvent.click(screen.getByText('Add Observation and Action Plan'))
     fireEvent.click(screen.getByText('Generate Mentor Review'))
 
     expect(stored(COMMUNITY_DISCIPLESHIP_STORAGE_KEYS.mentorRelationships)[0].permissionScope).toBe('growth_summary')
     expect(stored(COMMUNITY_DISCIPLESHIP_STORAGE_KEYS.mentorSessions)[0].status).toBe('planned')
-    expect(stored(COMMUNITY_DISCIPLESHIP_STORAGE_KEYS.mentorObservations)[0].title).toContain('prayer')
+    expect(stored(COMMUNITY_DISCIPLESHIP_STORAGE_KEYS.mentorObservations)[0].description).toContain('prayer')
     expect(stored(COMMUNITY_DISCIPLESHIP_STORAGE_KEYS.mentorActionPlans)[0].actions).toContain('send one honest check-in')
     expect(stored(COMMUNITY_DISCIPLESHIP_STORAGE_KEYS.mentorReviews)[0].summary).toContain('session')
   })
@@ -69,7 +74,10 @@ describe('CommunityDiscipleshipDashboard', () => {
 
     fireEvent.click(screen.getByText('Church'))
     fireEvent.click(screen.getByText('Create Church Connection'))
-    fireEvent.click(screen.getByText('Create Rhythm and Check-In'))
+    fireEvent.click(screen.getByText('Create Rhythm'))
+    fireEvent.click(screen.getByLabelText('Attended or practiced this rhythm'))
+    fireEvent.change(screen.getByLabelText('Church rhythm reflection'), { target: { value: 'Participated with attention.' } })
+    fireEvent.click(screen.getByText('Save Rhythm Check-In'))
     fireEvent.click(screen.getByText('Create Ministry Match'))
     fireEvent.change(screen.getByLabelText('Church context'), { target: { value: 'I experienced church hurt and need safe re-entry.' } })
     fireEvent.click(screen.getByText('Create Re-Entry Plan'))

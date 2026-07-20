@@ -42,6 +42,7 @@ import {
   saveSufferingSummary,
 } from '../../lib/sufferingCareStorage'
 import { MODULE_DISCLAIMER } from '../../lib/pastoralSafety'
+import PlanExecutionPanel from '../../../../components/PlanExecutionPanel'
 
 function MiniTabs({ active, onChange }) {
   const tabs = [
@@ -124,6 +125,7 @@ export function CrisisTriagePanel({ userId, data, onRefresh }) {
   const [text, setText] = useState('I feel hopeless but I can stay safe and will contact a trusted friend.')
   const [result, setResult] = useState(null)
   const [notice, setNotice] = useState('')
+  const [safePerson, setSafePerson] = useState('')
 
   function triage() {
     const next = triageText(userId, text, 'crisis_triage_panel')
@@ -135,7 +137,8 @@ export function CrisisTriagePanel({ userId, data, onRefresh }) {
   }
 
   function makePlan() {
-    const plan = createSafetyPlan(userId, { crisisEventId: result?.event?.id })
+    if (!safePerson.trim()) return
+    const plan = createSafetyPlan(userId, { crisisEventId: result?.event?.id, peopleToContact: [safePerson.trim()] })
     saveSafetyPlan(plan)
     setNotice('Safety plan created. Share it with a trusted human helper when appropriate.')
     onRefresh()
@@ -155,7 +158,8 @@ export function CrisisTriagePanel({ userId, data, onRefresh }) {
           {result.response.blockNormalFormation && <p className="sf-warning">Ordinary formation is blocked until safety is addressed.</p>}
           <ul>{result.response.immediateSteps.map((step) => <li key={step}>{step}</li>)}</ul>
           <div className="sf-chip-row">{result.response.detectedRiskTypes?.map((type) => <span className="sf-chip" key={type}>{type}</span>)}</div>
-          <button type="button" onClick={makePlan}>Create Safety Plan</button>
+          <label>Real person to contact<input value={safePerson} onChange={(event) => setSafePerson(event.target.value)} placeholder="Name and contact method" /></label>
+          <button type="button" disabled={!safePerson.trim()} onClick={makePlan}>Create Safety Plan</button>
         </article>
       )}
       <article className="sf-card"><h3>Generic Resources</h3>{crisisResourceTemplates.map((resource) => <div className="sf-insight-row" key={resource.key}><b>{resource.title}</b><p>{resource.description}</p><span>{resource.resourceType}</span></div>)}</article>
@@ -172,6 +176,7 @@ export function HealingJourneyTimeline({ userId, data, onRefresh }) {
   const recommendation = recommendHealingJourney(userId, context)
   const activeJourney = data.healingJourneys.find((journey) => journey.id === activeJourneyId) || data.healingJourneys[0]
   const practices = recommendation.recommendation?.practices || []
+  const [entryText, setEntryText] = useState('')
 
   function createJourney() {
     const result = createHealingJourney(userId, { title: 'Healing Journey', description: context })
@@ -188,15 +193,15 @@ export function HealingJourneyTimeline({ userId, data, onRefresh }) {
   }
 
   function addEntry() {
-    const journey = activeJourney || createHealingJourney(userId, { description: context }).journey
-    if (!activeJourney) saveHealingJourney(journey)
-    const result = addHealingEntry(userId, journey, { userReflection: 'I named one part of the pain without forcing details.', supportNeeded: true })
+    if (!activeJourney || !entryText.trim()) return
+    const result = addHealingEntry(userId, activeJourney, { userReflection: entryText.trim(), supportNeeded: true })
     if (result.routed) {
       setNotice(result.triage.response.message)
       return
     }
     saveHealingEntry(result.entry)
-    saveHealingMilestone(addHealingMilestone(userId, journey, { title: 'Named pain gently' }))
+    saveHealingMilestone(addHealingMilestone(userId, activeJourney, { title: 'Saved a gentle reflection' }))
+    setEntryText('')
     setNotice('Healing entry and milestone saved.')
     onRefresh()
   }
@@ -226,7 +231,8 @@ export function HealingJourneyTimeline({ userId, data, onRefresh }) {
         </article>
       </div>
       {activeJourney && <SummaryCard title={activeJourney.title} items={[{ label: 'Type', value: activeJourney.journeyTypeKey }, { label: 'Phase', value: activeJourney.currentPhase }, { label: 'Care level', value: activeJourney.careLevel }]} />}
-      <div className="sf-plan-actions"><button type="button" onClick={addEntry}>Add Healing Entry</button><button type="button" onClick={boundaryPlan}>Create Forgiveness Boundary Plan</button></div>
+      {activeJourney ? <><PlanExecutionPanel userId={userId} planId={`healing-journey:${activeJourney.id}`} title="Healing practices" actions={practices.map((practice) => ({ id: practice.key, title: practice.instructions, cadence: 'weekly' }))} /><label>Reflection actually written<textarea value={entryText} onChange={(event) => setEntryText(event.target.value)} /></label></> : null}
+      <div className="sf-plan-actions"><button type="button" disabled={!activeJourney || !entryText.trim()} onClick={addEntry}>Add Healing Entry</button><button type="button" onClick={boundaryPlan}>Create Forgiveness Boundary Plan</button></div>
       <article className="sf-card"><h3>Journey Types</h3><div className="sf-chip-row">{healingJourneyTypes.map((type) => <span className="sf-chip" key={type.key}>{type.displayName}</span>)}</div></article>
       <Notice text={notice} />
     </section>
@@ -238,6 +244,7 @@ export function PastoralCareDashboard({ userId, data, onRefresh }) {
   const [caseText, setCaseText] = useState('Grief support with weekly check-ins.')
   const [activeCaseId, setActiveCaseId] = useState('')
   const [notice, setNotice] = useState('')
+  const [careLogText, setCareLogText] = useState('')
   const activeRelationship = data.careRelationships.find((relationship) => relationship.status === 'active')
   const activeCase = data.careCases.find((item) => item.id === activeCaseId) || data.careCases[0]
 
@@ -267,15 +274,22 @@ export function PastoralCareDashboard({ userId, data, onRefresh }) {
   function addCarePlanFlow() {
     const careCase = activeCase || createCareCase(userId, { title: 'Pastoral care case', summary: caseText })
     if (!activeCase) saveCareCase(careCase)
-    const log = addCareLog(caregiverId, careCase, { summary: 'Gentle care check-in completed.', visibleToReceiver: true })
     const plan = createCarePlan(caregiverId, careCase, {})
     const followup = createCareFollowup(caregiverId, careCase, {})
-    const summary = generateRoleAwareSummary(caregiverId, careCase, 'mentor_view', activeRelationship?.permissionScope || 'formation_summary')
-    saveCareLog(log)
     saveCarePlan(plan)
     saveCareFollowup(followup)
+    setNotice('Care plan and pending follow-up created. No check-in was marked complete.')
+    onRefresh()
+  }
+
+  function saveActualCareLog() {
+    if (!activeCase || !careLogText.trim()) return
+    const log = addCareLog(caregiverId, activeCase, { summary: careLogText.trim(), nextSteps: [], visibleToReceiver: true })
+    saveCareLog(log)
+    const summary = generateRoleAwareSummary(caregiverId, activeCase, 'mentor_view', activeRelationship?.permissionScope || 'formation_summary')
     saveCareSummary(summary)
-    setNotice(summary.summary)
+    setCareLogText('')
+    setNotice('Care log saved from the caregiver entry.')
     onRefresh()
   }
 
@@ -295,7 +309,9 @@ export function PastoralCareDashboard({ userId, data, onRefresh }) {
         </article>
       </div>
       {activeCase && <SummaryCard title={activeCase.title} items={[{ label: 'Severity', value: activeCase.severity }, { label: 'Case type', value: activeCase.caseType }, { label: 'Escalation', value: recommendEscalation(activeCase) }]} />}
-      <button type="button" onClick={addCarePlanFlow}>Add Care Log, Plan, Follow-Up, Summary</button>
+      <button type="button" onClick={addCarePlanFlow}>Create Care Plan and Follow-Up</button>
+      <label>Care check-in actually completed<textarea value={careLogText} onChange={(event) => setCareLogText(event.target.value)} /></label><button type="button" disabled={!activeCase || !careLogText.trim()} onClick={saveActualCareLog}>Save Care Log</button>
+      {data.carePlans[0] ? <PlanExecutionPanel userId={userId} planId={`care-plan:${data.carePlans[0].id}`} title="Care plan execution" actions={[...(data.carePlans[0].supportActions || []), ...(data.carePlans[0].practicalSupport || [])].map((title, index) => ({ id: `care-${index + 1}`, title, cadence: 'weekly' }))} /> : null}
       <SummaryCard title="Pastoral Dashboard" items={[{ label: 'Relationships', value: String(data.careRelationships.length) }, { label: 'Cases', value: String(data.careCases.length) }, { label: 'Logs', value: String(data.careLogs.length) }, { label: 'Follow-ups', value: String(data.careFollowups.length) }]} />
       <Notice text={notice} />
     </section>

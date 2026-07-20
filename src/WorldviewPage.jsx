@@ -5,6 +5,7 @@ import { getToken } from './auth'
 import { t } from './i18n/runtime'
 import { AutoText } from './autoTranslate'
 import SuggestField from './components/SuggestField'
+import PlanExecutionPanel from './components/PlanExecutionPanel'
 import {
   rewriteNarrative, diagnoseWorldview, fetchWorldviewProfile, fetchWorldviewAssessments,
 } from './api'
@@ -43,7 +44,7 @@ function Disclaimer() {
 }
 
 // ── 生命叙事重写 ─────────────────────────────────────────────────────────────
-function NarrativeTab({ token }) {
+function NarrativeTab({ token, user }) {
   const [text, setText] = useState('')
   const [idol, setIdol] = useState('')
   const [useAi, setUseAi] = useState(true)
@@ -110,6 +111,12 @@ function NarrativeTab({ token }) {
           {r.practicePlan?.length > 0 && (
             <div style={card}><div style={{ fontSize: 12.5, fontWeight: 700, color: ACCENT, marginBottom: 8 }}>{t('🌱 操练计划')}</div>
               {r.practicePlan.map((p, i) => <div key={i} style={{ fontSize: 13, color: 'rgba(255,255,255,0.8)', lineHeight: 1.7, marginBottom: 6 }}>· <D>{p}</D></div>)}
+              <PlanExecutionPanel
+                user={user}
+                planId={`worldview-narrative:${r.id || r.hiddenIdol || 'current'}`}
+                title="世界观操练执行"
+                actions={r.practicePlan.map((practice, index) => ({ id: `practice-${index + 1}`, title: practice, cadence: 'daily' }))}
+              />
             </div>
           )}
           {r.reflectionQuestions?.length > 0 && (
@@ -273,7 +280,7 @@ function HistoryTab({ token }) {
 
 const TABS = [['narrative', '✍️ 叙事重写'], ['diagnose', '🧭 世界观诊断'], ['profile', '🧩 我的画像'], ['history', '🗂 历史']]
 
-export default function WorldviewPage({ onBack }) {
+export default function WorldviewPage({ onBack, user }) {
   const [tab, setTab] = useState('narrative')
   const token = getToken()
   return (
@@ -288,7 +295,7 @@ export default function WorldviewPage({ onBack }) {
       <div style={{ display: 'flex', gap: 6, margin: '12px 0 16px' }}>
         {TABS.map(([k, z]) => <button key={k} onClick={() => setTab(k)} style={tabBtn(tab === k)}>{t(z)}</button>)}
       </div>
-      {tab === 'narrative' && <NarrativeTab token={token} />}
+      {tab === 'narrative' && <NarrativeTab token={token} user={user} />}
       {tab === 'diagnose' && <DiagnoseTab token={token} />}
       {tab === 'profile' && <ProfileTab token={token} />}
       {tab === 'history' && <HistoryTab token={token} />}

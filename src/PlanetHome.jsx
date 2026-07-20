@@ -54,7 +54,7 @@ const CONTINENTS = [
   },
 ]
 
-export default function PlanetHome({ onClose, go, openExpansion }) {
+export default function PlanetHome({ user, onClose, go, openExpansion }) {
   const act = (target) => {
     if (target === '_close') return onClose()
     if (handleExpansionTarget(target, openExpansion)) return
@@ -106,7 +106,7 @@ export default function PlanetHome({ onClose, go, openExpansion }) {
           </span>
           <span style={{ color: '#c6c9ff', fontSize: 20 }} aria-hidden="true">›</span>
         </button>
-        <PastoralPathCard compact onOpen={openPastoralRoute} />
+        <PastoralPathCard user={user} compact onOpen={openPastoralRoute} />
         {withExpansionChips(CONTINENTS).map((c, i) => (
           <div key={i} onClick={() => act(c.chips[0][1])} style={{ cursor: 'pointer', marginBottom: 14, borderRadius: 18, padding: 18, background: `linear-gradient(135deg, ${c.color}22, rgba(255,255,255,0.02))`, border: `1px solid ${c.color}44` }} {...a11yClickProps(() => act(c.chips[0][1]))}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>

@@ -197,6 +197,7 @@ function DetailView({ bundle, reload, setError, onNeedLogin }) {
   useEffect(() => { setPractices(bundle.practices || []) }, [bundle])
   const t = TYPE[a.waiting_type || c.waiting_type] || TYPE.unknown
   const crisis = a.crisis_flag
+  const completedPractices = practices.filter((practice) => practice.completed).length
 
   async function genPractices() {
     const token = getToken(); if (!token) { onNeedLogin && onNeedLogin(); return }
@@ -279,7 +280,8 @@ function DetailView({ bundle, reload, setError, onNeedLogin }) {
         <button onClick={genPractices} disabled={busy} style={primaryBtn}>{busy ? '生成中…' : '生成 7 天等候操练'}</button>
       ) : (
         <div style={{ marginTop: 4 }}>
-          <div style={{ fontSize: 13, fontWeight: 700, color: 'rgba(255,255,255,0.7)', margin: '8px 4px' }}>{i18nT('🌱 7 天等候操练')}</div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, fontWeight: 700, color: 'rgba(255,255,255,0.7)', margin: '8px 4px' }}><span>{i18nT('🌱 7 天等候操练')}</span><span>{completedPractices}/{practices.length}</span></div>
+          <div aria-label={i18nT('等候操练进度')} style={{ height: 6, margin: '0 4px 10px', borderRadius: 99, overflow: 'hidden', background: 'rgba(255,255,255,.08)' }}><div style={{ width: `${practices.length ? Math.round((completedPractices / practices.length) * 100) : 0}%`, height: '100%', background: '#34c759' }} /></div>
           {practices.map(p => <PracticeCard key={p.id} p={p} onSaved={() => reload(c.id)} setError={setError} onNeedLogin={onNeedLogin} />)}
         </div>
       )}

@@ -3,6 +3,7 @@ import { evaluateDiscernment, generateRuleOfLife } from '../../lib/ruleDiscernme
 import { lifeSeasonProfiles } from '../../data/ruleDiscernmentSeed'
 import { formationExtApi } from '../../../../api'
 import '../../app/spiritual-formation.css'
+import PlanExecutionPanel from '../../../../components/PlanExecutionPanel'
 
 const STORAGE_KEY = 'spiritualFormation.ruleDiscernment.saved'
 
@@ -47,6 +48,18 @@ export default function RuleDiscernmentDashboard({ userId = 'local-user', token 
           <RuleList title="标准规则" items={rule.standardRule} />
           {rule.deepRule.length > 0 && <RuleList title="深度规则" items={rule.deepRule} />}
           <button className="sf-primary" type="button" onClick={saveRule}>保存当前规则</button>
+          <PlanExecutionPanel
+            userId={userId}
+            planId={`rule-discernment:${rule.profile.season}`}
+            title="生命规则执行"
+            description="规则保存后仍需要真实执行记录；每日与每周节律会分别统计。"
+            actions={rule.standardRule.map((item, index) => ({
+              id: `${item.domain}-${index}`,
+              title: item.rhythm,
+              cadence: item.rhythm.includes('每周') ? 'weekly' : 'daily',
+              minutes: item.minutes,
+            }))}
+          />
         </>
       ) : (
         <>

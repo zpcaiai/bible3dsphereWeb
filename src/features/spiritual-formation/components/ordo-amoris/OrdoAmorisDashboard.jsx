@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { buildLoveOrderMap, createOrdoAmorisRecord, createReorderingPractice, ordoAmorisCategories, routeOrdoAmorisInput } from '../../lib/ordoAmorisEngine'
 import { formationExtApi } from '../../../../api'
 import '../../app/spiritual-formation.css'
+import PlanExecutionPanel from '../../../../components/PlanExecutionPanel'
 
 const STORAGE_KEY = 'spiritualFormation.ordoAmoris.records'
 
@@ -73,7 +74,7 @@ export default function OrdoAmorisDashboard({ userId = 'local-user', token }) {
       {result.route === 'crisis_care' || result.route === 'pastoral_care' ? (
         <article className="sf-card"><h3>先照顾安全</h3><p>{result.safety.message}</p></article>
       ) : result.response && (
-        <div className="sf-home-grid">
+        <><div className="sf-home-grid">
           <article className="sf-card">
             <h3>{result.response.possibleLove}</h3>
             <p>{result.response.carefulLanguage}</p>
@@ -92,7 +93,7 @@ export default function OrdoAmorisDashboard({ userId = 'local-user', token }) {
             <p className="sf-muted">{practice.prayerPrompt}</p>
             <button className="sf-primary" type="button" onClick={save}>保存今日重排</button>
           </article>
-        </div>
+        </div><PlanExecutionPanel userId={userId} planId={`ordo-amoris:${keys[0] || 'general'}`} title="今日爱序重排操练" actions={[{ id: 'reordering-practice', title: practice.practice, cadence: 'daily' }]} /></>
       )}
 
       <article className="sf-card">

@@ -2,6 +2,7 @@ import { t as i18nT } from './i18n/runtime'
 import { useEffect, useRef, useState } from 'react'
 import { t } from './i18n/runtime'
 import { a11yClickProps } from './lib/a11yClick';
+import PlanExecutionPanel from './components/PlanExecutionPanel'
 import {
   fetchGiftMeta, fetchGiftProfile, assessGift, fetchGiftHistory, fetchGiftAssessment,
   submitGiftFeedback, fetchGiftFeedback, submitGiftReview, fetchGiftReviews,
@@ -92,7 +93,7 @@ function Banner({ children, tone }) {
 }
 
 // ── 完整报告渲染 ─────────────────────────────────────────────────────────────
-function Report({ r, meta }) {
+function Report({ r, meta, user }) {
   if (!r) return null
   const zhMap = (arr) => Object.fromEntries((arr || []).map(x => [x.key, x.zh]))
   const sZh = zhMap(meta?.strengths)
@@ -273,6 +274,18 @@ function Report({ r, meta }) {
           </div>
         )}
         {(gp.success_indicators || []).length > 0 && <div style={{ marginTop: 6 }}>{gp.success_indicators.map((x, i) => <Chip key={i} tone="ok">{x}</Chip>)}</div>}
+        <PlanExecutionPanel
+          user={user}
+          planId={`gift-growth:${r.id || r.assessment_id || 'current'}`}
+          title="恩赐成长计划执行"
+          description="30/90/180 天建议统一进入实际行动记录；复盘不会代替行动完成。"
+          actions={[
+            ...Object.entries(gp.plan_json || {}).flatMap(([phase, item]) => Object.entries(item || {})
+              .filter(([key, value]) => key !== 'theme' && Array.isArray(value))
+              .flatMap(([key, value]) => value.map((action, index) => ({ id: `${phase}-${key}-${index}`, title: action, cadence: 'once' })))),
+            ...(gp.weekly_rhythm || []).map((item, index) => ({ id: `weekly-${index}`, title: `${item.day}：${item.practice}`, cadence: 'weekly' })),
+          ]}
+        />
       </div>
 
       {/* 8. 共同体确认 */}
@@ -666,7 +679,7 @@ export default function GiftCallingView({ user, token }) {
       <div style={{ flex: 1, overflowY: 'auto', padding: '12px 14px', minHeight: 0 }}>
         {view === 'dash' && (
           report
-            ? <Report r={report} meta={meta} />
+            ? <Report r={report} meta={meta} user={user} />
             : (
               <div style={{ textAlign: 'center', padding: '40px 20px' }}>
                 <div style={{ fontSize: 40, marginBottom: 10 }}>🎁</div>

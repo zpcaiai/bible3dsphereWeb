@@ -73,7 +73,7 @@ export default function StrongholdPage({ userId = 'local-user', token, initialVi
       </div>
 
       {view === 'library' && <StrongholdLibrary />}
-      {view === 'scan' && <StrongholdDiscernmentForm onSave={onScanSave} />}
+      {view === 'scan' && <StrongholdDiscernmentForm userId={userId} onSave={onScanSave} />}
       {view === 'growth' && (
         <StrongholdTimeline
           userId={userId}

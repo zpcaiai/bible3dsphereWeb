@@ -35,6 +35,7 @@ describe('SufferingCareDashboard', () => {
     fireEvent.change(screen.getByLabelText('What is happening?'), { target: { value: 'I have pills ready and will kill myself now.' } })
     fireEvent.click(screen.getByText('Run Crisis Triage'))
     expect(screen.getByText(/Ordinary formation is blocked/)).toBeTruthy()
+    fireEvent.change(screen.getByPlaceholderText('Name and contact method'), { target: { value: 'Alex, 555-0100' } })
     fireEvent.click(screen.getByText('Create Safety Plan'))
 
     const assessments = JSON.parse(window.localStorage.getItem(SUFFERING_CARE_STORAGE_KEYS.crisisAssessments) || '[]')
@@ -48,6 +49,7 @@ describe('SufferingCareDashboard', () => {
 
     fireEvent.click(screen.getByText('Healing'))
     fireEvent.click(screen.getByText('Create Healing Journey'))
+    fireEvent.change(screen.getByLabelText('Reflection actually written'), { target: { value: 'I named one part of the pain without forcing details.' } })
     fireEvent.click(screen.getByText('Add Healing Entry'))
     fireEvent.change(screen.getByLabelText('Wound or healing need'), { target: { value: 'I need to forgive but contact is unsafe after abuse.' } })
     fireEvent.click(screen.getByText('Create Forgiveness Boundary Plan'))
@@ -60,13 +62,15 @@ describe('SufferingCareDashboard', () => {
     expect(plans[0].unsafeContactWarning).toBe(true)
   })
 
-  it('creates pastoral relationship, case, care plan, follow-up, and summary', () => {
+  it('creates pastoral relationship, case, care plan, follow-up, and user-entered log', () => {
     render(<SufferingCareDashboard userId="u1" />)
 
     fireEvent.click(screen.getByText('Pastoral'))
     fireEvent.click(screen.getByText('Grant Care Access'))
     fireEvent.click(screen.getByText('Create Care Case'))
-    fireEvent.click(screen.getByText('Add Care Log, Plan, Follow-Up, Summary'))
+    fireEvent.click(screen.getByText('Create Care Plan and Follow-Up'))
+    fireEvent.change(screen.getByLabelText('Care check-in actually completed'), { target: { value: 'A gentle check-in was completed by the caregiver.' } })
+    fireEvent.click(screen.getByText('Save Care Log'))
 
     const relationships = JSON.parse(window.localStorage.getItem(SUFFERING_CARE_STORAGE_KEYS.careRelationships) || '[]')
     const cases = JSON.parse(window.localStorage.getItem(SUFFERING_CARE_STORAGE_KEYS.careCases) || '[]')

@@ -16,6 +16,8 @@ export default function DiscipleshipPathwayPage({ user, onBack }) {
   const [assessed, setAssessed] = useState(null)
   const [path, setPath] = useState(null)
   const [error, setError] = useState('')
+  const steps = path?.steps || []
+  const completedSteps = steps.filter((step) => step.status === 'completed').length
 
   function loadPath() { const t = getToken(); if (t) communityApi.discActivePath(t).then(r => setPath(r.path)).catch((err) => { console.warn('[DiscipleshipPathwayPage.jsx] ignored async error', err) }) }
   useEffect(loadPath, [])
@@ -66,8 +68,10 @@ export default function DiscipleshipPathwayPage({ user, onBack }) {
 
       {path && (
         <div style={card}>
-          <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 10 }}>{path.title} · {path.current_stage_key} → {path.target_stage_key}</div>
-          {(path.steps || []).map(s => (
+          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, fontSize: 13, fontWeight: 700, marginBottom: 8 }}><span>{path.title} · {path.current_stage_key} → {path.target_stage_key}</span><span>{completedSteps}/{steps.length}</span></div>
+          <div aria-label={i18nT('门徒路径进度')} style={{ height: 6, marginBottom: 10, overflow: 'hidden', borderRadius: 99, background: 'rgba(255,255,255,.08)' }}><div style={{ width: `${steps.length ? Math.round((completedSteps / steps.length) * 100) : 0}%`, height: '100%', background: '#34c759' }} /></div>
+          {completedSteps === steps.length && steps.length > 0 ? <p style={{ color: '#8be9c0', fontSize: 12 }}>{i18nT('本阶段步骤已完成；请在复盘后与同行者确认下一阶段。')}</p> : null}
+          {steps.map(s => (
             <div key={s.id} onClick={() => toggleStep(s)} style={{ padding: '8px 0', borderBottom: '1px solid rgba(255,255,255,0.06)', cursor: 'pointer' }} {...a11yClickProps(() => toggleStep(s))}>
               <div style={{ fontSize: 14 }}>{s.status === 'completed' ? '✅ ' : '⬜ '}{s.step_title}</div>
               {s.related_module && <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)' }}>→ {s.related_module}</div>}

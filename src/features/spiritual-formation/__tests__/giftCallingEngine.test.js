@@ -77,7 +77,7 @@ describe('Gift, Calling & Mission OS engine', () => {
     const design = designMissionLife('u1', profile, null, [], 'connect work and faith')
     const commitment = createMissionCommitment('u1', profile, { domainKey: design.recommendedDomains[0].domain })
     const project = createMissionProject('u1', profile, {})
-    const log = addMissionProjectLog('u1', project, {})
+    const log = addMissionProjectLog('u1', project, { actionTaken: 'Took one small step.', nextStep: 'Keep the next action small.' })
     const review = generateMissionLifeReview('u1', profile, [commitment], [project], [log])
 
     expect(design.recommendedDomains.length).toBeGreaterThan(1)

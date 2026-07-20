@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { buildLamentFrame, crossLamentHopeCategories } from '../../lib/crossLamentHopeEngine'
 import { formationExtApi } from '../../../../api'
 import '../../app/spiritual-formation.css'
+import PlanExecutionPanel from '../../../../components/PlanExecutionPanel'
 
 const STORAGE_KEY = 'spiritualFormation.crossLamentHope.records'
 
@@ -47,14 +48,14 @@ export default function CrossLamentHopeDashboard({ userId = 'local-user', token 
       {frame.route === 'crisis_or_professional_support' ? (
         <article className="sf-card"><h3>先照顾安全</h3><p>{frame.safety.message}</p></article>
       ) : (
-        <div className="sf-home-grid">
+        <><div className="sf-home-grid">
           <article className="sf-card"><h3>我听见的痛苦</h3><p>{frame.heardPain}</p><p>{frame.permissionToLament}</p></article>
           <article className="sf-card"><h3>基督亲近软弱</h3><p>{frame.christNear}</p><span className="sf-chip">{frame.scripture}</span></article>
           <article className="sf-card"><h3>可以这样哀告</h3><p className="sf-prayer">{frame.psalmPrayer}</p></article>
           <article className="sf-card"><h3>不需要急着做</h3><ul>{frame.notToRush.map((item) => <li key={item}>{item}</li>)}</ul></article>
           <article className="sf-card"><h3>今天一个小行动</h3><p>{frame.nextSmallStep}</p><button className="sf-primary" type="button" onClick={save}>保存这次哀歌</button></article>
           <article className="sf-card"><h3>真人支持</h3><p>{frame.supportPrompt}</p></article>
-        </div>
+        </div><PlanExecutionPanel userId={userId} planId={`cross-lament:${frame.categoryKey}`} title="今日哀歌回应" actions={[{ id: 'small-step', title: frame.nextSmallStep, cadence: 'daily' }]} /></>
       )}
       <article className="sf-card"><h3>最近记录</h3>{records.slice(0, 7).length ? <ul>{records.slice(0, 7).map((r) => <li key={r.id}>{r.createdAt.slice(0, 10)} · {r.categoryKey}</li>)}</ul> : <p className="sf-empty">还没有保存记录。</p>}</article>
     </section>

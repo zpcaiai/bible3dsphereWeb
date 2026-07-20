@@ -14,7 +14,7 @@ const EMOTIONS = [
   ['烦躁', 'Restlessness'], ['悲伤', 'Grief'],
 ]
 
-export default function StrongholdDiscernmentForm({ onSave }) {
+export default function StrongholdDiscernmentForm({ onSave, userId = 'local-user' }) {
   const [text, setText] = useState('')
   const [emotions, setEmotions] = useState([])
   const [result, setResult] = useState(null)
@@ -135,7 +135,7 @@ export default function StrongholdDiscernmentForm({ onSave }) {
           </div>
 
           {/* 福音回应层 */}
-          <GospelResponsePanel plan={buildGospelResponse(result)} />
+          <GospelResponsePanel plan={buildGospelResponse(result)} userId={userId} />
 
           {/* 主模式完整卡片（可展开查看细节） */}
           <h4 style={{ margin: '22px 0 10px 0', fontSize: '13px', color: 'rgba(255,255,255,0.55)', fontWeight: 700 }}>{T('完整模式卡片', 'Full pattern card')}</h4>

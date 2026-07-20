@@ -218,7 +218,7 @@ export default function SpiritualFormationPage({ user, token, onBack, initialTab
             <h2>Return to Christ, then walk in concrete obedience.</h2>
             <p>{MODULE_DISCLAIMER}</p>
           </div>
-          <PastoralPathCard compact onOpen={openPastoralRoute} />
+          <PastoralPathCard user={user} compact onOpen={openPastoralRoute} />
           <GraceIdentityCard compact inputText="我必须表现好才被爱" token={token} />
           <div className="sf-action-grid">
             {[

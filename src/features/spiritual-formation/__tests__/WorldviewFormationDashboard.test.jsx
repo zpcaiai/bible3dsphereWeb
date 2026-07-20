@@ -64,7 +64,8 @@ describe('WorldviewFormationDashboard', () => {
     expect(screen.getByText('Wisdom Path Summary')).toBeTruthy()
     fireEvent.click(screen.getByText('Create Decision Session'))
     fireEvent.click(screen.getByText('Add Option'))
-    fireEvent.click(screen.getByText('Add Counsel and Summarize'))
+    fireEvent.change(screen.getByLabelText('Counsel actually received'), { target: { value: 'A mentor advised gathering the contract details first.' } })
+    fireEvent.click(screen.getByText('Save Counsel and Summarize'))
 
     const sessions = JSON.parse(window.localStorage.getItem(WORLDVIEW_FORMATION_STORAGE_KEYS.decisionSessions) || '[]')
     const summaries = JSON.parse(window.localStorage.getItem(WORLDVIEW_FORMATION_STORAGE_KEYS.decisionSummaries) || '[]')

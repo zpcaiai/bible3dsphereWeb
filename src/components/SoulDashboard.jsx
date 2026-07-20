@@ -939,7 +939,7 @@ export default function SoulDashboard({ user, onOpenDevotion }) {
           {overlay === 'reminder' && <ReminderSettings onBack={() => setOverlay(null)} />}
           {overlay === 'hub' && <PracticeHubPage user={user} onBack={() => setOverlay(null)} />}
           {overlay === 'gospel' && <GospelDiagnosticPage user={user} onBack={() => setOverlay(null)} />}
-          {overlay === 'planet' && <PlanetHome onClose={() => setOverlay(null)} go={(t) => setOverlay(t)} openExpansion={(key) => {
+          {overlay === 'planet' && <PlanetHome user={user} onClose={() => setOverlay(null)} go={(t) => setOverlay(t)} openExpansion={(key) => {
             onOpenDevotion?.(key || null)
           }} />}
           {overlay === 'pilgrim' && <PilgrimJourneyPage onClose={() => setOverlay(null)} go={(t) => setOverlay(t)} />}

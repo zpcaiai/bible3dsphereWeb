@@ -285,8 +285,8 @@ export function createCallingExperiment(userId, pattern, data = {}) {
 }
 
 export function reviewCallingExperiment(userId, experiment, data = {}) {
-  const fruit = data.fruitObserved || ['one person was helped']
-  const feedback = data.feedbackReceived || ['mentor feedback requested']
+  const fruit = data.fruitObserved || []
+  const feedback = data.feedbackReceived || []
   return {
     id: uid('calling_experiment_review'),
     userId,
@@ -296,8 +296,8 @@ export function reviewCallingExperiment(userId, experiment, data = {}) {
     fruitObserved: fruit,
     feedbackReceived: feedback,
     difficulties: data.difficulties || [],
-    characterExposure: data.characterExposure || ['need patience and humility'],
-    desireAfter: data.desireAfter || 'Desire remains, but should be tested further.',
+    characterExposure: data.characterExposure || [],
+    desireAfter: data.desireAfter || '',
     recommendedNextStep: Number(data.energyLevel || 6) <= 3 ? 'pause and simplify before more experiments' : 'repeat a small experiment with feedback',
     summary: `${fruit.length} fruit marker(s), ${feedback.length} feedback marker(s). Calling remains discerned, not declared.`,
     createdAt: nowIso(),
@@ -410,10 +410,10 @@ export function reviewServiceTrial(userId, trial, data = {}) {
     userId,
     serviceTrialId: trial.id,
     reviewDate: todayKey(),
-    joyScore: Number(data.joyScore ?? 7),
+    joyScore: Number(data.joyScore ?? 0),
     energyCostScore: energyCost,
-    fruitEvidence: data.fruitEvidence || ['served one concrete need'],
-    feedbackReceived: data.feedbackReceived || ['feedback requested'],
+    fruitEvidence: data.fruitEvidence || [],
+    feedbackReceived: data.feedbackReceived || [],
     concerns: data.concerns || [],
     boundaryAdjustments: energyCost >= 8 ? ['reduce frequency', 'ask for support'] : ['keep current limits'],
     recommendedNextStep: energyCost >= 8 ? 'reduce' : 'continue',
@@ -513,11 +513,11 @@ export function addMissionProjectLog(userId, project, data = {}) {
     userId,
     projectId: project.id,
     logDate: todayKey(),
-    actionTaken: data.actionTaken || 'Took one small mission action.',
-    fruitObserved: data.fruitObserved || ['one relational opening'],
+    actionTaken: data.actionTaken || '',
+    fruitObserved: data.fruitObserved || [],
     obstacles: data.obstacles || [],
-    prayerNeeds: data.prayerNeeds || ['love and patience'],
-    nextStep: data.nextStep || 'Keep the next action small.',
+    prayerNeeds: data.prayerNeeds || [],
+    nextStep: data.nextStep || '',
     createdAt: nowIso(),
   }
 }

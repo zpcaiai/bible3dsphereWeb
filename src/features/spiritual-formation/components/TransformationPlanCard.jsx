@@ -1,11 +1,11 @@
 import { sinPatternMap } from '../data/sinPatterns'
+import PlanExecutionPanel from '../../../components/PlanExecutionPanel'
 
 export default function TransformationPlanCard({ plan, onUpdate }) {
-  const completed = plan.completedPracticeIds || []
-  function togglePractice(id) {
-    const next = completed.includes(id) ? completed.filter((item) => item !== id) : [...completed, id]
-    onUpdate?.({ ...plan, completedPracticeIds: next, updatedAt: new Date().toISOString() })
-  }
+  const actions = [
+    ...(plan.dailyPractices || []).map((practice) => ({ ...practice, title: practice.name, cadence: 'daily' })),
+    ...(plan.weeklyPractices || []).map((practice) => ({ ...practice, title: practice.name, cadence: 'weekly' })),
+  ]
   return (
     <article className="sf-card sf-plan-card">
       <div className="sf-card-head">
@@ -19,19 +19,27 @@ export default function TransformationPlanCard({ plan, onUpdate }) {
       <div className="sf-chip-row">{plan.targetFruits.map((fruit) => <span className="sf-chip" key={fruit}>{fruit.replace('_', ' ')}</span>)}</div>
       <div className="sf-practice-columns">
         <div>
-          <h4>Daily practices</h4>
-          {plan.dailyPractices.map((practice) => (
-            <label className="sf-practice-check" key={practice.id}>
-              <input type="checkbox" checked={completed.includes(practice.id)} onChange={() => togglePractice(practice.id)} />
-              <span>{practice.name}<small>{practice.estimatedMinutes} min</small></span>
-            </label>
-          ))}
-        </div>
-        <div>
           <h4>Weekly review questions</h4>
           <ul>{plan.reviewQuestions.map((item) => <li key={item}>{item}</li>)}</ul>
         </div>
       </div>
+      <PlanExecutionPanel
+        userId={plan.userId}
+        planId={`transformation:${plan.id}`}
+        title="转化计划执行"
+        description="每日操练按日期重新出现；每周操练按周记录，不会因一次勾选而永久完成。"
+        actions={actions}
+        onProgress={(summary) => onUpdate?.({
+          ...plan,
+          executionSummary: {
+            currentCompleted: summary.completed,
+            currentTotal: summary.total,
+            totalCheckins: summary.totalCheckins,
+            updatedAt: new Date().toISOString(),
+          },
+          updatedAt: new Date().toISOString(),
+        })}
+      />
       <div className="sf-plan-actions">
         <button type="button" onClick={() => onUpdate?.({ ...plan, status: 'paused', updatedAt: new Date().toISOString() })}>Pause</button>
         <button type="button" onClick={() => onUpdate?.({ ...plan, status: 'completed', updatedAt: new Date().toISOString() })}>Complete</button>

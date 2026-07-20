@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import BackButton from './BackButton'
 import { agentApi } from './api'
 import { getToken } from './auth'
+import PlanExecutionPanel from './components/PlanExecutionPanel'
 
 const card = { background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, padding: 14, marginBottom: 12 }
 const btn = { cursor: 'pointer', borderRadius: 10, padding: '8px 12px', border: 'none', color: '#fff', fontWeight: 700, background: 'linear-gradient(135deg, rgba(139,92,246,0.85), rgba(245,181,63,0.6))' }
@@ -102,6 +103,20 @@ export default function FormationAgentDashboard({ user, onBack, go }) {
               </div>
             ))}
             {(plan.guardrails || []).map((g, i) => <div key={i} style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', marginTop: 4 }}>· {g}</div>)}
+            <PlanExecutionPanel
+              user={user}
+              planId={`formation-agent:${plan.id || plan.plan_date || new Date().toISOString().slice(0, 10)}`}
+              title="今日成长计划执行"
+              description="完成记录来自你的实际打卡；重新生成计划不会自动生成复盘。"
+              defaultCadence="daily"
+              actions={(plan.practices || []).map((practice, index) => ({
+                id: practice.id || practice.key || `practice-${index + 1}`,
+                title: practice.title,
+                cadence: 'daily',
+                minutes: practice.duration_minutes,
+                minimum: practice.minimum,
+              }))}
+            />
           </div>
         ) : <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)' }}>{i18nT('点「生成」获得今天 3 项小操练。')}</div>}
       </div>

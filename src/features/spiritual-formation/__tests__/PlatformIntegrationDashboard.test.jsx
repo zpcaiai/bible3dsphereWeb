@@ -35,7 +35,7 @@ describe('PlatformIntegrationDashboard', () => {
 
     expect(stored(PLATFORM_INTEGRATION_STORAGE_KEYS.spiritualProfiles)[0].primaryGrowthFocus).toBe('prayerful stability')
     expect(stored(PLATFORM_INTEGRATION_STORAGE_KEYS.dailyPlans)[0].status).toBe('active')
-    expect(stored(PLATFORM_INTEGRATION_STORAGE_KEYS.weeklyReviews)[0].summary).toContain('grace')
+    expect(stored(PLATFORM_INTEGRATION_STORAGE_KEYS.weeklyReviews)).toHaveLength(0)
     expect(stored(PLATFORM_INTEGRATION_STORAGE_KEYS.tutorConversations)[0].messages.length).toBeGreaterThan(1)
   })
 
@@ -43,6 +43,7 @@ describe('PlatformIntegrationDashboard', () => {
     render(<PlatformIntegrationDashboard userId="u1" />)
 
     fireEvent.click(screen.getByText('Analytics'))
+    fireEvent.change(screen.getByLabelText('Grace evidence (optional)'), { target: { value: 'Grace noticed in an honest prayer.' } })
     fireEvent.click(screen.getByText('Aggregate Formation Metrics'))
 
     expect(stored(PLATFORM_INTEGRATION_STORAGE_KEYS.metricValues).length).toBeGreaterThan(5)

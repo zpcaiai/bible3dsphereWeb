@@ -58,7 +58,7 @@ describe('Community, Accountability & Discipleship OS engine', () => {
     const { group, member } = createAccountabilityGroup('u1', { groupType: 'weekly_triads' })
     const goal = createAccountabilityGoal('u1', group, { title: 'Weekly prayer check-in' })
     const checkinResult = createAccountabilityCheckin('u1', group, { struggle: 'I need help with steady prayer.', prayerRequest: 'Pray for humility.' })
-    const response = addAccountabilityResponse('u1', checkinResult.checkin, {})
+    const response = addAccountabilityResponse('u1', checkinResult.checkin, { responseText: 'I am standing with you in grace.' })
     const prayer = createGroupPrayerRequest('u1', group, { title: 'Prayer for courage' })
     const review = generateGroupReview('u1', group, [checkinResult.checkin], [prayer])
 
@@ -91,7 +91,7 @@ describe('Community, Accountability & Discipleship OS engine', () => {
     const connection = createChurchConnection('u1', { churchProfileId: profile.id, connectionStatus: 'not_connected' })
     const recommendation = recommendChurchIntegration('u1', 'I have no church and want to visit safely.', connection)
     const rhythm = createChurchRhythm('u1', { churchConnectionId: connection.id, templateKey: 'lord_day_worship' })
-    const checkin = createChurchCheckin('u1', rhythm, {})
+    const checkin = createChurchCheckin('u1', rhythm, { attendedOrPracticed: true, reflection: 'Participated with attention.' })
     const opportunity = createMinistryOpportunity('u1', { ministryArea: 'hospitality' })
     const match = generateMinistryMatch('u1', opportunity, { capacity: 'low' })
     const reentry = createChurchReentryPlan('u1', { reasonText: 'I experienced church hurt and spiritual abuse.' })

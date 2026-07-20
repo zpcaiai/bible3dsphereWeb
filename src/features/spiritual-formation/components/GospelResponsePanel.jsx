@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { T } from '../lib/localize'
 import RepentancePathView from './RepentancePathView'
+import PlanExecutionPanel from '../../../components/PlanExecutionPanel'
 
 // 福音回应面板 / Gospel-response panel — 渲染 buildGospelResponse 的结果。
-export default function GospelResponsePanel({ plan }) {
+export default function GospelResponsePanel({ plan, userId = 'local-user' }) {
   const [showPath, setShowPath] = useState(false)
   if (!plan) return null
 
@@ -124,13 +125,25 @@ export default function GospelResponsePanel({ plan }) {
         </div>
       </Section>
 
+      <PlanExecutionPanel
+        userId={userId}
+        planId={`gospel-response:${plan.primaryStrongholdCode || 'current'}`}
+        title="福音回应执行"
+        description="经文、默想、祷告和回应分别记录，不以阅读计划文本代替实际完成。"
+        actions={[
+          ...(plan.scripturePlan?.days || []).map((day) => ({ id: `scripture-${day.day}`, title: `第 ${day.day} 天 · ${day.reference} · ${day.meditationQuestion}`, cadence: 'once' })),
+          { id: 'today-action', title: plan.action.today, cadence: 'daily' },
+          { id: 'weekly-action', title: plan.action.thisWeek, cadence: 'weekly' },
+        ]}
+      />
+
       {/* 7. 悔改路径 */}
       <div style={{ marginTop: '14px', background: 'rgba(255,149,0,0.04)', border: '1px solid rgba(255,149,0,0.16)', borderRadius: '14px', padding: '16px' }}>
         <button type="button" onClick={() => setShowPath((v) => !v)} style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'none', border: 'none', cursor: 'pointer', color: '#ffcf8b', fontSize: '14px', fontWeight: 800, padding: 0 }}>
           <span>🛤️ {T('把这次看见化作悔改路径', 'Turn this into a repentance path')}</span>
           <span style={{ transform: showPath ? 'rotate(180deg)' : 'none', transition: 'transform .2s' }}>▼</span>
         </button>
-        {showPath && <RepentancePathView strongholdCode={plan.primaryStrongholdCode} />}
+        {showPath && <RepentancePathView strongholdCode={plan.primaryStrongholdCode} userId={userId} />}
       </div>
     </div>
   )
