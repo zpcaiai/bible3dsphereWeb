@@ -5,11 +5,13 @@
  *  - 移除「行为追踪」tab（合并入灵修操练）
  *  - 「习惯养成」→「灵修操练」
  */
+import { t as i18nT } from '../i18n/runtime'
 
 export default function SoulTabs({ activeTab, onTabChange }) {
   const tabs = [
     { key: 'dashboard',   label: '今日心镜', emoji: '🪞' },
     { key: 'personality', label: '人格塑造', emoji: '🔮' },
+    { key: 'graph',       label: '形成图谱', emoji: '🕸️' },
     { key: 'habits',      label: '灵修操练', emoji: '🌱' },
     { key: 'library',     label: '模式库',   emoji: '🔍' },
     { key: 'crisis',      label: '危机守护', emoji: '🆘' },
@@ -55,7 +57,7 @@ export default function SoulTabs({ activeTab, onTabChange }) {
           }}
         >
           <span style={{ fontSize: '16px' }}>{tab.emoji}</span>
-          <span>{tab.label}</span>
+          <span>{i18nT(tab.label)}</span>
         </button>
       ))}
     </div>

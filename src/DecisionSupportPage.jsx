@@ -10,6 +10,7 @@ import HabitsPage from './HabitsPage'
 import PersonalityPage from './PersonalityPage'
 import SoulTabs from './components/SoulTabs'
 import SoulDashboard from './components/SoulDashboard'
+import FormationGraph3D from './FormationGraph3D'
 import SinPatternLibrary from './features/spiritual-formation/components/SinPatternLibrary'
 import CrisisCarePage from './features/crisis-care/app/CrisisCarePage'
 import CrisisHelpButton from './features/crisis-care/components/CrisisHelpButton'
@@ -1742,10 +1743,11 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
       <div style={{ paddingBottom: embedded ? '0' : '80px' }}>
         {activeTab === 'dashboard' && <SoulDashboard user={user} onOpenDevotion={onOpenDevotion} />}
         {activeTab === 'personality' && <PersonalityPage user={user} embedded={true} onSyncToHabits={() => setActiveTab('habits')} />}
+        {activeTab === 'graph' && <FormationGraph3D userId={user?.id || user?.email} token={getToken()} onNeedLogin={onNeedLogin} />}
         {activeTab === 'habits' && <HabitsPage user={user} token={getToken()} embedded={true} onNeedLogin={onNeedLogin} onNavigateToLibrary={() => setActiveTab('library')} />}
         {activeTab === 'library' && <SinPatternLibrary />}
         {activeTab === 'crisis' && <CrisisCarePage user={user} token={getToken()} onOpenLibrary={() => setActiveTab('library')} />}
-        {activeTab !== 'dashboard' && activeTab !== 'personality' && activeTab !== 'habits' && activeTab !== 'library' && activeTab !== 'crisis' && (
+        {activeTab !== 'dashboard' && activeTab !== 'personality' && activeTab !== 'graph' && activeTab !== 'habits' && activeTab !== 'library' && activeTab !== 'crisis' && (
           analysisResult ? renderAnalysisResult() : (
             <>
               {activeTab === 'new' && renderNewDecisionForm()}

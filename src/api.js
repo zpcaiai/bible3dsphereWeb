@@ -11,6 +11,108 @@ function resolveDefaultApiBase() {
 
 export const API_BASE = configuredApiBase || resolveDefaultApiBase()
 
+function authenticatedHeaders(token, json = false) {
+  return {
+    ...(json ? { 'Content-Type': 'application/json' } : {}),
+    ...(token && token !== 'cookie-session'
+      ? { Authorization: `Bearer ${token}` }
+      : {}),
+  }
+}
+
+async function readApiJson(response, fallbackMessage) {
+  const data = await response.json().catch(() => ({}))
+  if (!response.ok) {
+    throw new Error(data.detail || data.error || fallbackMessage)
+  }
+  return data
+}
+
+// Personal formation graph (PostgreSQL-backed, depth-limited for 3D rendering).
+export async function fetchFormationSubgraph(
+  userId,
+  { focusNode = '', depth = 2, maxNodes = 200 } = {},
+  token,
+) {
+  const params = new URLSearchParams({ depth: String(depth), max_nodes: String(maxNodes) })
+  if (focusNode) params.set('focus_node', focusNode)
+  const response = await fetch(
+    `${API_BASE}/sfds/v2/graph/subgraph/${encodeURIComponent(userId)}?${params}`,
+    { headers: authenticatedHeaders(token) },
+  )
+  return readApiJson(response, '灵性形成图加载失败')
+}
+
+export async function fetchFormationGraphStats(userId, token) {
+  const response = await fetch(
+    `${API_BASE}/sfds/v2/graph/stats/${encodeURIComponent(userId)}`,
+    { headers: authenticatedHeaders(token) },
+  )
+  return readApiJson(response, '图统计加载失败')
+}
+
+export async function fetchFormationGraphEvents(userId, token, limit = 10) {
+  const response = await fetch(
+    `${API_BASE}/sfds/v2/graph/events/${encodeURIComponent(userId)}?limit=${limit}`,
+    { headers: authenticatedHeaders(token) },
+  )
+  return readApiJson(response, '形成历史加载失败')
+}
+
+export async function fetchFormationGraphHealth(userId, token) {
+  const response = await fetch(
+    `${API_BASE}/sfds/v2/graph/health/${encodeURIComponent(userId)}`,
+    { headers: authenticatedHeaders(token) },
+  )
+  return readApiJson(response, '图健康状态加载失败')
+}
+
+export async function saveFormationGraphPositions(userId, positions, token) {
+  const response = await fetch(
+    `${API_BASE}/sfds/v2/graph/positions/${encodeURIComponent(userId)}`,
+    {
+      method: 'POST',
+      headers: authenticatedHeaders(token, true),
+      body: JSON.stringify({ positions }),
+    },
+  )
+  return readApiJson(response, '图坐标保存失败')
+}
+
+export async function recordFormationGraphInteraction(
+  userId,
+  sourceNodeId,
+  targetNodeId,
+  interactionType = 'click',
+  token,
+) {
+  const response = await fetch(`${API_BASE}/sfds/v2/graph/interaction`, {
+    method: 'POST',
+    headers: authenticatedHeaders(token, true),
+    body: JSON.stringify({
+      user_id: String(userId),
+      source_node_id: sourceNodeId,
+      target_node_id: targetNodeId,
+      interaction_type: interactionType,
+    }),
+  })
+  return readApiJson(response, '关系交互记录失败')
+}
+
+export async function fetchFormationGraphRag(userId, query, token, options = {}) {
+  const response = await fetch(`${API_BASE}/sfds/v2/graph/rag`, {
+    method: 'POST',
+    headers: authenticatedHeaders(token, true),
+    body: JSON.stringify({
+      user_id: String(userId),
+      query,
+      top_k: options.topK || 5,
+      graph_depth: options.graphDepth || 2,
+    }),
+  })
+  return readApiJson(response, '图增强检索失败')
+}
+
 const BIBLE_TEXT_FIXES = [
   [/酒\?/g, '酒榨'],
   [/大\?疯/g, '大麻风'],
