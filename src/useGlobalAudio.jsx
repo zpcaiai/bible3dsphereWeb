@@ -291,7 +291,7 @@ export function TTSButton({ text, style }) {
  * Props: buildText (fn → string), label (optional string)
  */
 export function TTSFullBar({ buildText, label = '全文朗读' }) {
-  const { ttsState, speak, stop } = useGlobalAudio()
+  const { ttsState, speak, stop, togglePause } = useGlobalAudio()
 
   const isIdle = ttsState === 'idle'
   const isLoading = ttsState === 'loading'
@@ -339,6 +339,24 @@ export function TTSFullBar({ buildText, label = '全文朗读' }) {
         {isLoading ? '⏳' : isActive ? '🔄' : '🔊'}
         <span>{isLoading ? '加载中...' : isActive ? '重新播放' : label}</span>
       </button>
+
+      {(isPlaying || isPaused) && (
+        <button
+          type="button"
+          onClick={togglePause}
+          style={{
+            background: 'none',
+            border: '1px solid rgba(255,255,255,0.2)',
+            borderRadius: 8,
+            color: isPaused ? '#34c759' : 'rgba(255,255,255,0.5)',
+            padding: '5px 10px',
+            fontSize: 12,
+            cursor: 'pointer',
+          }}
+        >
+          {isPaused ? i18nT('▶️ 继续') : i18nT('⏸ 暂停')}
+        </button>
+      )}
 
       {(isPlaying || isPaused || isLoading) && (
         <button
