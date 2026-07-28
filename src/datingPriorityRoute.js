@@ -1,4 +1,4 @@
-export const DATING_PRIORITY_PATH = '/desire-survey'
+export const DATING_PRIORITY_PATH = '/amor-survey'
 
 export function isDatingPriorityPath(pathname = '') {
   const normalizedPath = String(pathname).replace(/\/+$/, '') || '/'
