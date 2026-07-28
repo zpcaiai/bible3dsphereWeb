@@ -529,32 +529,6 @@
   line-height: 1.55;
 }
 
-.dp-strength {
-  display: inline-flex;
-  margin-top: 7px;
-  padding: 3px 8px;
-  border-radius: 999px;
-  color: #87513e;
-  background: rgba(176, 91, 66, 0.1);
-  font-size: 10px;
-  font-weight: 800;
-}
-
-.dp-strength-极高 {
-  color: #8c2f28;
-  background: rgba(183, 50, 43, 0.13);
-}
-
-.dp-strength-很高 {
-  color: #9a4a2d;
-  background: rgba(190, 88, 47, 0.13);
-}
-
-.dp-strength-高 {
-  color: #9b6429;
-  background: rgba(190, 126, 47, 0.13);
-}
-
 .dp-veto-check {
   display: grid;
   width: 24px;
@@ -828,7 +802,7 @@
 
 .dp-veto-result-list li {
   display: grid;
-  grid-template-columns: 26px minmax(0, 1fr) auto;
+  grid-template-columns: 26px minmax(0, 1fr);
   align-items: center;
   gap: 10px;
   padding: 10px 12px;
@@ -850,13 +824,6 @@
 
 .dp-veto-result-list strong {
   font-size: 12px;
-}
-
-.dp-veto-result-list em {
-  color: #9b542f;
-  font-size: 10px;
-  font-style: normal;
-  font-weight: 900;
 }
 
 .dp-current-stats {

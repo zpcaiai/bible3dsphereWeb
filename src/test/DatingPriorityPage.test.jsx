@@ -101,6 +101,8 @@ describe('DatingPriorityPage', () => {
     expect(screen.getByRole('heading', { name: '当前统计结果' })).toBeTruthy()
     expect(screen.getByText('8', { selector: '.dp-stats-heading > strong' })).toBeTruthy()
     expect(screen.getByText(/75% 选择/)).toBeTruthy()
+    expect(screen.queryByText('极高')).toBeNull()
+    expect(screen.queryByText(/强度/)).toBeNull()
     expect(onSubmit).toHaveBeenCalledTimes(1)
     expect(onSubmit.mock.calls[0][0].selected).toEqual([])
     expect(onSubmit.mock.calls[0][0].vetoes).toEqual([
@@ -116,16 +118,16 @@ describe('DatingPriorityPage', () => {
     expect(submitSurveyMock.mock.calls[0][1]).not.toHaveProperty('visitor_id')
   })
 
-  it('shows supplied veto ranks and strengths while allowing independent multi-select', () => {
+  it('shows veto ranks without strength labels while allowing independent multi-select', () => {
     render(<DatingPriorityPage />)
     fireEvent.click(screen.getByRole('button', { name: /我在选择男性伴侣/ }))
 
     const vetoes = screen.getAllByTestId('veto-option')
     expect(vetoes).toHaveLength(12)
     expect(vetoes[0].textContent).toContain('1')
-    expect(vetoes[0].textContent).toContain('极高')
+    expect(vetoes[0].textContent).not.toContain('极高')
     expect(vetoes[11].textContent).toContain('12')
-    expect(vetoes[11].textContent).toContain('因人而异')
+    expect(vetoes[11].textContent).not.toContain('因人而异')
 
     fireEvent.click(vetoes[0])
     fireEvent.click(vetoes[11])

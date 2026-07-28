@@ -408,7 +408,7 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
                 </button>
               </div>
               <p className="dp-veto-help">
-                以下顺序和强度是问卷提供的参考，不会改变你的优先级排序。请选择所有适用于你的条件，也可以一项不选。
+                以下顺序仅用于呈现，不会改变你的优先级排序。请选择所有适用于你的条件，也可以一项不选。
               </p>
               <div className="dp-veto-count" aria-live="polite">
                 已选 {selectedVetoIds.length} / {vetoItems.length}
@@ -428,7 +428,6 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
                       <span className="dp-veto-rank">{item.rank}</span>
                       <span className="dp-veto-copy">
                         <strong>{item.label}</strong>
-                        <span className={`dp-strength dp-strength-${item.strength}`}>{item.strength}</span>
                       </span>
                       <span className="dp-veto-check" aria-hidden="true">✓</span>
                     </button>
@@ -588,7 +587,6 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
                     <li key={`${item.suppliedRank}-${item.label}`}>
                       <span>{item.suppliedRank}</span>
                       <strong>{item.label}</strong>
-                      <em>{item.strength}</em>
                     </li>
                   ))}
                 </ol>
@@ -639,7 +637,7 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
                           <div className="dp-stat-main">
                             <div>
                               <strong>{item.label}</strong>
-                              <span>{item.selection_rate}% 选择 · 强度 {item.strength}</span>
+                              <span>{item.selection_rate}% 选择</span>
                             </div>
                             <div className="dp-stat-bar dp-stat-veto-bar" aria-hidden="true">
                               <i style={{ width: `${Math.min(100, item.selection_rate)}%` }} />
