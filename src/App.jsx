@@ -34,6 +34,7 @@ import PastoralPathCard, { PASTORAL_ROUTE_TARGETS } from './components/PastoralP
 import { useGuardianStore } from './components/guardian/guardianStore'
 import { curateAnthropicEmotionLayout } from './data/anthropicEmotionConcepts'
 import { getCuratedEmotionScriptureDetail } from './data/emotionScriptureDetail'
+import { isDatingPriorityPath } from './datingPriorityRoute'
 
 const CheckInPage = lazyWithRetry(() => import('./CheckInPage'))
 const ShareWallPage = lazyWithRetry(() => import('./ShareWallPage'))
@@ -1255,6 +1256,10 @@ function AppContent() {
   useEffect(() => {
     if (authLoading) return
     try {
+      if (isDatingPriorityPath(window.location.pathname)) {
+        setTimeout(() => setActivePanel('dating-priority'), 60)
+        return
+      }
       const pathMatch = window.location.pathname.match(/^\/attention(?:\/([^/]+))?\/?$/)
       if (pathMatch) {
         setAttentionInitialSection(pathMatch[1] || 'dashboard')
@@ -1933,7 +1938,6 @@ function AppContent() {
                       { icon: '🃏', labelKey: 'home.snapshot.memoryDeck', panel: 'memory-deck' },
                       { icon: '🗃', labelKey: 'home.snapshot.personalSearch', panel: 'personal-search' },
                       { icon: '📦', labelKey: 'home.snapshot.exportData', panel: 'export-data' },
-                      { icon: '💍', labelKey: '婚恋优先级', panel: 'dating-priority' },
                     ].map((item, i) => (
                       <button key={i}
                         onClick={() => item.action ? item.action() : handlePanelSwitch(item.panel)}
@@ -3131,7 +3135,12 @@ function AppContent() {
         {activePanel === 'dating-priority' && (
           <div className="page-overlay">
             <Suspense fallback={null}>
-              <DatingPriorityPage onBack={() => setActivePanel('sphere')} />
+              <DatingPriorityPage
+                onBack={() => {
+                  window.history.replaceState({}, '', '/')
+                  setActivePanel('sphere')
+                }}
+              />
             </Suspense>
           </div>
         )}
