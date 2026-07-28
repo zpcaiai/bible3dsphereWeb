@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { Meter, RingProgress } from '../../components/charts'
 import { t as i18nT } from '../../i18n/runtime'
 import {
   acceptProtectionAction,
@@ -58,6 +59,13 @@ const DEFAULT_SETTINGS = {
   all_warnings_paused: false,
 }
 
+// 严重度色只跟随后端 EarlyWarning.warning_level（contract 里的有序枚举），
+// 前端不自己算风险等级——那就等于造一个被明令禁止的风险分。
+const WARNING_SEVERITY = {
+  AWARENESS: 'good', PROTECTION_SUGGESTED: 'warning',
+  IMMEDIATE_SUPPORT_SUGGESTED: 'serious', CRISIS_HANDOFF: 'critical',
+}
+
 function Empty({ title, children }) {
   return <div className="ft-protection-empty"><strong>{i18nT(title)}</strong><div>{children}</div></div>
 }
@@ -82,6 +90,52 @@ function Conditions({ snapshot }) {
         {unknown.length ? <ul>{unknown.map((item) => <li key={item}>{item}</li>)}</ul> : <p>{i18nT('没有需要系统自动补全的未知条件。')}</p>}
       </article>
     </div>
+  )
+}
+
+// 这一页唯一诚实的量化信息是计数：出现了几项条件、已经有几项保护、还有几项仍然未知。
+// 三个 Meter 共用同一个分母，是为了让「保护」和「未知」永远与「条件」同屏出现——
+// 只画条件数量会被读成风险分；RingProgress 单独把「未知」留成缺口，提醒这不是全景。
+function ProtectionGauges({ snapshot, warning }) {
+  const active = snapshot?.active_conditions_json || snapshot?.active_conditions || []
+  const protections = [
+    ...(snapshot?.active_protective_factors_json || snapshot?.active_protective_factors || []),
+    ...(snapshot?.counterevidence_json || snapshot?.counterevidence || []),
+  ]
+  const unknown = snapshot?.unknown_conditions_json || snapshot?.unknown_conditions || []
+  const total = active.length + protections.length + unknown.length
+  if (!total) return null
+  const severity = WARNING_SEVERITY[warning?.warning_level]
+  return (
+    <div className="ft-protection-gauges" style={{ display: 'flex', flexWrap: 'wrap', gap: 18, alignItems: 'center', margin: '12px 0' }}>
+      <RingProgress
+        value={active.length + protections.length} max={total}
+        label={i18nT('已经写下来的部分')} sublabel={`${unknown.length} ${i18nT('项仍未知')}`}
+      />
+      <div style={{ display: 'grid', gap: 10, flex: '1 1 260px', minWidth: 240 }}>
+        <Meter
+          label={i18nT('当前出现的条件')} value={active.length} max={total} unit={i18nT(' 项')} severity={severity}
+          hint={severity ? i18nT('颜色只来自当前提醒等级，不是概率或风险分。') : i18nT('当前没有提醒等级；条件计数本身不代表风险。')}
+        />
+        <Meter label={i18nT('当前已有保护')} value={protections.length} max={total} unit={i18nT(' 项')} severity="good" />
+        <Meter label={i18nT('仍然未知')} value={unknown.length} max={total} unit={i18nT(' 项')} hint={i18nT('未知不会被系统猜测补全。')} />
+      </div>
+    </div>
+  )
+}
+
+// 每个循环单独一条 Meter：它回答的是「我自己写下的这些条件，此刻符合了几条」，
+// 分母是你自己列出的条件数，所以这是核对，不是打分。
+function CycleConditionMeter({ cycle, activeCodes }) {
+  const listed = [...(cycle.trigger_conditions_json || []), ...(cycle.vulnerability_conditions_json || [])]
+  if (!listed.length) return null
+  const matched = listed.filter((code) => activeCodes.has(code)).length
+  const severity = matched === 0 ? 'good' : matched === listed.length ? 'serious' : 'warning'
+  return (
+    <Meter
+      label={i18nT('此刻符合的条件')} value={matched} max={listed.length} unit={`/${listed.length}`} severity={severity}
+      hint={i18nT('这是条件计数，不是复发概率；条件齐了也不等于行为会发生。')}
+    />
   )
 }
 
@@ -139,6 +193,10 @@ export default function FormationTwinProtection({ user, onSafety }) {
   const action = current?.action || null
   const warningPrivate = warning?.sharing_status !== 'USER_INITIATED'
   const activePlan = useMemo(() => plans.find((item) => item.active) || null, [plans])
+  const activeConditionCodes = useMemo(() => new Set(
+    (current?.snapshot?.active_conditions_json || current?.snapshot?.active_conditions || [])
+      .map((item) => item.condition_code || item),
+  ), [current])
 
   const createCycle = () => {
     const required = cycleDraft.conditions.split(',').map((item) => item.trim()).filter(Boolean)
@@ -203,6 +261,7 @@ export default function FormationTwinProtection({ user, onSafety }) {
             <div><h4>{i18nT('当前保护状态')}</h4><p>{i18nT('条件、保护因素和未知项会同时显示。')}</p></div>
             <button type="button" disabled={!!busy} onClick={() => run('recalculate', () => recalculateProtection({}), '当前状态已重新核对。')}>{i18nT('重新核对')}</button>
           </div>
+          <ProtectionGauges snapshot={current?.snapshot} warning={warning} />
           <Conditions snapshot={current?.snapshot} />
           {warning ? (
             <article className={`ft-warning-card level-${String(warning.warning_level).toLowerCase()}`}>
@@ -249,6 +308,7 @@ export default function FormationTwinProtection({ user, onSafety }) {
                 <span>{item.lifecycle_status} · v{item.version}</span><h4>{item.title}</h4>
                 <p>{i18nT('触发与脆弱条件')}：{[...(item.trigger_conditions_json || []), ...(item.vulnerability_conditions_json || [])].join(' · ') || i18nT('尚未补充')}</p>
                 <p>{i18nT('保护与中断点')}：{[...(item.protective_factors_json || []), ...(item.interruption_points_json || [])].join(' · ') || i18nT('尚未补充')}</p>
+                <CycleConditionMeter cycle={item} activeCodes={activeConditionCodes} />
                 <footer>
                   {!item.user_confirmed ? <button type="button" onClick={() => run('confirm-cycle', () => updateTemptationCycleStatus(item.id, 'confirm'), '循环已由你确认。')}>{i18nT('确认启用')}</button> : null}
                   <button type="button" onClick={() => run('pause-cycle', () => updateTemptationCycleStatus(item.id, item.lifecycle_status === 'PAUSED' ? 'resume' : 'pause'), '循环状态已更新。')}>{item.lifecycle_status === 'PAUSED' ? i18nT('恢复') : i18nT('暂停')}</button>

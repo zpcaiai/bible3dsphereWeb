@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { DecisionTree } from '../../components/charts'
 import { t as i18nT } from '../../i18n/runtime'
 import {
   convertScenarioToProposal, createComplianceRequest, createFormationScenario,
@@ -15,7 +16,42 @@ const TABS = [
   ['current', '当前情景'], ['new', '新建比较'], ['history', '历史'], ['transparency', '数据与透明'], ['settings', '设置'],
 ]
 
+const HORIZON_LABELS = {
+  NEXT_EVENT: '下一次类似处境', NEXT_24_HOURS: '未来 24 小时', NEXT_7_DAYS: '未来 7 天',
+  NEXT_30_DAYS: '未来 30 天', CURRENT_LIFE_SEASON: '当前人生阶段', USER_DEFINED: '我自己定义的范围',
+}
+
 function Empty({ children }) { return <div className="ft-scenario-empty"><span aria-hidden="true">◇</span><p>{children}</p></div> }
+
+// tone 只由「这个分支下你已经写下几条可能效果、几条可能代价」决定。
+// 它不是推荐、成功率或属灵评价：contract 明确禁止任何概率字段，这里也只数条目。
+function branchTone(branch) {
+  const effects = (branch.plausible_near_term_effects || []).length
+  const tradeoffs = (branch.possible_tradeoffs || []).length
+  if (tradeoffs > effects) return 'risk'
+  if (effects > 0 && tradeoffs === 0) return 'good'
+  return 'option'
+}
+
+// 情景比较天生是一棵树：一个共同起点 → 几条互斥走向 → 每条走向下已记录的效果、代价与未知。
+// 三张并排卡片会被读成「三件事」；只有画成分支，才看得出它们同源、互斥、且都从此刻出发。
+function scenarioTree(scenario) {
+  return {
+    label: i18nT('现在的处境'),
+    note: i18nT(HORIZON_LABELS[scenario.horizon] || scenario.horizon || ''),
+    tone: 'neutral',
+    children: (scenario.branches || []).map((branch, index) => ({
+      label: `${index + 1} · ${i18nT(branch.label)}`,
+      note: `${(branch.plausible_near_term_effects || []).length} ${i18nT('项效果')} · ${(branch.possible_tradeoffs || []).length} ${i18nT('项代价')}`,
+      tone: branchTone(branch),
+      children: [
+        ...(branch.plausible_near_term_effects || []).slice(0, 2).map((item) => ({ label: i18nT('可能效果'), note: i18nT(item.description), tone: 'good' })),
+        ...(branch.possible_tradeoffs || []).slice(0, 2).map((item) => ({ label: i18nT('可能代价'), note: i18nT(item), tone: 'risk' })),
+        ...(branch.uncertainty_factors || []).slice(0, 1).map((item) => ({ label: i18nT('仍然不确定'), note: i18nT(item), tone: 'neutral' })),
+      ],
+    })),
+  }
+}
 
 function BranchCard({ branch, onConvert, busy }) {
   return (
@@ -138,6 +174,15 @@ export default function FormationTwinScenarios({ user, onSafety }) {
         <div className="ft-scenario-summary"><div><span>{current.horizon}</span><h4>{current.title}</h4></div><div><button type="button" onClick={() => markInaccurate(current.id)}>{i18nT('这次比较没有意义')}</button><button type="button" className="danger" onClick={() => remove(current.id)}>{i18nT('删除')}</button></div></div>
         <div className="ft-scenario-assumptions"><h5>{i18nT('本次使用的可见假设')}</h5>{current.assumptions.map((item) => <p key={`${item.assumption_type}:${item.description}`}>{item.description}<small>{item.source_kind} · {i18nT('由你确认')}</small></p>)}</div>
         {current.major_decision_limited && <div className="ft-scenario-boundary">{i18nT('重大人生问题只比较近期负担、支持与现实条件；请结合可信真人和相关专业意见。')}</div>}
+        {!!current.branches?.length && (
+          <div className="ft-scenario-tree">
+            <DecisionTree
+              root={scenarioTree(current)}
+              title={i18nT('这次比较的分支结构')}
+              subtitle={i18nT('颜色只反映每个分支已记录的「可能效果 / 可能代价」条数，不是推荐、概率或结论；点开「看数据」可读全文。')}
+            />
+          </div>
+        )}
         <div className="ft-scenario-branches">{current.branches.map((branch) => <BranchCard key={branch.branch_id} branch={branch} busy={busy === `convert:${branch.branch_id}`} onConvert={(branchId) => convert(current.id, branchId)} />)}</div>
         <div className="ft-scenario-evidence"><h5>{i18nT('证据与反证据')}</h5><p>{i18nT('支持')}：{current.evidence_matrix.supporting_evidence.length} · {i18nT('反证据')}：{current.evidence_matrix.counterevidence.length}</p><p>{(current.evidence_matrix.limitations || []).join(' · ')}</p></div>
       </div> : <Empty>{i18nT('还没有有限情景。新建时先写清楚一个假设；没有确认资料时系统不会生成。')}</Empty>)}

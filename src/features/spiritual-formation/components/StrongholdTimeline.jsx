@@ -9,6 +9,7 @@ import {
   TRIGGER_LABEL,
   TRIGGER_INTERVENTION,
 } from '../lib/strongholdHistory'
+import { Timeline } from '../../../components/charts'
 
 const RANGES = [[7, '7天'], [30, '30天'], [90, '90天']]
 
@@ -34,6 +35,32 @@ export default function StrongholdTimeline({ userId = 'local-user', refreshKey =
     () => summarizeStrongholdHistory(records ?? listScanRecords(userId), rangeDays),
     [userId, rangeDays, refreshKey, cleared, records],
   )
+
+  // 这个组件本来就叫「时间轴」，却只列了一串文字；时间的疏密、什么时候回来省察，
+  // 只有画在一条轴上才看得见。纵轴刻意用「当天做了几次辨识」——记录里根本没有
+  // 「严重程度」这样的分数，与其替人编一个罪的刻度，不如只画真实发生过的次数。
+  const timelineEvents = useMemo(() => {
+    const source = records ?? listScanRecords(userId)
+    const cutoff = Date.now() - rangeDays * 24 * 60 * 60 * 1000
+    const byDay = new Map()
+    for (const r of source) {
+      const ts = Date.parse(r.date)
+      if (!Number.isFinite(ts) || ts < cutoff) continue
+      const d = new Date(ts)
+      const day = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+      const bucket = byDay.get(day) || { date: day, value: 0, codes: new Map() }
+      bucket.value += 1
+      if (r.primaryCode) bucket.codes.set(r.primaryCode, (bucket.codes.get(r.primaryCode) ?? 0) + 1)
+      byDay.set(day, bucket)
+    }
+    return [...byDay.values()]
+      .sort((a, b) => a.date.localeCompare(b.date))
+      .slice(-30) // 只画最近 30 个「有记录的日子」，再密就看不清了
+      .map((b) => {
+        const top = [...b.codes.entries()].sort((x, y) => y[1] - x[1])[0]
+        return { date: b.date, value: b.value, label: top ? nameOf(top[0]) : T('未指认模式', 'No pattern named') }
+      })
+  }, [userId, rangeDays, refreshKey, cleared, records])
 
   const insight = buildGrowthInsight(summary)
   const maxCount = summary.topStrongholds[0]?.count || 1
@@ -104,6 +131,19 @@ export default function StrongholdTimeline({ userId = 'local-user', refreshKey =
                   🌱 {T('成长信号：', 'Growth signal: ')}{insight.growthSignals.map((g) => nameOf(g.strongholdCode)).join('、')} {T('最近出现得更少了。', 'has been showing up less.')}
                 </div>
               )}
+            </div>
+          )}
+
+          {/* 时间轴：什么时候、隔多久回来省察一次 */}
+          {timelineEvents.length >= 2 && (
+            <div style={{ marginBottom: '20px' }}>
+              <Timeline
+                title={T('这段时间的辨识轨迹', 'Your discernments over time')}
+                subtitle={T('纵轴是那一天你做了几次辨识——记录里没有「严重程度」这种分数，我们也不替你编一个。点高只说明那天你多回来省察了几次。',
+                            'The vertical axis is how many discernments you made that day — the records hold no severity score and we will not invent one. A higher point only means you came back to reflect more often.')}
+                events={timelineEvents}
+                valueLabel={T('当日辨识次数', 'discernments that day')}
+              />
             </div>
           )}
 

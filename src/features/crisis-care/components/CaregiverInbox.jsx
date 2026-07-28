@@ -1,6 +1,7 @@
 import { t as i18nT } from '../../../i18n/runtime'
 import { useEffect, useState } from 'react'
 import { crisisApi } from '../lib/api'
+import { StatTile, BarSeries } from '../../../components/charts'
 
 /**
  * CaregiverInbox — 牧者/咨询师只读收件箱。
@@ -40,6 +41,32 @@ export default function CaregiverInbox({ heading = '分享给我的人' }) {
       <div className="cc-card">
         <h3>{heading}</h3>
         <p className="cc-muted">{i18nT('只读，且按对方设置的范围。每次查看都会让对方看到。请用于陪伴，而非审判。')}</p>
+        {/* 关怀者最容易过载而不自知。但风险等级只有点开「查看」才拿得到，
+            而每次查看都会让当事人看到——为了画一张图去把每个人都点开一遍，
+            是拿别人的隐私换我们的仪表盘。所以这里只统计「不查看就能知道」的东西：
+            有多少人把自己交托给了你，以及他们各自开放了哪些范围。 */}
+        {loaded && incoming.length > 0 && (() => {
+          const scopeCount = {}
+          incoming.forEach((s) => (s.scope || []).forEach((k) => { scopeCount[k] = (scopeCount[k] || 0) + 1 }))
+          const items = Object.entries(scopeCount).map(([k, v]) => ({ label: SCOPE_LABEL[k] || k, value: v }))
+          return (
+            <div style={{ margin: '10px 0 14px' }}>
+              <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap', marginBottom: 10 }}>
+                <StatTile label={i18nT('把自己交托给你的人')} value={incoming.length} />
+                <StatTile label={i18nT('开放了安全计划')} value={incoming.filter((s) => (s.scope || []).includes('safety_plan')).length} />
+              </div>
+              {items.length > 0 && (
+                <BarSeries
+                  title={i18nT('他们各自开放了哪些范围')}
+                  subtitle={i18nT('这里只统计授权范围，不含任何风险等级——那需要点开查看，而每次查看当事人都会知道。')}
+                  items={items}
+                  unit={i18nT(' 人')}
+                />
+              )}
+            </div>
+          )
+        })()}
+
         {loaded && incoming.length === 0 && <p className="cc-muted">{i18nT('目前没有人分享给你。')}</p>}
         {incoming.map((s) => (
           <div className="cc-resource" key={s.id}>

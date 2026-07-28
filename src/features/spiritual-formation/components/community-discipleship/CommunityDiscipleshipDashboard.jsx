@@ -34,6 +34,7 @@ import {
 import { COMMUNITY_DISCIPLESHIP_STORAGE_KEYS as KEYS, loadCommunityDiscipleshipData, saveCommunityEntry } from '../../lib/communityDiscipleshipStorage'
 import { communityDiscipleshipApi, hydrateCommunityDiscipleshipRemote } from '../../lib/communityDiscipleshipApi'
 import PlanExecutionPanel from '../../../../components/PlanExecutionPanel'
+import { DirectedGraph } from '../../../../components/charts'
 import { MODULE_DISCLAIMER } from '../../lib/pastoralSafety'
 
 function MiniTabs({ active, onChange }) {
@@ -58,6 +59,52 @@ function SummaryCard({ title, items }) {
     <article className="sf-card sf-summary-card">
       <h3>{title}</h3>
       <dl>{items.filter((item) => item.value !== undefined && item.value !== null && item.value !== '').map((item) => <div key={item.label}><dt>{item.label}</dt><dd>{Array.isArray(item.value) ? item.value.join(', ') : item.value}</dd></div>)}</dl>
+    </article>
+  )
+}
+
+// 门训是有方向的关系（谁在陪谁），列表读不出方向，也读不出「有人同时被陪也在陪别人」。
+// 边全部来自 mentorRelationships 里真实存在的 mentorUserId → menteeUserId，
+// 不把小组、教会连线混进来（那是归属，不是门训），也不虚构没有记录的关系。
+// kind 只用来取色位：图里任意两点都可能相邻，所以只用经全对校验的前 3 色。
+export function DiscipleshipGraph({ userId, relationships = [] }) {
+  const active = relationships.filter((item) => item.mentorUserId && item.menteeUserId)
+  if (!active.length) {
+    return (
+      <article className="sf-card">
+        <h3>{T('门训关系图', 'Discipleship graph')}</h3>
+        <p className="sf-empty">{T('还没有任何师徒关系记录。在「Mentor」页建立一次关系后，这张图会显示谁在陪谁。', 'No mentor relationship recorded yet. Create one on the Mentor tab and this graph will show who disciples whom.')}</p>
+      </article>
+    )
+  }
+  const mentors = new Set(active.map((item) => item.mentorUserId))
+  const ids = []
+  active.forEach((item) => {
+    if (!ids.includes(item.mentorUserId)) ids.push(item.mentorUserId)
+    if (!ids.includes(item.menteeUserId)) ids.push(item.menteeUserId)
+  })
+  const nodes = ids.map((id) => ({
+    id,
+    label: id === userId ? T('我', 'Me') : id,
+    kind: mentors.has(id) ? 'trigger' : 'belief',
+    note: mentors.has(id) ? T('在陪伴别人', 'Disciples someone') : T('正被陪伴', 'Is being discipled'),
+  }))
+  const edges = active.map((item) => ({
+    from: item.mentorUserId,
+    to: item.menteeUserId,
+    label: item.status === 'active' ? item.relationshipType : `${item.relationshipType} · ${item.status}`,
+  }))
+  return (
+    <article className="sf-card">
+      <DirectedGraph
+        title={T('谁在陪谁：门训关系图', 'Who disciples whom')}
+        subtitle={T(
+          `${active.length} 条已记录的师徒关系、${nodes.length} 个人；箭头方向就是陪伴的方向，被陪的人若同时也在陪别人，会自己长出下一层。`,
+          `${active.length} recorded mentor relationships across ${nodes.length} people. The arrow is the direction of care; anyone who is both mentored and mentoring grows a further layer.`,
+        )}
+        nodes={nodes}
+        edges={edges}
+      />
     </article>
   )
 }
@@ -103,6 +150,7 @@ export function CommunityOverview({ userId, data }) {
           { label: 'Mentor sessions', value: String(dashboard.weeklySummary.mentorSessionsCompleted) },
           { label: 'Church check-ins', value: String(dashboard.weeklySummary.churchCheckinsCompleted) },
         ]} />
+        <DiscipleshipGraph userId={userId} relationships={data.mentorRelationships} />
         <article className="sf-card">
           <h3>Community insights</h3>
           {dashboard.communityInsights.length ? dashboard.communityInsights.map((insight) => <div className="sf-insight-row" key={insight.type}><b>{insight.summary}</b><p>{insight.recommendedNextAction}</p><span>{insight.type}</span></div>) : <p className="sf-empty">No insights yet. Create one pathway or safe group connection.</p>}

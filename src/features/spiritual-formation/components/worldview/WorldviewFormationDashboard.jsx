@@ -45,6 +45,51 @@ import {
 } from '../../lib/worldviewFormationStorage'
 import { MODULE_DISCLAIMER } from '../../lib/pastoralSafety'
 import PlanExecutionPanel from '../../../../components/PlanExecutionPanel'
+import { Radar } from '../../../../components/charts'
+
+// 雷达图的轴不是把 beliefDomains 全 16 个铺上去（那样每次只有一根刺，读不出形状），
+// 而是 beliefHeuristic 真正会判出的那 7 个领域——引擎能算的维度才配当轴。
+// 用雷达而不是排序条，是因为世界观的问题是「形状是否偏斜」：
+// 哪几个领域被反复触发、哪几个领域从来没被看过，一眼就是一个歪掉的多边形。
+const ENGINE_BELIEF_DOMAIN_KEYS = ['work', 'success', 'money', 'relationships', 'suffering', 'future', 'self']
+
+export function BeliefDomainRadar({ observations = [] }) {
+  const axes = ENGINE_BELIEF_DOMAIN_KEYS.map((key) => ({
+    key,
+    label: beliefDomains.find((domain) => domain.key === key)?.displayName || key,
+  }))
+  const values = {}
+  axes.forEach((axis) => { values[axis.key] = 0 })
+  observations.forEach((observation) => {
+    if (values[observation.domainKey] !== undefined) values[observation.domainKey] += 1
+  })
+  const total = Object.values(values).reduce((sum, value) => sum + value, 0)
+  const untouched = axes.filter((axis) => !values[axis.key])
+
+  if (!total) {
+    return (
+      <article className="sf-card">
+        <h3>{T('信念领域雷达', 'Belief domain radar')}</h3>
+        <p className="sf-empty">{T('还没有确认过任何信念观察，雷达图暂时没有数据。在「Beliefs」页确认一次观察后，这里会长出形状。', 'No confirmed belief observation yet, so the radar has nothing to draw. Confirm one on the Beliefs tab and a shape appears.')}</p>
+      </article>
+    )
+  }
+
+  return (
+    <article className="sf-card">
+      <Radar
+        title={T('信念领域雷达', 'Belief domain radar')}
+        subtitle={T(
+          `${total} 条已记录的信念观察落在这 7 个引擎能判别的领域上；仍有 ${untouched.length} 个领域一次都没出现过，那些没被拉出来的角，往往才是还没被诚实看过的地方。`,
+          `${total} recorded belief observations across the 7 domains the engine can classify; ${untouched.length} domain(s) never appeared. The flat corners are usually what has not been looked at honestly.`,
+        )}
+        axes={axes}
+        series={[{ name: T('信念观察次数', 'Belief observations'), values }]}
+        max={Math.max(1, ...Object.values(values))}
+      />
+    </article>
+  )
+}
 
 function MiniTabs({ active, onChange }) {
   const tabs = [
@@ -355,6 +400,7 @@ export default function WorldviewFormationDashboard({ userId = 'local-user' }) {
             <SummaryCard title="Idol Map" items={[{ label: 'Active', value: String(dashboard.today.activeIdolPatterns.length) }, { label: 'Insight', value: dashboard.formationInsights.map((item) => item.summary) }]} />
             <SummaryCard title="Worldview Weekly" items={[{ label: 'Belief observations', value: String(dashboard.weeklySummary.beliefObservationsCreated) }, { label: 'Idol observations', value: String(dashboard.weeklySummary.idolObservationsCreated) }, { label: 'Reframes completed', value: String(dashboard.weeklySummary.reframingSessionsCompleted) }, { label: 'Decision sessions', value: String(dashboard.weeklySummary.decisionSessionsUpdated) }]} />
           </div>
+          <BeliefDomainRadar observations={data.beliefObservations} />
           <article className="sf-card sf-flow-card">
             <h3>Worldview Orchestrator</h3>
             <label>Intent<textarea value={intent} onChange={(event) => setIntent(event.target.value)} /></label>

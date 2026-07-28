@@ -11,6 +11,7 @@ import {
   fetchIdolatrySignals, assessIdolatry, fetchIdolatryPatterns,
 } from './api'
 import { getToken } from './auth'
+import { BarSeries, Radar, TrendLine } from './components/charts'
 import { a11yClickProps } from './lib/a11yClick';
 
 const IDOLS = [
@@ -217,6 +218,14 @@ export default function IdolatryMonitorPage({ user, onBack, onNeedLogin }) {
 }
 
 function ResultView({ result, onAgain }) {
+  const patterns = result.patterns || []
+  // 依附强度是「一个加权平均」，但五个子维度合起来才是这个偶像的形状：
+  // 同样 60 分，可能是「怕失去」撑起来的，也可能是「身份依赖」撑起来的，救法完全不同。
+  // 雷达把这个形状一次读出来；同框叠加的多边形只用前 3 个色位（见 chartTheme 规则）。
+  const radarSeries = patterns.slice(0, 3).map(p => ({
+    name: `${p.meta?.name || p.target_type}${p.target_name ? ` · ${p.target_name}` : ''}`,
+    values: Object.fromEntries(DIMS.map(d => [d.key, Math.round((p.dims?.[d.key] || 0) * 100)])),
+  }))
   return (
     <>
       <div style={{ ...card, background: 'linear-gradient(135deg, rgba(52,199,89,0.10), rgba(90,200,250,0.08))' }}>
@@ -224,7 +233,29 @@ function ResultView({ result, onAgain }) {
         <div style={{ fontSize: 13.5, lineHeight: 1.75, color: 'rgba(255,255,255,0.85)' }}>{result.summary}</div>
       </div>
 
-      {(result.patterns || []).map((p, i) => (
+      {patterns.length > 1 && (
+        <div style={{ marginBottom: 12 }}>
+          <BarSeries
+            title={i18nT('这次省察的依附强度排序')}
+            subtitle={i18nT('依附强度指数 AII · 0–100，由五个子维度加权得出')}
+            items={patterns.map(p => ({ label: p.meta?.name || p.target_type, value: Math.round((p.intensity || 0) * 100) }))}
+          />
+        </div>
+      )}
+
+      {radarSeries.length > 0 && (
+        <div style={{ marginBottom: 12 }}>
+          <Radar
+            axes={DIMS.map(d => ({ key: d.key, label: d.name }))}
+            series={radarSeries}
+            max={100}
+            title={i18nT('五个信号的形状')}
+            subtitle={patterns.length > 3 ? i18nT('只画强度最高的三项，避免形状互相盖住') : i18nT('看的不是分数高低，是这个依附靠哪几根柱子撑着')}
+          />
+        </div>
+      )}
+
+      {patterns.map((p, i) => (
         <PatternCard key={i} p={p} />
       ))}
 
@@ -302,20 +333,48 @@ function PatternCard({ p }) {
 function HistoryView({ sessions, loading }) {
   if (loading) return <div style={{ ...card, textAlign: 'center', color: 'rgba(255,255,255,0.5)' }}>{i18nT('加载中…')}</div>
   if (!sessions || sessions.length === 0) return <div style={{ ...card, textAlign: 'center', color: 'rgba(255,255,255,0.5)' }}>{i18nT('还没有省察记录')}</div>
-  return sessions.map(s => {
-    const r = RISK[s.risk_level] || RISK.low
-    const name = IDOL_MAP[s.top_target]?.name || '—'
-    return (
-      <div key={s.session_id} style={card}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-          <span style={{ fontSize: 13, fontWeight: 600 }}>{IDOL_MAP[s.top_target]?.emoji} {name}</span>
-          <span style={{ fontSize: 11, color: r.color, fontWeight: 700 }}>{r.label} · {Math.round((s.top_intensity || 0) * 100)}</span>
+
+  // /idolatry/patterns 是按 created_at DESC 返回的，画趋势要翻回时间正序。
+  // 单看一次省察只知道「现在多高」，看不出「在长」；升起来的偶像只有在时间轴上才认得出。
+  const asc = [...sessions].reverse()
+  const trendLabels = asc.map(x => (x.created_at || '').slice(5, 10))
+  const trendValues = asc.map(x => Math.round((x.top_intensity || 0) * 100))
+  const rising = trendValues.length > 1 && trendValues[trendValues.length - 1] > trendValues[0]
+
+  return (
+    <>
+      {asc.length > 1 && (
+        <div style={{ marginBottom: 12 }}>
+          <TrendLine
+            title={i18nT('最强依附的走势')}
+            subtitle={rising
+              ? i18nT('最近一次比最早一次更高——有东西正在长大，值得停下来看它一眼')
+              : i18nT('每一次省察里最强的那一项的强度（0–100）')}
+            labels={trendLabels}
+            series={[{ name: i18nT('最强依附强度'), values: trendValues }]}
+            yUnit=""
+          />
+          <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', margin: '6px 4px 0', lineHeight: 1.7 }}>
+            {i18nT('每次的最强项：')}{asc.map(x => IDOL_MAP[x.top_target]?.name || '—').join(' → ')}
+          </div>
         </div>
-        <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', marginBottom: 8 }}>{(s.created_at || '').slice(0, 16).replace('T', ' ')}</div>
-        <div style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.7)', lineHeight: 1.6 }}>{s.summary}</div>
-      </div>
-    )
-  })
+      )}
+      {sessions.map(s => {
+        const r = RISK[s.risk_level] || RISK.low
+        const name = IDOL_MAP[s.top_target]?.name || '—'
+        return (
+          <div key={s.session_id} style={card}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+              <span style={{ fontSize: 13, fontWeight: 600 }}>{IDOL_MAP[s.top_target]?.emoji} {name}</span>
+              <span style={{ fontSize: 11, color: r.color, fontWeight: 700 }}>{r.label} · {Math.round((s.top_intensity || 0) * 100)}</span>
+            </div>
+            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', marginBottom: 8 }}>{(s.created_at || '').slice(0, 16).replace('T', ' ')}</div>
+            <div style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.7)', lineHeight: 1.6 }}>{s.summary}</div>
+          </div>
+        )
+      })}
+    </>
+  )
 }
 
 const backBtn = { background: 'rgba(120,120,128,0.2)', border: 'none', borderRadius: '50%', width: 36, height: 36, color: '#fff', fontSize: 20, cursor: 'pointer' }

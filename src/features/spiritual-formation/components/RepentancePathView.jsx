@@ -2,12 +2,31 @@ import { useMemo, useState } from 'react'
 import { T } from '../lib/localize'
 import { buildRepentancePath } from '../lib/repentancePath'
 import { getActivePathFor, startPath, toggleDay, setStatus } from '../lib/repentancePathStore'
+import { MilestoneTrack } from '../../../components/charts'
 
 const LENGTHS = [
   ['seven_days', T('7 天', '7-day')],
   ['thirty_days', T('30 天', '30-day')],
   ['one_day', T('今天一步', 'Today')],
 ]
+
+/**
+ * 把 plan.days 折叠成「阶段」。
+ * 7 天路径里一天一个阶段；30 天路径是同样 7 个阶段循环四轮多（见 repentancePath.ts 的取模），
+ * 逐日列 30 站没人看得下去，也会让人误以为悔改有三十个关卡。真正的骨架只有 STAGE_TEMPLATE 那七步。
+ * 阶段顺序按它们在 plan.days 中首次出现的次序，不重新排。
+ */
+function stageStops(plan, doneSet) {
+  const byStage = new Map()
+  plan.days.forEach((d) => {
+    if (!byStage.has(d.stage)) byStage.set(d.stage, { stage: d.stage, focus: d.focus, days: [] })
+    byStage.get(d.stage).days.push(d.day)
+  })
+  return [...byStage.values()].map((row) => ({
+    ...row,
+    done: row.days.filter((day) => doneSet.has(day)).length,
+  }))
+}
 
 const STAGE_LABEL = {
   awareness: T('看见', 'See'),
@@ -75,6 +94,13 @@ export default function RepentancePathView({ strongholdCode, userId = 'local-use
   }
 
   // 进行中
+  const stops = stageStops(plan, done)
+  // 「你在这里」= 第一天还没打勾的那一天所属的阶段；全部走完时停在最后一站。
+  const firstUndone = plan.days.find((d) => !done.has(d.day))
+  const currentStage = firstUndone
+    ? Math.max(0, stops.findIndex((row) => row.stage === firstUndone.stage))
+    : stops.length - 1
+
   return (
     <div style={{ marginTop: '10px' }}>
       <p style={{ margin: '0 0 6px 0', fontSize: '13px', fontWeight: 700, color: '#ffcf8b' }}>{plan.title}</p>
@@ -85,6 +111,23 @@ export default function RepentancePathView({ strongholdCode, userId = 'local-use
           <div style={{ width: `${pct}%`, height: '100%', background: 'linear-gradient(90deg, #ff9500, #ffcf8b)', borderRadius: '999px' }} />
         </div>
         <span style={{ fontSize: '11.5px', color: 'rgba(255,255,255,0.5)' }}>{done.size}/{plan.days.length}</span>
+      </div>
+
+      {/* 阶段里程碑：让人先看见整条路的形状，再去打每天的勾 */}
+      <div style={{ marginBottom: '12px' }}>
+        <MilestoneTrack
+          title={T('这条路会经过的阶段', 'The stages this path passes through')}
+          subtitle={T(
+            `${stops.length} 个阶段，现在停在「${STAGE_LABEL[stops[currentStage].stage] || stops[currentStage].stage}」。这条路的终点是恩典，不是自责；走慢了不算掉队。`,
+            `${stops.length} stages; you are at “${STAGE_LABEL[stops[currentStage].stage] || stops[currentStage].stage}”. This road ends in grace, not self-blame — going slowly is not falling behind.`,
+          )}
+          stops={stops.map((row) => ({
+            key: row.stage,
+            label: STAGE_LABEL[row.stage] || row.stage,
+            note: `${row.focus} · ${row.done}/${row.days.length}`,
+          }))}
+          currentIndex={currentStage}
+        />
       </div>
 
       {/* 主祷告 */}

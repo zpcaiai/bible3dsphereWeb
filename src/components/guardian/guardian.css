@@ -127,6 +127,63 @@
 .guardian-body--celebrating .guardian-ring { animation-duration: 5s; }
 .guardian-body--comforting .guardian-halo { animation-duration: 2.2s; }
 
+/* ── 姿态状态机（mood）：idle / listening / encouraging / concerned / celebrating ──
+   为什么是姿态而不是更多特效：陪伴的可信度来自「它此刻怎么站着」——
+   听你说的时候会侧头前倾，你沉重的时候它低下来靠近，你有力气的时候它才抬起来。 */
+@keyframes guardian-lean {
+  0%, 100% { transform: translateY(-2px) rotate(-4deg); }
+  50% { transform: translateY(-3px) rotate(-1deg); }
+}
+@keyframes guardian-lift {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-4px) scale(1.03); }
+}
+@keyframes guardian-hover-close {
+  0%, 100% { transform: translateY(2px) scale(0.97); }
+  50% { transform: translateY(1px) scale(0.985); }
+}
+@keyframes guardian-cheer {
+  0%, 100% { transform: translateY(0) rotate(0deg) scale(1); }
+  30% { transform: translateY(-6px) rotate(-5deg) scale(1.06); }
+  65% { transform: translateY(-3px) rotate(5deg) scale(1.04); }
+}
+
+.guardian-posture {
+  transform-origin: 50% 100%;
+  transition: transform 0.45s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+.guardian-posture--idle { transform: translateY(0); }
+.guardian-posture--listening { animation: guardian-lean 2.6s ease-in-out infinite; }
+.guardian-posture--encouraging { animation: guardian-lift 2.4s ease-in-out infinite; }
+.guardian-posture--concerned { animation: guardian-hover-close 4.2s ease-in-out infinite; }
+.guardian-posture--celebrating { animation: guardian-cheer 1.1s ease-in-out infinite; }
+
+/* 光晕跟着姿态换色温：关切时偏冷偏静，打气/庆祝时偏暖 */
+.guardian-posture--concerned .guardian-glow { background: #a8c0ff; opacity: 0.32; }
+.guardian-posture--encouraging .guardian-glow { background: #ffe0a8; }
+.guardian-posture--celebrating .guardian-glow { background: #ffd9a0; }
+/* 关切时星尘环几乎停下来——此刻不该有任何东西在转 */
+.guardian-posture--concerned .guardian-ring { animation-duration: 44s; opacity: 0.35; }
+
+/* prefersReducedMotion()：姿态保留，动画全部停 */
+.guardian-still,
+.guardian-still * {
+  animation: none !important;
+  transition: none !important;
+}
+.guardian-still.guardian-posture--listening { transform: translateY(-2px) rotate(-4deg); }
+.guardian-still.guardian-posture--encouraging { transform: translateY(-3px) scale(1.02); }
+.guardian-still.guardian-posture--concerned { transform: translateY(2px) scale(0.97); }
+
+@media (prefers-reduced-motion: reduce) {
+  .guardian-posture,
+  .guardian-posture *,
+  .guardian-panel {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
 .guardian-grow-bar { transition: width 0.8s ease-out; }
 
 /* ── 语音：录音红点 / 麦克风脉动 ── */

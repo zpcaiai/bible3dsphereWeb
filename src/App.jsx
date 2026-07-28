@@ -1288,6 +1288,13 @@ function AppContent() {
         setTimeout(() => setActivePanel(panel), 60)
         return
       }
+      if (panel === 'mccheyne') {
+        sp.delete('panel')
+        const nextSearch = sp.toString()
+        window.history.replaceState({}, '', `${window.location.pathname}${nextSearch ? `?${nextSearch}` : ''}${window.location.hash}`)
+        setTimeout(() => setActivePanel('mccheyne'), 60)
+        return
+      }
       const share = sp.get('share')
       if (!share) return
       const [kind, id] = share.split(':')
@@ -3088,7 +3095,7 @@ function AppContent() {
         {activePanel === 'mccheyne' && (
           <div className="page-overlay">
             <Suspense fallback={null}>
-              <MccheynePage user={user} onBack={() => setActivePanel('sphere')} onOpenPanel={(p) => { setActivePanel(p); if (p === 'bible-reading') { try { sessionStorage.setItem('bible-reading-open', JSON.stringify({ book: 'Genesis', chapter: 1 })) } catch {} } }} />
+              <MccheynePage user={user} onBack={() => setActivePanel('sphere')} onOpenPanel={(p) => setActivePanel(p)} />
             </Suspense>
           </div>
         )}

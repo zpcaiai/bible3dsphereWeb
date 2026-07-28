@@ -1,5 +1,7 @@
 import { t as i18nT } from '../../../i18n/runtime'
 import { useState } from 'react'
+import { useSpeechInput } from '../../../hooks/useSpeechInput'
+import { useHaptics } from '../../../lib/media/useHaptics'
 import { crisisApi } from '../lib/api'
 import { triageClient } from '../lib/triage'
 import { getResources } from '../data/crisisResources'
@@ -29,6 +31,13 @@ export default function CrisisIntakeFlow({ regionCode = 'TW', onNavigate, canNot
   const [busy, setBusy] = useState(false)
   const [showStabilize, setShowStabilize] = useState(false)
 
+  // 一个正在崩溃的人，打字这件事本身就可能是压垮他的最后一件事。
+  // 口述把门槛降到「按住、说一句、松开」。转写只填进输入框，由用户自己按下分流。
+  const haptics = useHaptics({ scope: 'crisis' })
+  const speech = useSpeechInput({
+    onTranscript: (t) => setText((prev) => (prev ? `${prev} ${t}` : t)),
+  })
+
   async function run() {
     const msg = text.trim()
     if (!msg) return
@@ -55,6 +64,28 @@ export default function CrisisIntakeFlow({ regionCode = 'TW', onNavigate, canNot
       <div className="cc-card">
         <h3>{i18nT('此刻发生了什么？')}</h3>
         <p className="cc-muted">{i18nT('可以只写几个字。你不需要解释清楚所有事情。')}</p>
+        <div className="cc-choice" style={{ marginBottom: 8 }}>
+          <button
+            className="cc-btn secondary"
+            type="button"
+            onClick={() => {
+              haptics.vibrate('tap')
+              if (speech.isRecording) speech.stopRecording()
+              else speech.startRecording()
+            }}
+          >
+            {speech.isRecording
+              ? `⏹ ${i18nT('说完了')}（${speech.recordingSeconds}s）`
+              : `🎤 ${i18nT('说给我听就好，不用打字')}`}
+          </button>
+          {speech.isRecording && (
+            <button className="cc-btn ghost" type="button" onClick={speech.cancelRecording}>{i18nT('取消')}</button>
+          )}
+        </div>
+        {speech.isTranscribing && <p className="cc-muted" style={{ marginTop: 0 }}>{i18nT('正在转写…')}</p>}
+        {speech.recordingError && (
+          <p className="cc-muted" role="alert" style={{ color: '#ff9f8a', marginTop: 0 }}>{speech.recordingError}</p>
+        )}
         <textarea
           className="cc-input"
           rows={3}

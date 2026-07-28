@@ -15,6 +15,18 @@ import SinPatternLibrary from './features/spiritual-formation/components/SinPatt
 import CrisisCarePage from './features/crisis-care/app/CrisisCarePage'
 import CrisisHelpButton from './features/crisis-care/components/CrisisHelpButton'
 import { a11yClickProps } from './lib/a11yClick';
+import { Radar, Meter, RingProgress, DecisionTree, MilestoneTrack } from './components/charts'
+
+// 分支树节点用的短标签。与下方详情区的文案一致，只是压缩到适合画在方框里。
+const MOTIVE_LABEL = {
+  fear: '😨 恐惧', pride: '😤 骄傲', love: '❤️ 爱',
+  desire: '🔥 欲望', duty: '📋 责任', ambition: '🎯 雄心',
+}
+const SOURCE_LABEL = {
+  holy_spirit: '✨ 圣灵感动', conscience: '🤔 良心/理性', fear_response: '😨 恐惧反应',
+  pride_response: '😤 骄傲反应', trauma_response: '💔 创伤反应', worldly_value: '🌍 世俗价值观',
+  flesh_desire: '🔥 肉体欲望', uncertain: '❓ 不确定',
+}
 
 const sfdsUrl = (path) => `${API_BASE}/sfds${path}`
 const MVFE_BASE = API_BASE + '/mvfe'
@@ -1250,46 +1262,36 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
         {motive_analysis && (
           <div style={resultCardStyle}>
             <div style={resultTitleStyle}>{i18nT('🧠 动机分析')}</div>
-            <div style={{ marginBottom: '12px' }}>
-              <div style={progressBarContainer}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '4px' }}>
-                  <span>{i18nT('😨 恐惧驱动')}</span>
-                  <span>{(motive_analysis.fear_driven_score * 100).toFixed(2)}%</span>
-                </div>
-                <div style={progressBarBg}>
-                  <div style={{ ...progressBarFill, width: `${motive_analysis.fear_driven_score * 100}%`, background: '#ff3b30' }} />
-                </div>
-              </div>
-              
-              <div style={progressBarContainer}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '4px' }}>
-                  <span>{i18nT('😤 骄傲驱动')}</span>
-                  <span>{(motive_analysis.pride_driven_score * 100).toFixed(2)}%</span>
-                </div>
-                <div style={progressBarBg}>
-                  <div style={{ ...progressBarFill, width: `${motive_analysis.pride_driven_score * 100}%`, background: '#ff9500' }} />
-                </div>
-              </div>
-              
-              <div style={progressBarContainer}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '4px' }}>
-                  <span>{i18nT('❤️ 爱驱动')}</span>
-                  <span>{(motive_analysis.love_driven_score * 100).toFixed(2)}%</span>
-                </div>
-                <div style={progressBarBg}>
-                  <div style={{ ...progressBarFill, width: `${motive_analysis.love_driven_score * 100}%`, background: '#34c759' }} />
-                </div>
-              </div>
-              
-              <div style={progressBarContainer}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '4px' }}>
-                  <span>{i18nT('🔥 欲望驱动')}</span>
-                  <span>{(motive_analysis.desire_driven_score * 100).toFixed(2)}%</span>
-                </div>
-                <div style={progressBarBg}>
-                  <div style={{ ...progressBarFill, width: `${motive_analysis.desire_driven_score * 100}%`, background: '#af52de' }} />
-                </div>
-              </div>
+            {/* 四种动机不是四件互不相干的事，而是同一颗心的四个面。
+                雷达把它们画成一个形状，才看得出「我这次是被什么推着走的」；
+                下面的条形保留精确读数，两者互补。 */}
+            <Radar
+              title={i18nT('动机的形状')}
+              subtitle={i18nT('四个方向合起来是一张脸。哪一边被拉得最长，就是此刻推动你的力量。')}
+              axes={[
+                { key: 'fear', label: i18nT('恐惧') },
+                { key: 'pride', label: i18nT('骄傲') },
+                { key: 'love', label: i18nT('爱') },
+                { key: 'desire', label: i18nT('欲望') },
+              ]}
+              series={[{
+                name: i18nT('本次辨识'),
+                values: {
+                  fear: motive_analysis.fear_driven_score,
+                  pride: motive_analysis.pride_driven_score,
+                  love: motive_analysis.love_driven_score,
+                  desire: motive_analysis.desire_driven_score,
+                },
+              }]}
+              max={1}
+              size={250}
+            />
+
+            <div style={{ marginBottom: '12px', marginTop: 12, display: 'grid', gap: 10 }}>
+              <Meter label={i18nT('😨 恐惧驱动')} value={Math.round(motive_analysis.fear_driven_score * 100)} max={100} unit="%" severity="critical" />
+              <Meter label={i18nT('😤 骄傲驱动')} value={Math.round(motive_analysis.pride_driven_score * 100)} max={100} unit="%" severity="serious" />
+              <Meter label={i18nT('❤️ 爱驱动')} value={Math.round(motive_analysis.love_driven_score * 100)} max={100} unit="%" severity="good" />
+              <Meter label={i18nT('🔥 欲望驱动')} value={Math.round(motive_analysis.desire_driven_score * 100)} max={100} unit="%" severity="warning" />
             </div>
             
             <div style={{ 
@@ -1345,9 +1347,24 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
                 {discernment_result.explanation}
               </div>
               
-              <div style={{ display: 'flex', gap: '16px', fontSize: '12px' }}>
-                <span>{i18nT('置信度:')} {(discernment_result.confidence * 100).toFixed(2)}%</span>
-                <span>{i18nT('长期果实:')} {discernment_result.long_term_fruit_score > 0 ? '+' : ''}{discernment_result.long_term_fruit_score}</span>
+              {/* 置信度是「这套判断有多站得住」，不是「你有多属灵」。
+                  画成环是为了让人一眼看出它并不高——低置信度就该被当作低置信度对待。 */}
+              <div style={{ display: 'flex', gap: 18, alignItems: 'center', flexWrap: 'wrap', marginTop: 10 }}>
+                <RingProgress
+                  value={Math.round((discernment_result.confidence || 0) * 100)}
+                  max={100} size={86} stroke={7}
+                  label={i18nT('辨识置信度')}
+                  severity={discernment_result.confidence >= 0.7 ? 'good' : discernment_result.confidence >= 0.4 ? 'warning' : 'serious'}
+                />
+                <div style={{ flex: '1 1 160px', minWidth: 150 }}>
+                  <Meter
+                    label={i18nT('长期果实倾向')}
+                    value={discernment_result.long_term_fruit_score}
+                    max={10}
+                    severity={discernment_result.long_term_fruit_score > 0 ? 'good' : 'serious'}
+                    hint={i18nT('正值表示这个方向长远看更可能结出好果子；这是提示，不是判决。')}
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -1357,6 +1374,59 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
         {guidance && (
           <div style={resultCardStyle}>
             <div style={resultTitleStyle}>{i18nT('📖 指导建议')}</div>
+
+            {/* 一个决定不是一条直线，而是「同一件事可以被理解成好几种样子」。
+                这棵树把系统目前的理解摊开：主导动机、判断来源、还有哪些别的读法、
+                以及各自要小心什么。
+                数据里没有「哪个视角对应哪条风险」的对应关系，所以风险单独成枝——
+                宁可少画一条连线，也不臆造因果。 */}
+            {(guidance.alternative_interpretations?.length || guidance.risks?.length) ? (
+              <div style={{ marginBottom: 16 }}>
+                <DecisionTree
+                  title={i18nT('这个决定，目前被理解成什么样')}
+                  subtitle={i18nT('这不是替你做决定，是把你已经在心里权衡的东西摊在桌上看。')}
+                  root={{
+                    label: (discernSituation || formData?.situation || i18nT('当前处境')).slice(0, 18),
+                    note: i18nT('处境'),
+                    tone: 'neutral',
+                    children: [
+                      ...(motive_analysis ? [{
+                        label: MOTIVE_LABEL[motive_analysis.dominant_motive] || i18nT('主导动机'),
+                        note: i18nT('主导动机'),
+                        tone: ['love', 'duty'].includes(motive_analysis.dominant_motive) ? 'good' : 'risk',
+                      }] : []),
+                      ...(discernment_result ? [{
+                        label: SOURCE_LABEL[discernment_result.primary_source] || i18nT('来源不确定'),
+                        note: `${i18nT('置信度')} ${Math.round((discernment_result.confidence || 0) * 100)}%`,
+                        tone: discernment_result.primary_source === 'holy_spirit' ? 'good'
+                          : ['fear_response', 'pride_response', 'trauma_response', 'flesh_desire'].includes(discernment_result.primary_source) ? 'danger'
+                          : 'neutral',
+                      }] : []),
+                      ...(guidance.alternative_interpretations?.length ? [{
+                        label: i18nT('还可以这样看'),
+                        note: `${guidance.alternative_interpretations.length} ${i18nT('种')}`,
+                        tone: 'option',
+                        children: guidance.alternative_interpretations.slice(0, 4).map((alt) => ({
+                          label: String(alt).slice(0, 16),
+                          note: String(alt).length > 16 ? String(alt).slice(16, 34) : '',
+                          tone: 'option',
+                        })),
+                      }] : []),
+                      ...(guidance.risks?.length ? [{
+                        label: i18nT('要小心的地方'),
+                        note: `${guidance.risks.length} ${i18nT('项')}`,
+                        tone: 'risk',
+                        children: guidance.risks.slice(0, 4).map((risk) => ({
+                          label: String(risk).slice(0, 16),
+                          note: String(risk).length > 16 ? String(risk).slice(16, 34) : '',
+                          tone: 'risk',
+                        })),
+                      }] : []),
+                    ],
+                  }}
+                />
+              </div>
+            ) : null}
             
             <div style={{ 
               background: 'rgba(52,199,89,0.15)',

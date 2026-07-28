@@ -3,10 +3,46 @@ import { strongholdMap } from '../data/strongholds'
 import { T, localizeStronghold, archetypeName, doctrineName, patternNameById, emotionName, pickVal } from '../lib/localize'
 import { TRIGGER_LABEL } from '../lib/strongholdHistory'
 import { loadProfileRemote, loadProgressRemote } from '../lib/strongholdApi'
+import { DirectedGraph } from '../../../components/charts'
 
 const RANGES = [[30, '30天'], [90, '90天'], [180, '180天']]
 const nameOf = (c) => (strongholdMap[c] ? localizeStronghold(strongholdMap[c]).name : c)
 const triggerLabel = (t) => pickVal(TRIGGER_LABEL[t]?.zh, TRIGGER_LABEL[t]?.en) || t
+
+// 「坚固营垒」不是一段静态描述，而是一条会闭环的链路：
+// 触发 → 谎言 → 情绪 → 行为 → 后果；而后果（某个真理更难被听进去）反过来让谎言无人拆穿。
+// 段落文字读不出「循环」，有向图可以——而看见循环这件事本身，人就已经站在循环外面了。
+// 只用该模式在本体库里真有的字段；缺哪一环就少画哪一环，不补空。
+function buildCausalChain(code, topTrigger) {
+  const raw = strongholdMap[code]
+  if (!raw) return null
+  const s = localizeStronghold(raw)
+  const stages = [
+    ['trigger', 'trigger', topTrigger ? triggerLabel(topTrigger) : '', T('触发情境（来自你的记录）', 'Trigger (from your own records)'), ''],
+    ['belief', 'belief', s.coreLie, T('核心谎言', 'Core lie'), T('被解读为', 'read as')],
+    ['emotion', 'emotion', s.emotionalSignals?.[0], T('随之而来的情绪', 'Emotion that follows'), T('生出', 'stirs')],
+    ['behavior', 'behavior', s.behavioralSignals?.[0], T('外显的行为', 'Outward behaviour'), T('外显为', 'acts out as')],
+    ['consequence', 'consequence', s.blockedDoctrines?.[0]?.name, T('因此更难领受的真理', 'Truth now harder to receive'), T('结果是', 'leads to')],
+  ]
+
+  const nodes = []
+  const edges = []
+  for (const [id, kind, label, note, edgeLabel] of stages) {
+    if (!label) continue
+    if (nodes.length) edges.push({ from: nodes[nodes.length - 1].id, to: id, label: edgeLabel })
+    nodes.push({ id, label, kind, note })
+  }
+
+  // 回环只在数据真的支持时才画：被遮蔽的那条真理，正是唯一能拆穿这个核心谎言的话；
+  // 它进不来，谎言就一直没人拆。两端都存在才有环，否则这里只是一条直链。
+  const hasBelief = nodes.some((n) => n.id === 'belief')
+  const hasConsequence = nodes.some((n) => n.id === 'consequence')
+  if (hasBelief && hasConsequence) {
+    edges.push({ from: 'consequence', to: 'belief', label: T('真理被遮蔽，谎言无人拆穿', 'truth blocked, the lie goes unchallenged') })
+  }
+
+  return { name: s.name, nodes, edges, fromUserTrigger: nodes.some((n) => n.id === 'trigger') }
+}
 
 const TREND = {
   growing: { label: T('在成长的方向上', 'Moving toward growth'), color: '#5fd98a', icon: '🌿' },
@@ -88,6 +124,8 @@ export default function StrongholdProfile({ token }) {
   const trend = TREND[pr?.overallTrend] || TREND.insufficient_data
   const hasStronghold = p && p.stronghold.dominant.length > 0
   const hasSin = p && p.sinPattern.dominant.length > 0
+  const focusCode = p?.recommendedFocus?.strongholdCode || p?.stronghold?.dominant?.[0]?.code || null
+  const chain = focusCode ? buildCausalChain(focusCode, p?.recommendedFocus?.topTrigger) : null
 
   return wrap(
     <>
@@ -185,6 +223,22 @@ export default function StrongholdProfile({ token }) {
             🎯 {T('下阶段建议关注：', 'Suggested focus next: ')}<b style={{ color: '#c7c8ff' }}>{nameOf(p.recommendedFocus.strongholdCode)}</b>
             {p.recommendedFocus.topTrigger ? T(`（常被「${triggerLabel(p.recommendedFocus.topTrigger)}」触发）`, ` (often triggered by ${triggerLabel(p.recommendedFocus.topTrigger)})`) : ''}
           </div>
+        </div>
+      )}
+
+      {/* 成因链路：把上面那个「建议关注」的模式画成机制图 */}
+      {chain && chain.nodes.length >= 3 && (
+        <div style={{ marginBottom: '14px' }}>
+          <DirectedGraph
+            title={T(`「${chain.name}」是怎样运作的`, `How “${chain.name}” works`)}
+            subtitle={chain.fromUserTrigger
+              ? T('触发情境取自你自己的记录，其余环节取自本体库对这个模式的描述。这是一张机制图，不是一份判决书。',
+                  'The trigger comes from your own records; the rest describes this pattern in the library. A picture of a mechanism, never a verdict.')
+              : T('各环节取自本体库对这个模式的描述。这是一张机制图，不是一份判决书。',
+                  'Each step describes this pattern as the library states it. A picture of a mechanism, never a verdict.')}
+            nodes={chain.nodes}
+            edges={chain.edges}
+          />
         </div>
       )}
 

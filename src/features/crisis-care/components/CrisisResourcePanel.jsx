@@ -1,6 +1,7 @@
 import { t as i18nT } from '../../../i18n/runtime'
 import { useMemo, useState } from 'react'
 import { REGION_OPTIONS, getResources } from '../data/crisisResources'
+import { CardActions } from '../../../lib/media/CardActions'
 
 /**
  * CrisisResourcePanel — 按地区显示危机热线与紧急资源。
@@ -48,6 +49,24 @@ export default function CrisisResourcePanel({ block, defaultRegion = 'TW', compa
         )
       })}
       <p className="cc-muted">{i18nT('如果你此刻有立即危险，请直接拨打')}{data?.emergencyNumber ? ` ${data.emergencyNumber} ` : '当地紧急电话'}。</p>
+
+      {/* 断网、手机没电前截图、或替不用智能机的人打印——热线必须能离开 App 存在。 */}
+      {!compact && (
+        <CardActions
+          label="把热线做成一张卡（可离线查看）"
+          filename="crisis-hotlines.png"
+          templates={['ink', 'calm']}
+          buildSpec={() => ({
+            badge: i18nT('危机热线'),
+            title: i18nT('撑不住的时候，打这些电话'),
+            sections: [
+              { heading: i18nT('立即危险'), items: [data?.emergencyNumber ? `${i18nT('紧急电话')} ${data.emergencyNumber}` : i18nT('当地紧急电话')], emphasis: true },
+              { heading: i18nT('危机与陪伴'), items: (data?.resources || []).map((r) => `${r.name} ${r.contact}（${r.availability}）`) },
+            ],
+            footer: i18nT('打电话求助不是软弱。把这张图存进相册，需要时不用解锁 App 也能看见。'),
+          })}
+        />
+      )}
     </div>
   )
 }

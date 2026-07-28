@@ -6,6 +6,7 @@ import { communityApi } from './api'
 import { getToken } from './auth'
 import CreedCatechismGalaxy from './features/spiritual-formation/components/creed-catechism/CreedCatechismGalaxy'
 import { a11yClickProps } from './lib/a11yClick';
+import { BarSeries, DirectedGraph } from './components/charts'
 
 const card = { background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, padding: 14, marginBottom: 12 }
 const btn = { cursor: 'pointer', borderRadius: 10, padding: '8px 12px', border: 'none', color: '#fff', fontWeight: 700, background: 'linear-gradient(135deg, rgba(139,92,246,0.85), rgba(52,199,89,0.6))' }
@@ -17,11 +18,42 @@ export default function DoctrineLearningPage({ user, onBack }) {
   const [rec, setRec] = useState(null)
   const [open, setOpen] = useState(null)
   const [error, setError] = useState('')
+  const [done, setDone] = useState(() => [])
 
   useEffect(() => { const t = getToken(); if (t) communityApi.doctrineTopics(t).then(r => setTopics(r.topics || [])).catch(e => setError(e.message)) }, [])
 
   async function recommend() { const t = getToken(); try { setRec(await communityApi.doctrineRecommend({ goal }, t)) } catch (e) { setError(e.message) } }
-  async function markDone(key) { const t = getToken(); try { await communityApi.doctrineProgress({ topic_key: key, status: 'completed' }, t) } catch (e) { setError(e.message) } }
+  async function markDone(key) {
+    const t = getToken()
+    try {
+      await communityApi.doctrineProgress({ topic_key: key, status: 'completed' }, t)
+      setDone(d => (d.includes(key) ? d : [...d, key]))
+    } catch (e) { setError(e.message) }
+  }
+
+  // 教义不是一堆平列的词条,推荐路径本身就带顺序:先懂「神是谁」才谈得上「我是谁」。
+  // 顺序读段落只能一条条读过去,读不出「这是一条链」;分层链路图把顺序变成可见的形状,
+  // 于是「学到哪儿了 / 还差哪一步」一眼就知道。只用接口真的给了的这一条路径,不自己补边。
+  const pathTopics = (rec?.topics || []).filter(tp => tp && tp.topic_key)
+  const pathNodes = pathTopics.map(tp => ({
+    id: tp.topic_key,
+    label: tp.display_name || tp.topic_key,
+    kind: done.includes(tp.topic_key) ? 'grace' : 'belief',
+    note: [tp.difficulty, tp.summary].filter(Boolean).join(' · '),
+  }))
+  const pathEdges = pathNodes.slice(1).map((n, i) => ({ from: pathNodes[i].id, to: n.id }))
+
+  // 难度分布用的是主题库里真实的 difficulty 字段计数,没有其他可量化的字段可用;
+  // 它回答的是一个具体问题:这个库对我这个阶段的人,到底有没有东西可读。
+  const difficultyCounts = topics.reduce((acc, tp) => {
+    const k = String(tp?.difficulty || '').trim()
+    if (!k) return acc
+    acc[k] = (acc[k] || 0) + 1
+    return acc
+  }, {})
+  const difficultyItems = Object.entries(difficultyCounts)
+    .sort((a, b) => b[1] - a[1])
+    .map(([label, value]) => ({ label, value }))
 
   const Topic = ({ tp }) => (
     <div style={{ padding: '8px 0', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
@@ -68,6 +100,19 @@ export default function DoctrineLearningPage({ user, onBack }) {
           <div style={{ marginTop: 12 }}>
             <div style={{ fontSize: 14, fontWeight: 700, color: '#8be9c0' }}>{rec.recommended_path.title}</div>
             <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)', marginBottom: 6 }}>{rec.recommended_path.description}</div>
+            {pathNodes.length > 1 && (
+              <div style={{ margin: '10px 0 12px' }}>
+                <DirectedGraph
+                  title={i18nT('这条路径的先后次序')}
+                  subtitle={done.length > 0
+                    ? i18nT('绿色是你已标记学过的;顺着箭头往右,是这条路径建议的下一步。')
+                    : i18nT('顺着箭头往右读:后面的主题要靠前面的主题才立得住,跳着学容易只剩下名词。')}
+                  nodes={pathNodes}
+                  edges={pathEdges}
+                  onSelect={(n) => setOpen(open === n.id ? null : n.id)}
+                />
+              </div>
+            )}
             {(rec.topics || []).map(tp => <Topic key={tp.topic_key} tp={tp} />)}
           </div>
         )}
@@ -75,6 +120,22 @@ export default function DoctrineLearningPage({ user, onBack }) {
 
       <div style={card}>
         <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 6 }}>{i18nT('全部主题（')}{topics.length}）</div>
+        {difficultyItems.length > 0 && (
+          <div style={{ margin: '4px 0 12px' }}>
+            <BarSeries
+              title={i18nT('主题库的难度分布')}
+              subtitle={i18nT('看哪一档最厚:那是这个库最能接住你的地方。某一档很薄,就别指望在这里把它学完整。')}
+              items={difficultyItems}
+              unit={i18nT('个')}
+              colorMode="categorical"
+            />
+          </div>
+        )}
+        {topics.length === 0 && (
+          <div style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.45)', lineHeight: 1.7 }}>
+            {i18nT('主题库还没有加载出来,所以这里不画图,也不编数字。')}
+          </div>
+        )}
         {topics.map(tp => <Topic key={tp.topic_key} tp={tp} />)}
       </div>
     </div>

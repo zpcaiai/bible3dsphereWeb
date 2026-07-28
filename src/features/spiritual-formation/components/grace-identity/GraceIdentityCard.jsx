@@ -4,6 +4,11 @@ import { formationExtApi } from '../../../../api'
 import { T } from '../../lib/localize'
 import '../../app/spiritual-formation.css'
 
+// 这张卡刻意不加图表。buildGraceIdentityResponse 返回的全是文本
+// （falseIdentity / inChristTruth / assurance / scriptureRefs / nextStep / prayer），
+// 组件本地不持有任何计数、评分或历史序列：graceLog 只写不读，历史接口的字段形状此处无法确认。
+// 把「经文条数」「已保存次数」这类与恩典无关的数字画成图，等于把身份重新变成分数，
+// 正好是这个模块要拆掉的东西。所以这里正确的可视化就是没有可视化。
 export default function GraceIdentityCard({ inputText = '', compact = false, response = null, token }) {
   const [draft, setDraft] = useState(inputText)
   const [logged, setLogged] = useState(false)

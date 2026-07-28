@@ -30,6 +30,8 @@ import {
 import { GIFT_CALLING_STORAGE_KEYS as KEYS, loadGiftCallingData, saveGiftCallingEntry } from '../../lib/giftCallingStorage'
 import { MODULE_DISCLAIMER } from '../../lib/pastoralSafety'
 import PlanExecutionPanel from '../../../../components/PlanExecutionPanel'
+import { BarSeries } from '../../../../components/charts'
+import { CardActions } from '../../../../lib/media/CardActions'
 
 function MiniTabs({ active, onChange }) {
   const tabs = [
@@ -65,10 +67,37 @@ function first(list) {
   return Array.isArray(list) && list.length ? list[0] : null
 }
 
+const giftLabel = (key) => spiritualGiftDefinitions.find((gift) => gift.key === key)?.displayName || key
+
+// 恩赐目录有 20 项，画像排出来的也有 10 项——超过八条轴的雷达只剩一团毛刺，读不出主次。
+// 而这里真正要回答的问题是「排在最前面的是哪几个、和后面差多少」，排序条就是这个问题的答案。
+function rankedGifts(profile) {
+  if (!profile) return []
+  return [...(profile.primaryGifts || []), ...(profile.secondaryGifts || []), ...(profile.possibleGifts || [])]
+    .filter((item) => item && item.giftKey)
+    .map((item) => ({ label: giftLabel(item.giftKey), value: Math.round(Number(item.score) || 0) }))
+}
+
 export function GiftCallingOverview({ userId, data }) {
   const [intent, setIntent] = useState('What gifts do I have, and where should I serve without burning out?')
   const dashboard = useMemo(() => buildGiftCallingDashboard({ ...data, userId }), [data, userId])
   const route = orchestrateGiftCallingIntent(userId, intent)
+  const latestProfile = first(data.giftProfiles)
+  const giftItems = rankedGifts(latestProfile)
+  const callingTitles = (data.callingPatterns || []).slice(0, 3).map((pattern) => `${pattern.title} · ${pattern.confidenceLevel}`)
+
+  // 图卡是给「拿去问人」用的：恩赐要在身体里被印证，卡上只放能公开讨论的结论，不放测评原文。
+  const buildGiftCardSpec = () => ({
+    badge: T('恩赐画像 · 待印证', 'Gift profile · to be confirmed'),
+    title: giftItems.slice(0, 3).map((item) => item.label).join(' · ') || T('尚未辨识', 'Not discerned yet'),
+    subtitle: latestProfile?.summary || '',
+    sections: [
+      { heading: T('可能的主要恩赐', 'Possible primary gifts'), items: giftItems.slice(0, 3).map((item) => `${item.label} ${item.value}`), emphasis: true },
+      { heading: T('正在分辨的呼召', 'Calling being discerned'), items: callingTitles.length ? callingTitles : [T('还没有呼召模式。', 'No calling pattern yet.')] },
+      { heading: T('请帮我留意', 'Please watch these with me'), items: (latestProfile?.misuseRisks || []).slice(0, 3) },
+    ],
+    footer: T('恩赐要在基督的身体里被印证。请指出我自己看不见的部分。', 'Gifts are confirmed in the body of Christ. Please name what I cannot see in myself.'),
+  })
 
   return (
     <section className="sf-section">
@@ -104,6 +133,25 @@ export function GiftCallingOverview({ userId, data }) {
           {dashboard.callingInsights.length ? dashboard.callingInsights.map((insight) => <div className="sf-insight-row" key={insight.type}><b>{insight.summary}</b><p>{insight.recommendedNextAction}</p><span>{insight.type}</span></div>) : <p className="sf-empty">No insights yet. Start with gifts, calling, ministry, or mission life.</p>}
         </article>
       </div>
+      {giftItems.length ? (
+        <BarSeries
+          title={T('恩赐排序（待共同体印证）', 'Gift ranking, awaiting community confirmation')}
+          subtitle={T('要看的是前三条和后面的落差：落差小说明还没分辨清楚，需要更多真实服事与他人的反馈，而不是再做一次问卷。', 'Watch the gap between the top three and the rest: a small gap means this is not discerned yet and needs real service and feedback, not another questionnaire.')}
+          items={giftItems}
+        />
+      ) : (
+        <article className="sf-card">
+          <h3>{T('恩赐排序', 'Gift ranking')}</h3>
+          <p className="sf-empty">{T('还没有恩赐画像。先在恩赐标签完成一次评估。', 'No gift profile yet. Complete one assessment under the gifts tab first.')}</p>
+        </article>
+      )}
+      {latestProfile && (
+        <article className="sf-card">
+          <h3>{T('恩赐画像卡', 'Gift profile card')}</h3>
+          <p className="sf-muted">{T('这张卡是拿去给牧者或同工看的，不是给自己盖章的。', 'This card is for showing a pastor or coworker, not for stamping yourself.')}</p>
+          <CardActions buildSpec={buildGiftCardSpec} filename="gift-profile-card.png" label={T('生成恩赐画像卡', 'Build gift profile card')} templates={['olive', 'ink', 'dawn']} />
+        </article>
+      )}
     </section>
   )
 }

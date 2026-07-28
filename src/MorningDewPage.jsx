@@ -2,20 +2,63 @@ import { t as i18nT } from './i18n/runtime'
 /**
  * MorningDewPage — 清晨甘露 / Morning Dew（司布真式每日默想，5/10/15 分钟）
  * 灵修 tab 子页。
+ *
+ * 音频层（可选、加法）：清晨往往还不想睁眼看屏幕，所以这里额外提供一段
+ * 约 60 秒的「经文 + 一句话」音频——念一句、安静一会儿、再念一句。
+ * 关掉声音，这一页与从前完全一样。
  */
 import { useEffect, useState } from 'react'
 import { fetchDewToday } from './api'
 import { getToken } from './auth'
+import { useGuidedAudio } from './lib/media/useGuidedAudio'
+import { useMediaPrefs } from './lib/media/useMediaPrefs'
+import { GuidedAudioBar, MediaToggleRow, CountdownRing } from './lib/media/MediaControls'
 
 const card = { background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, padding: 18, marginBottom: 12 }
 const TIERS = [[5, '5 分钟'], [10, '10 分钟'], [15, '15 分钟']]
+
+// 60 秒版只取「一节经文 + 一句话」：清晨记得住的从来不是三段默想，而是一句话。
+const DEW_VERSE_PAUSE = 12
+const DEW_LINE_PAUSE = 20
+
+/** 取正文的第一句作为「那一句话」——不整段念，60 秒装不下，也不该装。 */
+function firstSentence(str) {
+  const s = String(str || '').trim()
+  if (!s) return ''
+  // 不用后行断言（旧版 iOS Safari 会在解析期直接报错，整个模块就挂了）
+  const i = s.search(/[。！？!?]/)
+  return i >= 0 ? s.slice(0, i + 1) : s.slice(0, 90)
+}
 
 export default function MorningDewPage() {
   const [tier, setTier] = useState(10)
   const [dew, setDew] = useState(null)
   const [loading, setLoading] = useState(true)
+  const { prefs } = useMediaPrefs()
+  const guided = useGuidedAudio()
+
   useEffect(() => { load(tier) }, [tier])
   async function load(t) { setLoading(true); try { setDew(await fetchDewToday(t, getToken())) } catch (e) { setDew(null) } finally { setLoading(false) } }
+
+  // 换时长档或离开页面都停声（依赖用稳定的 guided.stop，避免播报中被自己的 setState 掐掉）
+  useEffect(() => () => guided.stop(), [tier, guided.stop])
+
+  function startDewAudio() {
+    if (!dew) return
+    const verse = dew.scripture?.text
+      ? `${dew.scripture.text}${dew.scripture.ref ? '。' + dew.scripture.ref : ''}`
+      : ''
+    const line = dew.reflection || firstSentence(dew.meditation) || dew.action || ''
+    const steps = []
+    if (verse) steps.push({ text: verse, pauseAfter: DEW_VERSE_PAUSE, label: i18nT('经文') })
+    if (line) steps.push({ text: line, pauseAfter: DEW_LINE_PAUSE, label: i18nT('一句话') })
+    steps.push({ text: i18nT('愿这滴甘露润泽你一整天。'), pauseAfter: 0 })
+    // rate 0.85：清晨的语速要慢，快了像播报新闻
+    guided.start(steps, { rate: 0.85 })
+  }
+
+  const pauseLen = guided.currentStep?.pauseAfter || 0
+  const ringProgress = pauseLen > 0 && guided.state === 'waiting' ? (pauseLen - guided.remaining) / pauseLen : 0
 
   return (
     <div style={{ padding: '14px 16px 90px', maxWidth: 660, margin: '0 auto', color: '#fff' }}>
@@ -30,6 +73,37 @@ export default function MorningDewPage() {
           <button key={v} onClick={() => setTier(v)} style={{ flex: 1, padding: 9, borderRadius: 10, border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 700, background: tier === v ? 'rgba(255,212,59,0.20)' : 'rgba(255,255,255,0.05)', color: tier === v ? '#ffd43b' : 'rgba(255,255,255,0.5)' }}>{l}</button>
         ))}
       </div>
+
+      {/* 音频层：默认不响，用户自己开、自己点播放 */}
+      {dew && (
+        <>
+          <MediaToggleRow show={['sound']} compact />
+          {prefs.sound ? (
+            <GuidedAudioBar
+              guided={guided}
+              onStart={startDewAudio}
+              label="60 秒晨间音频"
+              hint={i18nT('一节经文 + 一句话，可以闭着眼睛听')}
+            />
+          ) : (
+            <div style={{ fontSize: 11.5, color: 'rgba(255,255,255,0.38)', marginBottom: 12, lineHeight: 1.6 }}>
+              {i18nT('打开上面的「声音」，可以听 60 秒的晨间音频版。')}
+            </div>
+          )}
+          {guided.state === 'waiting' && (
+            <div style={{ display: 'grid', placeItems: 'center', margin: '2px 0 14px' }}>
+              <CountdownRing progress={ringProgress} size={80} color="#ffd43b" label={`${i18nT('安静还剩')} ${guided.remaining} ${i18nT('秒')}`}>
+                {guided.remaining}s
+              </CountdownRing>
+            </div>
+          )}
+          {guided.running && (
+            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.32)', marginBottom: 12, textAlign: 'center' }}>
+              {i18nT('声音只在这个页面开着时播放，切走或锁屏可能会停。')}
+            </div>
+          )}
+        </>
+      )}
 
       {loading ? <div style={{ ...card, textAlign: 'center', color: 'rgba(255,255,255,0.5)' }}>{i18nT('正在汲取今晨的甘露…')}</div>
         : !dew ? <div style={{ ...card, textAlign: 'center', color: 'rgba(255,255,255,0.5)' }}>{i18nT('加载失败，请稍后重试')}</div>

@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react'
 import BackButton from './BackButton'
 import { fetchPilgrimCurrent, fetchPilgrimJourney } from './api'
 import { getToken } from './auth'
+import { MilestoneTrack } from './components/charts'
 
 const card = { background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, padding: 16, marginBottom: 12 }
 
@@ -24,6 +25,12 @@ export default function PilgrimJourneyPage({ onClose, go }) {
 
   const cur = data?.place
   const places = data?.places || []
+  // 天路是「有次序的一条路」，不是一份地点清单：后端 PLACES 自带 order，
+  // 排成里程碑轨道才读得出「走过 / 你在这里 / 还没到」，平铺列表读不出方位感。
+  const stops = [...places]
+    .sort((a, b) => (a.order || 0) - (b.order || 0))
+    .map(p => ({ key: p.key, label: `${p.icon || ''} ${p.name}`.trim(), note: p.en }))
+  const curIndex = Math.max(0, stops.findIndex(s => s.key === data?.current))
 
   return (
     <div style={{ width: '100%', height: '100%', background: 'radial-gradient(circle at 50% 10%, rgba(81,207,102,0.12), #05060c 62%)', color: '#fff', overflowY: 'auto', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
@@ -62,21 +69,12 @@ export default function PilgrimJourneyPage({ onClose, go }) {
               )}
             </>
           ) : (
-            <div style={{ ...card, padding: '8px 16px 16px' }}>
-              {places.map((p, i) => {
-                const here = p.key === data.current
-                return (
-                  <div key={p.key} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 0', borderBottom: i < places.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none', opacity: here ? 1 : 0.6 }}>
-                    <span style={{ fontSize: 22, width: 28, textAlign: 'center' }}>{p.icon}</span>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: 13.5, fontWeight: here ? 800 : 600, color: here ? p.color : 'rgba(255,255,255,0.8)' }}>{p.name}{here && ' · 你在这里'}</div>
-                      <div style={{ fontSize: 10.5, color: 'rgba(255,255,255,0.35)' }}>{p.en}</div>
-                    </div>
-                    {here && <span style={{ fontSize: 11, color: p.color, fontWeight: 700 }}>◉</span>}
-                  </div>
-                )
-              })}
-            </div>
+            <MilestoneTrack
+              title={i18nT('天路路线图')}
+              subtitle={i18nT('你现在在第 {n} 站，共 {total} 站', { n: curIndex + 1, total: stops.length })}
+              stops={stops}
+              currentIndex={curIndex}
+            />
           )}
         {tab === 'now' && journey.length > 1 && (
           <div style={{ ...card, marginTop: 4 }}>

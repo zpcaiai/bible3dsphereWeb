@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import BackButton from '../../BackButton'
+import { StatTile } from '../../components/charts'
 import { t as i18nT } from '../../i18n/runtime'
 import { buildFormationTwinSnapshot, FORMATION_TWIN_INTEGRATIONS } from './formationTwinModel'
 import FormationTwinWorkspace from './FormationTwinWorkspace'
@@ -51,6 +52,26 @@ export default function FormationTwinPage({
     () => buildFormationTwinSnapshot({ dailySnapshot, emotionTrajectory }),
     [dailySnapshot, emotionTrajectory],
   )
+
+  // 概览条只放「能被点数的事实」。数字磁贴一旦承载定性内容（例如情绪名称），
+  // 就会被读成评分；定性内容留在下面带来源标签的证据卡里，保持可核对。
+  // 这里不额外请求任何接口，只用本页已经拿到的两份摘要，所以数字与下方证据永远一致。
+  const overview = useMemo(() => {
+    const tiles = []
+    if (Number(emotionTrajectory?.count) > 0) {
+      tiles.push({ key: 'emotion-count', label: i18nT('情绪记录 · 近 30 天'), value: Number(emotionTrajectory.count), unit: i18nT(' 次') })
+    }
+    if (Number.isFinite(dailySnapshot?.pending_prayers)) {
+      tiles.push({ key: 'pending-prayers', label: i18nT('待处理代祷'), value: Math.max(0, dailySnapshot.pending_prayers), unit: i18nT(' 项') })
+    }
+    if (typeof dailySnapshot?.has_devotion_today === 'boolean') {
+      tiles.push({ key: 'devotion-today', label: i18nT('今日灵修'), value: dailySnapshot.has_devotion_today ? i18nT('已记录') : i18nT('未记录'), unit: '' })
+    }
+    if (snapshot.facts.length > 0) {
+      tiles.push({ key: 'sources', label: i18nT('可核对的摘要来源'), value: snapshot.sourceCount, unit: i18nT(' 个来源') })
+    }
+    return tiles
+  }, [dailySnapshot, emotionTrajectory, snapshot])
 
   const open = (target) => {
     if (typeof onOpen === 'function') onOpen(target)
@@ -119,6 +140,14 @@ export default function FormationTwinPage({
               ? i18nT('以下内容来自已加载的现有系统摘要；它们是反思线索，不是属灵裁决。')
               : i18nT('目前还没有足够且经过授权的数据形成生命状态镜像。')}</p>
           </div>
+          {overview.length > 0 && (
+            <div
+              className="ft-overview-strip"
+              style={{ display: 'flex', flexWrap: 'wrap', gap: 20, padding: '10px 0 14px', borderBottom: '1px solid rgba(255,255,255,0.10)', marginBottom: 14 }}
+            >
+              {overview.map((tile) => <StatTile key={tile.key} label={tile.label} value={tile.value} unit={tile.unit} />)}
+            </div>
+          )}
           {snapshot.facts.length > 0 ? (
             <div className="ft-fact-grid">
               {snapshot.facts.map(localizeFact).map((fact) => (

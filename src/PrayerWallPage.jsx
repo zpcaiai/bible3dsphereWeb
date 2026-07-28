@@ -8,6 +8,10 @@ import usePullToRefresh from './hooks/usePullToRefresh'
 import useDraft from './useDraft'
 import { escapeHtml, escapeHtmlWithBr } from './sanitize'
 import HymnPlayer from './HymnPlayer'
+import { useGuidedAudio } from './lib/media/useGuidedAudio'
+import { GuidedAudioBar, MediaToggleRow } from './lib/media/MediaControls'
+import { getMediaPref } from './lib/media/mediaPrefs'
+import { localDateKey } from './components/charts'
 import DiscipleFormationView from './DiscipleFormationView'
 import GiftCallingView from './GiftCallingView'
 import { a11yClickProps } from './lib/a11yClick';
@@ -63,6 +67,17 @@ function formatDateTime(ts) {
   if (isNaN(d.getTime())) return ''
   return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日 ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`
 }
+
+// created_at 在这个接口里既可能是 ISO 字符串，也可能是秒/毫秒时间戳（见 formatDateTime）。
+// 引导播报要按「本地的今天」筛选，所以统一先归一化成 Date。
+function prayerDate(ts) {
+  if (!ts) return null
+  const d = typeof ts === 'string' ? new Date(ts) : (ts > 1e12 ? new Date(ts) : new Date(ts * 1000))
+  return isNaN(d.getTime()) ? null : d
+}
+
+/** 每条代祷之间留的安静秒数：够跟着祷一句，又不至于让人等到走神。 */
+const PRAYER_PAUSE_SECONDS = 8
 
 function exportAllPrayersToTxt(items) {
   if (!items || items.length === 0) return
@@ -192,6 +207,44 @@ export default function PrayerWallPage({ user, token, onBack }) {
 
   // 草稿自动保存（约 800ms 防抖）
   const { savedHint: draftSaved, clearDraft } = useDraft('pw-compose-draft-v1', draft, setDraft)
+
+  // ── 跟着代祷清单一起祷告（引导式播报）────────────────────────────────────
+  // 一条一条念出来，每条之后留一段安静，让人可以不看屏幕、跟着一起祷。
+  const guided = useGuidedAudio()
+  // 依赖必须是稳定的 guided.stop：useGuidedAudio 每次渲染返回新对象，
+  // 若依赖整个对象，播报中的每次 setState 都会触发清理、把声音掐断。
+  useEffect(() => () => guided.stop(), [guided.stop])
+
+  const todayKey = localDateKey(new Date())
+  const livePrayers = items.filter(p => !p.deleted_at && String(p.content || '').trim())
+  const todayPrayers = livePrayers.filter(p => {
+    const d = prayerDate(p.created_at)
+    return d && localDateKey(d) === todayKey
+  })
+
+  function buildPrayerSteps(list, isToday) {
+    if (!list.length) return []
+    return [
+      {
+        label: i18nT('开始'),
+        text: isToday
+          ? i18nT('现在一起为今天的 {n} 条代祷祷告。每念完一条，会留一段安静，你可以跟着祷。', { n: list.length })
+          : i18nT('现在一起为最近的 {n} 条代祷祷告。每念完一条，会留一段安静，你可以跟着祷。', { n: list.length }),
+        pauseAfter: 3,
+      },
+      ...list.map((p, index) => ({
+        label: p.nickname || '',
+        text: i18nT('第 {n} 条，{who} 的代祷：{content}', { n: index + 1, who: p.nickname || i18nT('一位弟兄姊妹'), content: p.content }),
+        pauseAfter: PRAYER_PAUSE_SECONDS,
+      })),
+      { label: i18nT('结束'), text: i18nT('念完了。愿神垂听这些祷告。'), pauseAfter: 0 },
+    ]
+  }
+
+  function startGuidedPrayer(list, isToday) {
+    const steps = buildPrayerSteps(list, isToday)
+    if (steps.length) guided.start(steps)
+  }
 
   // 把原始英文错误转成友好的中文提示
   function friendlyError(e) {
@@ -778,6 +831,28 @@ export default function PrayerWallPage({ user, token, onBack }) {
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* 跟着代祷清单一起祷告：不看屏幕也能一条一条祷 */}
+      {!loading && !error && livePrayers.length > 0 && (
+        <div style={{ padding: '0 16px' }}>
+          <MediaToggleRow show={['sound']} compact />
+          <GuidedAudioBar
+            guided={guided}
+            onStart={() => startGuidedPrayer(todayPrayers.length ? todayPrayers : livePrayers.slice(0, 10), todayPrayers.length > 0)}
+            label="带我读今天的代祷"
+            hint={!getMediaPref('sound')
+              ? i18nT('先打开上面的「声音」，播放才会出声。')
+              : todayPrayers.length > 0
+                ? i18nT('今天有 {n} 条代祷，每条之间会安静 {s} 秒。', { n: todayPrayers.length, s: PRAYER_PAUSE_SECONDS })
+                : i18nT('今天还没有新的代祷，将为你读最近的 {n} 条。', { n: Math.min(10, livePrayers.length) })}
+          />
+          {guided.running && guided.currentStep?.label && (
+            <div style={{ fontSize: 11.5, color: 'rgba(255,255,255,0.45)', margin: '-6px 0 10px' }}>
+              {i18nT('正在为：')}{guided.currentStep.label}
+            </div>
+          )}
         </div>
       )}
 

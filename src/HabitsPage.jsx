@@ -12,8 +12,9 @@ import { t as i18nT } from './i18n/runtime'
 import { useState, useEffect } from 'react'
 import { SuggestMenu } from './components/SuggestField'
 const HAB_OPTS = ['今天做到了，感谢神', '今天没做到 / 忘了', '比昨天有进步', '遇到拦阻：', '靠主恩典坚持', '想为此祷告']
-import { API_BASE } from './api'
+import { API_BASE, fetchBehaviorHistory } from './api'
 import { getToken } from './auth'
+import { CalendarHeatmap, StatTile, localDateKey } from './components/charts'
 
 // ── 预设灵修习惯 ──────────────────────────────────────────────────────────
 const PRESET_HABITS = [
@@ -62,6 +63,8 @@ export default function HabitsPage({ user, token: propToken, embedded = false, o
   const [saving, setSaving]         = useState({})       // habitId → bool
   const [addingPreset, setAddingPreset] = useState(null)
   const [customName, setCustomName]     = useState('')
+  const [heatDays, setHeatDays]         = useState([])   // [{date:'YYYY-MM-DD', value}] 每天完成的操练次数
+  const [totalExecutions, setTotalExecutions] = useState(0)
 
   const token = propToken || getToken()
   const uid   = user?.id || user?.userId
@@ -82,6 +85,21 @@ export default function HabitsPage({ user, token: propToken, embedded = false, o
       setHabits(items)
       setStreak(dashRes?.current_streak || 0)
       setTodayCount(dashRes?.today_executions || 0)
+      setTotalExecutions(items.reduce((sum, h) => sum + (Number(h.total_executions) || 0), 0))
+
+      // 习惯的重点是「连续性」，而连续性只有铺在日历上才看得见：
+      // 哪几周是连着的、断在哪一天，一句「连续 N 天」说不出来。
+      // /habits/dashboard 与 /habits/{id}/log 都不回历史，唯一带时间戳的真实执行记录
+      // 在 /behavior/history（habit_execution_logs 会并进来，source='habit'）。
+      const behavior = await fetchBehaviorHistory(uid, token, 200).catch(() => null)
+      const byDay = new Map()
+      for (const row of behavior?.items || []) {
+        if (row.source !== 'habit' || !row.was_completed || !row.executed_at) continue
+        const key = localDateKey(new Date(row.executed_at))
+        if (!key) continue
+        byDay.set(key, (byDay.get(key) || 0) + 1)
+      }
+      setHeatDays([...byDay.entries()].map(([date, value]) => ({ date, value })).sort((a, b) => a.date.localeCompare(b.date)))
 
       // Load today's logs for each habit
       const today = new Date().toISOString().split('T')[0]
@@ -197,6 +215,13 @@ export default function HabitsPage({ user, token: propToken, embedded = false, o
 
   const todayDate = new Date().toLocaleDateString('zh-CN', { month: 'long', day: 'numeric', weekday: 'short' })
   const doneCount = habits.filter(h => todayLogs[h.id]?.done).length
+  // 磁贴上的迷你趋势用最近 14 天的真实完成次数，缺的那天就是 0（=那天真的没有记录）。
+  const heatMap = new Map(heatDays.map(d => [d.date, d.value]))
+  const spark14 = Array.from({ length: 14 }, (_, i) => {
+    const d = new Date()
+    d.setDate(d.getDate() - (13 - i))
+    return heatMap.get(localDateKey(d)) || 0
+  })
 
   return (
     <div style={{ paddingBottom: 20 }}>
@@ -353,6 +378,30 @@ export default function HabitsPage({ user, token: propToken, embedded = false, o
                 )
               })}
             </div>
+          )}
+
+          {/* ── 连续性 ── */}
+          {(habits.length > 0 || heatDays.length > 0) && (
+          <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, padding: '14px 16px', marginTop: 16 }}>
+            <div style={{ display: 'flex', gap: 22, flexWrap: 'wrap', marginBottom: heatDays.length ? 14 : 0 }}>
+              <StatTile label={i18nT('连续天数')} value={streak} unit={i18nT('天')} />
+              <StatTile label={i18nT('累计完成')} value={totalExecutions} unit={i18nT('次')} spark={spark14} />
+              <StatTile label={i18nT('今日完成')} value={doneCount} unit={`/${habits.length}`} />
+            </div>
+            {heatDays.length > 0 ? (
+              <CalendarHeatmap
+                data={heatDays}
+                weeks={13}
+                title={i18nT('操练连续性')}
+                subtitle={i18nT('每格是一天完成的操练次数 · 断掉的那几格不是定罪，只是提醒')}
+                unit={i18nT('次')}
+              />
+            ) : (
+              <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', lineHeight: 1.7 }}>
+                {i18nT('还没有可以铺开的执行记录。打卡几天之后，这里会长出一张连续性日历。')}
+              </div>
+            )}
+          </div>
           )}
         </div>
       )}

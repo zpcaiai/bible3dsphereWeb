@@ -7,6 +7,12 @@ import { useEffect, useRef, useState } from 'react'
 import BackButton from './BackButton'
 import { JERU_ERAS, TEMPLE_CENTER, PASSION_WEEK, eraGeoJSON, locationsFor, JERU_LOCATIONS } from './data/jerusalemChronology'
 import { TEMPLE_GEOJSON, TEMPLE_PARTS, TEMPLE_LABELS, TEMPLE_CAMERA } from './data/templeStructure'
+import { speakOnce, stopAllAudio } from './useGlobalAudio'
+import { useAmbience } from './lib/media/useAmbience'
+import { MediaToggleRow } from './lib/media/MediaControls'
+import { getMediaPref } from './lib/media/mediaPrefs'
+import { useMediaPrefs } from './lib/media/useMediaPrefs'
+import { prefersReducedMotion } from './prefersReducedMotion'
 
 const TOKEN = (import.meta.env && (import.meta.env.NEXT_PUBLIC_MAPBOX_TOKEN || import.meta.env.VITE_MAPBOX_TOKEN)) || ''
 const MAPBOX_VER = '3.7.0'
@@ -67,6 +73,17 @@ function bearing(a, b) {
 }
 const sleep = (ms) => new Promise(r => setTimeout(r, ms))
 
+/**
+ * 受难周分站的解说词。
+ * 只用 PASSION_WEEK 里真实存在的四个字段：day / title / ref / summary。
+ */
+function passionNarrationText(stop) {
+  if (!stop) return ''
+  return [stop.day, stop.title].filter(Boolean).join('，')
+    + (stop.ref ? `。${stop.ref}` : '')
+    + (stop.summary ? `。${stop.summary}` : '')
+}
+
 export default function JerusalemSandbox({ onBack }) {
   const containerRef = useRef(null)
   const mapRef = useRef(null)
@@ -91,9 +108,17 @@ export default function JerusalemSandbox({ onBack }) {
   const [selectedPart, setSelectedPart] = useState(null)
   const templeMarkersRef = useRef([])
   const templeModeRef = useRef(false)
+  // —— 声音：巡游解说 + 旷野风环境音（都必须由用户显式开启）——
+  const [narrate, setNarrate] = useState(false)
+  const narrateRef = useRef(false)   // 巡游是一个跨多次渲染的 async 循环，读 ref 才能中途改主意
+  narrateRef.current = narrate
+  const spokeRef = useRef(false)     // 是否真的出过声，决定卸载时要不要 stopAllAudio
+  const ambience = useAmbience()
+  const { prefs: mediaPrefs } = useMediaPrefs()
 
   const era = JERU_ERAS[eraIdx]
   eraIdxRef.current = eraIdx
+  const reducedMotion = prefersReducedMotion()
 
   // —— 初始化地图（含回退）——
   useEffect(() => {
@@ -149,6 +174,8 @@ export default function JerusalemSandbox({ onBack }) {
     boot(TOKEN ? 'mapbox' : 'maplibre')
     return () => {
       disposed = true; passionRunRef.current = false
+      // 离开沙盘时不该还有解说声继续念下去（环境音由 useAmbience 自己卸载时淡出）
+      if (spokeRef.current) { spokeRef.current = false; stopAllAudio() }
       clearMarkers()
       if (mapRef.current) { try { mapRef.current.remove() } catch (_) {} mapRef.current = null }
     }
@@ -244,8 +271,13 @@ export default function JerusalemSandbox({ onBack }) {
   // —— 3D 平地起高楼：高度从 0 增长到目标 ——
   function riseTween() {
     const map = mapRef.current; if (!map || !map.getLayer || !map.getLayer('jeru-fill')) return
-    const start = performance.now(); const dur = 900
     const heightExpr = ['coalesce', ['get', 'height'], 0]
+    // 减弱动态效果：直接给到最终高度，不做「长高」这段装饰性动画
+    if (prefersReducedMotion()) {
+      try { map.setPaintProperty('jeru-fill', 'fill-extrusion-height', heightExpr) } catch (_) {}
+      return
+    }
+    const start = performance.now(); const dur = 900
     const step = (t) => {
       const k = Math.min(1, (t - start) / dur)
       const e = 1 - Math.pow(1 - k, 3) // easeOutCubic
@@ -292,7 +324,7 @@ export default function JerusalemSandbox({ onBack }) {
 
   function resetView() {
     const map = mapRef.current; if (!map) return
-    map.easeTo({ center: TEMPLE_CENTER, zoom: 15.4, pitch: 60, bearing: -22, duration: 900 })
+    map.easeTo({ center: TEMPLE_CENTER, zoom: 15.4, pitch: 60, bearing: -22, duration: reducedMotion ? 0 : 900 })
   }
 
   // —— 圣殿3D结构模式 ——
@@ -304,6 +336,7 @@ export default function JerusalemSandbox({ onBack }) {
     const map = mapRef.current, gl = glRef.current
     if (!map || !map.getLayer || !map.getLayer('temple-fill')) return
     passionRunRef.current = false; setPassionActive(false)
+    if (spokeRef.current) { spokeRef.current = false; stopAllAudio() }
     templeModeRef.current = true; setTempleMode(true); setSelectedLoc(null)
     try {
       map.setLayoutProperty('jeru-fill', 'visibility', 'none')
@@ -320,7 +353,7 @@ export default function JerusalemSandbox({ onBack }) {
       const mk = new gl.Marker({ element: el, anchor: 'center' }).setLngLat(l.coord).addTo(map)
       templeMarkersRef.current.push(mk)
     })
-    map.flyTo({ center: TEMPLE_CAMERA.center, zoom: TEMPLE_CAMERA.zoom, pitch: TEMPLE_CAMERA.pitch, bearing: TEMPLE_CAMERA.bearing, duration: 2200, essential: true })
+    map.flyTo({ center: TEMPLE_CAMERA.center, zoom: TEMPLE_CAMERA.zoom, pitch: TEMPLE_CAMERA.pitch, bearing: TEMPLE_CAMERA.bearing, duration: reducedMotion ? 0 : 2200, essential: true })
   }
   function exitTemple() {
     const map = mapRef.current, gl = glRef.current
@@ -343,6 +376,15 @@ export default function JerusalemSandbox({ onBack }) {
   }, [cutaway, templeMode])
 
   // —— 受难周 FPV 巡游 ——
+  /** 念这一站；返回一个 Promise，让相机等解说说完再走，而不是把人半路打断。 */
+  function narrateStop(stop) {
+    if (!narrateRef.current || !getMediaPref('sound')) return Promise.resolve()
+    const text = passionNarrationText(stop)
+    if (!text) return Promise.resolve()
+    spokeRef.current = true
+    return speakOnce(text, { rate: 0.9 }).catch(() => {})
+  }
+
   async function playPassion() {
     const map = mapRef.current, gl = glRef.current
     if (!map || passionRunRef.current) return
@@ -362,13 +404,15 @@ export default function JerusalemSandbox({ onBack }) {
       const br = i < PASSION_WEEK.length - 1 ? bearing(stop.coord, next.coord) : map.getBearing()
       setPassionStop(i)
       passionMarkerRef.current.setLngLat(stop.coord)
-      map.easeTo({ center: stop.coord, zoom: 17, pitch: 72, bearing: br, duration: 2600, essential: true })
-      await sleep(3100)
+      map.easeTo({ center: stop.coord, zoom: 17, pitch: 72, bearing: br, duration: reducedMotion ? 0 : 2600, essential: true })
+      // 解说与停留同时开始：没开解说时仍是原来的 3.1 秒节奏，开了则等念完
+      await Promise.all([sleep(3100), narrateStop(stop)])
     }
     passionRunRef.current = false; setPassionActive(false)
   }
   function stopPassion() {
     passionRunRef.current = false; setPassionActive(false); setPassionStop(-1)
+    if (spokeRef.current) { spokeRef.current = false; stopAllAudio() }
     if (passionMarkerRef.current) { try { passionMarkerRef.current.remove() } catch (_) {} }
     resetView()
   }
@@ -381,7 +425,8 @@ export default function JerusalemSandbox({ onBack }) {
     }
     passionMarkerRef.current.setLngLat(stop.coord).addTo(map)
     setPassionStop(i)
-    map.easeTo({ center: stop.coord, zoom: 17, pitch: 72, duration: 1600 })
+    map.easeTo({ center: stop.coord, zoom: 17, pitch: 72, duration: reducedMotion ? 0 : 1600 })
+    narrateStop(stop)
   }
 
   return (
@@ -424,6 +469,21 @@ export default function JerusalemSandbox({ onBack }) {
           {!passionActive
             ? <button className="primary" onClick={playPassion}>{i18nT('✝ 受难周 FPV 巡游')}</button>
             : <button className="primary" onClick={stopPassion}>{i18nT('⏹ 停止巡游')}</button>}
+          <button
+            className={narrate ? 'on' : ''}
+            aria-pressed={narrate}
+            title={i18nT('每到一站，念出那一天、经文出处与经过')}
+            onClick={() => setNarrate(v => {
+              if (v && spokeRef.current) { spokeRef.current = false; stopAllAudio() }
+              return !v
+            })}
+          >{narrate ? i18nT('🔊 巡游解说·开') : i18nT('🔈 巡游解说')}</button>
+          <button
+            className={ambience.playing ? 'on' : ''}
+            aria-pressed={ambience.playing}
+            title={i18nT('圣城旷野的风声，很轻，可以随时关掉')}
+            onClick={() => ambience.toggle('wind')}
+          >{ambience.playing ? i18nT('🌬 风声·开') : i18nT('🌬 风声')}</button>
           {engine === 'maplibre' && (
             <button className={showOsm ? 'on' : ''} onClick={() => setShowOsm(s => !s)}>{i18nT('🗺 现代底图')}</button>
           )}
@@ -449,6 +509,11 @@ export default function JerusalemSandbox({ onBack }) {
       {/* 受难周分站 */}
       <div className="jeru-passion">
         <div className="jeru-passion-h">{i18nT('✝ 受难周步行轨迹（希律时期 · 点击任一站定位）')}</div>
+        {/* 声音开关放在分站列表上方，让「有解说这回事」是看得见的，而不是藏在设置里 */}
+        <MediaToggleRow show={['sound', 'ambience']} compact />
+        {!mediaPrefs.sound && narrate && (
+          <div className="jeru-stopdetail"><p>{i18nT('解说已开启，但声音开关是关的。打开上面的「声音」才会出声。')}</p></div>
+        )}
         <div className="jeru-stops">
           {PASSION_WEEK.map((s, i) => (
             <button key={i} className={`jeru-stop ${passionStop === i ? 'on' : ''}`} onClick={() => jumpStop(i)}>

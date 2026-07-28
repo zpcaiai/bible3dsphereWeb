@@ -14,6 +14,7 @@ import html2canvas from 'html2canvas'
 import { fetchSermonJournals, saveSermonJournal, deleteSermonJournal, toggleShareSermonJournal } from './api'
 import usePullToRefresh from './hooks/usePullToRefresh'
 import { TTSFullBar, useGlobalAudio } from './useGlobalAudio.jsx'
+import { useSpeechInput } from './hooks/useSpeechInput'
 import { escapeHtml, escapeHtmlWithBr } from './sanitize'
 import { a11yClickProps } from './lib/a11yClick';
 import PlanExecutionPanel from './components/PlanExecutionPanel'
@@ -228,6 +229,29 @@ export default function SermonJournalPage({ user, token, onBack }) {
 
   function updateField(field, value) {
     setJournals(prev => prev.map(j => j.id === activeId ? { ...j, [field]: value } : j))
+  }
+
+  // ── 语音速记 ────────────────────────────────────────────────────────────
+  // 讲道进行中打字很难跟上，所以每个栏位旁边都有一个麦克风：按住说完松开，
+  // 转写结果**追加**到那个栏位末尾（绝不覆盖已经写好的字）。
+  const voiceTargetRef = useRef(null)
+  const [voiceTarget, setVoiceTarget] = useState(null)
+  const speech = useSpeechInput({
+    onTranscript: (text) => {
+      const field = voiceTargetRef.current
+      if (!field || !text) return
+      setJournals(prev => prev.map(j => (
+        j.id === activeId ? { ...j, [field]: j[field]?.trim() ? `${j[field]} ${text}` : text } : j
+      )))
+    },
+  })
+
+  function toggleVoiceNote(field) {
+    if (speech.isRecording && voiceTargetRef.current === field) { speech.stopRecording(); return }
+    if (speech.isRecording) speech.stopRecording({ discard: true })
+    voiceTargetRef.current = field
+    setVoiceTarget(field)
+    speech.startRecording()
   }
 
   function updateListField(field, idx, value) {
@@ -684,9 +708,39 @@ export default function SermonJournalPage({ user, token, onBack }) {
             {/* Main content sections */}
             {SECTION_CONFIG.map((section) => {
               const { key, icon, label, placeholder, rows } = localizeSection(section)
+              const recordingHere = speech.isRecording && voiceTarget === key
+              const busyHere = speech.isTranscribing && voiceTarget === key
               return (
               <section key={key} className="sj-section glass">
-                <div className="sj-section-title">{icon} {label}</div>
+                <div className="sj-section-title" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span>{icon} {label}</span>
+                  <button
+                    type="button"
+                    onClick={() => toggleVoiceNote(key)}
+                    disabled={busyHere}
+                    title={recordingHere ? i18nT('停止并转写') : i18nT('语音速记：说完自动追加到这一栏')}
+                    aria-label={recordingHere ? i18nT('停止并转写') : i18nT('语音速记：说完自动追加到这一栏')}
+                    style={{
+                      marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 5,
+                      padding: '3px 10px', borderRadius: 999, fontSize: 11.5, cursor: busyHere ? 'wait' : 'pointer',
+                      border: `1px solid ${recordingHere ? 'rgba(255,59,48,0.5)' : 'rgba(255,255,255,0.18)'}`,
+                      background: recordingHere ? 'rgba(255,59,48,0.16)' : 'rgba(255,255,255,0.06)',
+                      color: recordingHere ? '#ff9d97' : 'rgba(255,255,255,0.7)',
+                    }}
+                  >
+                    {busyHere ? `⏳ ${i18nT('转写中…')}` : recordingHere ? `⏹ ${speech.recordingSeconds}s` : `🎤 ${i18nT('语音速记')}`}
+                  </button>
+                </div>
+                {(recordingHere || busyHere) && (
+                  <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', marginBottom: 6 }}>
+                    {recordingHere
+                      ? i18nT('正在录音，最长 {max} 秒；说完点一下停止，文字会接在这一栏后面。', { max: speech.maxRecordingSeconds })
+                      : i18nT('正在转写，请稍候…')}
+                  </div>
+                )}
+                {speech.recordingError && voiceTarget === key && (
+                  <div role="alert" style={{ fontSize: 11.5, color: '#ff9d97', marginBottom: 6, lineHeight: 1.6 }}>{speech.recordingError}</div>
+                )}
                 <span style={{ position: 'relative', display: 'block' }}>
                 <textarea
                   className="sj-textarea"

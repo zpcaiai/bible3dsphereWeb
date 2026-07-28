@@ -180,3 +180,10 @@
 .cc-banner-red h3 { color: #ff8a7a; }
 
 .cc-toast { font-size: 12px; color: #34c759; margin-top: 6px; min-height: 16px; }
+
+
+/* 引导播报进行到的那一步：闭着眼睁开时，一眼知道自己在哪里。 */
+.cc-step.active {
+  background: rgba(52, 199, 89, 0.10);
+  border-color: rgba(52, 199, 89, 0.35);
+}

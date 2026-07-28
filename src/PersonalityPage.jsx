@@ -3,6 +3,26 @@ import { useEffect, useState, useRef, useCallback } from 'react'
 import { fetchFormationProfile, fetchFormationDimensions, saveReflectionAnswers, fetchReflectionAnswers, createHabitsFromFormationPlan } from './api'
 import { getToken } from './auth'
 import PlanExecutionPanel from './components/PlanExecutionPanel'
+import { Meter, Radar, seriesColor } from './components/charts'
+import { CardActions } from './lib/media/CardActions'
+
+// 八维里这六维是「越高越好」,另两维(恐惧/骄傲倾向)是「越低越健康」。
+// 方向相反的轴放进同一张雷达图会骗人——图形往外鼓在一半轴上是好消息,在另一半是坏消息。
+// 所以雷达只画同向的这六维,那两维仍按原来的读法单独看。
+const RADAR_DIMS = ['humility', 'emotional_stability', 'truth_alignment', 'relational_health', 'resilience', 'spiritual_clarity']
+
+function categoryName(label = '') {
+  return String(label)
+    .replace(/^第.类：/, '')
+    .replace(/^Category\s+\w+\s*:\s*/i, '')
+}
+
+function inferPlanCadence(item) {
+  const text = String(item || '').toLowerCase()
+  if (/每天|daily|every day/.test(text)) return 'daily'
+  if (/每周|本周|每月|weekly|this week|each week|monthly|each month/.test(text)) return 'weekly'
+  return 'once'
+}
 
 const REFLECTION_CATEGORIES = [
   {
@@ -79,6 +99,18 @@ const FREQUENCY_OPTIONS = [
 ]
 
 export default function PersonalityPage({ user, embedded = false, onSyncToHabits }) {
+  const reflectionCategories = REFLECTION_CATEGORIES.map((category) => ({
+    ...category,
+    label: i18nT(category.label),
+    lesson: i18nT(category.lesson),
+    questions: category.questions.map((question) => i18nT(question)),
+  }))
+  const frequencyOptions = FREQUENCY_OPTIONS.map((option) => ({
+    ...option,
+    label: i18nT(option.label),
+    desc: i18nT(option.desc),
+  }))
+
   const [profile, setProfile] = useState(null)
   const [dimensions, setDimensions] = useState([])
   const [loading, setLoading] = useState(true)
@@ -162,7 +194,7 @@ export default function PersonalityPage({ user, embedded = false, onSyncToHabits
 
   // 获取主导循环
   const getDominantLoop = () => {
-    return profile?.profile?.dominant_loop || '暂无数据'
+    return profile?.profile?.dominant_loop || i18nT('暂无数据')
   }
 
   // 维度颜色映射
@@ -179,32 +211,32 @@ export default function PersonalityPage({ user, embedded = false, onSyncToHabits
 
   // 维度中文名称
   const dimensionNames = {
-    humility: '谦逊',
-    fear_tendency: '恐惧倾向',
-    pride_tendency: '骄傲倾向',
-    emotional_stability: '情绪稳定',
-    truth_alignment: '真理对齐',
-    relational_health: '关系健康',
-    resilience: '韧性',
-    spiritual_clarity: '灵性清晰'
+    humility: i18nT('谦逊'),
+    fear_tendency: i18nT('恐惧倾向'),
+    pride_tendency: i18nT('骄傲倾向'),
+    emotional_stability: i18nT('情绪稳定'),
+    truth_alignment: i18nT('真理对齐'),
+    relational_health: i18nT('关系健康'),
+    resilience: i18nT('韧性'),
+    spiritual_clarity: i18nT('灵性清晰')
   }
 
   // 弧线描述
   const arcDescriptions = {
-    breaking_through: { emoji: '🌅', text: '突破期', desc: '健康的维度正在增强' },
-    deepening_loops: { emoji: '🔄', text: '循环深化', desc: '需要注意的行为模式' },
-    stabilizing: { emoji: '⚖️', text: '稳定期', desc: '整体趋于平衡' },
-    unknown: { emoji: '❓', text: '未知', desc: '数据不足' }
+    breaking_through: { emoji: '🌅', text: i18nT('突破期'), desc: i18nT('健康的维度正在增强') },
+    deepening_loops: { emoji: '🔄', text: i18nT('循环深化'), desc: i18nT('需要注意的行为模式') },
+    stabilizing: { emoji: '⚖️', text: i18nT('稳定期'), desc: i18nT('整体趋于平衡') },
+    unknown: { emoji: '❓', text: i18nT('未知'), desc: i18nT('数据不足') }
   }
 
   // 轨迹方向描述
   const trajectoryDescriptions = {
-    stabilizing: { emoji: '📈', text: '趋于稳定', color: '#4ade80' },
-    fragmenting: { emoji: '⚠️', text: '趋于分散', color: '#f87171' },
-    improving_clarity: { emoji: '✨', text: '清晰度提升', color: '#60a5fa' },
-    increasing_volatility: { emoji: '📉', text: '波动性增加', color: '#fb923c' },
-    cyclical: { emoji: '🔄', text: '周期性', color: '#fbbf24' },
-    unknown: { emoji: '❓', text: '未知', color: '#9ca3af' }
+    stabilizing: { emoji: '📈', text: i18nT('趋于稳定'), color: '#4ade80' },
+    fragmenting: { emoji: '⚠️', text: i18nT('趋于分散'), color: '#f87171' },
+    improving_clarity: { emoji: '✨', text: i18nT('清晰度提升'), color: '#60a5fa' },
+    increasing_volatility: { emoji: '📉', text: i18nT('波动性增加'), color: '#fb923c' },
+    cyclical: { emoji: '🔄', text: i18nT('周期性'), color: '#fbbf24' },
+    unknown: { emoji: '❓', text: i18nT('未知'), color: '#9ca3af' }
   }
 
   const arc = arcDescriptions[getFormationArc()] || arcDescriptions.unknown
@@ -212,7 +244,7 @@ export default function PersonalityPage({ user, embedded = false, onSyncToHabits
 
   // ── 从反思问卷分数推导生命成熟度与功课 ──
   const computeFormationAnalysis = () => {
-    const catScores = REFLECTION_CATEGORIES.map(cat => {
+    const catScores = reflectionCategories.map(cat => {
       const scores = cat.questions.map((_, qi) => reflectionAnswers[`${cat.key}_${qi}`] ?? 0)
       const answered = scores.filter(s => s > 0)
       const avg = answered.length > 0 ? answered.reduce((a, b) => a + b, 0) / answered.length : 0
@@ -224,10 +256,10 @@ export default function PersonalityPage({ user, embedded = false, onSyncToHabits
     const overallAvg = answeredCats.reduce((s, c) => s + c.avg, 0) / answeredCats.length
     // 成熟度 = 答题平均分 / 10，映射到 5 个阶段
     const maturityPct = Math.round((overallAvg / 10) * 100)
-    const maturityStage = overallAvg >= 8 ? { label: '成熟稳固期', color: '#4ade80', emoji: '🌳', desc: '生命根基稳固，持续结出果子' }
-      : overallAvg >= 6 ? { label: '成长深化期', color: '#60a5fa', emoji: '🌿', desc: '正在深化，需持续操练' }
-      : overallAvg >= 4 ? { label: '挣扎突破期', color: '#fbbf24', emoji: '🌱', desc: '已有意识，仍需神的工作' }
-      : { label: '起步觉醒期', color: '#f87171', emoji: '🌰', desc: '正在被唤醒，神要开始塑造工作' }
+    const maturityStage = overallAvg >= 8 ? { label: i18nT('成熟稳固期'), color: '#4ade80', emoji: '🌳', desc: i18nT('生命根基稳固，持续结出果子') }
+      : overallAvg >= 6 ? { label: i18nT('成长深化期'), color: '#60a5fa', emoji: '🌿', desc: i18nT('正在深化，需持续操练') }
+      : overallAvg >= 4 ? { label: i18nT('挣扎突破期'), color: '#fbbf24', emoji: '🌱', desc: i18nT('已有意识，仍需神的工作') }
+      : { label: i18nT('起步觉醒期'), color: '#f87171', emoji: '🌰', desc: i18nT('正在被唤醒，神要开始塑造工作') }
 
     // 最弱的类别 = 主要生命功课
     const sorted = [...catScores].filter(c => c.answered > 0).sort((a, b) => a.avg - b.avg)
@@ -237,24 +269,24 @@ export default function PersonalityPage({ user, embedded = false, onSyncToHabits
     // 基于最弱类别生成灵修计划
     const planMap = {
       god_relationship: {
-        short: ['每天固定时间读经30分钟，用SOAP方法（观察、应用、祷告）', '每周写一篇与神相遇的日记', '用诗篇139:23-24开始每天的祷告'],
-        mid: ['完成一套系统读经计划（如一年读完圣经）', '学习默观祷告或安静等候神', '寻找属灵导师，每月分享灵性状况']
+        short: [i18nT('每天固定时间读经30分钟，用SOAP方法（观察、应用、祷告）'), i18nT('每周写一篇与神相遇的日记'), i18nT('用诗篇139:23-24开始每天的祷告')],
+        mid: [i18nT('完成一套系统读经计划（如一年读完圣经）'), i18nT('学习默观祷告或安静等候神'), i18nT('寻找属灵导师，每月分享灵性状况')]
       },
       character: {
-        short: ['每天睡前记录一件"圣灵果子"表现和一件失败的事', '当感到愤怒时，用10秒暂停法并默祷腓4:7', '选一项最弱的圣灵果子专项操练（如节制）'],
-        mid: ['研读登山宝训（马太福音5-7章），每章写应用', '加入读书小组共同研读品格塑造资料', '邀请3位亲密朋友给你品格上的诚实反馈']
+        short: [i18nT('每天睡前记录一件"圣灵果子"表现和一件失败的事'), i18nT('当感到愤怒时，用10秒暂停法并默祷腓4:7'), i18nT('选一项最弱的圣灵果子专项操练（如节制）')],
+        mid: [i18nT('研读登山宝训（马太福音5-7章），每章写应用'), i18nT('加入读书小组共同研读品格塑造资料'), i18nT('邀请3位亲密朋友给你品格上的诚实反馈')]
       },
       relationships: {
-        short: ['本周主动联系一位许久未联系的人，不带目的关心', '练习"先聆听后说话"：本周开口前先问一个问题', '写下需要饶恕的人，用祷告交托'],
-        mid: ['系统学习非暴力沟通（NVC）或圣经中的和好原则', '与配偶/家人建立每周固定的深度对话时间', '在小组中担任服事职责，操练委身与舍己']
+        short: [i18nT('本周主动联系一位许久未联系的人，不带目的关心'), i18nT('练习"先聆听后说话"：本周开口前先问一个问题'), i18nT('写下需要饶恕的人，用祷告交托')],
+        mid: [i18nT('系统学习非暴力沟通（NVC）或圣经中的和好原则'), i18nT('与配偶/家人建立每周固定的深度对话时间'), i18nT('在小组中担任服事职责，操练委身与舍己')]
       },
       trials: {
-        short: ['每天感恩日记：写3件患难中仍感恩的事', '遇到试炼时，先问"神要教我什么"再求解脱', '找出一个反复出现的老我习惯，每周记录一次进展'],
-        mid: ['研读约伯记或罗马书8章，记录对苦难的理解变化', '识别生命中的"偶像"：将神以外的依靠列出来一一交托', '与辅导者共同探索试炼背后的根源模式']
+        short: [i18nT('每天感恩日记：写3件患难中仍感恩的事'), i18nT('遇到试炼时，先问"神要教我什么"再求解脱'), i18nT('找出一个反复出现的老我习惯，每周记录一次进展')],
+        mid: [i18nT('研读约伯记或罗马书8章，记录对苦难的理解变化'), i18nT('识别生命中的"偶像"：将神以外的依靠列出来一一交托'), i18nT('与辅导者共同探索试炼背后的根源模式')]
       },
       calling: {
-        short: ['写下自己认为神给的3个恩赐，并找本周用上的机会', '向一位未信友分享近期的生命见证', '检视时间/金钱分配：记录本周用在神国上的比例'],
-        mid: ['完成恩赐评估测试并与小组讨论', '制定"事奉地图"：在家庭、教会、职场各一项具体服事', '设立传福音目标：为身边3位未信者持续代祷并寻求机会']
+        short: [i18nT('写下自己认为神给的3个恩赐，并找本周用上的机会'), i18nT('向一位未信友分享近期的生命见证'), i18nT('检视时间/金钱分配：记录本周用在神国上的比例')],
+        mid: [i18nT('完成恩赐评估测试并与小组讨论'), i18nT('制定"事奉地图"：在家庭、教会、职场各一项具体服事'), i18nT('设立传福音目标：为身边3位未信者持续代祷并寻求机会')]
       }
     }
 
@@ -263,14 +295,14 @@ export default function PersonalityPage({ user, embedded = false, onSyncToHabits
 
     // 基于8维分数生成"今日可行一步"
     const DIM_ACTIONS = {
-      humility:            { name:'谦逊',    icon:'🌿', threshold:0.5, action:'今天遇到被否定的时刻，练习在心里先说：「我不需要被证明是对的。」' },
-      emotional_stability: { name:'情绪稳定', icon:'🌊', threshold:0.5, action:'设置一个"情绪暂停"提醒——每天下午3点用3分钟做一次自我觉察：此刻我的内心在哪里？' },
-      truth_alignment:     { name:'真理对齐', icon:'📖', threshold:0.5, action:'今天读一段经文，把它写在手机备忘录里，下班前回顾一次它如何影响了今天的决定。' },
-      relational_health:   { name:'关系健康', icon:'❤️',  threshold:0.5, action:'今天主动给一位关系有些疏远的人发一条简短消息，不带目的，只是关心。' },
-      resilience:          { name:'韧性',    icon:'🌳', threshold:0.5, action:'找出本月一件让你感到气馁的事，写一句话：「神在这件事上想教我……」' },
-      spiritual_clarity:   { name:'灵性清晰', icon:'✨', threshold:0.5, action:'今天安静10分钟，不读书不听音频，只问神：「祢今天最想对我说什么？」然后写下来。' },
-      fear_tendency:       { name:'恐惧倾向', icon:'😨', threshold:0.4, action:'识别今天让你焦虑的一件具体事，写下：「最坏的结果是什么？神在最坏的结果里仍然是谁？」', inverse:true },
-      pride_tendency:      { name:'骄傲倾向', icon:'🦅', threshold:0.4, action:'今天找一个机会主动赞美他人的优点，不加任何"但是"，看自己内心的感受。', inverse:true },
+      humility:            { name:i18nT('谦逊'),    icon:'🌿', threshold:0.5, action:i18nT('今天遇到被否定的时刻，练习在心里先说：「我不需要被证明是对的。」') },
+      emotional_stability: { name:i18nT('情绪稳定'), icon:'🌊', threshold:0.5, action:i18nT('设置一个"情绪暂停"提醒——每天下午3点用3分钟做一次自我觉察：此刻我的内心在哪里？') },
+      truth_alignment:     { name:i18nT('真理对齐'), icon:'📖', threshold:0.5, action:i18nT('今天读一段经文，把它写在手机备忘录里，下班前回顾一次它如何影响了今天的决定。') },
+      relational_health:   { name:i18nT('关系健康'), icon:'❤️',  threshold:0.5, action:i18nT('今天主动给一位关系有些疏远的人发一条简短消息，不带目的，只是关心。') },
+      resilience:          { name:i18nT('韧性'),    icon:'🌳', threshold:0.5, action:i18nT('找出本月一件让你感到气馁的事，写一句话：「神在这件事上想教我……」') },
+      spiritual_clarity:   { name:i18nT('灵性清晰'), icon:'✨', threshold:0.5, action:i18nT('今天安静10分钟，不读书不听音频，只问神：「祢今天最想对我说什么？」然后写下来。') },
+      fear_tendency:       { name:i18nT('恐惧倾向'), icon:'😨', threshold:0.4, action:i18nT('识别今天让你焦虑的一件具体事，写下：「最坏的结果是什么？神在最坏的结果里仍然是谁？」'), inverse:true },
+      pride_tendency:      { name:i18nT('骄傲倾向'), icon:'🦅', threshold:0.4, action:i18nT('今天找一个机会主动赞美他人的优点，不加任何"但是"，看自己内心的感受。'), inverse:true },
     }
     const sv2 = profile?.profile?.state_vector || {}
     const dimActions = Object.entries(DIM_ACTIONS)
@@ -285,6 +317,34 @@ export default function PersonalityPage({ user, embedded = false, onSyncToHabits
   }
 
   const formationAnalysis = computeFormationAnalysis()
+
+  // 只有后端真的给了 state_vector 才画雷达。没有数据时 getDimensionScore 会回落到 0.5,
+  // 那会画出一个完美的正六边形——一张全是「基线」的假图,比不画更糟。
+  const stateVector = profile?.profile?.state_vector || {}
+  const hasStateVector = RADAR_DIMS.some(k => typeof stateVector[k] === 'number')
+  const radarAxes = RADAR_DIMS.map(k => ({ key: k, label: dimensionNames[k] }))
+  const radarValues = Object.fromEntries(RADAR_DIMS.map(k => [k, Math.round(getDimensionScore(k) * 100)]))
+  const radarWeakest = hasStateVector
+    ? [...RADAR_DIMS].sort((a, b) => getDimensionScore(a) - getDimensionScore(b))[0]
+    : null
+
+  // 人格画像卡是拿去问人的,不是拿来给自己贴标签的:所以卡上只放你答过题得出的结论
+  // 与一句要请人指出的盲点,不放问卷原文,也不放任何单条答案。
+  const buildPersonaCardSpec = () => {
+    const fa = formationAnalysis
+    return {
+      badge: i18nT('人格塑造 · 轨迹信号,不是定论'),
+      title: fa ? `${fa.maturityStage.emoji} ${fa.maturityStage.label}` : i18nT('人格塑造画像'),
+      subtitle: fa ? fa.maturityStage.desc : '',
+      sections: [
+        { heading: i18nT('当前生命功课'), items: (fa?.topLessons || []).map(c => i18nT('{lesson}（{category}）', { lesson: c.lesson, category: categoryName(c.label) })), emphasis: true },
+        { heading: i18nT('神已经给的强项'), items: (fa?.strongCats || []).map(c => `${c.lesson} ${c.avg.toFixed(1)}/10`) },
+        ...(hasStateVector ? [{ heading: i18nT('最需要被培育的维度'), items: [`${dimensionNames[radarWeakest]} ${(getDimensionScore(radarWeakest) * 100).toFixed(0)}%`] }] : []),
+        { heading: i18nT('今天可以走的一步'), items: (fa?.dimActions || []).map(d => d.action).slice(0, 2) },
+      ].filter(s => (s.items || []).length > 0),
+      footer: i18nT('这是反思的镜子,不是属灵评分。请帮我指出我自己看不见的那一面。'),
+    }
+  }
 
   // 同步灵修计划到习惯养成
   const syncToHabits = async (planType) => {
@@ -343,23 +403,20 @@ export default function PersonalityPage({ user, embedded = false, onSyncToHabits
           <div style={{ height: '10px', background: 'rgba(255,255,255,0.08)', borderRadius: '5px', overflow: 'hidden', marginBottom: '16px' }}>
             <div style={{ height: '100%', width: `${maturityPct}%`, background: `linear-gradient(90deg, #8b5cf6, ${maturityStage.color})`, borderRadius: '5px', transition: 'width 0.8s ease' }} />
           </div>
-          {/* 各类别得分条 */}
-          <div style={{ display: 'grid', gap: '8px' }}>
-            {catScores.map(c => (
-              <div key={c.key} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <span style={{ fontSize: '14px', width: '20px', flexShrink: 0 }}>{c.emoji}</span>
-                <div style={{ flex: 1 }}>
-                  <div style={{ height: '6px', background: 'rgba(255,255,255,0.07)', borderRadius: '3px', overflow: 'hidden' }}>
-                    <div style={{ height: '100%', width: c.answered > 0 ? `${(c.avg / 10) * 100}%` : '0%', background: c.color, borderRadius: '3px', transition: 'width 0.6s ease' }} />
-                  </div>
-                </div>
-                <span style={{ fontSize: '12px', color: c.color, fontWeight: 600, width: '30px', textAlign: 'right', flexShrink: 0 }}>
-                  {c.answered > 0 ? `${c.avg.toFixed(1)}` : '—'}
-                </span>
-                <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.35)', width: '70px', flexShrink: 0 }}>
-                  {c.label.split('：')[0]}
-                </span>
-              </div>
+          {/* 各类别得分条 —— 五条同量纲(0–10)的横条,正是 Meter 的形状;
+              换成统一原语后,数值、标签与轨道的读法跟全站其他计量条一致,
+              「没作答」也有明确的说法,而不是画成一条 0 分的空条让人误读成「很差」。 */}
+          <div style={{ display: 'grid', gap: '10px' }}>
+            {catScores.map((c, i) => (
+              <Meter
+                key={c.key}
+                label={`${c.emoji} ${categoryName(c.label)}`}
+                value={c.answered > 0 ? Number(c.avg.toFixed(1)) : 0}
+                max={10}
+                unit={i18nT(' / 10分')}
+                color={seriesColor(i)}
+                hint={c.answered > 0 ? `${c.answered}/${c.total} ${i18nT('题已作答')}` : i18nT('这一类还没作答,分数不代表低,只代表空白')}
+              />
             ))}
           </div>
         </div>
@@ -374,7 +431,7 @@ export default function PersonalityPage({ user, embedded = false, onSyncToHabits
                   <span style={{ fontSize: '14px' }}>{c.emoji}</span>
                   <span style={{ fontSize: '13px', color: '#fff', fontWeight: 600 }}>{c.lesson}</span>
                 </div>
-                <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', paddingLeft: '20px' }}>{c.label.replace(/第.类：/, '')}</div>
+                <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', paddingLeft: '20px' }}>{categoryName(c.label)}</div>
               </div>
             ))}
           </div>
@@ -466,7 +523,7 @@ export default function PersonalityPage({ user, embedded = false, onSyncToHabits
                 gap: '6px',
               }}
             >
-              {syncStatus === 'syncing' ? '⏳ 同步中...' : '🌱 同步短期计划到习惯'}
+              {syncStatus === 'syncing' ? i18nT('⏳ 同步中...') : i18nT('🌱 同步短期计划到习惯')}
             </button>
             <button
               onClick={() => syncToHabits('mid')}
@@ -489,7 +546,7 @@ export default function PersonalityPage({ user, embedded = false, onSyncToHabits
                 gap: '6px',
               }}
             >
-              {syncStatus === 'syncing' ? '⏳ 同步中...' : '📅 同步中期计划到习惯'}
+              {syncStatus === 'syncing' ? i18nT('⏳ 同步中...') : i18nT('📅 同步中期计划到习惯')}
             </button>
           </div>
 
@@ -502,11 +559,11 @@ export default function PersonalityPage({ user, embedded = false, onSyncToHabits
           <PlanExecutionPanel
             user={user}
             planId="personality-formation-plan"
-            title="个人灵修计划执行"
-            description="无需等待同步到习惯页面；这里也会按每日、每周和一次性行动记录。"
+            title={i18nT('个人灵修计划执行')}
+            description={i18nT('无需等待同步到习惯页面；这里也会按每日、每周和一次性行动记录。')}
             actions={[
-              ...shortPlan.map((item, index) => ({ id: `short-${index}`, title: item, cadence: item.includes('每周') || item.includes('本周') ? 'weekly' : item.includes('每天') ? 'daily' : 'once' })),
-              ...midPlan.map((item, index) => ({ id: `mid-${index}`, title: item, cadence: item.includes('每周') || item.includes('每月') ? 'weekly' : 'once' })),
+              ...shortPlan.map((item, index) => ({ id: `short-${index}`, title: item, cadence: inferPlanCadence(item) })),
+              ...midPlan.map((item, index) => ({ id: `mid-${index}`, title: item, cadence: inferPlanCadence(item) })),
             ]}
           />
           {syncStatus === 'error' && (
@@ -613,7 +670,7 @@ export default function PersonalityPage({ user, embedded = false, onSyncToHabits
                 <div style={{ fontSize: '32px', marginBottom: '8px' }}>🔄</div>
                 <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', marginBottom: '4px' }}>{i18nT('主导循环')}</div>
                 <div style={{ fontSize: '14px', fontWeight: 600, color: '#fff' }}>
-                  {getDominantLoop() === 'none' ? '积累中...' : getDominantLoop()}
+                  {getDominantLoop() === 'none' ? i18nT('积累中...') : i18nT(getDominantLoop().replace(/_/g, ' '))}
                 </div>
               </div>
 
@@ -642,10 +699,10 @@ export default function PersonalityPage({ user, embedded = false, onSyncToHabits
         flexWrap: 'wrap'
       }}>
         {[
-          { key: 'reflection', label: '反思问题', emoji: '�' },
-          { key: 'dimensions', label: '维度分析', emoji: '🎯' },
-          { key: 'loops', label: '循环模式', emoji: '🔄' },
-          { key: 'overview', label: '总览', emoji: '�' }
+          { key: 'reflection', label: i18nT('反思问题'), emoji: '💭' },
+          { key: 'dimensions', label: i18nT('维度分析'), emoji: '🎯' },
+          { key: 'loops', label: i18nT('循环模式'), emoji: '🔄' },
+          { key: 'overview', label: i18nT('总览'), emoji: '📊' }
         ].map(tab => (
           <button
             key={tab.key}
@@ -690,7 +747,29 @@ export default function PersonalityPage({ user, embedded = false, onSyncToHabits
               {i18nT('这些数值表示行为倾向（0.05-0.95），不是道德评分。0.5是基线，偏离表示倾向性。')}
             </p>
 
-            <div style={{ 
+            {hasStateVector ? (
+              <div style={{ marginBottom: '20px' }}>
+                <Radar
+                  title={i18nT('六个同向维度的当前形状')}
+                  subtitle={radarWeakest
+                    ? i18nT('六条轴都是「越往外越好」,所以看的是形状:此刻最凹的是「{dim}」,那是塌陷点,不是罪状。', { dim: dimensionNames[radarWeakest] })
+                    : i18nT('六条轴都是「越往外越好」,看的是形状而不是单点分数。')}
+                  axes={radarAxes}
+                  series={[{ name: i18nT('当前倾向'), values: radarValues }]}
+                  max={100}
+                  size={300}
+                />
+                <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)', marginTop: '8px', lineHeight: 1.6 }}>
+                  {i18nT('恐惧倾向与骄傲倾向是「越低越健康」,方向和上面六条相反,所以不放进同一张图,请在下面单独看。')}
+                </div>
+              </div>
+            ) : (
+              <div style={{ marginBottom: '20px', padding: '16px 18px', borderRadius: '12px', background: 'rgba(255,255,255,0.03)', border: '1px dashed rgba(255,255,255,0.15)', fontSize: '13px', color: 'rgba(255,255,255,0.45)', lineHeight: 1.7 }}>
+                {i18nT('还没有累积到可画的维度向量,所以这里不画雷达图——画一张全是基线的图,只会让你以为自己被测过了。')}
+              </div>
+            )}
+
+            <div style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
               gap: '16px'
@@ -772,6 +851,22 @@ export default function PersonalityPage({ user, embedded = false, onSyncToHabits
             </div>
           </div>
 
+          {/* 人格画像卡 —— 反思要走出手机才会变成成长:卡是拿去给人看、请人指正的。 */}
+          <div style={{
+            background: 'rgba(255,255,255,0.05)',
+            borderRadius: '16px',
+            padding: '24px',
+            marginBottom: '24px'
+          }}>
+            <h3 style={{ margin: '0 0 8px 0', fontSize: '18px', color: '#fff' }}>{i18nT('🖼 人格画像卡')}</h3>
+            <p style={{ margin: '0 0 4px 0', color: 'rgba(255,255,255,0.6)', fontSize: '13px', lineHeight: 1.7 }}>
+              {i18nT('把这张卡发给小组长、属灵同伴或家人,请他们印证或修正。卡上只有结论,没有你的问卷答案。')}
+            </p>
+            {formationAnalysis
+              ? <CardActions buildSpec={buildPersonaCardSpec} filename="persona-card.png" label="生成人格画像卡" templates={['ink', 'calm', 'olive']} />
+              : <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.4)', marginTop: '8px' }}>{i18nT('先在「反思问题」标签答几题,这张卡才有内容可放。')}</div>}
+          </div>
+
           {/* 免责声明 */}
           <div style={{
             background: 'rgba(251,191,36,0.1)',
@@ -829,7 +924,7 @@ export default function PersonalityPage({ user, embedded = false, onSyncToHabits
                 const pct = Math.round(score * 100)
                 const isHigh = score >= 0.65
                 const isLow = score <= 0.35
-                const statusLabel = isHigh ? { text: '强', color: '#4ade80' } : isLow ? { text: '待培育', color: '#f87171' } : { text: '基线', color: '#fbbf24' }
+                const statusLabel = isHigh ? { text: i18nT('强'), color: '#4ade80' } : isLow ? { text: i18nT('待培育'), color: '#f87171' } : { text: i18nT('基线'), color: '#fbbf24' }
                 return (
                   <div key={key} style={{
                     background: 'rgba(0,0,0,0.25)',
@@ -866,13 +961,13 @@ export default function PersonalityPage({ user, embedded = false, onSyncToHabits
                     {/* 描述 */}
                     {dimInfo.description && (
                       <p style={{ margin: '0 0 10px 0', color: 'rgba(255,255,255,0.6)', fontSize: '13px', lineHeight: 1.5 }}>
-                        {dimInfo.description}
+                        {i18nT(dimInfo.description)}
                       </p>
                     )}
                     {/* 反思问题 */}
                     {dimInfo.reflective_question && (
                       <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: '8px', padding: '10px 12px', fontSize: '12px', color: 'rgba(255,255,255,0.5)', fontStyle: 'italic' }}>
-                        💭 {dimInfo.reflective_question}
+                        💭 {i18nT(dimInfo.reflective_question)}
                       </div>
                     )}
                   </div>
@@ -898,7 +993,7 @@ export default function PersonalityPage({ user, embedded = false, onSyncToHabits
                 const pct = Math.round(score * 100)
                 const isHigh = score >= 0.65
                 const isLow = score <= 0.35
-                const statusLabel = isHigh ? { text: '活跃', color: '#f87171' } : isLow ? { text: '受控', color: '#4ade80' } : { text: '基线', color: '#fbbf24' }
+                const statusLabel = isHigh ? { text: i18nT('活跃'), color: '#f87171' } : isLow ? { text: i18nT('受控'), color: '#4ade80' } : { text: i18nT('基线'), color: '#fbbf24' }
                 return (
                   <div key={key} style={{
                     background: 'rgba(0,0,0,0.25)',
@@ -930,12 +1025,12 @@ export default function PersonalityPage({ user, embedded = false, onSyncToHabits
                     </div>
                     {dimInfo.description && (
                       <p style={{ margin: '0 0 10px 0', color: 'rgba(255,255,255,0.6)', fontSize: '13px', lineHeight: 1.5 }}>
-                        {dimInfo.description}
+                        {i18nT(dimInfo.description)}
                       </p>
                     )}
                     {dimInfo.reflective_question && (
                       <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: '8px', padding: '10px 12px', fontSize: '12px', color: 'rgba(255,255,255,0.5)', fontStyle: 'italic' }}>
-                        💭 {dimInfo.reflective_question}
+                        💭 {i18nT(dimInfo.reflective_question)}
                       </div>
                     )}
                   </div>
@@ -951,13 +1046,13 @@ export default function PersonalityPage({ user, embedded = false, onSyncToHabits
             padding: '20px',
             border: '1px solid rgba(139,92,246,0.25)'
           }}>
-            <h4 style={{ margin: '0 0 12px 0', color: '#c4b5fd', fontSize: '15px' }}>{i18nT('� 维度对比分析')}</h4>
+            <h4 style={{ margin: '0 0 12px 0', color: '#c4b5fd', fontSize: '15px' }}>{i18nT('📊 维度对比分析')}</h4>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '12px' }}>
               {[
-                { label: '最强维度', value: (() => { const entries = Object.entries(dimensionNames); const best = entries.filter(([k]) => !['fear_tendency','pride_tendency'].includes(k)).sort(([a],[b]) => getDimensionScore(b) - getDimensionScore(a))[0]; return best ? `${best[1]} (${(getDimensionScore(best[0])*100).toFixed(2)}%)` : '—' })(), color: '#4ade80' },
-                { label: '最需培育', value: (() => { const entries = Object.entries(dimensionNames); const worst = entries.filter(([k]) => !['fear_tendency','pride_tendency'].includes(k)).sort(([a],[b]) => getDimensionScore(a) - getDimensionScore(b))[0]; return worst ? `${worst[1]} (${(getDimensionScore(worst[0])*100).toFixed(2)}%)` : '—' })(), color: '#f87171' },
-                { label: '最活跃循环倾向', value: (() => { const fear = getDimensionScore('fear_tendency'); const pride = getDimensionScore('pride_tendency'); return fear > pride ? `恐惧倾向 (${(fear*100).toFixed(2)}%)` : `骄傲倾向 (${(pride*100).toFixed(2)}%)` })(), color: '#f87171' },
-                { label: '健康维度平均', value: (() => { const healthy = ['humility','emotional_stability','truth_alignment','relational_health','resilience','spiritual_clarity']; const avg = healthy.reduce((s, k) => s + getDimensionScore(k), 0) / healthy.length; return `${(avg*100).toFixed(2)}%` })(), color: '#60a5fa' },
+                { label: i18nT('最强维度'), value: (() => { const entries = Object.entries(dimensionNames); const best = entries.filter(([k]) => !['fear_tendency','pride_tendency'].includes(k)).sort(([a],[b]) => getDimensionScore(b) - getDimensionScore(a))[0]; return best ? `${best[1]} (${(getDimensionScore(best[0])*100).toFixed(2)}%)` : '—' })(), color: '#4ade80' },
+                { label: i18nT('最需培育'), value: (() => { const entries = Object.entries(dimensionNames); const worst = entries.filter(([k]) => !['fear_tendency','pride_tendency'].includes(k)).sort(([a],[b]) => getDimensionScore(a) - getDimensionScore(b))[0]; return worst ? `${worst[1]} (${(getDimensionScore(worst[0])*100).toFixed(2)}%)` : '—' })(), color: '#f87171' },
+                { label: i18nT('最活跃循环倾向'), value: (() => { const fear = getDimensionScore('fear_tendency'); const pride = getDimensionScore('pride_tendency'); return fear > pride ? `${i18nT('恐惧倾向')} (${(fear*100).toFixed(2)}%)` : `${i18nT('骄傲倾向')} (${(pride*100).toFixed(2)}%)` })(), color: '#f87171' },
+                { label: i18nT('健康维度平均'), value: (() => { const healthy = ['humility','emotional_stability','truth_alignment','relational_health','resilience','spiritual_clarity']; const avg = healthy.reduce((s, k) => s + getDimensionScore(k), 0) / healthy.length; return `${(avg*100).toFixed(2)}%` })(), color: '#60a5fa' },
               ].map(item => (
                 <div key={item.label} style={{ background: 'rgba(0,0,0,0.2)', borderRadius: '10px', padding: '12px' }}>
                   <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.45)', marginBottom: '4px' }}>{item.label}</div>
@@ -1007,7 +1102,7 @@ export default function PersonalityPage({ user, embedded = false, onSyncToHabits
               <div style={{ background: 'rgba(0,0,0,0.2)', borderRadius: '12px', padding: '16px' }}>
                 <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', marginBottom: '8px' }}>{i18nT('主导循环')}</div>
                 <div style={{ fontSize: '16px', fontWeight: 600, color: getDominantLoop() === 'none' ? 'rgba(255,255,255,0.3)' : '#f6ad55' }}>
-                  {getDominantLoop() === 'none' ? '数据积累中...' : getDominantLoop().replace(/_/g, ' ')}
+                  {getDominantLoop() === 'none' ? i18nT('数据积累中...') : i18nT(getDominantLoop().replace(/_/g, ' '))}
                 </div>
               </div>
             </div>
@@ -1028,42 +1123,42 @@ export default function PersonalityPage({ user, embedded = false, onSyncToHabits
               {[
                 {
                   key: 'fear_control_loop',
-                  name: '恐惧控制循环',
-                  chain: ['恐惧', '控制', '过度工作', '燃尽', '恐惧'],
-                  triggers: ['未知结果', '失去掌控感', '完美主义'],
-                  response: '觉察恐惧源头，练习交托祷告，设定边界',
+                  name: i18nT('恐惧控制循环'),
+                  chain: [i18nT('恐惧'), i18nT('控制'), i18nT('过度工作'), i18nT('燃尽'), i18nT('恐惧')],
+                  triggers: [i18nT('未知结果'), i18nT('失去掌控感'), i18nT('完美主义')],
+                  response: i18nT('觉察恐惧源头，练习交托祷告，设定边界'),
                   color: '#f87171'
                 },
                 {
                   key: 'shame_avoidance_loop',
-                  name: '羞耻回避循环',
-                  chain: ['羞耻', '回避', '拖延', '焦虑', '羞耻'],
-                  triggers: ['失败经历', '被评价', '暴露脆弱'],
-                  response: '在基督里领受完全接纳，小步面对而非逃避',
+                  name: i18nT('羞耻回避循环'),
+                  chain: [i18nT('羞耻'), i18nT('回避'), i18nT('拖延'), i18nT('焦虑'), i18nT('羞耻')],
+                  triggers: [i18nT('失败经历'), i18nT('被评价'), i18nT('暴露脆弱')],
+                  response: i18nT('在基督里领受完全接纳，小步面对而非逃避'),
                   color: '#fb923c'
                 },
                 {
                   key: 'pride_comparison_loop',
-                  name: '骄傲比较循环',
-                  chain: ['骄傲', '比较', '焦虑', '不稳定', '骄傲'],
-                  triggers: ['他人成功', '身份受威胁', '优越感受损'],
-                  response: '默想十架谦卑，专注神眼中的价值',
+                  name: i18nT('骄傲比较循环'),
+                  chain: [i18nT('骄傲'), i18nT('比较'), i18nT('焦虑'), i18nT('不稳定'), i18nT('骄傲')],
+                  triggers: [i18nT('他人成功'), i18nT('身份受威胁'), i18nT('优越感受损')],
+                  response: i18nT('默想十架谦卑，专注神眼中的价值'),
                   color: '#fbbf24'
                 },
                 {
                   key: 'desire_impulse_loop',
-                  name: '欲望冲动循环',
-                  chain: ['欲望', '冲动行为', '后悔', '欲望'],
-                  triggers: ['即时满足诱惑', '逃避痛苦', '习惯性渴求'],
-                  response: '暂停10秒，默想永恒奖赏，寻求圣灵大能',
+                  name: i18nT('欲望冲动循环'),
+                  chain: [i18nT('欲望'), i18nT('冲动行为'), i18nT('后悔'), i18nT('欲望')],
+                  triggers: [i18nT('即时满足诱惑'), i18nT('逃避痛苦'), i18nT('习惯性渴求')],
+                  response: i18nT('暂停10秒，默想永恒奖赏，寻求圣灵大能'),
                   color: '#a78bfa'
                 },
                 {
                   key: 'truth_stability_loop',
-                  name: '真理稳定循环',
-                  chain: ['面对真理', '反思', '稳定', '成长', '面对真理'],
-                  triggers: ['诚实面对自己', '接纳光照', '悔改更新'],
-                  response: '保持透明，持续省察，在恩典中成长',
+                  name: i18nT('真理稳定循环'),
+                  chain: [i18nT('面对真理'), i18nT('反思'), i18nT('稳定'), i18nT('成长'), i18nT('面对真理')],
+                  triggers: [i18nT('诚实面对自己'), i18nT('接纳光照'), i18nT('悔改更新')],
+                  response: i18nT('保持透明，持续省察，在恩典中成长'),
                   color: '#4ade80',
                   healthy: true
                 }
@@ -1095,7 +1190,7 @@ export default function PersonalityPage({ user, embedded = false, onSyncToHabits
                       color: '#000',
                       fontWeight: 700
                     }}>
-                      {getDominantLoop() === loop.key ? '● 当前主导' : loop.healthy ? '✓ 健康' : '循环'}
+                      {getDominantLoop() === loop.key ? i18nT('● 当前主导') : loop.healthy ? i18nT('✓ 健康') : i18nT('循环')}
                     </span>
                     <span style={{ color: '#fff', fontWeight: 600, fontSize: '16px' }}>{loop.name}</span>
                   </div>
@@ -1205,10 +1300,10 @@ export default function PersonalityPage({ user, embedded = false, onSyncToHabits
               <div style={{ marginTop: '12px', fontSize: '13px', color: '#a78bfa', fontWeight: 600, marginBottom: '10px' }}>{i18nT('📝 作答原则')}</div>
               <div style={{ display: 'grid', gap: '6px' }}>
                 {[
-                  '诚实回答，不急着写「正确答案」。',
-                  '写下具体例子。',
-                  '完成后找出共同主题（例如多次提到「愤怒」或「不信」），那很可能就是当前生命功课。',
-                  '每3–6个月重做一次，观察变化。'
+                  i18nT('诚实回答，不急着写「正确答案」。'),
+                  i18nT('写下具体例子。'),
+                  i18nT('完成后找出共同主题（例如多次提到「愤怒」或「不信」），那很可能就是当前生命功课。'),
+                  i18nT('每3–6个月重做一次，观察变化。')
                 ].map((tip, i) => (
                   <div key={i} style={{ display: 'flex', gap: '8px', fontSize: '13px', color: 'rgba(255,255,255,0.65)', lineHeight: 1.6 }}>
                     <span style={{ color: '#a78bfa', flexShrink: 0 }}>·</span>
@@ -1231,9 +1326,9 @@ export default function PersonalityPage({ user, embedded = false, onSyncToHabits
               </div>
               <div style={{ display: 'grid', gap: '8px' }}>
                 {[
-                  { ref: '罗马书12:2', text: '这不是为了自我定罪，而是邀请神来更新。' },
-                  { ref: '希伯来书12:5-11', text: '生命功课常在重复的痛苦或试炼中显露，神是用爱来修剪。' },
-                  { ref: '加拉太书5:16', text: '靠恩典而行：认清功课后，立刻认罪、接受赦免，并倚靠圣灵改变。' },
+                  { ref: i18nT('罗马书12:2'), text: i18nT('这不是为了自我定罪，而是邀请神来更新。') },
+                  { ref: i18nT('希伯来书12:5-11'), text: i18nT('生命功课常在重复的痛苦或试炼中显露，神是用爱来修剪。') },
+                  { ref: i18nT('加拉太书5:16'), text: i18nT('靠恩典而行：认清功课后，立刻认罪、接受赦免，并倚靠圣灵改变。') },
                 ].map((item, i) => (
                   <div key={i} style={{ display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
                     <span style={{ flexShrink: 0, fontSize: '13px', color: '#fbbf24', marginTop: '1px' }}>·</span>
@@ -1255,11 +1350,11 @@ export default function PersonalityPage({ user, embedded = false, onSyncToHabits
               <div style={{ fontSize: '13px', color: '#60a5fa', fontWeight: 600, marginBottom: '10px' }}>{i18nT('🔍 分析与应用步骤（逻辑归纳）')}</div>
               <div style={{ display: 'grid', gap: '8px' }}>
                 {[
-                  { n: '1', text: '找出模式：哪些题目你的答案最负面或最常出现同一主题？' },
-                  { n: '2', text: '连结圣经：针对该主题查考相关经文（例如若是不饶恕，就看马太福音6:14-15）。' },
-                  { n: '3', text: '写下当前生命功课：例如「神要我学习在工作中信靠祂的供应，而不是忧虑」。' },
-                  { n: '4', text: '制定行动：用生命之轮或之前的地图，设计具体操练（例如每日为该功课用ACTS祷告）。' },
-                  { n: '5', text: '找人确认：与成熟基督徒或小组分享，让他们帮助你看见可能忽略的盲点。' },
+                  { n: '1', text: i18nT('找出模式：哪些题目你的答案最负面或最常出现同一主题？') },
+                  { n: '2', text: i18nT('连结圣经：针对该主题查考相关经文（例如若是不饶恕，就看马太福音6:14-15）。') },
+                  { n: '3', text: i18nT('写下当前生命功课：例如「神要我学习在工作中信靠祂的供应，而不是忧虑」。') },
+                  { n: '4', text: i18nT('制定行动：用生命之轮或之前的地图，设计具体操练（例如每日为该功课用ACTS祷告）。') },
+                  { n: '5', text: i18nT('找人确认：与成熟基督徒或小组分享，让他们帮助你看见可能忽略的盲点。') },
                 ].map(step => (
                   <div key={step.n} style={{ display: 'flex', gap: '10px', fontSize: '13px', color: 'rgba(255,255,255,0.65)', lineHeight: 1.6 }}>
                     <span style={{
@@ -1288,16 +1383,16 @@ export default function PersonalityPage({ user, embedded = false, onSyncToHabits
             marginBottom: '20px'
           }}>
             <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.45)', alignSelf: 'center' }}>{i18nT('标记频率：')}</span>
-            {FREQUENCY_OPTIONS.map(opt => (
+            {frequencyOptions.map(opt => (
               <div key={opt.value} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: opt.color }} />
-                <span style={{ fontSize: '13px', color: opt.color, fontWeight: 600 }}>{opt.label}</span>
-                <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)' }}>{opt.desc}</span>
+                <span style={{ fontSize: '13px', color: opt.color, fontWeight: 600 }}>{i18nT(opt.label)}</span>
+                <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)' }}>{i18nT(opt.desc)}</span>
               </div>
             ))}
           </div>
 
-          {REFLECTION_CATEGORIES.map((cat, catIdx) => {
+          {reflectionCategories.map((cat, catIdx) => {
             const catAnswered = cat.questions.filter((_, qi) => reflectionAnswers[`${cat.key}_${qi}`] !== undefined).length
             return (
               <div key={cat.key} style={{
@@ -1310,14 +1405,14 @@ export default function PersonalityPage({ user, embedded = false, onSyncToHabits
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <span style={{ fontSize: '22px' }}>{cat.emoji}</span>
-                    <span style={{ color: cat.color, fontWeight: 700, fontSize: '15px' }}>{cat.label}</span>
+                    <span style={{ color: cat.color, fontWeight: 700, fontSize: '15px' }}>{i18nT(cat.label)}</span>
                   </div>
                   <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)' }}>
                     {catAnswered}/{cat.questions.length}
                   </span>
                 </div>
                 <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.45)', marginBottom: '18px', paddingLeft: '32px' }}>
-                  {i18nT('可能功课：')}{cat.lesson}
+                  {i18nT('可能功课：')}{i18nT(cat.lesson)}
                 </div>
 
                 <div style={{ display: 'grid', gap: '14px' }}>
@@ -1330,7 +1425,7 @@ export default function PersonalityPage({ user, embedded = false, onSyncToHabits
                         borderRadius: '12px',
                         padding: '16px 18px',
                         border: chosen !== undefined
-                          ? `1px solid ${FREQUENCY_OPTIONS.find(o => o.value === chosen)?.color}60`
+                          ? `1px solid ${frequencyOptions.find(o => o.value === chosen)?.color}60`
                           : '1px solid rgba(255,255,255,0.08)'
                       }}>
                         <div style={{
@@ -1342,14 +1437,14 @@ export default function PersonalityPage({ user, embedded = false, onSyncToHabits
                           <span style={{ color: 'rgba(255,255,255,0.35)', fontSize: '12px', marginRight: '8px' }}>
                             Q{catIdx * 4 + qi + 1}
                           </span>
-                          {q}
+                          {i18nT(q)}
                         </div>
                         {(() => {
                           const sliderVal = chosen ?? 0
                           const activeOpt = sliderVal === 0 ? null
-                            : sliderVal <= 3 ? FREQUENCY_OPTIONS[2]
-                            : sliderVal <= 7 ? FREQUENCY_OPTIONS[1]
-                            : FREQUENCY_OPTIONS[0]
+                            : sliderVal <= 3 ? frequencyOptions[2]
+                            : sliderVal <= 7 ? frequencyOptions[1]
+                            : frequencyOptions[0]
                           const trackColor = activeOpt?.color ?? 'rgba(255,255,255,0.15)'
                           const pct = sliderVal === 0 ? 0 : ((sliderVal - 1) / 9) * 100
                           return (
@@ -1357,9 +1452,9 @@ export default function PersonalityPage({ user, embedded = false, onSyncToHabits
                               {/* 区段标签 */}
                               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
                                 {[
-                                  { label: '🌱盲点', range: '1–3', color: '#f87171' },
-                                  { label: '🌿成长中', range: '4–7', color: '#fbbf24' },
-                                  { label: '🌳稳定操练', range: '8–10', color: '#4ade80' },
+                                  { label: i18nT('🌱盲点'), range: '1–3', color: '#f87171' },
+                                  { label: i18nT('🌿成长中'), range: '4–7', color: '#fbbf24' },
+                                  { label: i18nT('🌳稳定操练'), range: '8–10', color: '#4ade80' },
                                 ].map(z => (
                                   <span key={z.label} style={{
                                     fontSize: '11px', color: z.color,
@@ -1431,7 +1526,7 @@ export default function PersonalityPage({ user, embedded = false, onSyncToHabits
                               <div style={{ textAlign: 'right', marginTop: '4px', height: '18px' }}>
                                 {activeOpt && (
                                   <span style={{ fontSize: '12px', color: trackColor, fontWeight: 600, transition: 'color 0.2s' }}>
-                                    {activeOpt.label}　<span style={{ color: 'rgba(255,255,255,0.3)', fontWeight: 400 }}>{sliderVal}{i18nT('分')}</span>
+                                    {i18nT(activeOpt.label)}　<span style={{ color: 'rgba(255,255,255,0.3)', fontWeight: 400 }}>{sliderVal}{i18nT('分')}</span>
                                   </span>
                                 )}
                               </div>
@@ -1448,11 +1543,11 @@ export default function PersonalityPage({ user, embedded = false, onSyncToHabits
 
           {/* 答题进度汇总 */}
           {(() => {
-            const total = REFLECTION_CATEGORIES.reduce((s, c) => s + c.questions.length, 0)
+            const total = reflectionCategories.reduce((s, c) => s + c.questions.length, 0)
             const answered = Object.keys(reflectionAnswers).filter(k => reflectionAnswers[k] !== undefined).length
             const pct = Math.round((answered / total) * 100)
             if (answered === 0) return null
-            const freqCounts = FREQUENCY_OPTIONS.reduce((acc, o) => {
+            const freqCounts = frequencyOptions.reduce((acc, o) => {
               acc[o.label] = Object.values(reflectionAnswers).filter(v => v === o.value).length
               return acc
             }, {})
@@ -1471,10 +1566,10 @@ export default function PersonalityPage({ user, embedded = false, onSyncToHabits
                   <div style={{ height: '100%', width: `${pct}%`, background: 'linear-gradient(90deg, #8b5cf6, #3b82f6)', borderRadius: '4px', transition: 'width 0.4s ease' }} />
                 </div>
                 <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-                  {FREQUENCY_OPTIONS.map(opt => (
+                  {frequencyOptions.map(opt => (
                     <div key={opt.value} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: opt.color }} />
-                      <span style={{ color: opt.color, fontWeight: 600, fontSize: '14px' }}>{opt.label}</span>
+                      <span style={{ color: opt.color, fontWeight: 600, fontSize: '14px' }}>{i18nT(opt.label)}</span>
                       <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '14px' }}>{freqCounts[opt.label]} {i18nT('题')}</span>
                     </div>
                   ))}

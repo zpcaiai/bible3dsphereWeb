@@ -6,6 +6,16 @@ const QD_GRAT_OPTS = ['感谢今天的平安', '感谢一位家人 / 朋友', '�
 import BackButton from './BackButton'
 import { saveJournal } from './api'
 import { planExecutionIdentity, planExecutionSummary, writePlanExecution } from './formationPlanProgress'
+import { useGuidedAudio } from './lib/media/useGuidedAudio'
+import { useHaptics } from './lib/media/useHaptics'
+import { useMediaPrefs } from './lib/media/useMediaPrefs'
+import { GuidedAudioBar, MediaToggleRow, CountdownRing } from './lib/media/MediaControls'
+
+// 纯音频模式的留白。两分钟灵修真正花时间的地方是「答那一问」，
+// 所以经文只留 10 秒沉一下，问题留 45 秒——够在心里答完，不够就用暂停。
+const QD_VERSE_PAUSE = 10
+const QD_QUESTION_PAUSE = 45
+const QD_GRATITUDE_PAUSE = 30
 
 const QUICK_DEVOTION_ACTION = { id: 'complete-flow', title: '完成两分钟灵修', cadence: 'daily' }
 
@@ -30,10 +40,42 @@ export default function QuickDevotionPage({ user, token, onBack, onDone }) {
   const [questionAnswer, setQuestionAnswer] = useState('')
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
+  const [audioMode, setAudioMode] = useState(false)   // 纯音频模式：屏幕上只剩倒计时
   const devotion = getTodayDevotion()
   const today = new Date().toISOString().slice(0, 10)
   const startRef = useRef(Date.now())
   const elapsed = Math.floor((Date.now() - startRef.current) / 1000)
+
+  const { prefs } = useMediaPrefs()
+  const guided = useGuidedAudio()
+  const haptics = useHaptics()
+
+  // 离开页面时收干净声音（依赖用稳定的 guided.stop，
+  // 否则播报中每次 setState 都会触发清理、把自己的声音掐掉）
+  useEffect(() => () => guided.stop(), [guided.stop])
+
+  // 纯音频模式：经文 → 一问 → 安静 → 感恩一句 → 安静。
+  // 全程不需要看屏幕，念完自动回到文字流程，想写就写、不写也已经做完了。
+  function startAudioDevotion() {
+    setAudioMode(true)
+    guided.start(
+      [
+        { text: `${devotion.verse} ${devotion.ref}`, pauseAfter: QD_VERSE_PAUSE, label: i18nT('今日经文'), onEnter: () => { setStep(0); haptics.vibrate('tap') } },
+        { text: devotion.question, pauseAfter: QD_QUESTION_PAUSE, label: i18nT('默想一问'), onEnter: () => { setStep(1); haptics.vibrate('tap') } },
+        { text: i18nT('今天，你感谢神的一件事是什么？'), pauseAfter: QD_GRATITUDE_PAUSE, label: i18nT('感恩一句'), onEnter: () => { setStep(2); haptics.vibrate('tap') } },
+        { text: i18nT('慢慢睁开眼睛。想写就写，不写也已经做完了。'), pauseAfter: 0 },
+      ],
+      {
+        rate: 0.85,
+        onComplete: () => { setAudioMode(false); haptics.vibrate('confirm') },
+      },
+    )
+  }
+
+  function exitAudioMode() {
+    guided.stop()
+    setAudioMode(false)
+  }
 
   async function handleFinish() {
     if (saving) return
@@ -124,6 +166,33 @@ export default function QuickDevotionPage({ user, token, onBack, onDone }) {
           <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', marginTop: 8 }}>{i18nT('已存入今日灵修日记')}</div>
           <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)', marginTop: 6 }}>{i18nT('近7天完成')} {completionSummary.recentCompleted} {i18nT('次')}</div>
         </div>
+      ) : audioMode ? (
+        /* 纯音频模式：屏幕上只留一个倒计时环。这个流程本来就该闭着眼睛做，
+           文字在这里只会把人拉回「读」而不是「听 + 安静」。 */
+        <div style={{ width: '100%', maxWidth: 420, textAlign: 'center' }}>
+          <div style={{ fontSize: 16, fontWeight: 700, color: '#fff', marginBottom: 6 }}>{i18nT('🎧 纯音频灵修')}</div>
+          <div style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.45)', marginBottom: 22 }}>
+            {guided.currentStep?.label || i18nT('闭上眼睛，听就好')}
+          </div>
+          <div style={{ display: 'grid', placeItems: 'center', marginBottom: 22 }}>
+            <CountdownRing
+              size={168} stroke={9} color="#c4b5fd"
+              progress={guided.state === 'waiting' && guided.currentStep?.pauseAfter
+                ? (guided.currentStep.pauseAfter - guided.remaining) / guided.currentStep.pauseAfter
+                : 0}
+              label={guided.state === 'waiting' ? `${i18nT('安静还剩')} ${guided.remaining} ${i18nT('秒')}` : i18nT('播报中')}
+            >
+              {guided.state === 'waiting' ? `${guided.remaining}s` : '···'}
+            </CountdownRing>
+          </div>
+          <GuidedAudioBar guided={guided} onStart={startAudioDevotion} label="再听一次" />
+          <button
+            onClick={exitAudioMode}
+            style={{ width: '100%', padding: '12px', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 12, color: 'rgba(255,255,255,0.6)', fontSize: 14, cursor: 'pointer' }}
+          >
+            {i18nT('回到文字版')}
+          </button>
+        </div>
       ) : (
         <div style={{ width: '100%', maxWidth: 420 }}>
           {/* Header */}
@@ -131,6 +200,21 @@ export default function QuickDevotionPage({ user, token, onBack, onDone }) {
             <BackButton onClick={onBack} />
             <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)' }}>{i18nT('⏱ 约2分钟')}</div>
           </div>
+
+          {/* 音频入口：默认不响，用户自己开、自己点 */}
+          <MediaToggleRow show={['sound', 'haptics']} compact />
+          {prefs.sound ? (
+            <button
+              onClick={startAudioDevotion}
+              style={{ width: '100%', padding: '10px', marginBottom: 20, background: 'rgba(196,181,253,0.14)', border: '1px solid rgba(196,181,253,0.35)', borderRadius: 12, color: '#c4b5fd', fontSize: 13.5, fontWeight: 600, cursor: 'pointer' }}
+            >
+              🎧 {i18nT('纯音频模式（闭着眼睛做完）')}
+            </button>
+          ) : (
+            <div style={{ fontSize: 11.5, color: 'rgba(255,255,255,0.35)', marginBottom: 20, lineHeight: 1.6 }}>
+              {i18nT('打开上面的「声音」，可以用纯音频模式闭着眼睛做完这两分钟。')}
+            </div>
+          )}
 
           {/* Step indicator */}
           <div style={{ display: 'flex', gap: 6, marginBottom: 28, justifyContent: 'center' }}>

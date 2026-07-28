@@ -19,6 +19,7 @@ import TraumaGroundingFlow from '../components/TraumaGroundingFlow'
 import PostCrisisTimeline from '../components/PostCrisisTimeline'
 import EmergencyEscalationPanel from '../components/EmergencyEscalationPanel'
 import CollaborationConsole from '../components/CollaborationConsole'
+import { SoundConsentBar } from '../../../lib/media/MediaControls'
 import '../app/crisis-care.css'
 
 const TABS = [
@@ -125,6 +126,10 @@ export default function CrisisCarePage({ user, token, initialTab = 'entry', onOp
   return (
     <main className="cc-page">
       <p className="cc-disclaimer">{MODULE_DISCLAIMER}</p>
+
+      {/* 声音与振动在整个危机模块里默认全部关闭，必须由用户主动开启，并随时可一键关掉。
+          放在页面顶部而不是各个练习里面：需要它的人不必先找到某个 Tab 才能打开。 */}
+      <SoundConsentBar />
 
       <nav className="cc-tabs" aria-label={i18nT('危机守护')}>
         {TABS.map(([id, label]) => (

@@ -1,6 +1,7 @@
 import { T } from '../../lib/localize'
 import { useMemo, useState } from 'react'
-import { gospelAssuranceTexts, memoryVerses } from '../../data/scriptureFormationSeed'
+import { gospelAssuranceTexts, memoryVerses, scripturePassages } from '../../data/scriptureFormationSeed'
+import { BarSeries } from '../../../../components/charts'
 import {
   CONFESSION_STAGES,
   EXAMEN_STAGES,
@@ -29,6 +30,50 @@ import {
 } from '../../lib/scriptureFormationEngine'
 import { loadScriptureFormationData, saveConfessionSession, saveExamenSession, saveLectioSession, saveMemoryItem } from '../../lib/scriptureFormationStorage'
 import { MODULE_DISCLAIMER } from '../../lib/pastoralSafety'
+
+// 主题覆盖只能用排序条，不能用饼图或词云：这里要回答的是「哪些主题一次都没读过」，
+// 零值必须占一行、必须可数，才看得见空白；饼图会直接把 0 从画面上抹掉。
+// 主题全集来自 scripturePassages[].themeTags（种子里真实存在的读经主题），
+// 已接触的计数只来自 stage==='completed' 的 Lectio 记录里那一篇经文的 themeTags——
+// 打开过但没走完的默想不算「读过」，避免把点击当成属灵成果。
+function buildThemeCoverage(lectioSessions = []) {
+  const counts = new Map()
+  scripturePassages.forEach((passage) => (passage.themeTags || []).forEach((tag) => {
+    if (!counts.has(tag)) counts.set(tag, 0)
+  }))
+  lectioSessions
+    .filter((session) => session.stage === 'completed')
+    .forEach((session) => {
+      const tags = session.passage?.themeTags || scripturePassages.find((item) => item.id === session.passageId)?.themeTags || []
+      tags.forEach((tag) => counts.set(tag, (counts.get(tag) || 0) + 1))
+    })
+  return Array.from(counts.entries())
+    .map(([label, value]) => ({ label, value }))
+    .sort((a, b) => b.value - a.value || a.label.localeCompare(b.label))
+}
+
+export function ThemeCoverageCard({ lectioSessions }) {
+  const items = buildThemeCoverage(lectioSessions)
+  const untouched = items.filter((item) => item.value === 0)
+  return (
+    <article className="sf-card">
+      {items.length ? (
+        <BarSeries
+          title={T('读经主题覆盖', 'Scripture theme coverage')}
+          subtitle={T(
+            `${items.length} 个主题里，${untouched.length} 个从未在完成的默想中出现过；条为 0 的那几行才是这张图真正要说的话。`,
+            `Of ${items.length} themes, ${untouched.length} have never appeared in a completed meditation. The empty rows are the point of this chart.`,
+          )}
+          items={items}
+          unit={T(' 次', 'x')}
+          rowHeight={22}
+        />
+      ) : (
+        <p className="sf-empty">{T('种子经文里没有可统计的主题标签。', 'The seed passages carry no theme tags to count.')}</p>
+      )}
+    </article>
+  )
+}
 
 function StagePills({ stages, active }) {
   return (
@@ -486,6 +531,7 @@ export default function ScriptureFormationDashboard({ userId }) {
           </ul>
         </article>
       </div>
+      <ThemeCoverageCard lectioSessions={data.lectioSessions} />
       <div className="sf-scripture-grid">
         <LectioDivinaCard userId={userId} session={todayLectio} onSave={saveLectio} />
         <ScriptureMemoryTrainer userId={userId} items={data.memoryItems} onSave={saveMemory} />

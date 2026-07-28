@@ -43,6 +43,57 @@ import {
 } from '../../lib/sufferingCareStorage'
 import { MODULE_DISCLAIMER } from '../../lib/pastoralSafety'
 import PlanExecutionPanel from '../../../../components/PlanExecutionPanel'
+import { MilestoneTrack } from '../../../../components/charts'
+
+// 诗篇哀歌的「下降 → 转折 → 盼望」在这套数据里画不成 TrendLine：
+// createSufferingFrameEntries 只产出 8 个 frameKey 的文字段落，painLevel 是整次会话一个数，
+// 没有逐段的强度刻度，硬画折线就是编数据。所以用旅程站点：
+// 站点顺序本身就是那条弧线（命名痛苦→哀歌→放进故事→拒绝廉价解释→领受安慰→盼望→小步→真人支持），
+// 让人看见「哀歌不必停在最低点，但也不许跳过最低点」。
+const LAMENT_FRAME_LABELS = {
+  name_pain: ['说出痛苦', 'Name the pain'],
+  lament: ['允许哀歌', 'Lament allowed'],
+  locate_in_story: ['放进神的故事里', 'Locate in the story'],
+  reject_false_explanations: ['拒绝廉价解释', 'Reject false explanations'],
+  receive_comfort: ['领受安慰', 'Receive comfort'],
+  hope_in_christ: ['在基督里盼望', 'Hope in Christ'],
+  faithful_next_step: ['今天一个小忠心', 'One faithful step'],
+  community_support: ['真人支持', 'Human support'],
+}
+
+export function LamentArcTrack({ sessions = [] }) {
+  const session = sessions.find((item) => (item.entries || []).length) || null
+  const entries = session?.entries || []
+  if (!entries.length) {
+    return (
+      <article className="sf-card">
+        <h3>{T('哀歌的形状', 'The shape of lament')}</h3>
+        <p className="sf-empty">{T('还没有保存过苦难省察，所以这条哀歌路径暂时是空的。在「Suffering」页保存一次后，八个阶段会出现在这里。', 'No suffering session saved yet, so the lament path is empty. Save one on the Suffering tab and the eight stages appear here.')}</p>
+      </article>
+    )
+  }
+  const stops = entries.map((entry) => {
+    const label = LAMENT_FRAME_LABELS[entry.frameKey]
+    return {
+      key: entry.id,
+      label: label ? T(label[0], label[1]) : String(entry.frameKey).replace(/_/g, ' '),
+      note: entry.aiGuidance,
+    }
+  })
+  return (
+    <article className="sf-card">
+      <MilestoneTrack
+        title={T('哀歌的形状：下降 → 转折 → 盼望', 'Shape of lament: descent, turn, hope')}
+        subtitle={T(
+          `取自最近一次苦难省察（${session.categoryKey}）真实保存的 ${stops.length} 个阶段；盼望排在最后，是因为它不能被提前，也不该被跳过。`,
+          `From the ${stops.length} stages actually saved in the latest suffering session (${session.categoryKey}). Hope comes last because it cannot be rushed and must not be skipped.`,
+        )}
+        stops={stops}
+        currentIndex={session.completedAt ? stops.length - 1 : 0}
+      />
+    </article>
+  )
+}
 
 function MiniTabs({ active, onChange }) {
   const tabs = [
@@ -341,6 +392,7 @@ export default function SufferingCareDashboard({ userId = 'local-user' }) {
             <SummaryCard title="Crisis Safety" items={[{ label: 'Safety plan', value: dashboard.today.activeSafetyPlan?.title || 'No active safety plan' }, { label: 'Urgent flags', value: dashboard.today.urgentFlags }]} />
             <SummaryCard title="Healing and Pastoral Care" items={[{ label: 'Healing journeys', value: String(dashboard.today.activeHealingJourneys.length) }, { label: 'Open cases', value: String(dashboard.today.openCareCases.length) }, { label: 'Due follow-ups', value: String(dashboard.today.dueFollowups.length) }]} />
           </div>
+          <LamentArcTrack sessions={data.sufferingSessions} />
           <article className="sf-card sf-flow-card">
             <h3>Care Orchestrator</h3>
             <label>Intent<textarea value={intent} onChange={(event) => setIntent(event.target.value)} /></label>

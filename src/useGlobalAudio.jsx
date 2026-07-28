@@ -384,3 +384,119 @@ export function TTSFullBar({ buildText, label = '全文朗读' }) {
     </div>
   )
 }
+
+// ── Imperative singleton API（供引导式播报 useGuidedAudio 等非组件场景使用）──────
+
+/** 立即停止全站正在播放的一切语音（服务端 TTS 与浏览器 speechSynthesis）。 */
+export function stopAllAudio() {
+  _globalStop()
+}
+
+/** 暂停当前播放（不清空），resumeAllAudio() 可续播。 */
+export function pauseAllAudio() {
+  if (_singleton.audioEl && !_singleton.audioEl.paused) {
+    try { _singleton.audioEl.pause() } catch (_) { /* ignore */ }
+    return true
+  }
+  if (typeof window !== 'undefined' && window.speechSynthesis?.speaking && !window.speechSynthesis.paused) {
+    try { window.speechSynthesis.pause() } catch (_) { /* ignore */ }
+    return true
+  }
+  return false
+}
+
+/** 恢复被 pauseAllAudio() 暂停的播放。 */
+export function resumeAllAudio() {
+  if (_singleton.audioEl && _singleton.audioEl.paused) {
+    try { _singleton.audioEl.play() } catch (_) { /* ignore */ }
+    return true
+  }
+  if (typeof window !== 'undefined' && window.speechSynthesis?.paused) {
+    try { window.speechSynthesis.resume() } catch (_) { /* ignore */ }
+    return true
+  }
+  return false
+}
+
+/**
+ * speakOnce — 朗读一段文字，返回在「播完 / 被打断 / 失败」时 resolve 的 Promise。
+ *
+ * 与 useGlobalAudio().speak() 共用同一个单例，因此任何一处开始播放都会打断这里；
+ * 被打断时 Promise 也会 resolve（值为 'interrupted'），调用方据此决定是否继续流程。
+ *
+ * @param {string} rawText
+ * @param {{rate?: number}} [opts]
+ * @returns {Promise<'ended'|'interrupted'|'skipped'>}
+ */
+export async function speakOnce(rawText, opts = {}) {
+  const text = _expandBibleRefs(String(rawText ?? ''))
+  if (!text.trim()) return 'skipped'
+
+  _globalStop()
+  const myGen = ++_singleton.speakGen
+
+  // ── 优先服务端 TTS ──────────────────────────────────────────────
+  try {
+    const [langCode, voiceName] = ttsServerParamsFor(text)
+    const blob = await fetchTTS(text, langCode, voiceName)
+    if (_singleton.speakGen !== myGen) return 'interrupted'
+
+    const url = URL.createObjectURL(blob)
+    const audio = new Audio(url)
+    if (opts.rate) audio.playbackRate = opts.rate
+    _singleton.audioEl = audio
+    _singleton.audioUrl = url
+
+    return await new Promise((resolve) => {
+      let settled = false
+      const cleanup = () => {
+        if (_singleton.audioEl === audio) {
+          _singleton.audioEl = null
+          _singleton.audioUrl = null
+        }
+        try { URL.revokeObjectURL(url) } catch (_) { /* ignore */ }
+        _singleton.stopListeners.delete(onStop)
+      }
+      const finish = (reason) => {
+        if (settled) return
+        settled = true
+        cleanup()
+        resolve(reason)
+      }
+      function onStop() { finish('interrupted') }
+      _singleton.stopListeners.add(onStop)
+
+      audio.onended = () => finish('ended')
+      audio.onerror = () => finish('ended')
+      audio.play().catch(() => finish('ended'))
+    })
+  } catch (_backendErr) {
+    // 落到浏览器原生 TTS
+  }
+
+  if (typeof window === 'undefined' || !window.speechSynthesis) return 'skipped'
+  if (_singleton.speakGen !== myGen) return 'interrupted'
+
+  return await new Promise((resolve) => {
+    let settled = false
+    const finish = (reason) => {
+      if (settled) return
+      settled = true
+      _singleton.stopListeners.delete(onStop)
+      resolve(reason)
+    }
+    function onStop() { finish('interrupted') }
+    _singleton.stopListeners.add(onStop)
+
+    window.speechSynthesis.cancel()
+    const utter = new SpeechSynthesisUtterance(text)
+    utter.lang = speechLangFor(text)
+    utter.rate = opts.rate || 0.9
+    utter.pitch = 1.05
+    const bestVoice = pickVoiceFor(text)
+    if (bestVoice) utter.voice = bestVoice
+    utter.onend = () => finish('ended')
+    utter.onerror = () => finish('ended')
+    window.speechSynthesis.speak(utter)
+  })
+}

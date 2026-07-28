@@ -7,6 +7,20 @@ import { Billboard, Html, OrbitControls, Stars, Text } from '@react-three/drei'
 import * as THREE from 'three'
 import { useEmotionStore } from './store'
 import TranslatableParagraph from './TranslatableParagraph'
+import { speakOnce, stopAllAudio } from './useGlobalAudio'
+import { getMediaPref } from './lib/media/mediaPrefs'
+import { MediaToggleRow } from './lib/media/MediaControls'
+
+/** 把一节匹配经文拼成可朗读的一句话（出处 + 经文本身）。 */
+function verseSpeechText(verse) {
+  if (!verse) return ''
+  return i18nT('{book} {chapter} 章 {verse} 节。{text}', {
+    book: verse.book_name || '',
+    chapter: verse.chapter,
+    verse: verse.verse,
+    text: verse.raw_text || '',
+  })
+}
 
 const SPHERE_RADIUS = 4.18
 // Generate a visually distinct color for the curated homepage points.
@@ -278,6 +292,25 @@ function VersePopover3D({
               : `${feature.layer}:${feature.feature_id}`}
           </span>
         </div>
+        {/* 声音开关放在这里，因为「点节点就念经文」这件事只在这张卡上发生，
+            开关离它最近才找得到；关着的时候点节点是完全安静的。 */}
+        <div style={{ marginBottom: 6 }}>
+          <MediaToggleRow show={['sound']} compact />
+          {verses.length > 0 && (
+            <button
+              type="button"
+              onClick={() => speakOnce(verseSpeechText(verses[0]))}
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: 5,
+                padding: '5px 11px', borderRadius: 999, fontSize: 12, cursor: 'pointer',
+                border: '1px solid rgba(255,255,255,0.18)', background: 'rgba(255,255,255,0.05)',
+                color: 'rgba(255,255,255,0.72)',
+              }}
+            >
+              🔊 {i18nT('朗读这节经文')}
+            </button>
+          )}
+        </div>
         {isLoading && (
           <div className="vp-loading">{i18nT('沈思中…')}</div>
         )}
@@ -449,16 +482,33 @@ function EmotionSphere({
     setHovered(item ? item.feature_key : null)
   }, [setHovered])
 
+  // 点节点是用户的明确动作，但匹配经文是点完之后异步取回来的。
+  // 所以这里只记下「这一次点击要念」，等经文到位再念；声音总开关关着时全程静音。
+  const pendingSpeakRef = useRef(null)
+
   const handleSelect = useCallback((item) => {
     setSelectedFeature(item)
+    pendingSpeakRef.current = getMediaPref('sound') ? item.feature_key : null
     onVerseTrigger?.(item)
   }, [setSelectedFeature, onVerseTrigger])
+
+  useEffect(() => {
+    const key = selectedFeature?.feature_key
+    if (!key || pendingSpeakRef.current !== key) return
+    const verse = (selectedFeatureDetail?.matches?.cuv || [])[0]
+    if (!verse) return
+    pendingSpeakRef.current = null   // 一次点击只念一次，重渲染不会重复触发
+    speakOnce(verseSpeechText(verse))
+  }, [selectedFeature, selectedFeatureDetail])
+
+  // 离开星球时把声音收干净，免得朗读跟着用户跑到别的页面
+  useEffect(() => () => stopAllAudio(), [])
 
   // Calculate popover scale based on zoom level
   const popoverScale = zoomLevel === 'far' ? 0.88 : zoomLevel === 'mid' ? 1.1 : 1.43
 
   return (
-    <group ref={groupRef} position={[0, 0, 0]} onPointerMissed={() => { setSelectedFeature(null); setHovered(null) }}>
+    <group ref={groupRef} position={[0, 0, 0]} onPointerMissed={() => { pendingSpeakRef.current = null; stopAllAudio(); setSelectedFeature(null); setHovered(null) }}>
       <SphereShell />
       <CommunityHaloRings emotions={communityHeatmap} />
       <InstancedPoints
@@ -479,7 +529,7 @@ function EmotionSphere({
         feature={selectedFeature}
         detail={selectedFeatureDetail}
         zoomScale={popoverScale}
-        onClose={() => setSelectedFeature(null)}
+        onClose={() => { pendingSpeakRef.current = null; stopAllAudio(); setSelectedFeature(null) }}
         expandedVerseId={expandedVerseId}
         versePrayers={versePrayers}
         versePrayerLoading={versePrayerLoading}

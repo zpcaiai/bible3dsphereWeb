@@ -2,6 +2,9 @@ import { t as i18nT } from '../../../i18n/runtime'
 import { pick } from '../../../i18n/pickLang'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { horariumHours } from '../data/horariumHours'
+import { T } from '../lib/localize'
+import { HorariumDial } from '../../../components/charts'
+import { prefersReducedMotion } from '../../../prefersReducedMotion'
 import {
   computeHorariumStreak,
   createHorariumDayLog,
@@ -22,6 +25,7 @@ export default function HorariumEngine({ userId, initialTodayLog, history = [], 
   const [log, setLog] = useState(() => ensureHorariumEntries(initialTodayLog || createHorariumDayLog(userId)))
   const [saveState, setSaveState] = useState(initialTodayLog ? 'synced' : 'idle')
   const [dirty, setDirty] = useState(false)
+  const [selectedHourId, setSelectedHourId] = useState('')
   const hydratedKeyRef = useRef(initialTodayLog ? `${initialTodayLog.id}:${initialTodayLog.updatedAt || ''}` : '')
 
   useEffect(() => {
@@ -42,6 +46,25 @@ export default function HorariumEngine({ userId, initialTodayLog, history = [], 
   const completed = horariumCompletedCount(log)
   const completion = Math.round((completed / horariumHours.length) * 100)
   const saveLabel = SAVE_LABELS[saveState] || i18nT('保存今日')
+
+  // 修道传统里的 Horarium 本来就画成一只圆盘：一天是回环而不是待办清单，
+  // 六个时辰之间「隔多久」才是它真正要教的东西——竖排列表把这层意思压平了。
+  // 圆盘同时让「此刻在昼夜的哪一段、下一个时辰还有多远」一眼可见。
+  const dialHours = horariumHours.map((hour) => {
+    const [h, m] = String(hour.time).split(':')
+    const entry = log.entries.find((item) => item.hourId === hour.id)
+    return { key: hour.id, label: pick(hour, 'title'), hour: Number(h) || 0, minute: Number(m) || 0, done: !!entry?.completed }
+  })
+
+  // 点圆盘上的时辰＝跳到下面那张卡并把焦点交给它，让圆盘成为导航而不是另一份只读图。
+  function focusHour(hourId) {
+    setSelectedHourId(hourId)
+    if (typeof document === 'undefined') return
+    const node = document.getElementById(`horarium-hour-${hourId}`)
+    if (!node) return
+    if (typeof node.scrollIntoView === 'function') node.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'center' })
+    node.querySelector('input[type="checkbox"]')?.focus()
+  }
 
   function updateLog(updater) {
     setDirty(true)
@@ -95,6 +118,15 @@ export default function HorariumEngine({ userId, initialTodayLog, history = [], 
         <button className="sf-primary holy-life-save" type="button" onClick={save} disabled={saveState === 'saving'}>{saveLabel}</button>
       </div>
 
+      <div className="sf-card">
+        <HorariumDial
+          title={T('今日时辰盘', "Today's Horarium dial")}
+          subtitle={T('外圈压暗的是夜间；黄色指针是此刻。点任意时辰可跳到下面的那一格。', 'The dimmed arc is night; the amber hand is now. Tap an hour to jump to its card below.')}
+          hours={dialHours}
+          onSelect={(hour) => focusHour(hour.key)}
+        />
+      </div>
+
       <div className="holy-life-summary">
         <article className="sf-card">
           <h3>{i18nT('今日时辰')}</h3>
@@ -121,7 +153,7 @@ export default function HorariumEngine({ userId, initialTodayLog, history = [], 
         {horariumHours.map((hour) => {
           const entry = log.entries.find((item) => item.hourId === hour.id) || { hourId: hour.id, completed: false, reflection: '' }
           return (
-            <article className={`sf-card horarium-hour ${entry.completed ? 'is-complete' : ''}`} key={hour.id}>
+            <article id={`horarium-hour-${hour.id}`} className={`sf-card horarium-hour ${entry.completed ? 'is-complete' : ''} ${selectedHourId === hour.id ? 'is-selected' : ''}`} key={hour.id}>
               <div className="holy-life-card-head">
                 <div>
                   <span className="sf-card-short">{hour.time} · {hour.subject}</span>

@@ -5,6 +5,9 @@ import { createMapAdapter } from './map/createMapAdapter'
 import { normalizeRoute, routeSliceToStation } from './map/routePlayback'
 import { resolveJourneyRoute } from './map/journeyRouting'
 import { loadBibleMap, BIBLE_MAPS, confidenceMeta, fetchTimeSlice, fetchRegions, fetchRelations, fetchLandmarks, landmarkNoteBySlug } from './data/bibleGeoSource'
+import { speakOnce, stopAllAudio } from './useGlobalAudio'
+import { MediaToggleRow } from './lib/media/MediaControls'
+import { useMediaPrefs } from './lib/media/useMediaPrefs'
 import { t, getRuntimeLang } from './i18n/runtime'
 import { AutoText } from './autoTranslate.jsx'
 
@@ -83,6 +86,29 @@ async function speak(text) {
   } catch (e) { /* ignore */ }
 }
 
+/**
+ * 沿途讲解的播报文本。
+ * 只拼接站点数据里真实存在的字段（properties.name_zh / name_en / scriptureRef / events），
+ * 缺哪个就少念哪个——宁可短，也不编造这一站「发生过什么」。
+ */
+function stationNarrationText(feature, index, total) {
+  if (!feature) return ''
+  const p = feature.properties || {}
+  const en = getRuntimeLang() === 'en'
+  const name = en && p.name_en ? p.name_en : p.name_zh
+  if (!name) return ''
+  const head = en
+    ? `Stop ${index + 1} of ${total}. ${name}.`
+    : `${t("第")} ${index + 1} ${t("站")}，${name}。`
+  const ref = p.scriptureRef ? `${p.scriptureRef}。` : ''
+  const events = (p.events || [])
+    .map((ev) => [ev.title, ev.summary].filter(Boolean).join('。'))
+    .filter(Boolean)
+  // 途经地没有事件记载时，如实说明，而不是补一句听起来很像的话
+  const body = events.length ? events.join('。') : t("此站为途经地，圣经未记载具体事件。")
+  return [head, ref, body].filter(Boolean).join(' ').trim()
+}
+
 function orderedStations(dataset, variant) {
   if (!dataset || dataset.temporal || !dataset.stations) return []
   if (variant?.stationIds) {
@@ -117,6 +143,9 @@ export default function BibleMapPage({ initialDatasetId = 'exodus', onBack, sing
   const [timelinePlaying, setTimelinePlaying] = useState(false)
   const [timelineSpeed, setTimelineSpeed] = useState(1)
   const [regionRel, setRegionRel] = useState(null)
+  const [narrate, setNarrate] = useState(false)   // 沿途讲解：必须用户显式开启，绝不自动开声
+  const narratingRef = useRef(false)              // 是否真的发过声（决定卸载时要不要 stopAllAudio）
+  const { prefs: mediaPrefs } = useMediaPrefs()
 
   useEffect(() => {
     setDatasetId(initialDatasetId)
@@ -164,9 +193,10 @@ export default function BibleMapPage({ initialDatasetId = 'exodus', onBack, sing
       .catch((e) => setMapError(e.message || t("地图加载失败")))
   }, [])
 
-  // 卸载时清理
+  // 卸载时清理（含停声：离开页面不该还有人在念第 7 站）
   useEffect(() => () => {
     if (playRef.current) clearInterval(playRef.current)
+    if (narratingRef.current) { narratingRef.current = false; stopAllAudio() }
     if (adapterRef.current) { try { adapterRef.current.destroy() } catch (e) {} }
   }, [])
 
@@ -335,6 +365,24 @@ export default function BibleMapPage({ initialDatasetId = 'exodus', onBack, sing
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedId, ready, dataset, variantId, realRoute])
+
+  // 沿途讲解：挂在既有的 selectedId 上，而不是另起一套播放引擎。
+  // 「▶ 播放行程」的定时器换站 → selectedId 变 → 这里把这一站念出来；
+  // 手动点上一站/下一站/站点条同样生效，行为一致。
+  useEffect(() => {
+    const on = narrate && !!mediaPrefs.sound && dataset && !dataset.temporal && STN.length > 0
+    if (!on) {
+      if (narratingRef.current) { narratingRef.current = false; stopAllAudio() }
+      return
+    }
+    const i = STN.findIndex((s) => s.properties.id === selectedId)
+    if (i < 0) return
+    const text = stationNarrationText(STN[i], i, STN.length)
+    if (!text) return
+    narratingRef.current = true
+    speakOnce(text, { rate: 0.9 })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [narrate, mediaPrefs.sound, selectedId, dataset, variantId])
 
   function step(dir) {
     if (!selected) return
@@ -558,8 +606,20 @@ export default function BibleMapPage({ initialDatasetId = 'exodus', onBack, sing
         <button onClick={() => step(-1)} aria-label={t("上一站")}>‹</button>
         <button className={`biblemap-play ${playing ? 'on' : ''}`} onClick={togglePlay}>{playing ? t("⏸ 暂停") : t("▶ 播放行程")}</button>
         <button onClick={() => step(1)} aria-label={t("下一站")}>›</button>
+        <button
+          className={narrate ? 'on' : ''}
+          aria-pressed={narrate}
+          onClick={() => setNarrate((v) => !v)}
+          title={t("每到一站，念出地名与这一站的经文记载")}
+        >
+          {narrate ? t("🔊 沿途讲解·开") : t("🔈 沿途讲解")}
+        </button>
         <span className="biblemap-counter">{t("第")} {idx + 1} {t("站 /")} {STN.length}</span>
       </div>
+      <MediaToggleRow show={['sound']} compact />
+      {narrate && !mediaPrefs.sound && (
+        <div className="biblemap-hypo-desc">{t("讲解已开启，但声音开关是关的。打开上面的「声音」才会出声。")}</div>
+      )}
       <div className="biblemap-journey-axis">
         {hasYears && <div className="biblemap-year biblemap-year-sm">{jYLabel(curYear)}</div>}
         <input

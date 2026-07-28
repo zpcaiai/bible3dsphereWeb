@@ -1,10 +1,41 @@
 import { useState } from 'react'
 import { T, localizeStronghold } from '../lib/localize'
+import { DirectedGraph } from '../../../components/charts'
+
+// 营垒的几个字段本来就不是并列的清单，而是一条链：
+// 文化助燃 → 核心谎言 → 情绪 → 行为 → 被遮蔽的真理；
+// 而被遮蔽的那条真理，恰恰是唯一能拆穿这个谎言的话——它进不来，谎言就一直没人拆。
+// 所以最后一环回指第一句谎言，这个环是数据本身就有的，不是画上去好看的。
+function buildChain(s) {
+  const stages = [
+    ['trigger', 'trigger', s.culturalReinforcers?.[0], T('文化助燃', 'Cultural reinforcer'), T('喂养', 'feeds')],
+    ['belief', 'belief', s.coreLie, T('核心谎言', 'Core lie'), T('被信以为真', 'believed as true')],
+    ['emotion', 'emotion', s.emotionalSignals?.[0], T('随之而来的情绪', 'Emotion that follows'), T('生出', 'stirs')],
+    ['behavior', 'behavior', s.behavioralSignals?.[0], T('外显的行为', 'Outward behaviour'), T('外显为', 'acts out as')],
+    ['consequence', 'consequence', s.blockedDoctrines?.[0]?.name, T('因此更难领受的真理', 'Truth now harder to receive'), T('结果是', 'leads to')],
+  ]
+
+  const nodes = []
+  const edges = []
+  for (const [id, kind, label, note, edgeLabel] of stages) {
+    if (!label) continue
+    if (nodes.length) edges.push({ from: nodes[nodes.length - 1].id, to: id, label: edgeLabel })
+    nodes.push({ id, label, kind, note })
+  }
+
+  const looped = nodes.some((n) => n.id === 'belief') && nodes.some((n) => n.id === 'consequence')
+  if (looped) edges.push({ from: 'consequence', to: 'belief', label: T('真理被遮蔽，谎言无人拆穿', 'truth blocked, the lie goes unchallenged') })
+
+  return { nodes, edges, looped }
+}
+
+const shortLabel = (x) => (String(x).length > 10 ? `${String(x).slice(0, 10)}…` : String(x))
 
 // 自高之事卡片 / Stronghold card — 与 SinPatternCard 视觉一致，可折叠展开。
 export default function StrongholdCard({ stronghold: raw, defaultOpen = false, onSelect }) {
   const [open, setOpen] = useState(defaultOpen)
   const s = localizeStronghold(raw)
+  const chain = buildChain(s)
 
   const panel = {
     background: 'rgba(255, 255, 255, 0.015)',
@@ -86,9 +117,42 @@ export default function StrongholdCard({ stronghold: raw, defaultOpen = false, o
         </div>
       )}
 
+      {/* 折叠时的紧凑链路：一行字先说明「这是一条会回头的链」，展开后才画整张图 */}
+      {!open && chain.nodes.length >= 3 && (
+        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '6px', marginTop: '12px', fontSize: '11.5px', color: 'rgba(255,255,255,0.6)' }}>
+          <span style={{ color: 'rgba(255,255,255,0.4)' }}>{T('链路：', 'Chain: ')}</span>
+          {chain.nodes.map((n, i) => (
+            <span key={n.id} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+              {i > 0 && <span aria-hidden="true" style={{ color: 'rgba(255,255,255,0.3)' }}>→</span>}
+              <span title={n.label} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '999px', padding: '2px 8px' }}>{shortLabel(n.label)}</span>
+            </span>
+          ))}
+          {chain.looped && (
+            <span style={{ color: 'rgba(255,255,255,0.4)' }}>↩ {T('再回到最初那句谎言', 'and back to the lie')}</span>
+          )}
+        </div>
+      )}
+
       {/* 展开详情 */}
       {open && (
         <div style={{ marginTop: '16px', borderTop: '1px dashed rgba(255,255,255,0.1)', paddingTop: '16px' }}>
+          {/* 成因链路图：展开后空间够了，才把这条链完整画出来 */}
+          {chain.nodes.length >= 3 && (
+            <div style={{ marginBottom: '14px' }}>
+              <DirectedGraph
+                title={T('成因链路', 'The causal chain')}
+                subtitle={T('这是这个模式怎样运作的示意，不是对任何人的诊断。看见机制，才谈得上带着恩典走出来。',
+                            'A sketch of how this pattern works — not a diagnosis of anyone. Seeing the mechanism is where grace gets to work.')}
+                nodes={chain.nodes}
+                edges={chain.edges}
+                width={440}
+                nodeW={92}
+                nodeH={38}
+                gapX={34}
+              />
+            </div>
+          )}
+
           {/* 假福音 / 假身份 */}
           <div className="sf-detail-grid">
             <div style={{ ...panel, background: 'rgba(255,159,10,0.04)', border: '1px solid rgba(255,159,10,0.16)' }}>

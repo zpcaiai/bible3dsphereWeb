@@ -14,6 +14,7 @@ import {
   readingPracticePercent,
   writeReadingPracticeRecord,
 } from './readingPracticeProgress'
+import { CalendarHeatmap, localDateKey } from './components/charts'
 
 const card = { background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, padding: 16, marginBottom: 12 }
 
@@ -36,6 +37,7 @@ export default function ReadingPlanPage({ user }) {
   const [syncError, setSyncError] = useState('')
   const [practice, setPractice] = useState(null)
   const [history, setHistory] = useState([])
+  const [yearRecords, setYearRecords] = useState([])
   const plan = planById(planId)
   const identity = readingPracticeIdentity(user)
 
@@ -86,11 +88,28 @@ export default function ReadingPlanPage({ user }) {
     && Boolean(practice?.action?.trim())
   const practiceDone = Boolean(practice?.completedAt)
 
+  // 一年尺度的完成热力图。数据来自本机实践记录（完成度 %），同一天多条记录取最高的一条。
+  const yearCells = (() => {
+    const byDate = new Map()
+    yearRecords.forEach((record) => {
+      const stamp = record.completedAt || record.updatedAt
+      const date = localDateKey(new Date(stamp))
+      if (!date) return
+      const pct = readingPracticePercent(record, record.totalSteps || steps.length)
+      byDate.set(date, Math.max(byDate.get(date) || 0, pct))
+    })
+    return [...byDate.entries()].map(([date, value]) => ({ date, value })).filter((cell) => cell.value > 0)
+  })()
+  const yearFinished = yearRecords.filter((record) => record.completedAt).length
+
   useEffect(() => {
     if (!planId || !dayKey) return
     const storage = getStorage()
     setPractice(readReadingPracticeRecord(storage, identity, planId, dayKey))
     setHistory(listReadingPracticeRecords(storage, identity, planId))
+    // 年度热力图要的是「哪一天做的」，而 dayKey 在 date 型计划里是会逐年重复的 MM-DD，
+    // 所以日期一律取记录自带的 completedAt / updatedAt 时间戳。
+    setYearRecords(listReadingPracticeRecords(storage, identity, planId, 366))
   }, [identity, planId, dayKey])
 
   function updatePractice(change) {
@@ -99,6 +118,7 @@ export default function ReadingPlanPage({ user }) {
       const changed = typeof change === 'function' ? change(base) : { ...base, ...change }
       const saved = writeReadingPracticeRecord(getStorage(), identity, { ...changed, totalSteps: steps.length })
       setHistory(listReadingPracticeRecords(getStorage(), identity, planId))
+      setYearRecords(listReadingPracticeRecords(getStorage(), identity, planId, 366))
       return saved
     })
   }
@@ -186,6 +206,25 @@ export default function ReadingPlanPage({ user }) {
             <PracticeHistory records={history} currentDayKey={dayKey} currentRecord={practice} totalSteps={steps.length} color={plan.color} />
             <div style={{ marginTop: 10, fontSize: 10.5, color: 'rgba(255,255,255,0.34)', lineHeight: 1.55 }}>
               {i18nT('读经天数与连续天数登录后同步；步骤、亮光和行动只保存在当前设备。')}
+            </div>
+          </section>
+
+          <section aria-label={i18nT('一年完成热力图')} style={{ marginBottom: 12 }}>
+            {yearCells.length > 0 ? (
+              <CalendarHeatmap
+                data={yearCells}
+                weeks={53}
+                unit="%"
+                title={i18nT('一年实践热力图')}
+                subtitle={i18nT('本机留下了 {days} 天的实践记录，其中 {done} 天走完了全部步骤；格子越深，那天完成度越高。', { days: yearCells.length, done: yearFinished })}
+              />
+            ) : (
+              <div style={{ ...card, marginBottom: 0, color: 'rgba(255,255,255,0.38)', fontSize: 11.5, lineHeight: 1.6 }}>
+                {i18nT('这个计划还没有本机实践记录，所以暂时没有可画的热力图。完成第一天之后它就会出现。')}
+              </div>
+            )}
+            <div style={{ marginTop: 8, fontSize: 10.5, color: 'rgba(255,255,255,0.3)', lineHeight: 1.55 }}>
+              {i18nT('热力图只画本机保存的最近 30 次实践；账号端只回传完成天数与连续天数，没有逐日日期，所以画不出来。')}
             </div>
           </section>
 

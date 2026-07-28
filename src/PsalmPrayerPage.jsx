@@ -4,6 +4,10 @@ import { t as i18nT } from './i18n/runtime'
  *
  * 选择当下的情绪 → 推荐诗篇 → 选篇与祷告模式 → 一步步动作祷告 → 顺服或安息。
  * 哀歌不强求正能量；自由文本若流露危机会温柔提示。入口：今日心镜 (SoulDashboard)。
+ *
+ * 音频层（可选、加法）：诗篇本来是被唱、被念出来的，不是被默读的。
+ * 这里提供 rate 0.8 的慢读（一节一停）与可选的环境音底噪；
+ * 每个祷告动作也可以「念一句 → 安静一段」。关掉声音，这一页与从前完全一样。
  */
 import { useEffect, useState } from 'react'
 import BackButton from './BackButton'
@@ -12,6 +16,10 @@ import {
   submitPsalmMovement, completePsalmSession,
 } from './api'
 import { getToken } from './auth'
+import { useGuidedAudio } from './lib/media/useGuidedAudio'
+import { useAmbience } from './lib/media/useAmbience'
+import { useMediaPrefs } from './lib/media/useMediaPrefs'
+import { GuidedAudioBar, MediaToggleRow, CountdownRing } from './lib/media/MediaControls'
 
 const MODES = [
   { key: 'guided', label: '随经文引导' }, { key: 'lament', label: '哀歌' },
@@ -26,6 +34,22 @@ const MOVE_TITLE = {
 }
 const card = { background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, padding: 14, marginBottom: 12 }
 const btn = { display: 'block', width: '100%', cursor: 'pointer', borderRadius: 12, padding: '12px 16px', border: 'none', color: '#fff', fontWeight: 700, background: 'linear-gradient(135deg, rgba(125,211,252,0.85), rgba(139,92,246,0.7))' }
+
+const hintTxt = { fontSize: 11.5, color: 'rgba(255,255,255,0.38)', marginBottom: 12, lineHeight: 1.6 }
+
+// rate 0.8：诗篇是诗，不是通知。慢到能听见句子里的停顿，才听得出它在替你说话。
+const PSALM_RATE = 0.8
+const PSALM_LINE_PAUSE = 4     // 每一节之后的小停顿（相当于会众读经的换气）
+const PSALM_END_PAUSE = 20     // 整篇读完之后的留白，让话沉下去
+const MOVE_SILENCE = 25        // 每个祷告动作念完之后的安静
+
+/** 把诗篇正文切成「一节一句」，让慢读有换气的地方，而不是一口气念完。 */
+function splitPsalmLines(text) {
+  return String(text || '')
+    .split(/[\n。；;]+/)
+    .map(x => x.trim())
+    .filter(Boolean)
+}
 
 function friendlyError(e, fb) { const m = e?.message || ''; return /[一-龥]/.test(m) ? m : (fb || '网络不稳定，请稍后重试') }
 
@@ -44,10 +68,41 @@ export default function PsalmPrayerPage({ user, onBack }) {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
 
+  const { prefs } = useMediaPrefs()
+  const guided = useGuidedAudio()
+  const ambience = useAmbience()
+
   useEffect(() => {
     const t = getToken(); if (!t) return
     fetchPsalms(t).then(r => setPsalms(r.psalms || [])).catch((err) => { console.warn('[PsalmPrayerPage.jsx] ignored async error', err) })
   }, [])
+
+  // 换动作或离开页面都停声。依赖用稳定的 guided.stop / ambience.stop，
+  // 若依赖整个 guided 对象，播报中每次 setState 都会触发清理、把声音掐掉。
+  useEffect(() => () => { guided.stop(); ambience.stop() }, [movement, guided.stop, ambience.stop])
+
+  // 慢读整篇：一节一停，读完留一段安静。底噪（若用户开了环境音）随读随起、读完淡出。
+  function startPsalmReading() {
+    if (!picked?.text) return
+    ambience.start('hush')
+    const lines = splitPsalmLines(picked.text)
+    const steps = lines.map((line, i) => ({
+      text: line,
+      pauseAfter: i === lines.length - 1 ? PSALM_END_PAUSE : PSALM_LINE_PAUSE,
+      label: `${i18nT('诗篇')} ${picked.psalm_number}`,
+    }))
+    guided.start(steps, { rate: PSALM_RATE, onComplete: () => ambience.stop() })
+  }
+
+  // 听当前这一步的引导，然后安静地在神面前做它
+  function startMovementAudio() {
+    const title = MOVE_TITLE[movement] || movement
+    const line = guidance || ''
+    guided.start(
+      [{ text: `${title}。${line}`, pauseAfter: MOVE_SILENCE, label: title }],
+      { rate: PSALM_RATE },
+    )
+  }
 
   async function recommend() {
     const t = getToken(); if (!t) return
@@ -116,6 +171,29 @@ export default function PsalmPrayerPage({ user, onBack }) {
             <div style={{ marginBottom: 10 }}>
               <div style={{ fontSize: 14, lineHeight: 1.8, color: 'rgba(255,255,255,0.9)' }}>{picked.text}</div>
               {picked.caution_notes && <div style={{ fontSize: 11, color: '#f5c451', marginTop: 6 }}>⚠ {picked.caution_notes}</div>}
+
+              {/* 音频层：默认不响，用户自己开、自己点播放 */}
+              <div style={{ marginTop: 12 }}>
+                <MediaToggleRow show={['sound', 'ambience']} compact />
+                {prefs.sound ? (
+                  <GuidedAudioBar
+                    guided={guided}
+                    onStart={startPsalmReading}
+                    label="慢读这篇诗篇"
+                    hint={i18nT('一节一停的慢读，可以闭着眼睛听')}
+                  />
+                ) : (
+                  <div style={hintTxt}>{i18nT('打开上面的「声音」，可以让这篇诗篇被慢慢念给你听。')}</div>
+                )}
+                {guided.state === 'waiting' && (
+                  <div style={{ display: 'grid', placeItems: 'center', margin: '2px 0 10px' }}>
+                    <CountdownRing progress={((guided.currentStep?.pauseAfter || 1) - guided.remaining) / (guided.currentStep?.pauseAfter || 1)}
+                      size={72} color="#a78bfa" label={`${i18nT('安静还剩')} ${guided.remaining} ${i18nT('秒')}`}>
+                      {guided.remaining}s
+                    </CountdownRing>
+                  </div>
+                )}
+              </div>
             </div>
           )}
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 12 }}>
@@ -136,6 +214,27 @@ export default function PsalmPrayerPage({ user, onBack }) {
           <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', marginBottom: 8 }}>{i18nT('诗篇')} {session.psalm_number} · {session.mode}</div>
           <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 6 }}>{MOVE_TITLE[movement] || movement}</div>
           <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', marginBottom: 10 }}>{guidance}</div>
+
+          {/* 音频层：念这一步，然后安静着做它 */}
+          <MediaToggleRow show={['sound', 'ambience']} compact />
+          {prefs.sound ? (
+            <GuidedAudioBar
+              guided={guided}
+              onStart={startMovementAudio}
+              label="听这一步，然后安静"
+              hint={`${i18nT('念完会安静')} ${MOVE_SILENCE}s`}
+            />
+          ) : (
+            <div style={hintTxt}>{i18nT('打开上面的「声音」，就可以闭着眼睛听引导，并跟着留白安静。')}</div>
+          )}
+          {guided.state === 'waiting' && (
+            <div style={{ display: 'grid', placeItems: 'center', margin: '2px 0 12px' }}>
+              <CountdownRing progress={(MOVE_SILENCE - guided.remaining) / MOVE_SILENCE}
+                size={80} color="#a78bfa" label={`${i18nT('安静还剩')} ${guided.remaining} ${i18nT('秒')}`}>
+                {guided.remaining}s
+              </CountdownRing>
+            </div>
+          )}
           <textarea value={text} onChange={e => setText(e.target.value)} rows={4} placeholder={i18nT('在神面前诚实地写下…')}
             style={{ width: '100%', padding: 10, borderRadius: 10, marginBottom: 10, background: 'rgba(0,0,0,0.3)', color: '#fff', border: '1px solid rgba(255,255,255,0.15)', resize: 'vertical' }}  aria-label={i18nT('在神面前诚实地写下…')}/>
           <button style={btn} disabled={busy} onClick={next}>{busy ? '…' : '下一步 ›'}</button>

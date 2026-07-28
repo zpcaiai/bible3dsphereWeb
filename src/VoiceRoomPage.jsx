@@ -21,6 +21,12 @@ import {
   fetchVoiceConfig, fetchVoiceGroups, createVoiceGroup,
   joinVoiceGroup, fetchVoiceToken, leaveVoiceGroup,
 } from './api'
+import {
+  fetchGroupChatHistory, sendGroupChat,
+  VOICE_TEXT_PREFIX, isVoiceOriginated, stripVoicePrefix,
+} from './realtime/realtimeApi'
+import { useRealtimeMessages } from './realtime/useRealtimeStore'
+import VoiceNoteComposer from './components/VoiceNoteComposer'
 
 const ACCENT = '#34c759'
 
@@ -46,7 +52,7 @@ const setE2eeKeyFor = (gid, v) => { try { v ? localStorage.setItem('voice-e2ee-'
 // 三种视图: list(群列表) / call(通话中)
 // ─────────────────────────────────────────────────────────────────────────────
 export default function VoiceRoomPage({ user, token, onBack }) {
-  const [view, setView] = useState('list')        // 'list' | 'call'
+  const [view, setView] = useState('list')        // 'list' | 'call' | 'chat'
   const [enabled, setEnabled] = useState(true)     // LiveKit 是否已配置
   const [groups, setGroups] = useState([])
   const [loading, setLoading] = useState(true)
@@ -71,6 +77,9 @@ export default function VoiceRoomPage({ user, token, onBack }) {
 
   const enterCall = (group) => { setActiveGroup(group); setView('call') }
   const exitCall = () => { setView('list'); setActiveGroup(null); refresh() }
+  // 群聊与群语音共用同一份成员表(voice_group_members)，所以直接挂在语音群页下。
+  const enterChat = (group) => { setActiveGroup(group); setView('chat') }
+  const exitChat = () => { setView('list'); setActiveGroup(null) }
 
   return (
     <div style={S.page}>
@@ -82,10 +91,12 @@ export default function VoiceRoomPage({ user, token, onBack }) {
 
       {view === 'call' && activeGroup ? (
         <CallScreen group={activeGroup} user={user} token={token} onLeave={exitCall} />
+      ) : view === 'chat' && activeGroup ? (
+        <GroupChatPanel group={activeGroup} user={user} onBack={exitChat} />
       ) : (
         <GroupList
           enabled={enabled} groups={groups} loading={loading}
-          token={token} onRefresh={refresh} onEnter={enterCall}
+          token={token} onRefresh={refresh} onEnter={enterCall} onOpenChat={enterChat}
         />
       )}
     </div>
@@ -95,7 +106,7 @@ export default function VoiceRoomPage({ user, token, onBack }) {
 // ─────────────────────────────────────────────────────────────────────────────
 // 群列表 + 建群 + 加群
 // ─────────────────────────────────────────────────────────────────────────────
-function GroupList({ enabled, groups, loading, token, onRefresh, onEnter }) {
+function GroupList({ enabled, groups, loading, token, onRefresh, onEnter, onOpenChat }) {
   const [newName, setNewName] = useState('')
   const [code, setCode] = useState('')
   const [creating, setCreating] = useState(false)
@@ -184,12 +195,143 @@ function GroupList({ enabled, groups, loading, token, onRefresh, onEnter }) {
                 <span style={S.codeChip} onClick={() => copyCode(g.join_code)}>{g.join_code} 📋</span>
               </div>
             </div>
+            <button style={S.chatBtn} onClick={() => onOpenChat(g)}>
+              {i18nT('💬 群聊')}
+            </button>
             <button style={S.callBtn} onClick={() => onEnter(g)} disabled={!enabled}>
               {i18nT('📞 进入')}
             </button>
           </div>
         ))
       )}
+    </div>
+  )
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 群聊 — GET/POST /api/groups/{gid}/chat + 全局 WebSocket 的 group_chat 广播
+// 语音留言：录音→转写→以「🎙 」前缀发出。后端 group_messages 既没有音频列，
+// POST 也只收 { body } 一个字段（kind 写死 'text'），所以标记只能写在正文里。
+// ─────────────────────────────────────────────────────────────────────────────
+function GroupChatPanel({ group, user, onBack }) {
+  const myEmail = (user?.email || '').toLowerCase()
+  const [messages, setMessages] = useState([])
+  const [draft, setDraft] = useState('')
+  const [loading, setLoading] = useState(true)
+  const [sending, setSending] = useState(false)
+  const [showVoice, setShowVoice] = useState(false)
+  const endRef = useRef(null)
+
+  useEffect(() => {
+    let cancelled = false
+    setLoading(true)
+    fetchGroupChatHistory(group.id, { limit: 50 })
+      .then((data) => { if (!cancelled) setMessages(data.messages || []) })
+      .catch((e) => { if (!cancelled) toast(e.message || i18nT('加载群聊失败'), 'error') })
+      .finally(() => { if (!cancelled) setLoading(false) })
+    return () => { cancelled = true }
+  }, [group.id])
+
+  // 服务端会把新消息通过全局 WebSocket 推给每个成员（含发送者自己），
+  // 所以发送后不用手动往列表里塞，靠这里去重合并即可。
+  useRealtimeMessages(useCallback((msg) => {
+    if (msg.type === 'group_chat' && msg.group === group.id && msg.message) {
+      setMessages((prev) => (prev.some((m) => m.id === msg.message.id) ? prev : [...prev, msg.message]))
+    } else if (msg.type === 'group_chat_recall' && msg.group === group.id) {
+      setMessages((prev) => prev.map((m) => (m.id === msg.id ? { ...m, body: '', recalled: true } : m)))
+    }
+  }, [group.id]))
+
+  useEffect(() => { endRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [messages])
+
+  const post = useCallback(async (body) => {
+    setSending(true)
+    try {
+      const data = await sendGroupChat(group.id, body)
+      if (data?.message) {
+        setMessages((prev) => (prev.some((m) => m.id === data.message.id) ? prev : [...prev, data.message]))
+      }
+      return true
+    } catch (e) {
+      toast(e.message || i18nT('发送失败'), 'error')
+      return false
+    } finally { setSending(false) }
+  }, [group.id])
+
+  const sendText = async () => {
+    const body = draft.trim()
+    if (!body) return
+    if (await post(body)) setDraft('')
+  }
+
+  return (
+    <div style={S.chatWrap}>
+      <div style={S.chatHead}>
+        <button style={S.backBtn} onClick={onBack}>{i18nT('← 返回')}</button>
+        <span style={{ fontSize: 14, fontWeight: 700 }}>{group.name}</span>
+        <span style={{ width: 56 }} />
+      </div>
+
+      <div style={S.chatScroll}>
+        {loading ? (
+          <div style={S.muted} role="status">{i18nT('加载中…')}</div>
+        ) : messages.length === 0 ? (
+          <div style={S.empty}>{i18nT('还没有人说话。发一句问安，或按住麦克风口述一段。')}</div>
+        ) : (
+          messages.map((m) => {
+            const mine = (m.sender || '').toLowerCase() === myEmail
+            const voice = isVoiceOriginated(m.body)
+            return (
+              <div key={m.id} style={{ ...S.chatMsg, alignItems: mine ? 'flex-end' : 'flex-start' }}>
+                <div style={S.chatMsgName}>{mine ? i18nT('我') : (m.sender_name || m.sender)}</div>
+                <div style={{ ...S.chatBubble, background: mine ? 'rgba(52,199,89,0.16)' : 'rgba(255,255,255,0.06)' }}>
+                  {m.recalled ? (
+                    <span style={{ opacity: 0.5, fontStyle: 'italic' }}>{i18nT('消息已撤回')}</span>
+                  ) : (
+                    <>
+                      {voice && <div style={{ fontSize: 11, opacity: 0.7, marginBottom: 3 }}>🎙 {i18nT('语音留言 · 转文字')}</div>}
+                      {stripVoicePrefix(m.body)}
+                    </>
+                  )}
+                </div>
+              </div>
+            )
+          })
+        )}
+        <div ref={endRef} />
+      </div>
+
+      {showVoice && (
+        <div style={{ padding: '0 12px 8px' }}>
+          <VoiceNoteComposer
+            maxSeconds={60}
+            busy={sending}
+            startLabel={i18nT('录一段语音留言')}
+            submitLabel={i18nT('发送')}
+            storageNote={i18nT('说明：后端群聊只保存文字，音频不会上传，群里收到的是这段转写文字（标注为语音留言）。')}
+            onSubmit={async ({ transcript }) => {
+              const ok = await post(VOICE_TEXT_PREFIX + transcript)
+              if (ok) setShowVoice(false)
+              return ok
+            }}
+          />
+        </div>
+      )}
+
+      <div style={S.chatCompose}>
+        <button style={S.ghostBtn} aria-pressed={showVoice} title={i18nT('语音留言')}
+          onClick={() => setShowVoice((v) => !v)}>🎤</button>
+        <input
+          style={S.input} value={draft} maxLength={4000}
+          placeholder={i18nT('说点什么，Enter 发送')}
+          aria-label={i18nT('说点什么，Enter 发送')}
+          onChange={(e) => setDraft(e.target.value)}
+          onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); sendText() } }}
+        />
+        <button style={S.primaryBtn} disabled={sending || !draft.trim()} onClick={sendText}>
+          {sending ? i18nT('发送中…') : i18nT('发送')}
+        </button>
+      </div>
     </div>
   )
 }
@@ -667,6 +809,14 @@ const S = {
   codeChip: { color: ACCENT, cursor: 'pointer', fontWeight: 600 },
   callBtn: { background: ACCENT, border: 'none', borderRadius: 10, padding: '9px 14px', color: '#06210f', fontWeight: 700, fontSize: 13, cursor: 'pointer', whiteSpace: 'nowrap' },
 
+  chatBtn: { background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.18)', borderRadius: 10, padding: '9px 12px', color: '#fff', fontWeight: 600, fontSize: 13, cursor: 'pointer', whiteSpace: 'nowrap' },
+  chatWrap: { flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' },
+  chatHead: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 12px', borderBottom: '1px solid rgba(255,255,255,0.1)', flexShrink: 0 },
+  chatScroll: { flex: 1, overflowY: 'auto', padding: '12px 14px' },
+  chatMsg: { display: 'flex', flexDirection: 'column', gap: 3, marginBottom: 10 },
+  chatMsgName: { fontSize: 11, color: 'rgba(255,255,255,0.4)' },
+  chatBubble: { maxWidth: '78%', padding: '8px 11px', borderRadius: 12, fontSize: 14, lineHeight: 1.6, color: 'rgba(255,255,255,0.9)', whiteSpace: 'pre-wrap', wordBreak: 'break-word' },
+  chatCompose: { display: 'flex', gap: 8, padding: '10px 12px', borderTop: '1px solid rgba(255,255,255,0.1)', flexShrink: 0 },
   callWrap: { flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' },
   callHead: { textAlign: 'center', padding: '18px 14px 6px' },
   callName: { fontSize: 18, fontWeight: 700 },

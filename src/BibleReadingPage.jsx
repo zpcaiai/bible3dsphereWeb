@@ -220,7 +220,7 @@ function CrossRefText({ text, autoExpand = false }) {
 }
 
 // ── 子组件：章节阅读视图 ──────────────────────────────────────────────────────
-function ChapterReader({ book, chapter, doneChapters, onMark, onBack, onNav, user, token }) {
+function ChapterReader({ book, chapter, doneChapters, onMark, onBack, onNav, user, token, autoStudy = false }) {
   const [verses, setVerses] = useState(null)
   const [loadErr, setLoadErr] = useState(null)
   const [highlight, setHighlight] = useState('')
@@ -233,6 +233,7 @@ function ChapterReader({ book, chapter, doneChapters, onMark, onBack, onNav, use
   const [openSections, setOpenSections] = useState({})
   const studyRef = useRef(null)
   const topRef = useRef(null)
+  const autoStudyStartedRef = useRef(false)
 
   const isDone = (doneChapters || []).includes(chapter)
 
@@ -255,7 +256,7 @@ function ChapterReader({ book, chapter, doneChapters, onMark, onBack, onNav, use
     setStudyErr('')
     setOpenSections({})
   }, [load])
-  useEffect(() => { topRef.current?.scrollIntoView({ behavior: 'instant' }) }, [book.name, chapter])
+  useEffect(() => { topRef.current?.scrollIntoView?.({ behavior: 'instant' }) }, [book.name, chapter])
 
   async function handleMark() {
     if (!user || marking || isDone || marked) return
@@ -267,14 +268,14 @@ function ChapterReader({ book, chapter, doneChapters, onMark, onBack, onNav, use
     } finally { setMarking(false) }
   }
 
-  async function handleGenerateStudy() {
+  const handleGenerateStudy = useCallback(async () => {
     if (studyLoading || !verses?.length) return
     setStudyLoading(true)
     setStudyErr('')
     setStudy(null)
     if (window.showToast) window.showToast(i18nT('📖 正在生成查经材料…'), "loading", 60000)
     setOpenSections({ summary: true })
-    setTimeout(() => studyRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100)
+    setTimeout(() => studyRef.current?.scrollIntoView?.({ behavior: 'smooth', block: 'start' }), 100)
     try {
       const data = await fetchBibleStudy(book.name, chapter, verses, token)
       setStudy(data.study)
@@ -284,7 +285,13 @@ function ChapterReader({ book, chapter, doneChapters, onMark, onBack, onNav, use
     } finally {
       setStudyLoading(false)
     }
-  }
+  }, [book.name, chapter, studyLoading, token, verses])
+
+  useEffect(() => {
+    if (!autoStudy || autoStudyStartedRef.current || !verses?.length) return
+    autoStudyStartedRef.current = true
+    handleGenerateStudy()
+  }, [autoStudy, handleGenerateStudy, verses])
 
   function toggleSection(key) {
     setOpenSections(prev => ({ ...prev, [key]: !prev[key] }))
@@ -605,6 +612,25 @@ export default function BibleReadingPage({ user, token, onBack }) {
   const [selectedChapter, setSelectedChapter] = useState(null)
   const [testament, setTestament] = useState('NT')
   const [completedBook, setCompletedBook] = useState(null)
+  const [initialAutoStudy, setInitialAutoStudy] = useState(false)
+
+  // 麦琴计划/通知深链：打开指定章节，并可在经文加载后自动生成查经材料。
+  useEffect(() => {
+    try {
+      const raw = window.sessionStorage.getItem('bible-reading-open')
+      if (!raw) return
+      window.sessionStorage.removeItem('bible-reading-open')
+      const target = JSON.parse(raw)
+      const book = BOOKS.find((item) => item.name === target?.book)
+      const chapter = Number(target?.chapter)
+      if (!book || !Number.isInteger(chapter) || chapter < 1 || chapter > book.chapters) return
+      setSelectedBook(book)
+      setSelectedChapter(chapter)
+      setTestament(book.testament)
+      setInitialAutoStudy(target?.autoStudy === true)
+      setView('reading')
+    } catch { /* ignore invalid deep link */ }
+  }, [])
 
   // Load progress
   useEffect(() => {
@@ -640,12 +666,17 @@ export default function BibleReadingPage({ user, token, onBack }) {
         onMark={handleMark}
         user={user}
         token={token}
-        onBack={() => setView('chapters')}
+        autoStudy={initialAutoStudy}
+        onBack={() => {
+          setInitialAutoStudy(false)
+          setView('chapters')
+        }}
         onNav={(book, ch) => {
           // If navigating to a different book, update selectedBook too
           if (book.name !== selectedBook.name) {
             setSelectedBook(book)
           }
+          setInitialAutoStudy(false)
           setSelectedChapter(ch)
         }}
       />
@@ -720,7 +751,7 @@ export default function BibleReadingPage({ user, token, onBack }) {
               const complete = done >= book.chapters
               return (
                 <div key={book.name} style={S.bookCard(complete)}
-                  onClick={() => { setSelectedBook(book); setView('chapters') }} {...a11yClickProps(() => { setSelectedBook(book); setView('chapters') })}>
+                  onClick={() => { setInitialAutoStudy(false); setSelectedBook(book); setView('chapters') }} {...a11yClickProps(() => { setInitialAutoStudy(false); setSelectedBook(book); setView('chapters') })}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5 }}>
                     <span style={{ fontSize: 13, fontWeight: 600, color: '#fff' }}>{book.name}</span>
                     {complete && <span style={{ fontSize: 11 }}>✅</span>}
@@ -745,7 +776,7 @@ export default function BibleReadingPage({ user, token, onBack }) {
                 return (
                   <button key={ch}
                     style={S.chapterBtn(done, false)}
-                    onClick={() => { setSelectedChapter(ch); setView('reading') }}>
+                    onClick={() => { setInitialAutoStudy(false); setSelectedChapter(ch); setView('reading') }}>
                     {ch}
                   </button>
                 )

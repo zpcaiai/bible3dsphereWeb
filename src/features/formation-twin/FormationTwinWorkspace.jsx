@@ -17,6 +17,8 @@ import {
 } from './formationTwinApi'
 import FormationTwinEmotions from './FormationTwinEmotions'
 import FormationTwinFormation from './FormationTwinFormation'
+import { Radar } from '../../components/charts'
+import { useSpeechInput } from '../../hooks/useSpeechInput'
 
 const TABS = [
   ['emotions', '情感状态', '≈'],
@@ -71,6 +73,17 @@ function CheckinPanel({ onSafety, onSaved }) {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [result, setResult] = useState(null)
+  // 语音填空：转写落到「最后点了麦克风的那一栏」，用 ref 保存目标，
+  // 因为 useSpeechInput 在 startRecording 时就把回调闭包进 recorder.onstop 了，
+  // 直接闭包 state 会写错栏位。
+  const voiceTargetRef = useRef(null)
+  const speech = useSpeechInput({
+    onTranscript: (text) => {
+      const key = voiceTargetRef.current
+      if (!key) return
+      setState((prev) => ({ ...prev, [key]: prev[key] ? `${prev[key]} ${text}` : text }))
+    },
+  })
 
   useEffect(() => {
     localStorage.setItem('formation-twin-checkin-draft', JSON.stringify(state))
@@ -107,6 +120,11 @@ function CheckinPanel({ onSafety, onSaved }) {
     } catch (caught) { setError(caught.message) } finally { setSaving(false) }
   }
 
+  // 四条滑杆都没动过时不画雷达：默认值 5 会画出一个整齐的正方形，
+  // 那是「表单默认」而不是「此刻的你」。
+  const hasSliderInput = ['overall_state', 'energy_level', 'stress_level', 'sleep_quality']
+    .some((k) => state[k] !== undefined)
+
   return (
     <form className="ft-entry-form" onSubmit={submit}>
       <div className="ft-form-intro"><h3>{i18nT('此刻的我')}</h3><p>{i18nT('每一项都可选；这里记录你的主动表达，不替你解释。')}</p></div>
@@ -118,12 +136,55 @@ function CheckinPanel({ onSafety, onSaved }) {
       <fieldset><legend>{i18nT('我选择的情绪（最多 5 项）')}</legend><div className="ft-choice-row">{EMOTIONS.map((emotion) => <button aria-pressed={emotions.includes(emotion)} type="button" key={emotion} onClick={() => toggleEmotion(emotion)}>{i18nT(emotion)}</button>)}</div></fieldset>
       <fieldset><legend>{i18nT('我注意到的身体感受（最多 5 项）')}</legend><div className="ft-choice-row">{['胸口发紧', '肩颈紧张', '疲劳', '坐立不安', '麻木', '放松', '温暖', '精力充沛'].map((bodyLabel) => <button aria-pressed={bodyStates.includes(bodyLabel)} type="button" key={bodyLabel} onClick={() => toggleBodyState(bodyLabel)}>{i18nT(bodyLabel)}</button>)}</div></fieldset>
       <fieldset><legend>{i18nT('涉及的生活领域')}</legend><div className="ft-choice-row">{DOMAINS.map((domain) => <button aria-pressed={(state.life_domains || []).includes(domain)} type="button" key={domain} onClick={() => set('life_domains', (state.life_domains || []).includes(domain) ? state.life_domains.filter((item) => item !== domain) : [...(state.life_domains || []), domain])}>{i18nT(DOMAIN_LABELS[domain])}</button>)}</div></fieldset>
+      {/* 四条滑杆是同一个「此刻」的四个侧面，分开读要在脑子里合成，合成不出来就只剩四个数字。
+          画成一个形状，一眼就看得出今天是「哪一边塌下去了」。
+          注意：压力是「越低越好」，与另外三项方向相反，直接同框会让「外扩」一半代表好、一半代表坏，
+          所以这里取 10−压力 换算成「放松」，并在副标题写明——不写明就是在悄悄改变量纲。 */}
+      {hasSliderInput && (
+        <Radar
+          title={i18nT('此刻的形状')}
+          subtitle={i18nT('四个方向都是「越往外越好」。压力已换算为放松（10 − 压力）。这是你自己报的，不是评分。')}
+          axes={[
+            { key: 'overall_state', label: i18nT('整体状态') },
+            { key: 'energy_level', label: i18nT('精力') },
+            { key: 'calm', label: i18nT('放松') },
+            { key: 'sleep_quality', label: i18nT('睡眠质量') },
+          ]}
+          series={[{
+            name: i18nT('此刻'),
+            values: {
+              overall_state: Number(state.overall_state ?? 5),
+              energy_level: Number(state.energy_level ?? 5),
+              calm: 10 - Number(state.stress_level ?? 5),
+              sleep_quality: Number(state.sleep_quality ?? 5),
+            },
+          }]}
+          max={10}
+          size={230}
+        />
+      )}
+
       <div className="ft-text-grid">
-        <label>{i18nT('感恩')}<textarea value={state.gratitude || ''} onChange={(e) => set('gratitude', e.target.value)} /></label>
-        <label>{i18nT('挣扎')}<textarea value={state.struggle || ''} onChange={(e) => set('struggle', e.target.value)} /></label>
-        <label>{i18nT('我需要的支持')}<textarea value={state.support_needed || ''} onChange={(e) => set('support_needed', e.target.value)} /></label>
-        <label>{i18nT('补充说明')}<textarea value={state.short_note || ''} onChange={(e) => set('short_note', e.target.value)} /></label>
+        {[['gratitude', '感恩'], ['struggle', '挣扎'], ['support_needed', '我需要的支持'], ['short_note', '补充说明']].map(([key, label]) => (
+          <label key={key}>
+            <span style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'space-between' }}>
+              {i18nT(label)}
+              {/* 累到说不出话的那种日子，说一句比打一段容易得多。转写只填进框里，保存仍由你按。 */}
+              <button
+                type="button"
+                onClick={() => { voiceTargetRef.current = key; speech.isRecording ? speech.stopRecording() : speech.startRecording() }}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: speech.isRecording && voiceTargetRef.current === key ? '#34c759' : 'rgba(255,255,255,0.5)' }}
+                aria-label={i18nT('用语音填写这一栏')}
+              >
+                {speech.isRecording && voiceTargetRef.current === key ? `⏹ ${speech.recordingSeconds}s` : '🎤'}
+              </button>
+            </span>
+            <textarea value={state[key] || ''} onChange={(e) => set(key, e.target.value)} />
+          </label>
+        ))}
       </div>
+      {speech.isTranscribing && <p className="ft-form-intro" style={{ margin: 0 }}>{i18nT('正在转写…')}</p>}
+      {speech.recordingError && <p role="alert" style={{ color: '#ff9f8a', fontSize: 12 }}>{speech.recordingError}</p>}
       <label className="ft-preference">{i18nT('处理偏好')}<select value={state.processing_preference || 'STORE_ONLY'} onChange={(e) => set('processing_preference', e.target.value)}><option value="STORE_ONLY">{i18nT('仅安全保存')}</option><option value="ALLOW_FUTURE_ANALYSIS">{i18nT('允许未来经授权的分析')}</option><option value="EXCLUDE_FROM_TWIN">{i18nT('不纳入孪生处理')}</option></select></label>
       <ErrorNotice error={error} /><SaveNotice result={result} onSafety={onSafety} />
       <button className="ft-submit" disabled={saving || (!emotions.length && !bodyStates.length && state.overall_state === undefined && state.energy_level === undefined && state.stress_level === undefined)}>{saving ? i18nT('正在保存…') : i18nT('保存这次签到')}</button>

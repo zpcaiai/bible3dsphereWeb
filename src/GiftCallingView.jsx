@@ -3,6 +3,8 @@ import { useEffect, useRef, useState } from 'react'
 import { t } from './i18n/runtime'
 import { a11yClickProps } from './lib/a11yClick';
 import PlanExecutionPanel from './components/PlanExecutionPanel'
+import { BarSeries, Radar } from './components/charts'
+import { CardActions } from './lib/media/CardActions'
 import {
   fetchGiftMeta, fetchGiftProfile, assessGift, fetchGiftHistory, fetchGiftAssessment,
   submitGiftFeedback, fetchGiftFeedback, submitGiftReview, fetchGiftReviews,
@@ -109,6 +111,31 @@ function Report({ r, meta, user }) {
   const gp = r.growth_plan || {}
   const cc = r.community_confirmation || {}
 
+  // 恩赐分数是「一个人的一张侧写」，不是排行榜：轴数不多时雷达能一眼显出侧写的形状
+  // （哪边鼓、哪边平），这是分开读一条条进度条读不出来的。
+  // 但超过八条轴雷达就成了毛刺团，那时排序更重要，改用排序条。
+  const giftChartItems = (sg.likely_gifts || [])
+    .filter((g) => g && g.gift != null)
+    .map((g) => ({ label: String(g.gift), value: Math.round(Number(g.score) || 0) }))
+  const giftRadarReadable = giftChartItems.length >= 3 && giftChartItems.length <= 8
+  const giftChartTitle = i18nT('恩赐侧写（需共同体印证）')
+  const giftChartSubtitle = i18nT('要看的是形状与落差：几项挤在一起说明还没分辨清楚，需要更多真实服事与他人的反馈。')
+
+  // 图卡是为了「拿去问人」：恩赐要在基督的身体里被印证，所以卡上只放能公开讨论的结论，不放测评原文。
+  const topGifts = giftChartItems.slice(0, 3)
+  const buildGiftCardSpec = () => ({
+    badge: i18nT('恩赐画像 · 待共同体印证'),
+    title: topGifts.map((item) => item.label).join(' · ') || i18nT('恩赐与呼召分析'),
+    subtitle: cp.possible_mission_sentence || r.summary || '',
+    sections: [
+      { heading: i18nT('可能的主要恩赐'), items: topGifts.map((item) => `${item.label} ${item.value}`), emphasis: true },
+      { heading: i18nT('使命方向'), items: [cp.primary_pattern, ...(cp.secondary_patterns || [])].filter(Boolean).slice(0, 4) },
+      { heading: i18nT('可以先试的服事'), items: Array.from(new Set([mm.top_ministry, ...(mm.recommended_ministries || []).map((m) => m.ministry)].filter(Boolean))).slice(0, 4) },
+      { heading: i18nT('请帮我留意'), items: (mr.top_risks || []).map((rk) => rk.risk).filter(Boolean).slice(0, 3) },
+    ],
+    footer: r.identity_reminder || i18nT('恩赐需要在基督的身体中被印证。请指出我自己看不见的部分。'),
+  })
+
   return (
     <div>
       {/* 概要 */}
@@ -153,6 +180,21 @@ function Report({ r, meta, user }) {
             {g.validation_task && <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.65)', lineHeight: 1.5, marginTop: 2 }}>✅ {g.validation_task}</div>}
           </div>
         ))}
+        {giftChartItems.length > 0 && (
+          <div style={{ margin: '10px 0 4px' }}>
+            {giftRadarReadable ? (
+              <Radar
+                title={giftChartTitle}
+                subtitle={giftChartSubtitle}
+                axes={giftChartItems.map((item, i) => ({ key: `gift-${i}`, label: item.label }))}
+                series={[{ name: i18nT('本次辨识分数'), values: Object.fromEntries(giftChartItems.map((item, i) => [`gift-${i}`, item.value])) }]}
+                max={100}
+              />
+            ) : (
+              <BarSeries title={giftChartTitle} subtitle={giftChartSubtitle} items={giftChartItems} />
+            )}
+          </div>
+        )}
         {(sg.likely_gifts || []).length === 0 && <div style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.45)' }}>{i18nT('资料尚不足以辨识明显恩赐，请在测评中提供更多经历。')}</div>}
         {sg.summary && <div style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.6)', lineHeight: 1.6, marginTop: 4 }}>{sg.summary}</div>}
       </div>
@@ -302,6 +344,15 @@ function Report({ r, meta, user }) {
           <div style={{ fontSize: 11.5, color: 'rgba(255,255,255,0.4)', marginTop: 4 }}>{i18nT('在「反馈」标签邀请牧者、同工、被服事者填写。')}</div>
         </div>
       )}
+
+      {/* 恩赐是拿到教会里被印证的，不是留在手机里自我确认——所以给一张可以直接发出去的卡。 */}
+      <div style={card}>
+        <div style={sectionTitle}>{i18nT('🖼 恩赐画像卡（发给教会）')}</div>
+        <div style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.55)', lineHeight: 1.6 }}>
+          {i18nT('把这张卡发给牧者、小组长或被你服事的人，请他们印证或修正。卡上不含你的测评原文。')}
+        </div>
+        <CardActions buildSpec={buildGiftCardSpec} filename="gift-profile-card.png" label="生成恩赐画像卡" templates={['olive', 'ink', 'dawn']} />
+      </div>
 
       {/* 身份提醒 */}
       {r.identity_reminder && <Banner tone="identity">🕊 {r.identity_reminder}</Banner>}

@@ -35,6 +35,7 @@ import { PLATFORM_INTEGRATION_STORAGE_KEYS as KEYS, loadPlatformIntegrationData,
 import { hydratePlatformIntegrationRemote, platformIntegrationApi } from '../../lib/platformIntegrationApi'
 import { MODULE_DISCLAIMER } from '../../lib/pastoralSafety'
 import PlanExecutionPanel from '../../../../components/PlanExecutionPanel'
+import { BarSeries, Meter } from '../../../../components/charts'
 
 function MiniTabs({ active, onChange }) {
   const tabs = [
@@ -59,6 +60,64 @@ function SummaryCard({ title, items }) {
       <h3>{title}</h3>
       <dl>{items.filter((item) => item.value !== undefined && item.value !== null && item.value !== '').map((item) => <div key={item.label}><dt>{item.label}</dt><dd>{Array.isArray(item.value) ? item.value.join(', ') : item.value}</dd></div>)}</dl>
     </article>
+  )
+}
+
+// 指标面板唯一真正数值化的东西是 metricValues：每个 metricKey 一条 numericValue。
+// 计数类（count）与百分比类（percentage）量纲不同，所以分开呈现——
+// 计数用排序条（谁在被记录、谁一直是 0），完成率用单条计量条，绝不塞进同一张图。
+// 只取每个 metricKey 最新的一条（列表是新记录在前），旧快照不参与，避免同一指标画两根条。
+function latestMetricByKey(metricValues = []) {
+  const latest = new Map()
+  metricValues.forEach((value) => { if (!latest.has(value.metricKey)) latest.set(value.metricKey, value) })
+  return latest
+}
+
+export function FormationMetricCharts({ metricValues = [] }) {
+  const latest = latestMetricByKey(metricValues)
+  if (!latest.size) {
+    return (
+      <article className="sf-card">
+        <p className="sf-empty">{T('还没有聚合过任何指标，所以没有可画的图。先在上面填入真实发生过的次数，再点「Aggregate Formation Metrics」。', 'No metrics aggregated yet, so there is nothing to chart. Enter what actually happened above, then aggregate.')}</p>
+      </article>
+    )
+  }
+  const countItems = analyticsMetricDefinitions
+    .filter((definition) => definition.valueType === 'count' && latest.has(definition.key))
+    .map((definition) => ({ label: definition.displayName, value: Number(latest.get(definition.key)?.numericValue) || 0 }))
+    .sort((a, b) => b.value - a.value)
+  const rate = latest.get('daily_plan_completion_rate')
+  const zeroCount = countItems.filter((item) => !item.value).length
+
+  return (
+    <div className="sf-home-grid">
+      <article className="sf-card">
+        {countItems.length ? (
+          <BarSeries
+            title={T('最近一次聚合的计数指标', 'Latest aggregated count metrics')}
+            subtitle={T(
+              `${countItems.length} 项计数指标中有 ${zeroCount} 项为 0——0 表示这一期没有记录，不表示属灵状态不合格。`,
+              `${zeroCount} of ${countItems.length} count metrics are zero. Zero means nothing was recorded this period, not a spiritual verdict.`,
+            )}
+            items={countItems}
+            unit={T(' 次', 'x')}
+            rowHeight={24}
+          />
+        ) : <p className="sf-empty">{T('这次聚合没有计数类指标。', 'This aggregation carried no count metrics.')}</p>}
+      </article>
+      <article className="sf-card">
+        <h3>{T('每日计划完成率', 'Daily plan completion rate')}</h3>
+        {rate ? (
+          <Meter
+            label={T('完成率', 'Completion rate')}
+            value={Number(rate.numericValue) || 0}
+            max={100}
+            unit="%"
+            hint={T(`统计区间 ${rate.periodStart} 至 ${rate.periodEnd}；confidenceScore=${rate.confidenceScore} 时表示这个值没有来源记录，只是占位的 0。`, `Period ${rate.periodStart} to ${rate.periodEnd}. confidenceScore=${rate.confidenceScore}; a zero-confidence value means no source record, just a placeholder zero.`)}
+          />
+        ) : <p className="sf-empty">{T('这一期没有完成率数据。', 'No completion rate recorded for this period.')}</p>}
+      </article>
+    </div>
   )
 }
 
@@ -223,6 +282,7 @@ export function AnalyticsPanel({ userId, token, data, onRefresh }) {
       <div className="sf-section-heading"><h2>{T('成长分析与生命果效指标系统', 'Analytics, Progress & Formation Metrics OS')}</h2><p>Metrics are indicators, not spiritual rank. Grace evidence appears before performance metrics.</p></div>
       <article className="sf-card sf-flow-card"><label>Prayer sessions actually recorded<input type="number" min="0" value={prayerCount} onChange={(event) => setPrayerCount(Math.max(0, Number(event.target.value) || 0))} /></label><label>Active overload signals actually noticed<input type="number" min="0" value={overloadCount} onChange={(event) => setOverloadCount(Math.max(0, Number(event.target.value) || 0))} /></label><label>Grace evidence (optional)<textarea value={graceText} onChange={(event) => setGraceText(event.target.value)} placeholder="Record only something you actually noticed." /></label></article>
       <button className="sf-primary" type="button" onClick={createAnalyticsArtifacts}>Aggregate Formation Metrics</button>
+      <FormationMetricCharts metricValues={data.metricValues} />
       <div className="sf-home-grid">
         <SummaryCard title="Analytics state" items={[
           { label: 'Metric definitions', value: String(analyticsMetricDefinitions.length) },

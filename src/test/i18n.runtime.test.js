@@ -2,6 +2,8 @@
  * Tests for runtime i18n helpers that localize backend-provided emotion names.
  */
 import { afterEach, describe, expect, it } from 'vitest'
+import autoEn from '../i18n/auto-en'
+import { mergeAutoEn } from '../i18n/translations'
 import {
   emotionZhKey,
   featureLabel,
@@ -83,5 +85,31 @@ describe('runtime emotion localization', () => {
     for (const key of keys) {
       expect(t(key), key).not.toMatch(/[一-鿿]/)
     }
+  })
+
+  it('localizes the new maturity and multimodal presentation copy', () => {
+    mergeAutoEn(autoEn)
+    setRuntimeLang('en')
+    const keys = [
+      '第一类：与神的关系（核心根基）',
+      '生命成熟度阶段',
+      '成熟稳固期',
+      '我每天/每周与神亲密相交（读经+祷告）的时间和品质如何？是否流于形式？',
+      '每周写一篇与神相遇的日记',
+      '个人灵修计划执行',
+      '生成成长图卡',
+      '晨光',
+      '深海',
+      '橄榄',
+      '墨夜',
+      '静蓝',
+    ]
+
+    for (const key of keys) {
+      expect(t(key), key).not.toMatch(/[一-鿿]/)
+    }
+
+    expect(t('{title}：{items}', { title: 'Growth', items: 'Hope 8, Peace 7' }))
+      .toBe('Growth: Hope 8, Peace 7')
   })
 })

@@ -8,6 +8,7 @@ import {
 } from './api'
 import { requestFriend } from './realtime/realtimeApi'
 import { COMMUNITY_STATUS_GROUPS } from './communityStatuses'
+import { CalendarHeatmap, localDateKey } from './components/charts'
 
 const PAGE = 20
 
@@ -187,6 +188,19 @@ export default function CommunityPage({ user, token, onBack }) {
       ? { ...p, comment_count: Math.max(0, p.comment_count + delta) } : p))
   }
 
+  // 社区活跃度热力图：唯一的数据源就是信息流里每条 post 的 created_at。
+  // 注意这里统计的是「已加载的这些帖子」，不是全站总量——分页没拉完的部分不该被画成 0。
+  const activityCells = (() => {
+    const byDate = new Map()
+    posts.forEach((post) => {
+      const date = localDateKey(new Date(post.created_at))
+      if (!date) return
+      byDate.set(date, (byDate.get(date) || 0) + 1)
+    })
+    return [...byDate.entries()].map(([date, value]) => ({ date, value }))
+  })()
+  const busiest = activityCells.reduce((best, cell) => (cell.value > (best?.value || 0) ? cell : best), null)
+
   return (
     <div className="cmty">
       <div className="cmty-head">
@@ -247,6 +261,23 @@ export default function CommunityPage({ user, token, onBack }) {
       {loading && posts.length === 0 && <div className="cmty-dim">{i18nT('加载中…')}</div>}
       {!loading && posts.length === 0 && !error && (
         <div className="cmty-empty">{i18nT('还没有人分享，成为第一个吧 🌱')}</div>
+      )}
+
+      {activityCells.length > 0 && (
+        <div style={{ padding: '0 14px 12px' }}>
+          <CalendarHeatmap
+            data={activityCells}
+            weeks={26}
+            unit={i18nT('条')}
+            title={i18nT('社区活跃度')}
+            subtitle={busiest
+              ? i18nT('已加载的 {loaded} 条动态里，{date} 最热闹，那天有 {peak} 条分享。', { loaded: posts.length, date: busiest.date, peak: busiest.value })
+              : i18nT('按发布日期统计已加载的动态。')}
+          />
+          <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.32)', marginTop: 6, lineHeight: 1.6 }}>
+            {i18nT('只统计已加载的 {loaded} 条（共 {total} 条）；往下「加载更多」后这张图会一起变长。', { loaded: posts.length, total })}
+          </div>
+        </div>
       )}
 
       <div className="cmty-feed">

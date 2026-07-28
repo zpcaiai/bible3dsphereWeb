@@ -19,6 +19,7 @@ import {
   submitWaitingReflection,
 } from './api'
 import { getToken } from './auth'
+import { MilestoneTrack, RingProgress, Timeline } from './components/charts'
 import { a11yClickProps } from './lib/a11yClick';
 
 const SLIDERS = [
@@ -198,6 +199,20 @@ function DetailView({ bundle, reload, setError, onNeedLogin }) {
   const t = TYPE[a.waiting_type || c.waiting_type] || TYPE.unknown
   const crisis = a.crisis_flag
   const completedPractices = practices.filter((practice) => practice.completed).length
+  // 等候里最难的是「看不出在动」。七天操练本身就是一条有次序的路：
+  // 里程碑轨道把「走过 / 我在这一天 / 还没到」画出来，比一条百分比进度条更能回答「我在哪」。
+  const orderedPractices = [...practices].sort((x, y) => (x.day_index || 0) - (y.day_index || 0))
+  const practiceStops = orderedPractices.map(pr => ({
+    key: pr.id,
+    label: `Day ${pr.day_index} · ${pr.practice_title}`,
+    note: pr.reflection_prompt,
+  }))
+  const firstUndone = orderedPractices.findIndex(pr => !pr.completed)
+  const practiceIndex = firstUndone === -1 ? Math.max(0, orderedPractices.length - 1) : firstUndone
+  // 复盘里的「信靠」分数是这条路上唯一逐次记录的连续量，画成时间轴就是「有没有在动」的证据。
+  const trustEvents = (bundle.reflections || [])
+    .filter(r => r.trust_level != null)
+    .map(r => ({ date: (r.created_at || '').slice(0, 10), label: r.action_taken || r.reflection_text?.slice(0, 20) || i18nT('一次复盘'), value: Math.round(r.trust_level) }))
 
   async function genPractices() {
     const token = getToken(); if (!token) { onNeedLogin && onNeedLogin(); return }
@@ -281,13 +296,40 @@ function DetailView({ bundle, reload, setError, onNeedLogin }) {
       ) : (
         <div style={{ marginTop: 4 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, fontWeight: 700, color: 'rgba(255,255,255,0.7)', margin: '8px 4px' }}><span>{i18nT('🌱 7 天等候操练')}</span><span>{completedPractices}/{practices.length}</span></div>
-          <div aria-label={i18nT('等候操练进度')} style={{ height: 6, margin: '0 4px 10px', borderRadius: 99, overflow: 'hidden', background: 'rgba(255,255,255,.08)' }}><div style={{ width: `${practices.length ? Math.round((completedPractices / practices.length) * 100) : 0}%`, height: '100%', background: '#34c759' }} /></div>
+          <div style={{ ...card, display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
+            <RingProgress
+              value={completedPractices}
+              max={practices.length}
+              label={i18nT('已完成的操练')}
+              sublabel={`${completedPractices}/${practices.length}`}
+              severity={completedPractices >= practices.length ? 'good' : undefined}
+            />
+            <div style={{ flex: 1, minWidth: 200 }}>
+              <MilestoneTrack
+                title={i18nT('这七天走到哪了')}
+                subtitle={i18nT('等候不是停住不动，是一天一天被塑造')}
+                stops={practiceStops}
+                currentIndex={practiceIndex}
+              />
+            </div>
+          </div>
           {practices.map(p => <PracticeCard key={p.id} p={p} onSaved={() => reload(c.id)} setError={setError} onNeedLogin={onNeedLogin} />)}
         </div>
       )}
 
       {/* 复盘 */}
       <ReflectBox caseId={c.id} onSaved={() => reload(c.id)} setError={setError} onNeedLogin={onNeedLogin} />
+
+      {trustEvents.length > 1 && (
+        <div style={{ marginTop: 12 }}>
+          <Timeline
+            title={i18nT('信靠的轨迹')}
+            subtitle={i18nT('每一次复盘你给「信靠」打的分 · 等候里唯一逐次留下的刻度')}
+            events={trustEvents}
+            valueLabel={i18nT('信靠')}
+          />
+        </div>
+      )}
 
       {bundle.reflections && bundle.reflections.length > 0 && (
         <div style={{ ...card, marginTop: 12 }}>

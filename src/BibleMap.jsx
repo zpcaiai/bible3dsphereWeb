@@ -4,7 +4,7 @@ import { t as i18nT } from './i18n/runtime'
 // 扩展：地点插图（MapScenes）、AI 讲解（fetchFaithQA）、人物卡片闭环（config.profile）。
 import { useEffect, useMemo, useRef, useState } from 'react'
 import BackButton from './BackButton'
-import MapScene, { resolveScene } from './MapScenes'
+import MapScene, { resolveScene, MapSceneCard } from './MapScenes'
 import { fetchFaithQA, API_BASE } from './api'
 import { curvedSegment } from './map/arc'
 
@@ -498,9 +498,8 @@ export default function BibleMap({ config, onBack }) {
         {selected && (
           <div className="biblemap-detail">
             <button className="biblemap-detail-close" onClick={() => setSelected(null)}>×</button>
-            <div className="biblemap-scene" style={{ background: selected._color + '1a' }}>
-              <MapScene scene={resolveScene(selected, config.id)} color={selected._color} />
-            </div>
+            {/* 插图 + 讲解 + 图卡：看见这一站之后，还能听见它、带走它 */}
+            <MapSceneCard point={selected} mapId={config.id} color={selected._color} />
             <div className="biblemap-detail-name" style={{ color: selected._color }}>
               {selected.name_zh}<span className="en">{selected.name_en}</span>
             </div>

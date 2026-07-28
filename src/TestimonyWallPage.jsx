@@ -13,7 +13,12 @@ const TW_OPTS = {
   after_story: ['我心里有了平安', '我与家人的关系改善', '我有了活下去的盼望', '我学会把重担交给神', '最感恩的是…'],
 }
 import { amenTestimony, deleteTestimony, fetchTestimonies, submitTestimony } from './api'
+import VoiceNoteComposer from './components/VoiceNoteComposer'
 import useDraft from './useDraft'
+
+// 口述见证的时长区间：短于 30 秒讲不完一件事，长于 90 秒 Deepgram 单次转写又容易掉尾巴。
+const VOICE_MIN_SECONDS = 30
+const VOICE_MAX_SECONDS = 90
 
 const AMEN_KEY = 'tw-amened-v1'
 const PAGE = 20
@@ -30,7 +35,7 @@ function saveAmened(set) {
 
 function friendlyError(e) {
   const msg = e?.message || ''
-  return /[一-龥]/.test(msg) ? msg : '网络不稳定，请稍后重试'
+  return /[一-龥]/.test(msg) ? i18nT(msg) : i18nT('网络不稳定，请稍后重试')
 }
 
 function formatDateTime(ts) {
@@ -68,6 +73,8 @@ export default function TestimonyWallPage({ user, token }) {
   const [submitting, setSubmitting] = useState(false)
   const [submitMsg, setSubmitMsg] = useState('')   // ✓ 成功 / 其它=错误
   const [deletingId, setDeletingId] = useState(null)
+  // 同一时刻只允许一段在录：三个录音器同时抢麦克风只会互相打架。
+  const [voiceSection, setVoiceSection] = useState(null)
 
   const { savedHint, clearDraft } = useDraft('testimony-draft-v1', form, setForm)
 
@@ -91,6 +98,19 @@ export default function TestimonyWallPage({ user, token }) {
   function setField(key, val, max) {
     setForm(f => ({ ...f, [key]: val.slice(0, max) }))
     setSubmitMsg('')
+  }
+
+  // 口述 → 转写 → 追加到对应段落。见证记录（testimonies 表）只有文字列，
+  // 没有任何音频字段，所以录音仅在浏览器内存中存在，转写完就丢——不假装保存了音频。
+  function appendVoiceText(sectionKey, text) {
+    setForm(f => {
+      const prev = f[sectionKey] || ''
+      const merged = prev ? `${prev}\n${text}` : text
+      return { ...f, [sectionKey]: merged.slice(0, STORY_MAX) }
+    })
+    setSubmitMsg('')
+    setVoiceSection(null)
+    return true
   }
 
   async function handleAmen(id) {
@@ -117,10 +137,10 @@ export default function TestimonyWallPage({ user, token }) {
 
   async function handleSubmit() {
     if (submitting) return
-    if (!token) { setSubmitMsg('请先登录后再分享见证'); return }
-    if (!form.title.trim()) { setSubmitMsg('请先给见证起一个标题'); return }
-    if (!form.how_story.trim()) { setSubmitMsg('请写下你是如何遇见主的'); return }
-    if (!form.after_story.trim()) { setSubmitMsg('请写下生命的改变'); return }
+    if (!token) { setSubmitMsg(i18nT('请先登录后再分享见证')); return }
+    if (!form.title.trim()) { setSubmitMsg(i18nT('请先给见证起一个标题')); return }
+    if (!form.how_story.trim()) { setSubmitMsg(i18nT('请写下你是如何遇见主的')); return }
+    if (!form.after_story.trim()) { setSubmitMsg(i18nT('请写下生命的改变')); return }
     setSubmitting(true)
     setSubmitMsg('')
     try {
@@ -137,7 +157,7 @@ export default function TestimonyWallPage({ user, token }) {
       setIsPublic(false)
       clearDraft()
       setShowCompose(false)
-      setSubmitMsg('✓ 见证已发布，愿一切荣耀归于神')
+      setSubmitMsg(i18nT('✓ 见证已发布，愿一切荣耀归于神'))
       await load(true)
       setTimeout(() => setSubmitMsg(''), 3000)
     } catch (e) {
@@ -153,7 +173,9 @@ export default function TestimonyWallPage({ user, token }) {
       <div style={{ textAlign: 'center', margin: '4px 0 14px' }}>
         <div style={{ fontSize: 16, fontWeight: 700, color: 'rgba(255,255,255,0.95)' }}>{i18nT('✨ 见证墙 · 述说祂的作为')}</div>
         <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)', marginTop: 3 }}>
-          {total > 0 ? `共 ${total} 篇见证` : '「来听我诉说，我要述说他为我所行的事。」（诗 66:16）'}
+          {total > 0
+            ? i18nT('共 {n} 篇见证', { n: total })
+            : i18nT('「来听我诉说，我要述说他为我所行的事。」（诗 66:16）')}
         </div>
       </div>
 
@@ -169,7 +191,7 @@ export default function TestimonyWallPage({ user, token }) {
         aria-expanded={showCompose}
         style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, width: '100%', minHeight: 44, padding: '11px 14px', marginBottom: 12, borderRadius: 12, border: '1px solid rgba(255,184,76,0.35)', background: showCompose ? 'rgba(255,184,76,0.16)' : 'rgba(255,184,76,0.10)', color: '#ffd43b', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
       >
-        ✍️ {showCompose ? '收起' : '写下我的见证'}
+        ✍️ {showCompose ? i18nT('收起') : i18nT('写下我的见证')}
       </button>
 
       {showCompose && (
@@ -186,18 +208,40 @@ export default function TestimonyWallPage({ user, token }) {
 
           {SECTIONS.map(s => (
             <div key={s.key} style={{ marginTop: 12 }}>
-              <label style={{ display: 'block', fontSize: 12.5, fontWeight: 700, color: 'rgba(255,255,255,0.8)', marginBottom: 6 }} htmlFor={`tw-${s.key}`}>
-                {s.icon} 「{s.label}」{s.required ? '' : '（选填）'}
-              </label>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+                <label style={{ flex: 1, fontSize: 12.5, fontWeight: 700, color: 'rgba(255,255,255,0.8)' }} htmlFor={`tw-${s.key}`}>
+                  {s.icon} {i18nT('「{label}」', { label: i18nT(s.label) })}{s.required ? '' : i18nT('（选填）')}
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setVoiceSection(v => (v === s.key ? null : s.key))}
+                  aria-expanded={voiceSection === s.key}
+                  aria-label={`${i18nT('口述这一段')}：${i18nT(s.label)}`}
+                  style={{ minHeight: 32, padding: '5px 10px', borderRadius: 9, border: '1px solid rgba(255,184,76,0.35)', background: voiceSection === s.key ? 'rgba(255,184,76,0.18)' : 'rgba(255,255,255,0.05)', color: '#ffd43b', fontSize: 12, cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap' }}
+                >🎤 {i18nT('口述')}</button>
+              </div>
+              {voiceSection === s.key && (
+                <div style={{ marginBottom: 8 }}>
+                  <VoiceNoteComposer
+                    minSeconds={VOICE_MIN_SECONDS}
+                    maxSeconds={VOICE_MAX_SECONDS}
+                    startLabel={i18nT('开始口述')}
+                    hint={i18nT('说 30～90 秒；说完点「停止」，系统会转成文字，你可以再修改。')}
+                    submitLabel={i18nT('填入这一段')}
+                    storageNote={i18nT('说明：见证记录只有文字栏位，录音不会上传或保存，只用来转成文字。')}
+                    onSubmit={({ transcript }) => appendVoiceText(s.key, transcript)}
+                  />
+                </div>
+              )}
               <span style={{ position: 'relative', display: 'block' }}>
               <textarea
                 id={`tw-${s.key}`}
                 value={form[s.key]}
                 onChange={e => setField(s.key, e.target.value, STORY_MAX)}
                 rows={3}
-                placeholder={`${s.label}：${s.ph}`}
+                placeholder={`${i18nT(s.label)}：${i18nT(s.ph)}`}
                 style={{ ...inp, paddingRight: 92 }}
-               aria-label={`${s.label}：${s.ph}`}/>
+               aria-label={`${i18nT(s.label)}：${i18nT(s.ph)}`}/>
               <SuggestMenu top={8} right={8} options={TW_OPTS[s.key] || []} value={form[s.key]} onChange={(v) => setField(s.key, v, STORY_MAX)} />
               </span>
               <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', textAlign: 'right', marginTop: 4 }}>{form[s.key].length}/{STORY_MAX}</div>
@@ -224,7 +268,7 @@ export default function TestimonyWallPage({ user, token }) {
             disabled={submitting}
             style={{ width: '100%', minHeight: 44, marginTop: 4, padding: 12, borderRadius: 12, border: 'none', cursor: submitting ? 'not-allowed' : 'pointer', fontSize: 14.5, fontWeight: 700, background: 'linear-gradient(135deg, #ffb84c, #ff9f0a)', color: '#1a1a2e', opacity: submitting ? 0.6 : 1, fontFamily: 'inherit' }}
           >
-            {submitting ? '发布中…' : '✨ 发布见证'}
+            {submitting ? i18nT('发布中…') : i18nT('✨ 发布见证')}
           </button>
         </div>
       )}
@@ -249,9 +293,9 @@ export default function TestimonyWallPage({ user, token }) {
       ) : (
         <>
           {items.map(t => {
-            const name = t.nickname || (t.is_anonymous ? '匿名弟兄姊妹' : '弟兄/姐妹')
+            const name = t.nickname || (t.is_anonymous ? i18nT('匿名弟兄姊妹') : i18nT('弟兄/姐妹'))
             return (
-              <article key={t.id} style={card} aria-label={`见证：${t.title}`}>
+              <article key={t.id} style={card} aria-label={`${i18nT('见证：')}${t.title}`}>
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
                   <div style={{ flex: 1 }}>
                     <div style={{ fontSize: 15, fontWeight: 700, color: '#ffd43b', lineHeight: 1.5 }}>✨ {t.title}</div>
@@ -274,7 +318,7 @@ export default function TestimonyWallPage({ user, token }) {
                 {[['before_story', '信主之前'], ['how_story', '如何遇见主'], ['after_story', '生命的改变']].map(([k, label]) => (
                   t[k] ? (
                     <div key={k} style={{ marginTop: 10 }}>
-                      <div style={{ fontSize: 11.5, fontWeight: 700, color: 'rgba(255,184,76,0.8)', marginBottom: 4 }}>「{label}」</div>
+                      <div style={{ fontSize: 11.5, fontWeight: 700, color: 'rgba(255,184,76,0.8)', marginBottom: 4 }}>{i18nT('「{label}」', { label: i18nT(label) })}</div>
                       <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.82)', lineHeight: 1.75, whiteSpace: 'pre-wrap' }}>{t[k]}</div>
                     </div>
                   ) : null
@@ -285,10 +329,10 @@ export default function TestimonyWallPage({ user, token }) {
                     type="button"
                     onClick={() => handleAmen(t.id)}
                     disabled={amened.has(t.id)}
-                    aria-label={`为这篇见证说阿们${t.amen_count ? `，已有 ${t.amen_count} 人阿们` : ''}`}
+                    aria-label={i18nT('为这篇见证说阿们{count}', { count: t.amen_count ? i18nT('，已有 {n} 人阿们', { n: t.amen_count }) : '' })}
                     style={{ display: 'inline-flex', alignItems: 'center', gap: 6, minHeight: 44, padding: '9px 16px', borderRadius: 22, border: '1px solid rgba(255,184,76,0.35)', background: amened.has(t.id) ? 'rgba(255,184,76,0.2)' : 'rgba(255,255,255,0.04)', color: '#ffd43b', fontSize: 13, fontWeight: 700, cursor: amened.has(t.id) ? 'default' : 'pointer', fontFamily: 'inherit' }}
                   >
-                    🙏 {amened.has(t.id) ? '已阿们' : '阿们'}
+                    🙏 {amened.has(t.id) ? i18nT('已阿们') : i18nT('阿们')}
                     {(t.amen_count || 0) > 0 && <span style={{ fontWeight: 400, opacity: 0.85 }}>{t.amen_count}</span>}
                   </button>
                 </div>

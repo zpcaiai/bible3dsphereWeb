@@ -2,6 +2,8 @@ import { t as i18nT } from '../../../i18n/runtime'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { holyLifePipeline, holyLifeSkills, holyLifeSkillsById } from '../data/holyLifeSkills'
 import { generateRuleOfLifeRemote } from '../lib/apiStorage'
+import { Radar, MilestoneTrack } from '../../../components/charts'
+import { T } from '../lib/localize'
 
 const DEFAULT_SCORE = 50
 const TIME_LABELS = {
@@ -10,6 +12,9 @@ const TIME_LABELS = {
   decision: i18nT('决定'),
   evening: i18nT('晚上'),
 }
+
+// 一天的四个时段，就是 holyLifeSkills 里的真实字段 skill.time，也是本组件既有的筛选维度。
+const TIME_STAGES = ['morning', 'day', 'decision', 'evening']
 
 function todayKey() {
   const now = new Date()
@@ -111,6 +116,38 @@ function summarizeDay(log) {
   }
 }
 
+/**
+ * 按时段聚合，而不是给 12 个技能各画一条轴。
+ * 本仓库的雷达图规矩是 3–8 条轴（超过八条就成了毛刺团，见 GiftCallingView 的注释）；
+ * 更重要的是：这里真正要看的不是「哪一项分高」，而是「一天里哪一段塌下去」——
+ * 早晨立了志，日间就散掉，这个形状只有按 skill.time 聚合才看得出来。
+ */
+function stageStats(log) {
+  const entries = log.entries || []
+  return TIME_STAGES.map((time) => {
+    const ids = holyLifeSkills.filter((skill) => skill.time === time).map((skill) => skill.id)
+    const rows = entries.filter((entry) => ids.includes(entry.skillId))
+    const done = rows.filter((entry) => entry.completed).length
+    return {
+      time,
+      total: ids.length,
+      done,
+      avg: rows.length ? Math.round(rows.reduce((sum, entry) => sum + clampScore(entry.score), 0) / rows.length) : 0,
+    }
+  })
+}
+
+/**
+ * 今天是否真的被碰过。
+ * createEntry() 给每一项都预置了 50 分，所以「什么都没做」和「每项都刚好 50」在数值上长得一样。
+ * 不加这道判断，雷达图会拿默认值画出一个漂亮的四边形，看起来像已经操练过了——那是编造。
+ */
+function hasBeenTouched(log) {
+  return (log.entries || []).some((entry) => (
+    entry.completed || String(entry.reflection || '').trim() || clampScore(entry.score) !== DEFAULT_SCORE
+  ))
+}
+
 function buildReport(log) {
   const summary = summarizeDay(log)
   const completed = log.entries
@@ -179,6 +216,20 @@ export default function HolyLifeEngine({ userId, token, initialTodayLog, history
   const summary = useMemo(() => summarizeDay(log), [log])
   const recent = useMemo(() => history.filter((item) => item.id !== log.id).slice(0, 14), [history, log.id])
   const visibleSkills = holyLifeSkills.filter((skill) => activeTime === 'all' || skill.time === activeTime)
+  const stages = useMemo(() => stageStats(log), [log])
+  const touched = useMemo(() => hasBeenTouched(log), [log])
+  // 只有真的存在历史记录时才画第二条线；没有就只有一条，绝不用今天的数值伪造一条「过去」。
+  const recentStageAvg = useMemo(() => {
+    if (!recent.length) return null
+    const perDay = recent.map((item) => stageStats(ensureEntries(item)))
+    return TIME_STAGES.map((_, i) => Math.round(perDay.reduce((sum, row) => sum + row[i].avg, 0) / perDay.length))
+  }, [recent])
+  const lowestStage = useMemo(() => [...stages].sort((a, b) => a.avg - b.avg)[0], [stages])
+  // 「当前在哪一段」= 第一个还没全部完成的时段；全部完成时停在最后一段。
+  const currentStageIndex = useMemo(() => {
+    const idx = stages.findIndex((stage) => stage.done < stage.total)
+    return idx === -1 ? stages.length - 1 : idx
+  }, [stages])
   const saveLabel = {
     idle: '保存今日',
     saving: '保存中…',
@@ -353,6 +404,63 @@ export default function HolyLifeEngine({ userId, token, initialTodayLog, history
             <p>{summaryStats.logCount || 0} {i18nT('天记录 ·')} {summaryStats.presencePauseCount || 0} {i18nT('次同在暂停 ·')} {summaryStats.decisionLogCount || 0} {i18nT('个成圣决定')}</p>
           </article>
         )}
+      </div>
+
+      <div className="holy-life-report-grid">
+        <article className="sf-card">
+          {touched ? (
+            <Radar
+              title={T('一天四段的形状', 'The shape of the four times of day')}
+              subtitle={recentStageAvg
+                ? T(
+                  `今天最凹的一段是「${TIME_LABELS[lowestStage.time]}」（${lowestStage.avg}）。虚实两条线比的是同一把 0–100 的尺，不是成熟度，也不是神对你的评价。`,
+                  `Today's most caved-in stretch is "${TIME_LABELS[lowestStage.time]}" (${lowestStage.avg}). Both outlines use the same 0–100 slider you set yourself — not a maturity score, and not God's verdict on you.`,
+                )
+                : T(
+                  `今天最凹的一段是「${TIME_LABELS[lowestStage.time]}」（${lowestStage.avg}）。数值来自你自己拖动的形成分；还没有历史记录可比，所以只有一条线。`,
+                  `Today's most caved-in stretch is "${TIME_LABELS[lowestStage.time]}" (${lowestStage.avg}). The values are the sliders you set yourself; there is no history to compare against yet, so there is only one outline.`,
+                )}
+              axes={TIME_STAGES.map((time) => ({ key: time, label: TIME_LABELS[time] }))}
+              series={[
+                { name: T('今天', 'Today'), values: Object.fromEntries(stages.map((stage) => [stage.time, stage.avg])) },
+                ...(recentStageAvg
+                  ? [{ name: T(`最近 ${recent.length} 天平均`, `Average of last ${recent.length} days`), values: Object.fromEntries(TIME_STAGES.map((time, i) => [time, recentStageAvg[i]])) }]
+                  : []),
+              ]}
+              max={100}
+              size={272}
+            />
+          ) : (
+            <>
+              <h3>{T('一天四段的形状', 'The shape of the four times of day')}</h3>
+              <p className="sf-empty">
+                {T(
+                  '今天还没有勾选或调整过任何一项，所以没有形状可画——每一项现在都停在默认的 50 分，那不是你的数据。先在下面记录一项，这张图就会出现。',
+                  'Nothing has been checked or adjusted today, so there is no shape to draw — every item is still sitting on the default 50, which is not your data. Record one item below and this chart appears.',
+                )}
+              </p>
+            </>
+          )}
+        </article>
+        <article className="sf-card">
+          <MilestoneTrack
+            title={T('今天走到哪一段', 'Where today has got to')}
+            subtitle={T(
+              `一天不是十二件任务，而是四段路。现在停在「${TIME_LABELS[stages[currentStageIndex].time]}」：${stages[currentStageIndex].done}/${stages[currentStageIndex].total}。点一段可以跳到那一段的操练。`,
+              `A day is four stretches of road, not twelve tasks. You are at "${TIME_LABELS[stages[currentStageIndex].time]}": ${stages[currentStageIndex].done}/${stages[currentStageIndex].total}. Tap a stretch to jump to its practices.`,
+            )}
+            stops={stages.map((stage) => ({
+              key: stage.time,
+              label: TIME_LABELS[stage.time],
+              note: T(
+                `${stage.done}/${stage.total} 已完成 · 平均 ${stage.avg}`,
+                `${stage.done}/${stage.total} done · average ${stage.avg}`,
+              ),
+            }))}
+            currentIndex={currentStageIndex}
+            onSelect={(stop) => setActiveTime(stop.key)}
+          />
+        </article>
       </div>
 
       <div className="sf-card holy-life-intention">

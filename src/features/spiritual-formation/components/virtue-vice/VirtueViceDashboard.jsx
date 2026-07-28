@@ -33,6 +33,7 @@ import {
   saveVirtueLog,
 } from '../../lib/virtueViceStorage'
 import { MODULE_DISCLAIMER } from '../../lib/pastoralSafety'
+import { BarSeries, Radar } from '../../../../components/charts'
 
 function MiniTabs({ active, onChange }) {
   const tabs = [
@@ -243,12 +244,89 @@ export function TemptationResistancePlan({ userId, plans, checkins, onSavePlan, 
   )
 }
 
+// 德性与罪性从来不是两张互不相干的表：每个德性在种子库里都写着它的对头罪性（oppositeVices）。
+// 只有把「我在操练什么」和「什么正在反复发生」叠在同一组轴上，这场对峙才有形状可看；
+// 拆成两张图，人只会看自己愿意看的那一张。
+const CONTRAST_MIN_AXES = 3
+
+function buildVirtueViceContrast({ focuses = [], virtueLogs = [], observations = [] }) {
+  const virtueKeyByFocusId = Object.fromEntries(focuses.map((focus) => [focus.id, focus.virtueKey]))
+  const practiceCounts = {}
+  virtueLogs.forEach((log) => {
+    const key = virtueKeyByFocusId[log.virtueFocusId]
+    if (key) practiceCounts[key] = (practiceCounts[key] || 0) + 1
+  })
+  // 只数观察本身。模式（patterns）是同一次观察派生出来的，一起数会把一件事算两遍。
+  const viceCounts = {}
+  observations.forEach((observation) => {
+    const keys = [...(observation.userNamedVices || []), ...(observation.aiSuggestedVices || [])]
+    Array.from(new Set(keys)).forEach((viceKey) => { viceCounts[viceKey] = (viceCounts[viceKey] || 0) + 1 })
+  })
+  const focusedKeys = new Set(focuses.map((focus) => focus.virtueKey))
+  const rows = virtues.map((virtue) => ({
+    key: virtue.key,
+    label: virtue.displayName,
+    practice: practiceCounts[virtue.key] || 0,
+    vice: (virtue.oppositeVices || []).reduce((sum, viceKey) => sum + (viceCounts[viceKey] || 0), 0),
+  })).filter((row) => focusedKeys.has(row.key) || row.practice > 0 || row.vice > 0)
+  return { rows, max: Math.max(1, ...rows.map((row) => Math.max(row.practice, row.vice))) }
+}
+
+function VirtueViceContrast({ data }) {
+  const { rows, max } = useMemo(() => buildVirtueViceContrast(data), [data])
+  const practiceName = T('德性操练', 'Virtue practice')
+  const viceName = T('对头罪性', 'Opposing vice')
+  const title = T('德性与罪性对峙', 'Virtue and vice contrast')
+  const subtitle = T('看两个形状的落差：操练在哪一条轴上落后于对头罪性出现的次数，那里就是这一季的战场。', 'Watch the gap between the two shapes: where practice lags behind the opposing vice is this season battleground.')
+
+  if (!rows.length) {
+    return (
+      <article className="sf-card">
+        <h3>{title}</h3>
+        <p className="sf-empty">{T('还没有可以对峙的数据。先创建一个德性焦点、记录一次操练，或保存一次罪性观察。', 'No contrast data yet. Create a virtue focus, log one practice, or save one vice observation first.')}</p>
+      </article>
+    )
+  }
+
+  // 少于三个轴时雷达会退化成一条线，读不出「形状」；此时排序条更诚实。
+  if (rows.length < CONTRAST_MIN_AXES) {
+    return (
+      <BarSeries
+        title={title}
+        subtitle={subtitle}
+        items={rows.flatMap((row) => [
+          { label: `${row.label} · ${practiceName}`, value: row.practice },
+          { label: `${row.label} · ${viceName}`, value: row.vice },
+        ])}
+        unit={T(' 次', '')}
+      />
+    )
+  }
+
+  return (
+    <Radar
+      title={title}
+      subtitle={subtitle}
+      axes={rows.map((row) => ({ key: row.key, label: row.label }))}
+      series={[
+        { name: practiceName, values: Object.fromEntries(rows.map((row) => [row.key, row.practice])) },
+        { name: viceName, values: Object.fromEntries(rows.map((row) => [row.key, row.vice])) },
+      ]}
+      max={max}
+    />
+  )
+}
+
 export function FruitOfSpiritTracker({ userId, assessments, feedbackRequests, onSaveAssessment, onSaveFeedback }) {
   const [scores, setScores] = useState(() => Object.fromEntries(fruitDimensions.map((dimension) => [dimension.key, 5])))
   const [evidence, setEvidence] = useState('')
   const [notice, setNotice] = useState('')
   const trends = calculateFruitTrends(userId, assessments)
   const insight = generateFruitInsight(userId, assessments)
+  // 上一次「已保存」的评估（trend.latestScore）；滑杆上的 scores 还没入库，两者叠在一起才看得出方向。
+  const savedScores = Object.fromEntries(trends.filter((trend) => trend.latestScore != null).map((trend) => [trend.fruitKey, trend.latestScore]))
+  const fruitSeries = [{ name: T('本次自评', 'This self-assessment'), values: scores }]
+  if (Object.keys(savedScores).length) fruitSeries.push({ name: T('上次已保存', 'Last saved assessment'), values: savedScores })
 
   function saveAssessment() {
     const result = createFruitAssessment(userId, {
@@ -277,6 +355,15 @@ export function FruitOfSpiritTracker({ userId, assessments, feedbackRequests, on
       <article className="sf-card sf-flow-card">
         <h3>{T('自我评估', 'Self Assessment')}</h3>
         <div className="sf-home-grid">{fruitDimensions.map((dimension) => <label key={dimension.key}>{dimension.displayName}: {scores[dimension.key]}<input type="range" min="1" max="10" value={scores[dimension.key]} onChange={(event) => setScores({ ...scores, [dimension.key]: Number(event.target.value) })} /></label>)}</div>
+        {/* 九个果子是一个整体的形状，不是九个孤立的数字：滑杆只能一格一格读，
+            雷达一次把凹进去的方向显出来；叠上一次已保存的评估，才分得清是长了还是退了。 */}
+        <Radar
+          title={T('圣灵果子九维形状', 'Nine-dimension fruit shape')}
+          subtitle={T('看凹进去的方向，不看总分——那里是这一季最需要恩典的地方，不是排名。', 'Read the dents, not the total: that is where grace is most needed this season, and it is not a ranking.')}
+          axes={fruitDimensions.map((dimension) => ({ key: dimension.key, label: dimension.displayName }))}
+          series={fruitSeries}
+          max={10}
+        />
         <label>{T('证据', 'Evidence')}<textarea value={evidence} onChange={(event) => setEvidence(event.target.value)} placeholder={T('哪里看见了果子，或哪里感到抗拒？', 'Where did fruit appear or feel resisted?')}  aria-label={T('哪里看见了果子，或哪里感到抗拒？', 'Where did fruit appear or feel resisted?')}/></label>
         <button className="sf-primary" type="button" onClick={saveAssessment}>{T('保存果子评估', 'Save Fruit Assessment')}</button>
       </article>
@@ -319,6 +406,7 @@ export default function VirtueViceDashboard({ userId }) {
             <article className="sf-card"><h3>{T('试探计划', 'Temptation Plans')}</h3><p>{dashboard.today.activeTemptationPlans.length} {T('个进行中计划', 'active plan(s)')}</p><button type="button" onClick={() => setTab('temptation')}>{T('打开抵抗', 'Open Resistance')}</button></article>
             <article className="sf-card"><h3>{T('果子快照', 'Fruit Snapshot')}</h3><p>{dashboard.today.fruitAssessmentDue ? T('需要评估', 'Assessment due') : T('今日已完成评估', 'Assessment complete today')}</p><button type="button" onClick={() => setTab('fruit')}>{T('打开果子追踪', 'Open Fruit Tracker')}</button></article>
           </div>
+          <VirtueViceContrast data={data} />
           <article className="sf-card sf-flow-card">
             <h3>{T('德性/罪性编排器', 'Virtue/Vice Orchestrator')}</h3>
             <label>{T('意向', 'Intent')}<textarea value={intentText} onChange={(event) => setIntentText(event.target.value)} /></label>

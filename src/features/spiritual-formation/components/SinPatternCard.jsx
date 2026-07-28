@@ -1,9 +1,30 @@
 import { useState } from 'react'
-import { T, fruitName, localizePattern } from '../lib/localize'
+import { T, fruitName, localizePattern, emotionName } from '../lib/localize'
+import { DirectedGraph } from '../../../components/charts'
+
+// 「诱因」和「反应」在数据里是两个各自独立的数组，排成两列时看起来像两份清单；
+// 可真正要看见的是它们中间那句核心谎言——它才是把某个情绪接到某个行为上的那个关节。
+// 因果关系用链路图一眼能看懂，两列文字看一天也看不出来。
+// 这里不画回环：数据没有说这些行为会反过来加深那句谎言，就不替它说。
+function buildTriggerResponseChain(pattern) {
+  const triggers = (pattern.emotionalTriggers || []).slice(0, 3)
+  const responses = (pattern.behavioralTriggers || []).slice(0, 3)
+  if (!triggers.length || !responses.length || !pattern.coreLie) return null
+
+  const nodes = []
+  const edges = []
+  triggers.forEach((e, i) => nodes.push({ id: `t${i}`, label: emotionName(e), kind: 'emotion', note: T('情绪诱因', 'Emotional trigger') }))
+  nodes.push({ id: 'lie', label: pattern.coreLie, kind: 'belief', note: T('核心谎言', 'Core lie') })
+  responses.forEach((b, i) => nodes.push({ id: `r${i}`, label: b, kind: 'behavior', note: T('行为反应', 'Behavioural response') }))
+  triggers.forEach((_, i) => edges.push({ from: `t${i}`, to: 'lie' }))
+  responses.forEach((_, i) => edges.push({ from: 'lie', to: `r${i}` }))
+  return { nodes, edges }
+}
 
 export default function SinPatternCard({ pattern: rawPattern, onSelect }) {
   const [open, setOpen] = useState(false)
   const pattern = localizePattern(rawPattern)
+  const chain = buildTriggerResponseChain(pattern)
 
   return (
     <article
@@ -199,6 +220,23 @@ export default function SinPatternCard({ pattern: rawPattern, onSelect }) {
             </b>
             {pattern.biblicalDiagnosis}
           </div>
+
+          {/* 诱因 → 反应 链路 */}
+          {chain && (
+            <div style={{ marginTop: '14px' }}>
+              <DirectedGraph
+                title={T('诱因 → 反应', 'Trigger → response')}
+                subtitle={T('取自这个模式最常见的情绪诱因与行为反应。这是机制，不是罪状；看得见的机制，才拦得住。',
+                            "This pattern's most common emotional triggers and behavioural responses. A mechanism to see, not a charge to answer — what you can see, you can interrupt.")}
+                nodes={chain.nodes}
+                edges={chain.edges}
+                width={440}
+                nodeW={92}
+                nodeH={38}
+                gapX={34}
+              />
+            </div>
+          )}
 
           {/* 2x2 详细行动与症状网格 */}
           <div 

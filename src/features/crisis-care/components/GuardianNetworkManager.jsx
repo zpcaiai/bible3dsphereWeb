@@ -1,6 +1,7 @@
 import { t as i18nT } from '../../../i18n/runtime'
 import { useState } from 'react'
 import { GUARDIAN_ROLES } from '../data/crisisContent'
+import { StatTile, Meter } from '../../../components/charts'
 
 const EMPTY = {
   name: '', relationship: '', role: 'friend', phone: '', email: '',
@@ -29,6 +30,30 @@ export default function GuardianNetworkManager({ guardians, onAdd, onDelete }) {
     <div className="cc-card">
       <h3>{i18nT('我的守护人')}</h3>
       <p className="cc-muted">{i18nT('危机时把你连接到真实的人。隐私由你掌控：只有你勾选「授权」的人，才会在危机时收到提醒。')}</p>
+
+      {/* 危机当下真正决定命运的不是「我加了几个人」，而是「几个人真的会被通知」。
+          未勾选授权的守护人在系统里等于不存在——这个落差必须一眼看见，
+          而不是藏在每一行的「未授权」小字里。 */}
+      {(guardians || []).length > 0 && (() => {
+        const total = guardians.length
+        const authorized = guardians.filter((g) => g.consentEnabled).length
+        const reachable = guardians.filter((g) => g.consentEnabled && (g.phone || g.email)).length
+        return (
+          <div style={{ display: 'flex', gap: 18, flexWrap: 'wrap', alignItems: 'flex-start', margin: '10px 0 14px' }}>
+            <StatTile label={i18nT('危机时真的会被通知')} value={authorized} unit={`/ ${total}`} />
+            <div style={{ flex: '1 1 190px', minWidth: 170 }}>
+              <Meter
+                label={i18nT('有联系方式且已授权')}
+                value={reachable} max={Math.max(1, total)}
+                severity={reachable === 0 ? 'critical' : reachable < total ? 'warning' : 'good'}
+                hint={reachable === 0
+                  ? i18nT('⚠ 现在没有任何人会被通知。危机时这一栏是 0，等于没有守护人。')
+                  : i18nT('只有勾了授权、又留了电话或邮箱的人，才可能真的被联系上。')}
+              />
+            </div>
+          </div>
+        )
+      })()}
 
       {(guardians || []).length === 0 && <p className="cc-muted">{i18nT('还没有添加守护人。先加一位你信任的人吧。')}</p>}
       {(guardians || []).map((g) => (

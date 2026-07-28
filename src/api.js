@@ -1628,6 +1628,51 @@ export async function leaveVoiceGroup(groupId, token) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// 圣经电影工作台 / Biblical film studio — backend/routers/film_studio.py
+//   POST /api/film/start        { story_text(<=20000), num_scenes(1..60) } → { job_id }
+//   GET  /api/film/status/{jid} → 整个 job 对象
+//        { job_id, status:'queued'|'running'|'done'|'error', progress:0..100,
+//          steps:string[]（流水线日志，逐条 append）, cur:当前镜头号,
+//          story:拆分出的分镜 JSON, result:{ file, r2_url, mb, scenes } | null, error:string|null }
+//   GET  /api/film/download/{fname} → mp4（同源会话 Cookie 鉴权）
+// 注：后端还有 /api/film/sse/{jid}，但 EventSource 无法带 Authorization 头，
+//     Bearer 登录的客户端只能轮询，所以这里只包 status。
+// ─────────────────────────────────────────────────────────────────────────────
+const filmHeaders = (token, json = false) => ({
+  ...(json ? { 'Content-Type': 'application/json' } : {}),
+  ...(token && token !== 'cookie-session' ? { Authorization: `Bearer ${token}` } : {}),
+})
+
+export async function startFilmJob({ storyText, numScenes = 3 }, token) {
+  devlog(`[api] startFilmJob scenes=${numScenes} chars=${storyText?.length ?? 0}`)
+  const res = await fetch(`${API_BASE}/film/start`, {
+    method: 'POST',
+    headers: filmHeaders(token, true),
+    body: JSON.stringify({ story_text: storyText, num_scenes: numScenes }),
+  })
+  const data = await res.json().catch(() => ({}))
+  if (!res.ok) throw new Error(data.detail || data.error || '启动影片生成失败')
+  devlog(`[api] startFilmJob ok job=${data.job_id}`)
+  return data   // { job_id }
+}
+
+export async function fetchFilmStatus(jobId, token) {
+  const res = await fetch(`${API_BASE}/film/status/${encodeURIComponent(jobId)}`, {
+    headers: filmHeaders(token),
+  })
+  const data = await res.json().catch(() => ({}))
+  if (!res.ok) throw new Error(data.detail || data.error || '查询生成进度失败')
+  return data
+}
+
+/** 成片可播放地址：优先 R2 CDN 公链；没上传成功就退回后端受保护的下载路由。 */
+export function filmVideoUrl(result) {
+  if (!result) return ''
+  if (result.r2_url) return result.r2_url
+  return result.file ? `${API_BASE}/film/download/${encodeURIComponent(result.file)}` : ''
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // 偶像监测 (依附强度指数) / Idolatry Detection — Attachment Intensity Index
 // ─────────────────────────────────────────────────────────────────────────────
 const idolHeaders = (token, json = false) => ({

@@ -1,7 +1,9 @@
 import { t as i18nT } from './i18n/runtime'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { fetchMilestones } from './api'
 import { API_BASE } from './api'
+import { Radar } from './components/charts'
+import { CardActions } from './lib/media/CardActions'
 
 const DIM_LABELS = {
   humility: { zh: '谦卑', icon: '🌿', color: '#34c759' },
@@ -16,56 +18,18 @@ const DIM_LABELS = {
 
 const HEALTHY_DIMS = ['humility', 'emotional_stability', 'truth_alignment', 'relational_health', 'resilience', 'spiritual_clarity']
 
-// Simple SVG radar chart
-function RadarChart({ scores }) {
-  const dims = Object.keys(DIM_LABELS)
-  const N = dims.length
-  const cx = 110, cy = 110, r = 90
-  const points = dims.map((d, i) => {
-    const angle = (i / N) * 2 * Math.PI - Math.PI / 2
-    const val = scores[d] ?? 0.5
-    return {
-      x: cx + r * val * Math.cos(angle),
-      y: cy + r * val * Math.sin(angle),
-      lx: cx + (r + 22) * Math.cos(angle),
-      ly: cy + (r + 22) * Math.sin(angle),
-      label: DIM_LABELS[d]?.zh || d,
-      icon: DIM_LABELS[d]?.icon || '',
-      val,
-    }
-  })
+// 雷达图统一走共享原语 components/charts 的 Radar：
+// 配色、图例、无障碍概述、「看数据」表格视图都由原语保证，页面只负责喂真实数据。
+const RADAR_AXES = Object.keys(DIM_LABELS).map((key) => ({ key, label: i18nT(DIM_LABELS[key].zh) }))
 
-  const gridLevels = [0.25, 0.5, 0.75, 1.0]
-  const polyPoints = points.map(p => `${p.x},${p.y}`).join(' ')
-
-  return (
-    <svg width="220" height="220" style={{ overflow: 'visible' }}>
-      {/* Grid */}
-      {gridLevels.map(level => {
-        const gps = dims.map((_, i) => {
-          const angle = (i / N) * 2 * Math.PI - Math.PI / 2
-          return `${cx + r * level * Math.cos(angle)},${cy + r * level * Math.sin(angle)}`
-        })
-        return <polygon key={level} points={gps.join(' ')} fill="none" stroke="rgba(255,255,255,0.07)" strokeWidth="1" />
-      })}
-      {/* Axes */}
-      {dims.map((_, i) => {
-        const angle = (i / N) * 2 * Math.PI - Math.PI / 2
-        return <line key={i} x1={cx} y1={cy} x2={cx + r * Math.cos(angle)} y2={cy + r * Math.sin(angle)} stroke="rgba(255,255,255,0.08)" strokeWidth="1" />
-      })}
-      {/* Fill */}
-      <polygon points={polyPoints} fill="rgba(88,86,214,0.2)" stroke="#5856d6" strokeWidth="1.5" />
-      {/* Points */}
-      {points.map((p, i) => <circle key={i} cx={p.x} cy={p.y} r="3" fill="#5856d6" />)}
-      {/* Labels */}
-      {points.map((p, i) => (
-        <text key={i} x={p.lx} y={p.ly} textAnchor="middle" dominantBaseline="middle"
-          style={{ fontSize: '9px', fill: 'rgba(255,255,255,0.6)', fontFamily: 'inherit' }}>
-          {p.icon}
-        </text>
-      ))}
-    </svg>
-  )
+/** 找出 state_vector 里最高 / 最低的一维，用来写「结论式」副标题。 */
+function radarTakeaway(scores) {
+  const rows = Object.keys(DIM_LABELS)
+    .filter((key) => typeof scores[key] === 'number')
+    .map((key) => ({ key, zh: i18nT(DIM_LABELS[key].zh), pct: Math.round(scores[key] * 100) }))
+  if (!rows.length) return null
+  const sorted = [...rows].sort((a, b) => b.pct - a.pct)
+  return { top: sorted[0], bottom: sorted[sorted.length - 1], rows }
 }
 
 // Mini bar for a single dimension
@@ -116,6 +80,22 @@ export default function GrowthMapPage({ user, token, onBack }) {
   const dominantLoop = profile?.formation?.dominant_loop || ''
   const alignmentTrend = profile?.formation?.alignment_trend || ''
 
+  const takeaway = radarTakeaway(stateVector)
+
+  // 图卡内容只用 state_vector 的真实数值 + 后端给的轨迹标签，不加任何推测性的话。
+  const buildGrowthCardSpec = useCallback(() => ({
+    badge: i18nT('灵命成长图谱'),
+    kicker: new Date().toLocaleDateString(),
+    title: takeaway
+      ? i18nT('最稳：{top} · 最需照顾：{bottom}', { top: takeaway.top.zh, bottom: takeaway.bottom.zh })
+      : i18nT('八维灵命状态'),
+    subtitle: i18nT('这是一次状态快照，不是属灵评分。'),
+    sections: [
+      { heading: i18nT('八个维度'), items: (takeaway?.rows || []).map((row) => `${row.zh} ${row.pct}%`) },
+    ],
+    footer: i18nT('属灵星球 · 数值来自你自己的记录'),
+  }), [takeaway])
+
   const ARC_LABELS = { breaking_through: '🌟 突破成长中', deepening_loops: '🔄 循环加深', stabilizing: '🌱 趋于稳定', unknown: '🔮 轨迹未知' }
   const TRAJ_LABELS = { stabilizing: '🌱 稳定成长', improving_clarity: '✨ 属灵清晰度提升', fragmenting: '🌊 内心正在挣扎', increasing_volatility: '⚡ 情绪波动较大', cyclical: '🔄 循环模式中' }
   const LOOP_LABELS = { fear_control_loop: '🔒 恐惧控制循环', shame_avoidance_loop: '🙈 羞耻回避循环', pride_comparison_loop: '🏆 骄傲比较循环', desire_impulse_loop: '🌊 欲望冲动循环', truth_stability_loop: '✨ 真理稳固循环' }
@@ -154,9 +134,30 @@ export default function GrowthMapPage({ user, token, onBack }) {
 
             {Object.keys(stateVector).length > 0 ? (
               <>
-                {/* Radar */}
-                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 24 }}>
-                  <RadarChart scores={stateVector} />
+                {/* Radar：共享原语，八维一次看完 */}
+                <div style={{ marginBottom: 20 }}>
+                  <Radar
+                    axes={RADAR_AXES}
+                    series={[{ name: i18nT('当前状态'), values: stateVector }]}
+                    max={1}
+                    size={280}
+                    title={i18nT('八维灵命状态雷达')}
+                    subtitle={takeaway
+                      ? i18nT('目前最稳的是{top}（{topPct}%），最需要照顾的是{bottom}（{bottomPct}%）。', { top: takeaway.top.zh, topPct: takeaway.top.pct, bottom: takeaway.bottom.zh, bottomPct: takeaway.bottom.pct })
+                      : i18nT('这是当前一次快照，不是评分。')}
+                  />
+                  <div style={{ marginTop: 8, fontSize: 11, color: 'rgba(255,255,255,0.32)', lineHeight: 1.6 }}>
+                    {i18nT('后端只回传当前这一份状态向量，没有按日期排列的历史快照，所以这里不做时间滑杆——宁可少一个功能，也不编造过去的数值。')}
+                  </div>
+                </div>
+
+                {/* 成长图卡：把这次快照带走 */}
+                <div style={{ background: 'rgba(255,255,255,0.04)', borderRadius: 14, padding: 16, marginBottom: 20 }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255,255,255,0.6)' }}>{i18nT('🖼 成长图卡')}</div>
+                  <div style={{ fontSize: 11.5, color: 'rgba(255,255,255,0.42)', marginTop: 4, lineHeight: 1.6 }}>
+                    {i18nT('卡上只有维度名称与百分比，没有任何你写过的内容，可以放心分享或存档。')}
+                  </div>
+                  <CardActions buildSpec={buildGrowthCardSpec} filename="growth-map-card.png" label="生成成长图卡" templates={['calm', 'ink', 'dawn']} />
                 </div>
 
                 {/* Bars */}

@@ -5,9 +5,9 @@ import { t as i18nT } from './i18n/runtime'
  * 展示用户8个灵命维度的当前评分、成长阶段与行动建议，
  * 以及属灵健康检查和今日关怀信息。
  */
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import BackButton from './BackButton'
-import { API_BASE } from './api.js'
+import { API_BASE, fetchFilmStatus, filmVideoUrl, startFilmJob } from './api.js'
 import { TTSButton } from './useGlobalAudio.jsx'
 
 const DIM_META = {
@@ -110,6 +110,222 @@ function HealthCard({ health }) {
   )
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// 圣经电影工作台（backend/routers/film_studio.py 的前端入口）
+//
+// 契约（照抄 router，不要凭印象改）：
+//   POST /api/film/start  { story_text, num_scenes } → { job_id }
+//   GET  /api/film/status/{jid} → { status:'queued'|'running'|'done'|'error',
+//        progress:0..100, steps:[日志], cur:当前镜头, story:分镜, result:{file,r2_url,mb,scenes}, error }
+// 用轮询而不是 /api/film/sse：EventSource 带不了 Authorization 头，Bearer 登录的端会 401。
+// JOBS 是后端进程内的字典，服务一重启任务就查不到了（404），所以 job_id 存本地只是为了
+// 刷新页面能接回同一个任务，查不到时要如实告诉用户，而不是无限转圈。
+// ─────────────────────────────────────────────────────────────────────────────
+const FILM_JOB_KEY = 'film-studio-job-id'
+const FILM_POLL_MS = 3000
+const STORY_MAX = 20000
+
+function readStoredJobId() {
+  try { return localStorage.getItem(FILM_JOB_KEY) || '' } catch { return '' }
+}
+
+function FilmStudioCard({ token }) {
+  const [story, setStory] = useState('')
+  const [numScenes, setNumScenes] = useState(3)
+  const [jobId, setJobId] = useState(readStoredJobId)
+  const [job, setJob] = useState(null)
+  const [starting, setStarting] = useState(false)
+  const [error, setError] = useState('')
+  const logRef = useRef(null)
+
+  const forgetJob = useCallback(() => {
+    try { localStorage.removeItem(FILM_JOB_KEY) } catch { /* ignore */ }
+    setJobId(''); setJob(null)
+  }, [])
+
+  useEffect(() => {
+    if (!jobId) return undefined
+    let cancelled = false
+    let timer = null
+    const tick = async () => {
+      try {
+        const data = await fetchFilmStatus(jobId, token)
+        if (cancelled) return
+        setJob(data)
+        setError('')
+        if (data.status === 'queued' || data.status === 'running') timer = setTimeout(tick, FILM_POLL_MS)
+      } catch (e) {
+        if (cancelled) return
+        const msg = e?.message || ''
+        if (/not found/i.test(msg)) {
+          setError(i18nT('这个生成任务在后端已经不存在了（服务重启会清空任务表）。'))
+          forgetJob()
+          return
+        }
+        setError(msg || i18nT('查询进度失败'))
+        timer = setTimeout(tick, FILM_POLL_MS * 2)
+      }
+    }
+    tick()
+    return () => { cancelled = true; if (timer) clearTimeout(timer) }
+  }, [jobId, token, forgetJob])
+
+  // 日志是只增数组，新行来了就滚到底，跟看构建日志一个体感。
+  useEffect(() => {
+    const el = logRef.current
+    if (el) el.scrollTop = el.scrollHeight
+  }, [job?.steps?.length])
+
+  const running = job?.status === 'queued' || job?.status === 'running'
+
+  async function handleStart() {
+    const text = story.trim()
+    if (text.length < 10) { setError(i18nT('先写下要拍的故事（至少 10 个字）')); return }
+    setStarting(true); setError('')
+    try {
+      const data = await startFilmJob({ storyText: text.slice(0, STORY_MAX), numScenes }, token)
+      try { localStorage.setItem(FILM_JOB_KEY, data.job_id) } catch { /* ignore */ }
+      setJob(null)
+      setJobId(data.job_id)
+    } catch (e) {
+      const msg = e?.message || ''
+      // 后端在「已有任务在跑 / 缺 Gemini Key / 未配置 Kling」时抛的是普通 Exception，
+      // 被全局处理器压成 500 «Internal server error»，真正原因只在服务端日志里。
+      setError(/internal server error/i.test(msg)
+        ? i18nT('后端拒绝了这次生成。常见原因：已有任务在生成中（同时只允许一个）、未配置 Gemini 或 Kling 密钥。具体原因需要看服务端日志。')
+        : (msg || i18nT('启动影片生成失败')))
+    } finally { setStarting(false) }
+  }
+
+  const videoUrl = job?.status === 'done' ? filmVideoUrl(job.result) : ''
+
+  return (
+    <div style={{
+      padding: '14px 16px', borderRadius: 14, marginBottom: 14,
+      background: 'rgba(191,90,242,0.07)', border: '1px solid rgba(191,90,242,0.18)',
+    }}>
+      <div style={{ fontSize: 12, color: 'rgba(191,90,242,0.85)', fontWeight: 700, marginBottom: 8, letterSpacing: '0.04em' }}>
+        {i18nT('🎬 圣经电影工作台')}
+      </div>
+      <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', lineHeight: 1.7, marginBottom: 10 }}>
+        {i18nT('写一段圣经故事，后端会拆分镜、配旁白、逐镜生成画面并拼成一部短片。整条流水线要跑十几分钟，期间同时只允许一个任务。')}
+      </div>
+
+      <label style={{ display: 'block', fontSize: 12, color: 'rgba(255,255,255,0.6)', marginBottom: 6 }} htmlFor="film-story">
+        {i18nT('故事内容')}
+      </label>
+      <textarea
+        id="film-story"
+        value={story}
+        onChange={(e) => setStory(e.target.value.slice(0, STORY_MAX))}
+        rows={4}
+        disabled={running || starting}
+        placeholder={i18nT('例如：大卫用机弦甩石打倒歌利亚，以色列全军得胜…')}
+        aria-label={i18nT('故事内容')}
+        style={{
+          width: '100%', boxSizing: 'border-box', padding: '10px 12px', borderRadius: 10,
+          background: 'rgba(0,0,0,0.28)', border: '1px solid rgba(255,255,255,0.12)',
+          color: '#fff', fontSize: 13, lineHeight: 1.7, resize: 'vertical', fontFamily: 'inherit',
+        }}
+      />
+      <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', textAlign: 'right', marginTop: 4 }}>
+        {story.length}/{STORY_MAX}
+      </div>
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 8, flexWrap: 'wrap' }}>
+        <label style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)' }} htmlFor="film-scenes">{i18nT('镜头数')}</label>
+        <input
+          id="film-scenes" type="number" min={1} max={60} value={numScenes}
+          disabled={running || starting}
+          onChange={(e) => setNumScenes(Math.min(60, Math.max(1, Number(e.target.value) || 1)))}
+          style={{
+            width: 72, padding: '8px 10px', borderRadius: 8, background: 'rgba(0,0,0,0.28)',
+            border: '1px solid rgba(255,255,255,0.12)', color: '#fff', fontSize: 13, fontFamily: 'inherit',
+          }}
+        />
+        <button
+          type="button" onClick={handleStart} disabled={running || starting}
+          style={{
+            minHeight: 40, padding: '10px 18px', borderRadius: 10, border: 'none',
+            background: running || starting ? 'rgba(255,255,255,0.12)' : 'linear-gradient(135deg,#bf5af2,#7d5cff)',
+            color: '#fff', fontSize: 13.5, fontWeight: 700,
+            cursor: running || starting ? 'not-allowed' : 'pointer', fontFamily: 'inherit',
+          }}
+        >
+          {starting ? i18nT('提交中…') : running ? i18nT('生成中…') : i18nT('🎬 开始生成')}
+        </button>
+        {jobId && !running && (
+          <button
+            type="button" onClick={forgetJob}
+            style={{ minHeight: 40, padding: '10px 14px', borderRadius: 10, border: '1px solid rgba(255,255,255,0.14)', background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.65)', fontSize: 13, cursor: 'pointer', fontFamily: 'inherit' }}
+          >{i18nT('清除任务')}</button>
+        )}
+      </div>
+
+      {error && (
+        <div role="alert" style={{ marginTop: 10, padding: '10px 12px', borderRadius: 10, background: 'rgba(255,59,48,0.1)', color: '#ff8787', fontSize: 12.5, lineHeight: 1.7 }}>
+          ⚠️ {error}
+        </div>
+      )}
+
+      {job && (
+        <div style={{ marginTop: 12 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'rgba(255,255,255,0.6)', marginBottom: 6 }}>
+            <span>
+              {job.status === 'done' ? i18nT('✅ 已完成')
+                : job.status === 'error' ? i18nT('❌ 生成失败')
+                  : job.status === 'queued' ? i18nT('排队中')
+                    : i18nT('生成中')}
+              {job.cur ? ` · ${i18nT('第')} ${job.cur} ${i18nT('镜')}` : ''}
+            </span>
+            <span style={{ fontVariantNumeric: 'tabular-nums' }}>{job.progress || 0}%</span>
+          </div>
+          <div
+            role="progressbar" aria-valuenow={job.progress || 0} aria-valuemin={0} aria-valuemax={100}
+            style={{ height: 6, background: 'rgba(255,255,255,0.08)', borderRadius: 3, overflow: 'hidden' }}
+          >
+            <div style={{
+              height: '100%', width: `${job.progress || 0}%`, borderRadius: 3,
+              background: job.status === 'error' ? '#f87171' : '#bf5af2', transition: 'width 0.6s ease',
+            }} />
+          </div>
+
+          {job.error && (
+            <div role="alert" style={{ marginTop: 8, fontSize: 12.5, color: '#ff8787', lineHeight: 1.7 }}>
+              {job.error}
+            </div>
+          )}
+
+          {job.steps?.length > 0 && (
+            <div
+              ref={logRef}
+              style={{
+                marginTop: 10, maxHeight: 180, overflowY: 'auto', padding: '8px 10px', borderRadius: 10,
+                background: 'rgba(0,0,0,0.32)', border: '1px solid rgba(255,255,255,0.08)',
+                fontSize: 11.5, lineHeight: 1.75, color: 'rgba(255,255,255,0.6)',
+                fontFamily: 'ui-monospace,SFMono-Regular,Menlo,monospace', whiteSpace: 'pre-wrap',
+              }}
+            >
+              {job.steps.map((line, i) => <div key={`${i}-${line}`}>{line}</div>)}
+            </div>
+          )}
+
+          {job.status === 'done' && videoUrl && (
+            <div style={{ marginTop: 12 }}>
+              <video src={videoUrl} controls playsInline style={{ width: '100%', borderRadius: 12, background: '#000' }} />
+              <div style={{ marginTop: 6, fontSize: 12, color: 'rgba(255,255,255,0.5)', lineHeight: 1.7 }}>
+                {job.result?.scenes ? `${job.result.scenes} ${i18nT('个镜头')} · ` : ''}
+                {job.result?.mb ? `${job.result.mb} MB · ` : ''}
+                <a href={videoUrl} target="_blank" rel="noreferrer" style={{ color: '#bf5af2' }}>{i18nT('打开成片链接')}</a>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function EngineeringPage({ onBack, user, token }) {
   const [formation, setFormation] = useState(null)
   const [health, setHealth] = useState(null)
@@ -166,6 +382,8 @@ export default function EngineeringPage({ onBack, user, token }) {
       </div>
 
       <div style={{ padding: '14px 16px' }}>
+        {user && <FilmStudioCard token={token} />}
+
         {!user && (
           <div style={{
             textAlign: 'center', padding: '40px 20px',

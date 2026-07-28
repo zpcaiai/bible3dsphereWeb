@@ -4,6 +4,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useGuardianStore } from './guardianStore'
 import { fetchGuardianInsights } from './guardianApi'
 import GuardianSprite from './GuardianSprite'
+import { resolveGuardianMood } from './guardianMood'
 import GuardianChatPanel from './GuardianChatPanel'
 import EmotionCheckIn from './EmotionCheckIn'
 import SpiritualCheckIn from './SpiritualCheckIn'
@@ -14,6 +15,7 @@ import GuardianMemoryPanel from './GuardianMemoryPanel'
 import PatternInsightCard from './PatternInsightCard'
 import IdolMonitorCard from './IdolMonitorCard'
 import { C, S } from './guardianStyles'
+import { useRhythmTone } from '../../lib/media/useRhythmTone'
 import './guardian.css'
 import { t } from '../../i18n/runtime'
 import { AutoText } from '../../autoTranslate.jsx'
@@ -85,9 +87,19 @@ function loadPos() {
 }
 
 export default function GuardianWidget() {
-  const { widgetMode, setWidgetMode, spriteState, profile, refresh } = useGuardianStore()
+  const { widgetMode, setWidgetMode, spriteState, sending, stateView, lastEmotion, profile, refresh } = useGuardianStore()
   const [tab, setTab] = useState('chat')
   const expanded = widgetMode !== 'collapsed'
+
+  // 姿态由 store 里已有的真实状态推出：后端给的 spriteState、是否正在发送、
+  // 最近一次灵程签到的三个分数与属灵状态、以及最近识别到的情绪。
+  const mood = resolveGuardianMood({ spriteState, sending, stateView, lastEmotion })
+
+  // 轻确认音：合成的一声短音，用来回答「我在」。
+  // 受 mediaPrefs.sound 约束（useRhythmTone 内部已判），关掉声音就彻底不响；
+  // 语音朗读仍然只在 GuardianChatPanel 的 useGuardianVoice 里做，这里不复制一套。
+  const tone = useRhythmTone({ volume: 0.06 })
+  const ack = () => { tone.ack() }
 
   // —— 拖拽：手指/鼠标皆可。null = 默认右下角；拖过后用 left/top 定位并持久化 ——
   // 收起态拖小鸽子本体；展开态拖面板头部（拖拽手柄）。
@@ -175,6 +187,7 @@ export default function GuardianWidget() {
   useEffect(() => { refresh() }, [])  // eslint-disable-line react-hooks/exhaustive-deps
 
   const openTab = (t) => {
+    if (t !== tab) ack()
     setTab(t)
     setWidgetMode(TAB_TO_WIDGET_MODE[t] || 'expanded')
   }
@@ -200,7 +213,7 @@ export default function GuardianWidget() {
             style={{ display: 'flex', alignItems: 'center', gap: 6,
               borderBottom: `1px solid ${C.lineSoft}`, padding: '5px 6px',
               cursor: 'grab', touchAction: 'none', userSelect: 'none' }}>
-            <GuardianSprite state={spriteState} size={24} />
+            <GuardianSprite state={spriteState} mood={mood} size={24} />
             <div style={{ flex: 1, minWidth: 0 }}>
               <p style={{ fontSize: 11, fontWeight: 700, color: C.text, margin: 0,
                 overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -211,7 +224,7 @@ export default function GuardianWidget() {
                 {profile ? <>{profile.stageEmoji} <AutoText>{profile.stageZh}</AutoText> · </> : ''}{t("同行者，不是替代者")}
               </p>
             </div>
-            <button type="button" data-no-drag onClick={() => setWidgetMode('collapsed')} aria-label={t("收起")}
+            <button type="button" data-no-drag onClick={() => { ack(); setWidgetMode('collapsed') }} aria-label={t("收起")}
               style={{ background: 'none', border: 'none', cursor: 'pointer',
                 color: C.dim, fontSize: 13, width: 28, height: 28, padding: 0 }}>─</button>
           </div>
@@ -252,10 +265,10 @@ export default function GuardianWidget() {
 
       {/* 小鸽子（可拖动，点按开合） */}
       <button type="button" aria-label={t("打开属灵守护者（按住可拖动）")}
-        onClick={() => { if (movedRef.current) { movedRef.current = false; return } setWidgetMode(expanded ? 'collapsed' : 'expanded') }}
+        onClick={() => { if (movedRef.current) { movedRef.current = false; return } ack(); setWidgetMode(expanded ? 'collapsed' : 'expanded') }}
         onPointerDown={beginWindowDrag}
         style={{ background: 'none', border: 'none', cursor: 'grab', padding: 6, touchAction: 'none' }}>
-        <GuardianSprite state={spriteState} size={58} />
+        <GuardianSprite state={spriteState} mood={mood} size={58} />
       </button>
     </div>
   )

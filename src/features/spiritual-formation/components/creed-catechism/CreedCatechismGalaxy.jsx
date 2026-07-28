@@ -5,6 +5,36 @@ import { todayKey } from '../../lib/scriptureFormationEngine'
 import { formationExtApi } from '../../../../api'
 import '../../app/spiritual-formation.css'
 import { t as i18nT } from '../../../../i18n/runtime'
+import { DirectedGraph } from '../../../../components/charts'
+import { T } from '../../lib/localize'
+
+
+// 「星系」在这里只能是关系图，不能是散点：creedCatechismSeed 里没有任何教义之间的显式依赖字段
+// （每条只有 category / creedRefs / pathwayTags），所以不臆造「A 教义依赖 B 教义」这种神学推导，
+// 只画数据里真实存在的归属关系：主题(category) → 该主题下的问答条目。
+// 用有向图而不是列表，是因为分层布局能把同一主题的条目收在同一列，
+// 一眼看出这条学习路径压在哪几个主题上、哪些主题只有一条问答。
+function buildCatechismGraph(items, completed) {
+  const categories = []
+  items.forEach((item) => { if (!categories.includes(item.category)) categories.push(item.category) })
+  const nodes = [
+    ...categories.map((category) => ({
+      id: `category:${category}`,
+      label: category,
+      kind: 'belief',
+      note: `${items.filter((item) => item.category === category).length} ${T('条问答', 'item(s)')}`,
+    })),
+    ...items.map((item) => ({
+      id: item.key,
+      // 完成态用 grace 色位，并同时在标签上加 ✓，不单靠颜色表意
+      kind: completed.includes(item.key) ? 'grace' : 'default',
+      label: `${completed.includes(item.key) ? '✓ ' : ''}${item.question}`,
+      note: item.shortAnswer,
+    })),
+  ]
+  const edges = items.map((item) => ({ from: `category:${item.category}`, to: item.key }))
+  return { nodes, edges }
+}
 
 
 export default function CreedCatechismGalaxy({ userId = 'local-user', token }) {
@@ -21,6 +51,7 @@ export default function CreedCatechismGalaxy({ userId = 'local-user', token }) {
   const pathwayItems = useMemo(() => listCatechismItems({ pathway }), [pathway])
   const completedCount = pathwayItems.filter((item) => completed.includes(item.key)).length
   const conn = buildDoctrineFormationConnection(daily)
+  const graph = useMemo(() => buildCatechismGraph(pathwayItems, completed), [pathwayItems, completed])
 
   function done(key) {
     setCompleted(markCatechismComplete(userId, key))
@@ -37,6 +68,22 @@ export default function CreedCatechismGalaxy({ userId = 'local-user', token }) {
         <div className="sf-card-head"><b>{i18nT('当前路径进度')}</b><span>{completedCount}/{pathwayItems.length}</span></div>
         <div style={{ height: 6, overflow: 'hidden', borderRadius: 99, background: 'rgba(255,255,255,.08)' }}><div style={{ width: `${pathwayItems.length ? Math.round((completedCount / pathwayItems.length) * 100) : 0}%`, height: '100%', background: '#34c759' }} /></div>
       </div>
+      <article className="sf-card">
+        {graph.nodes.length ? (
+          <DirectedGraph
+            title={T('本路径的教义星系', 'Doctrine galaxy for this pathway')}
+            subtitle={T(
+              `这条路径共 ${pathwayItems.length} 条问答、覆盖 ${graph.nodes.length - pathwayItems.length} 个主题，已学 ${completedCount} 条。连线只表示「主题 → 问答」的归属，不代表教义之间的推导或依赖。`,
+              `This pathway holds ${pathwayItems.length} items across ${graph.nodes.length - pathwayItems.length} topics; ${completedCount} learned. Edges only mean "topic contains item", never doctrinal dependency.`,
+            )}
+            nodes={graph.nodes}
+            edges={graph.edges}
+            onSelect={(node) => setOpen(node.id.startsWith('category:') ? '' : node.id)}
+          />
+        ) : (
+          <p className="sf-empty">{T('这条路径下还没有问答条目。', 'No catechism items on this pathway yet.')}</p>
+        )}
+      </article>
       <article className="sf-card sf-flow-card">
         <div className="sf-card-head"><div><h3>{i18nT("今日一问")}</h3><p>{daily.category}</p></div><span className="sf-status">{completed.includes(daily.key) ? i18nT('已完成') : i18nT('今日')}</span></div>
         <h4>{daily.question}</h4>

@@ -2,6 +2,8 @@ import { t as i18nT } from '../../../i18n/runtime'
 import { useState } from 'react'
 import { EMERGENCY_COPY_TEXT } from '../data/crisisContent'
 import CrisisResourcePanel from './CrisisResourcePanel'
+import { useHaptics } from '../../../lib/media/useHaptics'
+import { useRhythmTone } from '../../../lib/media/useRhythmTone'
 
 /**
  * EmergencyEscalationPanel — Red Level。停止普通对话，给出三步紧急行动 +
@@ -9,6 +11,9 @@ import CrisisResourcePanel from './CrisisResourcePanel'
  */
 export default function EmergencyEscalationPanel({ emergency, regionCode = 'TW', onNotifyGuardians, canNotify }) {
   const [copied, setCopied] = useState(false)
+  // 红色等级下，「我按到了吗」必须有明确的非视觉回执——手在抖、屏幕在糊的时候尤其如此
+  const haptics = useHaptics({ scope: 'crisis' })
+  const tone = useRhythmTone({ scope: 'crisis' })
   const copyText = emergency?.copyText || EMERGENCY_COPY_TEXT
   const steps = emergency?.steps || [
     '现在最重要的是你的即时安全，你不需要独自扛这个。',
@@ -23,6 +28,8 @@ export default function EmergencyEscalationPanel({ emergency, regionCode = 'TW',
     try {
       await navigator.clipboard.writeText(copyText)
       setCopied(true)
+      haptics.vibrate('confirm')
+      tone.ack()
       setTimeout(() => setCopied(false), 2500)
     } catch {
       setCopied(false)
@@ -46,7 +53,7 @@ export default function EmergencyEscalationPanel({ emergency, regionCode = 'TW',
       </div>
 
       {onNotifyGuardians && (
-        <button className="cc-btn secondary full" type="button" onClick={onNotifyGuardians} style={{ marginTop: 10 }}>
+        <button className="cc-btn secondary full" type="button" onClick={() => { haptics.vibrate('confirm'); tone.ack(); onNotifyGuardians() }} style={{ marginTop: 10 }}>
           {canNotify ? '提醒我已授权的守护人' : '设置守护人（暂未授权任何人）'}
         </button>
       )}

@@ -29,6 +29,8 @@ export default function ReminderSettings({ onBack }) {
   const [morningTime, setMorningTime] = useState('07:00')
   const [eveningTime, setEveningTime] = useState('21:30')
   const [growthOn, setGrowthOn] = useState(true)
+  const [mccheyneOn, setMccheyneOn] = useState(true)
+  const [prefsLoaded, setPrefsLoaded] = useState(false)
   const [shareCare, setShareCare] = useState(true)
   const [busy, setBusy] = useState(false)
   const [msg, setMsg] = useState('')
@@ -36,14 +38,21 @@ export default function ReminderSettings({ onBack }) {
   useEffect(() => {
     const t = getToken()
     fetchVapidKey().then(r => { setConfigured(r.configured); setVapid(r.public_key || '') }).catch(() => setConfigured(false))
-    if (t) fetchPushPrefs(t).then(r => {
-      setSubscribed(!!r.subscribed)
-      if (r.morning_time) setMorningTime(r.morning_time)
-      if (r.evening_time) setEveningTime(r.evening_time)
-      if (typeof r.morning_on === 'boolean') setMorningOn(r.morning_on)
-      if (typeof r.evening_on === 'boolean') setEveningOn(r.evening_on)
-      if (typeof r.growth_on === 'boolean') setGrowthOn(r.growth_on)
-    }).catch((err) => { console.warn('[ReminderSettings.jsx] ignored async error', err) })
+    if (t) {
+      fetchPushPrefs(t).then(r => {
+        setSubscribed(!!r.subscribed)
+        if (r.morning_time) setMorningTime(r.morning_time)
+        if (r.evening_time) setEveningTime(r.evening_time)
+        if (typeof r.morning_on === 'boolean') setMorningOn(r.morning_on)
+        if (typeof r.evening_on === 'boolean') setEveningOn(r.evening_on)
+        if (typeof r.growth_on === 'boolean') setGrowthOn(r.growth_on)
+        if (typeof r.mccheyne_on === 'boolean') setMccheyneOn(r.mccheyne_on)
+      }).catch((err) => {
+        console.warn('[ReminderSettings.jsx] ignored async error', err)
+      }).finally(() => setPrefsLoaded(true))
+    } else {
+      setPrefsLoaded(true)
+    }
     if (t) fetchCareConsent(t).then(r => { if (typeof r.share_formation_flags === 'boolean') setShareCare(r.share_formation_flags) }).catch((err) => { console.warn('[ReminderSettings.jsx] ignored async error', err) })
   }, [])
 
@@ -51,7 +60,7 @@ export default function ReminderSettings({ onBack }) {
     setBusy(true); setMsg('')
     try {
       const perm = await Notification.requestPermission()
-      if (perm !== 'granted') { setMsg('需要允许通知权限才能开启提醒'); setBusy(false); return }
+      if (perm !== 'granted') { setMsg(i18nT('需要允许通知权限才能开启提醒')); setBusy(false); return }
       const reg = await navigator.serviceWorker.ready
       let sub = await reg.pushManager.getSubscription()
       if (!sub) {
@@ -65,25 +74,35 @@ export default function ReminderSettings({ onBack }) {
         endpoint: j.endpoint, p256dh: j.keys.p256dh, auth: j.keys.auth,
         morning_on: morningOn, evening_on: eveningOn,
         morning_time: morningTime, evening_time: eveningTime, growth_on: growthOn,
+        mccheyne_on: mccheyneOn,
       }, getToken())
-      setSubscribed(true); setMsg('✓ 提醒已开启')
-    } catch (e) { setMsg('开启失败：' + (e.message || '')) }
+      setSubscribed(true); setMsg(i18nT('✓ 提醒已开启'))
+    } catch (e) { setMsg(i18nT('开启失败：{message}', { message: e.message || '' })) }
     finally { setBusy(false) }
   }
 
   async function saveTimes() {
     setBusy(true); setMsg('')
     try {
-      await savePushPrefs({ morning_on: morningOn, evening_on: eveningOn, morning_time: morningTime, evening_time: eveningTime, growth_on: growthOn }, getToken())
-      setMsg('✓ 已保存')
-    } catch (e) { setMsg(e.message || '保存失败') }
+      await savePushPrefs({
+        morning_on: morningOn,
+        evening_on: eveningOn,
+        morning_time: morningTime,
+        evening_time: eveningTime,
+        growth_on: growthOn,
+        mccheyne_on: mccheyneOn,
+      }, getToken())
+      setMsg(i18nT('✓ 已保存'))
+    } catch (e) { setMsg(e.message || i18nT('保存失败')) }
     finally { setBusy(false) }
   }
 
   async function sendTest() {
     setBusy(true); setMsg('')
     const r = await testPush(getToken())
-    setMsg(r.sent ? `✓ 已发送 ${r.sent} 条测试推送` : (r.reason || '发送失败（请先开启提醒）'))
+    setMsg(r.sent
+      ? i18nT('✓ 已发送 {n} 条测试推送', { n: r.sent })
+      : i18nT(r.reason || '发送失败（请先开启提醒）'))
     setBusy(false)
   }
 
@@ -118,10 +137,26 @@ export default function ReminderSettings({ onBack }) {
         <div style={card}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
             <div>
+              <div style={{ fontSize: 14, fontWeight: 600 }}>{i18nT('📖 麦琴每日读经')}</div>
+              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', marginTop: 2, lineHeight: 1.5 }}>{i18nT('每天 08:00 推送当天四处经文、灵修指引与逐章查经入口')}</div>
+            </div>
+            {prefsLoaded ? (
+              <button type="button" aria-label={i18nT('麦琴每日读经推送')} aria-pressed={mccheyneOn} onClick={() => setMccheyneOn(!mccheyneOn)} style={{ width: 46, height: 26, borderRadius: 13, border: 'none', cursor: 'pointer', background: mccheyneOn ? '#34c759' : 'rgba(255,255,255,0.18)', position: 'relative', flexShrink: 0 }}>
+                <span style={{ position: 'absolute', top: 3, left: mccheyneOn ? 23 : 3, width: 20, height: 20, borderRadius: '50%', background: '#fff', transition: 'all .2s' }} />
+              </button>
+            ) : (
+              <span role="status" aria-label={i18nT('正在加载推送设置…')} style={{ width: 46, height: 26, borderRadius: 13, background: 'rgba(255,255,255,0.08)', flexShrink: 0 }} />
+            )}
+          </div>
+        </div>
+
+        <div style={card}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+            <div>
               <div style={{ fontSize: 14, fontWeight: 600 }}>{i18nT('🌱 成长轻推')}</div>
               <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', marginTop: 2, lineHeight: 1.5 }}>{i18nT('每天午间一条「今日该做」，据你的成长画像（逾期纪律 / 未跟进的诊断）生成')}</div>
             </div>
-            <button onClick={() => setGrowthOn(!growthOn)} style={{ width: 46, height: 26, borderRadius: 13, border: 'none', cursor: 'pointer', background: growthOn ? '#34c759' : 'rgba(255,255,255,0.18)', position: 'relative', flexShrink: 0 }}>
+            <button type="button" aria-label={i18nT('成长轻推')} aria-pressed={growthOn} onClick={() => setGrowthOn(!growthOn)} style={{ width: 46, height: 26, borderRadius: 13, border: 'none', cursor: 'pointer', background: growthOn ? '#34c759' : 'rgba(255,255,255,0.18)', position: 'relative', flexShrink: 0 }}>
               <span style={{ position: 'absolute', top: 3, left: growthOn ? 23 : 3, width: 20, height: 20, borderRadius: '50%', background: '#fff', transition: 'all .2s' }} />
             </button>
           </div>
@@ -133,18 +168,18 @@ export default function ReminderSettings({ onBack }) {
               <div style={{ fontSize: 14, fontWeight: 600 }}>{i18nT('🔒 关怀可见性')}</div>
               <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', marginTop: 2, lineHeight: 1.5 }}>{i18nT('允许牧者 / 小组长在关怀汇总中看到你近期的风险信号（仅类别与时间，不含日志内容）。关闭后你的数据不进入任何关怀汇总。')}</div>
             </div>
-            <button onClick={async () => { const v = !shareCare; setShareCare(v); try { await saveCareConsent(v, getToken()); setMsg('✓ 关怀可见性已更新') } catch (e) { setMsg('保存失败') } }} style={{ width: 46, height: 26, borderRadius: 13, border: 'none', cursor: 'pointer', background: shareCare ? '#34c759' : 'rgba(255,255,255,0.18)', position: 'relative', flexShrink: 0 }}>
+            <button type="button" aria-label={i18nT('关怀可见性')} aria-pressed={shareCare} onClick={async () => { const v = !shareCare; setShareCare(v); try { await saveCareConsent(v, getToken()); setMsg(i18nT('✓ 关怀可见性已更新')) } catch { setMsg(i18nT('保存失败')) } }} style={{ width: 46, height: 26, borderRadius: 13, border: 'none', cursor: 'pointer', background: shareCare ? '#34c759' : 'rgba(255,255,255,0.18)', position: 'relative', flexShrink: 0 }}>
               <span style={{ position: 'absolute', top: 3, left: shareCare ? 23 : 3, width: 20, height: 20, borderRadius: '50%', background: '#fff', transition: 'all .2s' }} />
             </button>
           </div>
         </div>
 
         {!subscribed ? (
-          <button onClick={enable} disabled={busy || !supported} style={primaryBtn}>{busy ? '处理中…' : '开启提醒'}</button>
+          <button type="button" onClick={enable} disabled={busy || !supported} style={primaryBtn}>{busy ? i18nT('处理中…') : i18nT('开启提醒')}</button>
         ) : (
           <>
-            <button onClick={saveTimes} disabled={busy} style={primaryBtn}>{busy ? '保存中…' : '保存提醒时间'}</button>
-            <button onClick={sendTest} disabled={busy} style={{ ...primaryBtn, background: 'rgba(255,255,255,0.08)', marginTop: 8 }}>{i18nT('发送一条测试推送')}</button>
+            <button type="button" onClick={saveTimes} disabled={busy} style={primaryBtn}>{busy ? i18nT('保存中…') : i18nT('保存提醒时间')}</button>
+            <button type="button" onClick={sendTest} disabled={busy} style={{ ...primaryBtn, background: 'rgba(255,255,255,0.08)', marginTop: 8 }}>{i18nT('发送一条测试推送')}</button>
           </>
         )}
         {msg && <div style={{ textAlign: 'center', marginTop: 12, fontSize: 13, color: msg.startsWith('✓') ? '#34c759' : '#ffd43b' }}>{msg}</div>}
@@ -160,7 +195,7 @@ function Row({ label, on, setOn, time, setTime }) {
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
         <input type="time" value={time} onChange={e => setTime(e.target.value)} disabled={!on}
           style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 8, color: '#fff', padding: '6px 8px', fontSize: 13, opacity: on ? 1 : 0.4 }} />
-        <button onClick={() => setOn(!on)} style={{ width: 46, height: 26, borderRadius: 13, border: 'none', cursor: 'pointer', background: on ? '#34c759' : 'rgba(255,255,255,0.18)', position: 'relative', transition: 'all .2s' }}>
+        <button type="button" aria-label={label} aria-pressed={on} onClick={() => setOn(!on)} style={{ width: 46, height: 26, borderRadius: 13, border: 'none', cursor: 'pointer', background: on ? '#34c759' : 'rgba(255,255,255,0.18)', position: 'relative', transition: 'all .2s' }}>
           <span style={{ position: 'absolute', top: 3, left: on ? 23 : 3, width: 20, height: 20, borderRadius: '50%', background: '#fff', transition: 'all .2s' }} />
         </button>
       </div>

@@ -1,5 +1,8 @@
 import { t as i18nT } from '../../../i18n/runtime'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { speakOnce, stopAllAudio } from '../../../useGlobalAudio'
+import { getMediaPref } from '../../../lib/media/mediaPrefs'
+import { useHaptics } from '../../../lib/media/useHaptics'
 
 /**
  * SafetyCheckFlow — 直接、温柔、简短的安全确认状态机（前端镜像 crisis_engine.safety_check_step）。
@@ -28,8 +31,23 @@ function nextStep(state, yes) {
 export default function SafetyCheckFlow({ onEscalate, onStabilize, onSafetyPlan }) {
   const [state, setState] = useState('ask_intent')
   const [message, setMessage] = useState(QUESTIONS.ask_intent)
+  const [speaking, setSpeaking] = useState(false)
+  const haptics = useHaptics({ scope: 'crisis' })
+
+  useEffect(() => () => stopAllAudio(), [])
+
+  // 这几个问题必须由人「问」出来才不像表单。声音需显式开启，且永不自动播放。
+  async function readAloud() {
+    if (speaking) { stopAllAudio(); setSpeaking(false); return }
+    setSpeaking(true)
+    await speakOnce(message.replace(/\n/g, '。'), { rate: 0.8 })
+    setSpeaking(false)
+  }
 
   function answer(yes) {
+    haptics.vibrate('tap')
+    stopAllAudio()
+    setSpeaking(false)
     const step = nextStep(state, yes)
     if (step.escalate) { onEscalate && onEscalate(); return }
     setState(step.state)
@@ -43,6 +61,11 @@ export default function SafetyCheckFlow({ onEscalate, onStabilize, onSafetyPlan 
   return (
     <div className="cc-card">
       <p style={{ whiteSpace: 'pre-line' }}>{message}</p>
+      {getMediaPref('crisisAudio') && (
+        <button className="cc-btn ghost" type="button" onClick={readAloud} style={{ marginBottom: 8 }}>
+          {speaking ? `⏹ ${i18nT('停止')}` : `🔊 ${i18nT('念给我听')}`}
+        </button>
+      )}
       {!terminal && (
         <div className="cc-choice">
           <button className="cc-btn danger" type="button" onClick={() => answer(true)}>{i18nT('是 / 有')}</button>

@@ -1,7 +1,9 @@
 import { useEffect, useState, useCallback } from 'react'
+import { getRuntimeLang, t as i18nT } from './i18n/runtime'
 import BackButton from './BackButton'
 import { getToken } from './auth'
 import { churchHealthApi } from './api'
+import { Radar } from './components/charts'
 
 /**
  * NineMarksPage — 健康教会九标志 · Church Health OS
@@ -153,6 +155,18 @@ function OverviewTab({ token }) {
   if (busy && !ov) return <div style={C.sub}>加载中…</div>
   if (!ov) return <Err msg={err || '暂无数据'} />
 
+  // 九标志是「一间教会的一张侧写」,不是九个可以互相攀比的排行项。
+  // 一条条读进度条读得出高低,读不出形状——而真正要看的正是形状:
+  // 哪一块凹下去,整张图就往哪一边塌,那才是这一季该被照顾的地方。
+  // 九条轴刚好在雷达图读得清的范围内(超过八九条就成毛刺团,那时该改用排序条)。
+  const markList = (ov.marks || []).filter((m) => m && m.mark_code)
+  const markLabel = (mark) => getRuntimeLang() === 'en'
+    ? (mark.name_en || i18nT(mark.name_zh) || mark.mark_code)
+    : (mark.name_zh || mark.name_en || mark.mark_code)
+  const radarAxes = markList.map((m) => ({ key: m.mark_code, label: markLabel(m) }))
+  const radarValues = Object.fromEntries(markList.map((m) => [m.mark_code, Math.round(Number(m.score) || 0)]))
+  const weakest = [...markList].sort((a, b) => (Number(a.score) || 0) - (Number(b.score) || 0))[0]
+
   return (
     <div>
       <Notice>{ov.disclaimer}</Notice>
@@ -168,6 +182,21 @@ function OverviewTab({ token }) {
           {savedMsg && <div style={{ color: '#34c759', fontSize: 12, marginTop: 8 }}>{savedMsg}</div>}
         </div>
       </div>
+
+      {radarAxes.length >= 3 && (
+        <div style={{ marginBottom: 14 }}>
+          <Radar
+            title={i18nT('九标志侧写')}
+            subtitle={weakest
+              ? i18nT('要看的是形状不是分数:此刻最凹的一块是「{mark}」,整张图就往那一边塌。', { mark: markLabel(weakest) })
+              : i18nT('要看的是形状不是分数:凹进去的那一块,是这一季最该被照顾的地方。')}
+            axes={radarAxes}
+            series={[{ name: i18nT('本次评估'), values: radarValues }]}
+            max={100}
+            size={300}
+          />
+        </div>
+      )}
 
       {trend.length > 1 && (
         <div style={C.card}>

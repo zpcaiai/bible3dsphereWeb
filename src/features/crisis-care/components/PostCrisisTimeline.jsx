@@ -2,6 +2,7 @@ import { t as i18nT } from '../../../i18n/runtime'
 import { useState } from 'react'
 import { POST_CRISIS_PHASE_LABELS, POST_CRISIS_TASKS } from '../data/crisisContent'
 import { importCrisisToFormation } from '../lib/formationBridge'
+import { TrendLine } from '../../../components/charts'
 
 /**
  * PostCrisisTimeline — 危机后恢复（24h/72h/7d/30d）。
@@ -37,6 +38,19 @@ export default function PostCrisisTimeline({ userId = 'local-user', token, riskT
     <div className="cc-card">
       <h3>{i18nT('危机后的恢复路径')}</h3>
       <p className="cc-muted">{i18nT('危机过去了，先别急着做大改变。先让身体和心慢慢回来。')}</p>
+
+      {/* 恢复曲线：在危机后的低谷里，「我一点都没有变好」是最常见也最不准确的判断。
+          把已完成的照顾动作画出来，让人亲眼看见自己确实在往回走。 */}
+      <div style={{ margin: '12px 0' }}>
+        <TrendLine
+          title={i18nT('你正在往回走')}
+          subtitle={i18nT('这条线画的不是心情，是你为自己做到的照顾动作。心情会起伏，这些动作是真的。')}
+          labels={PHASES.map((ph) => POST_CRISIS_PHASE_LABELS[ph])}
+          series={[{ name: i18nT('已完成的照顾动作'), values: PHASES.map((ph) => POST_CRISIS_TASKS[ph].filter((_, i) => done[`${ph}-${i}`]).length) }]}
+          height={150}
+          yUnit={i18nT(' 项')}
+        />
+      </div>
       {PHASES.map((phase) => (
         <div className="cc-phase" key={phase}>
           <h4>{POST_CRISIS_PHASE_LABELS[phase]}</h4>

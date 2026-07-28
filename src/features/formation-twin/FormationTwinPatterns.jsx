@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { ColumnSeries, MatrixHeatmap } from '../../components/charts'
 import { t as i18nT } from '../../i18n/runtime'
 import {
   completePatternReview,
@@ -43,6 +44,9 @@ const DIRECTION_LABELS = {
 }
 
 const EMPTY = { current: [], candidates: [], trajectories: [], seasons: [], reviews: [] }
+
+const WEEKDAY_LABELS = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
+const HOUR_LABELS = Array.from({ length: 24 }, (_, hour) => String(hour))
 
 function EvidenceList({ title, items = [], kind }) {
   return (
@@ -136,6 +140,21 @@ export default function FormationTwinPatterns({ user, initialData = null, onSafe
 
   const allPatterns = useMemo(() => [...(data.current || []), ...(data.candidates || [])], [data])
 
+  // 「长期模式」的核心是节律：同一件事反复落在一周的哪个位置。这件事纯文字读不出来。
+  // 证据带真实时刻（出现过不同小时）时用 周×时段 矩阵，热点落在哪一格一眼可见；
+  // 只有日期没有时刻时退回按星期的柱状图 —— 把 00:00 当成真实发生时刻是伪造精度。
+  const rhythm = useMemo(() => {
+    const stamps = []
+    allPatterns.forEach((pattern) => (pattern.supporting_evidence || []).forEach((item) => {
+      const at = new Date(item.occurred_at)
+      if (!Number.isNaN(at.getTime())) stamps.push(at)
+    }))
+    const matrix = WEEKDAY_LABELS.map(() => new Array(24).fill(0))
+    const byWeekday = WEEKDAY_LABELS.map(() => 0)
+    stamps.forEach((at) => { byWeekday[at.getDay()] += 1; matrix[at.getDay()][at.getHours()] += 1 })
+    return { total: stamps.length, hasHours: new Set(stamps.map((at) => at.getHours())).size > 1, matrix, byWeekday }
+  }, [allPatterns])
+
   const act = async (id, action, payload = {}) => {
     setBusy(`${id}:${action}`); setError('')
     try { await reviewFormationPattern(id, action, payload); await refresh() }
@@ -187,6 +206,30 @@ export default function FormationTwinPatterns({ user, initialData = null, onSafe
 
       {!loading && view === 'current' && (
         <section className="ft-pattern-view" aria-label={i18nT('当前长期模式')}>
+          {allPatterns.length > 0 && (
+            <div className="ft-pattern-rhythm" style={{ marginBottom: 14 }}>
+              {rhythm.total < 3 ? (
+                <p className="ft-pattern-empty">{i18nT('带时间的证据少于三条，暂不绘制时间分布，免得从噪声里读出并不存在的规律。')}</p>
+              ) : rhythm.hasHours ? (
+                <MatrixHeatmap
+                  title={i18nT('支持证据落在一周的什么时候')}
+                  subtitle={i18nT('每格是被记为支持证据的记录条数，不是严重程度，也不预测下一次何时发生。')}
+                  rows={WEEKDAY_LABELS.map((label) => i18nT(label))}
+                  cols={HOUR_LABELS}
+                  values={rhythm.matrix}
+                  unit={i18nT(' 条')}
+                />
+              ) : (
+                <ColumnSeries
+                  title={i18nT('支持证据按星期的分布')}
+                  subtitle={i18nT('这些记录只带日期、不带具体时刻，所以只统计到星期，不假装知道几点发生。')}
+                  labels={WEEKDAY_LABELS.map((label) => i18nT(label))}
+                  values={rhythm.byWeekday}
+                  unit={i18nT(' 条')}
+                />
+              )}
+            </div>
+          )}
           {(data.current || []).length ? data.current.map((pattern) => <PatternCard key={pattern.id} pattern={pattern} busy={busy.startsWith(pattern.id)} onAction={act} />) : (
             <div className="ft-pattern-empty"><strong>{i18nT('目前没有已确认的长期模式')}</strong><p>{i18nT('这可能是数据不足，也可能只是你尚未确认候选；系统不会为填满页面而制造结论。')}</p></div>
           )}

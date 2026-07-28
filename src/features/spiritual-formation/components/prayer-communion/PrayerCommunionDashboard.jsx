@@ -40,6 +40,87 @@ import {
   savePsalmSession,
 } from '../../lib/prayerCommunionStorage'
 import { MODULE_DISCLAIMER } from '../../lib/pastoralSafety'
+import { BarSeries, TrendLine } from '../../../../components/charts'
+
+function dayKeys(days = 14) {
+  const keys = []
+  for (let i = days - 1; i >= 0; i -= 1) {
+    const d = new Date()
+    d.setDate(d.getDate() - i)
+    keys.push(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`)
+  }
+  return keys
+}
+
+// 祷告的两个问题是不同量纲的，所以拆成两张图，绝不合并成双 Y 轴：
+// 1) 「我在用哪几种方式祷告」是分类计数 → 水平排序条，四种形式一眼看得出偏食；
+// 2) 「我祷告了多久／多常」是时序 → 折线。
+// 计数只认真正完成的记录（status/completedAt/completed），点开没做完的不算，
+// 避免把打开页面当成祷告。
+function buildPrayerTypeItems(data) {
+  return [
+    { label: T('祷告规则', 'Prayer rule'), value: (data.prayerSessions || []).filter((session) => session.status === 'completed').length },
+    { label: T('诗篇祷告', 'Psalm prayer'), value: (data.psalmSessions || []).filter((session) => session.completedAt).length },
+    { label: T('代祷', 'Intercession'), value: (data.intercessionSessions || []).filter((session) => session.completedAt).length },
+    { label: T('同在打卡', 'Presence'), value: (data.presenceCheckins || []).filter((checkin) => checkin.completed).length },
+  ]
+}
+
+// durationMinutes 来自祷告规则时段（slot.durationMinutes）；若一条时长都没记录，
+// 就退回「每天完成的时段数」，并在副标题里说明换了单位——不假装有分钟数据。
+function buildPrayerTrend(prayerSessions = [], labels = []) {
+  const completed = prayerSessions.filter((session) => session.status === 'completed')
+  const minutes = labels.map((day) => completed
+    .filter((session) => session.sessionDate === day)
+    .reduce((sum, session) => sum + (Number(session.durationMinutes) || 0), 0))
+  const counts = labels.map((day) => completed.filter((session) => session.sessionDate === day).length)
+  const hasMinutes = minutes.some((value) => value > 0)
+  return { values: hasMinutes ? minutes : counts, hasMinutes, total: counts.reduce((sum, value) => sum + value, 0) }
+}
+
+export function PrayerRhythmCharts({ data }) {
+  const labels = useMemo(() => dayKeys(14), [])
+  const typeItems = buildPrayerTypeItems(data)
+  const trend = buildPrayerTrend(data.prayerSessions, labels)
+  const typeTotal = typeItems.reduce((sum, item) => sum + item.value, 0)
+  const busiest = [...typeItems].sort((a, b) => b.value - a.value)[0]
+
+  if (!typeTotal) {
+    return (
+      <article className="sf-card">
+        <p className="sf-empty">{T('还没有任何完成的祷告记录，所以暂时没有可画的分布与趋势。完成一次祷告时段后这里会出现两张图。', 'No completed prayer records yet, so there is nothing to chart. Two charts appear after the first completed session.')}</p>
+      </article>
+    )
+  }
+
+  return (
+    <div className="sf-home-grid">
+      <article className="sf-card">
+        <BarSeries
+          title={T('祷告形式分布', 'Prayer type distribution')}
+          subtitle={T(
+            `共 ${typeTotal} 次已完成的祷告，其中「${busiest.label}」最多（${busiest.value} 次）；为 0 的形式说明这段时间完全没碰。`,
+            `${typeTotal} completed prayers; "${busiest.label}" leads with ${busiest.value}. A zero row means that form was untouched.`,
+          )}
+          items={typeItems}
+          unit={T(' 次', 'x')}
+          colorMode="categorical"
+        />
+      </article>
+      <article className="sf-card">
+        <TrendLine
+          title={trend.hasMinutes ? T('近 14 天祷告时长', 'Prayer minutes, last 14 days') : T('近 14 天祷告次数', 'Prayer sessions, last 14 days')}
+          subtitle={trend.hasMinutes
+            ? T(`按 sessionDate 汇总每天已完成时段的 durationMinutes；断掉的地方就是没祷告的那天，不是失败判决。`, 'Daily durationMinutes of completed sessions by sessionDate. A gap is a day without prayer, not a verdict.')
+            : T(`还没有任何时段记录了时长，所以这里画的是每天完成的时段数（共 ${trend.total} 次）。`, `No session recorded a duration, so this shows completed sessions per day (${trend.total} total).`)}
+          labels={labels.map((day) => day.slice(5))}
+          series={[{ name: trend.hasMinutes ? T('分钟', 'Minutes') : T('次数', 'Sessions'), values: trend.values }]}
+          yUnit={trend.hasMinutes ? T(' 分钟', ' min') : T(' 次', 'x')}
+        />
+      </article>
+    </div>
+  )
+}
 
 function MiniTabs({ active, onChange }) {
   const tabs = [
@@ -407,6 +488,7 @@ export default function PrayerCommunionDashboard({ userId }) {
             <article className="sf-card"><h3>{T('推荐诗篇', 'Recommended Psalm')}</h3><p>{T('诗篇', 'Psalm')} {dashboard.today.recommendedPsalm.psalmNumber}: {dashboard.today.recommendedPsalm.title}</p><button type="button" onClick={() => setTab('psalms')}>{T('用诗篇祷告', 'Pray Psalm')}</button></article>
             <article className="sf-card"><h3>{T('此刻操练同在', 'Practice Presence Now')}</h3><p>{dashboard.today.presenceRecommendation.title}</p><button type="button" onClick={() => setTab('presence')}>{T('开始打卡', 'Start Check-In')}</button></article>
           </div>
+          <PrayerRhythmCharts data={data} />
           <article className="sf-card sf-flow-card">
             <h3>{T('祷告编排器', 'Prayer Orchestrator')}</h3>
             <label>{T('意向', 'Intent')}<textarea value={intentText} onChange={(event) => setIntentText(event.target.value)} /></label>

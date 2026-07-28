@@ -3,6 +3,7 @@ import { attentionApi } from '../../../api'
 import { AttentionCategoryLabel } from '../lib/constants'
 import { ScoreLabelText } from '../lib/score-types'
 import { AttentionCard } from '../components/attentionComponents'
+import { BarSeries, ColumnSeries, TrendLine } from '../../../components/charts'
 import { t as i18nT } from '../../../i18n/runtime'
 
 const TREND_LABEL = {
@@ -129,24 +130,54 @@ function ScoreBreakdown({ report }) {
   )
 }
 
+// 五类分布本质是「一周的时间被分成了哪几份」——排序条比五条各自为政的 CSS 条更快读出
+// 谁多谁少；百分比放副标题里保留，数值不丢。
 function AllocationChart({ report }) {
   const minutes = report?.categoryMinutes || {}
   const percentages = report?.categoryPercentages || {}
   const invested = CATEGORY_KEYS.filter((key) => key !== 'captured').reduce((sum, key) => sum + Number(minutes[key] || 0), 0)
+  const items = CATEGORY_KEYS.map((key) => ({
+    label: AttentionCategoryLabel[key] || key,
+    value: Number(minutes[key] || 0),
+  }))
+  const pctLine = CATEGORY_KEYS.map((key) => `${AttentionCategoryLabel[key] || key} ${percentages[key] || 0}%`).join(' · ')
   return (
-    <AttentionCard title={i18nT("五类注意力分布")}>
-      <div className="attn-allocation">
-        {CATEGORY_KEYS.map((key) => (
-          <div key={key}>
-            <span>{AttentionCategoryLabel[key] || key}</span>
-            <strong>{minutes[key] || 0} {i18nT("分钟 ·")} {percentages[key] || 0}%</strong>
-            <div><i className={`attn-cat-${key}`} style={{ width: `${percentages[key] || 0}%` }} /></div>
-          </div>
-        ))}
-      </div>
+    <div className="attn-allocation-chart">
+      <BarSeries
+        title={i18nT("五类注意力分布")}
+        subtitle={pctLine}
+        items={items}
+        unit={i18nT("分钟")}
+        colorMode="categorical"
+      />
       {minutes.captured > 0 ? <p>{i18nT("本周有一部分注意力被牵引。看见它，是重新设防的开始。")}</p> : null}
       {invested > (minutes.captured || 0) ? <p>{i18nT("本周更多注意力投入在敬拜、使命、关系与恢复上，这是可以感恩的节奏。")}</p> : null}
-    </AttentionCard>
+    </div>
+  )
+}
+
+// 周报里没有任何按小时分桶的数据：WeeklyReportDto / DailyAttentionScoreDto / GrowthDataPoint
+// 都只到「天」这一层（见 lib/weekly-report-types.ts、lib/score-types.ts），
+// 所以这里画不了「周 × 时段」矩阵热力图，改用按天的柱状——同一批真实数字，只降一个维度。
+function DailyInvestedColumns({ report }) {
+  const scores = report?.dailyScores || []
+  const labels = scores.map((s) => String(s.date || '').slice(5))
+  const values = scores.map((s) => Number(s.inputSummary?.investedMinutes || 0))
+  if (!labels.length || values.every((v) => !v)) {
+    return (
+      <AttentionCard title={i18nT("每日投入型注意力")}>
+        <p>{i18nT("这一周还没有足够的注意力记录，暂时画不出每天的分布。")}</p>
+      </AttentionCard>
+    )
+  }
+  return (
+    <ColumnSeries
+      title={i18nT("每日投入型注意力")}
+      subtitle={i18nT("敬拜 / 使命 / 关系 / 恢复四类合计 · 记录只到「天」，没有更细的时段数据")}
+      labels={labels}
+      values={values}
+      unit={i18nT("分钟")}
+    />
   )
 }
 

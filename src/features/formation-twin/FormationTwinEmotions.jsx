@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { BarSeries, TrendLine, localDateKey } from '../../components/charts'
 import { t as i18nT } from '../../i18n/runtime'
 import {
   createEmotionalEpisode, deleteEmotionObservation, deleteEmotionalEpisode,
@@ -29,10 +30,42 @@ function TimelineView({ refresh }) {
   return <div className="ft-emotion-view"><div className="ft-form-intro"><h3>{i18nT('情绪时间线')}</h3><p>{i18nT('时间线展示记录来源；删除或排除后不会继续参与快照。')}</p></div><Notice error={error}/>{items.length?items.map(item=><article className="ft-emotion-timeline-item" key={item.id}><div><SourceBadge kind={item.source_kind}/><time>{new Date(item.occurred_at).toLocaleString()}</time></div><h4>{i18nT(LABELS[item.emotion_label]||item.custom_label||item.emotion_label)} {item.intensity!=null&&`${item.intensity}/10`}</h4><p>{item.statement_type}{item.confidence!=null?` · ${i18nT('候选置信度')} ${Math.round(item.confidence*100)}%`:''}</p>{item.source_kind==='USER_REPORT'&&<button type="button" onClick={()=>remove(item.id)}>{i18nT('删除观察')}</button>}</article>):<div className="ft-workspace-empty">{i18nT('还没有情绪观察。')}</div>}</div>
 }
 
+// 趋势视图拆成两张图：强度是连续量纲，次数是离散计数，两者不可合并（绝不用双 Y 轴）。
+// 强度用 TrendLine，是因为“这几天是在升还是在降”只有连成线才看得出来；
+// 频次用 BarSeries，是因为排序后的长短对比才能回答“我最常记下的是哪一种情绪”。
 function TrendsView({ refresh }) {
-  const [data,setData]=useState(null);const [error,setError]=useState('')
+  const [data,setData]=useState(null);const [observations,setObservations]=useState([]);const [error,setError]=useState('')
   useEffect(()=>{getEmotionalState('weekly').then(setData).catch(e=>setError(e.message))},[refresh])
-  const snapshot=data?.snapshot;return <div className="ft-emotion-view"><div className="ft-form-intro"><h3>{i18nT('最近七天的记录变化')}</h3><p>{i18nT('图表反映的是你的记录，不一定覆盖全部实际经历。')}</p></div><Notice error={error}/>{snapshot?.data_status==='AVAILABLE'?<><div className="ft-frequency-list">{(data.frequencies||[]).map((item)=>{const max=Math.max(...data.frequencies.map(x=>x.recorded_count),1);return <div key={item.emotion_label}><span>{i18nT(LABELS[item.emotion_label]||item.emotion_label)}</span><div><i style={{width:`${item.recorded_count/max*100}%`}}/></div><strong>{item.recorded_count} {i18nT('次记录')}</strong></div>})}</div><p className="ft-coverage-note">{i18nT('数据覆盖率：')}{Math.round((snapshot.data_coverage?.coverage||0)*100)}% · {i18nT('记录频次不等于实际发生频次。')}</p></>:<div className="ft-workspace-empty">{i18nT('数据不足，不显示可能误导的趋势图。')}</div>}</div>
+  useEffect(()=>{listEmotionObservations().then(x=>setObservations(x.items||[])).catch(()=>setObservations([]))},[refresh])
+  // 只用 EmotionObservation.intensity（你自己填的 0–10）。没填强度的观察直接跳过，
+  // 不能补 0——那等于替你宣称“那天没有情绪”。
+  const intensity=useMemo(()=>{
+    const buckets=new Map()
+    observations.forEach((item)=>{
+      if(item.intensity==null||!item.occurred_at)return
+      const key=localDateKey(new Date(item.occurred_at));if(!key)return
+      const bucket=buckets.get(key)||{sum:0,count:0}
+      buckets.set(key,{sum:bucket.sum+(Number(item.intensity)||0),count:bucket.count+1})
+    })
+    const keys=[...buckets.keys()].sort().slice(-14)
+    return {labels:keys.map((key)=>key.slice(5)),values:keys.map((key)=>Math.round(buckets.get(key).sum/buckets.get(key).count*10)/10),points:keys.length}
+  },[observations])
+  const snapshot=data?.snapshot;const frequencies=data?.frequencies||[]
+  return <div className="ft-emotion-view">
+    <div className="ft-form-intro"><h3>{i18nT('最近七天的记录变化')}</h3><p>{i18nT('图表反映的是你的记录，不一定覆盖全部实际经历。')}</p></div>
+    <Notice error={error}/>
+    {snapshot?.data_status==='AVAILABLE'?<>
+      <div className="ft-emotion-charts" style={{display:'grid',gap:14}}>
+        {intensity.points>1
+          ?<TrendLine title={i18nT('自评情绪强度（按天平均）')} subtitle={i18nT('只统计你填了强度的观察；没填强度的记录不会被当作 0。')} labels={intensity.labels} series={[{name:i18nT('平均强度'),values:intensity.values}]} yUnit="/10" height={170}/>
+          :<div className="ft-workspace-empty">{i18nT('带强度的记录还不足两天，暂不绘制强度曲线。')}</div>}
+        {frequencies.length
+          ?<BarSeries title={i18nT('各情绪被记录的次数')} subtitle={i18nT('条形长度只表示被记录了几次，不表示强烈程度，也不等于实际发生频率。')} items={frequencies.map((item)=>({label:i18nT(LABELS[item.emotion_label]||item.emotion_label),value:item.recorded_count}))} unit={i18nT(' 次')}/>
+          :<div className="ft-workspace-empty">{i18nT('这段时间还没有可统计的情绪记录。')}</div>}
+      </div>
+      <p className="ft-coverage-note">{i18nT('数据覆盖率：')}{Math.round((snapshot.data_coverage?.coverage||0)*100)}% · {i18nT('记录频次不等于实际发生频次。')}</p>
+    </>:<div className="ft-workspace-empty">{i18nT('数据不足，不显示可能误导的趋势图。')}</div>}
+  </div>
 }
 
 function ReviewView({ onChanged }) {

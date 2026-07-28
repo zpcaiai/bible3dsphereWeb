@@ -4,6 +4,7 @@ import { SuggestMenu } from '../../../components/SuggestField'
 const SP_MSG_OPTS = ['我现在很不好，需要你陪我说说话。', '我正在经历危机，请尽快联系我。', '我需要帮助，请打电话给我。', '我现在不安全，请帮我联系专业支持。']
 import { buildSafetyPlanTemplate, EMERGENCY_COPY_TEXT } from '../data/crisisContent'
 import { getResources } from '../data/crisisResources'
+import { CardActions } from '../../../lib/media/CardActions'
 
 /** Small inline list editor */
 function ListEditor({ label, items, onChange, placeholder }) {
@@ -87,6 +88,27 @@ export default function SafetyPlanEditor({ plan, regionCode = 'TW', onSave, sync
 
       <button className="cc-btn full" type="button" onClick={save} disabled={syncing || !hasPerson}>{syncing ? '保存中…' : '保存安全计划'}</button>
       <div className="cc-toast">{saved ? '已保存。' : ''}</div>
+
+      {/* 危机时打开 App 本身就是负担。把计划做成一张图，截图 / 设为锁屏 / 打印出来贴在墙上，
+          不用解锁、不用找入口、断网也看得见。 */}
+      <CardActions
+        label="做成一张卡（截图 / 设锁屏 / 打印）"
+        filename="safety-plan.png"
+        templates={['calm', 'ink', 'olive']}
+        buildSpec={() => ({
+          badge: i18nT('我的安全计划'),
+          title: i18nT('如果我又撑不住了，我先做这些'),
+          sections: [
+            { heading: i18nT('先打给这些人'), items: (draft.safePeople || []).filter(Boolean), emphasis: true },
+            { heading: i18nT('我可以先做的 5 分钟动作'), items: (draft.internalCopingStrategies || []).filter(Boolean) },
+            { heading: i18nT('我可以去的安全地点'), items: (draft.safePlaces || []).filter(Boolean) },
+            { heading: i18nT('把危险的东西放远'), items: (draft.meansRestrictionSteps || []).filter(Boolean) },
+            { heading: i18nT('发给一个人的话'), items: [draft.emergencyMessageTemplate || EMERGENCY_COPY_TEXT], emphasis: true },
+            { heading: i18nT('热线'), items: getResources(draft.regionCode || regionCode).resources.slice(0, 3).map((r) => `${r.name} ${r.contact}`) },
+          ],
+          footer: i18nT('这是我在平静的时候，为将来的自己写下的。照着做就好，不用再想。'),
+        })}
+      />
     </div>
   )
 }

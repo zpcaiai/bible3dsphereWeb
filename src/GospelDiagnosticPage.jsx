@@ -16,6 +16,8 @@ const GD_OPTS = {
 import BackButton from './BackButton'
 import { diagnoseDiscernment, fetchGospelHistory } from './api'
 import { getToken } from './auth'
+import { BarSeries, DirectedGraph } from './components/charts'
+import { CardActions } from './lib/media/CardActions'
 
 const STEPS = [
   { key: 'event',   q: '发生了什么事？', ph: '客观地描述这件事，像在跟朋友讲…' },
@@ -49,6 +51,47 @@ export default function GospelDiagnosticPage({ user, onBack, onNeedLogin }) {
     try { const r = await fetchGospelHistory(t); setHistory(r.items || []); setView('history') } catch (e) { setError(e.message) }
   }
   function restart() { setVals({ event: '', feeling: '', want: '', fear: '', belief: '' }); setStep(0); setResult(null); setView('form') }
+
+  // 钟马田的诊断本来就是一条有方向的链:情绪 → 渴望 → 怕失去 → 偶像 → 不信 → 福音。
+  // 上面那张「标签 + 一行字」的表把这五层读成了五件并列的事;链路图把「往下挖」这个动作本身画出来,
+  // 一眼看得见最右边不是终点而是出口。接口没有分数,所以这里不做雷达图——没有数值就不画量表。
+  const CHAIN = [
+    { key: 'emotion', stage: i18nT('情绪'), kind: 'emotion' },
+    { key: 'desire', stage: i18nT('渴望'), kind: 'trigger' },
+    { key: 'fear_named', stage: i18nT('害怕失去'), kind: 'behavior' },
+    { key: 'idol_name', stage: i18nT('偶像'), kind: 'consequence' },
+    { key: 'unbelief', stage: i18nT('底层的不信'), kind: 'consequence' },
+    { key: 'gospel_truth', stage: i18nT('福音真理'), kind: 'grace' },
+  ]
+  const chainNodes = CHAIN
+    .filter(s => String(result?.[s.key] || '').trim())
+    .map(s => ({ id: s.key, label: String(result[s.key]).trim(), kind: s.kind, note: `${s.stage}：${String(result[s.key]).trim()}` }))
+  const chainEdges = chainNodes.slice(1).map((n, i) => ({ from: chainNodes[i].id, to: n.id }))
+
+  // 病历只有一份时看不出什么;累积几份之后,反复出现的那个名字才是真正的问题。
+  // 这里数的是接口真的返回的 idol_name 字段,不做任何归类或合并。
+  const idolCounts = history.reduce((acc, h) => {
+    const k = String(h?.idol_name || '').trim()
+    if (!k) return acc
+    acc[k] = (acc[k] || 0) + 1
+    return acc
+  }, {})
+  const idolItems = Object.entries(idolCounts).sort((a, b) => b[1] - a[1]).slice(0, 8).map(([label, value]) => ({ label, value }))
+  const topIdol = idolItems[0]
+
+  // 卡上只放福音那一半:诊断出来的偶像与不信是给自己看的,能带走、能贴在看得见的地方的,
+  // 应当是基督的应许和今天那一步,而不是一句对自己的定罪。
+  const buildDiagnosticCardSpec = () => ({
+    badge: i18nT('属灵病历 · 福音诊断室'),
+    title: result?.gospel_truth || i18nT('福音正是对付不信的良药'),
+    subtitle: result?.scripture?.text ? `「${result.scripture.text}」—— ${result.scripture.ref || ''}` : '',
+    sections: [
+      { heading: i18nT('今天要对付的'), items: [result?.idol_name, result?.unbelief].filter(Boolean), emphasis: true },
+      { heading: i18nT('默想'), items: [result?.meditation].filter(Boolean) },
+      { heading: i18nT('今日信心行动'), items: [result?.action].filter(Boolean) },
+    ].filter(s => s.items.length > 0),
+    footer: i18nT('症状不是问题。福音不是让你更努力,是让你不必再靠自己撑住。'),
+  })
 
   return (
     <div style={{ width: '100%', height: '100%', background: '#000', color: '#fff', overflowY: 'auto', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
@@ -99,6 +142,17 @@ export default function GospelDiagnosticPage({ user, onBack, onNeedLogin }) {
               <div style={{ fontSize: 13.5, lineHeight: 1.85, color: 'rgba(255,255,255,0.88)' }}>{result.summary}</div>
             </div>
 
+            {chainNodes.length >= 3 && (
+              <div style={{ marginBottom: 12 }}>
+                <DirectedGraph
+                  title={i18nT('这一次是怎么一层层挖下去的')}
+                  subtitle={i18nT('从左往右不是「越来越糟」,是越来越接近真正的问题;最右边那一格是出口,不是结论。')}
+                  nodes={chainNodes}
+                  edges={chainEdges}
+                />
+              </div>
+            )}
+
             {/* 钟马田 · 诊断 */}
             <div style={{ ...card, borderColor: 'rgba(218,119,242,0.3)' }}>
               <div style={{ fontSize: 12, fontWeight: 700, color: '#da77f2', marginBottom: 12 }}>{i18nT('🔬 钟马田 · 诊断（挖到根）')}</div>
@@ -124,6 +178,14 @@ export default function GospelDiagnosticPage({ user, onBack, onNeedLogin }) {
               <Block label={i18nT('今日信心行动')} color="#5ac8fa">{result.action}</Block>
             </div>
 
+            <div style={card}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: '#5ac8fa', marginBottom: 6 }}>{i18nT('🖼 把福音那一半带走')}</div>
+              <div style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.55)', lineHeight: 1.7 }}>
+                {i18nT('卡上只有基督的应许与今天那一步,没有你写的处境,可以放心放在看得见的地方。')}
+              </div>
+              <CardActions buildSpec={buildDiagnosticCardSpec} filename="gospel-diagnostic-card.png" label="生成属灵病历卡" templates={['dawn', 'ink', 'calm']} />
+            </div>
+
             <button onClick={restart} style={{ ...btn('rgba(255,255,255,0.08)'), color: 'rgba(255,255,255,0.7)' }}>{i18nT('再做一次诊断')}</button>
           </>
         )}
@@ -131,7 +193,20 @@ export default function GospelDiagnosticPage({ user, onBack, onNeedLogin }) {
         {view === 'history' && (
           history.length === 0
             ? <div style={{ ...card, textAlign: 'center', color: 'rgba(255,255,255,0.5)' }}>{i18nT('还没有诊断记录')}</div>
-            : history.map((h, i) => (
+            : <>
+              {idolItems.length > 1 && (
+                <div style={{ marginBottom: 12 }}>
+                  <BarSeries
+                    title={i18nT('反复出现的偶像')}
+                    subtitle={topIdol && topIdol.value > 1
+                      ? i18nT('「{idol}」已经出现了 {n} 次。同一个名字反复回来,说明要对付的不是那件事,是它。', { idol: topIdol.label, n: topIdol.value })
+                      : i18nT('每次诊断挖到的偶像各不相同;等某一个名字开始重复出现,那才是要长期对付的那一个。')}
+                    items={idolItems}
+                    unit={i18nT('次')}
+                  />
+                </div>
+              )}
+              {history.map((h, i) => (
               <div key={i} style={card}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
                   <span style={{ fontSize: 13, fontWeight: 600 }}>{h.idol_name} · {h.emotion}</span>
@@ -141,7 +216,8 @@ export default function GospelDiagnosticPage({ user, onBack, onNeedLogin }) {
                 <div style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.78)', lineHeight: 1.6 }}>{h.gospel_truth}</div>
                 {h.action && <div style={{ fontSize: 12, color: '#5ac8fa', marginTop: 6 }}>→ {h.action}</div>}
               </div>
-            ))
+              ))}
+            </>
         )}
       </div>
     </div>

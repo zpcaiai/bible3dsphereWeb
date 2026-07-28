@@ -7,6 +7,7 @@ import StrongholdCard from './StrongholdCard'
 import GospelResponsePanel from './GospelResponsePanel'
 import { buildGospelResponse } from '../lib/gospelResponse'
 import SuggestField, { SuggestMenu } from '../../../components/SuggestField'
+import { BarSeries } from '../../../components/charts'
 
 const EMOTIONS = [
   ['焦虑', 'Anxiety'], ['羞耻', 'Shame'], ['愤怒', 'Anger'], ['恐惧', 'Fear'],
@@ -133,6 +134,23 @@ export default function StrongholdDiscernmentForm({ onSave, userId = 'local-user
               </div>
             )}
           </div>
+
+          {/* 只报「最像的那一个」会让人以为系统很确定。把所有被检出的模式和各自的可能性
+              一起摊开，差距小 = 还没分辨清楚，这本身就是重要信息——它拦住了
+              「系统说我是这个」这种过早的自我定性。 */}
+          {(result.detected || []).length > 1 && (
+            <div style={{ marginBottom: 14 }}>
+              <BarSeries
+                title={T('这段话里同时被检出的模式', 'Patterns detected in what you wrote')}
+                subtitle={T('这是文字线索的匹配程度，不是诊断。几项挨得很近，说明还看不清楚，值得再写一段。', 'These are text-cue match levels, not a diagnosis. Bars close together mean it is not yet clear.')}
+                items={result.detected.slice(0, 6).map((d) => ({
+                  label: localizeStronghold(strongholdMap[d.code])?.name || d.code,
+                  value: Math.round((d.confidence || 0) * 100),
+                }))}
+                unit="%"
+              />
+            </div>
+          )}
 
           {/* 福音回应层 */}
           <GospelResponsePanel plan={buildGospelResponse(result)} userId={userId} />

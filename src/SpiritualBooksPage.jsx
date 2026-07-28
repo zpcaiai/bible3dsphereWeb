@@ -8,13 +8,40 @@ import { t as i18nT } from './i18n/runtime'
  *     · kind:'pdf'  → 显示 PDF 阅读器 + 下载；
  *     · 若同时提供 chapters（文字），则也显示文字 + TTS 语音朗读。
  */
-import { useState, useRef, useEffect, lazy, Suspense } from 'react'
+import { useState, useRef, useEffect, useCallback, lazy, Suspense } from 'react'
 import BackButton from './BackButton'
-import { TTSFullBar, TTSButton } from './useGlobalAudio.jsx'
+import { TTSFullBar, TTSButton, speakOnce, stopAllAudio } from './useGlobalAudio.jsx'
 import DailyDevotionPage from './DailyDevotionPage.jsx'
 import { API_BASE } from './api.js'
 import { getToken } from './auth.js'
 import { a11yClickProps } from './lib/a11yClick';
+import { useGuidedAudio } from './lib/media/useGuidedAudio'
+import { GuidedAudioBar, MediaToggleRow } from './lib/media/MediaControls'
+import { getMediaPref } from './lib/media/mediaPrefs'
+
+// ── 有声书书签（本机持久化）──────────────────────────────────────────────────
+// 有声书最怕的就是「关掉再打开又从头念」。书签跟着每一次翻页写盘，
+// 下次进来直接定位回去；存在 localStorage，不需要登录也不会上传。
+const BOOKMARK_PREFIX = 'book-bookmark-v1:'
+
+function readBookmark(bookId) {
+  try {
+    const raw = window.localStorage.getItem(`${BOOKMARK_PREFIX}${bookId}`)
+    const parsed = JSON.parse(raw || 'null')
+    return parsed && typeof parsed === 'object' ? parsed : null
+  } catch { return null }   // 隐私模式 / 损坏数据都不该挡住阅读
+}
+
+function writeBookmark(bookId, patch) {
+  try {
+    const next = { ...(readBookmark(bookId) || {}), ...patch, at: new Date().toISOString() }
+    window.localStorage.setItem(`${BOOKMARK_PREFIX}${bookId}`, JSON.stringify(next))
+  } catch { /* 写不进去就当没有书签，不影响阅读 */ }
+}
+
+function clearBookmark(bookId) {
+  try { window.localStorage.removeItem(`${BOOKMARK_PREFIX}${bookId}`) } catch { /* ignore */ }
+}
 
 // ── 书库（可扩展）──────────────────────────────────────────────────────────────
 export const BOOKS = [
@@ -50,9 +77,44 @@ export const BOOKS = [
 
 // ── 一本 PDF 书的阅读器（PDF + 可选文字 + TTS）────────────────────────────────
 function PdfBookReader({ book, onBack }) {
-  const [chap, setChap] = useState(0)
   const chapters = Array.isArray(book.chapters) ? book.chapters : []
+  // 恢复书签：上次读到第几章就从第几章开始（越界的旧书签直接忽略）。
+  // 只在首次挂载时读一次盘，不要每次渲染都碰 localStorage。
+  const [chap, setChap] = useState(() => {
+    const idx = Number(readBookmark(book.id)?.chapter)
+    return Number.isInteger(idx) && idx >= 0 && idx < chapters.length ? idx : 0
+  })
+  const [resumed, setResumed] = useState(() => Number(readBookmark(book.id)?.chapter) > 0)
+  const guided = useGuidedAudio()
   const cur = chapters[chap]
+
+  // 依赖必须是稳定的 guided.stop：useGuidedAudio 每次渲染都会返回新对象，
+  // 若依赖整个对象，播报过程中的每一次 setState 都会触发清理、把声音掐断。
+  useEffect(() => () => guided.stop(), [guided.stop])
+
+  // 连续朗读：从当前章一路念到最后一章，每章之间留 1.5 秒换气，
+  // 每进入一章就把书签写盘，中途关掉页面也能从那一章接上。
+  const startAudiobook = useCallback(() => {
+    const steps = chapters.slice(chap).map((c, offset) => ({
+      label: c.title || '',
+      text: `${c.title || book.title}。${c.text || ''}`,
+      pauseAfter: 1.5,
+      onEnter: () => {
+        const index = chap + offset
+        setChap(index)
+        writeBookmark(book.id, { chapter: index })
+      },
+    }))
+    guided.start(steps)
+  }, [book.id, book.title, chapters, chap, guided])
+
+  function pickChapter(index) {
+    guided.stop()
+    setChap(index)
+    setResumed(false)
+    writeBookmark(book.id, { chapter: index })
+  }
+
   return (
     <div style={S.page}>
       <header style={S.header}>
@@ -72,14 +134,27 @@ function PdfBookReader({ book, onBack }) {
           {chapters.length > 1 && (
             <div style={S.chapRow}>
               {chapters.map((c, i) => (
-                <button key={i} onClick={() => setChap(i)}
+                <button key={i} onClick={() => pickChapter(i)}
                   style={{ ...S.chapBtn, ...(i === chap ? S.chapBtnOn(book.color) : {}) }}>
                   {c.title || `第${i + 1}章`}
                 </button>
               ))}
             </div>
           )}
-          <TTSFullBar buildText={() => `${cur?.title || book.title}。${cur?.text || ''}`} label={i18nT('全文朗读')} />
+          {resumed && (
+            <div style={S.resumeBar}>
+              {i18nT('已从书签继续：第 {n} 章', { n: chap + 1 })}
+              <button style={S.resumeBtn} onClick={() => { pickChapter(0); clearBookmark(book.id) }}>{i18nT('从头开始')}</button>
+            </div>
+          )}
+          <MediaToggleRow show={['sound']} compact />
+          <GuidedAudioBar
+            guided={guided}
+            onStart={startAudiobook}
+            label="连续朗读到末章"
+            hint={getMediaPref('sound') ? i18nT('从当前这一章一直念下去，每章之间会停一下。') : i18nT('先打开上面的「声音」，才会出声。')}
+          />
+          <TTSFullBar buildText={() => `${cur?.title || book.title}。${cur?.text || ''}`} label={i18nT('只读这一章')} />
           <div style={S.chapTitle}>{cur?.title}</div>
           <div style={S.bodyText}>{cur?.text}</div>
         </div>
@@ -145,6 +220,12 @@ function EpubReader({ book, onBack }) {
   const [locReady, setLocReady] = useState(false)   // 全书位置索引就绪(滚动条可用)
   const seekTimer = useRef(null)
   const touchRef = useRef({ x: 0, y: 0 })
+  // 当前页文字既要渲染（pageText）也要给朗读循环读（pageTextRef）。
+  // 循环跑在 async 函数里，拿不到最新的 state，所以必须走 ref。
+  const pageTextRef = useRef('')
+  const audioRunRef = useRef(0)
+  const [audioOn, setAudioOn] = useState(false)
+  const [resumedPct, setResumedPct] = useState(null)
 
   useEffect(() => {
     let destroyed = false
@@ -171,15 +252,27 @@ function EpubReader({ book, onBack }) {
             'font-size': '17px', padding: '0 6px' },
           a: { color: '#5ac8fa' }, p: { margin: '0.8em 0' },
         })
-        rendition.display().then(() => { if (!destroyed) setStatus('ready') })
-        // 翻页后取当页文字（供朗读）+ 进度
+        // 恢复书签：有 CFI 就直接定位回上次读到的那一页
+        const mark = readBookmark(book.id)
+        rendition.display(mark?.cfi || undefined).then(() => {
+          if (destroyed) return
+          setStatus('ready')
+          if (mark?.cfi) setResumedPct(Number(mark.pct) || 0)
+        })
+        // 翻页后取当页文字（供朗读）+ 进度 + 写书签
         rendition.on('relocated', (loc) => {
           if (loc?.start?.percentage != null) setProgress(Math.round(loc.start.percentage * 100))
           try {
             const cs = rendition.getContents()
             const txt = cs && cs[0] && cs[0].content ? (cs[0].content.innerText || cs[0].content.textContent || '') : ''
-            setPageText((txt || '').trim().slice(0, 6000))
+            const clean = (txt || '').trim().slice(0, 6000)
+            pageTextRef.current = clean
+            setPageText(clean)
           } catch { /* ignore */ }
+          // 每翻一页就落一次书签，崩溃/退出都不会丢进度
+          if (loc?.start?.cfi) {
+            writeBookmark(book.id, { cfi: loc.start.cfi, pct: Math.round((loc.start.percentage || 0) * 100) })
+          }
         })
         // 左右滑动翻页（iframe 内的 touch 事件由 epub.js 转发出来）
         let _tx = 0, _ty = 0
@@ -207,13 +300,51 @@ function EpubReader({ book, onBack }) {
     return () => {
       destroyed = true
       if (seekTimer.current) clearTimeout(seekTimer.current)
+      audioRunRef.current += 1   // 作废正在跑的朗读循环
+      stopAllAudio()
       bookRef.current = null
       try { rendition && rendition.destroy() } catch { /* ignore */ }
     }
-  }, [book.epub])
+  }, [book.epub, book.id])
 
   const prev = () => renditionRef.current && renditionRef.current.prev()
   const next = () => renditionRef.current && renditionRef.current.next()
+
+  const stopAudiobook = useCallback(() => {
+    audioRunRef.current += 1
+    stopAllAudio()
+    setAudioOn(false)
+  }, [])
+
+  /** 等新一页的文字到位（epub.js 的 relocated 是异步派发的）。返回 false = 到书末了。 */
+  const waitForNextPage = useCallback((before, myRun) => new Promise((resolve) => {
+    let ticks = 0
+    const timer = setInterval(() => {
+      if (audioRunRef.current !== myRun) { clearInterval(timer); resolve(false); return }
+      if (pageTextRef.current && pageTextRef.current !== before) { clearInterval(timer); resolve(true); return }
+      if (ticks++ > 25) { clearInterval(timer); resolve(false) }   // 约 3 秒还没换页就当到底了
+    }, 120)
+  }), [])
+
+  // 有声书主循环：念完当前页 → 自动翻页 → 念下一页，直到读完或用户按停。
+  // 不做自动开始：必须先有「声音」开关 + 用户点这个按钮。
+  const startAudiobook = useCallback(async () => {
+    if (!getMediaPref('sound')) return
+    const myRun = ++audioRunRef.current
+    setAudioOn(true)
+    while (audioRunRef.current === myRun) {
+      const text = pageTextRef.current
+      if (!text) break
+      const reason = await speakOnce(text)
+      if (audioRunRef.current !== myRun) return
+      // 被别处的播放打断（比如用户点了别的朗读按钮）就不要再自己翻页
+      if (reason !== 'ended') break
+      try { await renditionRef.current?.next() } catch { break }
+      const advanced = await waitForNextPage(text, myRun)
+      if (!advanced) break
+    }
+    if (audioRunRef.current === myRun) setAudioOn(false)
+  }, [waitForNextPage])
 
   // 滚动条跳转（防抖，松手 150ms 后定位）
   const seekTo = (pct) => {
@@ -268,6 +399,36 @@ function EpubReader({ book, onBack }) {
         </div>
       ) : (
         <>
+          <div style={{ padding: '8px 12px 0', flexShrink: 0 }}>
+            {resumedPct != null && (
+              <div style={S.resumeBar}>
+                {i18nT('已从书签继续：{pct}%', { pct: resumedPct })}
+                <button
+                  style={S.resumeBtn}
+                  onClick={() => { stopAudiobook(); clearBookmark(book.id); setResumedPct(null); try { renditionRef.current?.display() } catch { /* ignore */ } }}
+                >
+                  {i18nT('从头开始')}
+                </button>
+              </div>
+            )}
+            <MediaToggleRow show={['sound']} compact />
+            <div style={S.audioBar}>
+              {!audioOn ? (
+                <button style={S.audioBtn} onClick={startAudiobook} disabled={!getMediaPref('sound') || !pageText}>
+                  🎧 {i18nT('有声书连续播放')}
+                </button>
+              ) : (
+                <button style={S.audioBtn} onClick={stopAudiobook}>⏹ {i18nT('停止有声书')}</button>
+              )}
+              <span style={S.audioHint}>
+                {!getMediaPref('sound')
+                  ? i18nT('先打开「声音」，才会出声。')
+                  : audioOn
+                    ? i18nT('念完一页会自动翻页，进度随时写进书签。')
+                    : i18nT('从当前这一页开始，一页接一页地念下去。')}
+              </span>
+            </div>
+          </div>
           <div style={{ flex: 1, minHeight: 0, position: 'relative', margin: '0 6px' }} onTouchStart={onAreaTouchStart} onTouchEnd={onAreaTouchEnd}>
             <div ref={viewerRef} style={{ position: 'absolute', inset: 0 }} />
             {status === 'loading' && (
@@ -463,4 +624,9 @@ const S = {
   chapTitle: { fontSize: 18, fontWeight: 700, margin: '6px 0 12px' },
   bodyText: { fontSize: 16, lineHeight: 2, color: 'rgba(255,255,255,0.9)', whiteSpace: 'pre-wrap' },
   navBtn: { flex: 1, padding: '11px', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 10, color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' },
+  resumeBar: { display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', padding: '7px 11px', marginBottom: 8, borderRadius: 10, fontSize: 12, color: 'rgba(255,255,255,0.7)', background: 'rgba(90,200,250,0.08)', border: '1px solid rgba(90,200,250,0.24)' },
+  resumeBtn: { background: 'none', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 8, color: 'rgba(255,255,255,0.6)', padding: '3px 9px', fontSize: 11.5, cursor: 'pointer', fontFamily: 'inherit' },
+  audioBar: { display: 'flex', alignItems: 'center', gap: 9, flexWrap: 'wrap', padding: '8px 11px', marginBottom: 4, borderRadius: 11, background: 'rgba(52,199,89,0.06)', border: '1px solid rgba(52,199,89,0.18)' },
+  audioBtn: { background: 'rgba(52,199,89,0.14)', border: '1px solid rgba(52,199,89,0.34)', borderRadius: 999, color: '#8be9c0', padding: '6px 13px', fontSize: 12.5, cursor: 'pointer', fontFamily: 'inherit' },
+  audioHint: { fontSize: 11.5, color: 'rgba(255,255,255,0.42)', lineHeight: 1.5 },
 }

@@ -11,6 +11,7 @@ import {
   fetchChatHistory, markRead,
 } from './realtime/realtimeApi'
 import realtimeStore from './realtime/realtimeStore'
+import VoiceNoteComposer from './components/VoiceNoteComposer'
 import { useRealtimeState, useRealtimeMessages } from './realtime/useRealtimeStore'
 import { a11yClickProps } from './lib/a11yClick';
 
@@ -43,6 +44,7 @@ export default function CommunionPage({ user, onBack, onOpenVoice }) {
   const [draft, setDraft] = useState('')
   const [addEmail, setAddEmail] = useState('')
   const [typingFrom, setTypingFrom] = useState(null)
+  const [showVoice, setShowVoice] = useState(false)
   const [showSacrament, setShowSacrament] = useState(false)
 
   const { connected, onlineFriends } = useRealtimeState()
@@ -62,6 +64,9 @@ export default function CommunionPage({ user, onBack, onOpenVoice }) {
       key: m.id ? `s${m.id}` : (m.client_id || `${m.from}-${m.created_at}-${Math.random()}`),
       id: m.id,
       body: m.body,
+      // kind 是后端 chat_messages 里真实存在的列（WS 原样透传、/chat/history 原样返回），
+      // 'voice' 表示这条是口述后转写的，渲染时要标出来。
+      kind: m.kind || 'text',
       mine: (m.sender || m.from) === myEmail || m.self === true,
       created_at: m.created_at,
     }
@@ -145,7 +150,7 @@ export default function CommunionPage({ user, onBack, onOpenVoice }) {
 
   // ---------------- Chat ----------------
   async function openChat(friend) {
-    setActivePeer(friend); setMessages([]); setTypingFrom(null)
+    setActivePeer(friend); setMessages([]); setTypingFrom(null); setShowVoice(false)
     try {
       const data = await fetchChatHistory(friend.email, { limit: 50 })
       setMessages((data.messages || []).map(normMsg))
@@ -159,6 +164,19 @@ export default function CommunionPage({ user, onBack, onOpenVoice }) {
     const ok = realtimeStore.send({ type: 'chat', to: activePeer.email, body, client_id: 'c-' + Date.now() })
     if (!ok) { showToast(i18nT('连接断开，正在重连…')); return }
     setDraft('')
+  }
+  // 语音留言：录音在本地，转写走 /api/speech/transcribe，最终仍是一条 kind='voice' 的文字消息。
+  // 后端 chat_messages 只有 body(TEXT)+kind(VARCHAR20)，没有任何音频存储，
+  // 所以这里**不假装**能播放对方的录音——只把「这是口述的」如实标出来。
+  function sendVoiceNote({ transcript }) {
+    if (!activePeer) return false
+    const ok = realtimeStore.send({
+      type: 'chat', to: activePeer.email, body: transcript,
+      kind: 'voice', client_id: 'v-' + Date.now(),
+    })
+    if (!ok) { showToast(i18nT('连接断开，正在重连…')); return false }
+    setShowVoice(false)
+    return true
   }
   function onDraftChange(v) {
     setDraft(v)
@@ -270,7 +288,14 @@ export default function CommunionPage({ user, onBack, onOpenVoice }) {
               <div className="communion-messages">
                 {messages.map((m) => (
                   <div key={m.key} className={`communion-msg ${m.mine ? 'mine' : ''}`}>
-                    <div className="communion-bubble">{m.body}</div>
+                    <div className="communion-bubble">
+                      {m.kind === 'voice' && (
+                        <div style={{ fontSize: 11, opacity: 0.7, marginBottom: 3 }}>
+                          🎙 {i18nT('语音留言 · 转文字')}
+                        </div>
+                      )}
+                      {m.body}
+                    </div>
                     <div className="communion-msg-time">{timeLabel(m.created_at)}</div>
                   </div>
                 ))}
@@ -278,7 +303,25 @@ export default function CommunionPage({ user, onBack, onOpenVoice }) {
                 <div ref={messagesEndRef} />
               </div>
 
+              {showVoice && (
+                <div style={{ padding: '0 12px 8px' }}>
+                  <VoiceNoteComposer
+                    maxSeconds={60}
+                    startLabel={i18nT('录一段语音留言')}
+                    submitLabel={i18nT('发送')}
+                    storageNote={i18nT('说明：后端目前只保存文字，音频不会上传，对方收到的是这段转写文字（标注为语音留言）。')}
+                    onSubmit={sendVoiceNote}
+                  />
+                </div>
+              )}
+
               <div className="communion-compose glass">
+                <button
+                  type="button"
+                  onClick={() => setShowVoice((v) => !v)}
+                  aria-pressed={showVoice}
+                  title={i18nT('语音留言')}
+                >🎤</button>
                 <textarea
                   value={draft}
                   onChange={(e) => onDraftChange(e.target.value)}

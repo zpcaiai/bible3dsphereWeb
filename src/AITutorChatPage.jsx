@@ -1,13 +1,56 @@
 import { t as i18nT } from './i18n/runtime'
 /** AITutorChatPage — AI 属灵导师对话 (B10)。危机优先安全门;记忆接地;工具非牧者。 */
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useCallback } from 'react'
 import BackButton from './BackButton'
 import { tutorApi } from './api'
 import { getToken } from './auth'
+import { speakOnce, stopAllAudio } from './useGlobalAudio'
+import { useMediaPrefs } from './lib/media/useMediaPrefs'
+import { CardActions } from './lib/media/CardActions'
 
 const card = { background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, padding: 14, marginBottom: 12 }
 const btn = { cursor: 'pointer', borderRadius: 10, padding: '8px 12px', border: 'none', color: '#fff', fontWeight: 700, background: 'linear-gradient(135deg, rgba(125,211,252,0.85), rgba(139,92,246,0.6))' }
 const ghost = { cursor: 'pointer', borderRadius: 10, padding: '6px 10px', border: '1px solid rgba(255,255,255,0.15)', color: 'rgba(255,255,255,0.8)', background: 'transparent', fontSize: 12 }
+
+// 导师回答是散文,不是结构化的概念数据(接口只回一个 d.reply 字符串),
+// 所以这里不画概念关系图——凭一段文字反推出来的「概念网络」是编的,
+// 看上去越专业越骗人。能诚实做的是两件事:让这段话可以被听见、可以被带走。
+function AnswerActions({ answer, question, soundOn }) {
+  const [speaking, setSpeaking] = useState(false)
+
+  // 朗读只由点击触发。灵里干渴时盯着屏幕读长段文字很累,听着更容易听进去;
+  // 关掉声音这一页依然完整可用。
+  const readAloud = useCallback(async () => {
+    if (speaking) { stopAllAudio(); setSpeaking(false); return }
+    const text = String(answer || '').trim()
+    if (!text) return
+    setSpeaking(true)
+    try { await speakOnce(text, { rate: 0.92 }) } finally { setSpeaking(false) }
+  }, [answer, speaking])
+
+  // 图卡带走的是「这段回答」本身,不含对话里其他的话,也不含记忆库内容——
+  // 分享出去的东西必须是用户自己看得见、说得清的那一段。
+  const buildSpec = useCallback(() => {
+    const paras = String(answer || '').split(/\n+/).map((s) => s.trim()).filter(Boolean)
+    return {
+      badge: i18nT('属灵导师对话 · 摘录'),
+      title: String(question || '').slice(0, 40) || i18nT('一段解释'),
+      sections: [{ heading: i18nT('导师这样说'), items: paras.slice(0, 6), emphasis: true }],
+      footer: i18nT('这是 AI 的整理,不是牧者的判断。带着它去问一个真实的人。'),
+    }
+  }, [answer, question])
+
+  return (
+    <div style={{ marginTop: 6 }}>
+      {soundOn && (
+        <button type="button" style={{ ...ghost, padding: '4px 9px', fontSize: 11.5 }} onClick={readAloud}>
+          {speaking ? `⏹ ${i18nT('停止朗读')}` : `🔊 ${i18nT('念给我听')}`}
+        </button>
+      )}
+      <CardActions buildSpec={buildSpec} filename="tutor-answer-card.png" label="把这个解释做成一张卡" templates={['calm', 'ink', 'olive']} />
+    </div>
+  )
+}
 
 export default function AITutorChatPage({ user, onBack }) {
   const [threads, setThreads] = useState([])
@@ -18,8 +61,11 @@ export default function AITutorChatPage({ user, onBack }) {
   const [error, setError] = useState('')
   const [crisis, setCrisis] = useState(null)
   const endRef = useRef(null)
+  const { prefs } = useMediaPrefs()
 
   useEffect(() => { loadThreads() }, [])
+  // 离开这页时把自己播的朗读停掉,不让声音跟着用户跑到别的页面去。
+  useEffect(() => () => stopAllAudio(), [])
   useEffect(() => { if (endRef.current) endRef.current.scrollIntoView({ behavior: 'smooth' }) }, [messages])
 
   async function loadThreads() {
@@ -83,7 +129,7 @@ export default function AITutorChatPage({ user, onBack }) {
 
       <div style={{ ...card, minHeight: 240, maxHeight: 420, overflowY: 'auto' }}>
         {messages.length === 0 && <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)' }}>{i18nT('把你心里真实的处境说出来吧。例如:「我最近祷告很枯干,该怎么办?」')}</div>}
-        {messages.map(m => (
+        {messages.map((m, mi) => (
           <div key={m.id} style={{ marginBottom: 12, textAlign: m.role === 'user' ? 'right' : 'left' }}>
             <div style={{ display: 'inline-block', maxWidth: '88%', textAlign: 'left', borderRadius: 12, padding: '8px 12px', whiteSpace: 'pre-wrap', fontSize: 14, lineHeight: 1.7,
               background: m.role === 'user' ? 'rgba(125,211,252,0.16)' : (m.message_type === 'safety' ? 'rgba(255,80,80,0.12)' : 'rgba(255,255,255,0.06)'),
@@ -91,6 +137,14 @@ export default function AITutorChatPage({ user, onBack }) {
               {m.content}
             </div>
             {m.role === 'assistant' && m.used_memory ? <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', marginTop: 3 }}>{i18nT('· 参考了你的记忆库')}</div> : null}
+            {/* 危机回复不做朗读也不做图卡:那一刻要的是转向真实的人,不是把 AI 的话收藏起来。 */}
+            {m.role === 'assistant' && m.message_type !== 'safety' && m.content ? (
+              <AnswerActions
+                answer={m.content}
+                question={[...messages].slice(0, mi).reverse().find((x) => x.role === 'user')?.content || ''}
+                soundOn={prefs.sound}
+              />
+            ) : null}
           </div>
         ))}
         <div ref={endRef} />

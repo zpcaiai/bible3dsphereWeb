@@ -1,6 +1,13 @@
 // MapScenes.jsx — 内联 SVG 插图场景库（离线、零依赖）
 // 每个地点据 point.scene 或关键词自动匹配一幅主题插图。
 // 用法：<MapScene scene={resolveScene(point, mapId)} color="#e8b04b" />
+//      <MapSceneCard point={selected} mapId={config.id} color={selected._color} />
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { t } from './i18n/runtime'
+import { speakOnce, stopAllAudio } from './useGlobalAudio'
+import { MediaToggleRow } from './lib/media/MediaControls'
+import { CardActions } from './lib/media/CardActions'
+import { useMediaPrefs } from './lib/media/useMediaPrefs'
 
 // 关键词 → 场景。顺序敏感（先匹配更具体的）。
 const RULES = [
@@ -38,10 +45,10 @@ export function resolveScene(point, mapId) {
 }
 
 export const SCENE_LABEL = {
-  altar: '筑坛献祭', temple: '圣殿', tablets: '律法之约', crown: '君王', scroll: '书信',
-  bush: '荆棘火焰', star: '伯利恒之星', cross: '十字架', tomb: '空坟复活', walls: '城邑征战',
-  sea: '分海开路', fire: '云柱火柱', serpent: '铜蛇', lampstand: '七金灯台', boat: '航海宣教',
-  well: '活水之井', manna: '天降吗哪', mountain: '高山', journey: '旅程足迹',
+  altar: t("筑坛献祭"), temple: t("圣殿"), tablets: t("律法之约"), crown: t("君王"), scroll: t("书信"),
+  bush: t("荆棘火焰"), star: t("伯利恒之星"), cross: t("十字架"), tomb: t("空坟复活"), walls: t("城邑征战"),
+  sea: t("分海开路"), fire: t("云柱火柱"), serpent: t("铜蛇"), lampstand: t("七金灯台"), boat: t("航海宣教"),
+  well: t("活水之井"), manna: t("天降吗哪"), mountain: t("高山"), journey: t("旅程足迹"),
 }
 
 // 每个场景：返回 <g> 内的图形。统一 viewBox 0 0 120 120，主色用 currentColor 由外层 stroke/fill 控制。
@@ -114,5 +121,116 @@ export default function MapScene({ scene = 'journey', color = '#e8b04b' }) {
       style={{ color, display: 'block' }} aria-hidden="true">
       <Art scene={scene} />
     </svg>
+  )
+}
+
+// ── 场景讲解 + 图卡 ────────────────────────────────────────────────────────
+// 插图能让人「看见」这一站，但看见之后还需要被讲给听。
+// 下面这些拼装只取地点数据里真实存在的字段；没有的字段就整段不出现，不补话。
+
+/** 把一个地点整理成一段可朗读的讲解词。字段来自 BibleMap 的 point。 */
+export function sceneNarrationText(point, scene) {
+  if (!point) return ''
+  const name = point.name_zh || point.name_en
+  if (!name) return ''
+  const parts = []
+  parts.push(SCENE_LABEL[scene] ? `${name}，${SCENE_LABEL[scene]}。` : `${name}。`)
+  if (point.scriptureRef) parts.push(`${point.scriptureRef}。`)
+  if (point.altar) parts.push(`${t("在此筑坛：")}${point.altar}。`)
+  if (point.promise) parts.push(`${t("神的应许：")}${point.promise}。`)
+  if (point.note) parts.push(`${point.note}。`)
+  ;(point.events || []).forEach((ev) => {
+    const line = [ev.title, ev.summary].filter(Boolean).join('。')
+    if (line) parts.push(`${line}。`)
+  })
+  // 只有地名、没有任何记载时，如实说明这是途经地
+  if (parts.length === 1) parts.push(t("途经此地。"))
+  return parts.join('').replace(/。+/g, '。')
+}
+
+/**
+ * MapSceneCard — 地点详情里的场景块：插图 + 朗读讲解 + 生成图卡。
+ * @param {object} point   BibleMap 的地点对象
+ * @param {string} mapId   用于 resolveScene 的地图 id
+ * @param {string} color   该图层主色
+ */
+export function MapSceneCard({ point, mapId, color = '#e8b04b' }) {
+  const scene = resolveScene(point, mapId)
+  const [speaking, setSpeaking] = useState(false)
+  const speakingRef = useRef(false)
+  const { prefs } = useMediaPrefs()
+
+  // 卸载 / 换地点时停声：不该在用户已经点开下一站之后，还有人在念上一站
+  useEffect(() => () => {
+    if (speakingRef.current) { speakingRef.current = false; stopAllAudio() }
+  }, [point?.id])
+
+  const narration = sceneNarrationText(point, scene)
+
+  const readAloud = useCallback(async () => {
+    if (speakingRef.current) {
+      speakingRef.current = false
+      setSpeaking(false)
+      stopAllAudio()
+      return
+    }
+    if (!narration) return
+    speakingRef.current = true
+    setSpeaking(true)
+    await speakOnce(narration, { rate: 0.88 })
+    speakingRef.current = false
+    setSpeaking(false)
+  }, [narration])
+
+  const buildSpec = useMemo(() => () => ({
+    badge: SCENE_LABEL[scene] || SCENE_LABEL.journey,
+    kicker: point?.scriptureRef || '',
+    title: point?.name_zh || point?.name_en || '',
+    subtitle: point?.name_en || '',
+    sections: [
+      point?.altar ? { heading: t("在此筑坛："), items: [point.altar] } : null,
+      point?.promise ? { heading: t("神的应许："), items: [point.promise], emphasis: true } : null,
+      (point?.events || []).length
+        ? { heading: t("圣经记载"), items: point.events.map((ev) => [ev.title, ev.ref].filter(Boolean).join(' · ')) }
+        : null,
+    ].filter(Boolean),
+    footer: point?.note || t("途经此地。"),
+  }), [point, scene])
+
+  return (
+    <div className="biblemap-scene-card">
+      <div className="biblemap-scene" style={{ background: color + '1a' }}>
+        <MapScene scene={scene} color={color} />
+      </div>
+      <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 8, marginTop: 8 }}>
+        <span style={{ fontSize: 12, color, opacity: 0.85 }}>{SCENE_LABEL[scene] || SCENE_LABEL.journey}</span>
+        {narration && (
+          <button
+            type="button"
+            onClick={readAloud}
+            aria-pressed={speaking}
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: 6,
+              padding: '5px 11px', borderRadius: 999, fontSize: 12.5, cursor: 'pointer',
+              border: `1px solid ${color}55`, background: color + '14', color,
+            }}
+          >
+            {speaking ? `⏹ ${t("停止讲解")}` : `🔊 ${t("讲解这一站")}`}
+          </button>
+        )}
+      </div>
+      <MediaToggleRow show={['sound']} compact />
+      {!prefs.sound && (
+        <div style={{ fontSize: 11.5, color: 'rgba(255,255,255,0.42)', marginTop: -6, marginBottom: 8 }}>
+          {t("打开「声音」后才会出声，讲解不会自己开始。")}
+        </div>
+      )}
+      <CardActions
+        buildSpec={buildSpec}
+        filename={`${point?.id || 'scene'}-card.png`}
+        label="把这一站做成图卡"
+        templates={['ink', 'dawn', 'olive']}
+      />
+    </div>
   )
 }

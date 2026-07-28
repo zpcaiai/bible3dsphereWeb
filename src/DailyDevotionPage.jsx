@@ -4,6 +4,10 @@ import { t as i18nT } from './i18n/runtime'
  *
  * 展示「晨恩日新——福音灵修日引」（保罗·区普）按日历日期组织的365篇内容。
  * 支持整体朗读和分段朗读（与镜鉴 tab 保持一致）。
+ *
+ * 音频层（可选、加法）：原有的「整体朗读」是一口气读完的长音频，听着像播报。
+ * 这里另加「一分钟音频版」——金句 → 正文（分段）→ 经文 → 一句祷告，
+ * 段与段之间留短暂的安静，让人跟得上。两者并存，互不影响。
  */
 
 import { useEffect, useMemo, useState } from 'react'
@@ -11,6 +15,16 @@ import BackButton from './BackButton'
 import { API_BASE, fetchScripture } from './api.js'
 import { TTSButton, TTSFullBar } from './useGlobalAudio.jsx'
 import { a11yClickProps } from './lib/a11yClick';
+import { useGuidedAudio } from './lib/media/useGuidedAudio'
+import { useMediaPrefs } from './lib/media/useMediaPrefs'
+import { GuidedAudioBar, MediaToggleRow, CountdownRing } from './lib/media/MediaControls'
+
+// 一分钟音频版的留白：只是「让上一段落下去」的短停，不是操练式的长留白，
+// 所以以秒计而不是以十秒计——这里的目的是听得进去，不是默观。
+const DD_QUOTE_PAUSE = 6
+const DD_BODY_PAUSE = 5
+const DD_SCRIPTURE_PAUSE = 4
+const DD_CLOSING_PRAYER = i18nT('主啊，愿这段话今天在我里面作工。阿们。')
 
 // ── Chinese month / day labels ────────────────────────────────────────────────
 const MONTH_LABELS = ['一月','二月','三月','四月','五月','六月',
@@ -271,6 +285,13 @@ export default function DailyDevotionPage({ onBack }) {
   const [viewYear]  = useState(today.getFullYear())
   const [selectedKey, setSelectedKey] = useState(todayKey)
 
+  const { prefs } = useMediaPrefs()
+  const guided = useGuidedAudio()
+
+  // 换日期或离开页面都停声（依赖用稳定的 guided.stop，
+  // 否则播报中每次 setState 都会触发清理、把自己的声音掐掉）
+  useEffect(() => () => guided.stop(), [selectedKey, guided.stop])
+
   // Load devotions.json from public folder
   useEffect(() => {
     fetch('/devotions.json')
@@ -301,6 +322,27 @@ export default function DailyDevotionPage({ onBack }) {
     if (d.body) parts.push(d.body)
     if (d.scripture) parts.push('更多的信息和勉励：' + d.scripture)
     return parts.join('\n\n')
+  }
+
+  // 一分钟音频版：把同一篇灵修拆成「金句 → 正文分段 → 经文 → 一句祷告」，
+  // 每段之间留一点安静。和上面的「整体朗读」是两种听法，用户自己选。
+  function buildGuidedSteps(d) {
+    if (!d) return []
+    const steps = []
+    if (d.quote) steps.push({ text: d.quote, pauseAfter: DD_QUOTE_PAUSE, label: i18nT('今日金句') })
+    if (d.body) {
+      const paras = String(d.body).split(/\n{2,}/).map(x => x.trim()).filter(Boolean)
+      paras.forEach((para) => steps.push({ text: para, pauseAfter: DD_BODY_PAUSE, label: i18nT('灵修正文') }))
+    }
+    if (d.scripture) steps.push({ text: `${i18nT('更多的信息和勉励：')}${d.scripture}`, pauseAfter: DD_SCRIPTURE_PAUSE, label: i18nT('经文') })
+    steps.push({ text: DD_CLOSING_PRAYER, pauseAfter: 0, label: i18nT('祷告') })
+    return steps
+  }
+
+  function startGuidedDevotion() {
+    const steps = buildGuidedSteps(devotion)
+    if (!steps.length) return
+    guided.start(steps, { rate: 0.9 })
   }
 
   if (loading) {
@@ -391,6 +433,32 @@ export default function DailyDevotionPage({ onBack }) {
               buildText={() => buildTTSText(devotion)}
               label={i18nT('整体朗读')}
             />
+
+            {/* 一分钟音频版：分段 + 短停，默认不响，用户自己开、自己点播放 */}
+            <MediaToggleRow show={['sound']} compact />
+            {prefs.sound ? (
+              <GuidedAudioBar
+                guided={guided}
+                onStart={startGuidedDevotion}
+                label="一分钟音频版"
+                hint={i18nT('金句 → 正文 → 经文 → 祷告，段落之间留一点安静')}
+              />
+            ) : (
+              <div style={{ fontSize: 11.5, color: 'rgba(255,255,255,0.38)', marginBottom: 12, lineHeight: 1.6 }}>
+                {i18nT('打开上面的「声音」，可以听分段留白的一分钟音频版。')}
+              </div>
+            )}
+            {guided.state === 'waiting' && guided.remaining > 0 && (
+              <div style={{ display: 'grid', placeItems: 'center', margin: '2px 0 10px' }}>
+                <CountdownRing
+                  progress={((guided.currentStep?.pauseAfter || 1) - guided.remaining) / (guided.currentStep?.pauseAfter || 1)}
+                  size={64} stroke={5} color="#34c759"
+                  label={`${i18nT('安静还剩')} ${guided.remaining} ${i18nT('秒')}`}
+                >
+                  {guided.remaining}s
+                </CountdownRing>
+              </div>
+            )}
           </div>
 
           <div style={S.cardBody}>

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { Radar } from '../../components/charts'
 import { t as i18nT } from '../../i18n/runtime'
 import {
   addFormationChainEdge,
@@ -76,6 +77,48 @@ const PROMPTS = {
   RECOVERY_RESPONSE: '什么回应帮助你回到稳定或重新开始？', FORMATION_DIRECTION: '只按你自己的理解，这件事可能在塑造什么方向？',
 }
 
+// 五个方向直接复用 GROUPS（页面自己的分组），保证雷达图和下面的子页签说的是同一件事。
+const RADAR_AXES = [
+  { key: 'identity', label: '身份信念', types: GROUPS.identity },
+  { key: 'desires', label: '渴望担忧', types: GROUPS.desires },
+  { key: 'temptations', label: '试探选择', types: GROUPS.temptations },
+  { key: 'practices', label: '行为操练', types: GROUPS.practices },
+  { key: 'grace', label: '恩典恢复', types: GROUPS.grace },
+]
+
+const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000
+
+function nodeStamp(node) {
+  const raw = node.created_at || node.occurred_at
+  const time = raw ? new Date(raw).getTime() : NaN
+  return Number.isNaN(time) ? null : time
+}
+
+// 只有当「上一个 30 天」真的有带时间的记录时才画第二个系列。
+// 没有历史就只画一条：绝不用一圈 0 值当作“过去”，那会让现在看起来一直在增长。
+function buildFormationRadar(nodes) {
+  const countBy = (items) => RADAR_AXES.reduce((acc, axis) => {
+    acc[axis.key] = items.filter((node) => axis.types.includes(node.node_type)).length
+    return acc
+  }, {})
+  const now = Date.now()
+  const dated = nodes.filter((node) => nodeStamp(node) != null)
+  const recent = dated.filter((node) => now - nodeStamp(node) <= THIRTY_DAYS)
+  const previous = dated.filter((node) => {
+    const gap = now - nodeStamp(node)
+    return gap > THIRTY_DAYS && gap <= THIRTY_DAYS * 2
+  })
+  const series = previous.length
+    ? [{ name: i18nT('最近 30 天'), values: countBy(recent) }, { name: i18nT('前一个 30 天'), values: countBy(previous) }]
+    : [{ name: i18nT('全部已有记录'), values: countBy(nodes) }]
+  return {
+    series,
+    max: Math.max(1, ...series.flatMap((item) => Object.values(item.values))),
+    total: nodes.length,
+    hasHistory: previous.length > 0,
+  }
+}
+
 function Notice({ error, message }) {
   if (error) return <div className="ft-workspace-error" role="alert">{error}</div>
   if (message) return <div className="ft-workspace-success" role="status">{message}</div>
@@ -121,6 +164,13 @@ function CurrentView() {
       await load()
     } catch (caught) { setError(caught.message) } finally { setBusy(false) }
   }
+  // 雷达图而不是条形：这五个方向是「同一张脸的五个侧面」，需要同时看，
+  // 而且凹进去的那一角（几乎没有记录的方向）比“哪一类最多”更值得被看见。
+  const radar = useMemo(() => buildFormationRadar([
+    ...(snapshot?.user_reported_items || []), ...(snapshot?.observed_relations || []),
+    ...(snapshot?.confirmed_patterns || []), ...(snapshot?.pending_hypotheses || []),
+    ...(snapshot?.grace_and_recovery || []),
+  ]), [snapshot])
   const sections = [
     ['我主动表达的', snapshot?.user_reported_items, 'user'],
     ['事实与规则关联', snapshot?.observed_relations, 'observed'],
@@ -138,6 +188,19 @@ function CurrentView() {
           <span>{i18nT('形成链')} <b>{snapshot?.record_coverage?.active_chains || 0}</b></span>
           <span className={quality?.quality_passed ? 'pass' : 'warn'}>{quality?.quality_passed ? i18nT('证据边界通过') : i18nT('需要检查证据边界')}</span>
         </div>
+        {radar.total > 0 && (
+          <div className="ft-formation-radar" style={{ margin: '12px 0' }}>
+            <Radar
+              axes={RADAR_AXES.map((axis) => ({ key: axis.key, label: i18nT(axis.label) }))}
+              series={radar.series}
+              max={radar.max}
+              title={i18nT('五个形成方向上的记录分布')}
+              subtitle={radar.hasHistory
+                ? i18nT('数值是记录条数，不是成熟度、分数或评价；两条线只比较记录多少，不代表进步或退步。')
+                : i18nT('数值是记录条数，不是成熟度、分数或评价；还没有上一个 30 天的记录可比较，所以只有一条。')}
+            />
+          </div>
+        )}
         {sections.map(([title, items, tone]) => <section className={`ft-formation-block ${tone}`} key={title}><h4>{i18nT(title)}</h4>{items?.length ? <div className="ft-formation-card-grid">{items.map((item) => <NodeCard key={item.id} node={item} compact />)}</div> : <p>{i18nT('暂无记录')}</p>}</section>)}
         {snapshot?.reflective_questions?.length > 0 && <section className="ft-formation-questions"><h4>{i18nT('可以由你思考的问题')}</h4>{snapshot.reflective_questions.map((item) => <p key={item}>“{item}”</p>)}</section>}
         <details className="ft-formation-limits"><summary>{i18nT('查看局限与边界')}</summary><ul>{snapshot?.limitations?.map((item) => <li key={item}>{item}</li>)}</ul></details>

@@ -6,6 +6,7 @@ import { API_BASE, fetchVoiceGroups } from './api'
 import MeetingScheduleModal from './MeetingScheduleModal'
 import { t } from './i18n/runtime'
 import { a11yClickProps } from './lib/a11yClick';
+import { BarSeries, CalendarHeatmap, localDateKey } from './components/charts'
 
 function authHeaders(token) {
   const h = {}
@@ -40,6 +41,24 @@ export default function GroupHubPage({ user, token, onBack, onOpenPanel }) {
   }, [token])
 
   const nextFor = (gid) => upcoming.find((m) => m.groupId === gid)
+
+  // 规模对比只用 fetchVoiceGroups 真实回传的 member_count，不做任何加权。
+  const sizeItems = (groups || [])
+    .map((g) => ({ label: g.name, value: Number(g.member_count) || 0 }))
+    .sort((a, b) => b.value - a.value)
+  const totalMembers = sizeItems.reduce((sum, item) => sum + item.value, 0)
+
+  // 聚会活跃度用 /minutes 的 createdAt——纪要是通话结束后自动归档的，
+  // 所以「哪天有纪要」= 那天真的聚过，这是这一页唯一带日期的量化数据。
+  const minuteCells = (() => {
+    const byDate = new Map()
+    minutes.forEach((m) => {
+      const date = localDateKey(new Date(m.createdAt))
+      if (!date) return
+      byDate.set(date, (byDate.get(date) || 0) + 1)
+    })
+    return [...byDate.entries()].map(([date, value]) => ({ date, value }))
+  })()
 
   return (
     <div style={S.page}>
@@ -85,6 +104,38 @@ export default function GroupHubPage({ user, token, onBack, onOpenPanel }) {
             </div>
           )
         })}
+
+        {/* 参与情况可视化：只画接口真的给了数字的两件事 */}
+        {sizeItems.length > 0 && (
+          <div style={{ marginTop: 14 }}>
+            <BarSeries
+              items={sizeItems}
+              unit={t('人')}
+              colorMode="categorical"
+              title={t('各小组人数')}
+              subtitle={t('{n} 个小组共 {total} 人，最大的是「{top}」（{topN} 人）。', { n: sizeItems.length, total: totalMembers, top: sizeItems[0].label, topN: sizeItems[0].value })}
+            />
+          </div>
+        )}
+
+        {minuteCells.length > 0 ? (
+          <div style={{ marginTop: 12 }}>
+            <CalendarHeatmap
+              data={minuteCells}
+              weeks={26}
+              unit={t('次')}
+              title={t('聚会活跃度')}
+              subtitle={t('近 26 周里有 {days} 天留下了聚会纪要，格子越深说明那天聚得越多。', { days: minuteCells.length })}
+            />
+            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.32)', marginTop: 6, lineHeight: 1.6 }}>
+              {t('只统计最近 20 份纪要；接口没有逐人出勤数据，所以这里画的是「哪天聚了」，不是「谁来了」。')}
+            </div>
+          </div>
+        ) : groups && groups.length > 0 && (
+          <div style={{ ...S.dim, padding: '18px 12px', fontSize: 12.5 }}>
+            {t('还没有任何聚会纪要，所以画不出聚会活跃度。开一次带 AI 纪要的语音聚会后就会有了。')}
+          </div>
+        )}
       </div>
 
       {/* 历史纪要：通话 AI 纪要自动归档于此 */}

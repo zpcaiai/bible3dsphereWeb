@@ -48,6 +48,8 @@ import {
   saveSimplicityAudit,
 } from '../../lib/holyHabitStorage'
 import { MODULE_DISCLAIMER } from '../../lib/pastoralSafety'
+import { todayKey } from '../../lib/scriptureFormationEngine'
+import { CalendarHeatmap, StatTile } from '../../../../components/charts'
 
 function MiniTabs({ active, onChange }) {
   const tabs = [
@@ -65,6 +67,64 @@ function SummaryCard({ title, items }) {
     <article className="sf-card sf-summary-card">
       <h3>{title}</h3>
       <dl>{items.filter((item) => item.value !== undefined && item.value !== null && item.value !== '').map((item) => <div key={item.label}><dt>{item.label}</dt><dd>{Array.isArray(item.value) ? item.value.join(', ') : item.value}</dd></div>)}</dl>
+    </article>
+  )
+}
+
+// 习惯签到里唯一带日期的字段是 checkinDate（引擎写入时用的是本地日期键）；
+// 这里只按它聚合，没有日期或没完成的记录一律不计入，也不补任何「大概应该有」的日子。
+function summarizeHabitContinuity(checkins = []) {
+  const byDate = new Map()
+  checkins.forEach((item) => {
+    if (!item?.completed) return
+    const date = String(item.checkinDate || '').slice(0, 10)
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return
+    byDate.set(date, (byDate.get(date) || 0) + 1)
+  })
+  const data = Array.from(byDate, ([date, value]) => ({ date, value })).sort((a, b) => a.date.localeCompare(b.date))
+  // 今天还没开始不算「断了」，所以从今天没记录时往前退一天再数。
+  const cursor = new Date()
+  if (!byDate.has(todayKey(cursor))) cursor.setDate(cursor.getDate() - 1)
+  let streak = 0
+  while (byDate.has(todayKey(cursor))) {
+    streak += 1
+    cursor.setDate(cursor.getDate() - 1)
+  }
+  const spark = Array.from({ length: 14 }, (_, i) => {
+    const day = new Date()
+    day.setDate(day.getDate() - (13 - i))
+    return byDate.get(todayKey(day)) || 0
+  })
+  return { data, streak, activeDays: data.length, totalCheckins: checkins.length, spark }
+}
+
+// 为什么是热力图：习惯的真相不在「今天做了几个」，而在「有没有回来、断在哪里」。
+// 把每一天摊平在同一张网格上，空白和填色一样诚实——这正好对着本模块反复讲的
+// 「恩典最小值」：断掉不是失败，看得见断在哪才知道从哪里温柔地回来。
+function HabitContinuity({ checkins }) {
+  const summary = useMemo(() => summarizeHabitContinuity(checkins), [checkins])
+  if (!summary.data.length) {
+    return (
+      <article className="sf-card">
+        <h3>{T('习惯连续性', 'Habit continuity')}</h3>
+        <p className="sf-empty">{T('还没有带日期的签到记录。完成第一次习惯签到后，这张格子会从那一天开始长出来；在那之前它就空着。', 'No dated check-ins yet. The grid starts filling from your first habit check-in; until then it stays honestly empty.')}</p>
+      </article>
+    )
+  }
+  return (
+    <article className="sf-card">
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, marginBottom: 12 }}>
+        <StatTile label={T('当前连续', 'Current streak')} value={summary.streak} unit={T(' 天', ' d')} spark={summary.spark} />
+        <StatTile label={T('有操练的天数', 'Days with practice')} value={summary.activeDays} unit={T(' 天', ' d')} />
+        <StatTile label={T('累计签到', 'Total check-ins')} value={summary.totalCheckins} />
+      </div>
+      <CalendarHeatmap
+        title={T('习惯连续性', 'Habit continuity')}
+        subtitle={T('深色是那天有完成的操练。要看的是空档有多长，而不是连续数字有多大——断了就从今天回来。', 'Darker cells are days a practice was completed. Read the gaps, not the record: a break just means today is where you return.')}
+        data={summary.data}
+        weeks={26}
+        unit={T(' 次', ' times')}
+      />
     </article>
   )
 }
@@ -371,6 +431,7 @@ export default function HolyHabitDashboard({ userId = 'local-user' }) {
             <SummaryCard title="Today Habits" items={[{ label: 'Due today', value: String(dashboard.todayHabits.length) }, { label: 'Completed today', value: String(dashboard.habitCompletionSummary.todayCompleted) }, { label: 'Total check-ins', value: String(dashboard.habitCompletionSummary.totalCheckins) }]} />
             <SummaryCard title="Rest and Fasting" items={[{ label: 'Next Sabbath', value: dashboard.nextSabbath?.weeklyDay || 'No plan' }, { label: 'Active fast', value: dashboard.activeFastingPlan?.title || 'No active fast' }, { label: 'Rest warning', value: dashboard.restWarning }]} />
           </div>
+          <HabitContinuity checkins={data.habitCheckins} />
           <article className="sf-card sf-flow-card">
             <h3>Orchestrator</h3>
             <label>Intent<textarea value={intent} onChange={(event) => setIntent(event.target.value)} /></label>

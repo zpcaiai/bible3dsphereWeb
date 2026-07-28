@@ -1,5 +1,7 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useSpeechInput } from '../../hooks/useSpeechInput'
 import { t as i18nT } from '../../i18n/runtime'
+import { speakOnce, stopAllAudio } from '../../useGlobalAudio'
 import {
   acceptInterventionProposal,
   answerReflectionQuestion,
@@ -96,6 +98,26 @@ export default function FormationTwinReflections({ user, onSafety }) {
     () => interventions.find((item) => !['COMPLETED', 'CANCELLED', 'STOPPED'].includes(item.execution_status)) || null,
     [interventions],
   )
+
+  // 说出来常常比打字更接近当下的真实。语音只走全站统一的 useSpeechInput：
+  // 转写结果先落进输入框，由你改过再保存，绝不跳过确认直接成为记录。
+  const speech = useSpeechInput({ onTranscript: (text) => setAnswer((value) => (value ? `${value} ${text}` : text)) })
+  const [speaking, setSpeaking] = useState(false)
+  const speakingRef = useRef(false)
+  // 只停自己播过的那一段；没播过就不去打断别的页面的朗读。
+  useEffect(() => () => { if (speakingRef.current) stopAllAudio() }, [])
+
+  const toggleDictation = () => (speech.isRecording ? speech.stopRecording() : speech.startRecording())
+
+  // 朗读永远由点击触发（媒体护栏：任何声音都不得在用户未开启时自动播放）。
+  // 镜像是「被理解」的时刻，听见比读到更容易停下来；关掉声音这页依然完整可用。
+  const speakMirror = async () => {
+    if (speakingRef.current) { stopAllAudio(); speakingRef.current = false; setSpeaking(false); return }
+    const text = [mirror?.headline, mirror?.mirror_text].filter(Boolean).join('。')
+    if (!text.trim()) return
+    speakingRef.current = true; setSpeaking(true)
+    try { await speakOnce(text, { rate: 0.92 }) } finally { speakingRef.current = false; setSpeaking(false) }
+  }
 
   const loadAll = useCallback(async () => {
     if (!user) return
@@ -195,8 +217,8 @@ export default function FormationTwinReflections({ user, onSafety }) {
       {tab === 'today' && <section className="ft-reflection-view" aria-label={i18nT('今日镜像')}>
         <div className="ft-reflection-section-head"><div><h4>{i18nT('今天的一面镜子')}</h4><p>{i18nT('根据你主动记录和确认的内容')}</p></div><button type="button" disabled={!!busy} onClick={createDaily}>{busy === 'daily' ? i18nT('生成中…') : i18nT('生成今日镜像')}</button></div>
         {mirror ? <>
-          <article className="ft-mirror-card"><span>{i18nT('镜像')}</span><h4>{mirror.headline}</h4><p>{mirror.mirror_text}</p><SourceList sources={mirror.source_references_json || []} limitations={mirror.limitations_json || []} /></article>
-          {question && <article className="ft-question-card"><span>{i18nT('一个问题')}</span><h4>{question.question_text}</h4><textarea value={answer} onChange={(event) => setAnswer(event.target.value)} placeholder={i18nT('可以简短回答，也可以跳过')} /><footer><button type="button" disabled={!answer.trim() || !!busy} onClick={submitAnswer}>{i18nT('保存回答')}</button><button type="button" onClick={() => run('question-skip', () => skipReflectionQuestion(question.id), '已跳过，不会产生负面标签。')}>{i18nT('跳过')}</button><button type="button" onClick={() => run('question-block', () => blockReflectionQuestion(question.id), '不再询问类似问题。')}>{i18nT('不再问类似问题')}</button></footer></article>}
+          <article className="ft-mirror-card"><span>{i18nT('镜像')}</span><h4>{mirror.headline}</h4><p>{mirror.mirror_text}</p><div className="ft-mirror-audio"><button type="button" onClick={speakMirror}>{speaking ? i18nT('停止朗读') : i18nT('朗读这面镜子')}</button><small>{i18nT('只在你点击时朗读；关掉声音后这页的内容依然完整。')}</small></div><SourceList sources={mirror.source_references_json || []} limitations={mirror.limitations_json || []} /></article>
+          {question && <article className="ft-question-card"><span>{i18nT('一个问题')}</span><h4>{question.question_text}</h4><textarea value={answer} onChange={(event) => setAnswer(event.target.value)} placeholder={i18nT('可以简短回答，也可以跳过')} /><div className="ft-question-voice"><button type="button" onClick={toggleDictation} disabled={speech.isTranscribing}>{speech.isRecording ? `${i18nT('停止录音')} ${speech.recordingSeconds}s` : speech.isTranscribing ? i18nT('正在转写…') : i18nT('语音回答')}</button><small>{i18nT('语音只用于转写成文字；转写会填进上面的框，由你修改后再决定是否保存。')}</small>{speech.recordingError && <small role="alert">{speech.recordingError}</small>}</div><footer><button type="button" disabled={!answer.trim() || !!busy} onClick={submitAnswer}>{i18nT('保存回答')}</button><button type="button" onClick={() => run('question-skip', () => skipReflectionQuestion(question.id), '已跳过，不会产生负面标签。')}>{i18nT('跳过')}</button><button type="button" onClick={() => run('question-block', () => blockReflectionQuestion(question.id), '不再询问类似问题。')}>{i18nT('不再问类似问题')}</button></footer></article>}
           {proposal ? <article className="ft-action-card"><span>{i18nT('一个可选行动')}</span><h4>{proposal.title}</h4><p>{proposal.description}</p><small>{proposal.rationale}</small><ProposalSummary proposal={proposal} effectReviewEnabled={settings.effect_review_enabled} /><p className="ft-action-consent">{i18nT('只有点击接受后，系统才会写入目标模块。默认一次性、无提醒、不重复。')}</p></article> : <EmptyState title="今天不必增加行动">{i18nT('只保留这次看见，也是一个完整且合法的选择。')}</EmptyState>}
         </> : <EmptyState title="尚未生成今日镜像">{i18nT('系统不会为了填满页面而虚构状态。你可以主动生成，也可以今天不分析。')}</EmptyState>}
       </section>}
