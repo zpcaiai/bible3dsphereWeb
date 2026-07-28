@@ -14,6 +14,58 @@ describe('API_BASE resolution', () => {
   })
 })
 
+describe('dating priority anonymous survey API', () => {
+  afterEach(() => vi.restoreAllMocks())
+
+  it('submits only the survey-scoped anonymous id and answer fields', async () => {
+    const mockFetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ ok: true, anonymous: true, stats: { total: 1 } }),
+    })
+    vi.stubGlobal('fetch', mockFetch)
+    const { submitAnonymousDatingPriority } = await import('../api')
+
+    const result = await submitAnonymousDatingPriority('survey-anonymous-123456', {
+      version: 3,
+      submittedAt: '2026-07-28T00:00:00.000Z',
+      perspective: 'female_to_male',
+      perspectiveLabel: '女性选择男性',
+      selected: [],
+      vetoes: [],
+      totalScore: 0,
+    })
+
+    expect(result.stats.total).toBe(1)
+    const [url, options] = mockFetch.mock.calls[0]
+    expect(url).toBe('/api/dating-priority/submit')
+    expect(options.method).toBe('POST')
+    expect(JSON.parse(options.body)).toEqual({
+      visitor_id: 'survey-anonymous-123456',
+      perspective: 'female_to_male',
+      version: 3,
+      selected: [],
+      vetoes: [],
+      totalScore: 0,
+    })
+  })
+
+  it('loads current aggregates for one answer perspective', async () => {
+    const mockFetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ ok: true, anonymous: true, total: 9 }),
+    })
+    vi.stubGlobal('fetch', mockFetch)
+    const { fetchDatingPriorityStats } = await import('../api')
+
+    const result = await fetchDatingPriorityStats('male_to_female')
+
+    expect(result.total).toBe(9)
+    expect(mockFetch).toHaveBeenCalledWith(
+      '/api/dating-priority/stats?perspective=male_to_female',
+    )
+  })
+})
+
 describe('fetchLayout', () => {
   afterEach(() => vi.restoreAllMocks())
 

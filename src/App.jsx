@@ -73,6 +73,7 @@ const SpiritualFormationPage = lazyWithRetry(() => import('./features/spiritual-
 const AttentionPage = lazyWithRetry(() => import('./features/attention/app/AttentionPage'))
 const FormationTwinPage = lazyWithRetry(() => import('./features/formation-twin/FormationTwinPage'))
 const SpiritualPlanetPlatformPage = lazyWithRetry(() => import('./features/spiritual-planet/SpiritualPlanetPlatformPage'))
+const DatingPriorityPage = lazyWithRetry(() => import('./DatingPriorityPage'))
 
 // React Query client for HabitsPage
 const queryClient = new QueryClient({
@@ -1932,6 +1933,7 @@ function AppContent() {
                       { icon: '🃏', labelKey: 'home.snapshot.memoryDeck', panel: 'memory-deck' },
                       { icon: '🗃', labelKey: 'home.snapshot.personalSearch', panel: 'personal-search' },
                       { icon: '📦', labelKey: 'home.snapshot.exportData', panel: 'export-data' },
+                      { icon: '💍', labelKey: '婚恋优先级', panel: 'dating-priority' },
                     ].map((item, i) => (
                       <button key={i}
                         onClick={() => item.action ? item.action() : handlePanelSwitch(item.panel)}
@@ -3122,6 +3124,14 @@ function AppContent() {
           <div className="page-overlay">
             <Suspense fallback={null}>
               <ExportDataPage onBack={() => setActivePanel('sphere')} />
+            </Suspense>
+          </div>
+        )}
+
+        {activePanel === 'dating-priority' && (
+          <div className="page-overlay">
+            <Suspense fallback={null}>
+              <DatingPriorityPage onBack={() => setActivePanel('sphere')} />
             </Suspense>
           </div>
         )}

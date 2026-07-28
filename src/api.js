@@ -28,6 +28,28 @@ async function readApiJson(response, fallbackMessage) {
   return data
 }
 
+export async function submitAnonymousDatingPriority(visitorId, result) {
+  const response = await fetch(`${API_BASE}/dating-priority/submit`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      visitor_id: visitorId,
+      perspective: result.perspective,
+      version: result.version,
+      selected: result.selected,
+      vetoes: result.vetoes,
+      totalScore: result.totalScore,
+    }),
+  })
+  return readApiJson(response, '匿名提交失败，请稍后重试')
+}
+
+export async function fetchDatingPriorityStats(perspective) {
+  const params = new URLSearchParams({ perspective })
+  const response = await fetch(`${API_BASE}/dating-priority/stats?${params}`)
+  return readApiJson(response, '统计结果加载失败')
+}
+
 // Personal formation graph (PostgreSQL-backed, depth-limited for 3D rendering).
 export async function fetchFormationSubgraph(
   userId,

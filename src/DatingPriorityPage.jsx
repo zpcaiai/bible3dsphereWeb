@@ -1,403 +1,673 @@
-import { t as i18nT } from './i18n/runtime'
-import { useState, useCallback, useEffect } from 'react'
+import { useMemo, useState } from 'react'
 import BackButton from './BackButton'
-import { API_BASE } from './api'
-import { getOrCreateVisitorId } from './utils'
+import {
+  DATING_PRIORITY_PERSPECTIVES,
+  getDatingPriorityItems,
+  getDatingVetoItems,
+} from './datingPriorityData'
+import { submitAnonymousDatingPriority } from './api'
+import './DatingPriorityPage.css'
 
-const DATA = {
-  dx_focus: [
-    '属灵生命的真实委身度',
-    '外形吸引力',
-    '"好相处"',
-    '情绪稳定性',
-    '明确婚恋意图',
-    '消费观',
-    '呼召与使命同路人',
-    '内在品格',
-    '生活习惯与理念',
-    '年龄适宜',
-  ],
-  dx_block: [
-    '性格强势或不稳定',
-    '消费观严重不合',
-    '忽略对方',
-    '信仰背景冲突',
-    '健康隐患或不良习惯',
-  ],
-  zm_focus: [
-    '属灵生命的真实委身度',
-    '稳定的经济能力',
-    '安全舒适感',
-    '真诚可沟通',
-    '三观与信仰背景同频',
-    '原生家庭和睦',
-    '明确的未来规划',
-    '责任与担当',
-    '优先被选择感',
-    '主动推进关系',
-  ],
-  zm_block: [
-    '控制欲强',
-    '原生家庭复杂或世俗',
-    '生活懒惰或严重不良习惯',
-    '性格幼稚不成熟',
-    '信仰冷淡',
-  ],
+const MAX_SELECTIONS = 10
+const STORAGE_KEY = 'dating-priority-survey:last'
+const ANONYMOUS_ID_KEY = 'dating-priority-survey:anonymous-id'
+
+function getOrCreateAnonymousSurveyId() {
+  try {
+    const existing = window.localStorage.getItem(ANONYMOUS_ID_KEY)
+    if (existing) return existing
+    const id = typeof crypto !== 'undefined' && crypto.randomUUID
+      ? `survey-${crypto.randomUUID()}`
+      : `survey-${Date.now()}-${Math.random().toString(36).slice(2, 12)}`
+    window.localStorage.setItem(ANONYMOUS_ID_KEY, id)
+    return id
+  } catch {
+    return `survey-${Date.now()}-${Math.random().toString(36).slice(2, 12)}`
+  }
 }
 
-export default function DatingPriorityPage({ onBack }) {
-  // 'dx' = 弟兄对姐妹, 'zm' = 姐妹对弟兄
-  const [perspective, setPerspective] = useState(null)
-  const [focusOrder, setFocusOrder] = useState([])
-  const [blockOrder, setBlockOrder] = useState([])
-  const [submitting, setSubmitting] = useState(false)
-  const [submitted, setSubmitted] = useState(false)
-  const [showStats, setShowStats] = useState(false)
-  const [stats, setStats] = useState(null)
-  const [statsLoading, setStatsLoading] = useState(false)
-
-  const focusList = perspective === 'dx' ? DATA.dx_focus : DATA.zm_focus
-  const blockList = perspective === 'dx' ? DATA.dx_block : DATA.zm_block
-
-  const handleSelect = useCallback((item, type) => {
-    if (type === 'focus') {
-      setFocusOrder(prev => {
-        if (prev.includes(item)) {
-          return prev.filter(x => x !== item)
-        }
-        return [...prev, item]
-      })
-    } else {
-      setBlockOrder(prev => {
-        if (prev.includes(item)) {
-          return prev.filter(x => x !== item)
-        }
-        return [...prev, item]
-      })
-    }
-  }, [])
-
-  const handleSubmit = async () => {
-    if (focusOrder.length === 0 && blockOrder.length === 0) return
-    setSubmitting(true)
-    try {
-      const visitorId = getOrCreateVisitorId()
-      const res = await fetch(`${API_BASE}/dating-priority/submit`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          visitor_id: visitorId,
-          perspective,
-          focus_order: focusOrder,
-          block_order: blockOrder,
-        }),
-      })
-      if (res.ok) {
-        setSubmitted(true)
-        loadStats()
+function evenlyDistributePoints(ids) {
+  if (ids.length === 0) return {}
+  const base = Math.floor(100 / ids.length)
+  const remainder = 100 - (base * ids.length)
+  return Object.fromEntries(ids.map((id, index) => [id, base + (index < remainder ? 1 : 0)]))
+}
+function buildDatingPriorityResult({
+  perspectiveKey,
+  selectedIds,
+  selectedVetoIds,
+  scores,
+  items,
+  vetoItems,
+}) {
+  const perspective = DATING_PRIORITY_PERSPECTIVES[perspectiveKey]
+  const byId = new Map(items.map((item) => [item.id, item]))
+  const vetoById = new Map(vetoItems.map((item) => [item.id, item]))
+  return {
+    version: 3,
+    submittedAt: new Date().toISOString(),
+    perspective: perspectiveKey,
+    perspectiveLabel: perspective?.label || '',
+    selected: selectedIds.map((id, index) => {
+      const item = byId.get(id)
+      return {
+        rank: index + 1,
+        category: item?.categoryLabel || '',
+        label: item?.label || '',
+        description: item?.description || '',
+        score: Number(scores[id] || 0),
       }
-    } catch (e) {
-      console.error('[dating] submit error:', e)
+    }),
+    vetoes: selectedVetoIds.map((id) => {
+      const item = vetoById.get(id)
+      return {
+        suppliedRank: item?.rank || 0,
+        label: item?.label || '',
+        strength: item?.strength || '',
+      }
+    }),
+    totalScore: selectedIds.reduce((sum, id) => sum + Number(scores[id] || 0), 0),
+  }
+}
+
+export default function DatingPriorityPage({ onBack, onSubmit }) {
+  const [perspectiveKey, setPerspectiveKey] = useState('')
+  const [stage, setStage] = useState('select')
+  const [selectedIds, setSelectedIds] = useState([])
+  const [selectedVetoIds, setSelectedVetoIds] = useState([])
+  const [scores, setScores] = useState({})
+  const [result, setResult] = useState(null)
+  const [stats, setStats] = useState(null)
+  const [submitting, setSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState('')
+  const [notice, setNotice] = useState('')
+
+  const perspective = DATING_PRIORITY_PERSPECTIVES[perspectiveKey]
+  const items = useMemo(() => getDatingPriorityItems(perspectiveKey), [perspectiveKey])
+  const vetoItems = useMemo(() => getDatingVetoItems(perspectiveKey), [perspectiveKey])
+  const itemById = useMemo(() => new Map(items.map((item) => [item.id, item])), [items])
+  const totalScore = selectedIds.reduce((sum, id) => sum + Number(scores[id] || 0), 0)
+
+  const choosePerspective = (key) => {
+    setPerspectiveKey(key)
+    setStage('select')
+    setSelectedIds([])
+    setSelectedVetoIds([])
+    setScores({})
+    setResult(null)
+    setStats(null)
+    setSubmitError('')
+    setNotice('')
+  }
+
+  const toggleItem = (id) => {
+    setSelectedIds((current) => {
+      if (current.includes(id)) {
+        setNotice('')
+        return current.filter((selectedId) => selectedId !== id)
+      }
+      if (current.length >= MAX_SELECTIONS) {
+        setNotice('最多选择 10 项。如需更换，请先反选一项。')
+        return current
+      }
+      setNotice('')
+      return [...current, id]
+    })
+  }
+
+  const clearSelection = () => {
+    setSelectedIds([])
+    setScores({})
+    setNotice('')
+  }
+
+  const toggleVeto = (id) => {
+    setSelectedVetoIds((current) => (
+      current.includes(id)
+        ? current.filter((selectedId) => selectedId !== id)
+        : [...current, id]
+    ))
+  }
+
+  const submitResult = async (nextResult) => {
+    try {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(nextResult))
+    } catch {
+      // Private browsing or storage limits should not block completion.
+    }
+    setSubmitting(true)
+    setSubmitError('')
+    try {
+      const response = await submitAnonymousDatingPriority(
+        getOrCreateAnonymousSurveyId(),
+        nextResult,
+      )
+      setStats(response.stats || null)
+      setResult(nextResult)
+      setStage('complete')
+      try {
+        onSubmit?.(nextResult, response.stats || null)
+      } catch {
+        // Consumer callbacks must not turn a successful anonymous submission into an error.
+      }
+      window.scrollTo?.({ top: 0, behavior: 'smooth' })
+    } catch (error) {
+      setSubmitError(error?.message || '匿名提交失败，请稍后重试')
     } finally {
       setSubmitting(false)
     }
   }
 
-  const loadStats = async () => {
-    if (!perspective) return
-    setStatsLoading(true)
-    try {
-      const res = await fetch(`${API_BASE}/dating-priority/stats?perspective=${perspective}`)
-      if (res.ok) {
-        const data = await res.json()
-        setStats(data)
-      }
-    } catch (e) {
-      console.error('[dating] stats error:', e)
-    } finally {
-      setStatsLoading(false)
+  const finishWithoutSelection = () => {
+    submitResult(buildDatingPriorityResult({
+      perspectiveKey,
+      selectedIds: [],
+      selectedVetoIds,
+      scores: {},
+      items,
+      vetoItems,
+    }))
+  }
+
+  const continueToScoring = () => {
+    if (selectedIds.length === 0) {
+      finishWithoutSelection()
+      return
     }
+    setScores(evenlyDistributePoints(selectedIds))
+    setNotice('')
+    setStage('score')
+    window.scrollTo?.({ top: 0, behavior: 'smooth' })
   }
 
-  useEffect(() => {
-    if (showStats && perspective) loadStats()
-  }, [showStats, perspective])
-
-  const resetAll = () => {
-    setFocusOrder([])
-    setBlockOrder([])
-    setSubmitted(false)
+  const updateScore = (id, rawValue) => {
+    const parsed = Number.parseInt(rawValue, 10)
+    const nextValue = Number.isFinite(parsed) ? Math.max(0, Math.min(100, parsed)) : 0
+    setScores((current) => ({ ...current, [id]: nextValue }))
   }
 
-  const changePerspective = (p) => {
-    setPerspective(p)
-    setFocusOrder([])
-    setBlockOrder([])
-    setSubmitted(false)
-    setShowStats(false)
+  const submitScoredResult = () => {
+    if (totalScore !== 100) {
+      setNotice(`当前合计 ${totalScore} 分，还需要调整为 100 分。`)
+      return
+    }
+    submitResult(buildDatingPriorityResult({
+      perspectiveKey,
+      selectedIds,
+      selectedVetoIds,
+      scores,
+      items,
+      vetoItems,
+    }))
+  }
+
+  const restart = () => {
+    setPerspectiveKey('')
+    setStage('select')
+    setSelectedIds([])
+    setSelectedVetoIds([])
+    setScores({})
+    setResult(null)
     setStats(null)
+    setSubmitError('')
+    setNotice('')
   }
 
-  // Styles
-  const pageStyle = {
-    minHeight: '100vh',
-    background: '#0d1117',
-    color: '#e6e6e6',
-    display: 'flex',
-    flexDirection: 'column',
+  const backFromHeader = () => {
+    if (stage === 'complete') {
+      setStage(selectedIds.length > 0 ? 'score' : 'select')
+      return
+    }
+    if (stage === 'score') {
+      setStage('select')
+      return
+    }
+    if (perspectiveKey) {
+      setPerspectiveKey('')
+      setSelectedIds([])
+      setSelectedVetoIds([])
+      setScores({})
+      setStats(null)
+      setSubmitError('')
+      setNotice('')
+      return
+    }
+    onBack?.()
   }
-  const headerStyle = {
-    display: 'flex', alignItems: 'center', padding: '16px 20px',
-    background: 'rgba(20,25,35,0.95)', borderBottom: '1px solid rgba(255,255,255,0.06)',
-    position: 'sticky', top: 0, zIndex: 50,
-  }
-  const sectionTitle = {
-    fontSize: '15px', fontWeight: 600, margin: '20px 0 10px',
-    color: '#e6e6e6', display: 'flex', alignItems: 'center', gap: '8px',
-  }
-  const chipBase = {
-    padding: '10px 16px',
-    borderRadius: '10px',
-    border: '1px solid rgba(255,255,255,0.1)',
-    background: 'rgba(255,255,255,0.04)',
-    color: 'rgba(255,255,255,0.8)',
-    fontSize: '14px',
-    cursor: 'pointer',
-    transition: 'all 0.15s',
-    position: 'relative',
-    textAlign: 'left',
-    lineHeight: 1.4,
-  }
-  const chipSelected = {
-    ...chipBase,
-    background: 'rgba(79,172,254,0.15)',
-    borderColor: '#4facfe',
-    color: '#fff',
-  }
-  const badgeStyle = {
-    position: 'absolute', top: '-6px', right: '-6px',
-    width: '20px', height: '20px', borderRadius: '50%',
-    background: '#4facfe', color: '#fff', fontSize: '11px', fontWeight: 700,
-    display: 'flex', alignItems: 'center', justifyContent: 'center',
-  }
-  const perspBtn = (active) => ({
-    flex: 1, padding: '14px', borderRadius: '12px', border: 'none',
-    background: active ? '#4facfe' : 'rgba(255,255,255,0.06)',
-    color: active ? '#fff' : 'rgba(255,255,255,0.6)',
-    fontSize: '15px', fontWeight: 600, cursor: 'pointer',
-    transition: 'all 0.2s',
-  })
 
-  // Choose perspective screen
-  if (!perspective) {
-    return (
-      <div style={pageStyle}>
-        <header style={headerStyle}>
-          <BackButton onClick={onBack} />
-          <h1 style={{ fontSize: '18px', fontWeight: 600, margin: 0 }}>{i18nT('交友原则排序')}</h1>
-        </header>
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 20px', gap: '24px' }}>
-          <div style={{ fontSize: '48px' }}>💒</div>
-          <p style={{ fontSize: '15px', color: 'rgba(255,255,255,0.5)', textAlign: 'center', maxWidth: '300px', lineHeight: 1.6 }}>
-            {i18nT('请选择你的视角：')}<br/>{i18nT('点选顺序即为你的优先级排序')}
-          </p>
-          <div style={{ display: 'flex', gap: '12px', width: '100%', maxWidth: '320px' }}>
-            <button onClick={() => changePerspective('dx')} style={perspBtn(false)}>
-              {i18nT('🙋‍♂️ 弟兄对姐妹')}
-            </button>
-            <button onClick={() => changePerspective('zm')} style={perspBtn(false)}>
-              {i18nT('🙋‍♀️ 姐妹对弟兄')}
-            </button>
-          </div>
-        </div>
-      </div>
-    )
-  }
+  const headerStep = !perspectiveKey
+    ? '开始'
+    : stage === 'select'
+      ? '第一阶段 · 选择与排序'
+      : stage === 'score'
+        ? '第二阶段 · 权重分配'
+        : '完成'
 
   return (
-    <div style={pageStyle}>
-      <header style={headerStyle}>
-        <BackButton onClick={onBack} />
-        <h1 style={{ fontSize: '18px', fontWeight: 600, margin: 0, flex: 1 }}>{i18nT('交友原则排序')}</h1>
-        <button onClick={resetAll} style={{
-          background: 'rgba(255,59,48,0.15)', border: 'none', color: '#ff6b6b',
-          fontSize: '13px', padding: '6px 12px', borderRadius: '8px', cursor: 'pointer',
-        }}>{i18nT('🔄 重置')}</button>
+    <main className="dating-priority-page">
+      <header className="dp-header">
+        <BackButton onClick={backFromHeader} />
+        <div className="dp-header-copy">
+          <p className="dp-eyebrow">{headerStep}</p>
+          <h1>长期伴侣选择优先级</h1>
+        </div>
       </header>
 
-      {/* Perspective toggle */}
-      <div style={{ padding: '12px 20px', display: 'flex', gap: '8px' }}>
-        <button onClick={() => changePerspective('dx')} style={perspBtn(perspective === 'dx')}>
-          {i18nT('🙋‍♂️ 弟兄→姐妹')}
-        </button>
-        <button onClick={() => changePerspective('zm')} style={perspBtn(perspective === 'zm')}>
-          {i18nT('🙋‍♀️ 姐妹→弟兄')}
-        </button>
-      </div>
-
-      <div style={{ flex: 1, overflowY: 'auto', padding: '0 20px 100px' }}>
-        {/* 关注点 */}
-        <div style={sectionTitle}>
-          <span>💚</span>
-          <span>{i18nT('关注点')}</span>
-          <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.35)', fontWeight: 400 }}>
-            {i18nT('(已选')} {focusOrder.length}/{focusList.length})
-          </span>
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          {focusList.map((item) => {
-            const idx = focusOrder.indexOf(item)
-            const selected = idx >= 0
-            return (
-              <button
-                key={item}
-                onClick={() => handleSelect(item, 'focus')}
-                style={selected ? chipSelected : chipBase}
-              >
-                {selected && <span style={badgeStyle}>{idx + 1}</span>}
-                {item}
-              </button>
-            )
-          })}
-        </div>
-
-        {/* 阻力点 */}
-        <div style={sectionTitle}>
-          <span>🚫</span>
-          <span>{i18nT('阻力点')}</span>
-          <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.35)', fontWeight: 400 }}>
-            {i18nT('(已选')} {blockOrder.length}/{blockList.length})
-          </span>
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          {blockList.map((item) => {
-            const idx = blockOrder.indexOf(item)
-            const selected = idx >= 0
-            return (
-              <button
-                key={item}
-                onClick={() => handleSelect(item, 'block')}
-                style={selected ? { ...chipSelected, borderColor: '#ff6b6b', background: 'rgba(255,107,107,0.12)' } : chipBase}
-              >
-                {selected && <span style={{ ...badgeStyle, background: '#ff6b6b' }}>{idx + 1}</span>}
-                {item}
-              </button>
-            )
-          })}
-        </div>
-
-        {/* 排序结果 + 提交 */}
-        {(focusOrder.length > 0 || blockOrder.length > 0) && (
-          <div style={{ marginTop: '28px', padding: '16px', borderRadius: '14px', background: 'rgba(79,172,254,0.06)', border: '1px solid rgba(79,172,254,0.15)' }}>
-            <div style={{ fontSize: '15px', fontWeight: 600, marginBottom: '12px', color: '#4facfe' }}>
-              {i18nT('📋 你的优先级排序')}
-            </div>
-            {focusOrder.length > 0 && (
-              <div style={{ marginBottom: '12px' }}>
-                <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)', marginBottom: '6px' }}>{i18nT('💚 关注点排序：')}</div>
-                {focusOrder.map((item, i) => (
-                  <div key={item} style={{ fontSize: '14px', padding: '4px 0', color: '#e6e6e6' }}>
-                    <span style={{ color: '#4facfe', fontWeight: 600, marginRight: '8px' }}>{i + 1}.</span>{item}
-                  </div>
-                ))}
-              </div>
-            )}
-            {blockOrder.length > 0 && (
+      <div className="dp-shell">
+        {!perspectiveKey && (
+          <>
+            <section className="dp-intro">
               <div>
-                <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)', marginBottom: '6px' }}>{i18nT('🚫 阻力点排序：')}</div>
-                {blockOrder.map((item, i) => (
-                  <div key={item} style={{ fontSize: '14px', padding: '4px 0', color: '#e6e6e6' }}>
-                    <span style={{ color: '#ff6b6b', fontWeight: 600, marginRight: '8px' }}>{i + 1}.</span>{item}
-                  </div>
-                ))}
+                <h2>认真辨认，什么对你真正重要</h2>
+                <p>
+                  假设你正在选择一位可能结婚并长期共同生活的伴侣，请根据真实的结婚决策作答，
+                  而不是社会普遍认为“应该重视”的因素。你可以选择 0–10 项，点选顺序就是优先级。
+                </p>
               </div>
-            )}
+              <div className="dp-intro-mark" aria-hidden="true">∞</div>
+            </section>
 
-            {/* 提交按钮 */}
-            {!submitted ? (
+            <section aria-labelledby="perspective-title">
+              <div className="dp-section-heading">
+                <h2 id="perspective-title">选择答题视角</h2>
+              </div>
+              <div className="dp-perspective-grid">
+                {Object.entries(DATING_PRIORITY_PERSPECTIVES).map(([key, option]) => {
+                  const count = getDatingPriorityItems(key).length
+                  return (
+                    <button
+                      key={key}
+                      type="button"
+                      className="dp-perspective-card"
+                      onClick={() => choosePerspective(key)}
+                    >
+                      <span className="dp-perspective-icon" aria-hidden="true">{option.icon}</span>
+                      <span>
+                        <strong>{option.shortLabel}</strong>
+                        <small>{option.label} · 共 {count} 个备选因素</small>
+                      </span>
+                    </button>
+                  )
+                })}
+              </div>
+            </section>
+          </>
+        )}
+
+        {perspectiveKey && stage === 'select' && (
+          <>
+            <section className="dp-intro">
+              <div>
+                <h2>选出最重视的 10 项，并按重要性排序</h2>
+                <p>
+                  每次点选会依次成为第 1、第 2……优先级。再次点击即可反选，后续项目会自动前移。
+                  你也可以一项都不选，或在提交前清空全部选择。
+                </p>
+              </div>
+              <div className="dp-intro-mark" aria-hidden="true">{perspective.icon}</div>
+            </section>
+
+            <div className="dp-toolbar" aria-live="polite">
+              <div className="dp-toolbar-copy">
+                <strong>{perspective.shortLabel}</strong>
+                <span>顺序代表优先级 · 最多 10 项</span>
+              </div>
+              <div className="dp-counter">已选 {selectedIds.length} / {MAX_SELECTIONS}</div>
+            </div>
+
+            <section className="dp-selection-panel" aria-labelledby="selected-heading">
+              <div className="dp-section-heading">
+                <h2 id="selected-heading">当前优先级</h2>
+                <button
+                  type="button"
+                  className="dp-text-button"
+                  onClick={clearSelection}
+                  disabled={selectedIds.length === 0}
+                >
+                  全部反选
+                </button>
+              </div>
+              {selectedIds.length === 0 ? (
+                <p className="dp-empty-selection">尚未选择。0 项也是有效答案，你可以直接提交。</p>
+              ) : (
+                <ol className="dp-rank-list">
+                  {selectedIds.map((id, index) => {
+                    const item = itemById.get(id)
+                    return (
+                      <li className="dp-rank-item" key={id}>
+                        <span className="dp-rank-number">{index + 1}</span>
+                        <span className="dp-rank-label">{item?.label}</span>
+                        <button
+                          type="button"
+                          className="dp-rank-remove"
+                          aria-label={`反选${item?.label}`}
+                          onClick={() => toggleItem(id)}
+                        >
+                          ×
+                        </button>
+                      </li>
+                    )
+                  })}
+                </ol>
+              )}
+            </section>
+
+            {notice && <div className="dp-notice" role="status">{notice}</div>}
+
+            {perspective.categories.map((category) => {
+              const categoryItems = items.filter((item) => item.categoryKey === category.key)
+              return (
+                <section className="dp-category" key={category.key} aria-labelledby={`category-${category.key}`}>
+                  <h2 className="dp-category-title" id={`category-${category.key}`}>
+                    <span aria-hidden="true">{category.icon}</span>
+                    {category.label}
+                    <span>{categoryItems.length} 项</span>
+                  </h2>
+                  <div className="dp-options-grid">
+                    {categoryItems.map((item) => {
+                      const rank = selectedIds.indexOf(item.id)
+                      const selected = rank >= 0
+                      const limitDisabled = !selected && selectedIds.length >= MAX_SELECTIONS
+                      return (
+                        <button
+                          key={item.id}
+                          type="button"
+                          data-testid="priority-option"
+                          className={`dp-option${selected ? ' is-selected' : ''}${limitDisabled ? ' is-limit-disabled' : ''}`}
+                          aria-pressed={selected}
+                          aria-disabled={limitDisabled}
+                          onClick={() => toggleItem(item.id)}
+                        >
+                          <span className="dp-option-check" aria-hidden="true">✓</span>
+                          <span className="dp-option-copy">
+                            <strong>{item.label}</strong>
+                            {item.description && <small>{item.description}</small>}
+                          </span>
+                          {selected && <span className="dp-option-rank">#{rank + 1}</span>}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </section>
+              )
+            })}
+
+            <section className="dp-veto-section" aria-labelledby="veto-heading">
+              <div className="dp-section-heading">
+                <div>
+                  <p className="dp-veto-eyebrow">独立多选 · 不占用前面的 10 项名额</p>
+                  <h2 id="veto-heading">哪些情况会成为你的否决条件？</h2>
+                </div>
+                <button
+                  type="button"
+                  className="dp-text-button dp-veto-clear"
+                  onClick={() => setSelectedVetoIds([])}
+                  disabled={selectedVetoIds.length === 0}
+                >
+                  清空否决条件
+                </button>
+              </div>
+              <p className="dp-veto-help">
+                以下顺序和强度是问卷提供的参考，不会改变你的优先级排序。请选择所有适用于你的条件，也可以一项不选。
+              </p>
+              <div className="dp-veto-count" aria-live="polite">
+                已选 {selectedVetoIds.length} / {vetoItems.length}
+              </div>
+              <div className="dp-veto-grid">
+                {vetoItems.map((item) => {
+                  const selected = selectedVetoIds.includes(item.id)
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      data-testid="veto-option"
+                      className={`dp-veto-option${selected ? ' is-selected' : ''}`}
+                      aria-pressed={selected}
+                      onClick={() => toggleVeto(item.id)}
+                    >
+                      <span className="dp-veto-rank">{item.rank}</span>
+                      <span className="dp-veto-copy">
+                        <strong>{item.label}</strong>
+                        <span className={`dp-strength dp-strength-${item.strength}`}>{item.strength}</span>
+                      </span>
+                      <span className="dp-veto-check" aria-hidden="true">✓</span>
+                    </button>
+                  )
+                })}
+              </div>
+            </section>
+
+            <div className="dp-actions">
               <button
-                onClick={handleSubmit}
+                type="button"
+                className="dp-button dp-button-secondary"
                 disabled={submitting}
-                style={{
-                  width: '100%', marginTop: '16px', padding: '14px', borderRadius: '12px',
-                  border: 'none', background: submitting ? 'rgba(120,120,128,0.3)' : '#4facfe',
-                  color: '#fff', fontSize: '15px', fontWeight: 600, cursor: submitting ? 'not-allowed' : 'pointer',
+                onClick={() => {
+                  clearSelection()
+                  setSelectedVetoIds([])
                 }}
               >
-                {submitting ? '⏳ 提交中...' : '✅ 提交我的排序'}
+                清空全部选择
               </button>
-            ) : (
-              <div style={{ marginTop: '16px', textAlign: 'center', color: '#51cf66', fontSize: '14px', fontWeight: 600 }}>
-                {i18nT('✅ 已提交！感谢你的参与')}
+              <button
+                type="button"
+                className="dp-button dp-button-primary"
+                disabled={submitting}
+                onClick={continueToScoring}
+              >
+                {submitting
+                  ? '正在匿名提交…'
+                  : selectedIds.length === 0
+                    ? '匿名提交并查看统计'
+                    : `下一步：为 ${selectedIds.length} 项分配 100 分`}
+              </button>
+            </div>
+            {submitError && <div className="dp-submit-error" role="alert">{submitError}</div>}
+          </>
+        )}
+
+        {perspectiveKey && stage === 'score' && (
+          <>
+            <section className="dp-score-intro">
+              <h2>把 100 分分配给所选项目</h2>
+              <p>
+                排名体现先后，分数体现重要程度。系统已按人数平均分配，你可以拖动滑杆或直接输入整数调整。
+                所有项目合计必须等于 100 分。
+              </p>
+              <div className={`dp-score-meter${totalScore === 100 ? '' : ' is-invalid'}`} aria-live="polite">
+                <div>
+                  <strong>{totalScore}</strong>
+                  <span> / 100 分</span>
+                </div>
+                <button
+                  type="button"
+                  className="dp-text-button"
+                  onClick={() => setScores(evenlyDistributePoints(selectedIds))}
+                >
+                  重新平均分配
+                </button>
+              </div>
+            </section>
+
+            <ol className="dp-score-list">
+              {selectedIds.map((id, index) => {
+                const item = itemById.get(id)
+                const value = Number(scores[id] || 0)
+                return (
+                  <li className="dp-score-row" key={id}>
+                    <span className="dp-score-rank">{index + 1}</span>
+                    <span className="dp-score-label">
+                      <strong>{item?.label}</strong>
+                      <small>{item?.categoryLabel}</small>
+                    </span>
+                    <input
+                      className="dp-score-range"
+                      type="range"
+                      min="0"
+                      max="100"
+                      value={value}
+                      aria-label={`${item?.label}分数滑杆`}
+                      onChange={(event) => updateScore(id, event.target.value)}
+                    />
+                    <label className="dp-score-input-wrap">
+                      <input
+                        className="dp-score-input"
+                        type="number"
+                        min="0"
+                        max="100"
+                        inputMode="numeric"
+                        value={value}
+                        aria-label={`${item?.label}分数`}
+                        onChange={(event) => updateScore(id, event.target.value)}
+                      />
+                      分
+                    </label>
+                  </li>
+                )
+              })}
+            </ol>
+
+            {notice && <div className="dp-notice" role="status">{notice}</div>}
+
+            <div className="dp-actions">
+              <button
+                type="button"
+                className="dp-button dp-button-secondary"
+                disabled={submitting}
+                onClick={() => {
+                  setNotice('')
+                  setStage('select')
+                }}
+              >
+                返回修改选择
+              </button>
+              <button
+                type="button"
+                className="dp-button dp-button-primary"
+                disabled={totalScore !== 100 || submitting}
+                onClick={submitScoredResult}
+              >
+                {submitting ? '正在匿名提交…' : '匿名提交并查看统计'}
+              </button>
+            </div>
+            {submitError && <div className="dp-submit-error" role="alert">{submitError}</div>}
+          </>
+        )}
+
+        {perspectiveKey && stage === 'complete' && result && (
+          <section className="dp-complete" aria-labelledby="complete-heading">
+            <div className="dp-complete-icon" aria-hidden="true">✓</div>
+            <h2 id="complete-heading">问卷已完成</h2>
+            <p>
+              你的回答已保存在当前浏览器中。
+              {result.selected.length === 0
+                ? '你没有选择优先因素，这仍是一份完整且有效的回答。'
+                : `你选择了 ${result.selected.length} 项，并完成了 100 分权重分配。`}
+              {result.vetoes.length > 0
+                ? ` 同时选择了 ${result.vetoes.length} 项否决条件。`
+                : ' 你没有选择否决条件。'}
+            </p>
+
+            {result.selected.length > 0 && (
+              <ol className="dp-result-list">
+                {result.selected.map((item) => (
+                  <li className="dp-result-row" key={`${item.rank}-${item.label}`}>
+                    <span className="dp-rank-number">{item.rank}</span>
+                    <strong>{item.label}</strong>
+                    <span className="dp-result-score">{item.score} 分</span>
+                  </li>
+                ))}
+              </ol>
+            )}
+
+            {result.vetoes.length > 0 && (
+              <div className="dp-result-vetoes">
+                <h3>已选择的否决条件</h3>
+                <ol className="dp-veto-result-list">
+                  {result.vetoes.map((item) => (
+                    <li key={`${item.suppliedRank}-${item.label}`}>
+                      <span>{item.suppliedRank}</span>
+                      <strong>{item.label}</strong>
+                      <em>{item.strength}</em>
+                    </li>
+                  ))}
+                </ol>
               </div>
             )}
-          </div>
-        )}
 
-        {/* 查看统计按钮 */}
-        {perspective && (
-          <div style={{ marginTop: '16px' }}>
-            <button
-              onClick={() => setShowStats(!showStats)}
-              style={{
-                width: '100%', padding: '12px', borderRadius: '12px',
-                border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.04)',
-                color: 'rgba(255,255,255,0.7)', fontSize: '14px', cursor: 'pointer',
-              }}
-            >
-              {showStats ? '🔼 收起统计' : '📊 查看大家的排序统计'}
-            </button>
-          </div>
-        )}
-
-        {/* 统计结果 */}
-        {showStats && (
-          <div style={{ marginTop: '16px', padding: '16px', borderRadius: '14px', background: 'rgba(81,207,102,0.06)', border: '1px solid rgba(81,207,102,0.15)' }}>
-            <div style={{ fontSize: '15px', fontWeight: 600, marginBottom: '12px', color: '#51cf66' }}>
-              {i18nT('📊 群体排序统计 (')}{perspective === 'dx' ? '弟兄→姐妹' : '姐妹→弟兄'})
-            </div>
-            {statsLoading ? (
-              <div style={{ textAlign: 'center', color: 'rgba(255,255,255,0.5)', padding: '20px' }}>{i18nT('加载中...')}</div>
-            ) : !stats || stats.total === 0 ? (
-              <div style={{ textAlign: 'center', color: 'rgba(255,255,255,0.4)', padding: '20px' }}>{i18nT('暂无数据，等待更多人参与')}</div>
-            ) : (
-              <>
-                <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)', marginBottom: '12px' }}>
-                  {i18nT('共')} {stats.total} {i18nT('人参与')}
-                </div>
-                {stats.focus_stats.length > 0 && (
-                  <div style={{ marginBottom: '16px' }}>
-                    <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)', marginBottom: '8px' }}>{i18nT('💚 关注点（按平均排序）：')}</div>
-                    {stats.focus_stats.map((s, i) => (
-                      <div key={s.item} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 0', fontSize: '13px' }}>
-                        <span style={{ color: '#4facfe', fontWeight: 700, minWidth: '24px' }}>{i + 1}.</span>
-                        <span style={{ flex: 1, color: '#e6e6e6' }}>{s.item}</span>
-                        <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '11px' }}>
-                          {i18nT('均')}{s.avg_rank} | {s.selection_rate}{i18nT('%选')}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-                {stats.block_stats.length > 0 && (
+            {stats && (
+              <section className="dp-current-stats" aria-labelledby="current-stats-heading">
+                <div className="dp-stats-heading">
                   <div>
-                    <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)', marginBottom: '8px' }}>{i18nT('🚫 阻力点（按平均排序）：')}</div>
-                    {stats.block_stats.map((s, i) => (
-                      <div key={s.item} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 0', fontSize: '13px' }}>
-                        <span style={{ color: '#ff6b6b', fontWeight: 700, minWidth: '24px' }}>{i + 1}.</span>
-                        <span style={{ flex: 1, color: '#e6e6e6' }}>{s.item}</span>
-                        <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '11px' }}>
-                          {i18nT('均')}{s.avg_rank} | {s.selection_rate}{i18nT('%选')}
-                        </span>
-                      </div>
-                    ))}
+                    <p>匿名聚合 · 不显示任何个人答案</p>
+                    <h3 id="current-stats-heading">当前统计结果</h3>
+                  </div>
+                  <strong>{stats.total || 0}<span> 份</span></strong>
+                </div>
+
+                {(stats.priority_stats || []).length > 0 ? (
+                  <div className="dp-stats-group">
+                    <h4>最常被选入前 10 项</h4>
+                    <ol className="dp-stats-list">
+                      {stats.priority_stats.slice(0, 10).map((item, index) => (
+                        <li key={`${item.category}-${item.label}`}>
+                          <span className="dp-stat-rank">{index + 1}</span>
+                          <div className="dp-stat-main">
+                            <div>
+                              <strong>{item.label}</strong>
+                              <span>{item.selection_rate}% 选择 · 平均第 {item.avg_rank} 位 · 平均 {item.avg_score} 分</span>
+                            </div>
+                            <div className="dp-stat-bar" aria-hidden="true">
+                              <i style={{ width: `${Math.min(100, item.selection_rate)}%` }} />
+                            </div>
+                          </div>
+                        </li>
+                      ))}
+                    </ol>
+                  </div>
+                ) : (
+                  <p className="dp-stats-empty">当前还没有优先因素统计。</p>
+                )}
+
+                {(stats.veto_stats || []).length > 0 && (
+                  <div className="dp-stats-group dp-stats-veto-group">
+                    <h4>最常选择的否决条件</h4>
+                    <ol className="dp-stats-list">
+                      {stats.veto_stats.slice(0, 12).map((item, index) => (
+                        <li key={item.label}>
+                          <span className="dp-stat-rank">{index + 1}</span>
+                          <div className="dp-stat-main">
+                            <div>
+                              <strong>{item.label}</strong>
+                              <span>{item.selection_rate}% 选择 · 强度 {item.strength}</span>
+                            </div>
+                            <div className="dp-stat-bar dp-stat-veto-bar" aria-hidden="true">
+                              <i style={{ width: `${Math.min(100, item.selection_rate)}%` }} />
+                            </div>
+                          </div>
+                        </li>
+                      ))}
+                    </ol>
                   </div>
                 )}
-              </>
+
+                <p className="dp-stats-privacy">
+                  统计仅包含同一答题视角下的匿名聚合结果；不会显示或返回浏览器匿名标识。
+                </p>
+              </section>
             )}
-          </div>
+
+            <div className="dp-actions">
+              <button type="button" className="dp-button dp-button-secondary" onClick={restart}>
+                重新填写
+              </button>
+              <button type="button" className="dp-button dp-button-primary" onClick={() => onBack?.()}>
+                完成并返回
+              </button>
+            </div>
+          </section>
         )}
       </div>
-    </div>
+    </main>
   )
 }
