@@ -1,6 +1,7 @@
 // Hand-reviewed English for recently added subpages that are not yet in auto-en.js.
 // Keep these translations local so EN mode never depends on the translation API.
 export default {
+  "▶️ 继续": "▶️ Resume",
   '灵修内容分类': 'Devotion content categories',
   '灵修主导航': 'Devotion navigation',
   '按今日状态继续专题灵修': "Continue a topic devotion from today's state",
