@@ -34,7 +34,7 @@ import PastoralPathCard, { PASTORAL_ROUTE_TARGETS } from './components/PastoralP
 import { useGuardianStore } from './components/guardian/guardianStore'
 import { curateAnthropicEmotionLayout } from './data/anthropicEmotionConcepts'
 import { getCuratedEmotionScriptureDetail } from './data/emotionScriptureDetail'
-import { isDatingPriorityPath } from './datingPriorityRoute'
+import { isDatingPriorityPath, shouldHideGlobalChrome } from './datingPriorityRoute'
 
 const CheckInPage = lazyWithRetry(() => import('./CheckInPage'))
 const ShareWallPage = lazyWithRetry(() => import('./ShareWallPage'))
@@ -1701,7 +1701,14 @@ function AppContent() {
       )
     }
 
+    // /amor-survey 是对外分发的独立问卷页：隐藏底部导航与守护精灵，
+    // 让页面保持单一任务，也不把站内导航暴露给只是来填问卷的人。
+    //
+    // 为什么还要卡 activePanel：面板切换只 replaceState 清 query 参数、不改 pathname，
+    // 所以从这个链接进来的人切到别的页面后 pathname 仍是 /amor-survey。
+    // 若只按路径判断，导航栏会就此永久消失，把人困在没有出口的界面里。
     const suppressGlobalChrome = showSOS
+      || shouldHideGlobalChrome({ pathname: window.location.pathname, activePanel })
 
     return (
       <div className={`mobile-app-shell ${activePanel !== 'sphere' ? 'has-active-subpage' : ''}`}>

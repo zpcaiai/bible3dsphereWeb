@@ -141,6 +141,28 @@ export function redirectToWechatLoginUnified(options = {}) {
   }
 }
 
+/**
+ * 查询邮箱自助注册是否可用（登录页在渲染表单前调用）。
+ *
+ * 探测失败时一律返回「可用」：宁可让用户点下去看到真实报错，
+ * 也不要因为一次网络抖动就把注册入口自己堵死。
+ */
+export async function fetchEmailAuthStatus() {
+  try {
+    const res = await fetch(authUrl('/email/status'))
+    if (!res.ok) return { selfRegisterEnabled: true, message: '' }
+    const contentType = res.headers.get('content-type') || ''
+    if (!contentType.includes('application/json')) return { selfRegisterEnabled: true, message: '' }
+    const data = await res.json()
+    return {
+      selfRegisterEnabled: data.self_register_enabled !== false,
+      message: data.message || '',
+    }
+  } catch {
+    return { selfRegisterEnabled: true, message: '' }
+  }
+}
+
 export async function sendEmailCode(email) {
   const res = await fetch(authUrl('/email/send-code'), {
     method: 'POST',

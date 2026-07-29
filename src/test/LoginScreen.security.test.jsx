@@ -7,12 +7,16 @@ import { setRuntimeLang } from '../i18n/runtime'
 import { mergeAutoEn } from '../i18n/translations'
 import autoEn from '../i18n/auto-en'
 
+const mockEmailAuthStatus = vi.fn().mockResolvedValue({ selfRegisterEnabled: true, message: '' })
+
 vi.mock('../auth', () => ({
   loginWithEmail: vi.fn().mockResolvedValue({ user: { email: 'member@example.com' } }),
   registerWithEmail: vi.fn(),
   sendEmailCode: vi.fn(),
   sendResetCode: vi.fn(),
   resetPassword: vi.fn(),
+  // 登录页渲染时会查询邮箱服务可用性；漏掉这个 mock 会让整个组件在挂载时抛错
+  fetchEmailAuthStatus: (...args) => mockEmailAuthStatus(...args),
 }))
 
 describe('LoginScreen credential safety', () => {
@@ -72,5 +76,42 @@ describe('LoginScreen credential safety', () => {
     expect(screen.getByRole('button', { name: 'Chinese' })).toBeTruthy()
     expect(screen.getByRole('tab', { name: 'Log in' })).toBeTruthy()
     expect(screen.getByLabelText('Email')).toBeTruthy()
+  })
+})
+
+describe('LoginScreen 在邮箱服务不可用时提前说明', () => {
+  beforeEach(() => {
+    mergeAutoEn(autoEn)
+    setRuntimeLang('zh')
+    localStorage.clear()
+  })
+  afterEach(() => { cleanup(); localStorage.clear(); mockEmailAuthStatus.mockReset() })
+
+  it('服务不可用时，切到注册页立刻看到原因，而不是填完表才撞 503', async () => {
+    mockEmailAuthStatus.mockResolvedValue({
+      selfRegisterEnabled: false,
+      message: '邮箱验证服务当前不可用，请联系管理员。',
+    })
+    render(<LoginScreen onLogin={() => {}} />)
+    fireEvent.click(screen.getByRole('tab', { name: /注册/ }))
+    await waitFor(() => {
+      expect(screen.getByRole('alert').textContent).toMatch(/不可用/)
+    })
+  })
+
+  it('服务正常时不显示任何告警横幅', async () => {
+    mockEmailAuthStatus.mockResolvedValue({ selfRegisterEnabled: true, message: '' })
+    render(<LoginScreen onLogin={() => {}} />)
+    fireEvent.click(screen.getByRole('tab', { name: /注册/ }))
+    await waitFor(() => expect(screen.getByRole('tab', { name: /注册/ })).toBeTruthy())
+    expect(screen.queryByRole('alert')).toBeNull()
+  })
+
+  it('探测失败时按可用处理——不能因为一次网络抖动就把注册入口自己堵死', async () => {
+    mockEmailAuthStatus.mockRejectedValue(new Error('network'))
+    render(<LoginScreen onLogin={() => {}} />)
+    fireEvent.click(screen.getByRole('tab', { name: /注册/ }))
+    await waitFor(() => expect(screen.getByRole('tab', { name: /注册/ })).toBeTruthy())
+    expect(screen.queryByRole('alert')).toBeNull()
   })
 })

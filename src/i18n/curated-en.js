@@ -792,4 +792,7 @@ export default {
   "加载群聊失败": "Could not load the group chat.",
   "好，我们只推迟十分钟。我陪你。": "Okay. We are only delaying for ten minutes. I am here with you.",
   "你撑过了这十分钟。冲动会像浪一样退下去。": "You made it through these ten minutes. The urge will recede like a wave.",
+
+  // ── 邮箱服务不可用时的登录页提示 ──
+  "邮箱验证服务当前不可用，暂时无法自助注册或重置密码。这不是你的问题，请联系管理员。": "Email verification is currently unavailable, so self-service sign-up and password reset are on hold. This is not something you did wrong — please contact the administrator.",
 }

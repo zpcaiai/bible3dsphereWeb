@@ -1,8 +1,8 @@
 import { t as i18nT } from './i18n/runtime'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import BackButton from './BackButton'
 import LanguageToggle from './i18n/LanguageToggle'
-import { loginWithEmail, registerWithEmail, sendEmailCode, sendResetCode, resetPassword } from './auth'
+import { loginWithEmail, registerWithEmail, sendEmailCode, sendResetCode, resetPassword, fetchEmailAuthStatus } from './auth'
 
 const cardStyle = {
   width: '100%',
@@ -74,6 +74,21 @@ function persistRememberedEmail(email, rememberMe) {
 export default function LoginScreen({ onLogin, onBack, message }) {
   const [tab, setTab] = useState('login') // 'login' | 'register' | 'reset'
   const [sharedEmail, setSharedEmail] = useState(loadRememberedEmail)
+  // 邮箱服务挂掉时，注册和重置密码都不可能成功。与其让人填完整张表
+  // 才在点「获取验证码」时撞见 503，不如进页面就说清楚。
+  const [authStatus, setAuthStatus] = useState({ selfRegisterEnabled: true, message: '' })
+  useEffect(() => {
+    let cancelled = false
+    fetchEmailAuthStatus()
+      .then((s) => { if (!cancelled) setAuthStatus(s) })
+      // fetchEmailAuthStatus 内部已经吞了异常，这里再兜一层：
+      // 可用性探测失败绝不该在登录页抛出未捕获的 rejection，
+      // 更不该因此把注册入口堵死——保持「按可用处理」的默认值。
+      .catch(() => { /* 保持默认的 selfRegisterEnabled: true */ })
+    return () => { cancelled = true }
+  }, [])
+  const needsEmailService = tab === 'register' || tab === 'reset'
+  const emailServiceDown = !authStatus.selfRegisterEnabled
   return (
     <div style={{
       width: '100%', minHeight: '100dvh', background: '#000',
@@ -122,16 +137,35 @@ export default function LoginScreen({ onLogin, onBack, message }) {
               aria-selected={tab === key}
               aria-controls={`auth-panel-${key}`}
               onClick={() => setTab(key)}
+              title={emailServiceDown && key !== 'login' ? authStatus.message : undefined}
               style={{
                 flex: 1, minHeight: '36px', border: 'none', borderRadius: '8px', fontFamily: 'inherit',
                 fontSize: '14px', fontWeight: 500, cursor: 'pointer',
                 background: tab === key ? '#007aff' : 'transparent',
-                color: tab === key ? '#fff' : 'rgba(255,255,255,0.5)',
+                // 服务不可用时把注册/重置标记为暗淡，但仍可点开——点进去要能看到原因，
+                // 直接 disabled 会变成「按不动又不说为什么」，更让人困惑。
+                color: tab === key ? '#fff'
+                  : (emailServiceDown && key !== 'login') ? 'rgba(255,255,255,0.28)' : 'rgba(255,255,255,0.5)',
                 transition: 'background 0.2s, color 0.2s',
               }}
-            >{label}</button>
+            >{label}{emailServiceDown && key !== 'login' ? ' ⚠' : ''}</button>
           ))}
         </div>
+
+        {emailServiceDown && needsEmailService && (
+          <div role="alert" style={{
+            background: 'rgba(255,159,10,0.12)',
+            border: '1px solid rgba(255,159,10,0.35)',
+            borderRadius: '10px',
+            padding: '12px 14px',
+            marginBottom: '16px',
+            fontSize: '13px',
+            color: '#ffd8a8',
+            lineHeight: 1.6,
+          }}>
+            {authStatus.message || i18nT('邮箱验证服务当前不可用，暂时无法自助注册或重置密码。这不是你的问题，请联系管理员。')}
+          </div>
+        )}
 
         <div role="tabpanel" id={`auth-panel-${tab}`} aria-labelledby={`auth-tab-${tab}`}>
           {tab === 'login' && <LoginForm email={sharedEmail} setEmail={setSharedEmail} onLogin={onLogin} onReset={() => setTab('reset')} />}
