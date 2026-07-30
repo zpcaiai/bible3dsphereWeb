@@ -203,13 +203,6 @@
   font-size: 14px;
 }
 
-.dp-toolbar-copy span {
-  display: block;
-  margin-top: 2px;
-  color: var(--dp-muted);
-  font-size: 11px;
-}
-
 .dp-counter {
   flex: 0 0 auto;
   padding: 8px 12px;
@@ -371,11 +364,6 @@
   border-color: rgba(49, 83, 67, 0.6);
   background: linear-gradient(135deg, #edf4ef, #e3eee7);
   box-shadow: inset 0 0 0 1px rgba(49, 83, 67, 0.08);
-}
-
-.dp-option.is-limit-disabled:not(.is-selected) {
-  cursor: not-allowed;
-  opacity: 0.5;
 }
 
 .dp-option-check {
@@ -547,16 +535,6 @@
   background: #9b542f;
 }
 
-.dp-notice {
-  margin: -6px 0 18px;
-  padding: 10px 13px;
-  border: 1px solid rgba(148, 99, 48, 0.2);
-  border-radius: 12px;
-  color: #805829;
-  background: rgba(243, 225, 193, 0.6);
-  font-size: 12px;
-}
-
 .dp-actions {
   display: flex;
   align-items: center;
@@ -602,7 +580,9 @@
   background: rgba(251, 231, 227, 0.86);
   font-size: 12px;
   line-height: 1.6;
-}.dp-complete {
+}
+
+.dp-complete {
   padding: clamp(24px, 6vw, 48px);
   border: 1px solid var(--dp-line);
   border-radius: 28px;

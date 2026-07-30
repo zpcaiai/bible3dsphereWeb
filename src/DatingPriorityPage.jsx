@@ -8,7 +8,6 @@ import {
 import { submitAnonymousDatingPriority } from './api'
 import './DatingPriorityPage.css'
 
-const MAX_SELECTIONS = 10
 const STORAGE_KEY = 'dating-priority-survey:last'
 const ANONYMOUS_ID_KEY = 'dating-priority-survey:anonymous-id'
 
@@ -32,10 +31,15 @@ function getOrCreateAnonymousSurveyId() {
 export function rankWeightedPoints(ids) {
   const count = ids.length
   if (count === 0) return {}
+  // 选了就至少 1 分。选项数量不设上限后，长列表尾部按纯比例分配会算出 0，
+  // 用户明明勾了却显示「权重 0」，看上去像没被记录。项数超过 100 时保不住
+  // 这个下限（总分只有 100），此时退回纯比例分配。
+  const floorEach = count <= 100 ? 1 : 0
+  const pool = 100 - (floorEach * count)
   const weights = ids.map((_, index) => count - index)
   const weightSum = weights.reduce((sum, weight) => sum + weight, 0)
-  const exact = weights.map((weight) => (weight * 100) / weightSum)
-  const points = exact.map((value) => Math.floor(value))
+  const exact = weights.map((weight) => (weight * pool) / weightSum)
+  const points = exact.map((value) => floorEach + Math.floor(value))
   const byLargestRemainder = exact
     .map((value, index) => ({ index, remainder: value - Math.floor(value) }))
     .sort((a, b) => b.remainder - a.remainder || a.index - b.index)
@@ -92,7 +96,6 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
   const [stats, setStats] = useState(null)
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState('')
-  const [notice, setNotice] = useState('')
 
   const perspective = DATING_PRIORITY_PERSPECTIVES[perspectiveKey]
   const items = useMemo(() => getDatingPriorityItems(perspectiveKey), [perspectiveKey])
@@ -107,27 +110,19 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
     setResult(null)
     setStats(null)
     setSubmitError('')
-    setNotice('')
   }
 
   const toggleItem = (id) => {
     setSelectedIds((current) => {
       if (current.includes(id)) {
-        setNotice('')
         return current.filter((selectedId) => selectedId !== id)
       }
-      if (current.length >= MAX_SELECTIONS) {
-        setNotice('最多选择 10 项。如需更换，请先反选一项。')
-        return current
-      }
-      setNotice('')
       return [...current, id]
     })
   }
 
   const clearSelection = () => {
     setSelectedIds([])
-    setNotice('')
   }
 
   const toggleVeto = (id) => {
@@ -168,7 +163,6 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
   }
 
   const submitSelection = () => {
-    setNotice('')
     submitResult(buildDatingPriorityResult({
       perspectiveKey,
       selectedIds,
@@ -177,17 +171,6 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
       items,
       vetoItems,
     }))
-  }
-
-  const restart = () => {
-    setPerspectiveKey('')
-    setStage('select')
-    setSelectedIds([])
-    setSelectedVetoIds([])
-    setResult(null)
-    setStats(null)
-    setSubmitError('')
-    setNotice('')
   }
 
   const backFromHeader = () => {
@@ -201,7 +184,6 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
       setSelectedVetoIds([])
       setStats(null)
       setSubmitError('')
-      setNotice('')
       return
     }
     onBack?.()
@@ -231,7 +213,7 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
                 <h2>认真辨认，什么对你真正重要</h2>
                 <p>
                   假设你正在选择一位可能结婚并长期共同生活的伴侣，请根据真实的结婚决策作答，
-                  而不是社会普遍认为“应该重视”的因素。你可以选择 0–10 项，点选顺序就是优先级。
+                  而不是社会普遍认为“应该重视”的因素。选多少项都可以，点选顺序就是优先级。
                 </p>
               </div>
               <div className="dp-intro-mark" aria-hidden="true">∞</div>
@@ -268,7 +250,7 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
           <>
             <section className="dp-intro">
               <div>
-                <h2>选出最重视的 10 项，并按重要性排序</h2>
+                <h2>选出你最重视的因素，并按重要性排序</h2>
                 <p>
                   每次点选会依次成为第 1、第 2……优先级，权重按这个顺序自动计算，你不需要手动配分。
                   再次点击即可反选，后续项目会自动前移。你也可以一项都不选，或在提交前清空全部选择。
@@ -280,9 +262,8 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
             <div className="dp-toolbar" aria-live="polite">
               <div className="dp-toolbar-copy">
                 <strong>{perspective.shortLabel}</strong>
-                <span>顺序代表优先级 · 最多 10 项</span>
               </div>
-              <div className="dp-counter">已选 {selectedIds.length} / {MAX_SELECTIONS}</div>
+              <div className="dp-counter">已选 {selectedIds.length} 项</div>
             </div>
 
             <section className="dp-selection-panel" aria-labelledby="selected-heading">
@@ -322,8 +303,6 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
               )}
             </section>
 
-            {notice && <div className="dp-notice" role="status">{notice}</div>}
-
             {perspective.categories.map((category) => {
               const categoryItems = items.filter((item) => item.categoryKey === category.key)
               return (
@@ -337,15 +316,13 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
                     {categoryItems.map((item) => {
                       const rank = selectedIds.indexOf(item.id)
                       const selected = rank >= 0
-                      const limitDisabled = !selected && selectedIds.length >= MAX_SELECTIONS
                       return (
                         <button
                           key={item.id}
                           type="button"
                           data-testid="priority-option"
-                          className={`dp-option${selected ? ' is-selected' : ''}${limitDisabled ? ' is-limit-disabled' : ''}`}
+                          className={`dp-option${selected ? ' is-selected' : ''}`}
                           aria-pressed={selected}
-                          aria-disabled={limitDisabled}
                           onClick={() => toggleItem(item.id)}
                         >
                           <span className="dp-option-check" aria-hidden="true">✓</span>
@@ -483,7 +460,7 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
 
                 {(stats.priority_stats || []).length > 0 ? (
                   <div className="dp-stats-group">
-                    <h4>最常被选入前 10 项</h4>
+                    <h4>最常被选择的因素</h4>
                     <ol className="dp-stats-list">
                       {stats.priority_stats.slice(0, 10).map((item, index) => (
                         <li key={`${item.category}-${item.label}`}>
@@ -533,14 +510,6 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
               </section>
             )}
 
-            <div className="dp-actions">
-              <button type="button" className="dp-button dp-button-secondary" onClick={restart}>
-                重新填写
-              </button>
-              <button type="button" className="dp-button dp-button-primary" onClick={() => onBack?.()}>
-                完成并返回
-              </button>
-            </div>
           </section>
         )}
       </div>

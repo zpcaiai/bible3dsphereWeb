@@ -73,19 +73,41 @@ describe('DatingPriorityPage', () => {
     expect(honesty.textContent).not.toContain('#')
   })
 
-  it('caps selection at ten while allowing all items to be cleared', () => {
+  it('places no cap on how many factors can be selected', () => {
     render(<DatingPriorityPage />)
     fireEvent.click(screen.getByRole('button', { name: /我在选择男性伴侣/ }))
 
     const options = screen.getAllByTestId('priority-option')
-    options.slice(0, 11).forEach((option) => fireEvent.click(option))
+    expect(options.length).toBeGreaterThan(10)
+    options.forEach((option) => fireEvent.click(option))
 
-    expect(screen.getByText('已选 10 / 10')).toBeTruthy()
-    expect(screen.getByText('最多选择 10 项。如需更换，请先反选一项。')).toBeTruthy()
+    // 全选也不该被拦下，也不该冒出「最多选择 10 项」这类提示
+    expect(screen.getByText(`已选 ${options.length} 项`)).toBeTruthy()
+    expect(screen.queryByText(/最多选择/)).toBeNull()
+    expect(options.every((option) => option.getAttribute('aria-pressed') === 'true')).toBe(true)
 
     fireEvent.click(screen.getAllByRole('button', { name: '全部反选' })[0])
-    expect(screen.getByText('已选 0 / 10')).toBeTruthy()
+    expect(screen.getByText('已选 0 项')).toBeTruthy()
     expect(screen.getByText('尚未选择。0 项也是有效答案，你可以直接提交。')).toBeTruthy()
+  })
+
+  it('submits a full-length selection without tripping the backend 100-point contract', async () => {
+    const onSubmit = vi.fn()
+    render(<DatingPriorityPage onSubmit={onSubmit} />)
+    fireEvent.click(screen.getByRole('button', { name: /我在选择男性伴侣/ }))
+
+    const options = screen.getAllByTestId('priority-option')
+    options.forEach((option) => fireEvent.click(option))
+    fireEvent.click(screen.getByRole('button', { name: '匿名提交并查看统计' }))
+
+    await waitFor(() => expect(screen.getByRole('heading', { name: '问卷已完成' })).toBeTruthy())
+    const submitted = onSubmit.mock.calls[0][0]
+    expect(submitted.selected).toHaveLength(options.length)
+    expect(submitted.totalScore).toBe(100)
+    expect(submitted.selected.map((item) => item.rank))
+      .toEqual(options.map((_, index) => index + 1))
+    // 后端 score 字段是 ge=0，但勾选了却显示「权重 0」是坏体验
+    expect(submitted.selected.every((item) => item.score >= 1)).toBe(true)
   })
 
   it('accepts a zero-selection anonymous submission and shows current stats', async () => {
@@ -165,7 +187,7 @@ describe('DatingPriorityPage', () => {
   })
 
   it('never lets the derived weights drift off 100, at any selection size', () => {
-    for (let size = 1; size <= 10; size += 1) {
+    for (let size = 1; size <= 100; size += 1) {
       const ids = Array.from({ length: size }, (_, index) => `item-${index}`)
       const points = rankWeightedPoints(ids)
       const values = ids.map((id) => points[id])
@@ -178,6 +200,19 @@ describe('DatingPriorityPage', () => {
       })
     }
     expect(rankWeightedPoints([])).toEqual({})
+  })
+
+  it('ends on the stats with no restart or return buttons', async () => {
+    render(<DatingPriorityPage onBack={vi.fn()} />)
+    fireEvent.click(screen.getByRole('button', { name: /我在选择男性伴侣/ }))
+    fireEvent.click(screen.getByRole('button', { name: /诚实守信/ }))
+    fireEvent.click(screen.getByRole('button', { name: '匿名提交并查看统计' }))
+
+    await waitFor(() => expect(screen.getByRole('heading', { name: '问卷已完成' })).toBeTruthy())
+    expect(screen.queryByRole('button', { name: '重新填写' })).toBeNull()
+    expect(screen.queryByRole('button', { name: '完成并返回' })).toBeNull()
+    // 统计仍然要在，否则这一页就没有内容了
+    expect(screen.getByRole('heading', { name: '当前统计结果' })).toBeTruthy()
   })
 
   it('keeps the answer editable when anonymous submission fails', async () => {
