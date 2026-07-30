@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 const { submitSurveyMock } = vi.hoisted(() => ({
@@ -9,7 +9,7 @@ vi.mock('../api', () => ({
   submitAnonymousDatingPriority: submitSurveyMock,
 }))
 
-import DatingPriorityPage from '../DatingPriorityPage'
+import DatingPriorityPage, { rankWeightedPoints } from '../DatingPriorityPage'
 import { getDatingPriorityItems, getDatingVetoItems } from '../datingPriorityData'
 
 const CURRENT_STATS = {
@@ -137,30 +137,47 @@ describe('DatingPriorityPage', () => {
     expect(screen.getByText('已选 1 / 12')).toBeTruthy()
   })
 
-  it('prepares a valid 100-point allocation and submits ranked results', async () => {
+  it('submits straight from the selection stage without a separate scoring step', async () => {
     const onSubmit = vi.fn()
     render(<DatingPriorityPage onSubmit={onSubmit} />)
     fireEvent.click(screen.getByRole('button', { name: /我在选择男性伴侣/ }))
     fireEvent.click(screen.getByRole('button', { name: /诚实守信/ }))
     fireEvent.click(screen.getByRole('button', { name: /忠诚与专一/ }))
     fireEvent.click(screen.getByRole('button', { name: /^责任感/ }))
-    fireEvent.click(screen.getByRole('button', { name: /下一步：为 3 项分配 100 分/ }))
 
-    expect(screen.getByText('100', { selector: '.dp-score-meter strong' })).toBeTruthy()
-    const scoreRows = screen.getAllByRole('listitem')
-    expect(within(scoreRows[0]).getByRole('spinbutton').value).toBe('34')
-    expect(within(scoreRows[1]).getByRole('spinbutton').value).toBe('33')
-    expect(within(scoreRows[2]).getByRole('spinbutton').value).toBe('33')
-
+    // 选完就能直接提交：不应该再出现「下一步：分配 100 分」这一跳
+    expect(screen.queryByText(/分配 100 分/)).toBeNull()
     fireEvent.click(screen.getByRole('button', { name: '匿名提交并查看统计' }))
 
     await waitFor(() => expect(screen.getByRole('heading', { name: '问卷已完成' })).toBeTruthy())
-    expect(onSubmit.mock.calls[0][0].totalScore).toBe(100)
-    expect(onSubmit.mock.calls[0][0].selected.map((item) => item.label)).toEqual([
+    expect(screen.queryByRole('spinbutton')).toBeNull()
+    expect(screen.queryByRole('slider')).toBeNull()
+
+    const submitted = onSubmit.mock.calls[0][0]
+    expect(submitted.totalScore).toBe(100)
+    expect(submitted.selected.map((item) => item.label)).toEqual([
       '诚实守信',
       '忠诚与专一',
       '责任感',
     ])
+    // 权重由点选顺序推导，第 1 位最重
+    expect(submitted.selected.map((item) => item.score)).toEqual([50, 33, 17])
+  })
+
+  it('never lets the derived weights drift off 100, at any selection size', () => {
+    for (let size = 1; size <= 10; size += 1) {
+      const ids = Array.from({ length: size }, (_, index) => `item-${index}`)
+      const points = rankWeightedPoints(ids)
+      const values = ids.map((id) => points[id])
+
+      expect(values.reduce((sum, value) => sum + value, 0)).toBe(100)
+      expect(values.every((value) => Number.isInteger(value) && value > 0)).toBe(true)
+      // 排名靠前的权重不得低于排名靠后的
+      values.forEach((value, index) => {
+        if (index > 0) expect(values[index - 1]).toBeGreaterThanOrEqual(value)
+      })
+    }
+    expect(rankWeightedPoints([])).toEqual({})
   })
 
   it('keeps the answer editable when anonymous submission fails', async () => {

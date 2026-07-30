@@ -26,11 +26,24 @@ function getOrCreateAnonymousSurveyId() {
   }
 }
 
-function evenlyDistributePoints(ids) {
-  if (ids.length === 0) return {}
-  const base = Math.floor(100 / ids.length)
-  const remainder = 100 - (base * ids.length)
-  return Object.fromEntries(ids.map((id, index) => [id, base + (index < remainder ? 1 : 0)]))
+// 用户不再手动配分：权重直接由点选顺序推导，第 1 位最重、依次递减。
+// 后端要求所选项分数合计恰好等于 100，所以用最大余数法取整，
+// 避免四舍五入后总和变成 99 或 101 而被拒收。
+export function rankWeightedPoints(ids) {
+  const count = ids.length
+  if (count === 0) return {}
+  const weights = ids.map((_, index) => count - index)
+  const weightSum = weights.reduce((sum, weight) => sum + weight, 0)
+  const exact = weights.map((weight) => (weight * 100) / weightSum)
+  const points = exact.map((value) => Math.floor(value))
+  const byLargestRemainder = exact
+    .map((value, index) => ({ index, remainder: value - Math.floor(value) }))
+    .sort((a, b) => b.remainder - a.remainder || a.index - b.index)
+  let leftover = 100 - points.reduce((sum, value) => sum + value, 0)
+  for (let i = 0; leftover > 0; i += 1, leftover -= 1) {
+    points[byLargestRemainder[i % count].index] += 1
+  }
+  return Object.fromEntries(ids.map((id, index) => [id, points[index]]))
 }
 function buildDatingPriorityResult({
   perspectiveKey,
@@ -75,7 +88,6 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
   const [stage, setStage] = useState('select')
   const [selectedIds, setSelectedIds] = useState([])
   const [selectedVetoIds, setSelectedVetoIds] = useState([])
-  const [scores, setScores] = useState({})
   const [result, setResult] = useState(null)
   const [stats, setStats] = useState(null)
   const [submitting, setSubmitting] = useState(false)
@@ -86,14 +98,12 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
   const items = useMemo(() => getDatingPriorityItems(perspectiveKey), [perspectiveKey])
   const vetoItems = useMemo(() => getDatingVetoItems(perspectiveKey), [perspectiveKey])
   const itemById = useMemo(() => new Map(items.map((item) => [item.id, item])), [items])
-  const totalScore = selectedIds.reduce((sum, id) => sum + Number(scores[id] || 0), 0)
 
   const choosePerspective = (key) => {
     setPerspectiveKey(key)
     setStage('select')
     setSelectedIds([])
     setSelectedVetoIds([])
-    setScores({})
     setResult(null)
     setStats(null)
     setSubmitError('')
@@ -117,7 +127,6 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
 
   const clearSelection = () => {
     setSelectedIds([])
-    setScores({})
     setNotice('')
   }
 
@@ -158,44 +167,13 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
     }
   }
 
-  const finishWithoutSelection = () => {
-    submitResult(buildDatingPriorityResult({
-      perspectiveKey,
-      selectedIds: [],
-      selectedVetoIds,
-      scores: {},
-      items,
-      vetoItems,
-    }))
-  }
-
-  const continueToScoring = () => {
-    if (selectedIds.length === 0) {
-      finishWithoutSelection()
-      return
-    }
-    setScores(evenlyDistributePoints(selectedIds))
+  const submitSelection = () => {
     setNotice('')
-    setStage('score')
-    window.scrollTo?.({ top: 0, behavior: 'smooth' })
-  }
-
-  const updateScore = (id, rawValue) => {
-    const parsed = Number.parseInt(rawValue, 10)
-    const nextValue = Number.isFinite(parsed) ? Math.max(0, Math.min(100, parsed)) : 0
-    setScores((current) => ({ ...current, [id]: nextValue }))
-  }
-
-  const submitScoredResult = () => {
-    if (totalScore !== 100) {
-      setNotice(`当前合计 ${totalScore} 分，还需要调整为 100 分。`)
-      return
-    }
     submitResult(buildDatingPriorityResult({
       perspectiveKey,
       selectedIds,
       selectedVetoIds,
-      scores,
+      scores: rankWeightedPoints(selectedIds),
       items,
       vetoItems,
     }))
@@ -206,7 +184,6 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
     setStage('select')
     setSelectedIds([])
     setSelectedVetoIds([])
-    setScores({})
     setResult(null)
     setStats(null)
     setSubmitError('')
@@ -215,10 +192,6 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
 
   const backFromHeader = () => {
     if (stage === 'complete') {
-      setStage(selectedIds.length > 0 ? 'score' : 'select')
-      return
-    }
-    if (stage === 'score') {
       setStage('select')
       return
     }
@@ -226,7 +199,6 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
       setPerspectiveKey('')
       setSelectedIds([])
       setSelectedVetoIds([])
-      setScores({})
       setStats(null)
       setSubmitError('')
       setNotice('')
@@ -238,10 +210,8 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
   const headerStep = !perspectiveKey
     ? '开始'
     : stage === 'select'
-      ? '第一阶段 · 选择与排序'
-      : stage === 'score'
-        ? '第二阶段 · 权重分配'
-        : '完成'
+      ? '选择与排序'
+      : '完成'
 
   return (
     <main className="dating-priority-page">
@@ -300,8 +270,8 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
               <div>
                 <h2>选出最重视的 10 项，并按重要性排序</h2>
                 <p>
-                  每次点选会依次成为第 1、第 2……优先级。再次点击即可反选，后续项目会自动前移。
-                  你也可以一项都不选，或在提交前清空全部选择。
+                  每次点选会依次成为第 1、第 2……优先级，权重按这个顺序自动计算，你不需要手动配分。
+                  再次点击即可反选，后续项目会自动前移。你也可以一项都不选，或在提交前清空全部选择。
                 </p>
               </div>
               <div className="dp-intro-mark" aria-hidden="true">{perspective.icon}</div>
@@ -452,99 +422,7 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
                 type="button"
                 className="dp-button dp-button-primary"
                 disabled={submitting}
-                onClick={continueToScoring}
-              >
-                {submitting
-                  ? '正在匿名提交…'
-                  : selectedIds.length === 0
-                    ? '匿名提交并查看统计'
-                    : `下一步：为 ${selectedIds.length} 项分配 100 分`}
-              </button>
-            </div>
-            {submitError && <div className="dp-submit-error" role="alert">{submitError}</div>}
-          </>
-        )}
-
-        {perspectiveKey && stage === 'score' && (
-          <>
-            <section className="dp-score-intro">
-              <h2>把 100 分分配给所选项目</h2>
-              <p>
-                排名体现先后，分数体现重要程度。系统已按人数平均分配，你可以拖动滑杆或直接输入整数调整。
-                所有项目合计必须等于 100 分。
-              </p>
-              <div className={`dp-score-meter${totalScore === 100 ? '' : ' is-invalid'}`} aria-live="polite">
-                <div>
-                  <strong>{totalScore}</strong>
-                  <span> / 100 分</span>
-                </div>
-                <button
-                  type="button"
-                  className="dp-text-button"
-                  onClick={() => setScores(evenlyDistributePoints(selectedIds))}
-                >
-                  重新平均分配
-                </button>
-              </div>
-            </section>
-
-            <ol className="dp-score-list">
-              {selectedIds.map((id, index) => {
-                const item = itemById.get(id)
-                const value = Number(scores[id] || 0)
-                return (
-                  <li className="dp-score-row" key={id}>
-                    <span className="dp-score-rank">{index + 1}</span>
-                    <span className="dp-score-label">
-                      <strong>{item?.label}</strong>
-                      <small>{item?.categoryLabel}</small>
-                    </span>
-                    <input
-                      className="dp-score-range"
-                      type="range"
-                      min="0"
-                      max="100"
-                      value={value}
-                      aria-label={`${item?.label}分数滑杆`}
-                      onChange={(event) => updateScore(id, event.target.value)}
-                    />
-                    <label className="dp-score-input-wrap">
-                      <input
-                        className="dp-score-input"
-                        type="number"
-                        min="0"
-                        max="100"
-                        inputMode="numeric"
-                        value={value}
-                        aria-label={`${item?.label}分数`}
-                        onChange={(event) => updateScore(id, event.target.value)}
-                      />
-                      分
-                    </label>
-                  </li>
-                )
-              })}
-            </ol>
-
-            {notice && <div className="dp-notice" role="status">{notice}</div>}
-
-            <div className="dp-actions">
-              <button
-                type="button"
-                className="dp-button dp-button-secondary"
-                disabled={submitting}
-                onClick={() => {
-                  setNotice('')
-                  setStage('select')
-                }}
-              >
-                返回修改选择
-              </button>
-              <button
-                type="button"
-                className="dp-button dp-button-primary"
-                disabled={totalScore !== 100 || submitting}
-                onClick={submitScoredResult}
+                onClick={submitSelection}
               >
                 {submitting ? '正在匿名提交…' : '匿名提交并查看统计'}
               </button>
@@ -561,7 +439,7 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
               你的回答已保存在当前浏览器中。
               {result.selected.length === 0
                 ? '你没有选择优先因素，这仍是一份完整且有效的回答。'
-                : `你选择了 ${result.selected.length} 项，并完成了 100 分权重分配。`}
+                : `你选择了 ${result.selected.length} 项，权重已按你的点选顺序自动计算。`}
               {result.vetoes.length > 0
                 ? ` 同时选择了 ${result.vetoes.length} 项否决条件。`
                 : ' 你没有选择否决条件。'}
@@ -573,7 +451,7 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
                   <li className="dp-result-row" key={`${item.rank}-${item.label}`}>
                     <span className="dp-rank-number">{item.rank}</span>
                     <strong>{item.label}</strong>
-                    <span className="dp-result-score">{item.score} 分</span>
+                    <span className="dp-result-score">权重 {item.score}</span>
                   </li>
                 ))}
               </ol>
@@ -613,7 +491,7 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
                           <div className="dp-stat-main">
                             <div>
                               <strong>{item.label}</strong>
-                              <span>{item.selection_rate}% 选择 · 平均第 {item.avg_rank} 位 · 平均 {item.avg_score} 分</span>
+                              <span>{item.selection_rate}% 选择 · 平均第 {item.avg_rank} 位 · 平均权重 {item.avg_score}</span>
                             </div>
                             <div className="dp-stat-bar" aria-hidden="true">
                               <i style={{ width: `${Math.min(100, item.selection_rate)}%` }} />
