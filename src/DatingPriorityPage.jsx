@@ -460,9 +460,9 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
 
                 {(stats.priority_stats || []).length > 0 ? (
                   <div className="dp-stats-group">
-                    <h4>最常被选择的因素</h4>
+                    <h4>所有被选择的因素 · 按选择率排序</h4>
                     <ol className="dp-stats-list">
-                      {stats.priority_stats.slice(0, 10).map((item, index) => (
+                      {stats.priority_stats.map((item, index) => (
                         <li key={`${item.category}-${item.label}`}>
                           <span className="dp-stat-rank">{index + 1}</span>
                           <div className="dp-stat-main">
@@ -484,9 +484,9 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
 
                 {(stats.veto_stats || []).length > 0 && (
                   <div className="dp-stats-group dp-stats-veto-group">
-                    <h4>最常选择的否决条件</h4>
+                    <h4>所有被选择的否决条件 · 按选择率排序</h4>
                     <ol className="dp-stats-list">
-                      {stats.veto_stats.slice(0, 12).map((item, index) => (
+                      {stats.veto_stats.map((item, index) => (
                         <li key={item.label}>
                           <span className="dp-stat-rank">{index + 1}</span>
                           <div className="dp-stat-main">

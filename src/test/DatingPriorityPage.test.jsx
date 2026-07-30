@@ -202,6 +202,41 @@ describe('DatingPriorityPage', () => {
     expect(rankWeightedPoints([])).toEqual({})
   })
 
+  it('shows every stat the backend returns instead of truncating to a top-N preview', async () => {
+    // 之前的实现只展示 slice(0, 10)/(0, 12)，一旦选项数超过 10 项，
+    // 大部分累计结果就被悄悄砍掉了。这里用 20 个优先项 + 12 个否决项模拟
+    // 全站累计投票，验证页面把后端返回的每一条都渲染出来。
+    const manyPriorityStats = Array.from({ length: 20 }, (_, index) => ({
+      category: '人品与关系品质',
+      label: `因素-${index + 1}`,
+      avg_rank: index + 1,
+      avg_score: 5,
+      selection_count: 20 - index,
+      selection_rate: 20 - index,
+    }))
+    const manyVetoStats = Array.from({ length: 12 }, (_, index) => ({
+      label: `否决-${index + 1}`,
+      strength: '高',
+      supplied_rank: index + 1,
+      selection_count: 12 - index,
+      selection_rate: 12 - index,
+    }))
+    submitSurveyMock.mockResolvedValue({
+      ok: true,
+      anonymous: true,
+      stats: { total: 30, priority_stats: manyPriorityStats, veto_stats: manyVetoStats },
+    })
+
+    render(<DatingPriorityPage />)
+    fireEvent.click(screen.getByRole('button', { name: /我在选择男性伴侣/ }))
+    fireEvent.click(screen.getByRole('button', { name: /诚实守信/ }))
+    fireEvent.click(screen.getByRole('button', { name: '匿名提交并查看统计' }))
+
+    await waitFor(() => expect(screen.getByRole('heading', { name: '问卷已完成' })).toBeTruthy())
+    expect(screen.getByText('因素-20')).toBeTruthy()
+    expect(screen.getByText('否决-12')).toBeTruthy()
+  })
+
   it('ends on the stats with no restart or return buttons', async () => {
     render(<DatingPriorityPage onBack={vi.fn()} />)
     fireEvent.click(screen.getByRole('button', { name: /我在选择男性伴侣/ }))
