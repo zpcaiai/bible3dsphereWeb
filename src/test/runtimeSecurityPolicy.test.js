@@ -15,12 +15,25 @@ describe('3D runtime security policy', () => {
     expect(workerSrc).toContain("'self' blob:")
   })
 
+  it('allows Cloudflare media and EPUB blob frames without weakening the default policy', () => {
+    const config = JSON.parse(projectFile('vercel.json'))
+    const csp = config.headers[0].headers.find((header) => header.key === 'Content-Security-Policy').value
+    const mediaSrc = csp.split(';').find((directive) => directive.trim().startsWith('media-src'))
+    const frameSrc = csp.split(';').find((directive) => directive.trim().startsWith('frame-src'))
+
+    expect(mediaSrc).toBe(" media-src 'self' blob: https://cdn.holiness.uk")
+    expect(frameSrc).toContain("'self' blob:")
+    expect(csp).toContain("default-src 'self'")
+  })
+
   it('keeps the container policy aligned and expires the broken worker cache', () => {
     const nginx = projectFile('nginx.conf')
     const serviceWorker = projectFile('public/sw.js')
 
     expect(nginx.match(/script-src 'self' blob:/g)).toHaveLength(2)
+    expect(nginx.match(/media-src 'self' blob: https:\/\/cdn\.holiness\.uk/g)).toHaveLength(2)
+    expect(nginx.match(/frame-src 'self' blob:/g)).toHaveLength(2)
     expect(nginx).not.toMatch(/script-src[^;]*'unsafe-inline'/)
-    expect(serviceWorker).toContain("CACHE_VERSION = 'emotion-sphere-2025-v8'")
+    expect(serviceWorker).toContain("CACHE_VERSION = 'emotion-sphere-2025-v9'")
   })
 })
