@@ -57,4 +57,32 @@ export function retryDeletionManifest(id) { return request(`/deletions/${id}/ret
 export function createRebuild(payload) { return request('/rebuilds', { method: 'POST', body: JSON.stringify(payload) }) }
 export function getIntegrationHealth() { return request('/integrations/health') }
 
+export function getDiscernmentCatalog() { return request('/discernment/catalog') }
+export function listDiscernmentCases() { return request('/discernment/cases') }
+export function createDiscernmentCase(payload) {
+  return request('/discernment/cases', { method: 'POST', body: JSON.stringify(payload) })
+}
+export function getDiscernmentCase(id) { return request(`/discernment/cases/${id}`) }
+export function reanalyzeDiscernmentCase(id) {
+  return request(`/discernment/cases/${id}/reanalyze`, { method: 'POST' })
+}
+export function deleteDiscernmentCase(id) {
+  return request(`/discernment/cases/${id}`, { method: 'DELETE' })
+}
+export function startDiscernmentDialogue(id, payload = {}) {
+  return request(`/discernment/cases/${id}/dialogue`, { method: 'POST', body: JSON.stringify(payload) })
+}
+export function sendDiscernmentDialogueTurn(sessionId, payload) {
+  return request(`/discernment/dialogues/${sessionId}/turns`, { method: 'POST', body: JSON.stringify(payload) })
+}
+export function pauseDiscernmentDialogue(sessionId) {
+  return request(`/discernment/dialogues/${sessionId}/pause`, { method: 'POST' })
+}
+export function buildDiscernmentGospelPath(id, payload = {}) {
+  return request(`/discernment/cases/${id}/gospel-path`, { method: 'POST', body: JSON.stringify(payload) })
+}
+export function submitDiscernmentReview(id, payload) {
+  return request(`/discernment/cases/${id}/reviews`, { method: 'POST', body: JSON.stringify(payload) })
+}
+
 export const PLATFORM_API_ROOT = ROOT

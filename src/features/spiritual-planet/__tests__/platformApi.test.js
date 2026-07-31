@@ -2,15 +2,20 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import {
   PLATFORM_API_ROOT,
   createDeletionManifest,
+  createDiscernmentCase,
+  buildDiscernmentGospelPath,
   decideRecommendation,
   getContextAccessLog,
   getCurrentRecommendation,
   getUnifiedHome,
   getUnifiedTimeline,
+  listDiscernmentCases,
   listContextConsents,
   listUnifiedActions,
   searchUnifiedData,
   setContextConsent,
+  sendDiscernmentDialogueTurn,
+  startDiscernmentDialogue,
   transitionUnifiedAction,
 } from '../platformApi'
 
@@ -62,5 +67,21 @@ describe('Spiritual Planet API client', () => {
   it('surfaces structured deny reason codes without leaking response bodies', async () => {
     vi.spyOn(globalThis, 'fetch').mockImplementation(() => response({ detail: { code: 'CONTEXT_DENIED', reason_codes: ['USER_CONSENT_REQUIRED'] } }, false))
     await expect(getUnifiedHome()).rejects.toThrow('CONTEXT_DENIED')
+  })
+
+  it('uses explicit versioned routes for discernment cases, dialogue and gospel paths', async () => {
+    const fetchMock = vi.spyOn(globalThis, 'fetch').mockImplementation(() => response())
+    await listDiscernmentCases()
+    await createDiscernmentCase({ title: 'case' })
+    await startDiscernmentDialogue('case-1', { preferred_depth: 'standard' })
+    await sendDiscernmentDialogueTurn('session-1', { answer: 'answer' })
+    await buildDiscernmentGospelPath('case-1', { preferred_depth: 'standard' })
+    const calls = fetchMock.mock.calls
+    expect(calls[0][0]).toContain('/v1/platform/discernment/cases')
+    expect(calls[1][1].method).toBe('POST')
+    expect(calls[2][0]).toContain('/cases/case-1/dialogue')
+    expect(calls[3][0]).toContain('/dialogues/session-1/turns')
+    expect(calls[4][0]).toContain('/cases/case-1/gospel-path')
+    expect(calls.slice(1).every(([, options]) => options.credentials === 'same-origin')).toBe(true)
   })
 })

@@ -13,11 +13,12 @@ import {
   setContextConsent,
   transitionUnifiedAction,
 } from './platformApi'
+import DiscernmentWorkspace from './DiscernmentWorkspace'
 import './spiritualPlanetPlatform.css'
 
 const NAV = [
   ['home', '首页', '◉'], ['today', '今日', '☀'], ['twin', '孪生', '✦'],
-  ['practices', '操练', '◇'], ['calling', '呼召', '⌁'], ['collaboration', '同行', '♡'],
+  ['discernment', '洞鉴别', '⌬'], ['practices', '操练', '◇'], ['calling', '呼召', '⌁'], ['collaboration', '同行', '♡'],
   ['timeline', '时间线', '◷'], ['search', '搜索', '⌕'], ['actions', '行动', '✓'], ['privacy', '隐私', '◎'],
 ]
 
@@ -245,6 +246,7 @@ export default function SpiritualPlanetPlatformPage({ user, onBack, onOpen }) {
       <div className="sp-content"><ErrorNotice error={error} onRetry={tab === 'home' ? loadCore : undefined} />
         {loading && tab === 'home' ? <Loading /> : tab === 'home' ? <HomePanel home={home} recommendation={recommendation} busyDecision={busyDecision} onDecision={decide} onOpen={onOpen} onReload={loadCore} /> : null}
         {['today', 'twin', 'practices', 'calling', 'collaboration'].includes(tab) && <ModulePanel kind={tab} onOpen={onOpen} />}
+        {tab === 'discernment' && <DiscernmentWorkspace />}
         {tab === 'timeline' && <TimelinePanel items={timeline} loading={loading} module={timelineModule} setModule={setTimelineModule} />}
         {tab === 'search' && <SearchPanel />}
         {tab === 'actions' && <ActionsPanel actions={actions} loading={loading} onChange={changeAction} />}
