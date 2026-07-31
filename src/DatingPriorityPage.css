@@ -150,9 +150,27 @@
   font-weight: 700;
 }
 
+.dp-participant-counts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px 24px;
+  margin-top: 7px;
+}
+
+.dp-participant-count-item {
+  min-width: 112px;
+}
+
+.dp-participant-count-item > span {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--dp-muted);
+  font-size: 10px;
+  font-weight: 700;
+}
+
 .dp-participant-summary strong {
   display: block;
-  margin-top: 2px;
   color: var(--dp-green-dark);
   font-family: Georgia, serif;
   font-size: 28px;
@@ -1161,6 +1179,10 @@
     grid-column: 1 / -1;
     max-width: none;
     text-align: left;
+  }
+
+  .dp-participant-counts {
+    gap: 9px 18px;
   }
 
   .dp-perspective-grid,

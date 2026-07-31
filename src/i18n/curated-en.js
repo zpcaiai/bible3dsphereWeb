@@ -1,6 +1,9 @@
 // Hand-reviewed English for recently added subpages that are not yet in auto-en.js.
 // Keep these translations local so EN mode never depends on the translation API.
 export default {
+  '弟兄选姊妹': 'Brothers choosing sisters',
+  '姊妹选择弟兄': 'Sisters choosing brothers',
+  '按匿名提交标识在两个答题方向内分别去重，不显示任何个人信息。': 'Deduplicated separately within each survey direction using anonymous submission IDs; no personal information is shown.',
   '灵修内容分类': 'Devotion content categories',
   '灵修主导航': 'Devotion navigation',
   '按今日状态继续专题灵修': "Continue a topic devotion from today's state",

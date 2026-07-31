@@ -69,7 +69,15 @@ describe('dating priority anonymous survey API', () => {
   it('loads the globally deduplicated participant count without caching', async () => {
     const mockFetch = vi.fn().mockResolvedValue({
       ok: true,
-      json: async () => ({ ok: true, anonymous: true, participant_count: 12 }),
+      json: async () => ({
+        ok: true,
+        anonymous: true,
+        participant_count: 12,
+        perspective_counts: {
+          male_to_female: 7,
+          female_to_male: 5,
+        },
+      }),
     })
     vi.stubGlobal('fetch', mockFetch)
     const { fetchDatingPriorityParticipantCount } = await import('../api')
@@ -77,6 +85,10 @@ describe('dating priority anonymous survey API', () => {
     const result = await fetchDatingPriorityParticipantCount()
 
     expect(result.participant_count).toBe(12)
+    expect(result.perspective_counts).toEqual({
+      male_to_female: 7,
+      female_to_male: 5,
+    })
     expect(mockFetch).toHaveBeenCalledWith(
       '/api/dating-priority/participants',
       { cache: 'no-store' },

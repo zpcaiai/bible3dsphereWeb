@@ -103,7 +103,7 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState('')
   const [submissionId, setSubmissionId] = useState(createAnonymousSubmissionId)
-  const [participantCount, setParticipantCount] = useState(null)
+  const [participantCounts, setParticipantCounts] = useState(null)
   const [participantCountLoading, setParticipantCountLoading] = useState(true)
 
   const perspective = DATING_PRIORITY_PERSPECTIVES[perspectiveKey]
@@ -111,20 +111,25 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
   const vetoItems = useMemo(() => getDatingVetoItems(perspectiveKey), [perspectiveKey])
   const itemById = useMemo(() => new Map(items.map((item) => [item.id, item])), [items])
 
-  const loadParticipantCount = useCallback(async () => {
+  const loadParticipantCounts = useCallback(async () => {
     try {
       const response = await fetchDatingPriorityParticipantCount()
-      setParticipantCount(Number(response.participant_count) || 0)
+      const counts = response?.perspective_counts
+      if (!counts) throw new Error('Missing perspective participant counts')
+      setParticipantCounts({
+        maleToFemale: Number(counts.male_to_female) || 0,
+        femaleToMale: Number(counts.female_to_male) || 0,
+      })
     } catch {
-      setParticipantCount(null)
+      setParticipantCounts(null)
     } finally {
       setParticipantCountLoading(false)
     }
   }, [])
 
   useEffect(() => {
-    loadParticipantCount()
-  }, [loadParticipantCount])
+    loadParticipantCounts()
+  }, [loadParticipantCounts])
 
   const choosePerspective = (key) => {
     setPerspectiveKey(key)
@@ -176,7 +181,7 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
       // Rotate only after a confirmed success. A failed/ambiguous request keeps
       // its id so an ordinary retry cannot inflate the aggregate accidentally.
       setSubmissionId(createAnonymousSubmissionId())
-      loadParticipantCount()
+      loadParticipantCounts()
       try {
         onSubmit?.(nextResult, response.stats || null)
       } catch {
@@ -249,17 +254,29 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
 
             <div className="dp-participant-summary" aria-live="polite">
               <span className="dp-participant-icon" aria-hidden="true">◎</span>
-              <div>
+              <div className="dp-participant-details">
                 <p>{i18nT('当前去重后参与填写问卷的人数')}</p>
-                <strong data-testid="participant-count">
-                  {participantCountLoading ? '—' : (participantCount ?? '—')}
-                  <span> {i18nT('人')}</span>
-                </strong>
+                <div className="dp-participant-counts">
+                  <div className="dp-participant-count-item">
+                    <span>{i18nT('弟兄选姊妹')}</span>
+                    <strong data-testid="male-to-female-participant-count">
+                      {participantCountLoading ? '—' : (participantCounts?.maleToFemale ?? '—')}
+                      <span> {i18nT('人')}</span>
+                    </strong>
+                  </div>
+                  <div className="dp-participant-count-item">
+                    <span>{i18nT('姊妹选择弟兄')}</span>
+                    <strong data-testid="female-to-male-participant-count">
+                      {participantCountLoading ? '—' : (participantCounts?.femaleToMale ?? '—')}
+                      <span> {i18nT('人')}</span>
+                    </strong>
+                  </div>
+                </div>
               </div>
               <small>
-                {participantCount == null && !participantCountLoading
+                {participantCounts == null && !participantCountLoading
                   ? i18nT('参与人数暂时无法加载，不影响继续填写。')
-                  : i18nT('按匿名提交标识全局去重，不显示任何个人信息。')}
+                  : i18nT('按匿名提交标识在两个答题方向内分别去重，不显示任何个人信息。')}
               </small>
             </div>
 

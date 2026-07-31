@@ -54,18 +54,27 @@ describe('DatingPriorityPage', () => {
     expect(getDatingVetoItems('male_to_female')).toHaveLength(12)
   })
 
-  it('shows the globally deduplicated participant count on page open', async () => {
+  it('shows deduplicated participant counts for both perspectives on page open', async () => {
     fetchParticipantCountMock.mockResolvedValueOnce({
       ok: true,
       anonymous: true,
       participant_count: 12,
+      perspective_counts: {
+        male_to_female: 7,
+        female_to_male: 5,
+      },
     })
     render(<DatingPriorityPage />)
 
     expect(screen.getByText('当前去重后参与填写问卷的人数')).toBeTruthy()
-    await waitFor(() => expect(screen.getByTestId('participant-count').textContent).toContain('12'))
+    expect(screen.getByText(/弟兄选姊妹|Brothers choosing sisters/)).toBeTruthy()
+    expect(screen.getByText(/姊妹选择弟兄|Sisters choosing brothers/)).toBeTruthy()
+    await waitFor(() => {
+      expect(screen.getByTestId('male-to-female-participant-count').textContent).toContain('7')
+      expect(screen.getByTestId('female-to-male-participant-count').textContent).toContain('5')
+    })
     expect(fetchParticipantCountMock).toHaveBeenCalledTimes(1)
-    expect(screen.getByText('按匿名提交标识全局去重，不显示任何个人信息。')).toBeTruthy()
+    expect(screen.getByText(/按匿名提交标识在两个答题方向内分别去重|Deduplicated separately within each survey direction/)).toBeTruthy()
   })
 
   it('keeps the survey usable if the participant count cannot load', async () => {
