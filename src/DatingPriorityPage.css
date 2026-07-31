@@ -615,6 +615,84 @@
   line-height: 1.75;
 }
 
+.dp-my-response {
+  padding: clamp(18px, 4vw, 26px);
+  border: 1px solid rgba(57, 83, 116, 0.16);
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(134, 166, 207, 0.18), transparent 20rem),
+    #f8fafc;
+}
+
+.dp-my-response-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(57, 83, 116, 0.14);
+}
+
+.dp-my-response-heading p {
+  margin: 0 0 4px;
+  color: #57729a;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.dp-my-response-heading h3 {
+  margin: 0;
+  font-family: "Songti SC", "STSong", Georgia, serif;
+  font-size: 23px;
+}
+
+.dp-my-response-heading > strong {
+  color: #3d5c86;
+  font-family: Georgia, serif;
+  font-size: 30px;
+}
+
+.dp-my-response-heading > strong span {
+  font-family: inherit;
+  font-size: 12px;
+}
+
+.dp-response-group {
+  margin-top: 20px;
+}
+
+.dp-response-group h4 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 11px;
+  font-family: "Songti SC", "STSong", Georgia, serif;
+  font-size: 17px;
+}
+
+.dp-response-group h4 span {
+  display: inline-grid;
+  min-width: 24px;
+  height: 24px;
+  place-items: center;
+  padding: 0 6px;
+  border-radius: 999px;
+  color: #3d5c86;
+  background: rgba(88, 119, 158, 0.11);
+  font-family: system-ui, sans-serif;
+  font-size: 11px;
+}
+
+.dp-response-empty {
+  margin: 0;
+  padding: 12px;
+  border-radius: 12px;
+  color: var(--dp-muted);
+  background: rgba(255,255,255,0.62);
+  font-size: 12px;
+}
+
 .dp-result-list {
   display: grid;
   gap: 8px;
@@ -634,7 +712,21 @@
 }
 
 .dp-result-row strong {
+  display: block;
   font-size: 13px;
+}
+
+.dp-result-copy {
+  min-width: 0;
+}
+
+.dp-result-copy > span,
+.dp-result-copy > small {
+  display: block;
+  margin-top: 3px;
+  color: var(--dp-muted);
+  font-size: 10.5px;
+  line-height: 1.45;
 }
 
 .dp-result-score {
@@ -644,16 +736,13 @@
 }
 
 .dp-result-vetoes {
-  margin-top: 24px;
+  margin-top: 20px;
   padding-top: 20px;
   border-top: 1px solid rgba(139, 70, 56, 0.16);
 }
 
-.dp-result-vetoes h3 {
-  margin: 0 0 11px;
+.dp-result-vetoes h4 {
   color: #824831;
-  font-family: "Songti SC", "STSong", Georgia, serif;
-  font-size: 18px;
 }
 
 .dp-veto-result-list {

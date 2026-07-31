@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { t as i18nT } from './i18n/runtime'
 import BackButton from './BackButton'
 import {
   DATING_PRIORITY_PERSPECTIVES,
@@ -428,31 +429,56 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
                 : ' 你没有选择否决条件。'}
             </p>
 
-            {result.selected.length > 0 && (
-              <ol className="dp-result-list">
-                {result.selected.map((item) => (
-                  <li className="dp-result-row" key={`${item.rank}-${item.label}`}>
-                    <span className="dp-rank-number">{item.rank}</span>
-                    <strong>{item.label}</strong>
-                    <span className="dp-result-score">权重 {item.score}</span>
-                  </li>
-                ))}
-              </ol>
-            )}
-
-            {result.vetoes.length > 0 && (
-              <div className="dp-result-vetoes">
-                <h3>已选择的否决条件</h3>
-                <ol className="dp-veto-result-list">
-                  {result.vetoes.map((item) => (
-                    <li key={`${item.suppliedRank}-${item.label}`}>
-                      <span>{item.suppliedRank}</span>
-                      <strong>{item.label}</strong>
-                    </li>
-                  ))}
-                </ol>
+            <section className="dp-my-response" aria-labelledby="my-response-heading">
+              <div className="dp-my-response-heading">
+                <div>
+                  <p>{i18nT('个人回显 · 仅当前浏览器可见')}</p>
+                  <h3 id="my-response-heading">{i18nT('我的本次选择')}</h3>
+                </div>
+                <strong>{result.selected.length + result.vetoes.length}<span> {i18nT('项')}</span></strong>
               </div>
-            )}
+
+              <div className="dp-response-group">
+                <h4>{i18nT('优先因素')} <span>{result.selected.length}</span></h4>
+                {result.selected.length > 0 ? (
+                  <ol className="dp-result-list">
+                    {result.selected.map((item) => (
+                      <li
+                        className="dp-result-row"
+                        data-testid="submitted-priority"
+                        key={`${item.rank}-${item.label}`}
+                      >
+                        <span className="dp-rank-number">{item.rank}</span>
+                        <div className="dp-result-copy">
+                          <strong>{item.label}</strong>
+                          {item.category && <span>{item.category}</span>}
+                          {item.description && <small>{item.description}</small>}
+                        </div>
+                        <span className="dp-result-score">{i18nT('权重')} {item.score}</span>
+                      </li>
+                    ))}
+                  </ol>
+                ) : (
+                  <p className="dp-response-empty">{i18nT('未选择优先因素')}</p>
+                )}
+              </div>
+
+              <div className="dp-response-group dp-result-vetoes">
+                <h4>{i18nT('否决条件')} <span>{result.vetoes.length}</span></h4>
+                {result.vetoes.length > 0 ? (
+                  <ol className="dp-veto-result-list">
+                    {result.vetoes.map((item) => (
+                      <li data-testid="submitted-veto" key={`${item.suppliedRank}-${item.label}`}>
+                        <span>{item.suppliedRank}</span>
+                        <strong>{item.label}</strong>
+                      </li>
+                    ))}
+                  </ol>
+                ) : (
+                  <p className="dp-response-empty">{i18nT('未选择否决条件')}</p>
+                )}
+              </div>
+            </section>
 
             {stats && (
               <section className="dp-current-stats" aria-labelledby="current-stats-heading">

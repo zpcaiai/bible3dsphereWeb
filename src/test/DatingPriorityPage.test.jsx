@@ -106,6 +106,8 @@ describe('DatingPriorityPage', () => {
     expect(submitted.totalScore).toBe(100)
     expect(submitted.selected.map((item) => item.rank))
       .toEqual(options.map((_, index) => index + 1))
+    expect(screen.getByRole('heading', { name: '我的本次选择' })).toBeTruthy()
+    expect(screen.getAllByTestId('submitted-priority')).toHaveLength(options.length)
     // 后端 score 字段是 ge=0，但勾选了却显示「权重 0」是坏体验
     expect(submitted.selected.every((item) => item.score >= 1)).toBe(true)
   })
@@ -123,6 +125,9 @@ describe('DatingPriorityPage', () => {
     expect(screen.getByRole('heading', { name: '当前统计结果' })).toBeTruthy()
     expect(screen.getByText('8', { selector: '.dp-stats-heading > strong' })).toBeTruthy()
     expect(screen.getByText(/75% 选择/)).toBeTruthy()
+    expect(screen.getByRole('heading', { name: '我的本次选择' })).toBeTruthy()
+    expect(screen.getByText('未选择优先因素')).toBeTruthy()
+    expect(screen.getAllByTestId('submitted-veto')).toHaveLength(1)
     expect(screen.queryByText('极高')).toBeNull()
     expect(screen.queryByText(/强度/)).toBeNull()
     expect(onSubmit).toHaveBeenCalledTimes(1)
