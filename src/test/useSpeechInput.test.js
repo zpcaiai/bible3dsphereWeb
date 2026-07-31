@@ -5,6 +5,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { renderHook, act } from '@testing-library/react'
 import { useSpeechInput } from '../hooks/useSpeechInput'
+import { setRuntimeLang } from '../i18n/runtime'
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -53,6 +54,7 @@ describe('useSpeechInput', () => {
 
   beforeEach(() => {
     vi.useFakeTimers()
+    setRuntimeLang('zh')
     mediaRecorderMock = makeMediaRecorderMock()
     streamMock = makeStreamMock()
 
@@ -169,6 +171,16 @@ describe('useSpeechInput', () => {
     await act(async () => {})
 
     expect(onTranscript).toHaveBeenCalledWith('我感到很平安')
+    const requestBody = fakeFetch.mock.calls[0][1].body
+    expect(requestBody.get('language')).toBe('zh-CN')
+    expect(navigator.mediaDevices.getUserMedia).toHaveBeenCalledWith({
+      audio: expect.objectContaining({
+        autoGainControl: true,
+        channelCount: 1,
+        echoCancellation: true,
+        noiseSuppression: true,
+      }),
+    })
   })
 
   it('sets recordingError when getUserMedia is denied', async () => {

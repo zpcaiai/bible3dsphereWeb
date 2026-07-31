@@ -365,9 +365,10 @@ export async function fetchMeditationQuestions(reference, text) {
   return data.questions || []
 }
 
-export async function transcribeAudioBlob(audioBlob, { contentType } = {}) {
+export async function transcribeAudioBlob(audioBlob, { contentType, language } = {}) {
   const form = new FormData()
   const type = contentType || audioBlob?.type || 'audio/webm'
+  const speechLanguage = language || (getRuntimeLang() === 'en' ? 'en-US' : 'zh-CN')
   const extension = type.includes('mp4') || type.includes('m4a')
     ? 'mp4'
     : type.includes('mpeg') || type.includes('mp3')
@@ -376,6 +377,9 @@ export async function transcribeAudioBlob(audioBlob, { contentType } = {}) {
         ? 'wav'
         : 'webm'
   form.append('file', audioBlob, `voice.${extension}`)
+  // Short utterances are easy to misclassify. The visible UI language is a
+  // strong hint and lets the backend select Deepgram's matching Nova model.
+  form.append('language', speechLanguage)
 
   const response = await fetch(`${API_BASE}/speech/transcribe`, {
     method: 'POST',

@@ -22,6 +22,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
 import { t as i18nT } from '../i18n/runtime'
 import { transcribeAudioBlob } from '../api'
+import { AUDIO_CONSTRAINTS, makeBoostedStream } from './recorderUtils'
 
 const MAX_RECORDING_SECONDS = 120
 const MIN_RECORDING_MS = 500
@@ -75,6 +76,7 @@ export function useSpeechInput ({
   // ── Refs ───────────────────────────────────────────────────────────────────
   const mediaRecorderRef  = useRef(null)
   const streamRef = useRef(null)
+  const audioContextRef = useRef(null)
   const audioChunksRef    = useRef([])
   const recordingTimerRef = useRef(null)
   const recordingStartedAtRef = useRef(0)
@@ -86,6 +88,8 @@ export function useSpeechInput ({
   useEffect(() => () => {
     try { stopStreamTracks(streamRef.current) } catch { /* ignore */ }
     streamRef.current = null
+    try { audioContextRef.current?.close?.() } catch { /* ignore */ }
+    audioContextRef.current = null
     clearInterval(recordingTimerRef.current)
     recordingTimerRef.current = null
     clearTimeout(recordingDelayRef.current)
@@ -181,22 +185,20 @@ export function useSpeechInput ({
     }
 
     try {
-      const stream = await mediaDevices.getUserMedia({
-        audio: {
-          echoCancellation: true,
-          noiseSuppression: true,
-          autoGainControl: true,
-        },
-      })
+      const stream = await mediaDevices.getUserMedia({ audio: AUDIO_CONSTRAINTS })
       streamRef.current = stream
+      // Compress large volume swings and gently lift quiet speech. Browsers
+      // without WebAudio simply keep using the original microphone stream.
+      const { stream: recordingStream, ctx } = makeBoostedStream(stream)
+      audioContextRef.current = ctx
       const pickedMimeType = pickRecordingMimeType()
       const options = pickedMimeType ? { mimeType: pickedMimeType } : undefined
       let mediaRecorder
       try {
-        mediaRecorder = new MediaRecorder(stream, options)
+        mediaRecorder = new MediaRecorder(recordingStream, options)
       } catch (err) {
         if (!options) throw err
-        mediaRecorder = new MediaRecorder(stream)
+        mediaRecorder = new MediaRecorder(recordingStream)
       }
       const contentType = mediaRecorder.mimeType || pickedMimeType || 'audio/webm'
 
@@ -212,6 +214,8 @@ export function useSpeechInput ({
         mediaRecorderRef.current = null
         stopStreamTracks(streamRef.current || stream)
         streamRef.current = null
+        try { audioContextRef.current?.close?.() } catch { /* ignore */ }
+        audioContextRef.current = null
 
         const chunks = audioChunksRef.current
         audioChunksRef.current = []
@@ -259,6 +263,8 @@ export function useSpeechInput ({
       console.error('[useSpeechInput] start error:', err)
       stopStreamTracks(streamRef.current)
       streamRef.current = null
+      try { audioContextRef.current?.close?.() } catch { /* ignore */ }
+      audioContextRef.current = null
       mediaRecorderRef.current = null
 
       let errorMsg = '无法访问麦克风'

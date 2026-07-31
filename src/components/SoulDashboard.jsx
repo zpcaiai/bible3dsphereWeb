@@ -63,6 +63,7 @@ import SacramentCalendarOrbit from '../features/spiritual-formation/components/s
 import FormationTwinPage from '../features/formation-twin/FormationTwinPage'
 import SpiritualPlanetPlatformPage from '../features/spiritual-planet/SpiritualPlanetPlatformPage'
 import { a11yClickProps } from '../lib/a11yClick';
+import { resolveFormationMetric } from '../lib/formationMetrics'
 
 const MVFE_BASE = API_BASE + '/mvfe'
 
@@ -241,13 +242,13 @@ export default function SoulDashboard({ user, onOpenDevotion }) {
 
   const { formation, habits } = dashData || {}
   const sv        = formation?.state_vector || {}
-  const arc       = formation?.formation_arc || ''
   const insight   = deriveInsight({ formation, mvfeLastResult: mvfeLast, habits })
   const practice  = derivePractice({ formation, mvfeLastResult: mvfeLast, habits })
   const streak    = habits?.current_streak || 0
   const lastEmo   = mvfeLast?.emotion?.primary_emotion
-  const formScore = mvfeLast?.formation?.formation_score
-  const driftScore= mvfeLast?.formation?.drift_score || 0
+  const formationMetric = resolveFormationMetric(mvfeLast, mvfeData)
+  const formScore = formationMetric.score
+  const driftScore = formationMetric.driftScore
 
   const signals = [
     {
@@ -260,9 +261,9 @@ export default function SoulDashboard({ user, onOpenDevotion }) {
     {
       icon: '🧬',
       label: '形成度',
-      value: formScore != null ? `${(formScore * 100).toFixed(0)}%` : (arc ? arc.replace(/_/g,' ') : '暂无数据'),
-      color: driftScore > 0.3 ? '#ff6b6b' : driftScore > 0.15 ? '#ffa94d' : '#51cf66',
-      sub: driftScore > 0.01 ? `漂移 ${(driftScore * 100).toFixed(0)}%` : '',
+      value: formScore != null ? `${(formScore * 100).toFixed(0)}%` : '暂无数据',
+      color: formScore == null ? 'rgba(255,255,255,0.3)' : driftScore > 0.3 ? '#ff6b6b' : driftScore > 0.15 ? '#ffa94d' : '#51cf66',
+      sub: driftScore != null && driftScore > 0.01 ? `漂移 ${(driftScore * 100).toFixed(0)}%` : '',
     },
     {
       icon: streak > 0 ? '🔥' : '🌱',
