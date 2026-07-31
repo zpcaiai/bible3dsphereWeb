@@ -1155,6 +1155,13 @@ export async function fetchScripture(ref) {
 }
 
 export async function fetchTTS(text, language_code = 'zh-CN', voice_name = 'zh-CN-XiaoxiaoNeural') {
+  if (getRuntimeLang() === 'en') {
+    if (/[一-鿿]/.test(String(text || ''))) {
+      throw new Error('ENGLISH_TTS_REQUIRES_ENGLISH_TEXT')
+    }
+    language_code = 'en-US'
+    if (!String(voice_name).toLowerCase().startsWith('en-')) voice_name = 'en-US-AriaNeural'
+  }
   devlog(`[api] fetchTTS text=${text?.slice(0, 60)}... lang=${language_code}`)
   const response = await fetch(`${API_BASE}/tts`, {
     method: 'POST',

@@ -15,6 +15,7 @@ import { t as i18nT } from './i18n/runtime'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { fetchTTS } from './api'
 import { ttsServerParamsFor, pickVoiceFor, speechLangFor } from './voice'
+import { notifyEnglishSpeechUnavailable, prepareSpeechText } from './speechText'
 
 // ── Bible reference expansion ────────────────────────────────────────────────
 // Expands abbreviated references like "太 六 10" → "马太福音6章10节" before TTS.
@@ -169,7 +170,7 @@ export function useGlobalAudio() {
 
   const speak = useCallback(async (rawText) => {
     if (!rawText?.trim()) return
-    const text = _expandBibleRefs(rawText)
+    const sourceText = _expandBibleRefs(rawText)
 
     // Stop whatever is currently playing globally, then claim a new generation
     // so any previous in-flight fetchTTS() call is silently discarded when it resolves.
@@ -178,6 +179,18 @@ export function useGlobalAudio() {
 
     if (!isMountedRef.current) return
     setTtsState('loading')
+
+    let text
+    try {
+      text = await prepareSpeechText(sourceText)
+    } catch {
+      if (_singleton.speakGen === myGen && isMountedRef.current) {
+        setTtsState('idle')
+        notifyEnglishSpeechUnavailable()
+      }
+      return
+    }
+    if (_singleton.speakGen !== myGen || !isMountedRef.current) return
 
     // ── Try backend TTS (edge-tts / Google) ──────────────────────────
     try {
@@ -429,11 +442,20 @@ export function resumeAllAudio() {
  * @returns {Promise<'ended'|'interrupted'|'skipped'>}
  */
 export async function speakOnce(rawText, opts = {}) {
-  const text = _expandBibleRefs(String(rawText ?? ''))
-  if (!text.trim()) return 'skipped'
+  const sourceText = _expandBibleRefs(String(rawText ?? ''))
+  if (!sourceText.trim()) return 'skipped'
 
   _globalStop()
   const myGen = ++_singleton.speakGen
+
+  let text
+  try {
+    text = await prepareSpeechText(sourceText)
+  } catch {
+    if (_singleton.speakGen === myGen) notifyEnglishSpeechUnavailable()
+    return 'skipped'
+  }
+  if (_singleton.speakGen !== myGen) return 'interrupted'
 
   // ── 优先服务端 TTS ──────────────────────────────────────────────
   try {

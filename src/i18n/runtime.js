@@ -50,14 +50,20 @@ function interpolate(str, params) {
   return str.replace(/\{(\w+)\}/g, (m, k) => (k in params ? String(params[k]) : m))
 }
 
-// 全站统一翻译函数。key 可为命名空间键（'topbar.title'）或中文原文（'保存'）。
-export function t(key, params) {
+// 只读当前词典，不触发后台缺词翻译。供朗读等必须在继续前拿到确定译文的流程使用。
+export function lookupTranslation(key) {
   if (key == null) return key
   const table = translations[currentLang] || translations[DEFAULT_LANG]
   const fallback = translations[DEFAULT_LANG]
-  const raw = (table && key in table) ? table[key]
+  return (table && key in table) ? table[key]
     : (fallback && key in fallback) ? fallback[key]
     : key
+}
+
+// 全站统一翻译函数。key 可为命名空间键（'topbar.title'）或中文原文（'保存'）。
+export function t(key, params) {
+  if (key == null) return key
+  const raw = lookupTranslation(key)
   // EN 模式仍是中文（auto-en 缺词）→ 触发后台实时机翻；译好写回词典 + localStorage，
   // 下次（含下次加载）同步命中英文。本次先返回中文占位。
   if (currentLang === 'en' && typeof raw === 'string' && _CJK.test(raw) && _missHandler) {

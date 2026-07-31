@@ -196,7 +196,7 @@ describe('fetchTTS', () => {
     }))
 
     const { fetchTTS } = await import('../api')
-    await expect(fetchTTS('测试')).rejects.toThrow('TTS_NOT_CONFIGURED')
+    await expect(fetchTTS('Test narration')).rejects.toThrow('TTS_NOT_CONFIGURED')
   })
 
   it('uses native TTS fallback when Google TTS upstream fails', async () => {
@@ -207,7 +207,7 @@ describe('fetchTTS', () => {
     }))
 
     const { fetchTTS } = await import('../api')
-    await expect(fetchTTS('测试')).rejects.toThrow('TTS_NOT_CONFIGURED')
+    await expect(fetchTTS('Test narration')).rejects.toThrow('TTS_NOT_CONFIGURED')
   })
 })
 

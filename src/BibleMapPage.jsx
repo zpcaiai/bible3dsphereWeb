@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import BackButton from './BackButton'
 import { pickVoiceFor, speechLangFor } from './voice'
+import { notifyEnglishSpeechUnavailable, prepareSpeechText } from './speechText'
 import { createMapAdapter } from './map/createMapAdapter'
 import { normalizeRoute, routeSliceToStation } from './map/routePlayback'
 import { resolveJourneyRoute } from './map/journeyRouting'
@@ -64,11 +65,18 @@ function journeyZoomForStation(stations, variant, feature, indexHint = -1) {
 // 语音朗读：优先后端自然女声（edge-tts 晓晓），失败回退浏览器原生
 let _mapAudio = null
 async function speak(text) {
+  let speechText
+  try {
+    speechText = await prepareSpeechText(text)
+  } catch {
+    notifyEnglishSpeechUnavailable()
+    return
+  }
   try {
     if (_mapAudio) { try { _mapAudio.pause() } catch (e) {} _mapAudio = null }
     const { fetchTTS } = await import('./api')
-    const en = !/[一-鿿]/.test(text)
-    const blob = await fetchTTS(text, en ? 'en-US' : 'zh-CN', en ? 'en-US-AriaNeural' : 'zh-CN-XiaoxiaoNeural')
+    const en = !/[一-鿿]/.test(speechText)
+    const blob = await fetchTTS(speechText, en ? 'en-US' : 'zh-CN', en ? 'en-US-AriaNeural' : 'zh-CN-XiaoxiaoNeural')
     const audio = new Audio(URL.createObjectURL(blob))
     _mapAudio = audio
     audio.onended = () => { try { URL.revokeObjectURL(audio.src) } catch (e) {} }
@@ -78,9 +86,9 @@ async function speak(text) {
   try {
     if (!('speechSynthesis' in window)) return
     window.speechSynthesis.cancel()
-    const u = new SpeechSynthesisUtterance(text)
-    u.lang = speechLangFor(text)
-    const v = pickVoiceFor(text)
+    const u = new SpeechSynthesisUtterance(speechText)
+    u.lang = speechLangFor(speechText)
+    const v = pickVoiceFor(speechText)
     if (v) u.voice = v
     window.speechSynthesis.speak(u)
   } catch (e) { /* ignore */ }

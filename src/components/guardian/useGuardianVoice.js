@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useSpeechInput } from '../../hooks/useSpeechInput'
 import { pickVoiceFor, speechLangFor, ttsServerParamsFor } from '../../voice'
 import { fetchTTS } from '../../api'
+import { notifyEnglishSpeechUnavailable, prepareSpeechText } from '../../speechText'
 
 // 与 App.jsx 同一偏好序列：温柔的中文女声
 const PREFERRED_VOICES = [
@@ -59,9 +60,9 @@ export function useGuardianVoice({ onTranscript } = {}) {
     onSpeechEndRef.current = null
   }, [])
 
-  const speak = useCallback((text, { onEnd } = {}) => {
-    const cleaned = cleanForSpeech(text)
-    if (!cleaned) { onEnd?.(); return }
+  const speak = useCallback(async (text, { onEnd } = {}) => {
+    const sourceText = cleanForSpeech(text)
+    if (!sourceText) { onEnd?.(); return }
 
     // 先停掉当前正在播放的（原生 + 后端音频）
     try { window.speechSynthesis?.cancel() } catch { /* noop */ }
@@ -79,13 +80,26 @@ export function useGuardianVoice({ onTranscript } = {}) {
       cb?.()                                 // 对话模式：说完自动开麦
     }
 
+    let cleaned
+    try {
+      cleaned = await prepareSpeechText(sourceText)
+    } catch {
+      if (genRef.current === myGen) {
+        notifyEnglishSpeechUnavailable()
+        finish()
+      }
+      return
+    }
+    if (genRef.current !== myGen) return
+
     // 浏览器原生兜底（后端不可用时）
     const nativeSpeak = () => {
       const synth = window.speechSynthesis
       if (!synth) { finish(); return }
       synth.cancel()
       const utter = new SpeechSynthesisUtterance(cleaned)
-      const voice = pickVoiceFor(cleaned) || pickVoice()
+      const voice = pickVoiceFor(cleaned)
+        || (speechLangFor(cleaned).startsWith('zh') ? pickVoice() : null)
       if (voice) utter.voice = voice
       utter.lang = speechLangFor(cleaned) || voice?.lang || 'zh-CN'
       utter.rate = 0.95   // 慢一点，温柔陪伴的节奏

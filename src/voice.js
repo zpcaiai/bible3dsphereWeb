@@ -1,19 +1,11 @@
-// 统一语音(TTS)语言/嗓音选择：EN 模式用英文嗓音，ZH 用中文。
-// 规则：EN 模式优先英文；但若待读文本本身以中文为主(如和合本经文)，仍用中文，
-// 避免英文嗓音硬念中文。所有原生 speechSynthesis 调用点共用此模块，保持一致。
+// 统一语音(TTS)语言/嗓音选择：EN 模式只用英文嗓音，ZH 用中文。
+// EN 模式的中文源文本必须先经过 prepareSpeechText() 翻译；这里不再按原文
+// 回退中文，避免页面已经显示英文、朗读却仍然播放中文。
 import { getRuntimeLang } from './i18n/runtime'
 
-const CJK = /[一-鿿]/
-
 // 返回 'en-US' | 'zh-CN'
-export function speechLangFor(text) {
-  if (getRuntimeLang() !== 'en') return 'zh-CN'
-  if (text && CJK.test(text)) {
-    const compact = String(text).replace(/\s/g, '')
-    const cjk = (compact.match(/[一-鿿]/g) || []).length
-    if (compact.length && cjk / compact.length > 0.2) return 'zh-CN'
-  }
-  return 'en-US'
+export function speechLangFor(_text) {
+  return getRuntimeLang() === 'en' ? 'en-US' : 'zh-CN'
 }
 
 // 根据文本应读语言挑一个最合适的本地嗓音(可能为 null)

@@ -23,6 +23,7 @@ import LoginScreen from './LoginScreen'
 import TranslatableParagraph from './TranslatableParagraph'
 import { TTSButton, TTSFullBar } from './useGlobalAudio.jsx'
 import { ttsServerParamsFor, pickVoiceFor, speechLangFor } from './voice'
+import { notifyEnglishSpeechUnavailable, prepareSpeechText } from './speechText'
 import LanguageToggle from './i18n/LanguageToggle'
 import GlobalToast from './components/GlobalToast'
 import ConfirmDialog from './components/ConfirmDialog'
@@ -537,7 +538,8 @@ function AppContent() {
     utter.rate = 0.85
     utter.pitch = 1.05
 
-    const bestVoice = pickVoiceFor(text) || selectBestVoice(window.speechSynthesis.getVoices())
+    const bestVoice = pickVoiceFor(text)
+      || (speechLangFor(text).startsWith('zh') ? selectBestVoice(window.speechSynthesis.getVoices()) : null)
     if (bestVoice) {
       utter.voice = bestVoice
       console.log('[TTS Native] 使用语音:', bestVoice.name)
@@ -553,8 +555,8 @@ function AppContent() {
   }
 
   async function speakContent() {
-    const text = buildSpeakText()
-    if (!text.trim()) return
+    const sourceText = buildSpeakText()
+    if (!sourceText.trim()) return
 
     // 暂停/继续控制
     if (ttsState === 'playing') {
@@ -579,6 +581,15 @@ function AppContent() {
     // 停止之前的播放
     stopSpeaking()
     setTtsState('playing')
+
+    let text
+    try {
+      text = await prepareSpeechText(sourceText)
+    } catch {
+      setTtsState('idle')
+      notifyEnglishSpeechUnavailable()
+      return
+    }
 
     try {
       // 优先后端高质量 TTS（ElevenLabs/Edge Neural）；按文本语言统一选嗓音
