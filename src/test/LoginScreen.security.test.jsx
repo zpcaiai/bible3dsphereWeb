@@ -38,16 +38,17 @@ describe('LoginScreen credential safety', () => {
     expect(screen.queryByText('Bible Emotion Sphere')).toBeNull()
   })
 
-  it('shows the default login credentials without prefilling the password field', () => {
+  it('shows and prefills the default login credentials', () => {
     render(<LoginScreen />)
 
     const credentials = screen.getByLabelText('默认登录账号')
     expect(credentials.textContent).toContain('john@biblesphere.com')
     expect(credentials.textContent).toContain('john')
-    expect(screen.getByLabelText('密码').value).toBe('')
+    expect(screen.getByLabelText('邮箱').value).toBe('john@biblesphere.com')
+    expect(screen.getByLabelText('密码').value).toBe('john')
   })
 
-  it('removes legacy plaintext credentials and never prefills a password', () => {
+  it('removes legacy stored credentials and uses only the configured defaults', () => {
     localStorage.setItem('bs_remember_creds', JSON.stringify({
       email: 'legacy@example.com',
       password: 'plaintext-password',
@@ -55,8 +56,8 @@ describe('LoginScreen credential safety', () => {
 
     render(<LoginScreen />)
 
-    expect(screen.getByLabelText('邮箱').value).toBe('')
-    expect(screen.getByLabelText('密码').value).toBe('')
+    expect(screen.getByLabelText('邮箱').value).toBe('john@biblesphere.com')
+    expect(screen.getByLabelText('密码').value).toBe('john')
     expect(localStorage.getItem('bs_remember_creds')).toBeNull()
     expect(screen.getByText('记住邮箱')).toBeTruthy()
   })
@@ -66,7 +67,7 @@ describe('LoginScreen credential safety', () => {
 
     fireEvent.change(screen.getByLabelText('邮箱'), { target: { value: 'member@example.com' } })
     fireEvent.change(screen.getByLabelText('密码'), { target: { value: 'strong-password' } })
-    fireEvent.click(screen.getByLabelText('记住邮箱'))
+    expect(screen.getByLabelText('记住邮箱').checked).toBe(true)
     fireEvent.click(screen.getByRole('button', { name: '🔑 登录' }))
 
     await waitFor(() => expect(localStorage.getItem('bs_remember_email')).toBe('member@example.com'))

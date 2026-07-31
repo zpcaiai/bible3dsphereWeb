@@ -10,6 +10,7 @@ import MissionBridgePanel from './components/mission-bridge/MissionBridgePanel'
 import MissionOSRoadmap from './features/mission-os/roadmap/MissionOSRoadmap'
 import MissionConsole from './features/mission-os/console/MissionConsole'
 import { a11yClickProps } from './lib/a11yClick';
+import SeekersVideoPlayer from './components/SeekersVideoPlayer'
 
 const AMEN_KEY = 'evangelism-amened-v1'
 
@@ -172,6 +173,20 @@ const SEEKERS_META = {
 
 // 慕道班视频课程改为 R2 (cdn.holiness.uk/seekers-class/) 动态列表，后端按固定课程顺序排列
 
+const SEEKERS_FALLBACK_COURSES = [
+  ['《认识圣经》', '2026-06-05'],
+  ['《认识创造》', '2026-06-05'],
+  ['《认识罪》', '2026-06-05'],
+  ['《认识耶稣》', '2026-06-05'],
+  ['《认识洗礼》', '2026-06-05'],
+].map(([title, date]) => ({
+  title,
+  filename: `${title}.mp4`,
+  media_type: 'video',
+  url: `https://cdn.holiness.uk/seekers-class/${title}.mp4`,
+  modified_ts: Math.floor(new Date(`${date}T00:00:00Z`).getTime() / 1000),
+}))
+
 const SEEKERS_SHARE_URL = 'https://holiness.uk/seekers'
 
 function SeekersShareButton() {
@@ -202,20 +217,17 @@ function SeekersShareButton() {
 
 export function SeekersClassView() {
   const [courses, setCourses] = useState(null)
-  const [err, setErr] = useState('')
+  const [warning, setWarning] = useState('')
   const [playing, setPlaying] = useState(null)   // url of currently playing video
 
   useEffect(() => {
     fetchSeekersClassCourses()
       .then(d => setCourses(d.courses || []))
-      .catch(() => setErr(i18nT('课程加载失败，请稍后重试')))
+      .catch(() => {
+        setCourses(SEEKERS_FALLBACK_COURSES)
+        setWarning(i18nT('课程列表服务暂时不可用，已显示内置视频课程'))
+      })
   }, [])
-
-  if (err) return (
-    <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'rgba(255,100,100,0.7)', fontSize: 14, padding: 32 }}>
-      {err}
-    </div>
-  )
 
   if (!courses) return (
     <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'rgba(255,255,255,0.3)', fontSize: 14 }}>
@@ -240,6 +252,15 @@ export function SeekersClassView() {
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 10 }}>
         <SeekersShareButton />
       </div>
+      {warning && (
+        <div role="status" style={{
+          marginBottom: 10, padding: '8px 12px', borderRadius: 10,
+          background: 'rgba(255,179,64,0.1)', border: '1px solid rgba(255,179,64,0.25)',
+          color: 'rgba(255,205,125,0.9)', fontSize: 12, lineHeight: 1.5,
+        }}>
+          {warning}
+        </div>
+      )}
       {allCourses.map(c => {
         const meta = SEEKERS_META[c.media_type] || SEEKERS_META.text
         const isVideo = c.media_type === 'video'
@@ -264,16 +285,15 @@ export function SeekersClassView() {
                     style={{ width: '100%', height: 210, display: 'block', border: 'none', background: '#000' }}
                   />
                 ) : (
-                  <video
-                    src={c.url}
-                    controls autoPlay playsInline
-                    style={{ width: '100%', display: 'block', background: '#000', maxHeight: 280 }}
+                  <SeekersVideoPlayer
+                    course={c}
                     onEnded={() => setPlaying(null)}
                   />
                 )
               ) : (
                 <div
                   onClick={() => setPlaying(c.url)}
+                  aria-label={`${i18nT('播放')} ${c.title || c.filename || ''}`.trim()}
                   style={{
                     position: 'relative', cursor: 'pointer',
                     background: 'linear-gradient(135deg,#12122a,#0d0d20)',

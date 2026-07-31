@@ -55,11 +55,11 @@ const DEFAULT_LOGIN_PASSWORD = 'john'
 
 function loadRememberedEmail() {
   try {
-    const email = localStorage.getItem(REMEMBERED_EMAIL_KEY) || ''
+    const email = localStorage.getItem(REMEMBERED_EMAIL_KEY) || DEFAULT_LOGIN_EMAIL
     localStorage.removeItem(LEGACY_CREDENTIALS_KEY)
     return email
   } catch {
-    return ''
+    return DEFAULT_LOGIN_EMAIL
   }
 }
 
@@ -189,7 +189,7 @@ export default function LoginScreen({ onLogin, onBack, message }) {
 }
 
 function LoginForm({ email, setEmail, onLogin, onReset }) {
-  const [password, setPassword] = useState('')
+  const [password, setPassword] = useState(DEFAULT_LOGIN_PASSWORD)
   const [rememberMe, setRememberMe] = useState(() => Boolean(email))
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
