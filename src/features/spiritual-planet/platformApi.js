@@ -85,4 +85,61 @@ export function submitDiscernmentReview(id, payload) {
   return request(`/discernment/cases/${id}/reviews`, { method: 'POST', body: JSON.stringify(payload) })
 }
 
+export function listFormationEvents() { return request('/discernment/formation/events') }
+export function createFormationEvent(payload) {
+  return request('/discernment/formation/events', { method: 'POST', body: JSON.stringify(payload) })
+}
+export function correctFormationEvent(id, payload) {
+  return request(`/discernment/formation/events/${id}/corrections`, { method: 'POST', body: JSON.stringify(payload) })
+}
+export function deleteFormationEvent(id) {
+  return request(`/discernment/formation/events/${id}`, { method: 'DELETE' })
+}
+export function createFormationSnapshot() {
+  return request('/discernment/formation/snapshot', { method: 'POST' })
+}
+export function createFormationReview(windowDays) {
+  return request('/discernment/formation/reviews', { method: 'POST', body: JSON.stringify({ window_days: windowDays }) })
+}
+export function createRelapseTransition(payload) {
+  return request('/discernment/formation/relapse', { method: 'POST', body: JSON.stringify(payload) })
+}
+export function createRelationshipRepair(payload) {
+  return request('/discernment/formation/repairs', { method: 'POST', body: JSON.stringify(payload) })
+}
+export function createIdentityMigration(payload) {
+  return request('/discernment/formation/identity-migrations', { method: 'POST', body: JSON.stringify(payload) })
+}
+
+export function listCollaborationConsents() { return request('/discernment/collaboration/consents') }
+export function createCollaborationConsent(payload) {
+  return request('/discernment/collaboration/consents', { method: 'POST', body: JSON.stringify(payload) })
+}
+export function revokeCollaborationConsent(id) {
+  return request(`/discernment/collaboration/consents/${id}`, { method: 'DELETE' })
+}
+export function createCollaborationDisclosure(payload) {
+  return request('/discernment/collaboration/disclosures', { method: 'POST', body: JSON.stringify(payload) })
+}
+export function createCollaborationMeetingPrep(payload) {
+  return request('/discernment/collaboration/meeting-preps', { method: 'POST', body: JSON.stringify(payload) })
+}
+export function getCollaborationInbox() { return request('/discernment/collaboration/inbox') }
+export function getCollaborationAudit() { return request('/discernment/collaboration/audit') }
+
+export function listTheologySources() { return request('/discernment/theology/sources') }
+export function createTheologySource(payload) {
+  return request('/discernment/theology/sources', { method: 'POST', body: JSON.stringify(payload) })
+}
+export function listTheologyQueries() { return request('/discernment/theology/queries') }
+export function createTheologyQuery(payload) {
+  return request('/discernment/theology/queries', { method: 'POST', body: JSON.stringify(payload) })
+}
+
+export function getDiscernmentCertificationStatus() { return request('/discernment/certification/status') }
+export function exportExtendedDiscernmentData() { return request('/discernment/data-export') }
+export function deleteExtendedDiscernmentData() {
+  return request('/discernment/extended-data', { method: 'DELETE' })
+}
+
 export const PLATFORM_API_ROOT = ROOT

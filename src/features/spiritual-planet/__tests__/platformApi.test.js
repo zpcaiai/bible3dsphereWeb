@@ -3,6 +3,15 @@ import {
   PLATFORM_API_ROOT,
   createDeletionManifest,
   createDiscernmentCase,
+  createFormationEvent,
+  createFormationReview,
+  createCollaborationConsent,
+  createCollaborationDisclosure,
+  createTheologySource,
+  createTheologyQuery,
+  deleteExtendedDiscernmentData,
+  exportExtendedDiscernmentData,
+  getDiscernmentCertificationStatus,
   buildDiscernmentGospelPath,
   decideRecommendation,
   getContextAccessLog,
@@ -83,5 +92,32 @@ describe('Spiritual Planet API client', () => {
     expect(calls[3][0]).toContain('/dialogues/session-1/turns')
     expect(calls[4][0]).toContain('/cases/case-1/gospel-path')
     expect(calls.slice(1).every(([, options]) => options.credentials === 'same-origin')).toBe(true)
+  })
+
+  it('maps Batches 07-10 to explicit formation, collaboration, theology and privacy routes', async () => {
+    const fetchMock = vi.spyOn(globalThis, 'fetch').mockImplementation(() => response())
+    await createFormationEvent({ context: 'work' })
+    await createFormationReview(30)
+    await createCollaborationConsent({ recipient_email: 'mentor@example.test' })
+    await createCollaborationDisclosure({ consent_id: 'grant-1' })
+    await createTheologySource({ title: 'source' })
+    await createTheologyQuery({ question: 'question' })
+    await getDiscernmentCertificationStatus()
+    await exportExtendedDiscernmentData()
+    await deleteExtendedDiscernmentData()
+    const calls = fetchMock.mock.calls
+    expect(calls.map(([url]) => url)).toEqual(expect.arrayContaining([
+      expect.stringContaining('/discernment/formation/events'),
+      expect.stringContaining('/discernment/formation/reviews'),
+      expect.stringContaining('/discernment/collaboration/consents'),
+      expect.stringContaining('/discernment/collaboration/disclosures'),
+      expect.stringContaining('/discernment/theology/sources'),
+      expect.stringContaining('/discernment/theology/queries'),
+      expect.stringContaining('/discernment/certification/status'),
+      expect.stringContaining('/discernment/data-export'),
+      expect.stringContaining('/discernment/extended-data'),
+    ]))
+    expect(calls.at(-1)[1].method).toBe('DELETE')
+    expect(calls.every(([, options]) => options.credentials === 'same-origin')).toBe(true)
   })
 })

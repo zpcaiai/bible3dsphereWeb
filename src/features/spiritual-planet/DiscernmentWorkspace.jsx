@@ -11,6 +11,7 @@ import {
   startDiscernmentDialogue,
   submitDiscernmentReview,
 } from './platformApi'
+import ExtendedDiscernmentPanels from './ExtendedDiscernmentPanels'
 import './discernmentWorkspace.css'
 
 const INITIAL = {
@@ -200,7 +201,7 @@ export default function DiscernmentWorkspace() {
   }
 
   return <div className="spd-workspace">
-    <section className="spd-intro"><span>DISCERNMENT · BATCH 01—06</span><h2>{i18nT('洞鉴别')}</h2><p>{i18nT('从事实、主张与受造之善开始，经世界观、传播、自高假设与逐问对话，最终在你明确同意后进入以基督为中心的福音路径。')}</p><div><button type="button" aria-pressed={mode === 'new'} onClick={() => setMode('new')}>{i18nT('新建辨识')}</button><button type="button" aria-pressed={mode === 'history'} onClick={() => setMode('history')}>{i18nT('历史记录')} ({cases.length})</button>{report && <button type="button" aria-pressed={mode === 'report'} onClick={() => setMode('report')}>{i18nT('当前报告')}</button>}</div></section>
+    <section className="spd-intro"><span>DISCERNMENT · BATCH 01—10</span><h2>{i18nT('洞鉴别')}</h2><p>{i18nT('从事实与世界观辨识，延伸到纵向形成、目的绑定的教会协作、可追溯神学证据与生产认证；每层都保留同意、纠正、撤回和人工复核边界。')}</p><div><button type="button" aria-pressed={mode === 'new'} onClick={() => setMode('new')}>{i18nT('新建辨识')}</button><button type="button" aria-pressed={mode === 'history'} onClick={() => setMode('history')}>{i18nT('历史记录')} ({cases.length})</button>{report && <button type="button" aria-pressed={mode === 'report'} onClick={() => setMode('report')}>{i18nT('当前报告')}</button>}<button type="button" aria-pressed={mode === 'formation'} onClick={() => setMode('formation')}>{i18nT('成长轨迹')}</button><button type="button" aria-pressed={mode === 'collaboration'} onClick={() => setMode('collaboration')}>{i18nT('协作授权')}</button><button type="button" aria-pressed={mode === 'theology'} onClick={() => setMode('theology')}>{i18nT('神学证据')}</button><button type="button" aria-pressed={mode === 'certification'} onClick={() => setMode('certification')}>{i18nT('认证状态')}</button></div></section>
     {error && <div className="spd-error" role="alert">{error}</div>}
     {mode === 'new' && <form className="spd-form" onSubmit={submit}>
       <div className="spd-form-grid"><label>{i18nT('案例标题')}<input value={form.title} onChange={(event) => update('title', event.target.value)} maxLength={160} required /></label><label>{i18nT('分析对象')}<select value={form.subject_type} onChange={(event) => update('subject_type', event.target.value)}>{SUBJECTS.map(([value, label]) => <option value={value} key={value}>{i18nT(label)}</option>)}</select></label><label>{i18nT('信仰背景')}<select value={form.faith_context} onChange={(event) => update('faith_context', event.target.value)}><option value="unknown">{i18nT('未知/不指定')}</option><option value="christian">{i18nT('基督徒')}</option><option value="seeker">{i18nT('慕道/探索')}</option><option value="other">{i18nT('其他')}</option></select></label><label>{i18nT('敏感级别')}<select value={form.sensitivity} onChange={(event) => update('sensitivity', event.target.value)}><option value="normal">{i18nT('一般')}</option><option value="pastoral">{i18nT('牧养敏感')}</option><option value="mental_health">{i18nT('心理健康')}</option><option value="abuse">{i18nT('虐待/创伤')}</option><option value="crisis">{i18nT('危机')}</option><option value="reputation_sensitive">{i18nT('声誉敏感')}</option></select></label></div>
@@ -213,5 +214,6 @@ export default function DiscernmentWorkspace() {
     </form>}
     {mode === 'history' && <section className="spd-history"><h3>{i18nT('我的辨识记录')}</h3>{!cases.length ? <p>{i18nT('还没有记录。')}</p> : cases.map((item) => <button type="button" key={item.id} onClick={() => openCase(item.id)}><div><strong>{item.title}</strong><span>{item.subject_type} · {new Date(item.created_at).toLocaleString()}</span></div><em className={item.review_status}>{item.review_status}</em></button>)}</section>}
     {mode === 'report' && <><ReportPanel active={active} report={report} busy={busy} onStartDialogue={startDialogue} onBuildGospel={buildGospel} onRequestReview={requestReview} onDelete={remove} /><DialoguePanel session={session} answer={answer} setAnswer={setAnswer} busy={busy} onSend={sendTurn} onConsent={(choice) => sendTurn(null, choice)} onPause={pause} /><GospelPathPanel path={gospelPath} /></>}
+    <ExtendedDiscernmentPanels mode={mode} activeCase={active} />
   </div>
 }
