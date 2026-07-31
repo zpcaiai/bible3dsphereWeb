@@ -140,6 +140,33 @@ describe('DatingPriorityPage', () => {
     expect(submitSurveyMock.mock.calls[0][1]).not.toHaveProperty('visitor_id')
   })
 
+  it('counts every newly completed survey as a new anonymous submission', async () => {
+    const submittedIds = []
+    window.localStorage.setItem('dating-priority-survey:anonymous-id', 'survey-legacy-browser-id')
+    submitSurveyMock.mockImplementation(async (submissionId) => {
+      submittedIds.push(submissionId)
+      return {
+        ok: true,
+        anonymous: true,
+        stats: { ...CURRENT_STATS, total: submittedIds.length },
+      }
+    })
+
+    render(<DatingPriorityPage />)
+    fireEvent.click(screen.getByRole('button', { name: /我在选择男性伴侣/ }))
+    fireEvent.click(screen.getByRole('button', { name: '匿名提交并查看统计' }))
+
+    await waitFor(() => expect(screen.getByText('1', { selector: '.dp-stats-heading > strong' })).toBeTruthy())
+    fireEvent.click(screen.getByRole('button', { name: '返回上一页' }))
+    fireEvent.click(screen.getByRole('button', { name: '匿名提交并查看统计' }))
+
+    await waitFor(() => expect(screen.getByText('2', { selector: '.dp-stats-heading > strong' })).toBeTruthy())
+    expect(submittedIds).toHaveLength(2)
+    expect(new Set(submittedIds).size).toBe(2)
+    expect(submittedIds.every((id) => /^survey-/.test(id))).toBe(true)
+    expect(window.localStorage.getItem('dating-priority-survey:anonymous-id')).toBeNull()
+  })
+
   it('shows veto ranks without strength labels while allowing independent multi-select', () => {
     render(<DatingPriorityPage />)
     fireEvent.click(screen.getByRole('button', { name: /我在选择男性伴侣/ }))

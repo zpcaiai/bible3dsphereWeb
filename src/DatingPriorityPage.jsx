@@ -9,16 +9,18 @@ import { submitAnonymousDatingPriority } from './api'
 import './DatingPriorityPage.css'
 
 const STORAGE_KEY = 'dating-priority-survey:last'
-const ANONYMOUS_ID_KEY = 'dating-priority-survey:anonymous-id'
+const LEGACY_ANONYMOUS_ID_KEY = 'dating-priority-survey:anonymous-id'
 
-function getOrCreateAnonymousSurveyId() {
+function createAnonymousSubmissionId() {
   try {
-    const existing = window.localStorage.getItem(ANONYMOUS_ID_KEY)
-    if (existing) return existing
+    // Older builds persisted one browser id forever. The backend intentionally
+    // keeps only the latest answer for a visitor id, so every later submission
+    // from that browser replaced the previous response and `stats.total` never
+    // increased. A fresh id represents one completed anonymous submission.
+    window.localStorage.removeItem(LEGACY_ANONYMOUS_ID_KEY)
     const id = typeof crypto !== 'undefined' && crypto.randomUUID
       ? `survey-${crypto.randomUUID()}`
       : `survey-${Date.now()}-${Math.random().toString(36).slice(2, 12)}`
-    window.localStorage.setItem(ANONYMOUS_ID_KEY, id)
     return id
   } catch {
     return `survey-${Date.now()}-${Math.random().toString(36).slice(2, 12)}`
@@ -96,6 +98,7 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
   const [stats, setStats] = useState(null)
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState('')
+  const [submissionId, setSubmissionId] = useState(createAnonymousSubmissionId)
 
   const perspective = DATING_PRIORITY_PERSPECTIVES[perspectiveKey]
   const items = useMemo(() => getDatingPriorityItems(perspectiveKey), [perspectiveKey])
@@ -143,12 +146,15 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
     setSubmitError('')
     try {
       const response = await submitAnonymousDatingPriority(
-        getOrCreateAnonymousSurveyId(),
+        submissionId,
         nextResult,
       )
       setStats(response.stats || null)
       setResult(nextResult)
       setStage('complete')
+      // Rotate only after a confirmed success. A failed/ambiguous request keeps
+      // its id so an ordinary retry cannot inflate the aggregate accidentally.
+      setSubmissionId(createAnonymousSubmissionId())
       try {
         onSubmit?.(nextResult, response.stats || null)
       } catch {
