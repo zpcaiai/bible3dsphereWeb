@@ -35,7 +35,7 @@ import PastoralPathCard, { PASTORAL_ROUTE_TARGETS } from './components/PastoralP
 import { useGuardianStore } from './components/guardian/guardianStore'
 import { curateAnthropicEmotionLayout } from './data/anthropicEmotionConcepts'
 import { getCuratedEmotionScriptureDetail } from './data/emotionScriptureDetail'
-import { isDatingPriorityPath, shouldHideGlobalChrome } from './datingPriorityRoute'
+import { isDatingPriorityPath, isDatingPriorityStatsPath, shouldHideGlobalChrome } from './datingPriorityRoute'
 
 const CheckInPage = lazyWithRetry(() => import('./CheckInPage'))
 const ShareWallPage = lazyWithRetry(() => import('./ShareWallPage'))
@@ -76,6 +76,7 @@ const AttentionPage = lazyWithRetry(() => import('./features/attention/app/Atten
 const FormationTwinPage = lazyWithRetry(() => import('./features/formation-twin/FormationTwinPage'))
 const SpiritualPlanetPlatformPage = lazyWithRetry(() => import('./features/spiritual-planet/SpiritualPlanetPlatformPage'))
 const DatingPriorityPage = lazyWithRetry(() => import('./DatingPriorityPage'))
+const DatingPriorityStatsPage = lazyWithRetry(() => import('./DatingPriorityStatsPage'))
 
 // React Query client for HabitsPage
 const queryClient = new QueryClient({
@@ -1269,6 +1270,10 @@ function AppContent() {
     try {
       if (isDatingPriorityPath(window.location.pathname)) {
         setTimeout(() => setActivePanel('dating-priority'), 60)
+        return
+      }
+      if (isDatingPriorityStatsPath(window.location.pathname)) {
+        setTimeout(() => setActivePanel('dating-priority-stats'), 60)
         return
       }
       const pathMatch = window.location.pathname.match(/^\/attention(?:\/([^/]+))?\/?$/)
@@ -3164,6 +3169,23 @@ function AppContent() {
                 onBack={() => {
                   window.history.replaceState({}, '', '/')
                   setActivePanel('sphere')
+                }}
+              />
+            </Suspense>
+          </div>
+        )}
+
+        {activePanel === 'dating-priority-stats' && (
+          <div className="page-overlay">
+            <Suspense fallback={null}>
+              <DatingPriorityStatsPage
+                onBack={() => {
+                  window.history.replaceState({}, '', '/')
+                  setActivePanel('sphere')
+                }}
+                onOpenSurvey={() => {
+                  window.history.replaceState({}, '', '/amor-survey')
+                  setActivePanel('dating-priority')
                 }}
               />
             </Suspense>

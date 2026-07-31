@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import {
   DATING_PRIORITY_PATH,
+  DATING_PRIORITY_STATS_PATH,
   isDatingPriorityPath,
+  isDatingPriorityStatsPath,
   shouldHideGlobalChrome,
 } from '../datingPriorityRoute'
 
@@ -10,6 +12,13 @@ describe('dating priority standalone route', () => {
     expect(DATING_PRIORITY_PATH).toBe('/amor-survey')
     expect(isDatingPriorityPath('/amor-survey')).toBe(true)
     expect(isDatingPriorityPath('/amor-survey/')).toBe(true)
+  })
+
+  it('recognizes the standalone summary path', () => {
+    expect(DATING_PRIORITY_STATS_PATH).toBe('/amor-survey-sum')
+    expect(isDatingPriorityStatsPath('/amor-survey-sum')).toBe(true)
+    expect(isDatingPriorityStatsPath('/amor-survey-sum/')).toBe(true)
+    expect(isDatingPriorityStatsPath('/amor-survey')).toBe(false)
   })
 
   it('does not treat the home page or similar paths as the survey', () => {
@@ -24,6 +33,17 @@ describe('standalone survey hides the global chrome', () => {
   it('隐藏底部导航与守护精灵：路径是问卷页且正停在问卷面板上', () => {
     expect(shouldHideGlobalChrome({ pathname: '/amor-survey', activePanel: 'dating-priority' })).toBe(true)
     expect(shouldHideGlobalChrome({ pathname: '/amor-survey/', activePanel: 'dating-priority' })).toBe(true)
+  })
+
+  it('统计独立页同样隐藏全局外壳', () => {
+    expect(shouldHideGlobalChrome({
+      pathname: '/amor-survey-sum',
+      activePanel: 'dating-priority-stats',
+    })).toBe(true)
+    expect(shouldHideGlobalChrome({
+      pathname: '/amor-survey-sum',
+      activePanel: 'sphere',
+    })).toBe(false)
   })
 
   it('从问卷链接进来后切到别的页面，导航必须回来——不能把人困住', () => {

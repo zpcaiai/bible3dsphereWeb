@@ -1,8 +1,16 @@
 export const DATING_PRIORITY_PATH = '/amor-survey'
+export const DATING_PRIORITY_STATS_PATH = '/amor-survey-sum'
+
+function normalizePath(pathname = '') {
+  return String(pathname).replace(/\/+$/, '') || '/'
+}
 
 export function isDatingPriorityPath(pathname = '') {
-  const normalizedPath = String(pathname).replace(/\/+$/, '') || '/'
-  return normalizedPath === DATING_PRIORITY_PATH
+  return normalizePath(pathname) === DATING_PRIORITY_PATH
+}
+
+export function isDatingPriorityStatsPath(pathname = '') {
+  return normalizePath(pathname) === DATING_PRIORITY_STATS_PATH
 }
 
 /**
@@ -13,5 +21,6 @@ export function isDatingPriorityPath(pathname = '') {
  * 切到别的页面后 pathname 仍是 /amor-survey。若只看路径，导航栏会就此永久消失。
  */
 export function shouldHideGlobalChrome({ pathname = '', activePanel = '' } = {}) {
-  return isDatingPriorityPath(pathname) && activePanel === 'dating-priority'
+  return (isDatingPriorityPath(pathname) && activePanel === 'dating-priority')
+    || (isDatingPriorityStatsPath(pathname) && activePanel === 'dating-priority-stats')
 }

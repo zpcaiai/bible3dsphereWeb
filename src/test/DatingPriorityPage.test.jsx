@@ -1,11 +1,13 @@
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-const { submitSurveyMock } = vi.hoisted(() => ({
+const { fetchParticipantCountMock, submitSurveyMock } = vi.hoisted(() => ({
+  fetchParticipantCountMock: vi.fn(),
   submitSurveyMock: vi.fn(),
 }))
 
 vi.mock('../api', () => ({
+  fetchDatingPriorityParticipantCount: fetchParticipantCountMock,
   submitAnonymousDatingPriority: submitSurveyMock,
 }))
 
@@ -37,6 +39,8 @@ describe('DatingPriorityPage', () => {
     window.scrollTo = vi.fn()
     submitSurveyMock.mockReset()
     submitSurveyMock.mockResolvedValue({ ok: true, anonymous: true, stats: CURRENT_STATS })
+    fetchParticipantCountMock.mockReset()
+    fetchParticipantCountMock.mockImplementation(() => new Promise(() => {}))
   })
 
   afterEach(() => {
@@ -48,6 +52,28 @@ describe('DatingPriorityPage', () => {
     expect(getDatingPriorityItems('male_to_female')).toHaveLength(64)
     expect(getDatingVetoItems('female_to_male')).toHaveLength(12)
     expect(getDatingVetoItems('male_to_female')).toHaveLength(12)
+  })
+
+  it('shows the globally deduplicated participant count on page open', async () => {
+    fetchParticipantCountMock.mockResolvedValueOnce({
+      ok: true,
+      anonymous: true,
+      participant_count: 12,
+    })
+    render(<DatingPriorityPage />)
+
+    expect(screen.getByText('当前去重后参与填写问卷的人数')).toBeTruthy()
+    await waitFor(() => expect(screen.getByTestId('participant-count').textContent).toContain('12'))
+    expect(fetchParticipantCountMock).toHaveBeenCalledTimes(1)
+    expect(screen.getByText('按匿名提交标识全局去重，不显示任何个人信息。')).toBeTruthy()
+  })
+
+  it('keeps the survey usable if the participant count cannot load', async () => {
+    fetchParticipantCountMock.mockRejectedValueOnce(new Error('offline'))
+    render(<DatingPriorityPage />)
+
+    await waitFor(() => expect(screen.getByText('参与人数暂时无法加载，不影响继续填写。')).toBeTruthy())
+    expect(screen.getByRole('button', { name: /我在选择男性伴侣/ })).toBeTruthy()
   })
 
   it('ranks selections by click order and reflows ranks after deselection', () => {

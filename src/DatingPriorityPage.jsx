@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { t as i18nT } from './i18n/runtime'
 import BackButton from './BackButton'
 import {
@@ -6,7 +6,10 @@ import {
   getDatingPriorityItems,
   getDatingVetoItems,
 } from './datingPriorityData'
-import { submitAnonymousDatingPriority } from './api'
+import {
+  fetchDatingPriorityParticipantCount,
+  submitAnonymousDatingPriority,
+} from './api'
 import './DatingPriorityPage.css'
 
 const STORAGE_KEY = 'dating-priority-survey:last'
@@ -100,11 +103,28 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState('')
   const [submissionId, setSubmissionId] = useState(createAnonymousSubmissionId)
+  const [participantCount, setParticipantCount] = useState(null)
+  const [participantCountLoading, setParticipantCountLoading] = useState(true)
 
   const perspective = DATING_PRIORITY_PERSPECTIVES[perspectiveKey]
   const items = useMemo(() => getDatingPriorityItems(perspectiveKey), [perspectiveKey])
   const vetoItems = useMemo(() => getDatingVetoItems(perspectiveKey), [perspectiveKey])
   const itemById = useMemo(() => new Map(items.map((item) => [item.id, item])), [items])
+
+  const loadParticipantCount = useCallback(async () => {
+    try {
+      const response = await fetchDatingPriorityParticipantCount()
+      setParticipantCount(Number(response.participant_count) || 0)
+    } catch {
+      setParticipantCount(null)
+    } finally {
+      setParticipantCountLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    loadParticipantCount()
+  }, [loadParticipantCount])
 
   const choosePerspective = (key) => {
     setPerspectiveKey(key)
@@ -156,6 +176,7 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
       // Rotate only after a confirmed success. A failed/ambiguous request keeps
       // its id so an ordinary retry cannot inflate the aggregate accidentally.
       setSubmissionId(createAnonymousSubmissionId())
+      loadParticipantCount()
       try {
         onSubmit?.(nextResult, response.stats || null)
       } catch {
@@ -225,6 +246,22 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
               </div>
               <div className="dp-intro-mark" aria-hidden="true">∞</div>
             </section>
+
+            <div className="dp-participant-summary" aria-live="polite">
+              <span className="dp-participant-icon" aria-hidden="true">◎</span>
+              <div>
+                <p>{i18nT('当前去重后参与填写问卷的人数')}</p>
+                <strong data-testid="participant-count">
+                  {participantCountLoading ? '—' : (participantCount ?? '—')}
+                  <span> {i18nT('人')}</span>
+                </strong>
+              </div>
+              <small>
+                {participantCount == null && !participantCountLoading
+                  ? i18nT('参与人数暂时无法加载，不影响继续填写。')
+                  : i18nT('按匿名提交标识全局去重，不显示任何个人信息。')}
+              </small>
+            </div>
 
             <section aria-labelledby="perspective-title">
               <div className="dp-section-heading">

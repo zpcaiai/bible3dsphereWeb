@@ -46,8 +46,17 @@ export async function submitAnonymousDatingPriority(visitorId, result) {
 
 export async function fetchDatingPriorityStats(perspective) {
   const params = new URLSearchParams({ perspective })
-  const response = await fetch(`${API_BASE}/dating-priority/stats?${params}`)
+  const response = await fetch(`${API_BASE}/dating-priority/stats?${params}`, {
+    cache: 'no-store',
+  })
   return readApiJson(response, '统计结果加载失败')
+}
+
+export async function fetchDatingPriorityParticipantCount() {
+  const response = await fetch(`${API_BASE}/dating-priority/participants`, {
+    cache: 'no-store',
+  })
+  return readApiJson(response, '参与人数加载失败')
 }
 
 // Personal formation graph (PostgreSQL-backed, depth-limited for 3D rendering).

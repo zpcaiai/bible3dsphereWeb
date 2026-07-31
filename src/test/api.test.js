@@ -62,6 +62,24 @@ describe('dating priority anonymous survey API', () => {
     expect(result.total).toBe(9)
     expect(mockFetch).toHaveBeenCalledWith(
       '/api/dating-priority/stats?perspective=male_to_female',
+      { cache: 'no-store' },
+    )
+  })
+
+  it('loads the globally deduplicated participant count without caching', async () => {
+    const mockFetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ ok: true, anonymous: true, participant_count: 12 }),
+    })
+    vi.stubGlobal('fetch', mockFetch)
+    const { fetchDatingPriorityParticipantCount } = await import('../api')
+
+    const result = await fetchDatingPriorityParticipantCount()
+
+    expect(result.participant_count).toBe(12)
+    expect(mockFetch).toHaveBeenCalledWith(
+      '/api/dating-priority/participants',
+      { cache: 'no-store' },
     )
   })
 })
