@@ -22,6 +22,9 @@ const namespacedZh = {
   'topbar.editProfile': '修改资料',
   'topbar.lastLogin': '最近登录时间',
   'topbar.login': '登录',
+  'auth.defaultCredentials': '默认登录账号',
+  'auth.defaultUsername': '用户名（邮箱）',
+  'auth.defaultPassword': '密码',
 
   'home.zoom.far': '远景',
   'home.zoom.mid': '中景',
@@ -155,6 +158,9 @@ const namespacedEn = {
   'topbar.editProfile': 'Edit profile',
   'topbar.lastLogin': 'Last login',
   'topbar.login': 'Log in',
+  'auth.defaultCredentials': 'Default login',
+  'auth.defaultUsername': 'Username (email)',
+  'auth.defaultPassword': 'Password',
 
   'home.zoom.far': 'Far',
   'home.zoom.mid': 'Mid',

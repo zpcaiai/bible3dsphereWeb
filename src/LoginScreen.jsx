@@ -50,6 +50,8 @@ const errorText = { fontSize: '13px', color: '#ff3b30', margin: '10px 0 0', text
 const labelStyle = { fontSize: '13px', color: 'rgba(255,255,255,0.72)', marginBottom: '6px', display: 'block' }
 const REMEMBERED_EMAIL_KEY = 'bs_remember_email'
 const LEGACY_CREDENTIALS_KEY = 'bs_remember_creds'
+const DEFAULT_LOGIN_EMAIL = 'john@biblesphere.com'
+const DEFAULT_LOGIN_PASSWORD = 'john'
 
 function loadRememberedEmail() {
   try {
@@ -209,6 +211,34 @@ function LoginForm({ email, setEmail, onLogin, onReset }) {
 
   return (
     <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+      <div
+        aria-label={i18nT('auth.defaultCredentials')}
+        style={{
+          padding: '12px 14px',
+          borderRadius: '10px',
+          border: '1px solid rgba(90,200,250,0.28)',
+          background: 'rgba(90,200,250,0.1)',
+          color: 'rgba(255,255,255,0.86)',
+          fontSize: '13px',
+          lineHeight: 1.65,
+        }}
+      >
+        <div style={{ color: '#5ac8fa', fontWeight: 600, marginBottom: '4px' }}>
+          {i18nT('auth.defaultCredentials')}
+        </div>
+        <div>
+          {i18nT('auth.defaultUsername')}：{' '}
+          <code style={{ color: '#fff', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace' }}>
+            {DEFAULT_LOGIN_EMAIL}
+          </code>
+        </div>
+        <div>
+          {i18nT('auth.defaultPassword')}：{' '}
+          <code style={{ color: '#fff', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace' }}>
+            {DEFAULT_LOGIN_PASSWORD}
+          </code>
+        </div>
+      </div>
       <div>
         <label htmlFor="login-email" style={labelStyle}>{i18nT('邮箱')}</label>
         <input

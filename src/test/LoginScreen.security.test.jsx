@@ -38,6 +38,15 @@ describe('LoginScreen credential safety', () => {
     expect(screen.queryByText('Bible Emotion Sphere')).toBeNull()
   })
 
+  it('shows the default login credentials without prefilling the password field', () => {
+    render(<LoginScreen />)
+
+    const credentials = screen.getByLabelText('默认登录账号')
+    expect(credentials.textContent).toContain('john@biblesphere.com')
+    expect(credentials.textContent).toContain('john')
+    expect(screen.getByLabelText('密码').value).toBe('')
+  })
+
   it('removes legacy plaintext credentials and never prefills a password', () => {
     localStorage.setItem('bs_remember_creds', JSON.stringify({
       email: 'legacy@example.com',
