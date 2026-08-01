@@ -1,0 +1,8 @@
+interface:
+  display_name: Course Domain Model
+  short_description: Implement versioned Course, Unit, Lesson and Activity contracts in the existing curriculum architecture.
+  default_prompt: Use $christian-course-domain-model for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

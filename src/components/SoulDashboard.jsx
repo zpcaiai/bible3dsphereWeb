@@ -62,6 +62,7 @@ import CrossLamentHopeDashboard from '../features/spiritual-formation/components
 import SacramentCalendarOrbit from '../features/spiritual-formation/components/sacrament-calendar/SacramentCalendarOrbit'
 import FormationTwinPage from '../features/formation-twin/FormationTwinPage'
 import SpiritualPlanetPlatformPage from '../features/spiritual-planet/SpiritualPlanetPlatformPage'
+import AiFormationPage from '../features/ai-formation/AiFormationPage'
 import { a11yClickProps } from '../lib/a11yClick';
 import { resolveFormationMetric } from '../lib/formationMetrics'
 
@@ -909,8 +910,16 @@ export default function SoulDashboard({ user, onOpenDevotion }) {
               checkin: 'mvfe', prayer: 'prayer-rule', devotion: 'hub', 'formation-twin': 'formation-twin',
               'spiritual-formation': 'spiritual-formation', attention: 'attention', 'growth-map': 'charts',
               'mission-life': 'mission-life', 'personal-search': 'spiritual-memory', partner: 'mentor', communion: 'church-life', sos: 'checkup',
+              'ai-formation': 'ai-formation',
             }[target]
             if (platformTarget) setOverlay(platformTarget)
+          }} />}
+          {overlay === 'ai-formation' && <AiFormationPage user={user} onBack={() => setOverlay(null)} onOpen={(target) => {
+            const formationTarget = {
+              'formation-twin': 'formation-twin', attention: 'attention', 'spiritual-formation': 'spiritual-formation',
+              devotion: 'hub', partner: 'mentor', communion: 'church-life',
+            }[target]
+            if (formationTarget) setOverlay(formationTarget)
           }} />}
           {overlay === 'ai-tutor' && <AITutorChatPage user={user} onBack={() => setOverlay(null)} />}
           {overlay === 'spiritual-memory' && <SpiritualMemoryPage user={user} onBack={() => setOverlay(null)} />}

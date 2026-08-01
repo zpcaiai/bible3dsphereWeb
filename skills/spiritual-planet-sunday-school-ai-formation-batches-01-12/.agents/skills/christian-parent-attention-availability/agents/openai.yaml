@@ -1,0 +1,8 @@
+interface:
+  display_name: Parent Attention Availability
+  short_description: Build device-free presence, reflective listening, follow-up and missed-connection repair practices.
+  default_prompt: Use $christian-parent-attention-availability for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

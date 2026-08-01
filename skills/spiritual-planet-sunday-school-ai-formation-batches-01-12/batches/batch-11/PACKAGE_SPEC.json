@@ -1,0 +1,274 @@
+{
+  "batch": 11,
+  "module_key": "sunday_school.ai_formation.formation_twin",
+  "skills": [
+    "spiritual-planet-formation-twin-orchestrator",
+    "christian-formation-twin-ontology",
+    "christian-formation-event-ledger",
+    "christian-formation-state-snapshot",
+    "christian-habit-trajectory",
+    "christian-attention-trajectory",
+    "christian-relationship-fruit-observation",
+    "christian-formation-review-window",
+    "christian-human-interpretation-note",
+    "christian-twin-recommendation",
+    "christian-formation-data-lifecycle",
+    "formation-twin-course-integrator"
+  ],
+  "counts": {
+    "skills": 12,
+    "schemas": 12,
+    "practices": 30,
+    "units": 8,
+    "lessons": 18,
+    "scenarios": 12
+  },
+  "practice_asset": "assets/formation-twin-control-catalog.seed.yaml",
+  "curriculum_asset": "assets/formation-twin-curriculum.seed.yaml",
+  "scenario_asset": "assets/formation-twin-scenarios.seed.yaml",
+  "analytics_asset": "assets/analytics-events.example.yaml",
+  "schema_invariants": [
+    {
+      "schema": "formation-twin-profile.schema.json",
+      "path": "properties.spiritualScoreGenerated.const",
+      "expected": false
+    },
+    {
+      "schema": "formation-twin-profile.schema.json",
+      "path": "properties.salvationInferenceGenerated.const",
+      "expected": false
+    },
+    {
+      "schema": "formation-twin-profile.schema.json",
+      "path": "properties.clinicalDiagnosisGenerated.const",
+      "expected": false
+    },
+    {
+      "schema": "formation-twin-profile.schema.json",
+      "path": "properties.crossUserRankingEnabled.const",
+      "expected": false
+    },
+    {
+      "schema": "formation-state-snapshot.schema.json",
+      "path": "properties.overallMaturityStateGenerated.const",
+      "expected": false
+    },
+    {
+      "schema": "formation-state-snapshot.schema.json",
+      "path": "properties.futureSpiritualStatePredicted.const",
+      "expected": false
+    },
+    {
+      "schema": "formation-state-snapshot.schema.json",
+      "path": "properties.hiddenTraitInferred.const",
+      "expected": false
+    },
+    {
+      "schema": "formation-signal-event.schema.json",
+      "path": "properties.rawNarrativeStored.const",
+      "expected": false
+    },
+    {
+      "schema": "formation-signal-event.schema.json",
+      "path": "properties.thirdPartyIdentityStored.const",
+      "expected": false
+    },
+    {
+      "schema": "formation-signal-event.schema.json",
+      "path": "properties.modelInferredEventAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "habit-trajectory.schema.json",
+      "path": "properties.streakDisplayed.const",
+      "expected": false
+    },
+    {
+      "schema": "habit-trajectory.schema.json",
+      "path": "properties.adherenceScoreUsedForWorth.const",
+      "expected": false
+    },
+    {
+      "schema": "habit-trajectory.schema.json",
+      "path": "properties.missedPracticePunished.const",
+      "expected": false
+    },
+    {
+      "schema": "attention-trajectory.schema.json",
+      "path": "properties.attentionScoreGenerated.const",
+      "expected": false
+    },
+    {
+      "schema": "attention-trajectory.schema.json",
+      "path": "properties.rawDeviceTelemetryUsed.const",
+      "expected": false
+    },
+    {
+      "schema": "attention-trajectory.schema.json",
+      "path": "properties.browsingHistoryUsed.const",
+      "expected": false
+    },
+    {
+      "schema": "relationship-fruit-observation.schema.json",
+      "path": "properties.observerMayAccessPrivateJournal.const",
+      "expected": false
+    },
+    {
+      "schema": "relationship-fruit-observation.schema.json",
+      "path": "properties.relationshipQualityScoreGenerated.const",
+      "expected": false
+    },
+    {
+      "schema": "relationship-fruit-observation.schema.json",
+      "path": "properties.thirdPartyNarrativeStored.const",
+      "expected": false
+    },
+    {
+      "schema": "practice-adherence-summary.schema.json",
+      "path": "properties.totalAdherencePercentageDisplayed.const",
+      "expected": false
+    },
+    {
+      "schema": "practice-adherence-summary.schema.json",
+      "path": "properties.crossPracticeRankGenerated.const",
+      "expected": false
+    },
+    {
+      "schema": "practice-adherence-summary.schema.json",
+      "path": "properties.publicLeaderboardEnabled.const",
+      "expected": false
+    },
+    {
+      "schema": "formation-review-window.schema.json",
+      "path": "properties.systemMayOverrideLearnerInterpretation.const",
+      "expected": false
+    },
+    {
+      "schema": "formation-review-window.schema.json",
+      "path": "properties.salvationOrCallingConclusionGenerated.const",
+      "expected": false
+    },
+    {
+      "schema": "human-interpretation-note.schema.json",
+      "path": "properties.modelMayAlterMeaning.const",
+      "expected": false
+    },
+    {
+      "schema": "human-interpretation-note.schema.json",
+      "path": "properties.privateJournalContentCopied.const",
+      "expected": false
+    },
+    {
+      "schema": "human-interpretation-note.schema.json",
+      "path": "properties.clinicalNoteClaimed.const",
+      "expected": false
+    },
+    {
+      "schema": "twin-recommendation.schema.json",
+      "path": "properties.automaticBehaviorChangeAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "twin-recommendation.schema.json",
+      "path": "properties.automaticNotificationToOthersAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "twin-recommendation.schema.json",
+      "path": "properties.highStakesDecisionAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "twin-recommendation.schema.json",
+      "path": "properties.modelConfidenceOverridesHuman.const",
+      "expected": false
+    },
+    {
+      "schema": "formation-data-retention-policy.schema.json",
+      "path": "properties.minorDataMinimized.const",
+      "expected": true
+    },
+    {
+      "schema": "formation-data-retention-policy.schema.json",
+      "path": "properties.safetyAuditExceptionDocumented.const",
+      "expected": true
+    },
+    {
+      "schema": "formation-data-retention-policy.schema.json",
+      "path": "properties.indefiniteRetentionByDefault.const",
+      "expected": false
+    },
+    {
+      "schema": "formation-data-retention-policy.schema.json",
+      "path": "properties.purposeExpansionWithoutConsentAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "twin-export-deletion-request.schema.json",
+      "path": "properties.silentDenialAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "twin-export-deletion-request.schema.json",
+      "path": "properties.exportIncludesOtherPeopleData.const",
+      "expected": false
+    }
+  ],
+  "forbidden_schema_keys": [
+    "salvationProbability",
+    "salvationScore",
+    "spiritualMaturityScore",
+    "holinessRank",
+    "addictionScore",
+    "hiddenSinScore",
+    "parentFitnessScore",
+    "sexualPurityScore",
+    "childObedienceScore",
+    "divineMessage",
+    "automaticDiagnosis",
+    "secretMonitoringToken",
+    "rawExplicitContent",
+    "privateMinorTranscript"
+  ],
+  "required_root_files": [
+    "README.md",
+    "CODEX_IMPLEMENTATION_PROMPT.md",
+    "SKILL_INDEX.md",
+    "BATCH01_10_COMPATIBILITY.md",
+    "IMPLEMENTATION_CHECKLIST.md",
+    "AGENTS.md.snippet",
+    "SOURCES.md",
+    "RELEASE_NOTES.md",
+    "PACKAGE_SPEC.json",
+    "evals/batch11.skill-prompts.csv",
+    "evals/batch11.behavior-cases.json",
+    "evals/batch11.behavior-rubric.md",
+    "assets/formation-twin-control-catalog.seed.yaml",
+    "assets/formation-twin-curriculum.seed.yaml",
+    "assets/formation-twin-scenarios.seed.yaml",
+    "assets/analytics-events.example.yaml",
+    "schemas/formation-twin-profile.schema.json",
+    "schemas/formation-state-snapshot.schema.json",
+    "schemas/formation-signal-event.schema.json",
+    "schemas/habit-trajectory.schema.json",
+    "schemas/attention-trajectory.schema.json",
+    "schemas/relationship-fruit-observation.schema.json",
+    "schemas/practice-adherence-summary.schema.json",
+    "schemas/formation-review-window.schema.json",
+    "schemas/human-interpretation-note.schema.json",
+    "schemas/twin-recommendation.schema.json",
+    "schemas/formation-data-retention-policy.schema.json",
+    "schemas/twin-export-deletion-request.schema.json",
+    "references/batch11-blueprint.md",
+    "references/api-persistence-blueprint.md",
+    "references/theology-and-formation-policy.md",
+    "references/privacy-safety-analytics-policy.md",
+    "references/testing-and-release-policy.md",
+    "references/formation-twin-ontology-policy.md",
+    "references/formation-event-and-state-policy.md",
+    "references/trajectory-and-review-policy.md",
+    "references/relationship-observation-policy.md",
+    "references/twin-recommendation-human-agency-policy.md",
+    "references/formation-data-lifecycle-policy.md"
+  ]
+}

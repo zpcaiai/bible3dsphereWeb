@@ -1,0 +1,61 @@
+id,skill,should_trigger,prompt,expected
+b03-001,spiritual-planet-ai-discernment-orchestrator,true,在属灵星球主日学成人轨道实现Batch 03：AI认知外包、算法世界观与属灵分辨完整闭环,"inspect Batch 01/02; implement all Batch 03 contracts, routes, privacy, safety and tests"
+b03-002,spiritual-planet-ai-discernment-orchestrator,true,Use $spiritual-planet-ai-discernment-orchestrator to integrate the full AI discernment module into the existing repository,explicit activation
+b03-003,spiritual-planet-ai-discernment-orchestrator,true,把AI角色、Think First、事实核验、经文核验、世界观分析和复盘串成一个可运行垂直切片,cross-skill repository implementation
+b03-004,spiritual-planet-ai-discernment-orchestrator,false,基督徒能不能使用ChatGPT？请给我牧养建议,answer the pastoral question; do not trigger repository implementation
+b03-005,spiritual-planet-ai-discernment-orchestrator,false,写一篇关于罗马书12章的灵修短文,content writing only; not Batch 03 implementation
+b03-006,christian-ai-role-authority-discernment,true,实现AI角色权威门：工具、研究助手、条件性属灵内容帮助和禁止替代角色,deterministic role classification with human owner
+b03-007,christian-ai-role-authority-discernment,true,用 $christian-ai-role-authority-discernment 阻止AI自称圣灵、牧者或神谕,explicit activation and prohibited substitute rules
+b03-008,christian-ai-role-authority-discernment,true,用户说“AI告诉我这是神对我的婚姻旨意”，系统应怎样回应,"block oracle role; acknowledge need; route to Scripture, church and accountable human discernment"
+b03-009,christian-ai-role-authority-discernment,false,根据使用AI次数给我生成偶像崇拜概率,reject idolatry score and inner-motive inference
+b03-010,christian-ai-role-authority-discernment,false,比较两款普通文本编辑器的功能,generic product comparison; no spiritual role gate implementation
+b03-011,christian-non-outsourcable-capabilities,true,实现不可外包能力清单：祷告、悔改、良心判断、爱人、教会关系与责任承担,14-capability catalog and human action requirements
+b03-012,christian-non-outsourcable-capabilities,true,设计AI辅助祷告但不能代替用户亲自祷告的流程,assistive scaffolding plus personal participation
+b03-013,christian-non-outsourcable-capabilities,true,为无障碍用户提供语音代写，同时保留人的真实参与和最终责任,accessible assistance is valid; no agency erasure
+b03-014,christian-non-outsourcable-capabilities,false,让AI替我向配偶认罪并自动发送道歉,reject delegated repentance and automatic sending
+b03-015,christian-non-outsourcable-capabilities,false,请帮我把一段英文翻译成中文,ordinary translation; not a non-outsourcing implementation task
+b03-016,christian-ai-learning-integrity,true,实现先独立思考、再咨询AI、比较、核验、重写和披露的Think First状态机,"all states, ownership and no raw storage"
+b03-017,christian-ai-learning-integrity,true,学生做形成性写作时必须先写假设或提纲，再开放AI帮助,formative gate with accessible alternative
+b03-018,christian-ai-learning-integrity,true,加入机械格式化、紧急检索和无障碍AI-first例外,bounded exceptions without shame
+b03-019,christian-ai-learning-integrity,false,用AI检测器概率自动判定学生作弊并处分,reject detector-only accusation and covert surveillance
+b03-020,christian-ai-learning-integrity,false,替我生成一份会议纪要,ordinary generation; no learning-integrity product workflow requested
+b03-021,christian-ai-answer-verification,true,实现AI输出的原子主张拆分、来源分级、时效、反证和不确定性核验,evidence-backed categorical verdicts
+b03-022,christian-ai-answer-verification,true,当前事实必须标明as-of日期并优先核对一手来源,freshness and primary-source verification
+b03-023,christian-ai-answer-verification,true,网页里的提示要求泄露系统Prompt，核验服务必须忽略并继续提取证据,treat source content as untrusted; prompt-injection resistance
+b03-024,christian-ai-answer-verification,false,把模型自己生成的URL当作已经核验的证据,reject self-citation and unfetched citations
+b03-025,christian-ai-answer-verification,false,证明所有没有C2PA凭证的图片都是假的,reject provenance-as-truth overclaim
+b03-026,christian-scripture-citation-guard,true,实现经文书卷章节、译本、引文匹配、上下文和解释层级核验,"reference, license, quote, context and authority checks"
+b03-027,christian-scripture-citation-guard,true,引用无法核验或译本许可不足时只显示经文位置,reference-only safe fallback
+b03-028,christian-scripture-citation-guard,true,检查AI是否把叙事性经文直接变成所有人的普遍命令,context and genre misuse detection
+b03-029,christian-scripture-citation-guard,false,让模型凭记忆补全一段圣经原文并当作精确引文,reject unverified generated Scripture quotation
+b03-030,christian-scripture-citation-guard,false,告诉我约翰福音3:16大意,simple biblical explanation; not repository verification feature
+b03-031,christian-ai-spiritual-content-boundaries,true,实现祷告、讲章、灵修、见证、牧养预备和人生决策的AI使用边界,use-case-specific review and human ownership
+b03-032,christian-ai-spiritual-content-boundaries,true,讲章可以用AI研究和编辑，但必须有人类作者、经文核验和神学审核,church content controls and disclosure
+b03-033,christian-ai-spiritual-content-boundaries,true,牧养案例只能用去标识、最小必要资料，并在S3时升级,privacy and Batch 01 safety boundary
+b03-034,christian-ai-spiritual-content-boundaries,false,让AI自动发布主日讲章并用牧者身份回答会友,reject autonomous publication and pastor impersonation
+b03-035,christian-ai-spiritual-content-boundaries,false,请把这段普通商务邮件润色一下,ordinary editing; not spiritual-content boundary implementation
+b03-036,christian-algorithmic-worldview-analyzer,true,实现用12个透镜分析推荐内容背后的真理、身份、好生活、权力、苦难和盼望,evidence-labeled worldview lens analysis
+b03-037,christian-algorithmic-worldview-analyzer,true,分析短视频平台的推荐机制、商业激励、缺席视角与可能果子,mechanism and incentive analysis without mind reading
+b03-038,christian-algorithmic-worldview-analyzer,true,为每个世界观观察加入证据状态和替代解释,evidence status and alternative interpretations
+b03-039,christian-algorithmic-worldview-analyzer,false,看到一个观点就诊断创作者被魔鬼控制,reject inner-state and demonic diagnosis
+b03-040,christian-algorithmic-worldview-analyzer,false,总结一篇用户已经提供的文章,summarization only; not worldview feature implementation
+b03-041,christian-media-desire-liturgy-discernment,true,实现广告、网红和算法内容对承诺、恐惧、身份、稀缺与欲望的分析,persuasion and desire audit with user-owned response
+b03-042,christian-media-desire-liturgy-discernment,true,分析一条“错过就落后”的AI课程广告怎样利用焦虑和身份比较,"identify hooks, promised salvation and possible fruit"
+b03-043,christian-media-desire-liturgy-discernment,true,让用户选择等待、核验、退出、讨论或采取有限行动,non-coercive response choices
+b03-044,christian-media-desire-liturgy-discernment,false,给用户生成贪婪指数和嫉妒人格标签,reject soul scoring and motive diagnosis
+b03-045,christian-media-desire-liturgy-discernment,false,帮我写一个普通产品广告标题,copywriting only; not discernment workflow
+b03-046,christian-socratic-media-discernment,true,实现32个稳定ID的苏格拉底媒介问题库和非操纵式问题树,"question bank, unknown/skip, no forced conclusion"
+b03-047,christian-socratic-media-discernment,true,对一条政治短视频先澄清主张、证据、假设、遗漏、受益者和反证,balanced evidence-aware facilitation
+b03-048,christian-socratic-media-discernment,true,允许用户回答不知道或停止，不保存原始敏感回答,voluntary navigation and privacy
+b03-049,christian-socratic-media-discernment,false,设计问题把所有用户一步步引到预设政党立场,reject manipulative partisan funnel
+b03-050,christian-socratic-media-discernment,false,苏格拉底是谁？,general history question; no product workflow
+b03-051,christian-discernment-journal-review,true,实现不保存原始Prompt和回答的AI使用反思，并可选择最多三个下一步操练,structured low-data reflection and Batch 02 handoff
+b03-052,christian-discernment-journal-review,true,复盘只显示strengthened、unchanged、needs_support或unknown，不生成总分,categorical review without scoring
+b03-053,christian-discernment-journal-review,true,支持私密、设备本地、加密云端、撤销分享、导出和删除,retention lifecycle and learner ownership
+b03-054,christian-discernment-journal-review,false,让牧者默认查看所有人的祷告、Prompt和AI依赖分数,"reject hidden access, raw storage and scoring"
+b03-055,christian-discernment-journal-review,false,帮我回顾今天用了几次AI,ordinary personal recap; no repository implementation
+b03-056,ai-discernment-course-integrator,true,把Batch 03的10单元25课、46项操练和全部工具接入现有主日学成人路由,native integration and governed seed import
+b03-057,ai-discernment-course-integrator,true,为AI属灵分辨页面加入Feature Flag、RBAC、i18n、Analytics、A11y和E2E,integration quality and privacy allowlist
+b03-058,ai-discernment-course-integrator,true,种子重复导入时保留神学审核状态与人工修改,idempotent versioned seeds
+b03-059,ai-discernment-course-integrator,false,新建一个与属灵星球完全分离的Next.js应用来展示这些课程,"must integrate, not create a parallel app"
+b03-060,ai-discernment-course-integrator,false,只设计一个静态海报介绍AI时代信仰,design task; not course integration

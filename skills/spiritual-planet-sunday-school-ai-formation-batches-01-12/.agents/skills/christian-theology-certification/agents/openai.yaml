@@ -1,0 +1,9 @@
+interface:
+  display_name: Theology Certification
+  short_description: Implement immutable, human-signed theology review for Scripture context, authority layering, gospel order
+    and denominational variance.
+  default_prompt: Use $christian-theology-certification for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

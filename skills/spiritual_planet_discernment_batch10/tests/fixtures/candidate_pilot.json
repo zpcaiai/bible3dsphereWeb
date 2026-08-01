@@ -1,0 +1,64 @@
+{
+  "release_id": "r2",
+  "build_hash": "def456",
+  "batch_manifests": [
+    {
+      "batch": 1,
+      "version": "0.1.0"
+    },
+    {
+      "batch": 2,
+      "version": "0.2.0"
+    },
+    {
+      "batch": 3,
+      "version": "0.3.0"
+    },
+    {
+      "batch": 4,
+      "version": "0.4.0"
+    },
+    {
+      "batch": 5,
+      "version": "0.5.0"
+    },
+    {
+      "batch": 6,
+      "version": "0.6.0"
+    },
+    {
+      "batch": 7,
+      "version": "0.7.0"
+    },
+    {
+      "batch": 8,
+      "version": "0.8.0"
+    },
+    {
+      "batch": 9,
+      "version": "0.9.0"
+    }
+  ],
+  "model_versions": [
+    {
+      "name": "model-a",
+      "version": "1"
+    }
+  ],
+  "prompt_versions": [],
+  "policy_versions": [
+    {
+      "name": "safety",
+      "version": "10"
+    }
+  ],
+  "knowledge_versions": [],
+  "target_scope": "pilot",
+  "jurisdictions": [],
+  "enabled_features": [
+    "discernment"
+  ],
+  "disabled_features": [
+    "autonomous_discipline"
+  ]
+}

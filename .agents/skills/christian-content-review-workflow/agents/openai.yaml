@@ -1,0 +1,8 @@
+interface:
+  display_name: Content Review and Publication
+  short_description: Implement multi-role version-bound review, publication, retirement and rollback.
+  default_prompt: Use $christian-content-review-workflow for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

@@ -1,0 +1,9 @@
+interface:
+  display_name: Identity and Intimacy Course Integrator
+  short_description: Integrate Batch 04 routes, course content, feature flags, analytics, accessibility, review states and
+    E2E tests.
+  default_prompt: Use $identity-intimacy-course-integrator for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

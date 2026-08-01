@@ -1,0 +1,8 @@
+interface:
+  display_name: Scenario Exercise Builder
+  short_description: Implement fictional, choice-based, consequence-and-repair learning exercises.
+  default_prompt: Use $christian-scenario-exercise-builder for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

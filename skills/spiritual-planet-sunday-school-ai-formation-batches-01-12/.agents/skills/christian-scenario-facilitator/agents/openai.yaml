@@ -1,0 +1,9 @@
+interface:
+  display_name: Scenario Facilitator Tools
+  short_description: Implement teacher/parent/mentor interventions for confusion, dominant voices, accessibility, conflict
+    and safety.
+  default_prompt: Use $christian-scenario-facilitator for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

@@ -1,0 +1,7 @@
+interface:
+  display_name: Sunday School Tab Module Integrator
+  short_description: Integrate the “AI时代心意更新与家庭门训” feature into Spiritual Planet’s
+    existing Sunday School Tab, routes, navigation, permission
+  default_prompt: Use $sunday-school-tab-module-integrator for this task.
+policy:
+  allow_implicit_invocation: true

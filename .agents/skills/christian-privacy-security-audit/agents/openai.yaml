@@ -1,0 +1,9 @@
+interface:
+  display_name: Privacy and Security Audit
+  short_description: Implement data inventory reconciliation, tenant/RBAC tests, logging/model redaction, rights, retention
+    and security findings.
+  default_prompt: Use $christian-privacy-security-audit for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

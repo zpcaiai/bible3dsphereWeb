@@ -1,0 +1,8 @@
+interface:
+  display_name: "Christian AI Learning Integrity"
+  short_description: "Preserve learning friction, authorship, policy compliance and honest disclosure."
+  default_prompt: "Use $christian-ai-learning-integrity for this task."
+policy:
+  products:
+    - CODEX
+  allow_implicit_invocation: true

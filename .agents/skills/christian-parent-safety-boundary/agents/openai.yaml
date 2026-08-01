@@ -1,0 +1,8 @@
+interface:
+  display_name: Parent and Child Safety Boundary
+  short_description: Integrate ordinary parenting content with child-protection, coercion, harm and immediate-danger interruption.
+  default_prompt: Use $christian-parent-safety-boundary for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

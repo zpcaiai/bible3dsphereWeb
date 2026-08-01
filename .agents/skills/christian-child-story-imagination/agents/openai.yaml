@@ -1,0 +1,9 @@
+interface:
+  display_name: Child Story and Imagination
+  short_description: Implement reviewed Bible stories, church history, literature and embodied retelling with source-type
+    labels.
+  default_prompt: Use $christian-child-story-imagination for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

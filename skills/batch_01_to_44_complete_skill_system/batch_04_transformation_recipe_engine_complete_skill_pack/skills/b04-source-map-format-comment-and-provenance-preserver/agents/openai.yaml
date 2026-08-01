@@ -1,0 +1,6 @@
+interface:
+  display_name: "b04-source-map-format-comment-and-provenance-preserver"
+  short_description: "Run this Batch capability with evidence gates"
+  default_prompt: "Use $b04-source-map-format-comment-and-provenance-preserver to execute this workflow with explicit evidence, validation, human approval boundaries, and rollback reporting."
+policy:
+  allow_implicit_invocation: true

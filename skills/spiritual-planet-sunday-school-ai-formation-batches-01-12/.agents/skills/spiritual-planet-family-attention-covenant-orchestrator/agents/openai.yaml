@@ -1,0 +1,9 @@
+interface:
+  display_name: Family Attention and AI Covenant Orchestrator
+  short_description: Implement Batch 06 household attention ecology, digital covenant, device zones, family AI rules, meetings,
+    age permissions, exceptions, repair, Sabbath and safety.
+  default_prompt: Use $spiritual-planet-family-attention-covenant-orchestrator for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

@@ -1,0 +1,12 @@
+{
+  "evidence_id": "ev1",
+  "control_id": "TGQ-001",
+  "evidence_type": "automated_test",
+  "locator": "tests/theology.xml",
+  "hash": "hash1",
+  "status": "valid",
+  "collected_at": "2026-07-31T10:00:00+00:00",
+  "expires_at": "2027-01-01T00:00:00+00:00",
+  "reviewer": "ci",
+  "limitations": []
+}

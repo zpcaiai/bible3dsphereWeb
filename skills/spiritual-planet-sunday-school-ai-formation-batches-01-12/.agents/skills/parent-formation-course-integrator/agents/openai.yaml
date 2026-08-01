@@ -1,0 +1,9 @@
+interface:
+  display_name: Parent Formation Course Integrator
+  short_description: Integrate Batch 05 parent routes, reviewed curriculum, workshops, feature flags, analytics, accessibility
+    and E2E.
+  default_prompt: Use $parent-formation-course-integrator for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

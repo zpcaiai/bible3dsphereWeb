@@ -1,0 +1,6 @@
+interface:
+  display_name: "Batch 33: Cloud, IaC, Container and Platform Modernization Factory"
+  short_description: "Orchestrate this Batch with evidence gates"
+  default_prompt: "Use $batch-33-cloud-iac-platform-factory to execute this workflow with explicit evidence, validation, human approval boundaries, and rollback reporting."
+policy:
+  allow_implicit_invocation: true

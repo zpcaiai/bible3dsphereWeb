@@ -1,0 +1,8 @@
+interface:
+  display_name: Embodied Play and Real-World Formation
+  short_description: Implement free play, outdoor observation, movement, craft, construction and household work plans.
+  default_prompt: Use $christian-embodied-play-formation for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

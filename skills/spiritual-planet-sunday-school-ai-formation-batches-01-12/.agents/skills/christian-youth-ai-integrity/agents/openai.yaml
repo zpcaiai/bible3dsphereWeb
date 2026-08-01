@@ -1,0 +1,8 @@
+interface:
+  display_name: Youth AI Academic Integrity
+  short_description: Implement school-policy, first-attempt, allowed-role, verification, revision and disclosure workflow.
+  default_prompt: Use $christian-youth-ai-integrity for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

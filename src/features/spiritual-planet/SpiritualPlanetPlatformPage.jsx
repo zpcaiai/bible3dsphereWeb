@@ -16,9 +16,12 @@ import {
 import DiscernmentWorkspace from './DiscernmentWorkspace'
 import './spiritualPlanetPlatform.css'
 
+const AI_FORMATION_ENABLED = import.meta.env.VITE_AI_FORMATION_ENABLED === 'true'
+
 const NAV = [
   ['home', '首页', '◉'], ['today', '今日', '☀'], ['twin', '孪生', '✦'],
   ['discernment', '洞鉴别', '⌬'], ['practices', '操练', '◇'], ['calling', '呼召', '⌁'], ['collaboration', '同行', '♡'],
+  ...(AI_FORMATION_ENABLED ? [['sunday_school', '主日学', '▦']] : []),
   ['timeline', '时间线', '◷'], ['search', '搜索', '⌕'], ['actions', '行动', '✓'], ['privacy', '隐私', '◎'],
 ]
 
@@ -35,6 +38,7 @@ const MODULE_LABELS = {
   formation_twin: '情感—属灵形成孪生', platform_orchestrator: '属灵星球协调器',
   prayer: '祷告', devotion: '灵修', holy_habit: '习惯', attention: '注意力',
   formation_engine: '形成操练', gift_calling: '恩赐与呼召', church: '教会生活', mission: '使命', crisis: '危机照护',
+  ai_formation: 'AI时代心意更新与家庭门训',
 }
 
 function Empty({ children }) {
@@ -131,6 +135,7 @@ function ModulePanel({ kind, onOpen }) {
     practices: ['操练', '祷告、灵修、习惯和注意力仍由各自模块保存与执行。', [['祷告', 'prayer'], ['灵修', 'devotion'], ['形成操练', 'spiritual-formation'], ['注意力边界', 'attention']]],
     calling: ['恩赐、呼召与使命', '平台只传递经授权的最小投影，不替你判断神的旨意。', [['恩赐与呼召', 'growth-map'], ['使命生活', 'mission-life']]],
     collaboration: ['真人同行', '由你主动选择可信关系；组织管理员不会获得你的生命状态面板。', [['属灵伙伴', 'partner'], ['教会生活', 'communion']]],
+    sunday_school: ['主日学 · AI时代心意更新与家庭门训', '四条轨道、十二个 Batch；未审核内容保持锁定，Feature Flag 与发布证据共同控制开放。', [['打开AI形成课程', 'ai-formation']]],
   }[kind]
   return (
     <section className="sp-card sp-module-panel">
@@ -245,7 +250,7 @@ export default function SpiritualPlanetPlatformPage({ user, onBack, onOpen }) {
       <nav className="sp-nav" aria-label={i18nT('属灵星球导航')}>{NAV.map(([key, label, icon]) => <button type="button" key={key} aria-current={tab === key ? 'page' : undefined} onClick={() => setTab(key)}><span aria-hidden="true">{icon}</span>{i18nT(label)}</button>)}</nav>
       <div className="sp-content"><ErrorNotice error={error} onRetry={tab === 'home' ? loadCore : undefined} />
         {loading && tab === 'home' ? <Loading /> : tab === 'home' ? <HomePanel home={home} recommendation={recommendation} busyDecision={busyDecision} onDecision={decide} onOpen={onOpen} onReload={loadCore} /> : null}
-        {['today', 'twin', 'practices', 'calling', 'collaboration'].includes(tab) && <ModulePanel kind={tab} onOpen={onOpen} />}
+        {['today', 'twin', 'practices', 'calling', 'collaboration', 'sunday_school'].includes(tab) && <ModulePanel kind={tab} onOpen={onOpen} />}
         {tab === 'discernment' && <DiscernmentWorkspace />}
         {tab === 'timeline' && <TimelinePanel items={timeline} loading={loading} module={timelineModule} setModule={setTimelineModule} />}
         {tab === 'search' && <SearchPanel />}

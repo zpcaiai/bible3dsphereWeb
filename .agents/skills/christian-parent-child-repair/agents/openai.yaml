@@ -1,0 +1,9 @@
+interface:
+  display_name: Parent–Child Repair
+  short_description: Implement specific ownership, impact acknowledgment, non-demanded forgiveness, consequence repair and
+    follow-up.
+  default_prompt: Use $christian-parent-child-repair for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

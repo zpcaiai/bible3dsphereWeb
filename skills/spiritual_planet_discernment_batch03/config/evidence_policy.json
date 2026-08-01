@@ -1,0 +1,17 @@
+{
+  "levels": {
+    "P0": "无公开证据，仅为待检验假设",
+    "P1": "单一公开来源，未独立验证",
+    "P2": "多个一致来源，但可能同源或缺少一手材料",
+    "P3": "一手材料、官方披露或可重复观察",
+    "P4": "跨时间、跨平台、跨来源的稳定证据"
+  },
+  "caps": {
+    "hidden_motive": "P1",
+    "platform_internal_algorithm": "P1",
+    "undisclosed_income": "P1",
+    "clinical_personality": "BLOCKED",
+    "salvation_status": "BLOCKED",
+    "demonic_possession": "BLOCKED"
+  }
+}

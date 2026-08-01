@@ -1,0 +1,27 @@
+{
+  "case_id": "viral-product-002",
+  "subject": {
+    "subject_type": "campaign",
+    "display_name": "示例争议产品营销",
+    "public_identifiers": [
+      "campaign_002"
+    ]
+  },
+  "analysis_goal": "分析争议引流、反对者传播、虚假稀缺风险和商业化循环",
+  "platforms": [
+    "microblog",
+    "short_video"
+  ],
+  "time_window": {
+    "start": "2026-03-01",
+    "end": "2026-04-30"
+  },
+  "consent_scope": {
+    "allow_public_content_analysis": true,
+    "allow_spiritual_analysis": true,
+    "allow_gospel_bridge": false,
+    "allow_longitudinal_monitoring": false
+  },
+  "source_items": [],
+  "sensitivity": "normal"
+}

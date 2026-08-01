@@ -1,0 +1,7 @@
+interface:
+  display_name: Christian Formation Pastoral Safety
+  short_description: Design or implement pastoral safety triage, child safeguarding
+    boundaries, crisis interruption, referral UX, privacy con
+  default_prompt: Use $christian-formation-pastoral-safety for this task.
+policy:
+  allow_implicit_invocation: true

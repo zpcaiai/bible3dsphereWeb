@@ -1,0 +1,15 @@
+{
+  "initial_state": "REVIEW_NEEDED",
+  "reason_codes": [
+    "minor_abuse_concern"
+  ],
+  "next_state": "SAFEGUARDING_REVIEW",
+  "required_actions": [
+    "限制普通导师和小组角色访问",
+    "由安全保护负责人复核",
+    "检查当地外部报告义务",
+    "保护用户和潜在受害人",
+    "禁止通知可能毁灭证据的涉事者，直到合格人员决定"
+  ],
+  "warning": "本示例不是具体法律建议，部署时必须接入地区法律与教会政策。"
+}

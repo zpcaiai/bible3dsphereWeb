@@ -1,0 +1,7 @@
+interface:
+  display_name: Christian Formation Theological Guardrails
+  short_description: 'Review or generate Christian formation content for AI-age attention,
+    bodily discipline, parenting, family discipleship, '
+  default_prompt: Use $christian-formation-theological-guardrails for this task.
+policy:
+  allow_implicit_invocation: true

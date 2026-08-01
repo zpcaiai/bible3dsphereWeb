@@ -1,0 +1,9 @@
+interface:
+  display_name: Pornography Trigger Timeline
+  short_description: Implement a category-only trigger–response–interruption timeline without storing explicit material or
+    detailed sexual narrative.
+  default_prompt: Use $christian-pornography-trigger-timeline for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

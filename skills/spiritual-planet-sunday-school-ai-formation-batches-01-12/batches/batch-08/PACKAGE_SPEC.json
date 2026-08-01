@@ -1,0 +1,310 @@
+{
+  "batch": 8,
+  "module_key": "sunday_school.ai_formation.youth_autonomy",
+  "skills": [
+    "spiritual-planet-youth-autonomy-orchestrator",
+    "christian-youth-identity-pressure",
+    "christian-youth-question-doubt",
+    "christian-youth-sexuality-safety",
+    "christian-youth-social-media-identity",
+    "christian-youth-ai-integrity",
+    "christian-youth-digital-autonomy",
+    "christian-youth-time-money-stewardship",
+    "christian-youth-mentor-safety",
+    "christian-youth-governance-transfer",
+    "christian-leaving-home-digital-readiness",
+    "christian-youth-safety-response",
+    "youth-autonomy-course-integrator"
+  ],
+  "counts": {
+    "skills": 13,
+    "schemas": 12,
+    "practices": 38,
+    "units": 10,
+    "lessons": 24,
+    "scenarios": 14
+  },
+  "practice_asset": "assets/youth-formation-practice-catalog.seed.yaml",
+  "curriculum_asset": "assets/youth-formation-curriculum.seed.yaml",
+  "scenario_asset": "assets/youth-formation-scenarios.seed.yaml",
+  "analytics_asset": "assets/analytics-events.example.yaml",
+  "schema_invariants": [
+    {
+      "schema": "youth-formation-context.schema.json",
+      "path": "properties.privateSecretSolicited.const",
+      "expected": false
+    },
+    {
+      "schema": "youth-formation-context.schema.json",
+      "path": "properties.spiritualStatusGenerated.const",
+      "expected": false
+    },
+    {
+      "schema": "youth-formation-context.schema.json",
+      "path": "properties.developmentalDiagnosisGenerated.const",
+      "expected": false
+    },
+    {
+      "schema": "youth-formation-context.schema.json",
+      "path": "properties.rawYouthNarrativeStored.const",
+      "expected": false
+    },
+    {
+      "schema": "youth-identity-pressure-map.schema.json",
+      "path": "properties.identityLabelAssignedBySystem.const",
+      "expected": false
+    },
+    {
+      "schema": "youth-identity-pressure-map.schema.json",
+      "path": "properties.orientationInferenceGenerated.const",
+      "expected": false
+    },
+    {
+      "schema": "youth-identity-pressure-map.schema.json",
+      "path": "properties.parentComparisonEnabled.const",
+      "expected": false
+    },
+    {
+      "schema": "youth-question-doubt-session.schema.json",
+      "path": "properties.youthMayDisagree.const",
+      "expected": true
+    },
+    {
+      "schema": "youth-question-doubt-session.schema.json",
+      "path": "properties.beliefScoreGenerated.const",
+      "expected": false
+    },
+    {
+      "schema": "youth-question-doubt-session.schema.json",
+      "path": "properties.conversionPressureAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "youth-question-doubt-session.schema.json",
+      "path": "properties.privateConfessionSolicited.const",
+      "expected": false
+    },
+    {
+      "schema": "youth-sexuality-safety-decision.schema.json",
+      "path": "properties.guardianOrOrgPolicyChecked.const",
+      "expected": true
+    },
+    {
+      "schema": "youth-sexuality-safety-decision.schema.json",
+      "path": "properties.graphicContentAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "youth-sexuality-safety-decision.schema.json",
+      "path": "properties.personalSexualHistoryRequired.const",
+      "expected": false
+    },
+    {
+      "schema": "youth-sexuality-safety-decision.schema.json",
+      "path": "properties.secretAdultYouthConversationAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "youth-sexuality-safety-decision.schema.json",
+      "path": "properties.orientationInferenceGenerated.const",
+      "expected": false
+    },
+    {
+      "schema": "youth-social-media-identity-reflection.schema.json",
+      "path": "properties.socialWorthScoreGenerated.const",
+      "expected": false
+    },
+    {
+      "schema": "youth-social-media-identity-reflection.schema.json",
+      "path": "properties.rawPostHistoryStored.const",
+      "expected": false
+    },
+    {
+      "schema": "youth-social-media-identity-reflection.schema.json",
+      "path": "properties.parentSurveillanceFeedEnabled.const",
+      "expected": false
+    },
+    {
+      "schema": "youth-ai-academic-integrity-record.schema.json",
+      "path": "properties.detectionEvasionAssistanceAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "youth-ai-academic-integrity-record.schema.json",
+      "path": "properties.fabricatedProcessAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "youth-ai-academic-integrity-record.schema.json",
+      "path": "properties.finalAuthorshipOwner.const",
+      "expected": "youth"
+    },
+    {
+      "schema": "youth-ai-academic-integrity-record.schema.json",
+      "path": "properties.rawAssignmentStored.const",
+      "expected": false
+    },
+    {
+      "schema": "youth-digital-autonomy-plan.schema.json",
+      "path": "properties.youthVoiceRequired.const",
+      "expected": true
+    },
+    {
+      "schema": "youth-digital-autonomy-plan.schema.json",
+      "path": "properties.oneFailurePermanentRollback.const",
+      "expected": false
+    },
+    {
+      "schema": "youth-digital-autonomy-plan.schema.json",
+      "path": "properties.secretMonitoringAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "youth-digital-autonomy-plan.schema.json",
+      "path": "properties.parentMayReadAllMessagesByDefault.const",
+      "expected": false
+    },
+    {
+      "schema": "youth-time-money-stewardship-plan.schema.json",
+      "path": "properties.familyFinancialDetailsStored.const",
+      "expected": false
+    },
+    {
+      "schema": "youth-time-money-stewardship-plan.schema.json",
+      "path": "properties.wealthRankGenerated.const",
+      "expected": false
+    },
+    {
+      "schema": "youth-time-money-stewardship-plan.schema.json",
+      "path": "properties.shameForLowResourcesAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "youth-mentor-consent-plan.schema.json",
+      "path": "properties.privateSecretChannelAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "youth-mentor-consent-plan.schema.json",
+      "path": "properties.romanticSexualRelationshipAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "youth-mentor-consent-plan.schema.json",
+      "path": "properties.absoluteConfidentialityPromised.const",
+      "expected": false
+    },
+    {
+      "schema": "youth-mentor-consent-plan.schema.json",
+      "path": "properties.revocableOrdinaryConsent.const",
+      "expected": true
+    },
+    {
+      "schema": "youth-governance-transfer-milestone.schema.json",
+      "path": "properties.maturityScoreGenerated.const",
+      "expected": false
+    },
+    {
+      "schema": "youth-governance-transfer-milestone.schema.json",
+      "path": "properties.comparisonToPeersGenerated.const",
+      "expected": false
+    },
+    {
+      "schema": "youth-governance-transfer-milestone.schema.json",
+      "path": "properties.automaticAdvanceAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "leaving-home-digital-readiness.schema.json",
+      "path": "properties.certifiedAsSpirituallyMature.const",
+      "expected": false
+    },
+    {
+      "schema": "leaving-home-digital-readiness.schema.json",
+      "path": "properties.automaticIndependenceGranted.const",
+      "expected": false
+    },
+    {
+      "schema": "youth-safety-decision.schema.json",
+      "path": "properties.youthBlamed.const",
+      "expected": false
+    },
+    {
+      "schema": "youth-safety-decision.schema.json",
+      "path": "properties.absoluteConfidentialityPromised.const",
+      "expected": false
+    },
+    {
+      "schema": "youth-safety-decision.schema.json",
+      "path": "properties.forensicQuestioningAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "youth-safety-decision.schema.json",
+      "path": "properties.rawEvidenceUploaded.const",
+      "expected": false
+    },
+    {
+      "schema": "youth-safety-decision.schema.json",
+      "path": "properties.authorizedHumanOwnerRequired.const",
+      "expected": true
+    }
+  ],
+  "forbidden_schema_keys": [
+    "salvationProbability",
+    "salvationScore",
+    "spiritualMaturityScore",
+    "holinessRank",
+    "addictionScore",
+    "hiddenSinScore",
+    "parentFitnessScore",
+    "sexualPurityScore",
+    "childObedienceScore",
+    "divineMessage",
+    "automaticDiagnosis",
+    "secretMonitoringToken",
+    "rawExplicitContent",
+    "privateMinorTranscript"
+  ],
+  "required_root_files": [
+    "README.md",
+    "CODEX_IMPLEMENTATION_PROMPT.md",
+    "SKILL_INDEX.md",
+    "BATCH01_07_COMPATIBILITY.md",
+    "IMPLEMENTATION_CHECKLIST.md",
+    "AGENTS.md.snippet",
+    "SOURCES.md",
+    "RELEASE_NOTES.md",
+    "PACKAGE_SPEC.json",
+    "evals/batch08.skill-prompts.csv",
+    "evals/batch08.behavior-cases.json",
+    "evals/batch08.behavior-rubric.md",
+    "assets/youth-formation-practice-catalog.seed.yaml",
+    "assets/youth-formation-curriculum.seed.yaml",
+    "assets/youth-formation-scenarios.seed.yaml",
+    "assets/analytics-events.example.yaml",
+    "schemas/youth-formation-context.schema.json",
+    "schemas/youth-identity-pressure-map.schema.json",
+    "schemas/youth-question-doubt-session.schema.json",
+    "schemas/youth-sexuality-safety-decision.schema.json",
+    "schemas/youth-social-media-identity-reflection.schema.json",
+    "schemas/youth-ai-academic-integrity-record.schema.json",
+    "schemas/youth-digital-autonomy-plan.schema.json",
+    "schemas/youth-time-money-stewardship-plan.schema.json",
+    "schemas/youth-mentor-consent-plan.schema.json",
+    "schemas/youth-governance-transfer-milestone.schema.json",
+    "schemas/leaving-home-digital-readiness.schema.json",
+    "schemas/youth-safety-decision.schema.json",
+    "references/batch08-blueprint.md",
+    "references/api-persistence-blueprint.md",
+    "references/theology-and-formation-policy.md",
+    "references/privacy-safety-analytics-policy.md",
+    "references/testing-and-release-policy.md",
+    "references/youth-identity-and-doubt-policy.md",
+    "references/youth-sexuality-and-ai-companion-safety-policy.md",
+    "references/youth-social-media-identity-policy.md",
+    "references/youth-ai-academic-integrity-policy.md",
+    "references/youth-autonomy-transfer-policy.md",
+    "references/youth-mentor-and-leaving-home-policy.md"
+  ]
+}

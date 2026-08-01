@@ -1,0 +1,326 @@
+{
+  "schema_version": "1.0.0",
+  "package_id": "batch-25-behavioral-equivalence-gate-complete-skill-pack",
+  "batch": 25,
+  "title": "Batch 25: Behavioral Equivalence Gate and Independent Oracle System",
+  "version": "1.0.0",
+  "root_skill": "batch-25-behavioral-equivalence-gate",
+  "generated_at": "2026-07-31T00:00:00Z",
+  "skill_count": 16,
+  "skills": [
+    "b25-behavioral-equivalence-gate-adapter-provider",
+    "b25-behavioral-equivalence-gate-capability-planning",
+    "b25-behavioral-equivalence-gate-certification-gate",
+    "b25-behavioral-equivalence-gate-corpus-benchmark",
+    "b25-behavioral-equivalence-gate-deterministic-engine",
+    "b25-behavioral-equivalence-gate-discovery-inventory",
+    "b25-behavioral-equivalence-gate-domain-model",
+    "b25-behavioral-equivalence-gate-failure-recovery",
+    "b25-behavioral-equivalence-gate-human-approval",
+    "b25-behavioral-equivalence-gate-integration-api",
+    "b25-behavioral-equivalence-gate-lifecycle-recertification",
+    "b25-behavioral-equivalence-gate-lineage-reconciliation",
+    "b25-behavioral-equivalence-gate-observability-economics",
+    "b25-behavioral-equivalence-gate-orchestrator",
+    "b25-behavioral-equivalence-gate-security-policy",
+    "b25-behavioral-equivalence-gate-workflow-runtime"
+  ],
+  "upstream_batch": 24,
+  "files": [
+    {
+      "path": "BATCH24_COMPATIBILITY.md",
+      "sha256": "3eb90c3d222f491af01d5633b0d80d4fdb9baa9408558996205a2d770fa71cc6",
+      "size": 2107
+    },
+    {
+      "path": "CODEX_IMPLEMENTATION_PROMPT.md",
+      "sha256": "cd6b248fc62a8babc3d6f4e048e4cd5cc9ff64fafc89130c34da659c0e34eb59",
+      "size": 2283
+    },
+    {
+      "path": "IMPLEMENTATION_CHECKLIST.md",
+      "sha256": "42149306aaa3775063655eeae11ec5ad88eae0a67ca22101e10ebead0bed794d",
+      "size": 1770
+    },
+    {
+      "path": "README.md",
+      "sha256": "1c3ebe3226a66d1e1fd77a61ea8734a0ded42d691f96bf0ac3e3b9393fc50bd0",
+      "size": 1072
+    },
+    {
+      "path": "SKILL.md",
+      "sha256": "dedc2e09b2709b56859198d939acb232c3d45d6fc3b28843e4cbe7bf369bb7ef",
+      "size": 3988
+    },
+    {
+      "path": "SKILL_INDEX.md",
+      "sha256": "42a5a8b1067d13989b75177305aa5c1c4f51f499618c0e830725c7cb55a93d16",
+      "size": 3058
+    },
+    {
+      "path": "VALIDATION_REPORT.md",
+      "sha256": "24bdda0ea17280280086f31c6fccd529e721173c84bb38ca91beaf3080d8527d",
+      "size": 572
+    },
+    {
+      "path": "agents/openai.yaml",
+      "sha256": "af12212b631c8bbb2f5347826f066c8b326fa2ef324e3b7db6e31ad1799c1187",
+      "size": 379
+    },
+    {
+      "path": "examples/certificate.example.json",
+      "sha256": "ce715ef90f45768c0f7b21cf14263f893536375d7c854a6079daf83e5cf230d7",
+      "size": 452
+    },
+    {
+      "path": "examples/invocation.example.json",
+      "sha256": "8940001b49fcce0395b831e243a3b07ef93e89dbb1c564e957f687ead11adccd",
+      "size": 291
+    },
+    {
+      "path": "install.sh",
+      "sha256": "cdaf3fdf0c010dd9e0fe29b4a92cd723ff35dd0617eaf14bb5f57e757bc2fa02",
+      "size": 305
+    },
+    {
+      "path": "policies/agent-boundary.yaml",
+      "sha256": "79adc8830adec220835b49067d29b50a3a1578f146a65e7d5b70a6d19ba09ab2",
+      "size": 150
+    },
+    {
+      "path": "policies/certification.yaml",
+      "sha256": "17f50ef51eb5cbf800b3b4990bfb399d4aed9c751cb7f440bee4a4d88ebf02ea",
+      "size": 182
+    },
+    {
+      "path": "policies/default-deny.yaml",
+      "sha256": "25c6a03403de8832018b82bfa5d9dd516d8f5136ba4974c85d40bdf8972f9366",
+      "size": 105
+    },
+    {
+      "path": "policies/evidence-first.yaml",
+      "sha256": "50408543ffa45cfea3461cd57bdabf39f9bdd422fc5b41cdfef4d3c679a058c2",
+      "size": 156
+    },
+    {
+      "path": "policies/human-approval.yaml",
+      "sha256": "d9a6b11cfe402c569440e95b1aa2377387e222a32b693c83fc278ddb1fd4482f",
+      "size": 143
+    },
+    {
+      "path": "schemas/batch-input.schema.json",
+      "sha256": "a2609e8bf543cb2f10f91fe0fc6110e08fcba6b59e47127c295c280524764133",
+      "size": 731
+    },
+    {
+      "path": "schemas/batch-output.schema.json",
+      "sha256": "8034f01e3ea79141cf05894a3c7ee1918d6315bd112b194225fd12d5f939318e",
+      "size": 832
+    },
+    {
+      "path": "schemas/capability-package.schema.json",
+      "sha256": "2e62565fc77871c1cba9295762139623be7700bbfa9bb588487fe0617438b104",
+      "size": 1133
+    },
+    {
+      "path": "schemas/certification.schema.json",
+      "sha256": "3b8b18d10438c31874a55cadfc95a8071b71eef0a43aa967ca8663486c3f4d95",
+      "size": 1281
+    },
+    {
+      "path": "schemas/evidence-ref.schema.json",
+      "sha256": "7d58acdc05d525227971732c8f0f7f583ef6f670b3f210d3fd19ac9b15846da8",
+      "size": 996
+    },
+    {
+      "path": "schemas/workflow-run.schema.json",
+      "sha256": "7b38ba64519ec27d2a248bec818dd964bab3215ac3512511626121b1b32f62e0",
+      "size": 848
+    },
+    {
+      "path": "skills/b25-behavioral-equivalence-gate-adapter-provider/SKILL.md",
+      "sha256": "3fc0940526932b63785d45654787b71ddbde9ef948687892f03faae0e5cf4396",
+      "size": 3959
+    },
+    {
+      "path": "skills/b25-behavioral-equivalence-gate-adapter-provider/agents/openai.yaml",
+      "sha256": "07e86d37db76b716e1323153e3e20c8b51edf816d8b208617097cda5db5f630f",
+      "size": 353
+    },
+    {
+      "path": "skills/b25-behavioral-equivalence-gate-capability-planning/SKILL.md",
+      "sha256": "b17077b206f988a94fddf146f2402af51a05b6e3ba8f3b3dca10467c7460b6e4",
+      "size": 3861
+    },
+    {
+      "path": "skills/b25-behavioral-equivalence-gate-capability-planning/agents/openai.yaml",
+      "sha256": "fb66967cfd2c7d7c58aca293e2970dbbec847c8685bb9c032779ee01d6702ac0",
+      "size": 360
+    },
+    {
+      "path": "skills/b25-behavioral-equivalence-gate-certification-gate/SKILL.md",
+      "sha256": "4776f24c52c06f802c2dda6364d659a1b16409bb29dbc6c1ebb6710c8b264b10",
+      "size": 3990
+    },
+    {
+      "path": "skills/b25-behavioral-equivalence-gate-certification-gate/agents/openai.yaml",
+      "sha256": "0c68fa9b47d63f817ce40c2c5e6d3e2d8d02ba0e86b653f7fe5c45478566d573",
+      "size": 360
+    },
+    {
+      "path": "skills/b25-behavioral-equivalence-gate-corpus-benchmark/SKILL.md",
+      "sha256": "04e8fa2698fc4aec7798d2f17d3c795d54ce7557d6c1221b434d6fdf5e2c5d66",
+      "size": 3900
+    },
+    {
+      "path": "skills/b25-behavioral-equivalence-gate-corpus-benchmark/agents/openai.yaml",
+      "sha256": "4b66671fc0ae96300b94c918ab976e2e53f7f3a87473f5c81015c3bdab28fccd",
+      "size": 358
+    },
+    {
+      "path": "skills/b25-behavioral-equivalence-gate-deterministic-engine/SKILL.md",
+      "sha256": "967e759fee0d33547e8d04db2d8b69c00f5f20e6dd3851279229efb988a8d95c",
+      "size": 3877
+    },
+    {
+      "path": "skills/b25-behavioral-equivalence-gate-deterministic-engine/agents/openai.yaml",
+      "sha256": "3b8a9ac3e92a37a7c5749c3061a45680adbdae2bc489d739ba5c781b755db07e",
+      "size": 351
+    },
+    {
+      "path": "skills/b25-behavioral-equivalence-gate-discovery-inventory/SKILL.md",
+      "sha256": "dafe29d671540ea8194abe5ee1305214ef98e4fb407fb61d3702d2d5d397d826",
+      "size": 3904
+    },
+    {
+      "path": "skills/b25-behavioral-equivalence-gate-discovery-inventory/agents/openai.yaml",
+      "sha256": "223d484e275aee9429bc5462b8e131169a2f68932edea2eb0b0c501714e08ea9",
+      "size": 353
+    },
+    {
+      "path": "skills/b25-behavioral-equivalence-gate-domain-model/SKILL.md",
+      "sha256": "926c92f5802059c9b4236e8eaa0291b541f8d6067aea0154ba9983ff1c4f3b37",
+      "size": 3931
+    },
+    {
+      "path": "skills/b25-behavioral-equivalence-gate-domain-model/agents/openai.yaml",
+      "sha256": "c040875a8d38ddec590294e39d0b36b933ee2239db7678d0b2b9854841862f0b",
+      "size": 357
+    },
+    {
+      "path": "skills/b25-behavioral-equivalence-gate-failure-recovery/SKILL.md",
+      "sha256": "d5394c2973e7d0420c155c23e8b9ea72a36671ec811279b10fcf0af178c92d92",
+      "size": 3908
+    },
+    {
+      "path": "skills/b25-behavioral-equivalence-gate-failure-recovery/agents/openai.yaml",
+      "sha256": "6d0cb6e5f3b1cae83de7f0e6b8564e84241fe810a9be4347071c9d0abd94dfc8",
+      "size": 356
+    },
+    {
+      "path": "skills/b25-behavioral-equivalence-gate-human-approval/SKILL.md",
+      "sha256": "e8d3fce265b0577991f376b21087b7cc0c90307231c4dc48bb9cc0b2b7b4d0e1",
+      "size": 3893
+    },
+    {
+      "path": "skills/b25-behavioral-equivalence-gate-human-approval/agents/openai.yaml",
+      "sha256": "60e7c8862e9db46cdd22f59715f205985850443f59d4f57ed7bb3f6c0415b598",
+      "size": 350
+    },
+    {
+      "path": "skills/b25-behavioral-equivalence-gate-integration-api/SKILL.md",
+      "sha256": "2f0ccd8d12a7869785e8905f522e91dae79d7e2384c6b38f3dfea9cde71228ca",
+      "size": 3878
+    },
+    {
+      "path": "skills/b25-behavioral-equivalence-gate-integration-api/agents/openai.yaml",
+      "sha256": "778c1fc09ac665d75ba5536671fe5cb29d941fae6e906b298c26d29e7a98061e",
+      "size": 353
+    },
+    {
+      "path": "skills/b25-behavioral-equivalence-gate-lifecycle-recertification/SKILL.md",
+      "sha256": "ad80eb00936232947c884eb19df9c9ca1311e88480683bdfa7c742048db3f9ea",
+      "size": 3968
+    },
+    {
+      "path": "skills/b25-behavioral-equivalence-gate-lifecycle-recertification/agents/openai.yaml",
+      "sha256": "8a2dfabcd9d6f9b9ae9f3dbff957a82682c808b91f1ff079a079dd42ed5335b5",
+      "size": 376
+    },
+    {
+      "path": "skills/b25-behavioral-equivalence-gate-lineage-reconciliation/SKILL.md",
+      "sha256": "6d1579e25c8bf3ccdb0e60a42ac65792db2b962a7b18ec5480fef5e6253e27a2",
+      "size": 3919
+    },
+    {
+      "path": "skills/b25-behavioral-equivalence-gate-lineage-reconciliation/agents/openai.yaml",
+      "sha256": "4da13158e23530f2e2accad33b3ab3dcfe08de9c0e1188b1987310c8480c8d2d",
+      "size": 359
+    },
+    {
+      "path": "skills/b25-behavioral-equivalence-gate-observability-economics/SKILL.md",
+      "sha256": "66a740c4a0d102cc210553162e58d34536fe0e43e3b29a327229e02d3efc6083",
+      "size": 3934
+    },
+    {
+      "path": "skills/b25-behavioral-equivalence-gate-observability-economics/agents/openai.yaml",
+      "sha256": "e5b5e873730732322c17aa6e83e564e4c5011f5c53344cfa687363e9097c01a8",
+      "size": 370
+    },
+    {
+      "path": "skills/b25-behavioral-equivalence-gate-orchestrator/SKILL.md",
+      "sha256": "306de6070a3770ee87d20265f9c2aac057cfbf6d0f903c026993a314d6630a9e",
+      "size": 3956
+    },
+    {
+      "path": "skills/b25-behavioral-equivalence-gate-orchestrator/agents/openai.yaml",
+      "sha256": "dac2d21afb7b40f17f2547bb6466147056080613ae230d6b55ca765e7594e58f",
+      "size": 353
+    },
+    {
+      "path": "skills/b25-behavioral-equivalence-gate-security-policy/SKILL.md",
+      "sha256": "0c1828f228de503428b04df4c128be0dc389e32801f4650036bbdd2a5e3eb34a",
+      "size": 3913
+    },
+    {
+      "path": "skills/b25-behavioral-equivalence-gate-security-policy/agents/openai.yaml",
+      "sha256": "a5a9cf2327a7a52139d5b3ad218aff0065e408e693044fba21e44e5514fc3d62",
+      "size": 354
+    },
+    {
+      "path": "skills/b25-behavioral-equivalence-gate-workflow-runtime/SKILL.md",
+      "sha256": "d14499991e344ff28712f59d5aec0b21140d5efcb153c4e1cb8e0e7872d69874",
+      "size": 3922
+    },
+    {
+      "path": "skills/b25-behavioral-equivalence-gate-workflow-runtime/agents/openai.yaml",
+      "sha256": "1ac89127d80c58fff2aaa209f8ba230b73a7b56ae08de18a1e354a7bd16ab836",
+      "size": 357
+    },
+    {
+      "path": "tests/README.md",
+      "sha256": "35d88776c5aae0d4bdb932837e2ab434db867dec6b30944247541b22b34c190d",
+      "size": 377
+    },
+    {
+      "path": "tests/test_catalog.json",
+      "sha256": "fd25c44c04a6d557e11b07c3790dc7771a07ea73d60f596a4b9b85c05ae18681",
+      "size": 1935
+    },
+    {
+      "path": "tools/validate_package.py",
+      "sha256": "281cd6663a38afc9e046323ef2c1a2f21d08e8cbfd490e54985526d73e0154f3",
+      "size": 3581
+    },
+    {
+      "path": "validate.sh",
+      "sha256": "a1afca2d69d8fa3d11c820c8381b06b6449e31b289196b3cdc4156de471dd6c4",
+      "size": 72
+    }
+  ],
+  "validation": {
+    "static": "passed",
+    "runtime": "not-executed"
+  },
+  "trust_boundary": "Static package validation is not runtime execution or production certification."
+}

@@ -1,0 +1,8 @@
+interface:
+  display_name: Parent Authority, Grace and Consequences
+  short_description: Implement explainable rules, proportionate consequences, appeal, restoration and anti-humiliation gates.
+  default_prompt: Use $christian-parent-authority-grace for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

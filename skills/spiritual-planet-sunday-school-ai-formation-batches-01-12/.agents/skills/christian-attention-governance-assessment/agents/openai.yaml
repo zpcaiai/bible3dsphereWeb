@@ -1,0 +1,8 @@
+interface:
+  display_name: "Christian Attention Governance Assessment"
+  short_description: "Build a private, non-diagnostic attention self-assessment."
+  default_prompt: "Use $christian-attention-governance-assessment for this task."
+policy:
+  products:
+    - CODEX
+  allow_implicit_invocation: true

@@ -1,0 +1,9 @@
+interface:
+  display_name: Child Formation Orchestrator
+  short_description: Implement Batch 07 age 0–6 and 7–12 caregiver, story, play, rhythm, media literacy, AI literacy, privacy,
+    responsibility, faith conversation and safeguarding.
+  default_prompt: Use $spiritual-planet-child-formation-orchestrator for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

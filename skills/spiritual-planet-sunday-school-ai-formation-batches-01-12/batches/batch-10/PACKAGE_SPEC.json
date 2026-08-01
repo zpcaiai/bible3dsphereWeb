@@ -1,0 +1,254 @@
+{
+  "batch": 10,
+  "module_key": "sunday_school.ai_formation.scenario_runtime",
+  "skills": [
+    "spiritual-planet-scenario-runtime-orchestrator",
+    "christian-scenario-authoring",
+    "christian-scenario-runtime",
+    "christian-trigger-state-simulation",
+    "christian-choice-consequence-engine",
+    "christian-scripture-grace-intervention",
+    "christian-socratic-scenario-branching",
+    "christian-scenario-facilitator",
+    "christian-scenario-safety-gate",
+    "christian-scenario-debrief",
+    "christian-scenario-benchmark",
+    "scenario-runtime-course-integrator"
+  ],
+  "counts": {
+    "skills": 12,
+    "schemas": 12,
+    "practices": 32,
+    "units": 8,
+    "lessons": 20,
+    "scenarios": 20
+  },
+  "practice_asset": "assets/scenario-runtime-control-catalog.seed.yaml",
+  "curriculum_asset": "assets/scenario-runtime-curriculum.seed.yaml",
+  "scenario_asset": "assets/scenario-runtime-scenarios.seed.yaml",
+  "analytics_asset": "assets/analytics-events.example.yaml",
+  "schema_invariants": [
+    {
+      "schema": "scenario-definition.schema.json",
+      "path": "properties.explicitContentRendered.const",
+      "expected": false
+    },
+    {
+      "schema": "scenario-definition.schema.json",
+      "path": "properties.learnerRealHistoryRequired.const",
+      "expected": false
+    },
+    {
+      "schema": "scenario-runtime-session.schema.json",
+      "path": "properties.rawFreeTextStored.const",
+      "expected": false
+    },
+    {
+      "schema": "scenario-runtime-session.schema.json",
+      "path": "properties.hiddenPsychologicalProfileGenerated.const",
+      "expected": false
+    },
+    {
+      "schema": "scenario-trigger-state-timeline.schema.json",
+      "path": "properties.learnerPersonalHistoryRequested.const",
+      "expected": false
+    },
+    {
+      "schema": "scenario-trigger-state-timeline.schema.json",
+      "path": "properties.diagnosisGenerated.const",
+      "expected": false
+    },
+    {
+      "schema": "scenario-trigger-state-timeline.schema.json",
+      "path": "properties.explicitNarrativeStored.const",
+      "expected": false
+    },
+    {
+      "schema": "choice-node.schema.json",
+      "path": "properties.oneCorrectMoralAnswerRequired.const",
+      "expected": false
+    },
+    {
+      "schema": "choice-node.schema.json",
+      "path": "properties.shameManipulationAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "choice-node.schema.json",
+      "path": "properties.coerciveCountdownAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "consequence-projection.schema.json",
+      "path": "properties.predictionPresentedAsCertain.const",
+      "expected": false
+    },
+    {
+      "schema": "consequence-projection.schema.json",
+      "path": "properties.futureBehaviorScoreGenerated.const",
+      "expected": false
+    },
+    {
+      "schema": "consequence-projection.schema.json",
+      "path": "properties.punishmentOnlyEndingAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "scripture-grace-intervention.schema.json",
+      "path": "properties.cheapGraceWithoutResponsibilityAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "scripture-grace-intervention.schema.json",
+      "path": "properties.condemnationWithoutGraceAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "scripture-grace-intervention.schema.json",
+      "path": "properties.divineMessageGenerated.const",
+      "expected": false
+    },
+    {
+      "schema": "socratic-branch.schema.json",
+      "path": "properties.predeterminedVerdictRequired.const",
+      "expected": false
+    },
+    {
+      "schema": "socratic-branch.schema.json",
+      "path": "properties.privateConfessionSolicited.const",
+      "expected": false
+    },
+    {
+      "schema": "socratic-branch.schema.json",
+      "path": "properties.modelMayPressureContinuation.const",
+      "expected": false
+    },
+    {
+      "schema": "facilitator-intervention.schema.json",
+      "path": "properties.facilitatorMayConductForensicInterview.const",
+      "expected": false
+    },
+    {
+      "schema": "facilitator-intervention.schema.json",
+      "path": "properties.facilitatorMayPromiseAbsoluteConfidentiality.const",
+      "expected": false
+    },
+    {
+      "schema": "facilitator-intervention.schema.json",
+      "path": "properties.learnerPubliclyShamed.const",
+      "expected": false
+    },
+    {
+      "schema": "scenario-safety-decision.schema.json",
+      "path": "properties.rawDisclosureStored.const",
+      "expected": false
+    },
+    {
+      "schema": "scenario-safety-decision.schema.json",
+      "path": "properties.explicitEvidenceUploaded.const",
+      "expected": false
+    },
+    {
+      "schema": "scenario-safety-decision.schema.json",
+      "path": "properties.clinicalOrLegalConclusionGenerated.const",
+      "expected": false
+    },
+    {
+      "schema": "scenario-debrief.schema.json",
+      "path": "properties.learnerScoreGenerated.const",
+      "expected": false
+    },
+    {
+      "schema": "scenario-debrief.schema.json",
+      "path": "properties.moralWorthInferred.const",
+      "expected": false
+    },
+    {
+      "schema": "scenario-debrief.schema.json",
+      "path": "properties.privateReflectionInAnalytics.const",
+      "expected": false
+    },
+    {
+      "schema": "scenario-authoring-review.schema.json",
+      "path": "properties.modelMayApprove.const",
+      "expected": false
+    },
+    {
+      "schema": "scenario-authoring-review.schema.json",
+      "path": "properties.sameAuthorSoleApproval.const",
+      "expected": false
+    },
+    {
+      "schema": "scenario-authoring-review.schema.json",
+      "path": "properties.unresolvedSafetyFailureMayPublish.const",
+      "expected": false
+    },
+    {
+      "schema": "scenario-benchmark-result.schema.json",
+      "path": "properties.syntheticOnly.const",
+      "expected": true
+    },
+    {
+      "schema": "scenario-benchmark-result.schema.json",
+      "path": "properties.productionEffectivenessClaimed.const",
+      "expected": false
+    }
+  ],
+  "forbidden_schema_keys": [
+    "salvationProbability",
+    "salvationScore",
+    "spiritualMaturityScore",
+    "holinessRank",
+    "addictionScore",
+    "hiddenSinScore",
+    "parentFitnessScore",
+    "sexualPurityScore",
+    "childObedienceScore",
+    "divineMessage",
+    "automaticDiagnosis",
+    "secretMonitoringToken",
+    "rawExplicitContent",
+    "privateMinorTranscript"
+  ],
+  "required_root_files": [
+    "README.md",
+    "CODEX_IMPLEMENTATION_PROMPT.md",
+    "SKILL_INDEX.md",
+    "BATCH01_09_COMPATIBILITY.md",
+    "IMPLEMENTATION_CHECKLIST.md",
+    "AGENTS.md.snippet",
+    "SOURCES.md",
+    "RELEASE_NOTES.md",
+    "PACKAGE_SPEC.json",
+    "evals/batch10.skill-prompts.csv",
+    "evals/batch10.behavior-cases.json",
+    "evals/batch10.behavior-rubric.md",
+    "assets/scenario-runtime-control-catalog.seed.yaml",
+    "assets/scenario-runtime-curriculum.seed.yaml",
+    "assets/scenario-runtime-scenarios.seed.yaml",
+    "assets/analytics-events.example.yaml",
+    "schemas/scenario-definition.schema.json",
+    "schemas/scenario-runtime-session.schema.json",
+    "schemas/scenario-trigger-state-timeline.schema.json",
+    "schemas/choice-node.schema.json",
+    "schemas/consequence-projection.schema.json",
+    "schemas/scripture-grace-intervention.schema.json",
+    "schemas/socratic-branch.schema.json",
+    "schemas/facilitator-intervention.schema.json",
+    "schemas/scenario-safety-decision.schema.json",
+    "schemas/scenario-debrief.schema.json",
+    "schemas/scenario-authoring-review.schema.json",
+    "schemas/scenario-benchmark-result.schema.json",
+    "references/batch10-blueprint.md",
+    "references/api-persistence-blueprint.md",
+    "references/theology-and-formation-policy.md",
+    "references/privacy-safety-analytics-policy.md",
+    "references/testing-and-release-policy.md",
+    "references/scenario-authoring-policy.md",
+    "references/scenario-runtime-state-policy.md",
+    "references/choice-consequence-and-repair-policy.md",
+    "references/socratic-branching-policy.md",
+    "references/facilitator-and-safety-policy.md",
+    "references/scenario-benchmark-policy.md"
+  ]
+}

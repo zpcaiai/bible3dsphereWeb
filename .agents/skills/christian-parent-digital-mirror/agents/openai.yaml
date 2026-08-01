@@ -1,0 +1,8 @@
+interface:
+  display_name: Parent Digital and Spiritual Mirror
+  short_description: Implement parent self-observation of modeled device, speech, prayer, work, rest and service patterns.
+  default_prompt: Use $christian-parent-digital-mirror for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

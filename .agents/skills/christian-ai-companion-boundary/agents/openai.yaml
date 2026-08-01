@@ -1,0 +1,9 @@
+interface:
+  display_name: AI Companion Boundary
+  short_description: Implement explainable boundaries for AI emotional support, romantic roleplay, secrecy, exclusivity and
+    human replacement.
+  default_prompt: Use $christian-ai-companion-boundary for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

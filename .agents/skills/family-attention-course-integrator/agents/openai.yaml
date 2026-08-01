@@ -1,0 +1,9 @@
+interface:
+  display_name: Family Attention Course Integrator
+  short_description: Integrate Batch 06 routes, covenant UI, reviewed curriculum, feature flags, analytics, accessibility
+    and E2E.
+  default_prompt: Use $family-attention-course-integrator for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

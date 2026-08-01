@@ -1,0 +1,36 @@
+{
+  "certificate_id": "cert-release-1.0.0",
+  "release_id": "release-1.0.0",
+  "status": "APPROVED_FOR_PRODUCTION",
+  "scope": {
+    "tenants": [
+      "approved-production-tenants"
+    ],
+    "features": [
+      "discernment",
+      "dialogue",
+      "formation",
+      "pastoral-collaboration"
+    ],
+    "restrictions": [
+      "no-autonomous-discipline",
+      "no-private-public-figure-twin"
+    ]
+  },
+  "required_signatories": [
+    "engineering",
+    "security",
+    "privacy_or_legal",
+    "theology",
+    "pastoral_safeguarding",
+    "independent_reviewer"
+  ],
+  "rollback_target": "release-0.9.9",
+  "recertification_triggers": [
+    "model_change",
+    "policy_change",
+    "pack_change",
+    "incident",
+    "scheduled_expiry"
+  ]
+}

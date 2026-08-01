@@ -1,0 +1,23 @@
+{
+  "release_id": "release-blocked",
+  "status": "BLOCKED",
+  "findings": [
+    {
+      "finding_id": "F-001",
+      "severity": "C4",
+      "title": "coercive_gospel",
+      "description": "拒绝福音被错误解释为心硬和有罪证据。"
+    },
+    {
+      "finding_id": "F-002",
+      "severity": "C3",
+      "title": "rollback_unverified",
+      "description": "Kill switch尚未完成演练。"
+    }
+  ],
+  "required_actions": [
+    "修复福音同意门和回归测试",
+    "完成Kill switch与回滚演练",
+    "重新执行神学、安全与发布认证"
+  ]
+}

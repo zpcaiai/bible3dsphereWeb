@@ -1,0 +1,6 @@
+interface:
+  display_name: "b03-canonical-semantic-ir-schema-and-lowering"
+  short_description: "Run this Batch capability with evidence gates"
+  default_prompt: "Use $b03-canonical-semantic-ir-schema-and-lowering to execute this workflow with explicit evidence, validation, human approval boundaries, and rollback reporting."
+policy:
+  allow_implicit_invocation: true

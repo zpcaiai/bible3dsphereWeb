@@ -1,0 +1,258 @@
+{
+  "batch": 6,
+  "module_key": "sunday_school.ai_formation.family_attention_covenant",
+  "skills": [
+    "spiritual-planet-family-attention-covenant-orchestrator",
+    "christian-family-attention-ecology",
+    "christian-family-digital-covenant",
+    "christian-device-zone-governance",
+    "christian-family-ai-covenant",
+    "christian-family-meeting-facilitator",
+    "christian-age-permission-policy",
+    "christian-family-exception-policy",
+    "christian-family-digital-conflict-repair",
+    "christian-family-digital-sabbath",
+    "christian-family-covenant-review",
+    "family-attention-course-integrator"
+  ],
+  "counts": {
+    "skills": 12,
+    "schemas": 11,
+    "practices": 34,
+    "units": 10,
+    "lessons": 22,
+    "scenarios": 12
+  },
+  "practice_asset": "assets/family-attention-practice-catalog.seed.yaml",
+  "curriculum_asset": "assets/family-attention-curriculum.seed.yaml",
+  "scenario_asset": "assets/family-attention-scenarios.seed.yaml",
+  "analytics_asset": "assets/analytics-events.example.yaml",
+  "schema_invariants": [
+    {
+      "schema": "family-attention-ecology.schema.json",
+      "path": "properties.householdSurveillanceEnabled.const",
+      "expected": false
+    },
+    {
+      "schema": "family-attention-ecology.schema.json",
+      "path": "properties.memberRankingGenerated.const",
+      "expected": false
+    },
+    {
+      "schema": "family-attention-ecology.schema.json",
+      "path": "properties.rawUsageHistoryStored.const",
+      "expected": false
+    },
+    {
+      "schema": "family-digital-covenant.schema.json",
+      "path": "properties.memberVoiceRecorded.const",
+      "expected": true
+    },
+    {
+      "schema": "family-digital-covenant.schema.json",
+      "path": "properties.appealAvailable.const",
+      "expected": true
+    },
+    {
+      "schema": "family-digital-covenant.schema.json",
+      "path": "properties.secretRulesAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "family-digital-covenant.schema.json",
+      "path": "properties.unilateralPermanentChangeAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "device-zone-rule.schema.json",
+      "path": "properties.emergencyAccessPreserved.const",
+      "expected": true
+    },
+    {
+      "schema": "device-zone-rule.schema.json",
+      "path": "properties.accessibilityExceptionPreserved.const",
+      "expected": true
+    },
+    {
+      "schema": "device-zone-rule.schema.json",
+      "path": "properties.covertSensorUseAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "family-ai-covenant.schema.json",
+      "path": "properties.aiMayBecomeSecretCompanion.const",
+      "expected": false
+    },
+    {
+      "schema": "family-ai-covenant.schema.json",
+      "path": "properties.aiMayMakeFinalMoralDecision.const",
+      "expected": false
+    },
+    {
+      "schema": "family-ai-covenant.schema.json",
+      "path": "properties.aiMaySolicitMinorSecrets.const",
+      "expected": false
+    },
+    {
+      "schema": "family-ai-covenant.schema.json",
+      "path": "properties.rawAiHistorySharedByDefault.const",
+      "expected": false
+    },
+    {
+      "schema": "family-meeting-record.schema.json",
+      "path": "properties.minorMaySkipSensitiveItem.const",
+      "expected": true
+    },
+    {
+      "schema": "family-meeting-record.schema.json",
+      "path": "properties.meetingUsedForInterrogation.const",
+      "expected": false
+    },
+    {
+      "schema": "family-meeting-record.schema.json",
+      "path": "properties.privateDisclosureRequired.const",
+      "expected": false
+    },
+    {
+      "schema": "age-permission-policy.schema.json",
+      "path": "properties.developmentalReviewRequired.const",
+      "expected": true
+    },
+    {
+      "schema": "age-permission-policy.schema.json",
+      "path": "properties.oneTimeFailureCausesPermanentBan.const",
+      "expected": false
+    },
+    {
+      "schema": "age-permission-policy.schema.json",
+      "path": "properties.secretPermissionChangesAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "family-exception-policy.schema.json",
+      "path": "properties.exceptionBecomesSecretBackdoor.const",
+      "expected": false
+    },
+    {
+      "schema": "family-exception-policy.schema.json",
+      "path": "properties.punishmentForRequestingException.const",
+      "expected": false
+    },
+    {
+      "schema": "family-conflict-repair-plan.schema.json",
+      "path": "properties.forcedConfessionAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "family-conflict-repair-plan.schema.json",
+      "path": "properties.publicShamingAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "family-conflict-repair-plan.schema.json",
+      "path": "properties.indefinitePunishmentAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "family-digital-sabbath-plan.schema.json",
+      "path": "properties.participationForcedAsSpiritualProof.const",
+      "expected": false
+    },
+    {
+      "schema": "family-digital-sabbath-plan.schema.json",
+      "path": "properties.emergencyAccessPreserved.const",
+      "expected": true
+    },
+    {
+      "schema": "family-covenant-review.schema.json",
+      "path": "properties.familyScoreGenerated.const",
+      "expected": false
+    },
+    {
+      "schema": "family-covenant-review.schema.json",
+      "path": "properties.memberComparisonGenerated.const",
+      "expected": false
+    },
+    {
+      "schema": "family-covenant-review.schema.json",
+      "path": "properties.privateUsageDataIncluded.const",
+      "expected": false
+    },
+    {
+      "schema": "family-digital-safety-decision.schema.json",
+      "path": "properties.authorizedHumanOwnerRequired.const",
+      "expected": true
+    },
+    {
+      "schema": "family-digital-safety-decision.schema.json",
+      "path": "properties.deviceConfiscationAsOnlySafetyResponseAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "family-digital-safety-decision.schema.json",
+      "path": "properties.forensicInvestigationByProductAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "family-digital-safety-decision.schema.json",
+      "path": "properties.rawEvidenceUploaded.const",
+      "expected": false
+    }
+  ],
+  "forbidden_schema_keys": [
+    "salvationProbability",
+    "salvationScore",
+    "spiritualMaturityScore",
+    "holinessRank",
+    "addictionScore",
+    "hiddenSinScore",
+    "parentFitnessScore",
+    "sexualPurityScore",
+    "childObedienceScore",
+    "divineMessage",
+    "automaticDiagnosis",
+    "secretMonitoringToken",
+    "rawExplicitContent",
+    "privateMinorTranscript"
+  ],
+  "required_root_files": [
+    "README.md",
+    "CODEX_IMPLEMENTATION_PROMPT.md",
+    "SKILL_INDEX.md",
+    "BATCH01_05_COMPATIBILITY.md",
+    "IMPLEMENTATION_CHECKLIST.md",
+    "AGENTS.md.snippet",
+    "SOURCES.md",
+    "RELEASE_NOTES.md",
+    "PACKAGE_SPEC.json",
+    "evals/batch06.skill-prompts.csv",
+    "evals/batch06.behavior-cases.json",
+    "evals/batch06.behavior-rubric.md",
+    "assets/family-attention-practice-catalog.seed.yaml",
+    "assets/family-attention-curriculum.seed.yaml",
+    "assets/family-attention-scenarios.seed.yaml",
+    "assets/analytics-events.example.yaml",
+    "schemas/family-attention-ecology.schema.json",
+    "schemas/family-digital-covenant.schema.json",
+    "schemas/device-zone-rule.schema.json",
+    "schemas/family-ai-covenant.schema.json",
+    "schemas/family-meeting-record.schema.json",
+    "schemas/age-permission-policy.schema.json",
+    "schemas/family-exception-policy.schema.json",
+    "schemas/family-conflict-repair-plan.schema.json",
+    "schemas/family-digital-sabbath-plan.schema.json",
+    "schemas/family-covenant-review.schema.json",
+    "schemas/family-digital-safety-decision.schema.json",
+    "references/batch06-blueprint.md",
+    "references/api-persistence-blueprint.md",
+    "references/theology-and-formation-policy.md",
+    "references/privacy-safety-analytics-policy.md",
+    "references/testing-and-release-policy.md",
+    "references/family-attention-ecology-policy.md",
+    "references/family-digital-covenant-policy.md",
+    "references/family-ai-covenant-policy.md",
+    "references/age-permission-and-autonomy-policy.md",
+    "references/family-meeting-and-repair-policy.md",
+    "references/family-digital-sabbath-policy.md"
+  ]
+}

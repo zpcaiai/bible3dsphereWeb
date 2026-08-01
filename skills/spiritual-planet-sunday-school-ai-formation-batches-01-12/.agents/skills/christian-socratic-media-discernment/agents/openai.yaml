@@ -1,0 +1,8 @@
+interface:
+  display_name: "Christian Socratic Media Discernment"
+  short_description: "Build non-coercive question trees for evidence, assumptions, telos and fruit."
+  default_prompt: "Use $christian-socratic-media-discernment for this task."
+policy:
+  products:
+    - CODEX
+  allow_implicit_invocation: true

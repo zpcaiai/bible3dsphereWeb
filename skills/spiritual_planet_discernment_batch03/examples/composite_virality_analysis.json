@@ -1,0 +1,45 @@
+{
+  "case_id": "example-composite-001",
+  "domain_packs": [
+    {
+      "id": "meritocracy_successism",
+      "version": "0.2.0",
+      "explains": [
+        "成就被用作价值证明"
+      ]
+    },
+    {
+      "id": "consumerism",
+      "version": "0.2.0",
+      "explains": [
+        "购买被许诺为身份转变"
+      ]
+    },
+    {
+      "id": "influencer_attention_culture",
+      "version": "0.2.0",
+      "explains": [
+        "被看见和流量成为真实性证明"
+      ]
+    }
+  ],
+  "virality_decomposition": {
+    "strong_candidates": [
+      "narrative_fit",
+      "emotional_activation",
+      "audience_need_fit"
+    ],
+    "mixed_candidates": [
+      "platform_affordance",
+      "controversy_lift"
+    ],
+    "unknown": [
+      "paid_distribution",
+      "randomness"
+    ]
+  },
+  "socratic_entry_question": {
+    "stage": "SelfMirror",
+    "question": "这类内容最吸引你的，是它提供的方法，还是它许诺你将成为一种更有价值的人？"
+  }
+}

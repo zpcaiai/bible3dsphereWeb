@@ -1,0 +1,9 @@
+interface:
+  display_name: Curriculum and Teacher Engine Orchestrator
+  short_description: Implement Batch 09 course, unit, lesson, activity, Scripture review, teacher guide, student material,
+    discussion, scenario, family extension, observation and publication workflows.
+  default_prompt: Use $spiritual-planet-curriculum-teacher-engine-orchestrator for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

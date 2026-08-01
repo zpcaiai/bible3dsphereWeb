@@ -1,0 +1,8 @@
+interface:
+  display_name: Child Privacy Literacy
+  short_description: Implement data-category cards and adult-reviewed share/do-not-share decisions.
+  default_prompt: Use $christian-child-privacy-literacy for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

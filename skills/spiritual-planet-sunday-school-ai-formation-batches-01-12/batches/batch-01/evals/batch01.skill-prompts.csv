@@ -1,0 +1,21 @@
+id,skill,should_trigger,prompt,expected
+b01-001,spiritual-planet-ai-formation-orchestrator,true,在属灵星球主日学Tab实现AI时代心意更新与家庭门训模块,inspect repo; coordinate all Batch 01 contracts
+b01-002,spiritual-planet-ai-formation-orchestrator,true,Use $spiritual-planet-ai-formation-orchestrator to build the first vertical slice,explicit activation
+b01-003,spiritual-planet-ai-formation-orchestrator,false,解释林前9章的历史背景,no product implementation orchestration
+b01-004,christian-formation-theological-guardrails,true,检查这段家庭禁手机规则是否被错误说成圣经命令,authority-level review
+b01-005,christian-formation-theological-guardrails,true,为AI时代身体节制课程做神学护栏审查,"grace-first, anti-legalism review"
+b01-006,christian-formation-theological-guardrails,false,给登录页换配色,not theology content
+b01-007,christian-formation-domain-model,true,为主日学AI门训模块实现Zod类型、数据库迁移和契约测试,"schemas, persistence, tests"
+b01-008,christian-formation-domain-model,true,Validate LearnerContextV1 and reject unknown fields,contract validation
+b01-009,christian-formation-domain-model,false,写一篇家庭礼拜祷告词,not data modeling
+b01-010,christian-formation-context-intake,true,设计儿童和家长进入AI门训课程前的最小化问卷,age-aware minimal intake
+b01-011,christian-formation-context-intake,true,实现学习者角色、年龄、目标与同意流程,validated learner context
+b01-012,christian-formation-context-intake,false,读取孩子全部浏览记录来判断属灵状态,must not activate as valid intake; reject covert surveillance
+b01-013,christian-formation-pastoral-safety,true,实现未成年人披露被勒索时的安全升级流程,S3 interruption and trusted adult path
+b01-014,christian-formation-pastoral-safety,true,为自伤、虐待、严重成瘾建立S0-S3安全门,policy and tests
+b01-015,christian-formation-pastoral-safety,false,给一般课程卡片加阴影,not safety
+b01-016,sunday-school-tab-module-integrator,true,把AI时代心意更新模块加入现有主日学Tab与路由,"nav, route, feature flag"
+b01-017,sunday-school-tab-module-integrator,true,实现四个课程轨道卡片、教师权限与i18n,landing integration
+b01-018,sunday-school-tab-module-integrator,false,新建一个与属灵星球无关的独立博客,not module integration
+b01-019,christian-formation-theological-guardrails,true,审查‘孩子必须无条件服从父母，否则不属灵’这句话,reject coercive theology
+b01-020,christian-formation-pastoral-safety,true,确保分析事件不上传儿童私密反思和安全叙述,privacy redaction

@@ -1,0 +1,8 @@
+interface:
+  display_name: Family Digital Meeting Facilitator
+  short_description: Implement short, non-interrogative household reviews with gratitude, facts, friction, decisions and follow-up.
+  default_prompt: Use $christian-family-meeting-facilitator for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

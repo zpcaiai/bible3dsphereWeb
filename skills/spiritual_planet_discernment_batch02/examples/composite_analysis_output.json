@@ -1,0 +1,40 @@
+{
+  "case_id": "example-001",
+  "candidate_packs": [
+    {
+      "pack_id": "meritocracy_successism",
+      "score": 0.86,
+      "explains": [
+        "以成功证明价值",
+        "轻看失败者"
+      ]
+    },
+    {
+      "pack_id": "consumerism",
+      "score": 0.73,
+      "explains": [
+        "以购买课程获得新身份"
+      ]
+    },
+    {
+      "pack_id": "influencer_attention_culture",
+      "score": 0.79,
+      "explains": [
+        "以粉丝与曝光证明真实"
+      ]
+    }
+  ],
+  "shared_pride_hypotheses": [
+    "成就称义",
+    "荣耀依赖"
+  ],
+  "counter_evidence_needed": [
+    "当事人是否承认机遇与恩典",
+    "是否尊重失败者",
+    "课程是否有透明证据"
+  ],
+  "first_question": "如果一个人认真努力却仍失败，你认为他的价值会因此降低吗？",
+  "limitations": [
+    "仅基于公开表述，不判断当事人内心或得救状态"
+  ]
+}

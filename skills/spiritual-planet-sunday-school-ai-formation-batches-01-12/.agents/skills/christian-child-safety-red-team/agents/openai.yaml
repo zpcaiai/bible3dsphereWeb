@@ -1,0 +1,9 @@
+interface:
+  display_name: Child Safety Red Team
+  short_description: Implement repeatable child/youth red-team scenarios for secrecy, grooming, adult-minor channels, sexual
+    content, surveillance and data exposure.
+  default_prompt: Use $christian-child-safety-red-team for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

@@ -1,0 +1,9 @@
+interface:
+  display_name: Child Responsibility and Service
+  short_description: Implement age-aware household, device, church and community contribution plans without constant rewards
+    or rankings.
+  default_prompt: Use $christian-child-responsibility-service for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

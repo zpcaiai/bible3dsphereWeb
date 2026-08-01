@@ -1,0 +1,326 @@
+{
+  "schema_version": "1.0.0",
+  "package_id": "batch-15-counterexample-guided-repair-complete-skill-pack",
+  "batch": 15,
+  "title": "Batch 15: Counterexample-Guided Repair and Self-Evolving Validation",
+  "version": "1.0.0",
+  "root_skill": "batch-15-counterexample-guided-repair",
+  "generated_at": "2026-07-31T00:00:00Z",
+  "skill_count": 16,
+  "skills": [
+    "b15-counterexample-guided-repair-adapter-provider",
+    "b15-counterexample-guided-repair-capability-planning",
+    "b15-counterexample-guided-repair-certification-gate",
+    "b15-counterexample-guided-repair-corpus-benchmark",
+    "b15-counterexample-guided-repair-deterministic-engine",
+    "b15-counterexample-guided-repair-discovery-inventory",
+    "b15-counterexample-guided-repair-domain-model",
+    "b15-counterexample-guided-repair-failure-recovery",
+    "b15-counterexample-guided-repair-human-approval",
+    "b15-counterexample-guided-repair-integration-api",
+    "b15-counterexample-guided-repair-lifecycle-recertification",
+    "b15-counterexample-guided-repair-lineage-reconciliation",
+    "b15-counterexample-guided-repair-observability-economics",
+    "b15-counterexample-guided-repair-orchestrator",
+    "b15-counterexample-guided-repair-security-policy",
+    "b15-counterexample-guided-repair-workflow-runtime"
+  ],
+  "upstream_batch": 14,
+  "files": [
+    {
+      "path": "BATCH14_COMPATIBILITY.md",
+      "sha256": "59a25cb02896fe79211e3bb1ace867b288188abbfda07b1b3e6fd90720d6c9bb",
+      "size": 2103
+    },
+    {
+      "path": "CODEX_IMPLEMENTATION_PROMPT.md",
+      "sha256": "26af3d6feee2df9be37b64604425e946c762301d5f1d1604744625255cea5c57",
+      "size": 2295
+    },
+    {
+      "path": "IMPLEMENTATION_CHECKLIST.md",
+      "sha256": "70f545aab925e10fccb1d5716088f9e7fd0da919b3151120ff723b3f4f9463a7",
+      "size": 1766
+    },
+    {
+      "path": "README.md",
+      "sha256": "d127fd5b5dbd4c4464155c92523db9093549606a05452f10d0787db0f2f0c145",
+      "size": 1088
+    },
+    {
+      "path": "SKILL.md",
+      "sha256": "059a1c86626813bb62423a71a715ec5b066a3dbbbe6dab5f85a56ee362410905",
+      "size": 4017
+    },
+    {
+      "path": "SKILL_INDEX.md",
+      "sha256": "315530dc42020ae6d6cd93c4f8ecff238c2f1e0ccafec5a17e9523d83f85facb",
+      "size": 3074
+    },
+    {
+      "path": "VALIDATION_REPORT.md",
+      "sha256": "02963021e415c5500ffc443d4695152fd6892de3c1bb2a8f4f14ee550edb4ba2",
+      "size": 572
+    },
+    {
+      "path": "agents/openai.yaml",
+      "sha256": "addacf29251e72df1667826085d2d153e43b47ac9ee4bbc5e16a2aa17c067692",
+      "size": 380
+    },
+    {
+      "path": "examples/certificate.example.json",
+      "sha256": "22d67fdfa1d1c0f6f7eec361377641ee9dc24d9040b4874d9c85ae8d60a0e921",
+      "size": 452
+    },
+    {
+      "path": "examples/invocation.example.json",
+      "sha256": "9085cf7829c8f10a1851f437da1e1ca0d2346c203ec4c5c679bce47793bcc76b",
+      "size": 291
+    },
+    {
+      "path": "install.sh",
+      "sha256": "cdaf3fdf0c010dd9e0fe29b4a92cd723ff35dd0617eaf14bb5f57e757bc2fa02",
+      "size": 305
+    },
+    {
+      "path": "policies/agent-boundary.yaml",
+      "sha256": "79adc8830adec220835b49067d29b50a3a1578f146a65e7d5b70a6d19ba09ab2",
+      "size": 150
+    },
+    {
+      "path": "policies/certification.yaml",
+      "sha256": "17f50ef51eb5cbf800b3b4990bfb399d4aed9c751cb7f440bee4a4d88ebf02ea",
+      "size": 182
+    },
+    {
+      "path": "policies/default-deny.yaml",
+      "sha256": "25c6a03403de8832018b82bfa5d9dd516d8f5136ba4974c85d40bdf8972f9366",
+      "size": 105
+    },
+    {
+      "path": "policies/evidence-first.yaml",
+      "sha256": "50408543ffa45cfea3461cd57bdabf39f9bdd422fc5b41cdfef4d3c679a058c2",
+      "size": 156
+    },
+    {
+      "path": "policies/human-approval.yaml",
+      "sha256": "d9a6b11cfe402c569440e95b1aa2377387e222a32b693c83fc278ddb1fd4482f",
+      "size": 143
+    },
+    {
+      "path": "schemas/batch-input.schema.json",
+      "sha256": "fa4c8fe67aa289cf5e1523ace5b9fa46b09f42328de1b4fa3f633e6bbd41bb3b",
+      "size": 731
+    },
+    {
+      "path": "schemas/batch-output.schema.json",
+      "sha256": "4af47f370ab0986af5a9cea7a5ba02f7d101a5e4c8d79195009a415f4e40cae9",
+      "size": 832
+    },
+    {
+      "path": "schemas/capability-package.schema.json",
+      "sha256": "ff24f06e1f0a5f91f39d41873b292bedf7c13787ae9270d1356024dc87e73998",
+      "size": 1133
+    },
+    {
+      "path": "schemas/certification.schema.json",
+      "sha256": "3113bd913c6436b4ea2bfa2c6575b16522fd749759ab7c1e3091a30489bbc80e",
+      "size": 1281
+    },
+    {
+      "path": "schemas/evidence-ref.schema.json",
+      "sha256": "b45606d0519805fe9fa7cb45c43ffd55bbb0cc9cb1f54bbccef07b3ba596cb3e",
+      "size": 996
+    },
+    {
+      "path": "schemas/workflow-run.schema.json",
+      "sha256": "053c48e583f20649311cc285bb6c0c72c0f5c5adee55cfa9a2377104b27d09f5",
+      "size": 848
+    },
+    {
+      "path": "skills/b15-counterexample-guided-repair-adapter-provider/SKILL.md",
+      "sha256": "9a2077a34127b9a9b228ed52caac380205faf284b38d745c74ac5f7f544b99a9",
+      "size": 3978
+    },
+    {
+      "path": "skills/b15-counterexample-guided-repair-adapter-provider/agents/openai.yaml",
+      "sha256": "9efa5697aadc44ea3980bf647dcb536a714f033df53b81ea678930aca70be9fa",
+      "size": 354
+    },
+    {
+      "path": "skills/b15-counterexample-guided-repair-capability-planning/SKILL.md",
+      "sha256": "d2ced19636a82cddcfc11fbda0c0b4d1db7bd64422d6242a989097ec25bdf905",
+      "size": 3880
+    },
+    {
+      "path": "skills/b15-counterexample-guided-repair-capability-planning/agents/openai.yaml",
+      "sha256": "70415ec4d61842932fdf3aa18dd26ec8c948de84bfe17e2da48e9567ee4a92e9",
+      "size": 361
+    },
+    {
+      "path": "skills/b15-counterexample-guided-repair-certification-gate/SKILL.md",
+      "sha256": "3c482c3186444ce626f9d81967fc9b6c0a1b3d6655955e23c6e9a6b91879b283",
+      "size": 4009
+    },
+    {
+      "path": "skills/b15-counterexample-guided-repair-certification-gate/agents/openai.yaml",
+      "sha256": "cf06dcc4d9820fc864f5ddd84de934a56dfe1f98b19b002299c4f4772fa548ff",
+      "size": 361
+    },
+    {
+      "path": "skills/b15-counterexample-guided-repair-corpus-benchmark/SKILL.md",
+      "sha256": "7a2f6554d57c9586d9745b1aae6903e7a4cd206907b9c8e852582e2472af9b40",
+      "size": 3919
+    },
+    {
+      "path": "skills/b15-counterexample-guided-repair-corpus-benchmark/agents/openai.yaml",
+      "sha256": "1ceeabf4e680008e904bf9af6af6410d83f5b9a77c70aa572f9f29236123e27b",
+      "size": 359
+    },
+    {
+      "path": "skills/b15-counterexample-guided-repair-deterministic-engine/SKILL.md",
+      "sha256": "291eafcfe79226acc45dace10859c6eda06e4a4a34ab26cd979609428012f8c9",
+      "size": 3896
+    },
+    {
+      "path": "skills/b15-counterexample-guided-repair-deterministic-engine/agents/openai.yaml",
+      "sha256": "1839d7bf5b77f893488353914385cdbaa0d0b5a75319c4631b38bca7a9c2449b",
+      "size": 352
+    },
+    {
+      "path": "skills/b15-counterexample-guided-repair-discovery-inventory/SKILL.md",
+      "sha256": "919f75f156b9471479299fb1445b91590379a1eac7be675bd1ec86d772915d2a",
+      "size": 3923
+    },
+    {
+      "path": "skills/b15-counterexample-guided-repair-discovery-inventory/agents/openai.yaml",
+      "sha256": "2601e0eca656a8537f361b4130d16ba6951cf264f234a66ca7fb927319b301a8",
+      "size": 354
+    },
+    {
+      "path": "skills/b15-counterexample-guided-repair-domain-model/SKILL.md",
+      "sha256": "fdbc327afbeb4e3b698a75790c59d83adcb36ab3a4beae99fdddc04ca9676706",
+      "size": 3950
+    },
+    {
+      "path": "skills/b15-counterexample-guided-repair-domain-model/agents/openai.yaml",
+      "sha256": "63673597145c8621b18e5c859e452eee6a8b62c6c66094f0a7afa3c6ae9ca70e",
+      "size": 358
+    },
+    {
+      "path": "skills/b15-counterexample-guided-repair-failure-recovery/SKILL.md",
+      "sha256": "23387a6dca7ae8d50d16376ebd8712bf2ac50937ab2715c0615525fb56cc3be7",
+      "size": 3927
+    },
+    {
+      "path": "skills/b15-counterexample-guided-repair-failure-recovery/agents/openai.yaml",
+      "sha256": "3815e9cfb3b79ce2d15bc2178e9855481ef2f5a94563899b9aad583339273dc1",
+      "size": 357
+    },
+    {
+      "path": "skills/b15-counterexample-guided-repair-human-approval/SKILL.md",
+      "sha256": "7ec629766ec1f6bc9052b1bbedb63ec971f40050d11fedfc7e744f41464bed8d",
+      "size": 3912
+    },
+    {
+      "path": "skills/b15-counterexample-guided-repair-human-approval/agents/openai.yaml",
+      "sha256": "26fe89b5a2f956bacd752b77dde7cb05ebc64861968833863833832e0c616fe2",
+      "size": 351
+    },
+    {
+      "path": "skills/b15-counterexample-guided-repair-integration-api/SKILL.md",
+      "sha256": "565846009323183176c1cfe268fc843be751974970239432ff57ca047113d75b",
+      "size": 3897
+    },
+    {
+      "path": "skills/b15-counterexample-guided-repair-integration-api/agents/openai.yaml",
+      "sha256": "bb4427c986477927a51daa39167b8daf51af1e92db7d0d94651e112408347258",
+      "size": 354
+    },
+    {
+      "path": "skills/b15-counterexample-guided-repair-lifecycle-recertification/SKILL.md",
+      "sha256": "4d4dd621068a07a2bc61afbbd4bb34eb3b3c815b0d01e74aaeb657ff5353c102",
+      "size": 3987
+    },
+    {
+      "path": "skills/b15-counterexample-guided-repair-lifecycle-recertification/agents/openai.yaml",
+      "sha256": "baf3032f9e44bdd99785f2cc090663164b25349eb69621c26d9ba78fd7f5eba9",
+      "size": 377
+    },
+    {
+      "path": "skills/b15-counterexample-guided-repair-lineage-reconciliation/SKILL.md",
+      "sha256": "cb52ff167a71251983308c8abb9ea45bc9550de3a98ec42c53bbdc153ba09671",
+      "size": 3938
+    },
+    {
+      "path": "skills/b15-counterexample-guided-repair-lineage-reconciliation/agents/openai.yaml",
+      "sha256": "a87ce158b0e98bb013144e36781de687ec93f7ccbbe0be64207f3220ee05a583",
+      "size": 360
+    },
+    {
+      "path": "skills/b15-counterexample-guided-repair-observability-economics/SKILL.md",
+      "sha256": "ae608a3c58844ff4b61364cc43f349f87eee571fc89ee66918e518dd5c807bdf",
+      "size": 3953
+    },
+    {
+      "path": "skills/b15-counterexample-guided-repair-observability-economics/agents/openai.yaml",
+      "sha256": "d1d83072b9284a4a5f9f721d255ff88aaa128251a251cf02f8da0a7dad2f943a",
+      "size": 371
+    },
+    {
+      "path": "skills/b15-counterexample-guided-repair-orchestrator/SKILL.md",
+      "sha256": "b5da65096afd56946aa64e33b4b708f118fe4006b9587a1d56965dece717546a",
+      "size": 3975
+    },
+    {
+      "path": "skills/b15-counterexample-guided-repair-orchestrator/agents/openai.yaml",
+      "sha256": "fa25b8a64f40090476f219345cd0bae2c22c34397cbf975993a7839871549c3b",
+      "size": 354
+    },
+    {
+      "path": "skills/b15-counterexample-guided-repair-security-policy/SKILL.md",
+      "sha256": "a9ea9c8eb0e8784b2127c884cff4d2f987dc62035c1d6397724fdc26896c1539",
+      "size": 3932
+    },
+    {
+      "path": "skills/b15-counterexample-guided-repair-security-policy/agents/openai.yaml",
+      "sha256": "2e5addb0947549cea476a73d8b5b3c310179ccfd6b784533880e14946f43d1ed",
+      "size": 355
+    },
+    {
+      "path": "skills/b15-counterexample-guided-repair-workflow-runtime/SKILL.md",
+      "sha256": "5355f21699520f5425e0a84ef6ad0e486b1c02beffc77bb386b5b1b9c138978d",
+      "size": 3941
+    },
+    {
+      "path": "skills/b15-counterexample-guided-repair-workflow-runtime/agents/openai.yaml",
+      "sha256": "a4c4895cfc95fa62657b9ef917fabd560019250d6ac0c728cd81ba902996fba7",
+      "size": 358
+    },
+    {
+      "path": "tests/README.md",
+      "sha256": "e295f2e715fb1df4c7ae648f59ad79d78c9451426bd4ad7da0569dbec5b4d710",
+      "size": 373
+    },
+    {
+      "path": "tests/test_catalog.json",
+      "sha256": "e0a4eba464ec0fd9a8530b3226c1c45b507deba946bf9915cea9439b70cf5cd0",
+      "size": 1935
+    },
+    {
+      "path": "tools/validate_package.py",
+      "sha256": "281cd6663a38afc9e046323ef2c1a2f21d08e8cbfd490e54985526d73e0154f3",
+      "size": 3581
+    },
+    {
+      "path": "validate.sh",
+      "sha256": "a1afca2d69d8fa3d11c820c8381b06b6449e31b289196b3cdc4156de471dd6c4",
+      "size": 72
+    }
+  ],
+  "validation": {
+    "static": "passed",
+    "runtime": "not-executed"
+  },
+  "trust_boundary": "Static package validation is not runtime execution or production certification."
+}

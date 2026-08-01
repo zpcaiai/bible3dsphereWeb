@@ -1,0 +1,8 @@
+interface:
+  display_name: "Christian Non-Outsourcable Capabilities"
+  short_description: "Preserve prayer, repentance, conscience, relationship and church responsibility."
+  default_prompt: "Use $christian-non-outsourcable-capabilities for this task."
+policy:
+  products:
+    - CODEX
+  allow_implicit_invocation: true

@@ -1,0 +1,9 @@
+interface:
+  display_name: Family Covenant Review
+  short_description: Implement 7/14/30/90-day review of working clauses, friction, member voice and changes without private
+    usage analytics.
+  default_prompt: Use $christian-family-covenant-review for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

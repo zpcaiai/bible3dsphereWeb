@@ -1,0 +1,28 @@
+{
+  "session_id": "dlg-example-001",
+  "active_hypotheses": [
+    "competence_justification",
+    "control_sovereignty"
+  ],
+  "turns": [
+    {
+      "stage": "CLARIFY",
+      "assistant": "最近一次你觉得只有自己能把事情做好时，具体发生了什么？"
+    },
+    {
+      "user": "团队成员漏了一个重要检查，我只好全部重做。"
+    },
+    {
+      "stage": "EVIDENCE",
+      "assistant": "这次失误能证明他们总是做不好，还是只证明这次检查出了问题？"
+    },
+    {
+      "user": "不能证明总是，但我很难再信任他们。"
+    },
+    {
+      "stage": "SELF_MIRROR",
+      "assistant": "如果别人经过训练也能把事情做好，你首先感到释放还是失落？"
+    }
+  ],
+  "note": "每轮只有一个问题，并允许用户在任何阶段暂停。"
+}

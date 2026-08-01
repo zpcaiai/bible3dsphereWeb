@@ -1,0 +1,51 @@
+prompt,expected_skill,should_activate,case_type,notes
+请在属灵星球仓库实现Parent Formation Orchestrator，复用现有路由和安全门。,spiritual-planet-parent-formation-orchestrator,true,explicit-domain,应自动路由到焦点技能
+Use $spiritual-planet-parent-formation-orchestrator to inspect and implement the repository changes with tests.,spiritual-planet-parent-formation-orchestrator,true,explicit-mention,显式调用
+审查当前 Parent Formation Orchestrator 的Schema、权限、隐私和E2E测试，不要新建平行应用。,spiritual-planet-parent-formation-orchestrator,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,spiritual-planet-parent-formation-orchestrator,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Parent Digital and Spiritual Mirror，复用现有路由和安全门。,christian-parent-digital-mirror,true,explicit-domain,应自动路由到焦点技能
+Use $christian-parent-digital-mirror to inspect and implement the repository changes with tests.,christian-parent-digital-mirror,true,explicit-mention,显式调用
+审查当前 Parent Digital and Spiritual Mirror 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-parent-digital-mirror,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-parent-digital-mirror,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Parent Attention Availability，复用现有路由和安全门。,christian-parent-attention-availability,true,explicit-domain,应自动路由到焦点技能
+Use $christian-parent-attention-availability to inspect and implement the repository changes with tests.,christian-parent-attention-availability,true,explicit-mention,显式调用
+审查当前 Parent Attention Availability 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-parent-attention-availability,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-parent-attention-availability,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Parent Anxiety Transmission Reflection，复用现有路由和安全门。,christian-parent-anxiety-transmission,true,explicit-domain,应自动路由到焦点技能
+Use $christian-parent-anxiety-transmission to inspect and implement the repository changes with tests.,christian-parent-anxiety-transmission,true,explicit-mention,显式调用
+审查当前 Parent Anxiety Transmission Reflection 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-parent-anxiety-transmission,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-parent-anxiety-transmission,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Family Success and Status Discernment，复用现有路由和安全门。,christian-family-success-idol-discernment,true,explicit-domain,应自动路由到焦点技能
+Use $christian-family-success-idol-discernment to inspect and implement the repository changes with tests.,christian-family-success-idol-discernment,true,explicit-mention,显式调用
+审查当前 Family Success and Status Discernment 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-family-success-idol-discernment,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-family-success-idol-discernment,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Parent–Child Repair，复用现有路由和安全门。,christian-parent-child-repair,true,explicit-domain,应自动路由到焦点技能
+Use $christian-parent-child-repair to inspect and implement the repository changes with tests.,christian-parent-child-repair,true,explicit-mention,显式调用
+审查当前 Parent–Child Repair 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-parent-child-repair,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-parent-child-repair,false,negative,纯神学问答不应激活仓库技能
+"请在属灵星球仓库实现Parent Authority, Grace and Consequences，复用现有路由和安全门。",christian-parent-authority-grace,true,explicit-domain,应自动路由到焦点技能
+Use $christian-parent-authority-grace to inspect and implement the repository changes with tests.,christian-parent-authority-grace,true,explicit-mention,显式调用
+"审查当前 Parent Authority, Grace and Consequences 的Schema、权限、隐私和E2E测试，不要新建平行应用。",christian-parent-authority-grace,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-parent-authority-grace,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Co-Parent Governance，复用现有路由和安全门。,christian-co-parent-governance,true,explicit-domain,应自动路由到焦点技能
+Use $christian-co-parent-governance to inspect and implement the repository changes with tests.,christian-co-parent-governance,true,explicit-mention,显式调用
+审查当前 Co-Parent Governance 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-co-parent-governance,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-co-parent-governance,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Child Feedback Invitation，复用现有路由和安全门。,christian-child-feedback-invitation,true,explicit-domain,应自动路由到焦点技能
+Use $christian-child-feedback-invitation to inspect and implement the repository changes with tests.,christian-child-feedback-invitation,true,explicit-mention,显式调用
+审查当前 Child Feedback Invitation 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-child-feedback-invitation,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-child-feedback-invitation,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现30-Day Parent Example Plan，复用现有路由和安全门。,christian-parent-example-plan,true,explicit-domain,应自动路由到焦点技能
+Use $christian-parent-example-plan to inspect and implement the repository changes with tests.,christian-parent-example-plan,true,explicit-mention,显式调用
+审查当前 30-Day Parent Example Plan 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-parent-example-plan,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-parent-example-plan,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Parent and Child Safety Boundary，复用现有路由和安全门。,christian-parent-safety-boundary,true,explicit-domain,应自动路由到焦点技能
+Use $christian-parent-safety-boundary to inspect and implement the repository changes with tests.,christian-parent-safety-boundary,true,explicit-mention,显式调用
+审查当前 Parent and Child Safety Boundary 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-parent-safety-boundary,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-parent-safety-boundary,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Parent Formation Course Integrator，复用现有路由和安全门。,parent-formation-course-integrator,true,explicit-domain,应自动路由到焦点技能
+Use $parent-formation-course-integrator to inspect and implement the repository changes with tests.,parent-formation-course-integrator,true,explicit-mention,显式调用
+审查当前 Parent Formation Course Integrator 的Schema、权限、隐私和E2E测试，不要新建平行应用。,parent-formation-course-integrator,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,parent-formation-course-integrator,false,negative,纯神学问答不应激活仓库技能
+在属灵星球主日学模块端到端实现 Batch 05，包含数据、页面、迁移、权限、内容、测试与报告。,spiritual-planet-parent-formation-orchestrator,true,orchestrator,端到端请求
+帮我写一段个人祷告，不要修改任何项目。,spiritual-planet-parent-formation-orchestrator,false,negative,非产品任务

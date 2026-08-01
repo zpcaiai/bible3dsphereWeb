@@ -1,0 +1,9 @@
+interface:
+  display_name: Child Feedback Invitation
+  short_description: Build age-appropriate, skippable, transparent and non-retaliatory feedback from children about family
+    experience.
+  default_prompt: Use $christian-child-feedback-invitation for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

@@ -1,0 +1,48 @@
+{
+  "$id": "https://modernization.local/schemas/batch-01/trust-assessment.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": true,
+  "properties": {
+    "evidence_refs": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "type": "array",
+      "uniqueItems": true
+    },
+    "extensions": {
+      "type": "object"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "status": {
+      "enum": [
+        "draft",
+        "experimental",
+        "partial",
+        "verified",
+        "blocked",
+        "stale",
+        "revoked"
+      ]
+    },
+    "trust_assessment_id": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "unknowns": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    }
+  },
+  "required": [
+    "schema_version",
+    "status"
+  ],
+  "title": "Trust Assessment",
+  "type": "object"
+}

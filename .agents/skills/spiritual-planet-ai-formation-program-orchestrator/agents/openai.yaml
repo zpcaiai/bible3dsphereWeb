@@ -1,0 +1,9 @@
+interface:
+  display_name: AI Formation Program Orchestrator
+  short_description: Implement and verify Spiritual Planet Sunday School AI Formation Batches 04–12 as one dependency-aware,
+    safety-governed and production-certified program.
+  default_prompt: Use $spiritual-planet-ai-formation-program-orchestrator for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

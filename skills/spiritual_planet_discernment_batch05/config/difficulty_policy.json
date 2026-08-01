@@ -1,0 +1,32 @@
+{
+  "D0": {
+    "max_stage": "CLARIFY"
+  },
+  "D1": {
+    "max_stage": "EVIDENCE"
+  },
+  "D2": {
+    "max_stage": "COUNTEREXAMPLE"
+  },
+  "D3": {
+    "max_stage": "SELF_MIRROR"
+  },
+  "D4": {
+    "max_stage": "WORSHIP"
+  },
+  "D5": {
+    "max_stage": "GOSPEL_EXPLORATION"
+  },
+  "lower_on": [
+    "confusion",
+    "fatigue",
+    "fear",
+    "shame_flooding",
+    "trauma_activation",
+    "scrupulosity"
+  ],
+  "never_raise_on": [
+    "hostility",
+    "boundary_setting"
+  ]
+}

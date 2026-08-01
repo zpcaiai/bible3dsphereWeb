@@ -1,0 +1,8 @@
+interface:
+  display_name: "Christian Scripture Citation Guard"
+  short_description: "Validate Bible references, quotations, context, translations and rights."
+  default_prompt: "Use $christian-scripture-citation-guard for this task."
+policy:
+  products:
+    - CODEX
+  allow_implicit_invocation: true

@@ -1,0 +1,8 @@
+interface:
+  display_name: Reviewed Lesson Generator
+  short_description: Implement 30/45/60/90-minute lesson generation from approved objectives and activities.
+  default_prompt: Use $christian-lesson-generator for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

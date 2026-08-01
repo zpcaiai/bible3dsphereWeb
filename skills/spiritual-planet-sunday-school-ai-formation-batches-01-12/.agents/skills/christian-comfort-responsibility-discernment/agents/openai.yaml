@@ -1,0 +1,8 @@
+interface:
+  display_name: "Christian Comfort Responsibility Discernment"
+  short_description: "Distinguish healthy rest from avoidant comfort and restore duty."
+  default_prompt: "Use $christian-comfort-responsibility-discernment for this task."
+policy:
+  products:
+    - CODEX
+  allow_implicit_invocation: true

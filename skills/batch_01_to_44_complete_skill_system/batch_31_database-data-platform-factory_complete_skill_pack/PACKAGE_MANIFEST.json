@@ -1,0 +1,326 @@
+{
+  "schema_version": "1.0.0",
+  "package_id": "batch-31-database-data-platform-factory-complete-skill-pack",
+  "batch": 31,
+  "title": "Batch 31: Database and Data-Platform Modernization Factory",
+  "version": "1.0.0",
+  "root_skill": "batch-31-database-data-platform-factory",
+  "generated_at": "2026-07-31T00:00:00Z",
+  "skill_count": 16,
+  "skills": [
+    "b31-database-data-platform-factory-adapter-provider",
+    "b31-database-data-platform-factory-capability-planning",
+    "b31-database-data-platform-factory-certification-gate",
+    "b31-database-data-platform-factory-corpus-benchmark",
+    "b31-database-data-platform-factory-deterministic-engine",
+    "b31-database-data-platform-factory-discovery-inventory",
+    "b31-database-data-platform-factory-domain-model",
+    "b31-database-data-platform-factory-failure-recovery",
+    "b31-database-data-platform-factory-human-approval",
+    "b31-database-data-platform-factory-integration-api",
+    "b31-database-data-platform-factory-lifecycle-recertification",
+    "b31-database-data-platform-factory-lineage-reconciliation",
+    "b31-database-data-platform-factory-observability-economics",
+    "b31-database-data-platform-factory-orchestrator",
+    "b31-database-data-platform-factory-security-policy",
+    "b31-database-data-platform-factory-workflow-runtime"
+  ],
+  "upstream_batch": 30,
+  "files": [
+    {
+      "path": "BATCH30_COMPATIBILITY.md",
+      "sha256": "6a132957e328666e02b063d32f16c30468142ac72d11373a0714d997008ac083",
+      "size": 2073
+    },
+    {
+      "path": "CODEX_IMPLEMENTATION_PROMPT.md",
+      "sha256": "8d4d268fa37b31a1dec6a7734a41b832416e246ab2c72b959d3b34775aaa41d2",
+      "size": 2232
+    },
+    {
+      "path": "IMPLEMENTATION_CHECKLIST.md",
+      "sha256": "42bf2c5a7fc29bce943203a0e563f24bf23cf861bfda3695401d0bab667acd6e",
+      "size": 1736
+    },
+    {
+      "path": "README.md",
+      "sha256": "931ebb49f81c167fece2e241af6d9779317bf228bb7a58346ee208d3472b5495",
+      "size": 1046
+    },
+    {
+      "path": "SKILL.md",
+      "sha256": "34b87c99725fe2b0743b00561683eaec0ff8fdeb131f77256d9b247a23a5ca3a",
+      "size": 3979
+    },
+    {
+      "path": "SKILL_INDEX.md",
+      "sha256": "9eafeac1fef7c08254f1fe96d23cceefc50f6af3b4acd3b99f152f82dbaaf94b",
+      "size": 3097
+    },
+    {
+      "path": "VALIDATION_REPORT.md",
+      "sha256": "dde57aee713dea1f53e77186d956a52b0f459a02220a7121e045f9de6fff80c3",
+      "size": 572
+    },
+    {
+      "path": "agents/openai.yaml",
+      "sha256": "58b2fa23fb5c18a2e8502a30982a1371af65b62d4431759c9f9c29330570aebc",
+      "size": 373
+    },
+    {
+      "path": "examples/certificate.example.json",
+      "sha256": "ca58da336fd682983a98afcb1bd39dd920f4de3f56a6d390efbfeb1d42409425",
+      "size": 452
+    },
+    {
+      "path": "examples/invocation.example.json",
+      "sha256": "ce9d7fc4508ae0887fe77f5fdc9ee6913cf7781668e4dce74dae6582894c4ea5",
+      "size": 282
+    },
+    {
+      "path": "install.sh",
+      "sha256": "cdaf3fdf0c010dd9e0fe29b4a92cd723ff35dd0617eaf14bb5f57e757bc2fa02",
+      "size": 305
+    },
+    {
+      "path": "policies/agent-boundary.yaml",
+      "sha256": "79adc8830adec220835b49067d29b50a3a1578f146a65e7d5b70a6d19ba09ab2",
+      "size": 150
+    },
+    {
+      "path": "policies/certification.yaml",
+      "sha256": "17f50ef51eb5cbf800b3b4990bfb399d4aed9c751cb7f440bee4a4d88ebf02ea",
+      "size": 182
+    },
+    {
+      "path": "policies/default-deny.yaml",
+      "sha256": "25c6a03403de8832018b82bfa5d9dd516d8f5136ba4974c85d40bdf8972f9366",
+      "size": 105
+    },
+    {
+      "path": "policies/evidence-first.yaml",
+      "sha256": "50408543ffa45cfea3461cd57bdabf39f9bdd422fc5b41cdfef4d3c679a058c2",
+      "size": 156
+    },
+    {
+      "path": "policies/human-approval.yaml",
+      "sha256": "d9a6b11cfe402c569440e95b1aa2377387e222a32b693c83fc278ddb1fd4482f",
+      "size": 143
+    },
+    {
+      "path": "schemas/batch-input.schema.json",
+      "sha256": "e2798065b75578e35dd8bc80e4072abf7c285cc8f3d59074ab7070a359474bd5",
+      "size": 731
+    },
+    {
+      "path": "schemas/batch-output.schema.json",
+      "sha256": "90378f3167cd862df1e8af7a7c6f4267ebc4089f75d651c6a5a27b0cc40d6388",
+      "size": 832
+    },
+    {
+      "path": "schemas/capability-package.schema.json",
+      "sha256": "fd9b85f7f036abbfe113566ed9fbbd6cf78a217ac74fc37120be4e214ea574db",
+      "size": 1133
+    },
+    {
+      "path": "schemas/certification.schema.json",
+      "sha256": "677094deaee435e125c9235d25eebcd6bf6d077ea6da5c63ad1b306a2f8832cc",
+      "size": 1281
+    },
+    {
+      "path": "schemas/evidence-ref.schema.json",
+      "sha256": "07ab8028854103ebf1c0f295956d641071b9ccf97e9bb6a7dfb6e2fd8872cb33",
+      "size": 996
+    },
+    {
+      "path": "schemas/workflow-run.schema.json",
+      "sha256": "e7aa24c0fad468c7f1965c052c821eb706d3df927d48cc7c7230d4765c912a8f",
+      "size": 848
+    },
+    {
+      "path": "skills/b31-database-data-platform-factory-adapter-provider/SKILL.md",
+      "sha256": "dde447887a0469e00a5c0b36016cdd859802922c53e59639f6bcc8e1870e0c21",
+      "size": 3902
+    },
+    {
+      "path": "skills/b31-database-data-platform-factory-adapter-provider/agents/openai.yaml",
+      "sha256": "d0bd5df96b957ac8709b1d25fbd555b445f604334bd8b189ec9ae7abd41a4589",
+      "size": 356
+    },
+    {
+      "path": "skills/b31-database-data-platform-factory-capability-planning/SKILL.md",
+      "sha256": "27bf0211a993952962888c53ab4ae67cb4bf0238028fbda4bbff73818a430f08",
+      "size": 3804
+    },
+    {
+      "path": "skills/b31-database-data-platform-factory-capability-planning/agents/openai.yaml",
+      "sha256": "5488b3b8c2f66de063f2662d69f4b2c8b1776938af2d2dc059b0d8ff88ecd9fc",
+      "size": 363
+    },
+    {
+      "path": "skills/b31-database-data-platform-factory-certification-gate/SKILL.md",
+      "sha256": "683dd9eacd14a7b70ba5ece66f5f3b0e74fcd402ccf691286af9d4e567cf554c",
+      "size": 3933
+    },
+    {
+      "path": "skills/b31-database-data-platform-factory-certification-gate/agents/openai.yaml",
+      "sha256": "7f4ad8c48ec42b8bb2135cba8f94c174b9dfd8227f681c870d3e27f1fc8dfdb0",
+      "size": 363
+    },
+    {
+      "path": "skills/b31-database-data-platform-factory-corpus-benchmark/SKILL.md",
+      "sha256": "9162dd33ed5af1c12ea9b98ee64b19bd4ccd44ed142ff0b93a32d30a421d596d",
+      "size": 3843
+    },
+    {
+      "path": "skills/b31-database-data-platform-factory-corpus-benchmark/agents/openai.yaml",
+      "sha256": "46d36d963a74ab015ce3b23aa385a811f096719672f343a2a9d057bfb02d2201",
+      "size": 361
+    },
+    {
+      "path": "skills/b31-database-data-platform-factory-deterministic-engine/SKILL.md",
+      "sha256": "733ea5dd4a4e7a8923d5872c415622bcb3aa349742fe3c005a275fe591efd0a1",
+      "size": 3820
+    },
+    {
+      "path": "skills/b31-database-data-platform-factory-deterministic-engine/agents/openai.yaml",
+      "sha256": "14af00ea25c7d87d10c6bebafbdd1f061841a3502d230b5df0c0829c37df594a",
+      "size": 354
+    },
+    {
+      "path": "skills/b31-database-data-platform-factory-discovery-inventory/SKILL.md",
+      "sha256": "b431897c27597c9d7fdbe197f4be8993459855135e96e3f3f2947382e1739e7a",
+      "size": 3847
+    },
+    {
+      "path": "skills/b31-database-data-platform-factory-discovery-inventory/agents/openai.yaml",
+      "sha256": "fe7d9055433a6c7b6802fe4951e825364aed42ce68f76ccab81ee26783cbb4e6",
+      "size": 356
+    },
+    {
+      "path": "skills/b31-database-data-platform-factory-domain-model/SKILL.md",
+      "sha256": "81376b3bacc64824cb521aab832871fd1742a8a628b95fc8ec165ac4e3091303",
+      "size": 3874
+    },
+    {
+      "path": "skills/b31-database-data-platform-factory-domain-model/agents/openai.yaml",
+      "sha256": "6cbf2f618adba8410f580d5f7f2a45c733e5f048f14c48a9a8f60e30f1faa5ae",
+      "size": 360
+    },
+    {
+      "path": "skills/b31-database-data-platform-factory-failure-recovery/SKILL.md",
+      "sha256": "7b9cf3cd254709020af37835b1537b0c570df9578b9e17af3b0701dc0980d1cb",
+      "size": 3851
+    },
+    {
+      "path": "skills/b31-database-data-platform-factory-failure-recovery/agents/openai.yaml",
+      "sha256": "38995e4d69f5fba190763c47d3eca9736ccb4a301cc91748b5852741c01eefc5",
+      "size": 359
+    },
+    {
+      "path": "skills/b31-database-data-platform-factory-human-approval/SKILL.md",
+      "sha256": "13fd995737e3909731c2ae95acecd8619e707d650b03228f74b77784a2372039",
+      "size": 3836
+    },
+    {
+      "path": "skills/b31-database-data-platform-factory-human-approval/agents/openai.yaml",
+      "sha256": "19442c9de361a2dd10a7e447db1eedac66e101fc53fdda65b77fd82d7f284b78",
+      "size": 353
+    },
+    {
+      "path": "skills/b31-database-data-platform-factory-integration-api/SKILL.md",
+      "sha256": "31f146b81aed9228e9bb67240ed400c6e7ad4d8113156461970329018688545a",
+      "size": 3821
+    },
+    {
+      "path": "skills/b31-database-data-platform-factory-integration-api/agents/openai.yaml",
+      "sha256": "396a453c65142b7ec05395847689edcf4d66569636250e99157698f5ad2517c6",
+      "size": 356
+    },
+    {
+      "path": "skills/b31-database-data-platform-factory-lifecycle-recertification/SKILL.md",
+      "sha256": "e41af67618c8a97cb7cf97e95ead5c6c1c3016f1e1f27f9350e1f41fd29f8dd2",
+      "size": 3911
+    },
+    {
+      "path": "skills/b31-database-data-platform-factory-lifecycle-recertification/agents/openai.yaml",
+      "sha256": "f8e4200cc1fae669d4f12389e863ebd9d2ce7c57fb0416a42bb7f384a877ae6e",
+      "size": 379
+    },
+    {
+      "path": "skills/b31-database-data-platform-factory-lineage-reconciliation/SKILL.md",
+      "sha256": "e053a624b4dfb51307793aae63da997c8548f776df0900983d4876652c9bcaf5",
+      "size": 3862
+    },
+    {
+      "path": "skills/b31-database-data-platform-factory-lineage-reconciliation/agents/openai.yaml",
+      "sha256": "10e13527266f7304cb21ea2b57b75423dd7dbf12b593e0b7cabec917bb18e299",
+      "size": 362
+    },
+    {
+      "path": "skills/b31-database-data-platform-factory-observability-economics/SKILL.md",
+      "sha256": "63925c09cc4213be1304ef51f2b9e0167f54204bd88bdb53d5f9469b9a48f1a6",
+      "size": 3877
+    },
+    {
+      "path": "skills/b31-database-data-platform-factory-observability-economics/agents/openai.yaml",
+      "sha256": "6fb678ffccdf9529067c6b3fd7c65d04b5fa0a7e896e27bdea5d6724cd8dfae1",
+      "size": 373
+    },
+    {
+      "path": "skills/b31-database-data-platform-factory-orchestrator/SKILL.md",
+      "sha256": "7b47e9297f953d0dc5aaf5422f280e57ec4649a07f4cad6e07a8a23e01c88441",
+      "size": 3899
+    },
+    {
+      "path": "skills/b31-database-data-platform-factory-orchestrator/agents/openai.yaml",
+      "sha256": "756a0b0013c965bcbd4f5fbff5db8f47c7eda73ccae4f0f3bab0bb3f58ac2386",
+      "size": 356
+    },
+    {
+      "path": "skills/b31-database-data-platform-factory-security-policy/SKILL.md",
+      "sha256": "f1669df7e56d4e5b7eaa396186d6f1e4782cf139a95f70918d68890de96b724e",
+      "size": 3856
+    },
+    {
+      "path": "skills/b31-database-data-platform-factory-security-policy/agents/openai.yaml",
+      "sha256": "b9d89ef986ec29dc4782daaf9e39e6c4985304011e17711097f1b8e23a35335d",
+      "size": 357
+    },
+    {
+      "path": "skills/b31-database-data-platform-factory-workflow-runtime/SKILL.md",
+      "sha256": "6ffa12cf0d83d24febb67e697f76229c02e1025466bb16e074ddeadaacd46a33",
+      "size": 3865
+    },
+    {
+      "path": "skills/b31-database-data-platform-factory-workflow-runtime/agents/openai.yaml",
+      "sha256": "40e17eb37df640a5c4f148542c3c946c44b51bfeac2cd2846820b0e270aaf6a2",
+      "size": 360
+    },
+    {
+      "path": "tests/README.md",
+      "sha256": "582a5aeffb55bc047c2702ed3fab6fec814b301b132fda792515b8b12e702b3e",
+      "size": 352
+    },
+    {
+      "path": "tests/test_catalog.json",
+      "sha256": "f63b314c17a9c30130c38203ea6e780741a8d159daa8560f79724c48a427629d",
+      "size": 1926
+    },
+    {
+      "path": "tools/validate_package.py",
+      "sha256": "281cd6663a38afc9e046323ef2c1a2f21d08e8cbfd490e54985526d73e0154f3",
+      "size": 3581
+    },
+    {
+      "path": "validate.sh",
+      "sha256": "a1afca2d69d8fa3d11c820c8381b06b6449e31b289196b3cdc4156de471dd6c4",
+      "size": 72
+    }
+  ],
+  "validation": {
+    "static": "passed",
+    "runtime": "not-executed"
+  },
+  "trust_boundary": "Static package validation is not runtime execution or production certification."
+}

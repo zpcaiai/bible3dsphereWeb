@@ -1,0 +1,7 @@
+interface:
+  display_name: Spiritual Planet Ai Formation Orchestrator
+  short_description: Build or extend the Spiritual Planet Sunday School module “AI时代心意更新与家庭门训”;
+    orchestrate repository inspection, module int
+  default_prompt: Use $spiritual-planet-ai-formation-orchestrator for this task.
+policy:
+  allow_implicit_invocation: true

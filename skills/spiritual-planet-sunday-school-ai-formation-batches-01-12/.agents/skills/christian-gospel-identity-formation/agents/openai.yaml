@@ -1,0 +1,8 @@
+interface:
+  display_name: Gospel Identity Formation
+  short_description: Build gospel-identity formation profiles and practices without performance, salvation or purity scoring.
+  default_prompt: Use $christian-gospel-identity-formation for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

@@ -1,0 +1,11 @@
+schema_version: "1.0.0"
+policy_id: "batch-03-cache-invalidation-policy"
+default_decision: "deny"
+requirements:
+  evidence_before_claim: true
+  preserve_unknowns: true
+  agent_proposal_only: true
+  human_approval_for_irreversible_actions: true
+  rollback_receipt_required: true
+runtime_status: "NOT_RUN"
+production_status: "NOT_CERTIFIED"

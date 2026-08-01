@@ -1,0 +1,8 @@
+interface:
+  display_name: Pastoral Safety Certification
+  short_description: Certify S0–S3 routing, interruption, non-diagnostic language, shame prevention and human handoff.
+  default_prompt: Use $christian-pastoral-safety-certification for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

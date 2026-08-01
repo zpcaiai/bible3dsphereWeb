@@ -1,0 +1,326 @@
+{
+  "schema_version": "1.0.0",
+  "package_id": "batch-42-production-operations-readiness-complete-skill-pack",
+  "batch": 42,
+  "title": "Batch 42: Production Observability, SLO, Incident, HA/DR and Operations Readiness",
+  "version": "1.0.0",
+  "root_skill": "batch-42-production-operations-readiness",
+  "generated_at": "2026-07-31T00:00:00Z",
+  "skill_count": 16,
+  "skills": [
+    "b42-production-operations-readiness-adapter-provider",
+    "b42-production-operations-readiness-capability-planning",
+    "b42-production-operations-readiness-certification-gate",
+    "b42-production-operations-readiness-corpus-benchmark",
+    "b42-production-operations-readiness-deterministic-engine",
+    "b42-production-operations-readiness-discovery-inventory",
+    "b42-production-operations-readiness-domain-model",
+    "b42-production-operations-readiness-failure-recovery",
+    "b42-production-operations-readiness-human-approval",
+    "b42-production-operations-readiness-integration-api",
+    "b42-production-operations-readiness-lifecycle-recertification",
+    "b42-production-operations-readiness-lineage-reconciliation",
+    "b42-production-operations-readiness-observability-economics",
+    "b42-production-operations-readiness-orchestrator",
+    "b42-production-operations-readiness-security-policy",
+    "b42-production-operations-readiness-workflow-runtime"
+  ],
+  "upstream_batch": 41,
+  "files": [
+    {
+      "path": "BATCH41_COMPATIBILITY.md",
+      "sha256": "913d81731354d0536426150b01d2194aefcda94a390f2740cf8b60c0637e0b36",
+      "size": 2119
+    },
+    {
+      "path": "CODEX_IMPLEMENTATION_PROMPT.md",
+      "sha256": "838f10730951447e4c8503ef5d4e664cb91f6619a256983456da28a5bc266367",
+      "size": 2292
+    },
+    {
+      "path": "IMPLEMENTATION_CHECKLIST.md",
+      "sha256": "bc9d8531ff43221bfa83e3bd7b4a4a377a3ddd4832776dfc1b51cb7f41f0f9c3",
+      "size": 1790
+    },
+    {
+      "path": "README.md",
+      "sha256": "9abd8a730d1184ceec47348045ecf86843f7340838187ab63e614d7b00e1ee63",
+      "size": 1083
+    },
+    {
+      "path": "SKILL.md",
+      "sha256": "6321a7a5f39817cb1011b4fbb942b26e945fd1fea3be336b44f1b4d4b05f7b72",
+      "size": 4079
+    },
+    {
+      "path": "SKILL_INDEX.md",
+      "sha256": "7acc0bd66895028988208851cafae7ab49ef22f05b8dbfe115a0d92bc3928c83",
+      "size": 3136
+    },
+    {
+      "path": "VALIDATION_REPORT.md",
+      "sha256": "6d1022e32b538908cffa5f1559039fbe9fd2bfc040fcb6e6874bce8194375a77",
+      "size": 572
+    },
+    {
+      "path": "agents/openai.yaml",
+      "sha256": "cbb0df75d1f2043e6dcda199990ae794df712d0c423082b9e3f4c35d87ebbd73",
+      "size": 397
+    },
+    {
+      "path": "examples/certificate.example.json",
+      "sha256": "3e53c5feee0b08134cb1e5bfd137e19adb92ee8d2b5cca35777a3fccb7f8ffce",
+      "size": 452
+    },
+    {
+      "path": "examples/invocation.example.json",
+      "sha256": "46dd032726ff380a5726e287121d36be96bc18ed1a8e51082053b370860f83cf",
+      "size": 305
+    },
+    {
+      "path": "install.sh",
+      "sha256": "cdaf3fdf0c010dd9e0fe29b4a92cd723ff35dd0617eaf14bb5f57e757bc2fa02",
+      "size": 305
+    },
+    {
+      "path": "policies/agent-boundary.yaml",
+      "sha256": "79adc8830adec220835b49067d29b50a3a1578f146a65e7d5b70a6d19ba09ab2",
+      "size": 150
+    },
+    {
+      "path": "policies/certification.yaml",
+      "sha256": "17f50ef51eb5cbf800b3b4990bfb399d4aed9c751cb7f440bee4a4d88ebf02ea",
+      "size": 182
+    },
+    {
+      "path": "policies/default-deny.yaml",
+      "sha256": "25c6a03403de8832018b82bfa5d9dd516d8f5136ba4974c85d40bdf8972f9366",
+      "size": 105
+    },
+    {
+      "path": "policies/evidence-first.yaml",
+      "sha256": "50408543ffa45cfea3461cd57bdabf39f9bdd422fc5b41cdfef4d3c679a058c2",
+      "size": 156
+    },
+    {
+      "path": "policies/human-approval.yaml",
+      "sha256": "d9a6b11cfe402c569440e95b1aa2377387e222a32b693c83fc278ddb1fd4482f",
+      "size": 143
+    },
+    {
+      "path": "schemas/batch-input.schema.json",
+      "sha256": "d9d71fee9046cbbc6b7efdd6ff3f8208ad368f95526fcd5c5c570901cefda675",
+      "size": 731
+    },
+    {
+      "path": "schemas/batch-output.schema.json",
+      "sha256": "cb083bbddf23772fc38944d159e3c34b55f6729b3a8727fb436e06de8145ceeb",
+      "size": 832
+    },
+    {
+      "path": "schemas/capability-package.schema.json",
+      "sha256": "41aced81355624d5fcfb53a25333a65d773e768e89d7187261cb9d65e3d6f40e",
+      "size": 1133
+    },
+    {
+      "path": "schemas/certification.schema.json",
+      "sha256": "3ea9dca522efc8c1d4c5abf82946e6787cc7b5c592b5c525df6b5c03afb0db85",
+      "size": 1281
+    },
+    {
+      "path": "schemas/evidence-ref.schema.json",
+      "sha256": "e98b51fb73383392b0058b51d79a3863e92bf0a3870979d2710344b5ccd4b429",
+      "size": 996
+    },
+    {
+      "path": "schemas/workflow-run.schema.json",
+      "sha256": "489d557ec95caceb8c3ae7d70925a356736036b7083fdb80607ae91255b0ab05",
+      "size": 848
+    },
+    {
+      "path": "skills/b42-production-operations-readiness-adapter-provider/SKILL.md",
+      "sha256": "e5060945ec884a61af8ee0d889a55ceb69dd7042be864de7bbd7b30b283dc517",
+      "size": 3977
+    },
+    {
+      "path": "skills/b42-production-operations-readiness-adapter-provider/agents/openai.yaml",
+      "sha256": "8fe59a3c3c556954f4d3532ed13b9a3622d19547cf7829420d5a8727680a52dc",
+      "size": 357
+    },
+    {
+      "path": "skills/b42-production-operations-readiness-capability-planning/SKILL.md",
+      "sha256": "2e4e356a49b04c0c0a122165a570e4ec209cdc14350fbbab2b44feceea7e499f",
+      "size": 3879
+    },
+    {
+      "path": "skills/b42-production-operations-readiness-capability-planning/agents/openai.yaml",
+      "sha256": "d6169a3c840849dab0d64be8ee2593a6eb3414e289c91bb7c7623e3e233a86c5",
+      "size": 364
+    },
+    {
+      "path": "skills/b42-production-operations-readiness-certification-gate/SKILL.md",
+      "sha256": "0ff7ce96397964e2980342ec290ecaee601e01b5c92c7fc93528bbaa25abbedb",
+      "size": 4008
+    },
+    {
+      "path": "skills/b42-production-operations-readiness-certification-gate/agents/openai.yaml",
+      "sha256": "b8ec0664eeecdf742421428c3432398e0b60cdb1124576439eb5ccb4d0cdc839",
+      "size": 364
+    },
+    {
+      "path": "skills/b42-production-operations-readiness-corpus-benchmark/SKILL.md",
+      "sha256": "ae7625f24af04797fd806b1977c77a478b27907c638428b9f14e725f1abf1412",
+      "size": 3918
+    },
+    {
+      "path": "skills/b42-production-operations-readiness-corpus-benchmark/agents/openai.yaml",
+      "sha256": "f5931efe253e80b89ae63929c3049925cdf1a230e8af128d7c099358ba3b7abf",
+      "size": 362
+    },
+    {
+      "path": "skills/b42-production-operations-readiness-deterministic-engine/SKILL.md",
+      "sha256": "8bbfa47860327e1e16a15161e98fc1697c9ed09245652bbb9cb582bbe66b3265",
+      "size": 3895
+    },
+    {
+      "path": "skills/b42-production-operations-readiness-deterministic-engine/agents/openai.yaml",
+      "sha256": "67416a20ff6f9fce346356e12b96b05709a05ec323f2838199670742813832a8",
+      "size": 355
+    },
+    {
+      "path": "skills/b42-production-operations-readiness-discovery-inventory/SKILL.md",
+      "sha256": "fa936705c388cddfcbe825d594b75dfd51100f81e09c4bd397e19fc386b6e9b6",
+      "size": 3922
+    },
+    {
+      "path": "skills/b42-production-operations-readiness-discovery-inventory/agents/openai.yaml",
+      "sha256": "000d0066c16c811b733825b1033b8731cdfd8b0655b1225bec44e8510d99518a",
+      "size": 357
+    },
+    {
+      "path": "skills/b42-production-operations-readiness-domain-model/SKILL.md",
+      "sha256": "1442195433955ca915cffdd4c8a1a055b8a55308e674a5dc5ab8b2d2a8745686",
+      "size": 3949
+    },
+    {
+      "path": "skills/b42-production-operations-readiness-domain-model/agents/openai.yaml",
+      "sha256": "ba5852f6dc7ae3d6623ca3bdf9b8a7436a1ae1e304659d0c98357f32d55585ca",
+      "size": 361
+    },
+    {
+      "path": "skills/b42-production-operations-readiness-failure-recovery/SKILL.md",
+      "sha256": "999b8f54c8c2dc5a102fa30b60da46a0db7dfb982ed3c512fcd4f8a2577d4fb8",
+      "size": 3926
+    },
+    {
+      "path": "skills/b42-production-operations-readiness-failure-recovery/agents/openai.yaml",
+      "sha256": "2d8d30a683fd453733ff90368a47a4cc5815309adee7193fadc50e663d720634",
+      "size": 360
+    },
+    {
+      "path": "skills/b42-production-operations-readiness-human-approval/SKILL.md",
+      "sha256": "1eb5e1233e54f7f7bd92cf298bd4fb21da74b0842d0bbabe97b0199df0975055",
+      "size": 3911
+    },
+    {
+      "path": "skills/b42-production-operations-readiness-human-approval/agents/openai.yaml",
+      "sha256": "459c1a146cf3142d93da0a3dee595e5dd32befb5e2dd9c77d4bec401a7ff2f15",
+      "size": 354
+    },
+    {
+      "path": "skills/b42-production-operations-readiness-integration-api/SKILL.md",
+      "sha256": "af9eb8a6d9bf7c151e0ad6002b004f1cd5991f0e2aed5f53be9cfacdfadf10bb",
+      "size": 3896
+    },
+    {
+      "path": "skills/b42-production-operations-readiness-integration-api/agents/openai.yaml",
+      "sha256": "c3740dcde1a153770b9c7f09fe603ffd79f48defaed22f3ccea3d84e977a18b8",
+      "size": 357
+    },
+    {
+      "path": "skills/b42-production-operations-readiness-lifecycle-recertification/SKILL.md",
+      "sha256": "325a026445c0440b6eaefe201f65e818526f7676818dd9b1b0f7f4ab9f4cea29",
+      "size": 3986
+    },
+    {
+      "path": "skills/b42-production-operations-readiness-lifecycle-recertification/agents/openai.yaml",
+      "sha256": "04e6b19745026919b2d24b21196b9ccfd5454673ccf03e95fed4addb40d9d072",
+      "size": 380
+    },
+    {
+      "path": "skills/b42-production-operations-readiness-lineage-reconciliation/SKILL.md",
+      "sha256": "32d70ccdfec39f45ea46c06bc595c0b15d7eeeb211e09e49b577c168071c1e22",
+      "size": 3937
+    },
+    {
+      "path": "skills/b42-production-operations-readiness-lineage-reconciliation/agents/openai.yaml",
+      "sha256": "4689675a32fab1d16797f3a5b6294f88b988d5af85275aba19b33d148947a3c8",
+      "size": 363
+    },
+    {
+      "path": "skills/b42-production-operations-readiness-observability-economics/SKILL.md",
+      "sha256": "ae6c030c68a760e85d93c987ce25f0768c5063ff3d99615c5628afa66d81bd4b",
+      "size": 3952
+    },
+    {
+      "path": "skills/b42-production-operations-readiness-observability-economics/agents/openai.yaml",
+      "sha256": "86e7a5f4428a37b957b66f6d7f8b740aac98a10fd7dacef66f7c6a80e21c1fa1",
+      "size": 374
+    },
+    {
+      "path": "skills/b42-production-operations-readiness-orchestrator/SKILL.md",
+      "sha256": "cacb96d304f5fb3b665dfeb1437a7abee464e7579c8c2dcde867a3892ce6b1f1",
+      "size": 3974
+    },
+    {
+      "path": "skills/b42-production-operations-readiness-orchestrator/agents/openai.yaml",
+      "sha256": "65186889dac09d0d9072739982405170e657e0ee9877011705edcd4e88e5892d",
+      "size": 357
+    },
+    {
+      "path": "skills/b42-production-operations-readiness-security-policy/SKILL.md",
+      "sha256": "ca57f9d96d457faae06a1285e93178d12ae9bd6ef69ad34dc0d40598534d0a0c",
+      "size": 3931
+    },
+    {
+      "path": "skills/b42-production-operations-readiness-security-policy/agents/openai.yaml",
+      "sha256": "1a5d5f6e6c36ad3d1f4dc48cb1edb3a3555ccf56596c4ad3984061ff13313764",
+      "size": 358
+    },
+    {
+      "path": "skills/b42-production-operations-readiness-workflow-runtime/SKILL.md",
+      "sha256": "85e860495914c24f4373da3880d6483034f25d1ac4dc3a2ac27001513375ed9c",
+      "size": 3940
+    },
+    {
+      "path": "skills/b42-production-operations-readiness-workflow-runtime/agents/openai.yaml",
+      "sha256": "7f54aa76979015f6bc6bb6afadd02f45eb718d0eb24b2fb4b38a78675bb120c1",
+      "size": 361
+    },
+    {
+      "path": "tests/README.md",
+      "sha256": "5aeba0d9fc7aaf44289bff2ee4bd05bc1adb4d3b216c10c3bc49555b5e88f01d",
+      "size": 373
+    },
+    {
+      "path": "tests/test_catalog.json",
+      "sha256": "f336d6dd6ce74033de4487e99be63ec7e3adfa2616d0167ed60fb80a1acd5ce6",
+      "size": 1949
+    },
+    {
+      "path": "tools/validate_package.py",
+      "sha256": "281cd6663a38afc9e046323ef2c1a2f21d08e8cbfd490e54985526d73e0154f3",
+      "size": 3581
+    },
+    {
+      "path": "validate.sh",
+      "sha256": "a1afca2d69d8fa3d11c820c8381b06b6449e31b289196b3cdc4156de471dd6c4",
+      "size": 72
+    }
+  ],
+  "validation": {
+    "static": "passed",
+    "runtime": "not-executed"
+  },
+  "trust_boundary": "Static package validation is not runtime execution or production certification."
+}

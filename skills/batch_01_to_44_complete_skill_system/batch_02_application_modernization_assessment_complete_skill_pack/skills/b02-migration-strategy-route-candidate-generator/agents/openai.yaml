@@ -1,0 +1,6 @@
+interface:
+  display_name: "b02-migration-strategy-route-candidate-generator"
+  short_description: "Run this Batch capability with evidence gates"
+  default_prompt: "Use $b02-migration-strategy-route-candidate-generator to execute this workflow with explicit evidence, validation, human approval boundaries, and rollback reporting."
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,326 @@
+{
+  "schema_version": "1.0.0",
+  "package_id": "batch-38-platform-convergence-complete-skill-pack",
+  "batch": 38,
+  "title": "Batch 38: Canonical CapabilityPackage, Dependency Graph and Platform Convergence",
+  "version": "1.0.0",
+  "root_skill": "batch-38-platform-convergence",
+  "generated_at": "2026-07-31T00:00:00Z",
+  "skill_count": 16,
+  "skills": [
+    "b38-platform-convergence-adapter-provider",
+    "b38-platform-convergence-capability-planning",
+    "b38-platform-convergence-certification-gate",
+    "b38-platform-convergence-corpus-benchmark",
+    "b38-platform-convergence-deterministic-engine",
+    "b38-platform-convergence-discovery-inventory",
+    "b38-platform-convergence-domain-model",
+    "b38-platform-convergence-failure-recovery",
+    "b38-platform-convergence-human-approval",
+    "b38-platform-convergence-integration-api",
+    "b38-platform-convergence-lifecycle-recertification",
+    "b38-platform-convergence-lineage-reconciliation",
+    "b38-platform-convergence-observability-economics",
+    "b38-platform-convergence-orchestrator",
+    "b38-platform-convergence-security-policy",
+    "b38-platform-convergence-workflow-runtime"
+  ],
+  "upstream_batch": 37,
+  "files": [
+    {
+      "path": "BATCH37_COMPATIBILITY.md",
+      "sha256": "562fb6550e77b311e42820a6ad488c7bc9dc296160309ead0dd6d394b878ca79",
+      "size": 2123
+    },
+    {
+      "path": "CODEX_IMPLEMENTATION_PROMPT.md",
+      "sha256": "fd358f589dc4479d9523fb6f3543c1b7dd1279b8472f8ee228bb8ba4ee0f2365",
+      "size": 2328
+    },
+    {
+      "path": "IMPLEMENTATION_CHECKLIST.md",
+      "sha256": "a53e91523a58988f6b67e443501e0f5156757b8142db8672d147fc0397a743fd",
+      "size": 1790
+    },
+    {
+      "path": "README.md",
+      "sha256": "95fec93b189a1f17ba8cd55ab34aae71c750a99f7d59abe041d76170bcee84c0",
+      "size": 1114
+    },
+    {
+      "path": "SKILL.md",
+      "sha256": "a0e3113a609af3e13fe23a955ec8fc4ae788f555d9d340ff2b316f756bf74877",
+      "size": 3927
+    },
+    {
+      "path": "SKILL_INDEX.md",
+      "sha256": "4a7baf4b90449252d3b719b6360e397dae6804398e08e8e175f71ce6b2f7c91d",
+      "size": 2959
+    },
+    {
+      "path": "VALIDATION_REPORT.md",
+      "sha256": "f0079a71154882bf922dd9e886d7d63187216ddfde274702b377b34981250e81",
+      "size": 572
+    },
+    {
+      "path": "agents/openai.yaml",
+      "sha256": "bc80aca3121f119946e2dfe2452680744a06eb7a298879823adec8743892f7c2",
+      "size": 385
+    },
+    {
+      "path": "examples/certificate.example.json",
+      "sha256": "f0e2c84b50aab450e79a947236187f6d25ecfcc4d0ffd216b21291bc0d47b2fb",
+      "size": 452
+    },
+    {
+      "path": "examples/invocation.example.json",
+      "sha256": "2fd367fcb534acfbfdbae8a240a28a35905daa0cab26ee5888b6ff0b59b8b74e",
+      "size": 304
+    },
+    {
+      "path": "install.sh",
+      "sha256": "cdaf3fdf0c010dd9e0fe29b4a92cd723ff35dd0617eaf14bb5f57e757bc2fa02",
+      "size": 305
+    },
+    {
+      "path": "policies/agent-boundary.yaml",
+      "sha256": "79adc8830adec220835b49067d29b50a3a1578f146a65e7d5b70a6d19ba09ab2",
+      "size": 150
+    },
+    {
+      "path": "policies/certification.yaml",
+      "sha256": "17f50ef51eb5cbf800b3b4990bfb399d4aed9c751cb7f440bee4a4d88ebf02ea",
+      "size": 182
+    },
+    {
+      "path": "policies/default-deny.yaml",
+      "sha256": "25c6a03403de8832018b82bfa5d9dd516d8f5136ba4974c85d40bdf8972f9366",
+      "size": 105
+    },
+    {
+      "path": "policies/evidence-first.yaml",
+      "sha256": "50408543ffa45cfea3461cd57bdabf39f9bdd422fc5b41cdfef4d3c679a058c2",
+      "size": 156
+    },
+    {
+      "path": "policies/human-approval.yaml",
+      "sha256": "d9a6b11cfe402c569440e95b1aa2377387e222a32b693c83fc278ddb1fd4482f",
+      "size": 143
+    },
+    {
+      "path": "schemas/batch-input.schema.json",
+      "sha256": "348ba1167420b3d61b0ba534df20f899e8e9c7c16d3fed1df69914a952df1958",
+      "size": 731
+    },
+    {
+      "path": "schemas/batch-output.schema.json",
+      "sha256": "21f2a12a4b11da5b5a061e745308d69241057898a044ef9701e2e3f1397b2ef4",
+      "size": 832
+    },
+    {
+      "path": "schemas/capability-package.schema.json",
+      "sha256": "dbaeaea87118f66abc9799330c1adc10925834429b83215333d81f839d1abf83",
+      "size": 1133
+    },
+    {
+      "path": "schemas/certification.schema.json",
+      "sha256": "1a3875e3bc9807c6124c277fb5e086e370105d67c0a9cb8bf085513bcc5ba567",
+      "size": 1281
+    },
+    {
+      "path": "schemas/evidence-ref.schema.json",
+      "sha256": "5a8be0a9acf0c53b114eaf4d498467c0b485bf8c580256edce33921d322fb78c",
+      "size": 996
+    },
+    {
+      "path": "schemas/workflow-run.schema.json",
+      "sha256": "7ea2fa2bb9a90b891d83c2541865071d86b757b557cbde68160925ad72163ed2",
+      "size": 848
+    },
+    {
+      "path": "skills/b38-platform-convergence-adapter-provider/SKILL.md",
+      "sha256": "a1f759439c5a026ab24f3d24583c3a676f5bfa20cfa24b37b19adbcc1dd35134",
+      "size": 4035
+    },
+    {
+      "path": "skills/b38-platform-convergence-adapter-provider/agents/openai.yaml",
+      "sha256": "def9580fd78a181ab9bb419215eed9488f5366c7727df9a22ce7d66245adbb57",
+      "size": 346
+    },
+    {
+      "path": "skills/b38-platform-convergence-capability-planning/SKILL.md",
+      "sha256": "8fc89e234e80c1c51ddf46bceb6f6f2f119d25a8d0cd6ee75d2bc96ff866242f",
+      "size": 3937
+    },
+    {
+      "path": "skills/b38-platform-convergence-capability-planning/agents/openai.yaml",
+      "sha256": "8a9c32d9908968ef7931ce23ed6de51024e1a6f912c23d9c3c20532f2466022b",
+      "size": 353
+    },
+    {
+      "path": "skills/b38-platform-convergence-certification-gate/SKILL.md",
+      "sha256": "dd946f16f5bff37c67806da00cdad37a94315f99d3f58ab2446c70f5a433cc5f",
+      "size": 4066
+    },
+    {
+      "path": "skills/b38-platform-convergence-certification-gate/agents/openai.yaml",
+      "sha256": "d47a13682be546eb176bfef01f90e77ca5763bb7048113f6096cdd8630a8e1f9",
+      "size": 353
+    },
+    {
+      "path": "skills/b38-platform-convergence-corpus-benchmark/SKILL.md",
+      "sha256": "e2ceba3318c6ed2ba68d87951549dd5707ec66e4dcc436c32e484f311950be44",
+      "size": 3976
+    },
+    {
+      "path": "skills/b38-platform-convergence-corpus-benchmark/agents/openai.yaml",
+      "sha256": "5261b33322112c93de62a2ec6b85bad4fdd83c5230a9be7b63bd5419a10a0b41",
+      "size": 351
+    },
+    {
+      "path": "skills/b38-platform-convergence-deterministic-engine/SKILL.md",
+      "sha256": "6eda2e4ac0ad1a5bf856d54ffb797a7854c5a82a08d25e267fbf80e2db259786",
+      "size": 3953
+    },
+    {
+      "path": "skills/b38-platform-convergence-deterministic-engine/agents/openai.yaml",
+      "sha256": "7c50b00dcdb016774703c15d3b9e4215fa12a1790e0bc48311f1a7a1a40c9ab4",
+      "size": 344
+    },
+    {
+      "path": "skills/b38-platform-convergence-discovery-inventory/SKILL.md",
+      "sha256": "5e5d5494ff1e59a2dc913c3271f899e592e7c1e14a9ce7eaf46e04dc0068c1dd",
+      "size": 3980
+    },
+    {
+      "path": "skills/b38-platform-convergence-discovery-inventory/agents/openai.yaml",
+      "sha256": "4d985a44fdd1fba8930160190bf81ba33857d2e27d86df6a7113e08be3b4946b",
+      "size": 346
+    },
+    {
+      "path": "skills/b38-platform-convergence-domain-model/SKILL.md",
+      "sha256": "b51b25847d71339d3b7b9681750c2c00f8163f3e43ea2dc2206e7b039d87fff8",
+      "size": 4007
+    },
+    {
+      "path": "skills/b38-platform-convergence-domain-model/agents/openai.yaml",
+      "sha256": "357a29dc1ef7d738b044e1ffcf3811e931f0c86f4a19ec99e8dc5dfb1a4f5556",
+      "size": 350
+    },
+    {
+      "path": "skills/b38-platform-convergence-failure-recovery/SKILL.md",
+      "sha256": "6d13fac7befadb91bf86f9dbf7904675d390aa193a8e3140cc414022a6fe49c7",
+      "size": 3984
+    },
+    {
+      "path": "skills/b38-platform-convergence-failure-recovery/agents/openai.yaml",
+      "sha256": "f4cfca97ce825317fe39853460b039b38f7c35811888ab873d735ede025afd01",
+      "size": 349
+    },
+    {
+      "path": "skills/b38-platform-convergence-human-approval/SKILL.md",
+      "sha256": "259c9598213721bd9e3992a5d94f0763caee48a7b2d47f5b598819ee1b67100b",
+      "size": 3969
+    },
+    {
+      "path": "skills/b38-platform-convergence-human-approval/agents/openai.yaml",
+      "sha256": "785a7022d354bc85e55a22cb8e1bdf1a8745e3f977be3ab4d3c2484a4336340a",
+      "size": 343
+    },
+    {
+      "path": "skills/b38-platform-convergence-integration-api/SKILL.md",
+      "sha256": "081fb04d7fb1e115777ac754ac2dbb5cc31c783b67a05605ac75cd6b38c3f340",
+      "size": 3954
+    },
+    {
+      "path": "skills/b38-platform-convergence-integration-api/agents/openai.yaml",
+      "sha256": "9b860b3917e9c954b14da574e286e98caadfe4f813a7c89f084abff46a27580a",
+      "size": 346
+    },
+    {
+      "path": "skills/b38-platform-convergence-lifecycle-recertification/SKILL.md",
+      "sha256": "2e17e66b83bff01afa600fc9195aa362b65baf84d81544c6118afcd6f8a2f1f5",
+      "size": 4044
+    },
+    {
+      "path": "skills/b38-platform-convergence-lifecycle-recertification/agents/openai.yaml",
+      "sha256": "3dca951ddb86d94f38fce69fc59e4a3f3e6f84b6c08be384f2507c23095d707f",
+      "size": 369
+    },
+    {
+      "path": "skills/b38-platform-convergence-lineage-reconciliation/SKILL.md",
+      "sha256": "e32bc66f38df12da7fac23d4ee249f4a660b59479ddc2910e99354dd6b564ffa",
+      "size": 3995
+    },
+    {
+      "path": "skills/b38-platform-convergence-lineage-reconciliation/agents/openai.yaml",
+      "sha256": "f5747162acb83b44ce0800bfbdaace40a87c38da772cf3f81bbf25fc17f1b98f",
+      "size": 352
+    },
+    {
+      "path": "skills/b38-platform-convergence-observability-economics/SKILL.md",
+      "sha256": "e592a9deee9dfdf5546f0404ff9d75f13535f82c1c01f3d070c8294ba19dc9fa",
+      "size": 4010
+    },
+    {
+      "path": "skills/b38-platform-convergence-observability-economics/agents/openai.yaml",
+      "sha256": "ee1e832566d58d353f8c6589056a276a3ad8677243b72294caf98a8e67b8d902",
+      "size": 363
+    },
+    {
+      "path": "skills/b38-platform-convergence-orchestrator/SKILL.md",
+      "sha256": "aa5ede91dca310a3d561c112d8418087f1c125330f4cdfc490245c8f31fba7d3",
+      "size": 4032
+    },
+    {
+      "path": "skills/b38-platform-convergence-orchestrator/agents/openai.yaml",
+      "sha256": "cfd6cc91f05dcd27d6e14448e2e368c25f51a52bb9b7be5d4cdbeecf6015797e",
+      "size": 346
+    },
+    {
+      "path": "skills/b38-platform-convergence-security-policy/SKILL.md",
+      "sha256": "150b2236d4fdcd988086a59ffe6845e97fe693094d5fddcc4d947077e383a272",
+      "size": 3989
+    },
+    {
+      "path": "skills/b38-platform-convergence-security-policy/agents/openai.yaml",
+      "sha256": "69ba837762167ebccff60b7e1acbd748b8fb1df155de837f3642cdf04f168922",
+      "size": 347
+    },
+    {
+      "path": "skills/b38-platform-convergence-workflow-runtime/SKILL.md",
+      "sha256": "4da66740a650830ee3e5afbf1f299c747c4a0ae06fe2efb9c997aaa366debcdf",
+      "size": 3998
+    },
+    {
+      "path": "skills/b38-platform-convergence-workflow-runtime/agents/openai.yaml",
+      "sha256": "e951c6673705ceced0dd123a84f6563e595a85b1cc4050bd0ef4ae32ad7fed26",
+      "size": 350
+    },
+    {
+      "path": "tests/README.md",
+      "sha256": "26a047c2b0780683c1a0d0a812d0a545ef40eaeb94bc4aaf46f191d47be537a6",
+      "size": 379
+    },
+    {
+      "path": "tests/test_catalog.json",
+      "sha256": "9915761ccf04bfb7699844aefe7c2d45719a2d70793eb565664e799fcb5d9ce4",
+      "size": 1948
+    },
+    {
+      "path": "tools/validate_package.py",
+      "sha256": "281cd6663a38afc9e046323ef2c1a2f21d08e8cbfd490e54985526d73e0154f3",
+      "size": 3581
+    },
+    {
+      "path": "validate.sh",
+      "sha256": "a1afca2d69d8fa3d11c820c8381b06b6449e31b289196b3cdc4156de471dd6c4",
+      "size": 72
+    }
+  ],
+  "validation": {
+    "static": "passed",
+    "runtime": "not-executed"
+  },
+  "trust_boundary": "Static package validation is not runtime execution or production certification."
+}

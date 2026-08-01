@@ -1,0 +1,9 @@
+interface:
+  display_name: Family Attention Ecology
+  short_description: Implement household rhythm, space, default and replacement-activity mapping without raw device-history
+    ingestion.
+  default_prompt: Use $christian-family-attention-ecology for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

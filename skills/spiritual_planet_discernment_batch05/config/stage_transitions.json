@@ -1,0 +1,67 @@
+{
+  "ORIENT": [
+    "CLARIFY",
+    "REVIEW"
+  ],
+  "CLARIFY": [
+    "STEELMAN",
+    "EVIDENCE",
+    "REVIEW"
+  ],
+  "STEELMAN": [
+    "EVIDENCE",
+    "ASSUMPTION",
+    "REVIEW"
+  ],
+  "EVIDENCE": [
+    "ASSUMPTION",
+    "COUNTEREXAMPLE",
+    "CLARIFY"
+  ],
+  "ASSUMPTION": [
+    "COUNTEREXAMPLE",
+    "CONSEQUENCE",
+    "SELF_MIRROR"
+  ],
+  "COUNTEREXAMPLE": [
+    "EVIDENCE",
+    "CONSEQUENCE",
+    "SELF_MIRROR"
+  ],
+  "CONSEQUENCE": [
+    "SELF_MIRROR",
+    "HEART",
+    "REVIEW"
+  ],
+  "SELF_MIRROR": [
+    "HEART",
+    "WORSHIP",
+    "REVIEW"
+  ],
+  "HEART": [
+    "WORSHIP",
+    "LAW",
+    "REVIEW"
+  ],
+  "WORSHIP": [
+    "LAW",
+    "GOSPEL_INVITATION",
+    "REVIEW"
+  ],
+  "LAW": [
+    "GOSPEL_INVITATION",
+    "REVIEW"
+  ],
+  "GOSPEL_INVITATION": [
+    "GOSPEL_EXPLORATION",
+    "REVIEW"
+  ],
+  "GOSPEL_EXPLORATION": [
+    "RESPONSE",
+    "REVIEW"
+  ],
+  "RESPONSE": [
+    "REVIEW"
+  ],
+  "REVIEW": []
+}

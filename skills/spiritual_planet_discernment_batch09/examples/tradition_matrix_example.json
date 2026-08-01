@@ -1,0 +1,27 @@
+{
+  "topic": "洗礼",
+  "common_core": [
+    "由基督设立",
+    "与门徒身份、教会和三一之名相关",
+    "不可被视为普通私人象征"
+  ],
+  "positions": [
+    {
+      "tradition": "Reformed/Presbyterian",
+      "summary": "通常实行婴儿与成人洗礼，强调圣约记号。"
+    },
+    {
+      "tradition": "Baptist",
+      "summary": "通常实行信徒洗礼，强调公开信仰告白。"
+    },
+    {
+      "tradition": "Roman Catholic",
+      "summary": "视为圣礼并强调重生与教会纳入。"
+    },
+    {
+      "tradition": "Eastern Orthodox",
+      "summary": "与傅油和圣餐结合，强调参与基督生命。"
+    }
+  ],
+  "warning": "该矩阵必须绑定官方或代表性文献，并记录各传统内部差异。"
+}

@@ -1,0 +1,25 @@
+{
+  "case_id": "g3",
+  "faith_context": "christian",
+  "consent_scope": {
+    "allow_gospel_bridge": true
+  },
+  "presenting_issue": "我每天反复认罪几个小时，仍怕神不会赦免。",
+  "created_good": [
+    "渴望圣洁"
+  ],
+  "distorted_desire": [
+    "绝对确定自己没有遗漏任何罪"
+  ],
+  "functional_savior": [
+    "完美认罪"
+  ],
+  "pride_hypotheses": [],
+  "suffering_and_structural_factors": [],
+  "law_risk": "high",
+  "shame_risk": "high",
+  "scrupulosity_risk": "high",
+  "doctrine_familiarity": "advanced",
+  "church_context": "local_church",
+  "preferred_depth": "standard"
+}

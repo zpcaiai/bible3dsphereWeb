@@ -1,0 +1,8 @@
+interface:
+  display_name: Formation Event Ledger
+  short_description: Implement append-only structured formation events from real sources with visibility and provenance.
+  default_prompt: Use $christian-formation-event-ledger for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

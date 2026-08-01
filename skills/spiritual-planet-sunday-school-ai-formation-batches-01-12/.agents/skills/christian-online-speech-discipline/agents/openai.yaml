@@ -1,0 +1,8 @@
+interface:
+  display_name: "Christian Online Speech Discipline"
+  short_description: "Build private pre-send reflection and repair workflows."
+  default_prompt: "Use $christian-online-speech-discipline for this task."
+policy:
+  products:
+    - CODEX
+  allow_implicit_invocation: true

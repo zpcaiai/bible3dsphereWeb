@@ -1,0 +1,8 @@
+interface:
+  display_name: Scripture, Grace and Repair Intervention
+  short_description: Implement reviewed truth, grace, responsibility, repair and human-help nodes.
+  default_prompt: Use $christian-scripture-grace-intervention for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

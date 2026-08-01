@@ -1,0 +1,6 @@
+interface:
+  display_name: "Batch 42: Production Observability, SLO, Incident, HA/DR and Operations Readiness"
+  short_description: "Orchestrate this Batch with evidence gates"
+  default_prompt: "Use $batch-42-production-operations-readiness to execute this workflow with explicit evidence, validation, human approval boundaries, and rollback reporting."
+policy:
+  allow_implicit_invocation: true

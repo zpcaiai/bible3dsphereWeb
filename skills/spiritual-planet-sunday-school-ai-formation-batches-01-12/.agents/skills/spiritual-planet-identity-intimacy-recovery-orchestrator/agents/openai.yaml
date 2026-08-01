@@ -1,0 +1,9 @@
+interface:
+  display_name: Identity, Desire, Sexuality and Virtual Intimacy Orchestrator
+  short_description: Implement Batch 04 identity, desire, sexuality, pornography-trigger recovery, AI-companion, virtual-intimacy,
+    accountability, age-gating and safety flows in Spiritual Planet.
+  default_prompt: Use $spiritual-planet-identity-intimacy-recovery-orchestrator for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

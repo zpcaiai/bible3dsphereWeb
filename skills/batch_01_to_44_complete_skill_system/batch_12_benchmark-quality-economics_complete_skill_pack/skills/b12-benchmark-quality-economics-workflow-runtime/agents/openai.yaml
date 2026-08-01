@@ -1,0 +1,6 @@
+interface:
+  display_name: "Workflow Runtime and Execution"
+  short_description: "Run this Batch capability with evidence gates"
+  default_prompt: "Use $b12-benchmark-quality-economics-workflow-runtime to execute this workflow with explicit evidence, validation, human approval boundaries, and rollback reporting."
+policy:
+  allow_implicit_invocation: true

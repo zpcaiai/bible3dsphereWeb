@@ -1,0 +1,8 @@
+interface:
+  display_name: Teacher Guide Generator
+  short_description: Implement opening, outline, timing, questions, facilitation warnings, safety and accessibility notes.
+  default_prompt: Use $christian-teacher-guide-generator for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

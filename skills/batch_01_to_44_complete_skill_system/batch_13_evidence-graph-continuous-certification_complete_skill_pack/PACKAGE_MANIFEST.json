@@ -1,0 +1,326 @@
+{
+  "schema_version": "1.0.0",
+  "package_id": "batch-13-evidence-graph-continuous-certification-complete-skill-pack",
+  "batch": 13,
+  "title": "Batch 13: Evidence Graph, Independent Oracle and Continuous Certification",
+  "version": "1.0.0",
+  "root_skill": "batch-13-evidence-graph-continuous-certification",
+  "generated_at": "2026-07-31T00:00:00Z",
+  "skill_count": 16,
+  "skills": [
+    "b13-evidence-cert-lifecycle-recertification",
+    "b13-evidence-cert-lineage-reconciliation",
+    "b13-evidence-cert-observability-economics",
+    "b13-evidence-graph-continuous-certification-adapter-provider",
+    "b13-evidence-graph-continuous-certification-capability-planning",
+    "b13-evidence-graph-continuous-certification-certification-gate",
+    "b13-evidence-graph-continuous-certification-corpus-benchmark",
+    "b13-evidence-graph-continuous-certification-deterministic-engine",
+    "b13-evidence-graph-continuous-certification-discovery-inventory",
+    "b13-evidence-graph-continuous-certification-domain-model",
+    "b13-evidence-graph-continuous-certification-failure-recovery",
+    "b13-evidence-graph-continuous-certification-human-approval",
+    "b13-evidence-graph-continuous-certification-integration-api",
+    "b13-evidence-graph-continuous-certification-orchestrator",
+    "b13-evidence-graph-continuous-certification-security-policy",
+    "b13-evidence-graph-continuous-certification-workflow-runtime"
+  ],
+  "upstream_batch": 12,
+  "files": [
+    {
+      "path": "BATCH12_COMPATIBILITY.md",
+      "sha256": "47c2c17df40a249c6bcff4519444fb571ecbd0f9d60a2cf9be2e78148eb5dac3",
+      "size": 2178
+    },
+    {
+      "path": "CODEX_IMPLEMENTATION_PROMPT.md",
+      "sha256": "ead3c3341596729c9c4cbb2cf04df3c7ef063d81f4958cba287ac02089fd42a2",
+      "size": 2374
+    },
+    {
+      "path": "IMPLEMENTATION_CHECKLIST.md",
+      "sha256": "50696c7650ee4768ebf41e59db16509322b32b1951505cf89a5500ba9ed9bce6",
+      "size": 1841
+    },
+    {
+      "path": "README.md",
+      "sha256": "1c9df48256cd655b454a86596334f748211810e07551e63702b76e887a26ca7a",
+      "size": 1098
+    },
+    {
+      "path": "SKILL.md",
+      "sha256": "095f783e7b8ed3d7d1e2b2397c332b0b464c1e7e426082bfc35bc4defe6b4665",
+      "size": 4211
+    },
+    {
+      "path": "SKILL_INDEX.md",
+      "sha256": "bd0a5f052e5724d7928e950010f96e7701992df8fe08f9ab5b21c1bf60a67d1c",
+      "size": 3178
+    },
+    {
+      "path": "VALIDATION_REPORT.md",
+      "sha256": "b368925399cbeaa03a523128379bfc803426cdf381d5d6d7b7a4d0181f3ec136",
+      "size": 572
+    },
+    {
+      "path": "agents/openai.yaml",
+      "sha256": "5a0b2a1ba3de8700de715f1c87c67dd9630b687e8b25ea69102ee8e80b676663",
+      "size": 397
+    },
+    {
+      "path": "examples/certificate.example.json",
+      "sha256": "09e327e042d4d807a24b596a015887934e2b365db0227463dc14e1f02340cb5c",
+      "size": 452
+    },
+    {
+      "path": "examples/invocation.example.json",
+      "sha256": "a298efc7da8089b12dcaabd0740fb9fa86839a38b596ea99b16cbf044eb54ebb",
+      "size": 297
+    },
+    {
+      "path": "install.sh",
+      "sha256": "cdaf3fdf0c010dd9e0fe29b4a92cd723ff35dd0617eaf14bb5f57e757bc2fa02",
+      "size": 305
+    },
+    {
+      "path": "policies/agent-boundary.yaml",
+      "sha256": "79adc8830adec220835b49067d29b50a3a1578f146a65e7d5b70a6d19ba09ab2",
+      "size": 150
+    },
+    {
+      "path": "policies/certification.yaml",
+      "sha256": "17f50ef51eb5cbf800b3b4990bfb399d4aed9c751cb7f440bee4a4d88ebf02ea",
+      "size": 182
+    },
+    {
+      "path": "policies/default-deny.yaml",
+      "sha256": "25c6a03403de8832018b82bfa5d9dd516d8f5136ba4974c85d40bdf8972f9366",
+      "size": 105
+    },
+    {
+      "path": "policies/evidence-first.yaml",
+      "sha256": "50408543ffa45cfea3461cd57bdabf39f9bdd422fc5b41cdfef4d3c679a058c2",
+      "size": 156
+    },
+    {
+      "path": "policies/human-approval.yaml",
+      "sha256": "d9a6b11cfe402c569440e95b1aa2377387e222a32b693c83fc278ddb1fd4482f",
+      "size": 143
+    },
+    {
+      "path": "schemas/batch-input.schema.json",
+      "sha256": "7a436b080e6ab0719344a5315bfc1528d7c82ac747f96cca9324ac89523871f1",
+      "size": 731
+    },
+    {
+      "path": "schemas/batch-output.schema.json",
+      "sha256": "092f910eeb8381b8fcb6d23d89cd17aa131e8976abd4c2dd152d3cba85b2bbf5",
+      "size": 832
+    },
+    {
+      "path": "schemas/capability-package.schema.json",
+      "sha256": "dbd2d22175d65cee93c36583e058c7544bba83523546932e722dd33b858a6e69",
+      "size": 1133
+    },
+    {
+      "path": "schemas/certification.schema.json",
+      "sha256": "2aa2831998a1056c3e32f5a59f20f2333d2c5158c7e4bece01a63324510cff82",
+      "size": 1281
+    },
+    {
+      "path": "schemas/evidence-ref.schema.json",
+      "sha256": "3df3e81dd987595389d60fe65cc5864e1955ca354b22cbcacf55ef3d5d20398d",
+      "size": 996
+    },
+    {
+      "path": "schemas/workflow-run.schema.json",
+      "sha256": "9ca354ff0ae8e60618b1c635e5c98daca8a712549fd7187886073a75bf41114a",
+      "size": 848
+    },
+    {
+      "path": "skills/b13-evidence-cert-lifecycle-recertification/SKILL.md",
+      "sha256": "36b41091ebbb86df7b995865d3e31a11adefbfdb762ed2de4418a5f01283e199",
+      "size": 4096
+    },
+    {
+      "path": "skills/b13-evidence-cert-lifecycle-recertification/agents/openai.yaml",
+      "sha256": "a35b8d88dcd5f31b288aae5448c46dc8b1253e57b8b566551498025e3944f220",
+      "size": 362
+    },
+    {
+      "path": "skills/b13-evidence-cert-lineage-reconciliation/SKILL.md",
+      "sha256": "a4898b4fce2b67a0753b34d98ac8fff7db5232a59ce474a461405c53cbfd9846",
+      "size": 4047
+    },
+    {
+      "path": "skills/b13-evidence-cert-lineage-reconciliation/agents/openai.yaml",
+      "sha256": "52bd3b7ba65353747782c5fe2dada8e468488557525ad68c739c100d1f374b81",
+      "size": 345
+    },
+    {
+      "path": "skills/b13-evidence-cert-observability-economics/SKILL.md",
+      "sha256": "b52a0c6c56ec30dae65f05dec64592b104fc33382db6be574e0e111558aa3dea",
+      "size": 4062
+    },
+    {
+      "path": "skills/b13-evidence-cert-observability-economics/agents/openai.yaml",
+      "sha256": "3e9e02165dc46e7a46616a60fa5c14283ddc6c505ebc8d413d8be6f2b6e2a5b5",
+      "size": 356
+    },
+    {
+      "path": "skills/b13-evidence-graph-continuous-certification-adapter-provider/SKILL.md",
+      "sha256": "af6fb016713b80c0722ebf747f0a1fdbb633e4d217f94fff2b879addb9570b67",
+      "size": 4113
+    },
+    {
+      "path": "skills/b13-evidence-graph-continuous-certification-adapter-provider/agents/openai.yaml",
+      "sha256": "23475049d1907001e4e56090c0b138feaeec037911dc39183ede0b518c1710a6",
+      "size": 365
+    },
+    {
+      "path": "skills/b13-evidence-graph-continuous-certification-capability-planning/SKILL.md",
+      "sha256": "6ee0677f33ab8ff67a157c49c0061a7f2c2d61a8efa08bcbe92e10a962128ece",
+      "size": 4015
+    },
+    {
+      "path": "skills/b13-evidence-graph-continuous-certification-capability-planning/agents/openai.yaml",
+      "sha256": "ad03f4c3594f026fc94b79d017cf6968f9572e4476d18e1378c59efac5f0b0e1",
+      "size": 372
+    },
+    {
+      "path": "skills/b13-evidence-graph-continuous-certification-certification-gate/SKILL.md",
+      "sha256": "8ac207efa4dbfe9af7dee5eef8583d941eba4b6f553eb2a46c644f4b6905b67a",
+      "size": 4144
+    },
+    {
+      "path": "skills/b13-evidence-graph-continuous-certification-certification-gate/agents/openai.yaml",
+      "sha256": "cd50e83c68116977ea8a4f1077d2c2a2208d7e97165c4ce51410312c87111353",
+      "size": 372
+    },
+    {
+      "path": "skills/b13-evidence-graph-continuous-certification-corpus-benchmark/SKILL.md",
+      "sha256": "99576bfacd845c5aa61ece4ec43e006cb4c77c16dec6bbf22a2b1bc3bcc0bc00",
+      "size": 4054
+    },
+    {
+      "path": "skills/b13-evidence-graph-continuous-certification-corpus-benchmark/agents/openai.yaml",
+      "sha256": "f03ed8d2d0b9bb04f460a3b299591f4073391d32dd8407d2ee66ed7e6e998377",
+      "size": 370
+    },
+    {
+      "path": "skills/b13-evidence-graph-continuous-certification-deterministic-engine/SKILL.md",
+      "sha256": "85ddd8cc47cde269c10e4b41f897c85e8ccc8120178170a9617498e268fc5a85",
+      "size": 4031
+    },
+    {
+      "path": "skills/b13-evidence-graph-continuous-certification-deterministic-engine/agents/openai.yaml",
+      "sha256": "9ebb6bd9b4af554db4018207fe116228c133488f88247da26ed35d2a10fcc010",
+      "size": 363
+    },
+    {
+      "path": "skills/b13-evidence-graph-continuous-certification-discovery-inventory/SKILL.md",
+      "sha256": "e32e43caac13ce9b5111f5e460e8fbd513237bd827bdddc8e3fa85dd59b9e87f",
+      "size": 4058
+    },
+    {
+      "path": "skills/b13-evidence-graph-continuous-certification-discovery-inventory/agents/openai.yaml",
+      "sha256": "af009345c57f5c2c9585a154e6b567a65aaddf1ce24c8d602fb0a25f795c5e85",
+      "size": 365
+    },
+    {
+      "path": "skills/b13-evidence-graph-continuous-certification-domain-model/SKILL.md",
+      "sha256": "665ffed2e2ee6d733bfe964f9f18dd8467b57e2b81367aea6b7177a9b3ff332b",
+      "size": 4085
+    },
+    {
+      "path": "skills/b13-evidence-graph-continuous-certification-domain-model/agents/openai.yaml",
+      "sha256": "483515baa8a5fe51049616c1a4b825d2ab1808d73346b9c96d3bbe4150430ff9",
+      "size": 369
+    },
+    {
+      "path": "skills/b13-evidence-graph-continuous-certification-failure-recovery/SKILL.md",
+      "sha256": "f8d5744ff881b90ee2affba68dfb12fd707788679971ae39387154815490f9a9",
+      "size": 4062
+    },
+    {
+      "path": "skills/b13-evidence-graph-continuous-certification-failure-recovery/agents/openai.yaml",
+      "sha256": "f46e97d1ae7b192d6868073dc6b715bb00cfe8fdc19bb13ef599da355355127b",
+      "size": 368
+    },
+    {
+      "path": "skills/b13-evidence-graph-continuous-certification-human-approval/SKILL.md",
+      "sha256": "2bc59cd12d361db108ed056b27545d55cd5407dd11fb95bea2b2d9e65d5d2b76",
+      "size": 4047
+    },
+    {
+      "path": "skills/b13-evidence-graph-continuous-certification-human-approval/agents/openai.yaml",
+      "sha256": "e4ac48e07a0ff52fd24cb86e64ffde5bee0736fec668e2de9a199f3df79754a0",
+      "size": 362
+    },
+    {
+      "path": "skills/b13-evidence-graph-continuous-certification-integration-api/SKILL.md",
+      "sha256": "24186e07570acf70b3499056b141d188e20764a89184da0d73f7a893035defa9",
+      "size": 4032
+    },
+    {
+      "path": "skills/b13-evidence-graph-continuous-certification-integration-api/agents/openai.yaml",
+      "sha256": "7986b57b8149ee7a7c9444b58146aec5bc623413be05f61711305111b0a32d35",
+      "size": 365
+    },
+    {
+      "path": "skills/b13-evidence-graph-continuous-certification-orchestrator/SKILL.md",
+      "sha256": "4282a279d3621fd83d4dc1ff65de73b08a188aa8080181405a49b10774c890bf",
+      "size": 4110
+    },
+    {
+      "path": "skills/b13-evidence-graph-continuous-certification-orchestrator/agents/openai.yaml",
+      "sha256": "4143bb4bd6b0fcd45c55c5cc415d1e03fe07bded5df7a1198d0cfc6a14f1e139",
+      "size": 365
+    },
+    {
+      "path": "skills/b13-evidence-graph-continuous-certification-security-policy/SKILL.md",
+      "sha256": "60d6f0ac025a1614c04267ed958d6e85d376dc2e0ec1785f4e53a045fc3d646a",
+      "size": 4067
+    },
+    {
+      "path": "skills/b13-evidence-graph-continuous-certification-security-policy/agents/openai.yaml",
+      "sha256": "7cb749b657d50e4d0a7298b541c16b7b34c0af2dbe3cdcfb57b913b4d2179fb6",
+      "size": 366
+    },
+    {
+      "path": "skills/b13-evidence-graph-continuous-certification-workflow-runtime/SKILL.md",
+      "sha256": "8fa78f911121ef6a7f02bf61005023099768005d99ecc5120178c64889baca24",
+      "size": 4076
+    },
+    {
+      "path": "skills/b13-evidence-graph-continuous-certification-workflow-runtime/agents/openai.yaml",
+      "sha256": "d619a39478b05b6c0bae81f14113f1a3576edec81d36c590ddfdd9992bdf15a7",
+      "size": 369
+    },
+    {
+      "path": "tests/README.md",
+      "sha256": "08d9003a37aeae1e2c96f3f6d19c6a7a03e2c35232d8b51095ef8d9e439f0234",
+      "size": 442
+    },
+    {
+      "path": "tests/test_catalog.json",
+      "sha256": "e1f3862e62c7372a5dd74c448c3ecc5507efb6b8f8be209ecd10c3bebc76f8b4",
+      "size": 1941
+    },
+    {
+      "path": "tools/validate_package.py",
+      "sha256": "281cd6663a38afc9e046323ef2c1a2f21d08e8cbfd490e54985526d73e0154f3",
+      "size": 3581
+    },
+    {
+      "path": "validate.sh",
+      "sha256": "a1afca2d69d8fa3d11c820c8381b06b6449e31b289196b3cdc4156de471dd6c4",
+      "size": 72
+    }
+  ],
+  "validation": {
+    "static": "passed",
+    "runtime": "not-executed"
+  },
+  "trust_boundary": "Static package validation is not runtime execution or production certification."
+}

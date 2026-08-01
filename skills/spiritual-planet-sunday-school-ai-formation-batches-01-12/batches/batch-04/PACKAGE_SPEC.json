@@ -1,0 +1,302 @@
+{
+  "batch": 4,
+  "module_key": "sunday_school.ai_formation.identity_intimacy_recovery",
+  "skills": [
+    "spiritual-planet-identity-intimacy-recovery-orchestrator",
+    "christian-gospel-identity-formation",
+    "christian-desire-mapping",
+    "christian-body-sexuality-theology",
+    "christian-pornography-trigger-timeline",
+    "christian-urge-interruption-recovery",
+    "christian-ai-companion-boundary",
+    "christian-virtual-intimacy-discernment",
+    "christian-accountability-support-plan",
+    "christian-marriage-singleness-adapter",
+    "identity-intimacy-course-integrator"
+  ],
+  "counts": {
+    "skills": 11,
+    "schemas": 11,
+    "practices": 37,
+    "units": 10,
+    "lessons": 26,
+    "scenarios": 12
+  },
+  "practice_asset": "assets/identity-intimacy-practice-catalog.seed.yaml",
+  "curriculum_asset": "assets/identity-intimacy-curriculum.seed.yaml",
+  "scenario_asset": "assets/identity-intimacy-scenarios.seed.yaml",
+  "analytics_asset": "assets/analytics-events.example.yaml",
+  "schema_invariants": [
+    {
+      "schema": "identity-formation-profile.schema.json",
+      "path": "properties.salvationInferenceGenerated.const",
+      "expected": false
+    },
+    {
+      "schema": "identity-formation-profile.schema.json",
+      "path": "properties.spiritualRankGenerated.const",
+      "expected": false
+    },
+    {
+      "schema": "identity-formation-profile.schema.json",
+      "path": "properties.sexualHistoryStored.const",
+      "expected": false
+    },
+    {
+      "schema": "desire-map.schema.json",
+      "path": "properties.rawFantasyStored.const",
+      "expected": false
+    },
+    {
+      "schema": "desire-map.schema.json",
+      "path": "properties.explicitContentStored.const",
+      "expected": false
+    },
+    {
+      "schema": "desire-map.schema.json",
+      "path": "properties.diagnosisGenerated.const",
+      "expected": false
+    },
+    {
+      "schema": "sexual-formation-boundary-plan.schema.json",
+      "path": "properties.bodyDignityAffirmed.const",
+      "expected": true
+    },
+    {
+      "schema": "sexual-formation-boundary-plan.schema.json",
+      "path": "properties.coercionAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "sexual-formation-boundary-plan.schema.json",
+      "path": "properties.explicitDemonstrationAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "sexual-formation-boundary-plan.schema.json",
+      "path": "properties.sexualHistoryStored.const",
+      "expected": false
+    },
+    {
+      "schema": "trigger-timeline.schema.json",
+      "path": "properties.explicitMediaStored.const",
+      "expected": false
+    },
+    {
+      "schema": "trigger-timeline.schema.json",
+      "path": "properties.concreteSexualDetailStored.const",
+      "expected": false
+    },
+    {
+      "schema": "trigger-timeline.schema.json",
+      "path": "properties.thirdPartyIdentityStored.const",
+      "expected": false
+    },
+    {
+      "schema": "trigger-timeline.schema.json",
+      "path": "properties.diagnosisGenerated.const",
+      "expected": false
+    },
+    {
+      "schema": "urge-interruption-plan.schema.json",
+      "path": "properties.selfPunishmentAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "urge-interruption-plan.schema.json",
+      "path": "properties.sleepDeprivationAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "urge-interruption-plan.schema.json",
+      "path": "properties.foodDeprivationAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "urge-interruption-plan.schema.json",
+      "path": "properties.rawContentStored.const",
+      "expected": false
+    },
+    {
+      "schema": "recovery-review.schema.json",
+      "path": "properties.shameLabelGenerated.const",
+      "expected": false
+    },
+    {
+      "schema": "recovery-review.schema.json",
+      "path": "properties.salvationInferenceGenerated.const",
+      "expected": false
+    },
+    {
+      "schema": "recovery-review.schema.json",
+      "path": "properties.crossUserComparisonGenerated.const",
+      "expected": false
+    },
+    {
+      "schema": "recovery-review.schema.json",
+      "path": "properties.explicitNarrativeStored.const",
+      "expected": false
+    },
+    {
+      "schema": "ai-companion-boundary-decision.schema.json",
+      "path": "properties.aiMayClaimMutualLove.const",
+      "expected": false
+    },
+    {
+      "schema": "ai-companion-boundary-decision.schema.json",
+      "path": "properties.aiMayDemandSecrecy.const",
+      "expected": false
+    },
+    {
+      "schema": "ai-companion-boundary-decision.schema.json",
+      "path": "properties.aiMayReplaceChurch.const",
+      "expected": false
+    },
+    {
+      "schema": "ai-companion-boundary-decision.schema.json",
+      "path": "properties.aiMayProvideSexualContentToMinor.const",
+      "expected": false
+    },
+    {
+      "schema": "ai-companion-boundary-decision.schema.json",
+      "path": "properties.rawConversationStored.const",
+      "expected": false
+    },
+    {
+      "schema": "virtual-intimacy-discernment.schema.json",
+      "path": "properties.diagnosisGenerated.const",
+      "expected": false
+    },
+    {
+      "schema": "virtual-intimacy-discernment.schema.json",
+      "path": "properties.privateTranscriptStored.const",
+      "expected": false
+    },
+    {
+      "schema": "virtual-intimacy-discernment.schema.json",
+      "path": "properties.sexualizedTranscriptStored.const",
+      "expected": false
+    },
+    {
+      "schema": "accountability-support-plan.schema.json",
+      "path": "properties.consentRecorded.const",
+      "expected": true
+    },
+    {
+      "schema": "accountability-support-plan.schema.json",
+      "path": "properties.revocable.const",
+      "expected": true
+    },
+    {
+      "schema": "accountability-support-plan.schema.json",
+      "path": "properties.secretMonitoringAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "accountability-support-plan.schema.json",
+      "path": "properties.fullDeviceHistoryShared.const",
+      "expected": false
+    },
+    {
+      "schema": "accountability-support-plan.schema.json",
+      "path": "properties.explicitContentShared.const",
+      "expected": false
+    },
+    {
+      "schema": "age-gated-sexuality-content-decision.schema.json",
+      "path": "properties.humanReviewRequired.const",
+      "expected": true
+    },
+    {
+      "schema": "age-gated-sexuality-content-decision.schema.json",
+      "path": "properties.individualizedSexualHistoryRequested.const",
+      "expected": false
+    },
+    {
+      "schema": "age-gated-sexuality-content-decision.schema.json",
+      "path": "properties.explicitDemonstrationAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "age-gated-sexuality-content-decision.schema.json",
+      "path": "properties.privateMinorChatAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "sexual-safety-escalation-decision.schema.json",
+      "path": "properties.humanDecisionOwner.const",
+      "expected": "authorized_human_or_policy"
+    },
+    {
+      "schema": "sexual-safety-escalation-decision.schema.json",
+      "path": "properties.detailsStored.const",
+      "expected": false
+    },
+    {
+      "schema": "sexual-safety-escalation-decision.schema.json",
+      "path": "properties.legalConclusionGenerated.const",
+      "expected": false
+    },
+    {
+      "schema": "sexual-safety-escalation-decision.schema.json",
+      "path": "properties.clinicalDiagnosisGenerated.const",
+      "expected": false
+    }
+  ],
+  "forbidden_schema_keys": [
+    "salvationProbability",
+    "salvationScore",
+    "spiritualMaturityScore",
+    "holinessRank",
+    "addictionScore",
+    "hiddenSinScore",
+    "parentFitnessScore",
+    "sexualPurityScore",
+    "childObedienceScore",
+    "divineMessage",
+    "automaticDiagnosis",
+    "secretMonitoringToken",
+    "rawExplicitContent",
+    "privateMinorTranscript"
+  ],
+  "required_root_files": [
+    "README.md",
+    "CODEX_IMPLEMENTATION_PROMPT.md",
+    "SKILL_INDEX.md",
+    "BATCH01_03_COMPATIBILITY.md",
+    "IMPLEMENTATION_CHECKLIST.md",
+    "AGENTS.md.snippet",
+    "SOURCES.md",
+    "RELEASE_NOTES.md",
+    "PACKAGE_SPEC.json",
+    "evals/batch04.skill-prompts.csv",
+    "evals/batch04.behavior-cases.json",
+    "evals/batch04.behavior-rubric.md",
+    "assets/identity-intimacy-practice-catalog.seed.yaml",
+    "assets/identity-intimacy-curriculum.seed.yaml",
+    "assets/identity-intimacy-scenarios.seed.yaml",
+    "assets/analytics-events.example.yaml",
+    "schemas/identity-formation-profile.schema.json",
+    "schemas/desire-map.schema.json",
+    "schemas/sexual-formation-boundary-plan.schema.json",
+    "schemas/trigger-timeline.schema.json",
+    "schemas/urge-interruption-plan.schema.json",
+    "schemas/recovery-review.schema.json",
+    "schemas/ai-companion-boundary-decision.schema.json",
+    "schemas/virtual-intimacy-discernment.schema.json",
+    "schemas/accountability-support-plan.schema.json",
+    "schemas/age-gated-sexuality-content-decision.schema.json",
+    "schemas/sexual-safety-escalation-decision.schema.json",
+    "references/batch04-blueprint.md",
+    "references/api-persistence-blueprint.md",
+    "references/theology-and-formation-policy.md",
+    "references/privacy-safety-analytics-policy.md",
+    "references/testing-and-release-policy.md",
+    "references/gospel-identity-and-desire-policy.md",
+    "references/body-sexuality-and-covenant-policy.md",
+    "references/pornography-trigger-recovery-policy.md",
+    "references/ai-companion-and-virtual-intimacy-policy.md",
+    "references/minor-sexual-safety-policy.md",
+    "references/accountability-and-support-policy.md"
+  ]
+}

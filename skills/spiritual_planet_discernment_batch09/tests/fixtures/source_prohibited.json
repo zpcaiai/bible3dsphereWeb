@@ -1,0 +1,16 @@
+{
+  "source_id": "src2",
+  "title": "Restricted Commentary",
+  "source_type": "commentary",
+  "language": "en",
+  "rights_status": "prohibited_for_generation",
+  "version": "1.0",
+  "author": [
+    "Author"
+  ],
+  "edition": "1st",
+  "publisher": "Publisher",
+  "year": "2020",
+  "quality_tier": "Q3",
+  "limitations": []
+}

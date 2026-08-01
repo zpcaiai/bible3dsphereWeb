@@ -1,0 +1,8 @@
+interface:
+  display_name: Trigger–State Simulation
+  short_description: Implement fictional trigger, interpretation, desire, body and action option timelines.
+  default_prompt: Use $christian-trigger-state-simulation for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

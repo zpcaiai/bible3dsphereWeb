@@ -1,0 +1,8 @@
+interface:
+  display_name: Youth Social Media Identity
+  short_description: Implement performed-self, comparison, outrage, fruit and boundary reflection without raw history.
+  default_prompt: Use $christian-youth-social-media-identity for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

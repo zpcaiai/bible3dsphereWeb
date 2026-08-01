@@ -1,0 +1,46 @@
+{
+  "case_id": "gospel-example-competence",
+  "presenting_issue": "我必须证明自己比团队更有能力，否则就觉得没有价值。",
+  "path": [
+    {
+      "pack": "creation_order",
+      "application": "能力是神所赐的托付，不是人格价值来源。"
+    },
+    {
+      "pack": "sin_and_idolatry",
+      "application": "能力被要求承担称义和安全。"
+    },
+    {
+      "pack": "uses_of_law",
+      "application": "完全绩效标准最终也会定罪使用它的人。"
+    },
+    {
+      "pack": "christ_and_atonement",
+      "application": "基督完全顺服并为失败者担当罪。"
+    },
+    {
+      "pack": "justification_by_faith",
+      "application": "人的义不来自绩效，而来自基督。"
+    },
+    {
+      "pack": "adoption",
+      "application": "失败不取消儿女身份。"
+    },
+    {
+      "pack": "union_with_christ",
+      "application": "工作成为在基督里的忠心，而非自救。"
+    },
+    {
+      "pack": "sanctification_by_spirit",
+      "application": "操练委派、安息与尊重弱者。"
+    },
+    {
+      "pack": "church_community",
+      "application": "接受彼此需要和共同服侍。"
+    },
+    {
+      "pack": "eschatological_hope",
+      "application": "当前成果不再承受终极重量。"
+    }
+  ]
+}

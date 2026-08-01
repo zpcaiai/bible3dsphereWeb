@@ -1,0 +1,6 @@
+interface:
+  display_name: "Batch 10: Behavioral Equivalence, Golden Master and Differential Validation"
+  short_description: "Orchestrate this Batch with evidence gates"
+  default_prompt: "Use $batch-10-behavioral-equivalence-differential to execute this workflow with explicit evidence, validation, human approval boundaries, and rollback reporting."
+policy:
+  allow_implicit_invocation: true

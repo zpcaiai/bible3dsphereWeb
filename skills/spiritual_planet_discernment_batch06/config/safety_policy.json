@@ -1,0 +1,33 @@
+{
+  "scrupulosity": {
+    "law_intensity": "reduce",
+    "emphasize": [
+      "christ_objective_work",
+      "justification",
+      "adoption",
+      "assurance"
+    ],
+    "avoid": [
+      "repeated_hidden_sin_search",
+      "salvation_rechecking"
+    ]
+  },
+  "trauma_or_abuse": {
+    "emphasize": [
+      "created_dignity",
+      "justice",
+      "safety",
+      "church_accountability",
+      "eschatological_justice"
+    ],
+    "avoid": [
+      "forced_contact",
+      "instant_trust",
+      "victim_blame"
+    ]
+  },
+  "seeker": {
+    "require_gospel_consent": true,
+    "style": "invitational"
+  }
+}

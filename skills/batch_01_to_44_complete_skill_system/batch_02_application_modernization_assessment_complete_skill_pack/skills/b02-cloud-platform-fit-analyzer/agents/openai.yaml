@@ -1,0 +1,6 @@
+interface:
+  display_name: "b02-cloud-platform-fit-analyzer"
+  short_description: "Run this Batch capability with evidence gates"
+  default_prompt: "Use $b02-cloud-platform-fit-analyzer to execute this workflow with explicit evidence, validation, human approval boundaries, and rollback reporting."
+policy:
+  allow_implicit_invocation: true

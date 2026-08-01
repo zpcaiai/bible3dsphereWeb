@@ -1,0 +1,8 @@
+interface:
+  display_name: Formation State Snapshot
+  short_description: Implement domain-specific state, confidence, evidence and explanation snapshots.
+  default_prompt: Use $christian-formation-state-snapshot for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

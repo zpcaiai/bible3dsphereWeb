@@ -1,0 +1,8 @@
+interface:
+  display_name: "Christian Body Rhythm Discipline"
+  short_description: "Build safe sleep, rest, movement, and fasting practices."
+  default_prompt: "Use $christian-body-rhythm-discipline for this task."
+policy:
+  products:
+    - CODEX
+  allow_implicit_invocation: true

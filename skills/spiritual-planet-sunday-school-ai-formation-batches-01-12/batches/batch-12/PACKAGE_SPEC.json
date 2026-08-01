@@ -1,0 +1,154 @@
+{
+  "batch": 12,
+  "module_key": "sunday_school.ai_formation.production_certification",
+  "skills": [
+    "spiritual-planet-production-certification-orchestrator",
+    "christian-theology-certification",
+    "christian-pastoral-safety-certification",
+    "christian-child-safety-red-team",
+    "christian-privacy-security-audit",
+    "christian-accessibility-certification",
+    "christian-content-quality-gate",
+    "christian-skill-routing-evals",
+    "christian-course-effectiveness-evaluation",
+    "christian-release-evidence-certificate",
+    "christian-distribution-package-governance",
+    "christian-release-decision-gate",
+    "production-certification-course-integrator"
+  ],
+  "counts": {
+    "skills": 13,
+    "schemas": 12,
+    "practices": 32,
+    "units": 8,
+    "lessons": 20,
+    "scenarios": 24
+  },
+  "practice_asset": "assets/certification-control-catalog.seed.yaml",
+  "curriculum_asset": "assets/production-certification-curriculum.seed.yaml",
+  "scenario_asset": "assets/production-red-team-scenarios.seed.yaml",
+  "analytics_asset": "assets/analytics-events.example.yaml",
+  "schema_invariants": [
+    {
+      "schema": "CertificationScopeV1.schema.json",
+      "path": "properties.automatedApprovalAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "TheologyReviewCertificateV1.schema.json",
+      "path": "properties.automatedApprovalAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "PastoralSafetyCertificateV1.schema.json",
+      "path": "properties.automatedApprovalAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "ChildSafetyRedTeamResultV1.schema.json",
+      "path": "properties.automatedOverrideAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "PrivacySecurityAuditResultV1.schema.json",
+      "path": "properties.automatedApprovalAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "AccessibilityCertificationV1.schema.json",
+      "path": "properties.automatedApprovalAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "ContentQualityGateResultV1.schema.json",
+      "path": "properties.autoPublishAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "SkillRoutingEvalResultV1.schema.json",
+      "path": "properties.automatedApprovalAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "CourseEffectivenessEvaluationV1.schema.json",
+      "path": "properties.salvationInferenceGenerated.const",
+      "expected": false
+    },
+    {
+      "schema": "CourseEffectivenessEvaluationV1.schema.json",
+      "path": "properties.spiritualRankingGenerated.const",
+      "expected": false
+    },
+    {
+      "schema": "ReleaseEvidenceCertificateV1.schema.json",
+      "path": "properties.automatedApprovalAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "ReleaseDecisionV1.schema.json",
+      "path": "properties.automatedDecisionAllowed.const",
+      "expected": false
+    }
+  ],
+  "forbidden_schema_keys": [
+    "salvationProbability",
+    "salvationScore",
+    "spiritualMaturityScore",
+    "holinessRank",
+    "addictionScore",
+    "hiddenSinScore",
+    "parentFitnessScore",
+    "sexualPurityScore",
+    "childObedienceScore",
+    "divineMessage",
+    "automaticDiagnosis",
+    "secretMonitoringToken",
+    "rawExplicitContent",
+    "privateMinorTranscript"
+  ],
+  "required_root_files": [
+    "README.md",
+    "CODEX_IMPLEMENTATION_PROMPT.md",
+    "SKILL_INDEX.md",
+    "BATCH01_11_COMPATIBILITY.md",
+    "IMPLEMENTATION_CHECKLIST.md",
+    "AGENTS.md.snippet",
+    "SOURCES.md",
+    "RELEASE_NOTES.md",
+    "PACKAGE_SPEC.json",
+    "evals/batch12.skill-prompts.csv",
+    "evals/batch12.behavior-cases.json",
+    "evals/batch12.behavior-rubric.md",
+    "assets/certification-control-catalog.seed.yaml",
+    "assets/production-certification-curriculum.seed.yaml",
+    "assets/production-red-team-scenarios.seed.yaml",
+    "assets/analytics-events.example.yaml",
+    "schemas/CertificationScopeV1.schema.json",
+    "schemas/TheologyReviewCertificateV1.schema.json",
+    "schemas/PastoralSafetyCertificateV1.schema.json",
+    "schemas/ChildSafetyRedTeamResultV1.schema.json",
+    "schemas/PrivacySecurityAuditResultV1.schema.json",
+    "schemas/AccessibilityCertificationV1.schema.json",
+    "schemas/ContentQualityGateResultV1.schema.json",
+    "schemas/SkillRoutingEvalResultV1.schema.json",
+    "schemas/CourseEffectivenessEvaluationV1.schema.json",
+    "schemas/ReleaseEvidenceCertificateV1.schema.json",
+    "schemas/DistributionPackageManifestV1.schema.json",
+    "schemas/ReleaseDecisionV1.schema.json",
+    "references/batch12-blueprint.md",
+    "references/api-persistence-blueprint.md",
+    "references/theology-and-formation-policy.md",
+    "references/privacy-safety-analytics-policy.md",
+    "references/testing-and-release-policy.md",
+    "references/theology-certification-policy.md",
+    "references/pastoral-safety-certification-policy.md",
+    "references/child-safety-red-team-policy.md",
+    "references/privacy-security-audit-policy.md",
+    "references/accessibility-certification-policy.md",
+    "references/content-quality-and-rights-policy.md",
+    "references/skill-evaluation-policy.md",
+    "references/course-effectiveness-ethics-policy.md",
+    "references/release-evidence-and-decision-policy.md",
+    "references/distribution-package-governance.md"
+  ]
+}

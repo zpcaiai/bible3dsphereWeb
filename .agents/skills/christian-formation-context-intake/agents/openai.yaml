@@ -1,0 +1,7 @@
+interface:
+  display_name: Christian Formation Context Intake
+  short_description: Build a privacy-minimizing, age-aware learner and family intake
+    for the AI-age Christian formation Sunday School module;
+  default_prompt: Use $christian-formation-context-intake for this task.
+policy:
+  allow_implicit_invocation: true

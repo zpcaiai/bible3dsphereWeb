@@ -1,0 +1,51 @@
+prompt,expected_skill,should_activate,case_type,notes
+请在属灵星球仓库实现Curriculum and Teacher Engine Orchestrator，复用现有路由和安全门。,spiritual-planet-curriculum-teacher-engine-orchestrator,true,explicit-domain,应自动路由到焦点技能
+Use $spiritual-planet-curriculum-teacher-engine-orchestrator to inspect and implement the repository changes with tests.,spiritual-planet-curriculum-teacher-engine-orchestrator,true,explicit-mention,显式调用
+审查当前 Curriculum and Teacher Engine Orchestrator 的Schema、权限、隐私和E2E测试，不要新建平行应用。,spiritual-planet-curriculum-teacher-engine-orchestrator,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,spiritual-planet-curriculum-teacher-engine-orchestrator,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Course Domain Model，复用现有路由和安全门。,christian-course-domain-model,true,explicit-domain,应自动路由到焦点技能
+Use $christian-course-domain-model to inspect and implement the repository changes with tests.,christian-course-domain-model,true,explicit-mention,显式调用
+审查当前 Course Domain Model 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-course-domain-model,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-course-domain-model,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Reviewed Lesson Generator，复用现有路由和安全门。,christian-lesson-generator,true,explicit-domain,应自动路由到焦点技能
+Use $christian-lesson-generator to inspect and implement the repository changes with tests.,christian-lesson-generator,true,explicit-mention,显式调用
+审查当前 Reviewed Lesson Generator 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-lesson-generator,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-lesson-generator,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Scripture Anchor Review，复用现有路由和安全门。,christian-scripture-anchor-review,true,explicit-domain,应自动路由到焦点技能
+Use $christian-scripture-anchor-review to inspect and implement the repository changes with tests.,christian-scripture-anchor-review,true,explicit-mention,显式调用
+审查当前 Scripture Anchor Review 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-scripture-anchor-review,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-scripture-anchor-review,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Teacher Guide Generator，复用现有路由和安全门。,christian-teacher-guide-generator,true,explicit-domain,应自动路由到焦点技能
+Use $christian-teacher-guide-generator to inspect and implement the repository changes with tests.,christian-teacher-guide-generator,true,explicit-mention,显式调用
+审查当前 Teacher Guide Generator 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-teacher-guide-generator,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-teacher-guide-generator,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Student Material Generator，复用现有路由和安全门。,christian-student-material-generator,true,explicit-domain,应自动路由到焦点技能
+Use $christian-student-material-generator to inspect and implement the repository changes with tests.,christian-student-material-generator,true,explicit-mention,显式调用
+审查当前 Student Material Generator 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-student-material-generator,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-student-material-generator,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Discussion Prompt Engine，复用现有路由和安全门。,christian-discussion-prompt-engine,true,explicit-domain,应自动路由到焦点技能
+Use $christian-discussion-prompt-engine to inspect and implement the repository changes with tests.,christian-discussion-prompt-engine,true,explicit-mention,显式调用
+审查当前 Discussion Prompt Engine 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-discussion-prompt-engine,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-discussion-prompt-engine,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Scenario Exercise Builder，复用现有路由和安全门。,christian-scenario-exercise-builder,true,explicit-domain,应自动路由到焦点技能
+Use $christian-scenario-exercise-builder to inspect and implement the repository changes with tests.,christian-scenario-exercise-builder,true,explicit-mention,显式调用
+审查当前 Scenario Exercise Builder 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-scenario-exercise-builder,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-scenario-exercise-builder,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Family Extension Builder，复用现有路由和安全门。,christian-family-extension-builder,true,explicit-domain,应自动路由到焦点技能
+Use $christian-family-extension-builder to inspect and implement the repository changes with tests.,christian-family-extension-builder,true,explicit-mention,显式调用
+审查当前 Family Extension Builder 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-family-extension-builder,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-family-extension-builder,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Teacher Observation Boundaries，复用现有路由和安全门。,christian-teacher-observation,true,explicit-domain,应自动路由到焦点技能
+Use $christian-teacher-observation to inspect and implement the repository changes with tests.,christian-teacher-observation,true,explicit-mention,显式调用
+审查当前 Teacher Observation Boundaries 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-teacher-observation,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-teacher-observation,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Content Review and Publication，复用现有路由和安全门。,christian-content-review-workflow,true,explicit-domain,应自动路由到焦点技能
+Use $christian-content-review-workflow to inspect and implement the repository changes with tests.,christian-content-review-workflow,true,explicit-mention,显式调用
+审查当前 Content Review and Publication 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-content-review-workflow,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-content-review-workflow,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Curriculum Teacher UI Integrator，复用现有路由和安全门。,curriculum-teacher-course-integrator,true,explicit-domain,应自动路由到焦点技能
+Use $curriculum-teacher-course-integrator to inspect and implement the repository changes with tests.,curriculum-teacher-course-integrator,true,explicit-mention,显式调用
+审查当前 Curriculum Teacher UI Integrator 的Schema、权限、隐私和E2E测试，不要新建平行应用。,curriculum-teacher-course-integrator,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,curriculum-teacher-course-integrator,false,negative,纯神学问答不应激活仓库技能
+在属灵星球主日学模块端到端实现 Batch 09，包含数据、页面、迁移、权限、内容、测试与报告。,spiritual-planet-curriculum-teacher-engine-orchestrator,true,orchestrator,端到端请求
+帮我写一段个人祷告，不要修改任何项目。,spiritual-planet-curriculum-teacher-engine-orchestrator,false,negative,非产品任务

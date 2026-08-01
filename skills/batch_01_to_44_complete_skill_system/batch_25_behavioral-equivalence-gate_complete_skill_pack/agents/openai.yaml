@@ -1,0 +1,6 @@
+interface:
+  display_name: "Batch 25: Behavioral Equivalence Gate and Independent Oracle System"
+  short_description: "Orchestrate this Batch with evidence gates"
+  default_prompt: "Use $batch-25-behavioral-equivalence-gate to execute this workflow with explicit evidence, validation, human approval boundaries, and rollback reporting."
+policy:
+  allow_implicit_invocation: true

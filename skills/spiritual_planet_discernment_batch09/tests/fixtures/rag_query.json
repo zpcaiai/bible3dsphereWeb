@@ -1,0 +1,20 @@
+{
+  "query_id": "q1",
+  "question": "解释创世记1:2",
+  "intent": "exegesis",
+  "scripture_refs": [
+    "Genesis 1:2"
+  ],
+  "tradition_scope": [],
+  "allowed_rights": [
+    "public_domain",
+    "open_license",
+    "licensed_internal"
+  ],
+  "required_source_types": [
+    "scripture",
+    "commentary"
+  ],
+  "depth": "standard",
+  "human_review_level": "R1"
+}

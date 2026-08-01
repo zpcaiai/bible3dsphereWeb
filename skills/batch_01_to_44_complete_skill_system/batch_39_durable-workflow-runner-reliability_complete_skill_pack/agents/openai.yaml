@@ -1,0 +1,6 @@
+interface:
+  display_name: "Batch 39: Durable Workflow, Runner Fleet and Provider Reliability"
+  short_description: "Orchestrate this Batch with evidence gates"
+  default_prompt: "Use $batch-39-durable-workflow-runner-reliability to execute this workflow with explicit evidence, validation, human approval boundaries, and rollback reporting."
+policy:
+  allow_implicit_invocation: true

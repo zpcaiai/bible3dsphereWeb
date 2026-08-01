@@ -1,0 +1,8 @@
+interface:
+  display_name: Family Digital Covenant
+  short_description: Implement versioned, reasoned, reviewable household clauses with member voice, appeal and human approval.
+  default_prompt: Use $christian-family-digital-covenant for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

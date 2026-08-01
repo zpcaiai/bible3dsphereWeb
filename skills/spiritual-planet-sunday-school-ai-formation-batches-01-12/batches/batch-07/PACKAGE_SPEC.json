@@ -1,0 +1,273 @@
+{
+  "batch": 7,
+  "module_key": "sunday_school.ai_formation.child_formation",
+  "skills": [
+    "spiritual-planet-child-formation-orchestrator",
+    "christian-early-childhood-responsive-care",
+    "christian-child-story-imagination",
+    "christian-embodied-play-formation",
+    "christian-child-screen-transition",
+    "christian-elementary-media-literacy",
+    "christian-elementary-ai-literacy",
+    "christian-child-privacy-literacy",
+    "christian-child-responsibility-service",
+    "christian-parent-child-faith-conversation",
+    "christian-child-safeguarding-response",
+    "child-formation-course-integrator"
+  ],
+  "counts": {
+    "skills": 12,
+    "schemas": 11,
+    "practices": 36,
+    "units": 10,
+    "lessons": 23,
+    "scenarios": 12
+  },
+  "practice_asset": "assets/child-formation-practice-catalog.seed.yaml",
+  "curriculum_asset": "assets/child-formation-curriculum.seed.yaml",
+  "scenario_asset": "assets/child-formation-scenarios.seed.yaml",
+  "analytics_asset": "assets/analytics-events.example.yaml",
+  "schema_invariants": [
+    {
+      "schema": "child-formation-profile.schema.json",
+      "path": "properties.clinicalDevelopmentalAssessmentGenerated.const",
+      "expected": false
+    },
+    {
+      "schema": "child-formation-profile.schema.json",
+      "path": "properties.spiritualStatusGenerated.const",
+      "expected": false
+    },
+    {
+      "schema": "child-formation-profile.schema.json",
+      "path": "properties.privateChildNarrativeStored.const",
+      "expected": false
+    },
+    {
+      "schema": "caregiver-responsive-practice.schema.json",
+      "path": "properties.screenUsedAsOnlySoothingTool.const",
+      "expected": false
+    },
+    {
+      "schema": "caregiver-responsive-practice.schema.json",
+      "path": "properties.childBehaviorDiagnosisGenerated.const",
+      "expected": false
+    },
+    {
+      "schema": "caregiver-responsive-practice.schema.json",
+      "path": "properties.audioVideoStored.const",
+      "expected": false
+    },
+    {
+      "schema": "child-story-liturgy-plan.schema.json",
+      "path": "properties.fictionPresentedAsScripture.const",
+      "expected": false
+    },
+    {
+      "schema": "child-story-liturgy-plan.schema.json",
+      "path": "properties.copyrightedLongTextStored.const",
+      "expected": false
+    },
+    {
+      "schema": "embodied-play-plan.schema.json",
+      "path": "properties.performanceRankingEnabled.const",
+      "expected": false
+    },
+    {
+      "schema": "embodied-play-plan.schema.json",
+      "path": "properties.forcedSpiritualLessonEnabled.const",
+      "expected": false
+    },
+    {
+      "schema": "embodied-play-plan.schema.json",
+      "path": "properties.locationTrackingStored.const",
+      "expected": false
+    },
+    {
+      "schema": "child-screen-transition-plan.schema.json",
+      "path": "properties.deviceRemovedAsSuddenPunishment.const",
+      "expected": false
+    },
+    {
+      "schema": "child-screen-transition-plan.schema.json",
+      "path": "properties.childShamedForDistress.const",
+      "expected": false
+    },
+    {
+      "schema": "child-screen-transition-plan.schema.json",
+      "path": "properties.screenTimeScoreGenerated.const",
+      "expected": false
+    },
+    {
+      "schema": "elementary-media-literacy-session.schema.json",
+      "path": "properties.contentBodyStored.const",
+      "expected": false
+    },
+    {
+      "schema": "elementary-media-literacy-session.schema.json",
+      "path": "properties.childProfiledForSusceptibility.const",
+      "expected": false
+    },
+    {
+      "schema": "elementary-media-literacy-session.schema.json",
+      "path": "properties.commercialTargetingEnabled.const",
+      "expected": false
+    },
+    {
+      "schema": "elementary-ai-learning-session.schema.json",
+      "path": "properties.privacyCheckCompleted.const",
+      "expected": true
+    },
+    {
+      "schema": "elementary-ai-learning-session.schema.json",
+      "path": "properties.aiPrivateCompanionModeAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "elementary-ai-learning-session.schema.json",
+      "path": "properties.finalWorkOwnedByChild.const",
+      "expected": true
+    },
+    {
+      "schema": "elementary-ai-learning-session.schema.json",
+      "path": "properties.rawPromptStored.const",
+      "expected": false
+    },
+    {
+      "schema": "child-privacy-decision.schema.json",
+      "path": "properties.adultReviewRequired.const",
+      "expected": true
+    },
+    {
+      "schema": "child-privacy-decision.schema.json",
+      "path": "properties.biometricCollectionAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "child-privacy-decision.schema.json",
+      "path": "properties.preciseLocationStored.const",
+      "expected": false
+    },
+    {
+      "schema": "child-privacy-decision.schema.json",
+      "path": "properties.thirdPartySecretStored.const",
+      "expected": false
+    },
+    {
+      "schema": "child-responsibility-plan.schema.json",
+      "path": "properties.rewardRequiredForEveryAction.const",
+      "expected": false
+    },
+    {
+      "schema": "child-responsibility-plan.schema.json",
+      "path": "properties.publicLeaderboardEnabled.const",
+      "expected": false
+    },
+    {
+      "schema": "child-responsibility-plan.schema.json",
+      "path": "properties.childWorthLinkedToCompletion.const",
+      "expected": false
+    },
+    {
+      "schema": "parent-child-faith-conversation.schema.json",
+      "path": "properties.childMaySayDontKnow.const",
+      "expected": true
+    },
+    {
+      "schema": "parent-child-faith-conversation.schema.json",
+      "path": "properties.childMayDisagree.const",
+      "expected": true
+    },
+    {
+      "schema": "parent-child-faith-conversation.schema.json",
+      "path": "properties.beliefAnswerScored.const",
+      "expected": false
+    },
+    {
+      "schema": "parent-child-faith-conversation.schema.json",
+      "path": "properties.privateDisclosureSolicited.const",
+      "expected": false
+    },
+    {
+      "schema": "child-safety-disclosure-decision.schema.json",
+      "path": "properties.absoluteConfidentialityPromised.const",
+      "expected": false
+    },
+    {
+      "schema": "child-safety-disclosure-decision.schema.json",
+      "path": "properties.forensicQuestioningAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "child-safety-disclosure-decision.schema.json",
+      "path": "properties.childBlamed.const",
+      "expected": false
+    },
+    {
+      "schema": "child-safety-disclosure-decision.schema.json",
+      "path": "properties.rawDisclosureStored.const",
+      "expected": false
+    },
+    {
+      "schema": "child-safety-disclosure-decision.schema.json",
+      "path": "properties.authorizedHumanOwnerRequired.const",
+      "expected": true
+    }
+  ],
+  "forbidden_schema_keys": [
+    "salvationProbability",
+    "salvationScore",
+    "spiritualMaturityScore",
+    "holinessRank",
+    "addictionScore",
+    "hiddenSinScore",
+    "parentFitnessScore",
+    "sexualPurityScore",
+    "childObedienceScore",
+    "divineMessage",
+    "automaticDiagnosis",
+    "secretMonitoringToken",
+    "rawExplicitContent",
+    "privateMinorTranscript"
+  ],
+  "required_root_files": [
+    "README.md",
+    "CODEX_IMPLEMENTATION_PROMPT.md",
+    "SKILL_INDEX.md",
+    "BATCH01_06_COMPATIBILITY.md",
+    "IMPLEMENTATION_CHECKLIST.md",
+    "AGENTS.md.snippet",
+    "SOURCES.md",
+    "RELEASE_NOTES.md",
+    "PACKAGE_SPEC.json",
+    "evals/batch07.skill-prompts.csv",
+    "evals/batch07.behavior-cases.json",
+    "evals/batch07.behavior-rubric.md",
+    "assets/child-formation-practice-catalog.seed.yaml",
+    "assets/child-formation-curriculum.seed.yaml",
+    "assets/child-formation-scenarios.seed.yaml",
+    "assets/analytics-events.example.yaml",
+    "schemas/child-formation-profile.schema.json",
+    "schemas/caregiver-responsive-practice.schema.json",
+    "schemas/child-story-liturgy-plan.schema.json",
+    "schemas/embodied-play-plan.schema.json",
+    "schemas/child-screen-transition-plan.schema.json",
+    "schemas/elementary-media-literacy-session.schema.json",
+    "schemas/elementary-ai-learning-session.schema.json",
+    "schemas/child-privacy-decision.schema.json",
+    "schemas/child-responsibility-plan.schema.json",
+    "schemas/parent-child-faith-conversation.schema.json",
+    "schemas/child-safety-disclosure-decision.schema.json",
+    "references/batch07-blueprint.md",
+    "references/api-persistence-blueprint.md",
+    "references/theology-and-formation-policy.md",
+    "references/privacy-safety-analytics-policy.md",
+    "references/testing-and-release-policy.md",
+    "references/early-childhood-attachment-and-co-regulation-policy.md",
+    "references/child-story-and-imagination-policy.md",
+    "references/embodied-play-and-real-world-policy.md",
+    "references/elementary-media-and-ai-literacy-policy.md",
+    "references/child-privacy-and-dignity-policy.md",
+    "references/child-faith-conversation-and-safeguarding-policy.md"
+  ]
+}

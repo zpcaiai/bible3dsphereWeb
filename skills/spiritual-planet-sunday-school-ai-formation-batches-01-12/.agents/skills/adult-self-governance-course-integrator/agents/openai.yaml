@@ -1,0 +1,8 @@
+interface:
+  display_name: "Adult Self-Governance Course Integrator"
+  short_description: "Integrate all adult self-governance routes, UI, data, and tests."
+  default_prompt: "Use $adult-self-governance-course-integrator for this task."
+policy:
+  products:
+    - CODEX
+  allow_implicit_invocation: true

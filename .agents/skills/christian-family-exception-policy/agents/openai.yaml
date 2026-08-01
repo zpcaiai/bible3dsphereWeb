@@ -1,0 +1,8 @@
+interface:
+  display_name: Family Rule Exception Policy
+  short_description: Implement expiring exceptions for emergency, school, work, care, travel and accessibility.
+  default_prompt: Use $christian-family-exception-policy for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

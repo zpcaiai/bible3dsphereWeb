@@ -1,0 +1,227 @@
+{
+  "config": {
+    "argv": [
+      "/opt/homebrew/Cellar/node/26.0.0/bin/node",
+      "/Users/stephen/Documents/Projects/DoctorPro/bible3dsphereWeb/node_modules/.bin/playwright",
+      "test",
+      "e2e/ai-formation.spec.js"
+    ],
+    "configFile": "/Users/stephen/Documents/Projects/DoctorPro/bible3dsphereWeb/playwright.config.js",
+    "rootDir": "/Users/stephen/Documents/Projects/DoctorPro/bible3dsphereWeb/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/stephen/Documents/Projects/DoctorPro/bible3dsphereWeb/docs/ai-formation-certification/browser-artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/Users/stephen/Documents/Projects/DoctorPro/bible3dsphereWeb/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "line",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "./docs/ai-formation-certification/browser-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.62.1",
+    "workers": 4,
+    "webServer": {
+      "command": "VITE_AI_FORMATION_ENABLED=true npm run build && npm run preview -- --host 127.0.0.1",
+      "url": "http://127.0.0.1:4173",
+      "timeout": 180000,
+      "reuseExistingServer": false
+    }
+  },
+  "suites": [
+    {
+      "title": "ai-formation.spec.js",
+      "file": "ai-formation.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "desktop Chrome: keyboard path, data-minimizing intake, and WCAG scan",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5646,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-08-01T07:23:22.055Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "644b75c25ab7a015057d-dce4d53cdfd0b008ee79",
+          "file": "ai-formation.spec.js",
+          "line": 58,
+          "column": 1
+        },
+        {
+          "title": "mobile-390x844: reflow, touch targets, reduced motion, and WCAG scan",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2503,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-08-01T07:23:29.243Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "644b75c25ab7a015057d-5d8ab0787728bb00682e",
+          "file": "ai-formation.spec.js",
+          "line": 94,
+          "column": 3
+        },
+        {
+          "title": "mobile-320x568: reflow, touch targets, reduced motion, and WCAG scan",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1766,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-08-01T07:23:31.793Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "644b75c25ab7a015057d-bd25b98987f4995500c7",
+          "file": "ai-formation.spec.js",
+          "line": 94,
+          "column": 3
+        },
+        {
+          "title": "admin certification deep link remains fail-closed",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1594,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-08-01T07:23:33.567Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "644b75c25ab7a015057d-929608bd7a20d4b62000",
+          "file": "ai-formation.spec.js",
+          "line": 113,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-08-01T07:22:55.836Z",
+    "duration": 39592.322,
+    "expected": 4,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

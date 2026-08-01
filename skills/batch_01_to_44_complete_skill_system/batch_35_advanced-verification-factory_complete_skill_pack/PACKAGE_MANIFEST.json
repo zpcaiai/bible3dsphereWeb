@@ -1,0 +1,326 @@
+{
+  "schema_version": "1.0.0",
+  "package_id": "batch-35-advanced-verification-factory-complete-skill-pack",
+  "batch": 35,
+  "title": "Batch 35: Advanced Verification, Fuzzing, Mutation and Formal Assurance Factory",
+  "version": "1.0.0",
+  "root_skill": "batch-35-advanced-verification-factory",
+  "generated_at": "2026-07-31T00:00:00Z",
+  "skill_count": 16,
+  "skills": [
+    "b35-advanced-verification-factory-adapter-provider",
+    "b35-advanced-verification-factory-capability-planning",
+    "b35-advanced-verification-factory-certification-gate",
+    "b35-advanced-verification-factory-corpus-benchmark",
+    "b35-advanced-verification-factory-deterministic-engine",
+    "b35-advanced-verification-factory-discovery-inventory",
+    "b35-advanced-verification-factory-domain-model",
+    "b35-advanced-verification-factory-failure-recovery",
+    "b35-advanced-verification-factory-human-approval",
+    "b35-advanced-verification-factory-integration-api",
+    "b35-advanced-verification-factory-lifecycle-recertification",
+    "b35-advanced-verification-factory-lineage-reconciliation",
+    "b35-advanced-verification-factory-observability-economics",
+    "b35-advanced-verification-factory-orchestrator",
+    "b35-advanced-verification-factory-security-policy",
+    "b35-advanced-verification-factory-workflow-runtime"
+  ],
+  "upstream_batch": 34,
+  "files": [
+    {
+      "path": "BATCH34_COMPATIBILITY.md",
+      "sha256": "de8c81689aad257f5e5e19cf09afe9fb8c25fa823f8682421ad39d27b33b024e",
+      "size": 2117
+    },
+    {
+      "path": "CODEX_IMPLEMENTATION_PROMPT.md",
+      "sha256": "4eef5b6560247f5ebf7f2f4ea2a2de4460f31fb63a0456fb4e24032849590640",
+      "size": 2291
+    },
+    {
+      "path": "IMPLEMENTATION_CHECKLIST.md",
+      "sha256": "ff22b95328d2f496092a77ca57da4ab56984640f3a8dd2e71646b919d873d032",
+      "size": 1788
+    },
+    {
+      "path": "README.md",
+      "sha256": "deb3450dfd9edbf68630d6ba553f065c8466758cb60d1c8de76a71de35bb9230",
+      "size": 1082
+    },
+    {
+      "path": "SKILL.md",
+      "sha256": "0eefece0d622032bcf1bdddd12f1c62fafd09de476ce5131560da5288dfd07b3",
+      "size": 4042
+    },
+    {
+      "path": "SKILL_INDEX.md",
+      "sha256": "aeffaff04af032c0fa720b7fc95c935bb8fc914ca87f905b8ed8b3dc5f499d4f",
+      "size": 3102
+    },
+    {
+      "path": "VALIDATION_REPORT.md",
+      "sha256": "dda7a2ef8dc5a47928ac5ba306601c4c4b43a2a753a322948ccacb4e8353b7d0",
+      "size": 572
+    },
+    {
+      "path": "agents/openai.yaml",
+      "sha256": "31c9faecceb476b6df289162dfaeebd9912c6c8dde0cda5d3e7b876b43f67240",
+      "size": 393
+    },
+    {
+      "path": "examples/certificate.example.json",
+      "sha256": "beec2c03c0ff950228219c17eb20eb9f5e587a3b52a3c4dc9fd2d20dc79b09b1",
+      "size": 452
+    },
+    {
+      "path": "examples/invocation.example.json",
+      "sha256": "481f6ce44532b8d2fbdd0703fdefd8f58230f5dd067aa9b3474a3fcd143f2f75",
+      "size": 303
+    },
+    {
+      "path": "install.sh",
+      "sha256": "cdaf3fdf0c010dd9e0fe29b4a92cd723ff35dd0617eaf14bb5f57e757bc2fa02",
+      "size": 305
+    },
+    {
+      "path": "policies/agent-boundary.yaml",
+      "sha256": "79adc8830adec220835b49067d29b50a3a1578f146a65e7d5b70a6d19ba09ab2",
+      "size": 150
+    },
+    {
+      "path": "policies/certification.yaml",
+      "sha256": "17f50ef51eb5cbf800b3b4990bfb399d4aed9c751cb7f440bee4a4d88ebf02ea",
+      "size": 182
+    },
+    {
+      "path": "policies/default-deny.yaml",
+      "sha256": "25c6a03403de8832018b82bfa5d9dd516d8f5136ba4974c85d40bdf8972f9366",
+      "size": 105
+    },
+    {
+      "path": "policies/evidence-first.yaml",
+      "sha256": "50408543ffa45cfea3461cd57bdabf39f9bdd422fc5b41cdfef4d3c679a058c2",
+      "size": 156
+    },
+    {
+      "path": "policies/human-approval.yaml",
+      "sha256": "d9a6b11cfe402c569440e95b1aa2377387e222a32b693c83fc278ddb1fd4482f",
+      "size": 143
+    },
+    {
+      "path": "schemas/batch-input.schema.json",
+      "sha256": "04dfc882f3f575da31a253fb5cf484e6c7fcb65c6982df31ef4d71bbbdda3532",
+      "size": 731
+    },
+    {
+      "path": "schemas/batch-output.schema.json",
+      "sha256": "a951fedc37b2c3be4f9e86868c6196fa6fc43ab0bad0bebc49cf63ab8e7cb575",
+      "size": 832
+    },
+    {
+      "path": "schemas/capability-package.schema.json",
+      "sha256": "4fc8cd5a6ec90a59077a235d533dcada3734178a3668b6d84554b5ded70b01f0",
+      "size": 1133
+    },
+    {
+      "path": "schemas/certification.schema.json",
+      "sha256": "6e36217a48ca7ff7f316c5e4717d9b611aabc83cf549f4973ff46a5eff2f2003",
+      "size": 1281
+    },
+    {
+      "path": "schemas/evidence-ref.schema.json",
+      "sha256": "6a0ad23b2ba3b31e04d4ad2a959f599861ecd7fc65c670672dcc206088052d7f",
+      "size": 996
+    },
+    {
+      "path": "schemas/workflow-run.schema.json",
+      "sha256": "8ddb3faa00c6b99964ba6de4158966f279ce99163f883c46d54fa3bf010651b4",
+      "size": 848
+    },
+    {
+      "path": "skills/b35-advanced-verification-factory-adapter-provider/SKILL.md",
+      "sha256": "daf92ef3384d9e932b2474c6b99db0d0c4e79cc2a7297e2cef3621a82116cdef",
+      "size": 3972
+    },
+    {
+      "path": "skills/b35-advanced-verification-factory-adapter-provider/agents/openai.yaml",
+      "sha256": "a8bbca961adf40b6b6e3e5bc3a6606fa723e236308d788784f80297aa5e898eb",
+      "size": 355
+    },
+    {
+      "path": "skills/b35-advanced-verification-factory-capability-planning/SKILL.md",
+      "sha256": "40b1bfd634134eb71077741db65112e1e6cff5b8b66258169348f28d550c8bca",
+      "size": 3874
+    },
+    {
+      "path": "skills/b35-advanced-verification-factory-capability-planning/agents/openai.yaml",
+      "sha256": "b9ca70bb75952acc73041d60cab30192d916fd2be66fd50cdc3ceaf6b2d9dab7",
+      "size": 362
+    },
+    {
+      "path": "skills/b35-advanced-verification-factory-certification-gate/SKILL.md",
+      "sha256": "2eb1fb297a31ae0982126f66dc0480163c631f748cb502e14a0d4c2bf3bac993",
+      "size": 4003
+    },
+    {
+      "path": "skills/b35-advanced-verification-factory-certification-gate/agents/openai.yaml",
+      "sha256": "407557d19487e50f6554e4c3514bf9236cd7a34dfc9d7a88a32b89b341e58026",
+      "size": 362
+    },
+    {
+      "path": "skills/b35-advanced-verification-factory-corpus-benchmark/SKILL.md",
+      "sha256": "49a73f354f5aa9b2af174ba7ef30a5e3651a362dd3d72a375de226f4af5e3222",
+      "size": 3913
+    },
+    {
+      "path": "skills/b35-advanced-verification-factory-corpus-benchmark/agents/openai.yaml",
+      "sha256": "adb8fe991ce29606fe8e056b6634fbc487e1f56fb343846e0d66944d59df5619",
+      "size": 360
+    },
+    {
+      "path": "skills/b35-advanced-verification-factory-deterministic-engine/SKILL.md",
+      "sha256": "5b9eb4feae5145a43ab99170f0ed9b6d5be547b4cd928cdb4bf409ea3a66d566",
+      "size": 3890
+    },
+    {
+      "path": "skills/b35-advanced-verification-factory-deterministic-engine/agents/openai.yaml",
+      "sha256": "88287429274442902e1aefdefca4a2484671b486dffb3ed50e4c392ad382bb18",
+      "size": 353
+    },
+    {
+      "path": "skills/b35-advanced-verification-factory-discovery-inventory/SKILL.md",
+      "sha256": "b92cc879d2497c7d0e410ebd91c4be55deecd8cb1a9224aa1b939bd1777ad192",
+      "size": 3917
+    },
+    {
+      "path": "skills/b35-advanced-verification-factory-discovery-inventory/agents/openai.yaml",
+      "sha256": "0fed7a6c8e969bf377b6851ea7aa938552e21c0249db09b4158b4852436be471",
+      "size": 355
+    },
+    {
+      "path": "skills/b35-advanced-verification-factory-domain-model/SKILL.md",
+      "sha256": "022c3fbed394c547a01ada1b2ec456518e528aeabfb29834dc995cd4efc4bab4",
+      "size": 3944
+    },
+    {
+      "path": "skills/b35-advanced-verification-factory-domain-model/agents/openai.yaml",
+      "sha256": "36e3d335d93e9a73073f61c21d0c4f966b6e8967e2df8faa409a87ba57bcaf00",
+      "size": 359
+    },
+    {
+      "path": "skills/b35-advanced-verification-factory-failure-recovery/SKILL.md",
+      "sha256": "e43182da22cb23b062825b99ae5e3eb1c74d80812466d254673e6b720364c77f",
+      "size": 3921
+    },
+    {
+      "path": "skills/b35-advanced-verification-factory-failure-recovery/agents/openai.yaml",
+      "sha256": "d22579051a0b586ef8f4516a3280dc2228f6d69f2368aa520ab8a235b92b0d70",
+      "size": 358
+    },
+    {
+      "path": "skills/b35-advanced-verification-factory-human-approval/SKILL.md",
+      "sha256": "5c04a63ffa599c650a1023fea49f93872a7c3bfe74f73302cebd9aca26bd0194",
+      "size": 3906
+    },
+    {
+      "path": "skills/b35-advanced-verification-factory-human-approval/agents/openai.yaml",
+      "sha256": "dc3bec06a9d34d4c28b6a8d5936e141273283fba905620c5e471e1fec7295dfb",
+      "size": 352
+    },
+    {
+      "path": "skills/b35-advanced-verification-factory-integration-api/SKILL.md",
+      "sha256": "1f6a777b882994a08a483ae534006eddab76faf00d8269ef8f3c3d9429cd86ac",
+      "size": 3891
+    },
+    {
+      "path": "skills/b35-advanced-verification-factory-integration-api/agents/openai.yaml",
+      "sha256": "c3bbb11b909e3fac763cd01125c58b09a018df7951a39e030287a53d398d4822",
+      "size": 355
+    },
+    {
+      "path": "skills/b35-advanced-verification-factory-lifecycle-recertification/SKILL.md",
+      "sha256": "139fae16acc4391d07458470627f416f00d6d43ced7adcbe394d15f64cb86ba3",
+      "size": 3981
+    },
+    {
+      "path": "skills/b35-advanced-verification-factory-lifecycle-recertification/agents/openai.yaml",
+      "sha256": "70485b2ee524d090db435397bb0acb270251d54d7fb53bf36f513d0e83bec40a",
+      "size": 378
+    },
+    {
+      "path": "skills/b35-advanced-verification-factory-lineage-reconciliation/SKILL.md",
+      "sha256": "1ecadcc89c4ed8e7971759df7f972a858d8e4c5556f73056e68e3b56a3c2e33b",
+      "size": 3932
+    },
+    {
+      "path": "skills/b35-advanced-verification-factory-lineage-reconciliation/agents/openai.yaml",
+      "sha256": "1c54d2307c28a4c781de04716183ce9c5f06359c22cb6c29996261cfa36b99ca",
+      "size": 361
+    },
+    {
+      "path": "skills/b35-advanced-verification-factory-observability-economics/SKILL.md",
+      "sha256": "5c97d6a39f161d289197d1ba08c3ba83a1e837a526a1de7a012b93e65af0da62",
+      "size": 3947
+    },
+    {
+      "path": "skills/b35-advanced-verification-factory-observability-economics/agents/openai.yaml",
+      "sha256": "139f66a513c28f4ca44f12e29524611665887d7682e69d42ffa8e2233889072c",
+      "size": 372
+    },
+    {
+      "path": "skills/b35-advanced-verification-factory-orchestrator/SKILL.md",
+      "sha256": "62c7d56f6770be3fbb69ba8282e2943d598eac343e14ae5a49fea7506c959ccf",
+      "size": 3969
+    },
+    {
+      "path": "skills/b35-advanced-verification-factory-orchestrator/agents/openai.yaml",
+      "sha256": "67a39d730e64d60210693e6134bd4e7e4450c11561ad4eb8f2baec4a32155056",
+      "size": 355
+    },
+    {
+      "path": "skills/b35-advanced-verification-factory-security-policy/SKILL.md",
+      "sha256": "17cf850b4f63518cef7d60813cbbfbaf23efe370d474a38b5aea82dfa1766e84",
+      "size": 3926
+    },
+    {
+      "path": "skills/b35-advanced-verification-factory-security-policy/agents/openai.yaml",
+      "sha256": "1e180d640d8dc813b56e747b6255d9c713d6805daf59359a02718a08edef126d",
+      "size": 356
+    },
+    {
+      "path": "skills/b35-advanced-verification-factory-workflow-runtime/SKILL.md",
+      "sha256": "4afa7123b844f7abd46f3ea7088481149cb7ff9f306a8af9fdcba0491246faa4",
+      "size": 3935
+    },
+    {
+      "path": "skills/b35-advanced-verification-factory-workflow-runtime/agents/openai.yaml",
+      "sha256": "dfa0157889d39340272b5d669be27da80e6d37fd0afb5ff23b180bfe74141ad0",
+      "size": 359
+    },
+    {
+      "path": "tests/README.md",
+      "sha256": "1a64b457fa9aa1fbdb03061b87e1fbdad3686addf31b471280a7006bb090d2c4",
+      "size": 373
+    },
+    {
+      "path": "tests/test_catalog.json",
+      "sha256": "cbb4bebb6be26d6d54ff2b243acaccf128221efb2e4ea153194b0b1b19b4c794",
+      "size": 1947
+    },
+    {
+      "path": "tools/validate_package.py",
+      "sha256": "281cd6663a38afc9e046323ef2c1a2f21d08e8cbfd490e54985526d73e0154f3",
+      "size": 3581
+    },
+    {
+      "path": "validate.sh",
+      "sha256": "a1afca2d69d8fa3d11c820c8381b06b6449e31b289196b3cdc4156de471dd6c4",
+      "size": 72
+    }
+  ],
+  "validation": {
+    "static": "passed",
+    "runtime": "not-executed"
+  },
+  "trust_boundary": "Static package validation is not runtime execution or production certification."
+}

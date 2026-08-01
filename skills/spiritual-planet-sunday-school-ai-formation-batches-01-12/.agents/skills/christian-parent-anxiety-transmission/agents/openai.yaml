@@ -1,0 +1,9 @@
+interface:
+  display_name: Parent Anxiety Transmission Reflection
+  short_description: Implement non-clinical reflection on how adult fear becomes interrogation, comparison, overcontrol or
+    withdrawal.
+  default_prompt: Use $christian-parent-anxiety-transmission for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

@@ -1,0 +1,8 @@
+interface:
+  display_name: Scenario Runtime State Machine
+  short_description: Implement version-pinned start, choose, pause, resume, complete, abort, expire and safety-interrupt states.
+  default_prompt: Use $christian-scenario-runtime for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

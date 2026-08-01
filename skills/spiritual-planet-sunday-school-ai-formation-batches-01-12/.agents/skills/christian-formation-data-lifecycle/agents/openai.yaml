@@ -1,0 +1,8 @@
+interface:
+  display_name: Formation Data Lifecycle
+  short_description: Implement purpose-bound retention, aggregation, deletion, export, pause, correction and revocable sharing.
+  default_prompt: Use $christian-formation-data-lifecycle for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

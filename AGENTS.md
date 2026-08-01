@@ -1,0 +1,12 @@
+# Spiritual Planet Sunday School AI Formation
+
+- Reuse the existing product, navigation, identity, tenant, permissions, design system, content review, analytics, safety and deployment architecture. Do not create a parallel app.
+- Implement Batch 01-12 in dependency order. Read the applicable Batch orchestrator and focused Skills before editing.
+- Treat Scripture-explicit teaching, theological inference, pastoral wisdom and product defaults as distinct authority levels.
+- Generated theological, pastoral, sexual-formation, child/youth and curriculum content stays in review until authorized humans approve it.
+- AI is an assistant, not revelation, conscience, pastor, covenant partner, secret child companion, clinical diagnostician or final release authority.
+- Do not create salvation, holiness, maturity, purity, addiction, orientation, calling, parental-fitness or hidden-sin scores.
+- Do not implement covert monitoring, spyware, raw browsing-history ingestion or secret parent/pastor/teacher access.
+- Minimize sensitive data. Keep raw confessions, explicit content, private chats, child narratives, health details and third-party identities out of analytics and model logs.
+- Enforce age, consent, owner, tenant, review, S0-S3, child-protection, retention/deletion and release gates deterministically.
+- Every implementation report must state actual files, migrations, commands, exit codes, limitations, content-review state, rollback path and unresolved blockers.

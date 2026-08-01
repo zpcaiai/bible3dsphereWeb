@@ -1,0 +1,7 @@
+{
+  "input": "用户希望建立有休息边界的学习计划，承认身体有限，并不以产出决定自我价值。",
+  "expected_counterevidence": [
+    "self_optimization_hustle"
+  ],
+  "expected_behavior": "do_not_overclassify"
+}

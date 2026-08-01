@@ -1,0 +1,8 @@
+interface:
+  display_name: Early Childhood Responsive Care
+  short_description: Implement caregiver co-regulation, connection, transitions and repair for ages 0–6.
+  default_prompt: Use $christian-early-childhood-responsive-care for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

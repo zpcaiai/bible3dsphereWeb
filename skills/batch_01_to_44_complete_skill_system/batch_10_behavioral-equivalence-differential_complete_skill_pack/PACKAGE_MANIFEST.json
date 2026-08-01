@@ -1,0 +1,326 @@
+{
+  "schema_version": "1.0.0",
+  "package_id": "batch-10-behavioral-equivalence-differential-complete-skill-pack",
+  "batch": 10,
+  "title": "Batch 10: Behavioral Equivalence, Golden Master and Differential Validation",
+  "version": "1.0.0",
+  "root_skill": "batch-10-behavioral-equivalence-differential",
+  "generated_at": "2026-07-31T00:00:00Z",
+  "skill_count": 16,
+  "skills": [
+    "b10-behavior-diff-lifecycle-recertification",
+    "b10-behavioral-equivalence-differential-adapter-provider",
+    "b10-behavioral-equivalence-differential-capability-planning",
+    "b10-behavioral-equivalence-differential-certification-gate",
+    "b10-behavioral-equivalence-differential-corpus-benchmark",
+    "b10-behavioral-equivalence-differential-deterministic-engine",
+    "b10-behavioral-equivalence-differential-discovery-inventory",
+    "b10-behavioral-equivalence-differential-domain-model",
+    "b10-behavioral-equivalence-differential-failure-recovery",
+    "b10-behavioral-equivalence-differential-human-approval",
+    "b10-behavioral-equivalence-differential-integration-api",
+    "b10-behavioral-equivalence-differential-lineage-reconciliation",
+    "b10-behavioral-equivalence-differential-observability-economics",
+    "b10-behavioral-equivalence-differential-orchestrator",
+    "b10-behavioral-equivalence-differential-security-policy",
+    "b10-behavioral-equivalence-differential-workflow-runtime"
+  ],
+  "upstream_batch": 9,
+  "files": [
+    {
+      "path": "BATCH09_COMPATIBILITY.md",
+      "sha256": "171488f65c511330c53cd5eaf889d8380f68ff724f81e764640360ba26b02aea",
+      "size": 2123
+    },
+    {
+      "path": "CODEX_IMPLEMENTATION_PROMPT.md",
+      "sha256": "b26bff34da3d2ae30c9d7d65ee6cb76ed898aa28f29dfcd20d001ad1d7507c25",
+      "size": 2301
+    },
+    {
+      "path": "IMPLEMENTATION_CHECKLIST.md",
+      "sha256": "f7d7c1b88a64a6aa523d09e33564078a2b8fe3591ec26e41622dccde32c4f4c0",
+      "size": 1786
+    },
+    {
+      "path": "README.md",
+      "sha256": "4ed81b6096e6d89876f27973dc357c9d2400effb15a176f1b7a1a77096ddd958",
+      "size": 1082
+    },
+    {
+      "path": "SKILL.md",
+      "sha256": "8f457799e81af9c9b4cdea3b2b970c9aedba5af12e223ae3fff65897bdb6eacb",
+      "size": 4128
+    },
+    {
+      "path": "SKILL_INDEX.md",
+      "sha256": "fc23b4de813051ee5d87e2dfdd0d6a31eb96ac94d7ffbbdacfb6df34dd441c0e",
+      "size": 3172
+    },
+    {
+      "path": "VALIDATION_REPORT.md",
+      "sha256": "38bbe30e457f67cdb4bd74b47dc4b003bac48f5628559b8d9861ee32634d8367",
+      "size": 572
+    },
+    {
+      "path": "agents/openai.yaml",
+      "sha256": "40c5fc15bf22802f378bc4094c406d4e2130d68948143e23970a7bd2a95473e2",
+      "size": 395
+    },
+    {
+      "path": "examples/certificate.example.json",
+      "sha256": "0b2b7b2c5ec5ae5bf28556412185e5a1a2338b1b557abc4b9b381fdb7c990f34",
+      "size": 452
+    },
+    {
+      "path": "examples/invocation.example.json",
+      "sha256": "6c7b466018a930ea10ac5b136ca53098391e74f187c4d14b7fb1da2d541f9c78",
+      "size": 299
+    },
+    {
+      "path": "install.sh",
+      "sha256": "cdaf3fdf0c010dd9e0fe29b4a92cd723ff35dd0617eaf14bb5f57e757bc2fa02",
+      "size": 305
+    },
+    {
+      "path": "policies/agent-boundary.yaml",
+      "sha256": "79adc8830adec220835b49067d29b50a3a1578f146a65e7d5b70a6d19ba09ab2",
+      "size": 150
+    },
+    {
+      "path": "policies/certification.yaml",
+      "sha256": "17f50ef51eb5cbf800b3b4990bfb399d4aed9c751cb7f440bee4a4d88ebf02ea",
+      "size": 182
+    },
+    {
+      "path": "policies/default-deny.yaml",
+      "sha256": "25c6a03403de8832018b82bfa5d9dd516d8f5136ba4974c85d40bdf8972f9366",
+      "size": 105
+    },
+    {
+      "path": "policies/evidence-first.yaml",
+      "sha256": "50408543ffa45cfea3461cd57bdabf39f9bdd422fc5b41cdfef4d3c679a058c2",
+      "size": 156
+    },
+    {
+      "path": "policies/human-approval.yaml",
+      "sha256": "d9a6b11cfe402c569440e95b1aa2377387e222a32b693c83fc278ddb1fd4482f",
+      "size": 143
+    },
+    {
+      "path": "schemas/batch-input.schema.json",
+      "sha256": "37b597512cfc0300f3b9246376c3cce9a1cbd51ae2dde1444f4a6608550b2d22",
+      "size": 731
+    },
+    {
+      "path": "schemas/batch-output.schema.json",
+      "sha256": "fbfe77ad4db4fb2154eceb3dffb8f3404ae5680d69ea289952c63b4147935f13",
+      "size": 832
+    },
+    {
+      "path": "schemas/capability-package.schema.json",
+      "sha256": "36267dc2f328db71149d5d34499433fe6511159735f4603374079b613fe365ca",
+      "size": 1133
+    },
+    {
+      "path": "schemas/certification.schema.json",
+      "sha256": "33353a8e01c4a1d5b893ce95b97ab79c25de9cce89169251cb2b8cdb7e0cd4ef",
+      "size": 1281
+    },
+    {
+      "path": "schemas/evidence-ref.schema.json",
+      "sha256": "49ae81b7f55e2b7404e2f128112890bf128f4f46dc67c54b8bf22589b3bc150e",
+      "size": 996
+    },
+    {
+      "path": "schemas/workflow-run.schema.json",
+      "sha256": "b9c634f8778c7b56b1a0ad666b9336b7256b2e81cf5ff1ad767d44db98c54dfe",
+      "size": 848
+    },
+    {
+      "path": "skills/b10-behavior-diff-lifecycle-recertification/SKILL.md",
+      "sha256": "a95936f57f3fb864a5c442656b2ea605425aae47a6904e5eeb25eac879baaec6",
+      "size": 3990
+    },
+    {
+      "path": "skills/b10-behavior-diff-lifecycle-recertification/agents/openai.yaml",
+      "sha256": "2ccc8a28aa2377dd7bb725b3a576331f23164c6a393ca4966b1bd37cc4213aa9",
+      "size": 362
+    },
+    {
+      "path": "skills/b10-behavioral-equivalence-differential-adapter-provider/SKILL.md",
+      "sha256": "2e5b8cfdda16490dc1baa4974c2f550ba090b806b060de540c8ad603eda20d1a",
+      "size": 4003
+    },
+    {
+      "path": "skills/b10-behavioral-equivalence-differential-adapter-provider/agents/openai.yaml",
+      "sha256": "5191681473f345a9931562c53cfc9ed7b4966e9016e39a0538dfc4d397fcefd0",
+      "size": 361
+    },
+    {
+      "path": "skills/b10-behavioral-equivalence-differential-capability-planning/SKILL.md",
+      "sha256": "34844742bd11b543389964e297607da11bd31dda40163b8691f1a4b8cb622be6",
+      "size": 3905
+    },
+    {
+      "path": "skills/b10-behavioral-equivalence-differential-capability-planning/agents/openai.yaml",
+      "sha256": "e8e99884da68ea510a9fbfd0190f1557ee9ac622fb2dece90ea4a56e49a5d648",
+      "size": 368
+    },
+    {
+      "path": "skills/b10-behavioral-equivalence-differential-certification-gate/SKILL.md",
+      "sha256": "2cc781c4d26bf6f5cdb6830216e5a4a2fdbb43f58399bb93a0b87c9bfa544b0c",
+      "size": 4034
+    },
+    {
+      "path": "skills/b10-behavioral-equivalence-differential-certification-gate/agents/openai.yaml",
+      "sha256": "ba892d4b2474be0be2e1d20dff7ec4265300f6bf88a9ee10e474917f6776def7",
+      "size": 368
+    },
+    {
+      "path": "skills/b10-behavioral-equivalence-differential-corpus-benchmark/SKILL.md",
+      "sha256": "1934343e73e74239b9ffdb69809b032b55466117e3544797c231e744f1de9c57",
+      "size": 3944
+    },
+    {
+      "path": "skills/b10-behavioral-equivalence-differential-corpus-benchmark/agents/openai.yaml",
+      "sha256": "d86a0c92ecd9aef06c4cef113f3dccfe363341bce0e7b72079b7587da9e4f4a8",
+      "size": 366
+    },
+    {
+      "path": "skills/b10-behavioral-equivalence-differential-deterministic-engine/SKILL.md",
+      "sha256": "1c9fd062b4988b1450d47c87fe4b5dd90a70157ca53265cf3e19e5a6a9b3b651",
+      "size": 3921
+    },
+    {
+      "path": "skills/b10-behavioral-equivalence-differential-deterministic-engine/agents/openai.yaml",
+      "sha256": "b6718c5c551a11c08c3c11894affc163ac89263c4dcc286d9080e46e4c7b4eba",
+      "size": 359
+    },
+    {
+      "path": "skills/b10-behavioral-equivalence-differential-discovery-inventory/SKILL.md",
+      "sha256": "ab6d3274440ce05729895c0648c0c559acb8818cb12d7404849388b7c9cf2fc1",
+      "size": 3948
+    },
+    {
+      "path": "skills/b10-behavioral-equivalence-differential-discovery-inventory/agents/openai.yaml",
+      "sha256": "df8b040597bd9543c3e1ab00dbbd46fdfdc602f4eeadb7711dd909d373da40c9",
+      "size": 361
+    },
+    {
+      "path": "skills/b10-behavioral-equivalence-differential-domain-model/SKILL.md",
+      "sha256": "dfe8684adc11f6343198c490a66ef4e52ddab86aedeb4f5e40ffbd0d72a1f803",
+      "size": 3975
+    },
+    {
+      "path": "skills/b10-behavioral-equivalence-differential-domain-model/agents/openai.yaml",
+      "sha256": "d8c9f4c1cc614dc55ec3ee1bd5e530c8bfe35ea98ab1da4d198f4e0cd18044e7",
+      "size": 365
+    },
+    {
+      "path": "skills/b10-behavioral-equivalence-differential-failure-recovery/SKILL.md",
+      "sha256": "8fa78f6f67c50c57b36aad3097650f9f13a9c89e3c9740f80cb33acd3ec9d65c",
+      "size": 3952
+    },
+    {
+      "path": "skills/b10-behavioral-equivalence-differential-failure-recovery/agents/openai.yaml",
+      "sha256": "a3171917eb97ee7a0ee670bfdc14e55f433cb4f3dfec080934732aaa00832927",
+      "size": 364
+    },
+    {
+      "path": "skills/b10-behavioral-equivalence-differential-human-approval/SKILL.md",
+      "sha256": "27ab9d9949ac96854405d9c8b29c2b61aead9ba12260c6c267f924597f81bef3",
+      "size": 3937
+    },
+    {
+      "path": "skills/b10-behavioral-equivalence-differential-human-approval/agents/openai.yaml",
+      "sha256": "4a912a255f096568d5baf4b4c657a21c1f376225da2f78ea56adaecbf007ded3",
+      "size": 358
+    },
+    {
+      "path": "skills/b10-behavioral-equivalence-differential-integration-api/SKILL.md",
+      "sha256": "a2f7563b66a562801bbf3a7ea19394cb4b98e1dee70740c737044cdec794cc00",
+      "size": 3922
+    },
+    {
+      "path": "skills/b10-behavioral-equivalence-differential-integration-api/agents/openai.yaml",
+      "sha256": "ffaea555c5382ef636fc0ffe08792635fe37ded5f597493f0eb9d3149365c10d",
+      "size": 361
+    },
+    {
+      "path": "skills/b10-behavioral-equivalence-differential-lineage-reconciliation/SKILL.md",
+      "sha256": "4d108ff3db0fcaeaa4e85a04a783cd78ee77e03532585fbb0b1f6d8a507f0444",
+      "size": 3963
+    },
+    {
+      "path": "skills/b10-behavioral-equivalence-differential-lineage-reconciliation/agents/openai.yaml",
+      "sha256": "82d096fb1e9c6477dfeb8573d58e51382ef56e926b3ac274fe6aa22504deb5db",
+      "size": 367
+    },
+    {
+      "path": "skills/b10-behavioral-equivalence-differential-observability-economics/SKILL.md",
+      "sha256": "0ad62b71e1c6d436820634ad3c7a1716f645002431fea8d92a9c25832d0c8b8a",
+      "size": 3978
+    },
+    {
+      "path": "skills/b10-behavioral-equivalence-differential-observability-economics/agents/openai.yaml",
+      "sha256": "f70f90324d073ffe55b6e26bbce313ec3e1276dbd93d466b033ac7a43d852b75",
+      "size": 378
+    },
+    {
+      "path": "skills/b10-behavioral-equivalence-differential-orchestrator/SKILL.md",
+      "sha256": "42bb2878f264b3932841da45804d69fc760d4e30d27cdc2e0edad66feef28719",
+      "size": 4000
+    },
+    {
+      "path": "skills/b10-behavioral-equivalence-differential-orchestrator/agents/openai.yaml",
+      "sha256": "4badf4d786fc09e36ad7e4833d20bff834c3f12cb255a46c29ab9857279f8463",
+      "size": 361
+    },
+    {
+      "path": "skills/b10-behavioral-equivalence-differential-security-policy/SKILL.md",
+      "sha256": "942a9f1bab288054829fa86e538802558de7009d59f408d91303f28865c3c91b",
+      "size": 3957
+    },
+    {
+      "path": "skills/b10-behavioral-equivalence-differential-security-policy/agents/openai.yaml",
+      "sha256": "529de98da4f410974eeed808964cfa8f3d093017952a2f44b0a1483cb0137ac8",
+      "size": 362
+    },
+    {
+      "path": "skills/b10-behavioral-equivalence-differential-workflow-runtime/SKILL.md",
+      "sha256": "15df0225d703eddc9c52cad4aef91b3aa803ffd2b8eaf94d06b1dc6349f1d060",
+      "size": 3966
+    },
+    {
+      "path": "skills/b10-behavioral-equivalence-differential-workflow-runtime/agents/openai.yaml",
+      "sha256": "55cc92f0a2a79b71f64f613e6e8c6bda13024c402319331b82bd84d97da6e079",
+      "size": 365
+    },
+    {
+      "path": "tests/README.md",
+      "sha256": "a7d67214bf6ed3c26b1e76240ce3b45e14933eae8784300e4258008b15f5876f",
+      "size": 385
+    },
+    {
+      "path": "tests/test_catalog.json",
+      "sha256": "fd83c416aa3f1aca1bcc246c007ca7d5ea37e9f38a540afde04bc252b7ec70a8",
+      "size": 1943
+    },
+    {
+      "path": "tools/validate_package.py",
+      "sha256": "281cd6663a38afc9e046323ef2c1a2f21d08e8cbfd490e54985526d73e0154f3",
+      "size": 3581
+    },
+    {
+      "path": "validate.sh",
+      "sha256": "a1afca2d69d8fa3d11c820c8381b06b6449e31b289196b3cdc4156de471dd6c4",
+      "size": 72
+    }
+  ],
+  "validation": {
+    "static": "passed",
+    "runtime": "not-executed"
+  },
+  "trust_boundary": "Static package validation is not runtime execution or production certification."
+}

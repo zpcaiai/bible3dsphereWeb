@@ -1,0 +1,8 @@
+interface:
+  display_name: "Christian Emotional Pause Protocol"
+  short_description: "Build a fast, safe pause protocol for intense triggers."
+  default_prompt: "Use $christian-emotional-pause-protocol for this task."
+policy:
+  products:
+    - CODEX
+  allow_implicit_invocation: true

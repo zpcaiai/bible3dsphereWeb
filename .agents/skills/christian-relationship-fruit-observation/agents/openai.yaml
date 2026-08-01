@@ -1,0 +1,8 @@
+interface:
+  display_name: Relationship Fruit Observation
+  short_description: Implement consent-based coarse observations from self, household, mentor or aggregate teacher roles.
+  default_prompt: Use $christian-relationship-fruit-observation for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

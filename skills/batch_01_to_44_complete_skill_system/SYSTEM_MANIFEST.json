@@ -1,0 +1,409 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at": "2026-08-01T00:00:00+08:00",
+  "batch_count": 44,
+  "child_skill_count": 744,
+  "batch_root_skill_count": 44,
+  "installable_skill_count": 788,
+  "packages": [
+    {
+      "batch": 1,
+      "directory": "batch_01_competitive_landscape_complete_skill_pack",
+      "title": "Batch 1：竞争格局、产品定位与持续竞争情报",
+      "skill_count": 16,
+      "static_status": "passed",
+      "runtime_status": "NOT_RUN",
+      "production_status": "NOT_CERTIFIED"
+    },
+    {
+      "batch": 2,
+      "directory": "batch_02_application_modernization_assessment_complete_skill_pack",
+      "title": "Batch 2：应用现代化自动评估",
+      "skill_count": 21,
+      "static_status": "passed",
+      "runtime_status": "NOT_RUN",
+      "production_status": "NOT_CERTIFIED"
+    },
+    {
+      "batch": 3,
+      "directory": "batch_03_canonical_semantic_ir_complete_skill_pack",
+      "title": "Batch 3：统一源码摄取、解析前端与 Canonical Semantic IR Foundation",
+      "skill_count": 24,
+      "static_status": "passed",
+      "runtime_status": "NOT_RUN",
+      "production_status": "NOT_CERTIFIED"
+    },
+    {
+      "batch": 4,
+      "directory": "batch_04_transformation_recipe_engine_complete_skill_pack",
+      "title": "Batch 4：跨语言语义映射、Transformation Rule DSL 与 Deterministic Recipe Engine",
+      "skill_count": 25,
+      "static_status": "passed",
+      "runtime_status": "NOT_RUN",
+      "production_status": "NOT_CERTIFIED"
+    },
+    {
+      "batch": 5,
+      "directory": "batch_05_target_language_lowering_complete_skill_pack",
+      "title": "Batch 5：Target Language Lowering、Framework Backend 与 Idiomatic Code Generation",
+      "skill_count": 34,
+      "static_status": "passed",
+      "runtime_status": "NOT_RUN",
+      "production_status": "NOT_CERTIFIED"
+    },
+    {
+      "batch": 6,
+      "directory": "batch_06_standard-library-dependency-compatibility_complete_skill_pack",
+      "title": "Batch 06: Standard Library, Dependency Mapping and Compatibility Runtime",
+      "skill_count": 16,
+      "static_status": "passed",
+      "runtime_status": "NOT_RUN",
+      "production_status": "NOT_CERTIFIED"
+    },
+    {
+      "batch": 7,
+      "directory": "batch_07_framework-contract-recipe-packs_complete_skill_pack",
+      "title": "Batch 07: Framework Contract Model and Framework Migration Recipe Packs",
+      "skill_count": 16,
+      "static_status": "passed",
+      "runtime_status": "NOT_RUN",
+      "production_status": "NOT_CERTIFIED"
+    },
+    {
+      "batch": 8,
+      "directory": "batch_08_repository-aware-multi-agent_complete_skill_pack",
+      "title": "Batch 08: Repository-Aware Multi-Agent, Context and RAG System",
+      "skill_count": 16,
+      "static_status": "passed",
+      "runtime_status": "NOT_RUN",
+      "production_status": "NOT_CERTIFIED"
+    },
+    {
+      "batch": 9,
+      "directory": "batch_09_build-compile-test-repair_complete_skill_pack",
+      "title": "Batch 09: Build, Compile, Test Repair and Bounded Fix Loop",
+      "skill_count": 16,
+      "static_status": "passed",
+      "runtime_status": "NOT_RUN",
+      "production_status": "NOT_CERTIFIED"
+    },
+    {
+      "batch": 10,
+      "directory": "batch_10_behavioral-equivalence-differential_complete_skill_pack",
+      "title": "Batch 10: Behavioral Equivalence, Golden Master and Differential Validation",
+      "skill_count": 16,
+      "static_status": "passed",
+      "runtime_status": "NOT_RUN",
+      "production_status": "NOT_CERTIFIED"
+    },
+    {
+      "batch": 11,
+      "directory": "batch_11_performance-security-production-semantics_complete_skill_pack",
+      "title": "Batch 11: Performance, Security and Production Semantics Validation",
+      "skill_count": 16,
+      "static_status": "passed",
+      "runtime_status": "NOT_RUN",
+      "production_status": "NOT_CERTIFIED"
+    },
+    {
+      "batch": 12,
+      "directory": "batch_12_benchmark-quality-economics_complete_skill_pack",
+      "title": "Batch 12: Benchmark, Quality Scoring and Migration Economics",
+      "skill_count": 16,
+      "static_status": "passed",
+      "runtime_status": "NOT_RUN",
+      "production_status": "NOT_CERTIFIED"
+    },
+    {
+      "batch": 13,
+      "directory": "batch_13_evidence-graph-continuous-certification_complete_skill_pack",
+      "title": "Batch 13: Evidence Graph, Independent Oracle and Continuous Certification",
+      "skill_count": 16,
+      "static_status": "passed",
+      "runtime_status": "NOT_RUN",
+      "production_status": "NOT_CERTIFIED"
+    },
+    {
+      "batch": 14,
+      "directory": "batch_14_formal-verification-proof-carrying_complete_skill_pack",
+      "title": "Batch 14: Formal Verification and Proof-Carrying Migration",
+      "skill_count": 16,
+      "static_status": "passed",
+      "runtime_status": "NOT_RUN",
+      "production_status": "NOT_CERTIFIED"
+    },
+    {
+      "batch": 15,
+      "directory": "batch_15_counterexample-guided-repair_complete_skill_pack",
+      "title": "Batch 15: Counterexample-Guided Repair and Self-Evolving Validation",
+      "skill_count": 16,
+      "static_status": "passed",
+      "runtime_status": "NOT_RUN",
+      "production_status": "NOT_CERTIFIED"
+    },
+    {
+      "batch": 16,
+      "directory": "batch_16_target-architecture-search_complete_skill_pack",
+      "title": "Batch 16: Target Architecture Search and Migration Planning",
+      "skill_count": 16,
+      "static_status": "passed",
+      "runtime_status": "NOT_RUN",
+      "production_status": "NOT_CERTIFIED"
+    },
+    {
+      "batch": 17,
+      "directory": "batch_17_migration-execution-os_complete_skill_pack",
+      "title": "Batch 17: Migration Execution Operating System",
+      "skill_count": 16,
+      "static_status": "passed",
+      "runtime_status": "NOT_RUN",
+      "production_status": "NOT_CERTIFIED"
+    },
+    {
+      "batch": 18,
+      "directory": "batch_18_complete-project-generation_complete_skill_pack",
+      "title": "Batch 18: Complete Project Generation Standard",
+      "skill_count": 16,
+      "static_status": "passed",
+      "runtime_status": "NOT_RUN",
+      "production_status": "NOT_CERTIFIED"
+    },
+    {
+      "batch": 19,
+      "directory": "batch_19_seventy-two-directional-route-packs_complete_skill_pack",
+      "title": "Batch 19: 72 Directional Executable Generator Packs",
+      "skill_count": 16,
+      "static_status": "passed",
+      "runtime_status": "NOT_RUN",
+      "production_status": "NOT_CERTIFIED"
+    },
+    {
+      "batch": 20,
+      "directory": "batch_20_skill-sdk-runtime-registry_complete_skill_pack",
+      "title": "Batch 20: Skill SDK, Runtime, Registry and Marketplace Productization",
+      "skill_count": 16,
+      "static_status": "passed",
+      "runtime_status": "NOT_RUN",
+      "production_status": "NOT_CERTIFIED"
+    },
+    {
+      "batch": 21,
+      "directory": "batch_21_real-repository-golden-workload_complete_skill_pack",
+      "title": "Batch 21: Real Repository Slice and Golden Workload Factory",
+      "skill_count": 16,
+      "static_status": "passed",
+      "runtime_status": "NOT_RUN",
+      "production_status": "NOT_CERTIFIED"
+    },
+    {
+      "batch": 22,
+      "directory": "batch_22_semantic-recovery-hardening_complete_skill_pack",
+      "title": "Batch 22: Semantic Recovery Hardening and Runtime-Enriched CSIR",
+      "skill_count": 16,
+      "static_status": "passed",
+      "runtime_status": "NOT_RUN",
+      "production_status": "NOT_CERTIFIED"
+    },
+    {
+      "batch": 23,
+      "directory": "batch_23_framework-modernization-execution_complete_skill_pack",
+      "title": "Batch 23: Framework Modernization Execution Packs",
+      "skill_count": 16,
+      "static_status": "passed",
+      "runtime_status": "NOT_RUN",
+      "production_status": "NOT_CERTIFIED"
+    },
+    {
+      "batch": 24,
+      "directory": "batch_24_real-build-test-artifact-lab_complete_skill_pack",
+      "title": "Batch 24: Real Build, Test, Package and Artifact Execution Lab",
+      "skill_count": 16,
+      "static_status": "passed",
+      "runtime_status": "NOT_RUN",
+      "production_status": "NOT_CERTIFIED"
+    },
+    {
+      "batch": 25,
+      "directory": "batch_25_behavioral-equivalence-gate_complete_skill_pack",
+      "title": "Batch 25: Behavioral Equivalence Gate and Independent Oracle System",
+      "skill_count": 16,
+      "static_status": "passed",
+      "runtime_status": "NOT_RUN",
+      "production_status": "NOT_CERTIFIED"
+    },
+    {
+      "batch": 26,
+      "directory": "batch_26_dual-run-shadow-reconciliation_complete_skill_pack",
+      "title": "Batch 26: Dual Run, Shadow Execution and State Reconciliation",
+      "skill_count": 16,
+      "static_status": "passed",
+      "runtime_status": "NOT_RUN",
+      "production_status": "NOT_CERTIFIED"
+    },
+    {
+      "batch": 27,
+      "directory": "batch_27_canonical-database-ir-foundation_complete_skill_pack",
+      "title": "Batch 27: Canonical Database IR, Data Migration and Cutover Foundation",
+      "skill_count": 16,
+      "static_status": "passed",
+      "runtime_status": "NOT_RUN",
+      "production_status": "NOT_CERTIFIED"
+    },
+    {
+      "batch": 28,
+      "directory": "batch_28_relational-database-12-routes_complete_skill_pack",
+      "title": "Batch 28: Oracle, SQL Server, MySQL and PostgreSQL 12 Directional Route Packs",
+      "skill_count": 16,
+      "static_status": "passed",
+      "runtime_status": "NOT_RUN",
+      "production_status": "NOT_CERTIFIED"
+    },
+    {
+      "batch": 29,
+      "directory": "batch_29_multi-language-route-factory_complete_skill_pack",
+      "title": "Batch 29: Multi-Language Route Certification Factory",
+      "skill_count": 16,
+      "static_status": "passed",
+      "runtime_status": "NOT_RUN",
+      "production_status": "NOT_CERTIFIED"
+    },
+    {
+      "batch": 30,
+      "directory": "batch_30_multi-framework-version-factory_complete_skill_pack",
+      "title": "Batch 30: Multi-Framework and Version Migration Factory",
+      "skill_count": 16,
+      "static_status": "passed",
+      "runtime_status": "NOT_RUN",
+      "production_status": "NOT_CERTIFIED"
+    },
+    {
+      "batch": 31,
+      "directory": "batch_31_database-data-platform-factory_complete_skill_pack",
+      "title": "Batch 31: Database and Data-Platform Modernization Factory",
+      "skill_count": 16,
+      "static_status": "passed",
+      "runtime_status": "NOT_RUN",
+      "production_status": "NOT_CERTIFIED"
+    },
+    {
+      "batch": 32,
+      "directory": "batch_32_client-ui-modernization-factory_complete_skill_pack",
+      "title": "Batch 32: Client, UI, Desktop and Mobile Modernization Factory",
+      "skill_count": 16,
+      "static_status": "passed",
+      "runtime_status": "NOT_RUN",
+      "production_status": "NOT_CERTIFIED"
+    },
+    {
+      "batch": 33,
+      "directory": "batch_33_cloud-iac-platform-factory_complete_skill_pack",
+      "title": "Batch 33: Cloud, IaC, Container and Platform Modernization Factory",
+      "skill_count": 16,
+      "static_status": "passed",
+      "runtime_status": "NOT_RUN",
+      "production_status": "NOT_CERTIFIED"
+    },
+    {
+      "batch": 34,
+      "directory": "batch_34_portfolio-scale-migration-factory_complete_skill_pack",
+      "title": "Batch 34: Portfolio-Scale Multi-Repository Migration Factory",
+      "skill_count": 16,
+      "static_status": "passed",
+      "runtime_status": "NOT_RUN",
+      "production_status": "NOT_CERTIFIED"
+    },
+    {
+      "batch": 35,
+      "directory": "batch_35_advanced-verification-factory_complete_skill_pack",
+      "title": "Batch 35: Advanced Verification, Fuzzing, Mutation and Formal Assurance Factory",
+      "skill_count": 16,
+      "static_status": "passed",
+      "runtime_status": "NOT_RUN",
+      "production_status": "NOT_CERTIFIED"
+    },
+    {
+      "batch": 36,
+      "directory": "batch_36_developer-experience-integration_complete_skill_pack",
+      "title": "Batch 36: Developer Experience, CLI, IDE and SCM Integration",
+      "skill_count": 16,
+      "static_status": "passed",
+      "runtime_status": "NOT_RUN",
+      "production_status": "NOT_CERTIFIED"
+    },
+    {
+      "batch": 37,
+      "directory": "batch_37_extension-marketplace-governance_complete_skill_pack",
+      "title": "Batch 37: Extension SDK, Marketplace and Supply-Chain Governance",
+      "skill_count": 16,
+      "static_status": "passed",
+      "runtime_status": "NOT_RUN",
+      "production_status": "NOT_CERTIFIED"
+    },
+    {
+      "batch": 38,
+      "directory": "batch_38_platform-convergence_complete_skill_pack",
+      "title": "Batch 38: Canonical CapabilityPackage, Dependency Graph and Platform Convergence",
+      "skill_count": 16,
+      "static_status": "passed",
+      "runtime_status": "NOT_RUN",
+      "production_status": "NOT_CERTIFIED"
+    },
+    {
+      "batch": 39,
+      "directory": "batch_39_durable-workflow-runner-reliability_complete_skill_pack",
+      "title": "Batch 39: Durable Workflow, Runner Fleet and Provider Reliability",
+      "skill_count": 16,
+      "static_status": "passed",
+      "runtime_status": "NOT_RUN",
+      "production_status": "NOT_CERTIFIED"
+    },
+    {
+      "batch": 40,
+      "directory": "batch_40_adversarial-security-privacy_complete_skill_pack",
+      "title": "Batch 40: Adversarial Security, Privacy and Supply-Chain Assurance",
+      "skill_count": 16,
+      "static_status": "passed",
+      "runtime_status": "NOT_RUN",
+      "production_status": "NOT_CERTIFIED"
+    },
+    {
+      "batch": 41,
+      "directory": "batch_41_release-progressive-delivery_complete_skill_pack",
+      "title": "Batch 41: Release Engineering, Progressive Delivery and Automated Rollback",
+      "skill_count": 16,
+      "static_status": "passed",
+      "runtime_status": "NOT_RUN",
+      "production_status": "NOT_CERTIFIED"
+    },
+    {
+      "batch": 42,
+      "directory": "batch_42_production-operations-readiness_complete_skill_pack",
+      "title": "Batch 42: Production Observability, SLO, Incident, HA/DR and Operations Readiness",
+      "skill_count": 16,
+      "static_status": "passed",
+      "runtime_status": "NOT_RUN",
+      "production_status": "NOT_CERTIFIED"
+    },
+    {
+      "batch": 43,
+      "directory": "batch_43_legacy-coexistence-retirement_complete_skill_pack",
+      "title": "Batch 43: Legacy Coexistence, Cutover, Hypercare and Continuous Modernization",
+      "skill_count": 16,
+      "static_status": "passed",
+      "runtime_status": "NOT_RUN",
+      "production_status": "NOT_CERTIFIED"
+    },
+    {
+      "batch": 44,
+      "directory": "batch_44_unified-production-release-gate_complete_skill_pack",
+      "title": "Batch 44: Unified Production Release Gate and Continuous Recertification",
+      "skill_count": 16,
+      "static_status": "passed",
+      "runtime_status": "NOT_RUN",
+      "production_status": "NOT_CERTIFIED"
+    }
+  ],
+  "runtime_status": "NOT_RUN",
+  "production_status": "NOT_CERTIFIED",
+  "trust_boundary": "Static package validation is not runtime execution or production certification."
+}

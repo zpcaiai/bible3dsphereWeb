@@ -1,0 +1,41 @@
+{
+  "LATENT": [
+    "TRIGGERED"
+  ],
+  "TRIGGERED": [
+    "AMPLIFYING",
+    "RESOLVED"
+  ],
+  "AMPLIFYING": [
+    "POLARIZED",
+    "FATIGUED",
+    "RESOLVED"
+  ],
+  "POLARIZED": [
+    "MONETIZED",
+    "FATIGUED",
+    "REFRAMED"
+  ],
+  "MONETIZED": [
+    "FATIGUED",
+    "REFRAMED",
+    "REIGNITED"
+  ],
+  "FATIGUED": [
+    "REFRAMED",
+    "RESOLVED",
+    "REIGNITED"
+  ],
+  "REFRAMED": [
+    "RESOLVED",
+    "REIGNITED",
+    "AMPLIFYING"
+  ],
+  "RESOLVED": [
+    "REIGNITED"
+  ],
+  "REIGNITED": [
+    "AMPLIFYING",
+    "POLARIZED"
+  ]
+}

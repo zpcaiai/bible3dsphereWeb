@@ -1,0 +1,8 @@
+interface:
+  display_name: Explainable Twin Recommendation
+  short_description: Implement evidence-based optional keep/reduce/replace/pause/environment/help recommendations.
+  default_prompt: Use $christian-twin-recommendation for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

@@ -1,0 +1,6 @@
+interface:
+  display_name: "Batch 4：跨语言语义映射、Transformation Rule DSL 与 Deterministic Recipe Engine"
+  short_description: "Orchestrate this Batch with evidence gates"
+  default_prompt: "Use $batch-04-transformation-recipe-engine to execute this workflow with explicit evidence, validation, human approval boundaries, and rollback reporting."
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,7 @@
+schema_version: "1.0.0"
+example_kind: "patch-intent-set"
+batch: "batch-04"
+status: "experimental"
+evidence_refs: []
+unknowns:
+  - "Runtime evidence is intentionally not supplied by a package example."

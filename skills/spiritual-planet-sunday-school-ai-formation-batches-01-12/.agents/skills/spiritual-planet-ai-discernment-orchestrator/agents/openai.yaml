@@ -1,0 +1,8 @@
+interface:
+  display_name: "Spiritual Planet AI Discernment Orchestrator"
+  short_description: "Implement Batch 03 end to end in the Sunday School module."
+  default_prompt: "Use $spiritual-planet-ai-discernment-orchestrator for this task."
+policy:
+  products:
+    - CODEX
+  allow_implicit_invocation: true

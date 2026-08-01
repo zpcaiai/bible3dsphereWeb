@@ -1,0 +1,8 @@
+interface:
+  display_name: Scenario Benchmark and Golden Runs
+  short_description: Implement synthetic route, safety, privacy, non-coercion, accessibility and regression benchmarks.
+  default_prompt: Use $christian-scenario-benchmark for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

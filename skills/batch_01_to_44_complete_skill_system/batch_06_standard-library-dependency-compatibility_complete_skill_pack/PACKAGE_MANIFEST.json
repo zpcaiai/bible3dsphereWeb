@@ -1,0 +1,326 @@
+{
+  "schema_version": "1.0.0",
+  "package_id": "batch-06-standard-library-dependency-compatibility-complete-skill-pack",
+  "batch": 6,
+  "title": "Batch 06: Standard Library, Dependency Mapping and Compatibility Runtime",
+  "version": "1.0.0",
+  "root_skill": "batch-06-standard-library-dependency-compatibility",
+  "generated_at": "2026-07-31T00:00:00Z",
+  "skill_count": 16,
+  "skills": [
+    "b06-standard-library-dependency-compatibility-adapter-provider",
+    "b06-standard-library-dependency-compatibility-certification-gate",
+    "b06-standard-library-dependency-compatibility-corpus-benchmark",
+    "b06-standard-library-dependency-compatibility-domain-model",
+    "b06-standard-library-dependency-compatibility-failure-recovery",
+    "b06-standard-library-dependency-compatibility-human-approval",
+    "b06-standard-library-dependency-compatibility-integration-api",
+    "b06-standard-library-dependency-compatibility-orchestrator",
+    "b06-standard-library-dependency-compatibility-security-policy",
+    "b06-standard-library-dependency-compatibility-workflow-runtime",
+    "b06-stdlib-dependency-capability-planning",
+    "b06-stdlib-dependency-deterministic-engine",
+    "b06-stdlib-dependency-discovery-inventory",
+    "b06-stdlib-dependency-lifecycle-recertification",
+    "b06-stdlib-dependency-lineage-reconciliation",
+    "b06-stdlib-dependency-observability-economics"
+  ],
+  "upstream_batch": 5,
+  "files": [
+    {
+      "path": "BATCH05_COMPATIBILITY.md",
+      "sha256": "30a7de6d22bb5b300c2797c73e5d7a5323be23a802ab269a17965b0e1f11cc7e",
+      "size": 2175
+    },
+    {
+      "path": "CODEX_IMPLEMENTATION_PROMPT.md",
+      "sha256": "62b603025c1c31030c132481844065d757689e594bb9ac7c074ccfda11f48dbd",
+      "size": 2375
+    },
+    {
+      "path": "IMPLEMENTATION_CHECKLIST.md",
+      "sha256": "bc64182542809cdf0e1475877a057c29d1ff04a1c211be826bc0f07b2daf1890",
+      "size": 1830
+    },
+    {
+      "path": "README.md",
+      "sha256": "0542539f62dfd278db565623fea51c5fa71f11072f12c2f75fc2a664b3dc8c06",
+      "size": 1101
+    },
+    {
+      "path": "SKILL.md",
+      "sha256": "df9d34ad066ad993f221770d9afd97f08babf76ca8d8775d19a12d8971104523",
+      "size": 4179
+    },
+    {
+      "path": "SKILL_INDEX.md",
+      "sha256": "da606a7dead277d62e3b1ed7ae700a0993bd1753e94d31b8c1caabd785d31769",
+      "size": 3143
+    },
+    {
+      "path": "VALIDATION_REPORT.md",
+      "sha256": "e478b2ac9fb35e3c7f81ad64e688b96db60f01d3b617da300d42fd7acb912417",
+      "size": 572
+    },
+    {
+      "path": "agents/openai.yaml",
+      "sha256": "0480fabcff7ab6c1f8f9db662ad9ff1faf00ae6dc9e0bb465ff8f617fa474991",
+      "size": 398
+    },
+    {
+      "path": "examples/certificate.example.json",
+      "sha256": "829c1a9bd18d011875bb077ce0053bb07e68b0c714b37e0da17b51239b868aee",
+      "size": 451
+    },
+    {
+      "path": "examples/invocation.example.json",
+      "sha256": "e159bd7c89a88c65c50f116baaed786df0e7253d8bc4375d6427eb76431fefad",
+      "size": 296
+    },
+    {
+      "path": "install.sh",
+      "sha256": "cdaf3fdf0c010dd9e0fe29b4a92cd723ff35dd0617eaf14bb5f57e757bc2fa02",
+      "size": 305
+    },
+    {
+      "path": "policies/agent-boundary.yaml",
+      "sha256": "79adc8830adec220835b49067d29b50a3a1578f146a65e7d5b70a6d19ba09ab2",
+      "size": 150
+    },
+    {
+      "path": "policies/certification.yaml",
+      "sha256": "17f50ef51eb5cbf800b3b4990bfb399d4aed9c751cb7f440bee4a4d88ebf02ea",
+      "size": 182
+    },
+    {
+      "path": "policies/default-deny.yaml",
+      "sha256": "25c6a03403de8832018b82bfa5d9dd516d8f5136ba4974c85d40bdf8972f9366",
+      "size": 105
+    },
+    {
+      "path": "policies/evidence-first.yaml",
+      "sha256": "50408543ffa45cfea3461cd57bdabf39f9bdd422fc5b41cdfef4d3c679a058c2",
+      "size": 156
+    },
+    {
+      "path": "policies/human-approval.yaml",
+      "sha256": "d9a6b11cfe402c569440e95b1aa2377387e222a32b693c83fc278ddb1fd4482f",
+      "size": 143
+    },
+    {
+      "path": "schemas/batch-input.schema.json",
+      "sha256": "c13cd64c7aa9c6346479ea72caf52252441802c120aa4c48b874b08c3ef2fbbc",
+      "size": 731
+    },
+    {
+      "path": "schemas/batch-output.schema.json",
+      "sha256": "cc87b30a1e9d7e5f557653f4d68babfaa838c52bc51f40b529206353fc8c1ecc",
+      "size": 832
+    },
+    {
+      "path": "schemas/capability-package.schema.json",
+      "sha256": "8e6292327b4630abd7195025702e350c9e948222a6696a24389f7848b994a6ab",
+      "size": 1133
+    },
+    {
+      "path": "schemas/certification.schema.json",
+      "sha256": "58f4c052ebfdc792dcd88418ea24bd96351d86f35cf5b9c152d39511b97770bd",
+      "size": 1280
+    },
+    {
+      "path": "schemas/evidence-ref.schema.json",
+      "sha256": "0b6f9e78065f20fb9febcd826aa8d66c2c7c956dfeef186eb73cd87fc59f15a1",
+      "size": 996
+    },
+    {
+      "path": "schemas/workflow-run.schema.json",
+      "sha256": "1a9cb384350224da991a58e5548b64e9a7a6adf1a492b24f83af033fd24be1ad",
+      "size": 848
+    },
+    {
+      "path": "skills/b06-standard-library-dependency-compatibility-adapter-provider/SKILL.md",
+      "sha256": "bb40a6cb9b02bdf3657280781a9224b84658d534be8e9bec6ee76a9dfc39ab95",
+      "size": 4108
+    },
+    {
+      "path": "skills/b06-standard-library-dependency-compatibility-adapter-provider/agents/openai.yaml",
+      "sha256": "a5d3cf718e7beffbd542a258ba8e31837da35c836cfc366971cdd772907a6cac",
+      "size": 367
+    },
+    {
+      "path": "skills/b06-standard-library-dependency-compatibility-certification-gate/SKILL.md",
+      "sha256": "fde98a65fd275278e36a25257be763fda2f23724ea4d55a0b0cc582ae7c6d2b2",
+      "size": 4139
+    },
+    {
+      "path": "skills/b06-standard-library-dependency-compatibility-certification-gate/agents/openai.yaml",
+      "sha256": "9a787e40bc41c1f3835ec8410ea15553b72e148e1f803f03e512c701325ee6ba",
+      "size": 374
+    },
+    {
+      "path": "skills/b06-standard-library-dependency-compatibility-corpus-benchmark/SKILL.md",
+      "sha256": "f3da6dc81a8c0cb853a5bb371e63d97d028e711302e037e5c17a8c5f2ca06901",
+      "size": 4049
+    },
+    {
+      "path": "skills/b06-standard-library-dependency-compatibility-corpus-benchmark/agents/openai.yaml",
+      "sha256": "ed4c3d43b715eaa65cb02520fc3a880e1041660806b6ef96ef3b3757f2c385ff",
+      "size": 372
+    },
+    {
+      "path": "skills/b06-standard-library-dependency-compatibility-domain-model/SKILL.md",
+      "sha256": "545ef165def80351058969933c32dd35143b1562ad845fd5b32d014abbd85db9",
+      "size": 4080
+    },
+    {
+      "path": "skills/b06-standard-library-dependency-compatibility-domain-model/agents/openai.yaml",
+      "sha256": "38fcbbf550aa85602c1e9f56b25a892d24d85c7c6d4c3a94cc60a092f4b6eeef",
+      "size": 371
+    },
+    {
+      "path": "skills/b06-standard-library-dependency-compatibility-failure-recovery/SKILL.md",
+      "sha256": "c780b764075207e36af6fa208e1065eef1b01af61113a624de241dda0936de9a",
+      "size": 4057
+    },
+    {
+      "path": "skills/b06-standard-library-dependency-compatibility-failure-recovery/agents/openai.yaml",
+      "sha256": "34ff06b9052cf374b72e1d6efef456bbdb23ee09ebaf1fda3bad8910c027ba6c",
+      "size": 370
+    },
+    {
+      "path": "skills/b06-standard-library-dependency-compatibility-human-approval/SKILL.md",
+      "sha256": "e4c380b990f51f198c2f9b070f6e4b1506887bc86d53492948111b1035ec181f",
+      "size": 4042
+    },
+    {
+      "path": "skills/b06-standard-library-dependency-compatibility-human-approval/agents/openai.yaml",
+      "sha256": "b7ad56ada999afd097867165fb0cdd2d210520ee82e1676cdb55699fa0d4ac2a",
+      "size": 364
+    },
+    {
+      "path": "skills/b06-standard-library-dependency-compatibility-integration-api/SKILL.md",
+      "sha256": "b4ce8645d5383014c99f0bab4c33150553ea73c38559b95c8a038228cdf6ee9f",
+      "size": 4027
+    },
+    {
+      "path": "skills/b06-standard-library-dependency-compatibility-integration-api/agents/openai.yaml",
+      "sha256": "c5587717b02159afc17c5f42871b2bbf672021c19d80939a21b8fba37972be0a",
+      "size": 367
+    },
+    {
+      "path": "skills/b06-standard-library-dependency-compatibility-orchestrator/SKILL.md",
+      "sha256": "953849d5f642ae9372566c86fe73b7ad19aa980a69acaa0a3ee056ebec73362f",
+      "size": 4105
+    },
+    {
+      "path": "skills/b06-standard-library-dependency-compatibility-orchestrator/agents/openai.yaml",
+      "sha256": "4cfb29885dab0bf079e147651f28a78918ac878271fcb45c06abcb0f1d9fecce",
+      "size": 367
+    },
+    {
+      "path": "skills/b06-standard-library-dependency-compatibility-security-policy/SKILL.md",
+      "sha256": "aed00ff658aeca226067ce63ab609160e26a6a30bbc0a197edadbe74587a261f",
+      "size": 4062
+    },
+    {
+      "path": "skills/b06-standard-library-dependency-compatibility-security-policy/agents/openai.yaml",
+      "sha256": "61233ec4d5c104c1b5d9c393adc1f0f2753f9477ff4275315896d756050cda6c",
+      "size": 368
+    },
+    {
+      "path": "skills/b06-standard-library-dependency-compatibility-workflow-runtime/SKILL.md",
+      "sha256": "0da6e8fbd1f86ad48d3e1ffa658e6c50a57e1a4c9a8174020c40f44b289c701c",
+      "size": 4071
+    },
+    {
+      "path": "skills/b06-standard-library-dependency-compatibility-workflow-runtime/agents/openai.yaml",
+      "sha256": "73660ac9af613025ac4c373fd1154267b2fbf321dea5e56eacea21ab6ca01d83",
+      "size": 371
+    },
+    {
+      "path": "skills/b06-stdlib-dependency-capability-planning/SKILL.md",
+      "sha256": "ef45e2c35d4348878b25221bcbd026db556ecda7e807a05e258135e75c15a262",
+      "size": 3986
+    },
+    {
+      "path": "skills/b06-stdlib-dependency-capability-planning/agents/openai.yaml",
+      "sha256": "a79cbf7825a6a5334fa749e747b486a7c2ebd9bd301540c288c5d19b49e8fc3c",
+      "size": 350
+    },
+    {
+      "path": "skills/b06-stdlib-dependency-deterministic-engine/SKILL.md",
+      "sha256": "29f7fa498f32217caef9e8162938b75b6a3980448c034f0f933ba4ce3ac02014",
+      "size": 4002
+    },
+    {
+      "path": "skills/b06-stdlib-dependency-deterministic-engine/agents/openai.yaml",
+      "sha256": "55e2ed8231bc3e2f182682ab95a111c15fc2236e9e7c1fa357bd12f5500a8da0",
+      "size": 341
+    },
+    {
+      "path": "skills/b06-stdlib-dependency-discovery-inventory/SKILL.md",
+      "sha256": "94d62a5ee3eddefc78bb00a17f29dc66faf279d52216c0010840bfefa3cc2ffa",
+      "size": 4029
+    },
+    {
+      "path": "skills/b06-stdlib-dependency-discovery-inventory/agents/openai.yaml",
+      "sha256": "889474eabc8069430c4eb3b90b76740a19c4c17f9f0b2743841d71ab6f9e9630",
+      "size": 343
+    },
+    {
+      "path": "skills/b06-stdlib-dependency-lifecycle-recertification/SKILL.md",
+      "sha256": "dc8d49407267032aa0165745287843081bd4e5e57784ffc531a5818bc5f4fab6",
+      "size": 4093
+    },
+    {
+      "path": "skills/b06-stdlib-dependency-lifecycle-recertification/agents/openai.yaml",
+      "sha256": "d499acd4445cc5d15eff36cb59049d5c69a4c5913b5e5d5e729f8ebc0b4e55d0",
+      "size": 366
+    },
+    {
+      "path": "skills/b06-stdlib-dependency-lineage-reconciliation/SKILL.md",
+      "sha256": "0bdf2256cdb166ed3af005b1049fd0505a1454135370aeab76907056b14103b4",
+      "size": 4044
+    },
+    {
+      "path": "skills/b06-stdlib-dependency-lineage-reconciliation/agents/openai.yaml",
+      "sha256": "92b69f6c3ec2202f63eb6093f6c3a8184c39e63c47382060b49822e7d30b596a",
+      "size": 349
+    },
+    {
+      "path": "skills/b06-stdlib-dependency-observability-economics/SKILL.md",
+      "sha256": "e48a392641651908b3fa26c0b4dc5f513539401be33b0716de115a7559b84ebb",
+      "size": 4059
+    },
+    {
+      "path": "skills/b06-stdlib-dependency-observability-economics/agents/openai.yaml",
+      "sha256": "bf291b4b210c96dec1bdbb21fcf2c8f7161b8bd87205e7870c2e556e4e9f99e9",
+      "size": 360
+    },
+    {
+      "path": "tests/README.md",
+      "sha256": "9bde8fae97630436d55b508cae499ed688a0367f61e8992a68dd8b2953a03552",
+      "size": 442
+    },
+    {
+      "path": "tests/test_catalog.json",
+      "sha256": "2d1604523fabf6aebde11f12893c4deb7c9cd223d5d6ad10fc74a04e59639f04",
+      "size": 1939
+    },
+    {
+      "path": "tools/validate_package.py",
+      "sha256": "281cd6663a38afc9e046323ef2c1a2f21d08e8cbfd490e54985526d73e0154f3",
+      "size": 3581
+    },
+    {
+      "path": "validate.sh",
+      "sha256": "a1afca2d69d8fa3d11c820c8381b06b6449e31b289196b3cdc4156de471dd6c4",
+      "size": 72
+    }
+  ],
+  "validation": {
+    "static": "passed",
+    "runtime": "not-executed"
+  },
+  "trust_boundary": "Static package validation is not runtime execution or production certification."
+}

@@ -1,0 +1,8 @@
+interface:
+  display_name: "Christian Algorithmic Worldview Analyzer"
+  short_description: "Analyze objective functions, incentives, anthropology, telos and feedback loops."
+  default_prompt: "Use $christian-algorithmic-worldview-analyzer for this task."
+policy:
+  products:
+    - CODEX
+  allow_implicit_invocation: true

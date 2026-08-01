@@ -1,0 +1,51 @@
+prompt,expected_skill,should_activate,case_type,notes
+请在属灵星球仓库实现Family Attention and AI Covenant Orchestrator，复用现有路由和安全门。,spiritual-planet-family-attention-covenant-orchestrator,true,explicit-domain,应自动路由到焦点技能
+Use $spiritual-planet-family-attention-covenant-orchestrator to inspect and implement the repository changes with tests.,spiritual-planet-family-attention-covenant-orchestrator,true,explicit-mention,显式调用
+审查当前 Family Attention and AI Covenant Orchestrator 的Schema、权限、隐私和E2E测试，不要新建平行应用。,spiritual-planet-family-attention-covenant-orchestrator,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,spiritual-planet-family-attention-covenant-orchestrator,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Family Attention Ecology，复用现有路由和安全门。,christian-family-attention-ecology,true,explicit-domain,应自动路由到焦点技能
+Use $christian-family-attention-ecology to inspect and implement the repository changes with tests.,christian-family-attention-ecology,true,explicit-mention,显式调用
+审查当前 Family Attention Ecology 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-family-attention-ecology,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-family-attention-ecology,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Family Digital Covenant，复用现有路由和安全门。,christian-family-digital-covenant,true,explicit-domain,应自动路由到焦点技能
+Use $christian-family-digital-covenant to inspect and implement the repository changes with tests.,christian-family-digital-covenant,true,explicit-mention,显式调用
+审查当前 Family Digital Covenant 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-family-digital-covenant,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-family-digital-covenant,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Device Zone Governance，复用现有路由和安全门。,christian-device-zone-governance,true,explicit-domain,应自动路由到焦点技能
+Use $christian-device-zone-governance to inspect and implement the repository changes with tests.,christian-device-zone-governance,true,explicit-mention,显式调用
+审查当前 Device Zone Governance 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-device-zone-governance,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-device-zone-governance,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Family AI Covenant，复用现有路由和安全门。,christian-family-ai-covenant,true,explicit-domain,应自动路由到焦点技能
+Use $christian-family-ai-covenant to inspect and implement the repository changes with tests.,christian-family-ai-covenant,true,explicit-mention,显式调用
+审查当前 Family AI Covenant 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-family-ai-covenant,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-family-ai-covenant,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Family Digital Meeting Facilitator，复用现有路由和安全门。,christian-family-meeting-facilitator,true,explicit-domain,应自动路由到焦点技能
+Use $christian-family-meeting-facilitator to inspect and implement the repository changes with tests.,christian-family-meeting-facilitator,true,explicit-mention,显式调用
+审查当前 Family Digital Meeting Facilitator 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-family-meeting-facilitator,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-family-meeting-facilitator,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Developmental Digital Permission Policy，复用现有路由和安全门。,christian-age-permission-policy,true,explicit-domain,应自动路由到焦点技能
+Use $christian-age-permission-policy to inspect and implement the repository changes with tests.,christian-age-permission-policy,true,explicit-mention,显式调用
+审查当前 Developmental Digital Permission Policy 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-age-permission-policy,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-age-permission-policy,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Family Rule Exception Policy，复用现有路由和安全门。,christian-family-exception-policy,true,explicit-domain,应自动路由到焦点技能
+Use $christian-family-exception-policy to inspect and implement the repository changes with tests.,christian-family-exception-policy,true,explicit-mention,显式调用
+审查当前 Family Rule Exception Policy 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-family-exception-policy,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-family-exception-policy,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Family Digital Conflict Repair，复用现有路由和安全门。,christian-family-digital-conflict-repair,true,explicit-domain,应自动路由到焦点技能
+Use $christian-family-digital-conflict-repair to inspect and implement the repository changes with tests.,christian-family-digital-conflict-repair,true,explicit-mention,显式调用
+审查当前 Family Digital Conflict Repair 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-family-digital-conflict-repair,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-family-digital-conflict-repair,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Family Digital Sabbath，复用现有路由和安全门。,christian-family-digital-sabbath,true,explicit-domain,应自动路由到焦点技能
+Use $christian-family-digital-sabbath to inspect and implement the repository changes with tests.,christian-family-digital-sabbath,true,explicit-mention,显式调用
+审查当前 Family Digital Sabbath 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-family-digital-sabbath,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-family-digital-sabbath,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Family Covenant Review，复用现有路由和安全门。,christian-family-covenant-review,true,explicit-domain,应自动路由到焦点技能
+Use $christian-family-covenant-review to inspect and implement the repository changes with tests.,christian-family-covenant-review,true,explicit-mention,显式调用
+审查当前 Family Covenant Review 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-family-covenant-review,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-family-covenant-review,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Family Attention Course Integrator，复用现有路由和安全门。,family-attention-course-integrator,true,explicit-domain,应自动路由到焦点技能
+Use $family-attention-course-integrator to inspect and implement the repository changes with tests.,family-attention-course-integrator,true,explicit-mention,显式调用
+审查当前 Family Attention Course Integrator 的Schema、权限、隐私和E2E测试，不要新建平行应用。,family-attention-course-integrator,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,family-attention-course-integrator,false,negative,纯神学问答不应激活仓库技能
+在属灵星球主日学模块端到端实现 Batch 06，包含数据、页面、迁移、权限、内容、测试与报告。,spiritual-planet-family-attention-covenant-orchestrator,true,orchestrator,端到端请求
+帮我写一段个人祷告，不要修改任何项目。,spiritual-planet-family-attention-covenant-orchestrator,false,negative,非产品任务

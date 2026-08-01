@@ -1,0 +1,721 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at": "2026-08-01T00:00:00+08:00",
+  "name_migrations": {
+    "b06-standard-library-dependency-compatibility-capability-planning": "b06-stdlib-dependency-capability-planning",
+    "b06-standard-library-dependency-compatibility-deterministic-engine": "b06-stdlib-dependency-deterministic-engine",
+    "b06-standard-library-dependency-compatibility-discovery-inventory": "b06-stdlib-dependency-discovery-inventory",
+    "b06-standard-library-dependency-compatibility-lifecycle-recertification": "b06-stdlib-dependency-lifecycle-recertification",
+    "b06-standard-library-dependency-compatibility-lineage-reconciliation": "b06-stdlib-dependency-lineage-reconciliation",
+    "b06-standard-library-dependency-compatibility-observability-economics": "b06-stdlib-dependency-observability-economics",
+    "b10-behavioral-equivalence-differential-lifecycle-recertification": "b10-behavior-diff-lifecycle-recertification",
+    "b11-performance-security-production-semantics-capability-planning": "b11-prod-semantics-capability-planning",
+    "b11-performance-security-production-semantics-deterministic-engine": "b11-prod-semantics-deterministic-engine",
+    "b11-performance-security-production-semantics-discovery-inventory": "b11-prod-semantics-discovery-inventory",
+    "b11-performance-security-production-semantics-lifecycle-recertification": "b11-prod-semantics-lifecycle-recertification",
+    "b11-performance-security-production-semantics-lineage-reconciliation": "b11-prod-semantics-lineage-reconciliation",
+    "b11-performance-security-production-semantics-observability-economics": "b11-prod-semantics-observability-economics",
+    "b13-evidence-graph-continuous-certification-lifecycle-recertification": "b13-evidence-cert-lifecycle-recertification",
+    "b13-evidence-graph-continuous-certification-lineage-reconciliation": "b13-evidence-cert-lineage-reconciliation",
+    "b13-evidence-graph-continuous-certification-observability-economics": "b13-evidence-cert-observability-economics",
+    "b19-seventy-two-directional-route-packs-lifecycle-recertification": "b19-route-packs-lifecycle-recertification",
+    "b39-durable-workflow-runner-reliability-lifecycle-recertification": "b39-workflow-reliability-lifecycle-recertification",
+    "batch-01-competitive-landscape-product-positioning-and-continuous-intelligence": "batch-01-competitive-intelligence",
+    "batch-03-unified-source-intake-parser-frontends-and-canonical-semantic-ir": "batch-03-canonical-semantic-ir",
+    "batch-04-cross-language-semantic-mapping-transformation-rule-dsl-and-deterministic-recipe-engine": "batch-04-transformation-recipe-engine",
+    "batch-05-target-language-lowering-framework-backend-idiomatic-code-generation": "batch-05-target-code-generation"
+  },
+  "folder_migrations": [
+    {
+      "batch": "batch-01",
+      "old_path": "skills/01-competitive-landscape-orchestrator",
+      "new_path": "skills/b01-competitive-landscape-orchestrator"
+    },
+    {
+      "batch": "batch-01",
+      "old_path": "skills/02-modernization-market-boundary",
+      "new_path": "skills/b01-modernization-market-boundary"
+    },
+    {
+      "batch": "batch-01",
+      "old_path": "skills/03-competitor-discovery-registry",
+      "new_path": "skills/b01-competitor-discovery-registry"
+    },
+    {
+      "batch": "batch-01",
+      "old_path": "skills/04-competitive-evidence-harvester",
+      "new_path": "skills/b01-competitive-evidence-harvester"
+    },
+    {
+      "batch": "batch-01",
+      "old_path": "skills/05-modernization-capability-taxonomy",
+      "new_path": "skills/b01-modernization-capability-taxonomy"
+    },
+    {
+      "batch": "batch-01",
+      "old_path": "skills/06-competitor-capability-normalizer",
+      "new_path": "skills/b01-competitor-capability-normalizer"
+    },
+    {
+      "batch": "batch-01",
+      "old_path": "skills/07-end-to-end-stage-coverage-analyzer",
+      "new_path": "skills/b01-end-to-end-stage-coverage-analyzer"
+    },
+    {
+      "batch": "batch-01",
+      "old_path": "skills/08-language-framework-route-coverage",
+      "new_path": "skills/b01-language-framework-route-coverage"
+    },
+    {
+      "batch": "batch-01",
+      "old_path": "skills/09-database-route-competitive-analyzer",
+      "new_path": "skills/b01-database-route-competitive-analyzer"
+    },
+    {
+      "batch": "batch-01",
+      "old_path": "skills/10-verification-and-trust-model-analyzer",
+      "new_path": "skills/b01-verification-and-trust-model-analyzer"
+    },
+    {
+      "batch": "batch-01",
+      "old_path": "skills/11-deployment-sovereignty-lockin-analyzer",
+      "new_path": "skills/b01-deployment-sovereignty-lockin-analyzer"
+    },
+    {
+      "batch": "batch-01",
+      "old_path": "skills/12-commercial-economics-analyzer",
+      "new_path": "skills/b01-commercial-economics-analyzer"
+    },
+    {
+      "batch": "batch-01",
+      "old_path": "skills/13-competitive-claim-benchmark-verifier",
+      "new_path": "skills/b01-competitive-claim-benchmark-verifier"
+    },
+    {
+      "batch": "batch-01",
+      "old_path": "skills/14-competitive-gap-opportunity-engine",
+      "new_path": "skills/b01-competitive-gap-opportunity-engine"
+    },
+    {
+      "batch": "batch-01",
+      "old_path": "skills/15-product-positioning-and-boundary",
+      "new_path": "skills/b01-product-positioning-and-boundary"
+    },
+    {
+      "batch": "batch-01",
+      "old_path": "skills/16-battlecard-and-continuous-intelligence-gate",
+      "new_path": "skills/b01-battlecard-and-continuous-intelligence-gate"
+    },
+    {
+      "batch": "batch-02",
+      "old_path": "skills/01-assessment-orchestrator",
+      "new_path": "skills/b02-assessment-orchestrator"
+    },
+    {
+      "batch": "batch-02",
+      "old_path": "skills/02-portfolio-intake-and-scope",
+      "new_path": "skills/b02-portfolio-intake-and-scope"
+    },
+    {
+      "batch": "batch-02",
+      "old_path": "skills/03-assessment-access-and-data-governance",
+      "new_path": "skills/b02-assessment-access-and-data-governance"
+    },
+    {
+      "batch": "batch-02",
+      "old_path": "skills/04-source-repository-discovery",
+      "new_path": "skills/b02-source-repository-discovery"
+    },
+    {
+      "batch": "batch-02",
+      "old_path": "skills/05-binary-and-artifact-discovery",
+      "new_path": "skills/b02-binary-and-artifact-discovery"
+    },
+    {
+      "batch": "batch-02",
+      "old_path": "skills/06-infrastructure-runtime-document-ingestion",
+      "new_path": "skills/b02-infrastructure-runtime-document-ingestion"
+    },
+    {
+      "batch": "batch-02",
+      "old_path": "skills/07-canonical-workload-inventory-builder",
+      "new_path": "skills/b02-canonical-workload-inventory-builder"
+    },
+    {
+      "batch": "batch-02",
+      "old_path": "skills/08-assessment-evidence-quality-controller",
+      "new_path": "skills/b02-assessment-evidence-quality-controller"
+    },
+    {
+      "batch": "batch-02",
+      "old_path": "skills/09-semantic-source-indexer",
+      "new_path": "skills/b02-semantic-source-indexer"
+    },
+    {
+      "batch": "batch-02",
+      "old_path": "skills/10-architecture-recovery-engine",
+      "new_path": "skills/b02-architecture-recovery-engine"
+    },
+    {
+      "batch": "batch-02",
+      "old_path": "skills/11-dependency-callgraph-impact-analyzer",
+      "new_path": "skills/b02-dependency-callgraph-impact-analyzer"
+    },
+    {
+      "batch": "batch-02",
+      "old_path": "skills/12-dataflow-state-integration-analyzer",
+      "new_path": "skills/b02-dataflow-state-integration-analyzer"
+    },
+    {
+      "batch": "batch-02",
+      "old_path": "skills/13-runtime-topology-correlator",
+      "new_path": "skills/b02-runtime-topology-correlator"
+    },
+    {
+      "batch": "batch-02",
+      "old_path": "skills/14-technical-debt-maintainability-assessor",
+      "new_path": "skills/b02-technical-debt-maintainability-assessor"
+    },
+    {
+      "batch": "batch-02",
+      "old_path": "skills/15-security-supply-chain-compliance-assessor",
+      "new_path": "skills/b02-security-supply-chain-compliance-assessor"
+    },
+    {
+      "batch": "batch-02",
+      "old_path": "skills/16-cloud-platform-fit-analyzer",
+      "new_path": "skills/b02-cloud-platform-fit-analyzer"
+    },
+    {
+      "batch": "batch-02",
+      "old_path": "skills/17-migration-strategy-route-candidate-generator",
+      "new_path": "skills/b02-migration-strategy-route-candidate-generator"
+    },
+    {
+      "batch": "batch-02",
+      "old_path": "skills/18-feasibility-probe-and-baseline-runner",
+      "new_path": "skills/b02-feasibility-probe-and-baseline-runner"
+    },
+    {
+      "batch": "batch-02",
+      "old_path": "skills/19-prediction-calibration-engine",
+      "new_path": "skills/b02-prediction-calibration-engine"
+    },
+    {
+      "batch": "batch-02",
+      "old_path": "skills/20-portfolio-prioritization-wave-planner",
+      "new_path": "skills/b02-portfolio-prioritization-wave-planner"
+    },
+    {
+      "batch": "batch-02",
+      "old_path": "skills/21-assessment-report-and-certificate-gate",
+      "new_path": "skills/b02-assessment-report-and-certificate-gate"
+    },
+    {
+      "batch": "batch-03",
+      "old_path": "skills/01-ir-foundation-orchestrator",
+      "new_path": "skills/b03-ir-foundation-orchestrator"
+    },
+    {
+      "batch": "batch-03",
+      "old_path": "skills/02-source-artifact-normalizer",
+      "new_path": "skills/b03-source-artifact-normalizer"
+    },
+    {
+      "batch": "batch-03",
+      "old_path": "skills/03-language-version-and-region-detector",
+      "new_path": "skills/b03-language-version-and-region-detector"
+    },
+    {
+      "batch": "batch-03",
+      "old_path": "skills/04-build-context-and-toolchain-resolver",
+      "new_path": "skills/b03-build-context-and-toolchain-resolver"
+    },
+    {
+      "batch": "batch-03",
+      "old_path": "skills/05-frontend-adapter-sdk-and-registry",
+      "new_path": "skills/b03-frontend-adapter-sdk-and-registry"
+    },
+    {
+      "batch": "batch-03",
+      "old_path": "skills/06-native-lossless-syntax-ir-builder",
+      "new_path": "skills/b03-native-lossless-syntax-ir-builder"
+    },
+    {
+      "batch": "batch-03",
+      "old_path": "skills/07-native-semantic-attribution-engine",
+      "new_path": "skills/b03-native-semantic-attribution-engine"
+    },
+    {
+      "batch": "batch-03",
+      "old_path": "skills/08-canonical-semantic-ir-schema-and-lowering",
+      "new_path": "skills/b03-canonical-semantic-ir-schema-and-lowering"
+    },
+    {
+      "batch": "batch-03",
+      "old_path": "skills/09-symbol-identity-scope-and-linker",
+      "new_path": "skills/b03-symbol-identity-scope-and-linker"
+    },
+    {
+      "batch": "batch-03",
+      "old_path": "skills/10-canonical-type-system-and-language-relations",
+      "new_path": "skills/b03-canonical-type-system-and-language-relations"
+    },
+    {
+      "batch": "batch-03",
+      "old_path": "skills/11-expression-statement-and-evaluation-order-lowerer",
+      "new_path": "skills/b03-expression-statement-and-evaluation-order-lowerer"
+    },
+    {
+      "batch": "batch-03",
+      "old_path": "skills/12-control-flow-ssa-and-dataflow-builder",
+      "new_path": "skills/b03-control-flow-ssa-and-dataflow-builder"
+    },
+    {
+      "batch": "batch-03",
+      "old_path": "skills/13-callgraph-dispatch-reflection-and-dynamic-linker",
+      "new_path": "skills/b03-callgraph-dispatch-reflection-and-dynamic-linker"
+    },
+    {
+      "batch": "batch-03",
+      "old_path": "skills/14-effect-exception-concurrency-and-resource-modeler",
+      "new_path": "skills/b03-effect-exception-concurrency-and-resource-modeler"
+    },
+    {
+      "batch": "batch-03",
+      "old_path": "skills/15-build-config-and-resource-ir-builder",
+      "new_path": "skills/b03-build-config-and-resource-ir-builder"
+    },
+    {
+      "batch": "batch-03",
+      "old_path": "skills/16-api-message-and-contract-ir-builder",
+      "new_path": "skills/b03-api-message-and-contract-ir-builder"
+    },
+    {
+      "batch": "batch-03",
+      "old_path": "skills/17-sql-and-database-procedural-ir-builder",
+      "new_path": "skills/b03-sql-and-database-procedural-ir-builder"
+    },
+    {
+      "batch": "batch-03",
+      "old_path": "skills/18-binary-bytecode-and-native-metadata-ir",
+      "new_path": "skills/b03-binary-bytecode-and-native-metadata-ir"
+    },
+    {
+      "batch": "batch-03",
+      "old_path": "skills/19-generated-code-macro-and-metaprogramming-modeler",
+      "new_path": "skills/b03-generated-code-macro-and-metaprogramming-modeler"
+    },
+    {
+      "batch": "batch-03",
+      "old_path": "skills/20-source-map-provenance-and-semantic-fingerprint",
+      "new_path": "skills/b03-source-map-provenance-and-semantic-fingerprint"
+    },
+    {
+      "batch": "batch-03",
+      "old_path": "skills/21-formalizable-core-and-proof-obligation-contract",
+      "new_path": "skills/b03-formalizable-core-and-proof-obligation-contract"
+    },
+    {
+      "batch": "batch-03",
+      "old_path": "skills/22-incremental-ir-cache-and-chunk-store",
+      "new_path": "skills/b03-incremental-ir-cache-and-chunk-store"
+    },
+    {
+      "batch": "batch-03",
+      "old_path": "skills/23-ir-query-diff-and-export-service",
+      "new_path": "skills/b03-ir-query-diff-and-export-service"
+    },
+    {
+      "batch": "batch-03",
+      "old_path": "skills/24-frontend-conformance-and-ir-certification-gate",
+      "new_path": "skills/b03-frontend-conformance-and-ir-certification-gate"
+    },
+    {
+      "batch": "batch-04",
+      "old_path": "skills/01-transformation-orchestrator",
+      "new_path": "skills/b04-transformation-orchestrator"
+    },
+    {
+      "batch": "batch-04",
+      "old_path": "skills/02-semantic-mapping-ontology-and-registry",
+      "new_path": "skills/b04-semantic-mapping-ontology-and-registry"
+    },
+    {
+      "batch": "batch-04",
+      "old_path": "skills/03-transformation-rule-dsl",
+      "new_path": "skills/b04-transformation-rule-dsl"
+    },
+    {
+      "batch": "batch-04",
+      "old_path": "skills/04-rule-compiler-and-static-safety-analyzer",
+      "new_path": "skills/b04-rule-compiler-and-static-safety-analyzer"
+    },
+    {
+      "batch": "batch-04",
+      "old_path": "skills/05-semantic-matcher-query-and-binding",
+      "new_path": "skills/b04-semantic-matcher-query-and-binding"
+    },
+    {
+      "batch": "batch-04",
+      "old_path": "skills/06-applicability-precondition-and-guard-engine",
+      "new_path": "skills/b04-applicability-precondition-and-guard-engine"
+    },
+    {
+      "batch": "batch-04",
+      "old_path": "skills/07-rewrite-operation-and-patch-planner",
+      "new_path": "skills/b04-rewrite-operation-and-patch-planner"
+    },
+    {
+      "batch": "batch-04",
+      "old_path": "skills/08-deterministic-recipe-runtime",
+      "new_path": "skills/b04-deterministic-recipe-runtime"
+    },
+    {
+      "batch": "batch-04",
+      "old_path": "skills/09-recipe-composition-pass-planner-and-explain",
+      "new_path": "skills/b04-recipe-composition-pass-planner-and-explain"
+    },
+    {
+      "batch": "batch-04",
+      "old_path": "skills/10-analysis-preservation-and-incremental-recompute",
+      "new_path": "skills/b04-analysis-preservation-and-incremental-recompute"
+    },
+    {
+      "batch": "batch-04",
+      "old_path": "skills/11-directional-route-pack-builder",
+      "new_path": "skills/b04-directional-route-pack-builder"
+    },
+    {
+      "batch": "batch-04",
+      "old_path": "skills/12-openrewrite-recipe-adapter",
+      "new_path": "skills/b04-openrewrite-recipe-adapter"
+    },
+    {
+      "batch": "batch-04",
+      "old_path": "skills/13-codemod-and-native-ast-adapter",
+      "new_path": "skills/b04-codemod-and-native-ast-adapter"
+    },
+    {
+      "batch": "batch-04",
+      "old_path": "skills/14-compiler-rewrite-pass-adapter",
+      "new_path": "skills/b04-compiler-rewrite-pass-adapter"
+    },
+    {
+      "batch": "batch-04",
+      "old_path": "skills/15-cross-file-symbol-api-and-graph-rewriter",
+      "new_path": "skills/b04-cross-file-symbol-api-and-graph-rewriter"
+    },
+    {
+      "batch": "batch-04",
+      "old_path": "skills/16-build-config-contract-and-sql-coordinated-rewriter",
+      "new_path": "skills/b04-build-config-contract-and-sql-coordinated-rewriter"
+    },
+    {
+      "batch": "batch-04",
+      "old_path": "skills/17-transformation-conflict-detector-and-resolver",
+      "new_path": "skills/b04-transformation-conflict-detector-and-resolver"
+    },
+    {
+      "batch": "batch-04",
+      "old_path": "skills/18-copy-on-write-transaction-and-rollback",
+      "new_path": "skills/b04-copy-on-write-transaction-and-rollback"
+    },
+    {
+      "batch": "batch-04",
+      "old_path": "skills/19-source-map-format-comment-and-provenance-preserver",
+      "new_path": "skills/b04-source-map-format-comment-and-provenance-preserver"
+    },
+    {
+      "batch": "batch-04",
+      "old_path": "skills/20-verification-obligation-and-postcondition-runner",
+      "new_path": "skills/b04-verification-obligation-and-postcondition-runner"
+    },
+    {
+      "batch": "batch-04",
+      "old_path": "skills/21-restricted-agent-repair-controller",
+      "new_path": "skills/b04-restricted-agent-repair-controller"
+    },
+    {
+      "batch": "batch-04",
+      "old_path": "skills/22-agent-repair-to-rule-distiller",
+      "new_path": "skills/b04-agent-repair-to-rule-distiller"
+    },
+    {
+      "batch": "batch-04",
+      "old_path": "skills/23-recipe-package-registry-and-supply-chain",
+      "new_path": "skills/b04-recipe-package-registry-and-supply-chain"
+    },
+    {
+      "batch": "batch-04",
+      "old_path": "skills/24-recipe-corpus-benchmark-and-regression",
+      "new_path": "skills/b04-recipe-corpus-benchmark-and-regression"
+    },
+    {
+      "batch": "batch-04",
+      "old_path": "skills/25-transformation-certification-gate",
+      "new_path": "skills/b04-transformation-certification-gate"
+    },
+    {
+      "batch": "batch-05",
+      "old_path": "skills/01-target-generation-orchestrator",
+      "new_path": "skills/b05-target-generation-orchestrator"
+    },
+    {
+      "batch": "batch-05",
+      "old_path": "skills/02-target-profile-and-platform-registry",
+      "new_path": "skills/b05-target-profile-and-platform-registry"
+    },
+    {
+      "batch": "batch-05",
+      "old_path": "skills/03-target-backend-sdk-and-plugin-registry",
+      "new_path": "skills/b05-target-backend-sdk-and-plugin-registry"
+    },
+    {
+      "batch": "batch-05",
+      "old_path": "skills/04-target-typed-ir-schema",
+      "new_path": "skills/b05-target-typed-ir-schema"
+    },
+    {
+      "batch": "batch-05",
+      "old_path": "skills/05-target-lowering-plan-and-pass-manager",
+      "new_path": "skills/b05-target-lowering-plan-and-pass-manager"
+    },
+    {
+      "batch": "batch-05",
+      "old_path": "skills/06-idiom-policy-and-pattern-selector",
+      "new_path": "skills/b05-idiom-policy-and-pattern-selector"
+    },
+    {
+      "batch": "batch-05",
+      "old_path": "skills/07-type-nullability-generics-and-numeric-lowerer",
+      "new_path": "skills/b05-type-nullability-generics-and-numeric-lowerer"
+    },
+    {
+      "batch": "batch-05",
+      "old_path": "skills/08-expression-statement-control-flow-lowerer",
+      "new_path": "skills/b05-expression-statement-control-flow-lowerer"
+    },
+    {
+      "batch": "batch-05",
+      "old_path": "skills/09-exception-resource-lifetime-lowerer",
+      "new_path": "skills/b05-exception-resource-lifetime-lowerer"
+    },
+    {
+      "batch": "batch-05",
+      "old_path": "skills/10-async-concurrency-cancellation-lowerer",
+      "new_path": "skills/b05-async-concurrency-cancellation-lowerer"
+    },
+    {
+      "batch": "batch-05",
+      "old_path": "skills/11-module-package-project-layout-planner",
+      "new_path": "skills/b05-module-package-project-layout-planner"
+    },
+    {
+      "batch": "batch-05",
+      "old_path": "skills/12-build-dependency-toolchain-generator",
+      "new_path": "skills/b05-build-dependency-toolchain-generator"
+    },
+    {
+      "batch": "batch-05",
+      "old_path": "skills/13-api-web-di-serialization-framework-backend",
+      "new_path": "skills/b05-api-web-di-serialization-framework-backend"
+    },
+    {
+      "batch": "batch-05",
+      "old_path": "skills/14-persistence-orm-transaction-framework-backend",
+      "new_path": "skills/b05-persistence-orm-transaction-framework-backend"
+    },
+    {
+      "batch": "batch-05",
+      "old_path": "skills/15-messaging-scheduler-background-job-backend",
+      "new_path": "skills/b05-messaging-scheduler-background-job-backend"
+    },
+    {
+      "batch": "batch-05",
+      "old_path": "skills/16-config-secrets-observability-resilience-security-backend",
+      "new_path": "skills/b05-config-secrets-observability-resilience-security-backend"
+    },
+    {
+      "batch": "batch-05",
+      "old_path": "skills/17-java-jvm-backend",
+      "new_path": "skills/b05-java-jvm-backend"
+    },
+    {
+      "batch": "batch-05",
+      "old_path": "skills/18-csharp-dotnet-backend",
+      "new_path": "skills/b05-csharp-dotnet-backend"
+    },
+    {
+      "batch": "batch-05",
+      "old_path": "skills/19-nodejs-typescript-backend",
+      "new_path": "skills/b05-nodejs-typescript-backend"
+    },
+    {
+      "batch": "batch-05",
+      "old_path": "skills/20-python-backend",
+      "new_path": "skills/b05-python-backend"
+    },
+    {
+      "batch": "batch-05",
+      "old_path": "skills/21-cpp-backend",
+      "new_path": "skills/b05-cpp-backend"
+    },
+    {
+      "batch": "batch-05",
+      "old_path": "skills/22-go-backend",
+      "new_path": "skills/b05-go-backend"
+    },
+    {
+      "batch": "batch-05",
+      "old_path": "skills/23-rust-backend",
+      "new_path": "skills/b05-rust-backend"
+    },
+    {
+      "batch": "batch-05",
+      "old_path": "skills/24-vue-backend",
+      "new_path": "skills/b05-vue-backend"
+    },
+    {
+      "batch": "batch-05",
+      "old_path": "skills/25-react-backend",
+      "new_path": "skills/b05-react-backend"
+    },
+    {
+      "batch": "batch-05",
+      "old_path": "skills/26-flutter-dart-backend",
+      "new_path": "skills/b05-flutter-dart-backend"
+    },
+    {
+      "batch": "batch-05",
+      "old_path": "skills/27-target-native-ast-lst-emitter",
+      "new_path": "skills/b05-target-native-ast-lst-emitter"
+    },
+    {
+      "batch": "batch-05",
+      "old_path": "skills/28-printer-formatter-import-and-style-organizer",
+      "new_path": "skills/b05-printer-formatter-import-and-style-organizer"
+    },
+    {
+      "batch": "batch-05",
+      "old_path": "skills/29-incremental-regeneration-manual-region-protector",
+      "new_path": "skills/b05-incremental-regeneration-manual-region-protector"
+    },
+    {
+      "batch": "batch-05",
+      "old_path": "skills/30-build-lint-typecheck-repair-loop",
+      "new_path": "skills/b05-build-lint-typecheck-repair-loop"
+    },
+    {
+      "batch": "batch-05",
+      "old_path": "skills/31-restricted-generation-agent-controller",
+      "new_path": "skills/b05-restricted-generation-agent-controller"
+    },
+    {
+      "batch": "batch-05",
+      "old_path": "skills/32-source-target-map-and-provenance-exporter",
+      "new_path": "skills/b05-source-target-map-and-provenance-exporter"
+    },
+    {
+      "batch": "batch-05",
+      "old_path": "skills/33-backend-conformance-corpus-benchmark",
+      "new_path": "skills/b05-backend-conformance-corpus-benchmark"
+    },
+    {
+      "batch": "batch-05",
+      "old_path": "skills/34-generated-project-completeness-and-certification-gate",
+      "new_path": "skills/b05-generated-project-completeness-and-certification-gate"
+    },
+    {
+      "batch": "batch-06",
+      "old_path": "skills/b06-standard-library-dependency-compatibility-capability-planning",
+      "new_path": "skills/b06-stdlib-dependency-capability-planning"
+    },
+    {
+      "batch": "batch-06",
+      "old_path": "skills/b06-standard-library-dependency-compatibility-deterministic-engine",
+      "new_path": "skills/b06-stdlib-dependency-deterministic-engine"
+    },
+    {
+      "batch": "batch-06",
+      "old_path": "skills/b06-standard-library-dependency-compatibility-discovery-inventory",
+      "new_path": "skills/b06-stdlib-dependency-discovery-inventory"
+    },
+    {
+      "batch": "batch-06",
+      "old_path": "skills/b06-standard-library-dependency-compatibility-lifecycle-recertification",
+      "new_path": "skills/b06-stdlib-dependency-lifecycle-recertification"
+    },
+    {
+      "batch": "batch-06",
+      "old_path": "skills/b06-standard-library-dependency-compatibility-lineage-reconciliation",
+      "new_path": "skills/b06-stdlib-dependency-lineage-reconciliation"
+    },
+    {
+      "batch": "batch-06",
+      "old_path": "skills/b06-standard-library-dependency-compatibility-observability-economics",
+      "new_path": "skills/b06-stdlib-dependency-observability-economics"
+    },
+    {
+      "batch": "batch-10",
+      "old_path": "skills/b10-behavioral-equivalence-differential-lifecycle-recertification",
+      "new_path": "skills/b10-behavior-diff-lifecycle-recertification"
+    },
+    {
+      "batch": "batch-11",
+      "old_path": "skills/b11-performance-security-production-semantics-capability-planning",
+      "new_path": "skills/b11-prod-semantics-capability-planning"
+    },
+    {
+      "batch": "batch-11",
+      "old_path": "skills/b11-performance-security-production-semantics-deterministic-engine",
+      "new_path": "skills/b11-prod-semantics-deterministic-engine"
+    },
+    {
+      "batch": "batch-11",
+      "old_path": "skills/b11-performance-security-production-semantics-discovery-inventory",
+      "new_path": "skills/b11-prod-semantics-discovery-inventory"
+    },
+    {
+      "batch": "batch-11",
+      "old_path": "skills/b11-performance-security-production-semantics-lifecycle-recertification",
+      "new_path": "skills/b11-prod-semantics-lifecycle-recertification"
+    },
+    {
+      "batch": "batch-11",
+      "old_path": "skills/b11-performance-security-production-semantics-lineage-reconciliation",
+      "new_path": "skills/b11-prod-semantics-lineage-reconciliation"
+    },
+    {
+      "batch": "batch-11",
+      "old_path": "skills/b11-performance-security-production-semantics-observability-economics",
+      "new_path": "skills/b11-prod-semantics-observability-economics"
+    },
+    {
+      "batch": "batch-13",
+      "old_path": "skills/b13-evidence-graph-continuous-certification-lifecycle-recertification",
+      "new_path": "skills/b13-evidence-cert-lifecycle-recertification"
+    },
+    {
+      "batch": "batch-13",
+      "old_path": "skills/b13-evidence-graph-continuous-certification-lineage-reconciliation",
+      "new_path": "skills/b13-evidence-cert-lineage-reconciliation"
+    },
+    {
+      "batch": "batch-13",
+      "old_path": "skills/b13-evidence-graph-continuous-certification-observability-economics",
+      "new_path": "skills/b13-evidence-cert-observability-economics"
+    },
+    {
+      "batch": "batch-19",
+      "old_path": "skills/b19-seventy-two-directional-route-packs-lifecycle-recertification",
+      "new_path": "skills/b19-route-packs-lifecycle-recertification"
+    },
+    {
+      "batch": "batch-39",
+      "old_path": "skills/b39-durable-workflow-runner-reliability-lifecycle-recertification",
+      "new_path": "skills/b39-workflow-reliability-lifecycle-recertification"
+    }
+  ],
+  "compatibility": "Old identifiers remain documented here; manifests and indexes use canonical names."
+}

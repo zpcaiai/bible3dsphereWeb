@@ -1,0 +1,8 @@
+interface:
+  display_name: Formation Twin Ontology
+  short_description: Implement profile, domain and consent boundaries that define what the twin is and is not.
+  default_prompt: Use $christian-formation-twin-ontology for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

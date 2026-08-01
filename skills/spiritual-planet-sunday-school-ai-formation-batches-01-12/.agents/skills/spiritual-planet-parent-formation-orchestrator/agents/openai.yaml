@@ -1,0 +1,9 @@
+interface:
+  display_name: Parent Formation Orchestrator
+  short_description: Implement Batch 05 parent modeling, attention availability, anxiety transmission, success pressure, repair,
+    authority, co-parenting, feedback and safety in Spiritual Planet.
+  default_prompt: Use $spiritual-planet-parent-formation-orchestrator for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

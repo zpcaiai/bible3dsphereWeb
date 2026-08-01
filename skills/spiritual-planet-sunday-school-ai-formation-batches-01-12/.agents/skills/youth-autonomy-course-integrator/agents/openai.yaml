@@ -1,0 +1,9 @@
+interface:
+  display_name: Youth Autonomy Course Integrator
+  short_description: Integrate Batch 08 routes, role views, reviewed curriculum, feature flags, analytics, accessibility and
+    E2E.
+  default_prompt: Use $youth-autonomy-course-integrator for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

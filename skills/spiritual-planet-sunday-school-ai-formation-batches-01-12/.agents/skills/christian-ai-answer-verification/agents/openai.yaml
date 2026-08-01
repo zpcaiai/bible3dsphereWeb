@@ -1,0 +1,8 @@
+interface:
+  display_name: "Christian AI Answer Verification"
+  short_description: "Verify AI claims with provenance, freshness, conflicts and human decisions."
+  default_prompt: "Use $christian-ai-answer-verification for this task."
+policy:
+  products:
+    - CODEX
+  allow_implicit_invocation: true

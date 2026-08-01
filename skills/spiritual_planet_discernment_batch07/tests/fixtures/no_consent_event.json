@@ -1,0 +1,13 @@
+{
+  "event_id": "e2",
+  "user_id": "u2",
+  "occurred_at": "2026-07-21T10:00:00+08:00",
+  "context": "home",
+  "trigger": "冲突",
+  "source_type": "self_report",
+  "evidence_quality": "E1",
+  "consent_scope": {
+    "allow_longitudinal_tracking": false
+  },
+  "limitations": []
+}

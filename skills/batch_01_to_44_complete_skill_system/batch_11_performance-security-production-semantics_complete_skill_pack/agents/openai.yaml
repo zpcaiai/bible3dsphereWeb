@@ -1,0 +1,6 @@
+interface:
+  display_name: "Batch 11: Performance, Security and Production Semantics Validation"
+  short_description: "Orchestrate this Batch with evidence gates"
+  default_prompt: "Use $batch-11-performance-security-production-semantics to execute this workflow with explicit evidence, validation, human approval boundaries, and rollback reporting."
+policy:
+  allow_implicit_invocation: true

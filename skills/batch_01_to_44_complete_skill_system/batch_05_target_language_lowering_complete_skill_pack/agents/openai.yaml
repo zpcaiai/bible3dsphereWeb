@@ -1,0 +1,6 @@
+interface:
+  display_name: "Batch 5：Target Language Lowering、Framework Backend 与 Idiomatic Code Generation"
+  short_description: "Orchestrate this Batch with evidence gates"
+  default_prompt: "Use $batch-05-target-code-generation to execute this workflow with explicit evidence, validation, human approval boundaries, and rollback reporting."
+policy:
+  allow_implicit_invocation: true

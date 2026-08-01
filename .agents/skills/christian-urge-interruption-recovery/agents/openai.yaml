@@ -1,0 +1,8 @@
+interface:
+  display_name: Urge Interruption and Recovery
+  short_description: Implement 90-second interruption, environment exit, support contact, repair and non-shaming review flows.
+  default_prompt: Use $christian-urge-interruption-recovery for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

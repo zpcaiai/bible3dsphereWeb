@@ -1,0 +1,21 @@
+{
+  "case_id": "c1",
+  "subject_user_id": "u1",
+  "purpose": "mentor formation review",
+  "sensitivity": "L1",
+  "status": "active",
+  "assigned_roles": [
+    "mentor_discipler"
+  ],
+  "source_artifacts": [
+    "formation-review-30d"
+  ],
+  "active_questions": [
+    "委派是否迁移到压力场景"
+  ],
+  "safety_flags": [],
+  "retention_policy": {
+    "days": 90
+  },
+  "limitations": []
+}

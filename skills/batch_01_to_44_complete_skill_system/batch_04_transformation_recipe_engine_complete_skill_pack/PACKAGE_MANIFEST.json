@@ -1,0 +1,450 @@
+{
+  "schema_version": "1.0.0",
+  "package_id": "batch-04-transformation-recipe-engine-complete-skill-pack",
+  "batch": 4,
+  "title": "Batch 4：跨语言语义映射、Transformation Rule DSL 与 Deterministic Recipe Engine",
+  "version": "1.0.0",
+  "root_skill": "batch-04-transformation-recipe-engine",
+  "generated_at": "2026-07-31T09:00:00+08:00",
+  "skill_count": 25,
+  "skills": [
+    "b04-agent-repair-to-rule-distiller",
+    "b04-analysis-preservation-and-incremental-recompute",
+    "b04-applicability-precondition-and-guard-engine",
+    "b04-build-config-contract-and-sql-coordinated-rewriter",
+    "b04-codemod-and-native-ast-adapter",
+    "b04-compiler-rewrite-pass-adapter",
+    "b04-copy-on-write-transaction-and-rollback",
+    "b04-cross-file-symbol-api-and-graph-rewriter",
+    "b04-deterministic-recipe-runtime",
+    "b04-directional-route-pack-builder",
+    "b04-openrewrite-recipe-adapter",
+    "b04-recipe-composition-pass-planner-and-explain",
+    "b04-recipe-corpus-benchmark-and-regression",
+    "b04-recipe-package-registry-and-supply-chain",
+    "b04-restricted-agent-repair-controller",
+    "b04-rewrite-operation-and-patch-planner",
+    "b04-rule-compiler-and-static-safety-analyzer",
+    "b04-semantic-mapping-ontology-and-registry",
+    "b04-semantic-matcher-query-and-binding",
+    "b04-source-map-format-comment-and-provenance-preserver",
+    "b04-transformation-certification-gate",
+    "b04-transformation-conflict-detector-and-resolver",
+    "b04-transformation-orchestrator",
+    "b04-transformation-rule-dsl",
+    "b04-verification-obligation-and-postcondition-runner"
+  ],
+  "upstream_batch": 3,
+  "files": [
+    {
+      "path": "BATCH03_COMPATIBILITY.md",
+      "sha256": "044b8a91546cd7230259149d9626c359e333bcb9633b3743595fb4e7f877d510",
+      "size": 2386
+    },
+    {
+      "path": "CODEX_IMPLEMENTATION_PROMPT.md",
+      "sha256": "917afbcf12270aa08bc7a01a708b19fab9f1af56ec6b911e099c4b1513384e3f",
+      "size": 4270
+    },
+    {
+      "path": "IMPLEMENTATION_CHECKLIST.md",
+      "sha256": "7869d42dd56c726490c516b0f3354ce1608ac6ddc059022f71971af700b4cc82",
+      "size": 2139
+    },
+    {
+      "path": "README.md",
+      "sha256": "20553fa41d57837b0ce374f3ce6a1664cca0c7ce45603ebbc3adce9499772914",
+      "size": 2219
+    },
+    {
+      "path": "SKILL.md",
+      "sha256": "45d52dbb074850442baa1b34d830072c014170845c12a6381d033e60771274c8",
+      "size": 13987
+    },
+    {
+      "path": "SKILL_INDEX.md",
+      "sha256": "770f0fc490f10ac3e8205e0f47dfc7d65d62fff51ee179293c34d89c6db4a6bd",
+      "size": 9910
+    },
+    {
+      "path": "VALIDATION_REPORT.md",
+      "sha256": "fa4c46fb499017dfad8a129f05198904d17cee13d3e16c8d7036565100648172",
+      "size": 1845
+    },
+    {
+      "path": "agents/openai.yaml",
+      "sha256": "ead839f2601b2894a4071213aff2565163abaa30dd77a7e0494fe83a2969db54",
+      "size": 402
+    },
+    {
+      "path": "examples/agent-repair-proposal.yaml",
+      "sha256": "3bc1cea2c16ed3e820fa812bed5719a15694132c7854aff84bc49a6b817139bd",
+      "size": 206
+    },
+    {
+      "path": "examples/patch-intent-set.yaml",
+      "sha256": "cd2f27742842c2d6550be8a7ef4d1c30998e5cd412228f1d5bddb017c79fc1fc",
+      "size": 201
+    },
+    {
+      "path": "examples/route-pack.yaml",
+      "sha256": "7e3aefd7f416dcf92ba9f25521235facd9fc15f8ad6a6d61efe75c3241d2960f",
+      "size": 195
+    },
+    {
+      "path": "examples/semantic-rewrite-rule.yaml",
+      "sha256": "d106553d9c01dda37040eacb46f8a6da8e78b340ce3a2862876963319b512902",
+      "size": 206
+    },
+    {
+      "path": "install.sh",
+      "sha256": "74b42ab182895a157f0f99178f4e99eff46189071402952ae621bfda18ae5bf5",
+      "size": 483
+    },
+    {
+      "path": "policies/conflict-resolution-policy.yaml",
+      "sha256": "10ac4bbeba4380b3d5162e52d58dbf2d623beeb332481f6a70952642b7edf3e2",
+      "size": 339
+    },
+    {
+      "path": "policies/default-agent-envelope.yaml",
+      "sha256": "5bec60fe0532713105ed03add1276213d6a39a66bfbaccee1ee5332511a31b78",
+      "size": 335
+    },
+    {
+      "path": "policies/deterministic-runtime-policy.yaml",
+      "sha256": "4e5c0c38a8a6c49de9c96359b2bf0812a9cb36311e9a0c4592b242dd7d806372",
+      "size": 341
+    },
+    {
+      "path": "policies/recipe-supply-chain-policy.yaml",
+      "sha256": "19d35e4400dd8de8b6810814659022a6dcfc5c0d78828a5edd9d250decfaece8",
+      "size": 339
+    },
+    {
+      "path": "policies/verification-policy.yaml",
+      "sha256": "9a645a9d356a2aef55b77ade20708e218670bece21c9c59e62ec95991e036926",
+      "size": 332
+    },
+    {
+      "path": "schemas/agent-repair-proposal.schema.json",
+      "sha256": "e9f561adb83916841167daab2bf258b88a2af999fbab58e587a939e070eb5461",
+      "size": 944
+    },
+    {
+      "path": "schemas/compiled-rule-ir.schema.json",
+      "sha256": "f7bdee7e2aeee441bf8f5314b2f55264caa74ffb7b63f20675ee82be00d5dd0e",
+      "size": 929
+    },
+    {
+      "path": "schemas/match-record.schema.json",
+      "sha256": "165f3af39a85a7a40c807190d0284a1d75798c9f84999a161c76de10f284a2fa",
+      "size": 917
+    },
+    {
+      "path": "schemas/patch-intent.schema.json",
+      "sha256": "96997a2ee9b13ee39113f8fdd2a42a41a93ed752e4e1fa21034063188f047853",
+      "size": 917
+    },
+    {
+      "path": "schemas/semantic-mapping.schema.json",
+      "sha256": "be04954709c96692342d553da3ece3aa5179f38176bbb3426a21bcfc723258d5",
+      "size": 929
+    },
+    {
+      "path": "schemas/transformation-certificate.schema.json",
+      "sha256": "7e789702d3f6f2e54d0a5d180b6ad2bde37db2afe0cbe4d0135f9a26fd0c01a5",
+      "size": 959
+    },
+    {
+      "path": "schemas/transformation-plan.schema.json",
+      "sha256": "1ee83839da9e860979e11c0e5a8ab6b02cc5760fa99ce579a7454c629be5d659",
+      "size": 938
+    },
+    {
+      "path": "schemas/transformation-rule.schema.json",
+      "sha256": "23db258c156cb6f70fdb0dfd4e466a936c50f337fc5dcc4cc17a77caf9279c30",
+      "size": 938
+    },
+    {
+      "path": "schemas/transformation-transaction.schema.json",
+      "sha256": "ec988e396a4d365fb4aaf9468ae068ddc712502ed7e295aff464743cf4c93a70",
+      "size": 959
+    },
+    {
+      "path": "schemas/verification-obligation.schema.json",
+      "sha256": "7cbba46ddeecdfe2ac28acb8d808c3e7105330a22015615da8d30403561b9cdf",
+      "size": 950
+    },
+    {
+      "path": "skills/b04-agent-repair-to-rule-distiller/SKILL.md",
+      "sha256": "aa3380180a18b0fc52bf88a6fee50eacd45c6d98dc73fde96bbd91503e73b7c5",
+      "size": 3379
+    },
+    {
+      "path": "skills/b04-agent-repair-to-rule-distiller/agents/openai.yaml",
+      "sha256": "d06c5ef1c8ffe9d0c51a4b88ac323c096e063afa1c8fa2c845730ae42e9fc0b3",
+      "size": 347
+    },
+    {
+      "path": "skills/b04-analysis-preservation-and-incremental-recompute/SKILL.md",
+      "sha256": "e3705c2c1a6ddf5a70f5606f41c031a0eb990f368c7bcd8f4cc85a9f54cdec92",
+      "size": 3430
+    },
+    {
+      "path": "skills/b04-analysis-preservation-and-incremental-recompute/agents/openai.yaml",
+      "sha256": "214076bf5995d6aa685d60f195d6408ffe3cef8a7b76cdae9e3f5efb31a39300",
+      "size": 381
+    },
+    {
+      "path": "skills/b04-applicability-precondition-and-guard-engine/SKILL.md",
+      "sha256": "bc02856ff6514ad0e20a4731a6dee815c76349380a8bb71529b6037130f94eb0",
+      "size": 3449
+    },
+    {
+      "path": "skills/b04-applicability-precondition-and-guard-engine/agents/openai.yaml",
+      "sha256": "5cae36099eed149abcfb936e47adf1127ca4d8feaacef8e9d50f909e70f260fc",
+      "size": 373
+    },
+    {
+      "path": "skills/b04-build-config-contract-and-sql-coordinated-rewriter/SKILL.md",
+      "sha256": "2e112ad74bbd011a038dbbc45a2a6ce9d4deac1a7c78150b4d7cc9f160e18c8b",
+      "size": 3436
+    },
+    {
+      "path": "skills/b04-build-config-contract-and-sql-coordinated-rewriter/agents/openai.yaml",
+      "sha256": "f7d2e6dbd0bf70dbee7ef8a72794f0c9ab1a63cfbc99b407119b693e2d4dbb41",
+      "size": 387
+    },
+    {
+      "path": "skills/b04-codemod-and-native-ast-adapter/SKILL.md",
+      "sha256": "c141535b0cad1b731575650a80196fe249b319e28bea2133f30209be3eb704ff",
+      "size": 3396
+    },
+    {
+      "path": "skills/b04-codemod-and-native-ast-adapter/agents/openai.yaml",
+      "sha256": "c8c7850ad04a8a0211316d996dae932468cc6d105836fca39e92ad38c3f05ccd",
+      "size": 347
+    },
+    {
+      "path": "skills/b04-compiler-rewrite-pass-adapter/SKILL.md",
+      "sha256": "4c284ac4c5e9da372a4d7542ce3a9394046285a2d1854ce6b00c9e6cc702565c",
+      "size": 3458
+    },
+    {
+      "path": "skills/b04-compiler-rewrite-pass-adapter/agents/openai.yaml",
+      "sha256": "38e6985817db8a0c98ccb189316e0d949b0cdde67d7983f4dcb41167b42b98ab",
+      "size": 345
+    },
+    {
+      "path": "skills/b04-copy-on-write-transaction-and-rollback/SKILL.md",
+      "sha256": "93283bacbe0b48952ecc7e44b0623534d2b2c5af9cf8056761ebc2f31cce3c51",
+      "size": 3404
+    },
+    {
+      "path": "skills/b04-copy-on-write-transaction-and-rollback/agents/openai.yaml",
+      "sha256": "f303f1f9478c08170af0734370079946ccc2a30337731bd85ee4a5aa965998f7",
+      "size": 363
+    },
+    {
+      "path": "skills/b04-cross-file-symbol-api-and-graph-rewriter/SKILL.md",
+      "sha256": "18171f4bc743128660ad78b678c241a65fc3ed9989ac5a6802b288d945fdf770",
+      "size": 3410
+    },
+    {
+      "path": "skills/b04-cross-file-symbol-api-and-graph-rewriter/agents/openai.yaml",
+      "sha256": "0b6d1d2f0b862a09c514cba81d7f8a51ac37687ea7d98968d71bc96e918c1286",
+      "size": 367
+    },
+    {
+      "path": "skills/b04-deterministic-recipe-runtime/SKILL.md",
+      "sha256": "946c153c43790f8136687541fafe52e2cbd434deffc2ca4c0f308683fb1d8859",
+      "size": 3373
+    },
+    {
+      "path": "skills/b04-deterministic-recipe-runtime/agents/openai.yaml",
+      "sha256": "2e371ce64a73549672c2a28698a2daa9e003718abd80d8fdb2a2a2be77f06ecd",
+      "size": 343
+    },
+    {
+      "path": "skills/b04-directional-route-pack-builder/SKILL.md",
+      "sha256": "e6be9310ec90938e0c10edf2c051b8d88c8db8748164c3d9dec876b275cb9583",
+      "size": 3413
+    },
+    {
+      "path": "skills/b04-directional-route-pack-builder/agents/openai.yaml",
+      "sha256": "0e3923c64a44c49fe8ef9c23fdaea8766079369de2bc8d3d06e4838cdb01a13e",
+      "size": 347
+    },
+    {
+      "path": "skills/b04-openrewrite-recipe-adapter/SKILL.md",
+      "sha256": "f9f74d66d87b025064c019b63891841d5e68a31af68a03a0d797344c4e95d6c3",
+      "size": 3404
+    },
+    {
+      "path": "skills/b04-openrewrite-recipe-adapter/agents/openai.yaml",
+      "sha256": "5ed15aafe8bf4ae0b85e372bf1b8bccd097ad82b089ef948295cc835eb17346d",
+      "size": 339
+    },
+    {
+      "path": "skills/b04-recipe-composition-pass-planner-and-explain/SKILL.md",
+      "sha256": "864cc4c4d7e9f06c1a59333b49be2a654e0dbb837c64c99d7b4685bb771dc830",
+      "size": 3430
+    },
+    {
+      "path": "skills/b04-recipe-composition-pass-planner-and-explain/agents/openai.yaml",
+      "sha256": "8bdf9e6a06e18a26a05dd3a7c054effea6171b29d174fb98b4f3002fb57394a3",
+      "size": 373
+    },
+    {
+      "path": "skills/b04-recipe-corpus-benchmark-and-regression/SKILL.md",
+      "sha256": "72931dc91233debf4db341a818e851400f88a2c3e1e7bc638c8faf7325739a23",
+      "size": 3435
+    },
+    {
+      "path": "skills/b04-recipe-corpus-benchmark-and-regression/agents/openai.yaml",
+      "sha256": "43df581563e93fd6c70a4918cea76ff014abd9c12350f5ad324323833bed84a8",
+      "size": 363
+    },
+    {
+      "path": "skills/b04-recipe-package-registry-and-supply-chain/SKILL.md",
+      "sha256": "215a88850a39b416148f9e62b322e43df23d45d714b1bc2b6ba4915d189bb103",
+      "size": 3418
+    },
+    {
+      "path": "skills/b04-recipe-package-registry-and-supply-chain/agents/openai.yaml",
+      "sha256": "a21656890d1901f5b91ece3bd3ad33510c4b819a1563581a5aeda01093243b1e",
+      "size": 367
+    },
+    {
+      "path": "skills/b04-restricted-agent-repair-controller/SKILL.md",
+      "sha256": "f52bbc13220b896a0c1fc9eaf29987893fb0c4d863e2227f90e0a4a579d7dcc0",
+      "size": 3412
+    },
+    {
+      "path": "skills/b04-restricted-agent-repair-controller/agents/openai.yaml",
+      "sha256": "0a6b5d951094fa00b51094712cf215d2e1d1ab15c8245610d93c6fa28c4ec0bc",
+      "size": 355
+    },
+    {
+      "path": "skills/b04-rewrite-operation-and-patch-planner/SKILL.md",
+      "sha256": "ad192d2a678815aa90897d2d472030a8d26389fc8e2e4f9e8a03b520785f2fff",
+      "size": 3373
+    },
+    {
+      "path": "skills/b04-rewrite-operation-and-patch-planner/agents/openai.yaml",
+      "sha256": "83c203676fb9af8aa02d7913038938ce4a4995b7879b9a48c82a2aebce8894ce",
+      "size": 357
+    },
+    {
+      "path": "skills/b04-rule-compiler-and-static-safety-analyzer/SKILL.md",
+      "sha256": "7ea4cbba798c96a7c60a694b4efdf7757d9c616703138972c8308366cd8bb89c",
+      "size": 3414
+    },
+    {
+      "path": "skills/b04-rule-compiler-and-static-safety-analyzer/agents/openai.yaml",
+      "sha256": "52d746b228a7322cb86e2badcc7ca94222539ce09040a8ddb63c01ae4f4afdd6",
+      "size": 367
+    },
+    {
+      "path": "skills/b04-semantic-mapping-ontology-and-registry/SKILL.md",
+      "sha256": "f86abe4ba324bea8ff6770cb108c82d0a53eae48d9aba427fe67c53faa6c8899",
+      "size": 3422
+    },
+    {
+      "path": "skills/b04-semantic-mapping-ontology-and-registry/agents/openai.yaml",
+      "sha256": "b17fe75a4ea6ef387ea0c8292aa55541df90f6bb761964419b0c718ac45ef243",
+      "size": 363
+    },
+    {
+      "path": "skills/b04-semantic-matcher-query-and-binding/SKILL.md",
+      "sha256": "0e46d0bb53b0e6552f631248caac19d800bb37c880c6581206f954334eab146b",
+      "size": 3349
+    },
+    {
+      "path": "skills/b04-semantic-matcher-query-and-binding/agents/openai.yaml",
+      "sha256": "0d8397dfff225c3cb6888641d0b6f107dd69c4e5bf3a4d56d79a00ed5e4f81b1",
+      "size": 355
+    },
+    {
+      "path": "skills/b04-source-map-format-comment-and-provenance-preserver/SKILL.md",
+      "sha256": "84585a2d2d9c348a974d33ab846b4cc7c85a1bda1d3f8012d96b1d9dd530d632",
+      "size": 3460
+    },
+    {
+      "path": "skills/b04-source-map-format-comment-and-provenance-preserver/agents/openai.yaml",
+      "sha256": "85324be6a2d15179c66c7ce55e79ea9f8566c8f28f7f437f0ac8571baf09cf64",
+      "size": 387
+    },
+    {
+      "path": "skills/b04-transformation-certification-gate/SKILL.md",
+      "sha256": "c826cd7cbce799459dd0fb915a8ca04454a02d09382ad1fce65f78a0c65fc58c",
+      "size": 3413
+    },
+    {
+      "path": "skills/b04-transformation-certification-gate/agents/openai.yaml",
+      "sha256": "6aca8679db39f60c9a4f270f428b034956a876f700132cea26ab6397b4e095e2",
+      "size": 353
+    },
+    {
+      "path": "skills/b04-transformation-conflict-detector-and-resolver/SKILL.md",
+      "sha256": "7ee9b6fbc92a0d3bd4e74e9834d3df33db69d19e8190f804ef2994c3f5a67cc0",
+      "size": 3433
+    },
+    {
+      "path": "skills/b04-transformation-conflict-detector-and-resolver/agents/openai.yaml",
+      "sha256": "c9886105d52b189293a91ad2f11bab3369e0820e93f984f04845239196faacd7",
+      "size": 377
+    },
+    {
+      "path": "skills/b04-transformation-orchestrator/SKILL.md",
+      "sha256": "bd6064d87dfe639ba81165a72ddc2293e6bb2b1bb36f6f47a45c63e72e1a2d29",
+      "size": 3484
+    },
+    {
+      "path": "skills/b04-transformation-orchestrator/agents/openai.yaml",
+      "sha256": "6fefb29f691c20a8c81eea57edb3b45ac2f76c548bf92ef279018e28b4a05307",
+      "size": 341
+    },
+    {
+      "path": "skills/b04-transformation-rule-dsl/SKILL.md",
+      "sha256": "d62ffe8c9fddb852bdd30c592a6a2ec01bc57d7ca33acd617eebe66b8e876105",
+      "size": 3418
+    },
+    {
+      "path": "skills/b04-transformation-rule-dsl/agents/openai.yaml",
+      "sha256": "2cb385049c015c15c0c80299e9beaf16dc3e7977350e71de1e96375f9a8b0932",
+      "size": 333
+    },
+    {
+      "path": "skills/b04-verification-obligation-and-postcondition-runner/SKILL.md",
+      "sha256": "72cb2bc3132a65020fda6050bceedd9d5e4ea09fbbd3cb0927232a6be1bac0e0",
+      "size": 3428
+    },
+    {
+      "path": "skills/b04-verification-obligation-and-postcondition-runner/agents/openai.yaml",
+      "sha256": "0a94888369c6b4e70d8ac59f1f6063c58f70ea380a54a04ec89df5e8052bbeed",
+      "size": 383
+    },
+    {
+      "path": "tests/SCENARIOS.md",
+      "sha256": "4d979d4daaf1dcc4eef5bfe84cf7b2a1a2ffd9c9cae278ef2928ed63a0f09498",
+      "size": 1383
+    },
+    {
+      "path": "tools/validate_package.py",
+      "sha256": "0d6d3331b667a4be8bc47dc8cae89d5b045ea9fafe6bb0b9e9192709a8ca1a63",
+      "size": 3581
+    },
+    {
+      "path": "validate.sh",
+      "sha256": "cdd1b72b6d2db5eb885005815aac6f6618eed65ed932038d76f52d99a3a0ab6b",
+      "size": 130
+    }
+  ],
+  "validation": {
+    "static": "passed",
+    "runtime": "not-executed"
+  },
+  "trust_boundary": "Static package validation is not runtime execution or production certification."
+}

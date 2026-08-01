@@ -1,0 +1,9 @@
+interface:
+  display_name: Formation Twin Orchestrator
+  short_description: Implement Batch 11 consent-bound formation events, domain snapshots, trajectories, relationship fruit,
+    reviews, human notes, recommendations, retention and data rights.
+  default_prompt: Use $spiritual-planet-formation-twin-orchestrator for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

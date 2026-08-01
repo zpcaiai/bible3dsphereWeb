@@ -1,0 +1,326 @@
+{
+  "schema_version": "1.0.0",
+  "package_id": "batch-09-build-compile-test-repair-complete-skill-pack",
+  "batch": 9,
+  "title": "Batch 09: Build, Compile, Test Repair and Bounded Fix Loop",
+  "version": "1.0.0",
+  "root_skill": "batch-09-build-compile-test-repair",
+  "generated_at": "2026-07-31T00:00:00Z",
+  "skill_count": 16,
+  "skills": [
+    "b09-build-compile-test-repair-adapter-provider",
+    "b09-build-compile-test-repair-capability-planning",
+    "b09-build-compile-test-repair-certification-gate",
+    "b09-build-compile-test-repair-corpus-benchmark",
+    "b09-build-compile-test-repair-deterministic-engine",
+    "b09-build-compile-test-repair-discovery-inventory",
+    "b09-build-compile-test-repair-domain-model",
+    "b09-build-compile-test-repair-failure-recovery",
+    "b09-build-compile-test-repair-human-approval",
+    "b09-build-compile-test-repair-integration-api",
+    "b09-build-compile-test-repair-lifecycle-recertification",
+    "b09-build-compile-test-repair-lineage-reconciliation",
+    "b09-build-compile-test-repair-observability-economics",
+    "b09-build-compile-test-repair-orchestrator",
+    "b09-build-compile-test-repair-security-policy",
+    "b09-build-compile-test-repair-workflow-runtime"
+  ],
+  "upstream_batch": 8,
+  "files": [
+    {
+      "path": "BATCH08_COMPATIBILITY.md",
+      "sha256": "d4376ad704cfeadbfaf3924d4e4b159d7ac39b882f0aa848c32230a7efea48f1",
+      "size": 2072
+    },
+    {
+      "path": "CODEX_IMPLEMENTATION_PROMPT.md",
+      "sha256": "8e5089e6f0f1062dba5e7c6a25936783f1a6e88d7a05736ad85fc793a15fb28b",
+      "size": 2241
+    },
+    {
+      "path": "IMPLEMENTATION_CHECKLIST.md",
+      "sha256": "417bcabc730ba472a730b89297cb1eea4144a5b7c9cbfe9ef0680eabe7cfb675",
+      "size": 1735
+    },
+    {
+      "path": "README.md",
+      "sha256": "f92f71a457b3aad7f37b57a118782657ad04777897f12454c7c17865f8d2c1da",
+      "size": 1056
+    },
+    {
+      "path": "SKILL.md",
+      "sha256": "c6f603e58d0e359b0ca441039623bb96bafdfc8df7f12e4de0a5e6532624ce39",
+      "size": 3903
+    },
+    {
+      "path": "SKILL_INDEX.md",
+      "sha256": "ca30703a93c020e91cccd81e7ce82fe2f22d99d743de649bc8fae2f52d3012c3",
+      "size": 3017
+    },
+    {
+      "path": "VALIDATION_REPORT.md",
+      "sha256": "e4081df95dd0fb5d577db55bfffff85125bb89dd066d68b2d461a89a61a9f267",
+      "size": 572
+    },
+    {
+      "path": "agents/openai.yaml",
+      "sha256": "af63c42468509b5328035ccce8f9f755e7f2007c62ad62281419b6ca120de4bf",
+      "size": 368
+    },
+    {
+      "path": "examples/certificate.example.json",
+      "sha256": "f42cd084d0ccd366f4a1c1da11dfdd3a8929efbadf57ba48844889426af90a26",
+      "size": 451
+    },
+    {
+      "path": "examples/invocation.example.json",
+      "sha256": "228e787e46ce51a779cf49dbd386c6ec31d80d1f5876aabc69a5323dfd760489",
+      "size": 282
+    },
+    {
+      "path": "install.sh",
+      "sha256": "cdaf3fdf0c010dd9e0fe29b4a92cd723ff35dd0617eaf14bb5f57e757bc2fa02",
+      "size": 305
+    },
+    {
+      "path": "policies/agent-boundary.yaml",
+      "sha256": "79adc8830adec220835b49067d29b50a3a1578f146a65e7d5b70a6d19ba09ab2",
+      "size": 150
+    },
+    {
+      "path": "policies/certification.yaml",
+      "sha256": "17f50ef51eb5cbf800b3b4990bfb399d4aed9c751cb7f440bee4a4d88ebf02ea",
+      "size": 182
+    },
+    {
+      "path": "policies/default-deny.yaml",
+      "sha256": "25c6a03403de8832018b82bfa5d9dd516d8f5136ba4974c85d40bdf8972f9366",
+      "size": 105
+    },
+    {
+      "path": "policies/evidence-first.yaml",
+      "sha256": "50408543ffa45cfea3461cd57bdabf39f9bdd422fc5b41cdfef4d3c679a058c2",
+      "size": 156
+    },
+    {
+      "path": "policies/human-approval.yaml",
+      "sha256": "d9a6b11cfe402c569440e95b1aa2377387e222a32b693c83fc278ddb1fd4482f",
+      "size": 143
+    },
+    {
+      "path": "schemas/batch-input.schema.json",
+      "sha256": "1add07a8d4ad499a8426aa213c3a8a1093a645bbf29849e174f7f7570026889b",
+      "size": 731
+    },
+    {
+      "path": "schemas/batch-output.schema.json",
+      "sha256": "a4bc4868ebc3548cc0023a91bddd919c08096a651ed47e3d13bef05bb0b09895",
+      "size": 832
+    },
+    {
+      "path": "schemas/capability-package.schema.json",
+      "sha256": "55ccc4015c5ca591ed7bce41f90b8a80ae4af1455ed040ea4f307a59db1af524",
+      "size": 1133
+    },
+    {
+      "path": "schemas/certification.schema.json",
+      "sha256": "7d3ca2f0985ffe6f22da39a9da6553dd4feb61ed948aba13b560394a3669a66b",
+      "size": 1280
+    },
+    {
+      "path": "schemas/evidence-ref.schema.json",
+      "sha256": "6d0a40331a98ca579a410f6b3fb296e5529fc3541ff4ed315a5df1829920d385",
+      "size": 996
+    },
+    {
+      "path": "schemas/workflow-run.schema.json",
+      "sha256": "339aec9916b84972215913d01ed2370d48dd4a909aa6ad8e20e07cf01f9497e2",
+      "size": 848
+    },
+    {
+      "path": "skills/b09-build-compile-test-repair-adapter-provider/SKILL.md",
+      "sha256": "14245cb06872a3c63a7a72b8a62150f210938437f66e25ed45e9c0f8cea2b7a1",
+      "size": 3893
+    },
+    {
+      "path": "skills/b09-build-compile-test-repair-adapter-provider/agents/openai.yaml",
+      "sha256": "a99f90c5825b818c32c29bf6cde286267bd5e1e37b08b5781c695f33456470d2",
+      "size": 351
+    },
+    {
+      "path": "skills/b09-build-compile-test-repair-capability-planning/SKILL.md",
+      "sha256": "fd1842f8f5e9f354c903f3b8ac0729656ea5ee09a4cc2f021fb6eb7a1c5d6aeb",
+      "size": 3795
+    },
+    {
+      "path": "skills/b09-build-compile-test-repair-capability-planning/agents/openai.yaml",
+      "sha256": "7982a882cf88c6e8616b8a97c718781fb90127ee42becf623eda8ec49e81a5c0",
+      "size": 358
+    },
+    {
+      "path": "skills/b09-build-compile-test-repair-certification-gate/SKILL.md",
+      "sha256": "a04c83cb3ef9df06c6f1a32bc63384133d3daa8d77d99a703a86135537e814d3",
+      "size": 3924
+    },
+    {
+      "path": "skills/b09-build-compile-test-repair-certification-gate/agents/openai.yaml",
+      "sha256": "5df8770eaf3069c7e58576f90c3b519634354142384829cb3e30fe799d96b7fc",
+      "size": 358
+    },
+    {
+      "path": "skills/b09-build-compile-test-repair-corpus-benchmark/SKILL.md",
+      "sha256": "7126d29fff080322de3317bd108a5620f8b1e16870e0f3c82338abc1c42e914b",
+      "size": 3834
+    },
+    {
+      "path": "skills/b09-build-compile-test-repair-corpus-benchmark/agents/openai.yaml",
+      "sha256": "3b7003b46f5eeb073d0b2ec63831a6ac96ffcb82983d377d9bebcffed01ebd18",
+      "size": 356
+    },
+    {
+      "path": "skills/b09-build-compile-test-repair-deterministic-engine/SKILL.md",
+      "sha256": "b94e3b2321a057bb9e73775ae1f2a2edbf064e3310a07591f6570704042ff198",
+      "size": 3811
+    },
+    {
+      "path": "skills/b09-build-compile-test-repair-deterministic-engine/agents/openai.yaml",
+      "sha256": "94189617255d5647914e8663b4ad8c9a0fa3e8749c8637cfa5ab85a011e69eef",
+      "size": 349
+    },
+    {
+      "path": "skills/b09-build-compile-test-repair-discovery-inventory/SKILL.md",
+      "sha256": "6236c359541806e9279c8cf62ec9727e48e085896abef7edd26105381a24c2e2",
+      "size": 3838
+    },
+    {
+      "path": "skills/b09-build-compile-test-repair-discovery-inventory/agents/openai.yaml",
+      "sha256": "49072ae02b624b8f36946e1acb312d1ea8dd8d96eac82a78b5022f5f1262de4d",
+      "size": 351
+    },
+    {
+      "path": "skills/b09-build-compile-test-repair-domain-model/SKILL.md",
+      "sha256": "5ad7e14834ba2fbf12f2865de0057e2269e45daf1f54f97f20c890ca54e99d00",
+      "size": 3865
+    },
+    {
+      "path": "skills/b09-build-compile-test-repair-domain-model/agents/openai.yaml",
+      "sha256": "6f40759380408f9a3e1e8aa04179e5a7390c403f798ea47d3815cae7fcd7b67b",
+      "size": 355
+    },
+    {
+      "path": "skills/b09-build-compile-test-repair-failure-recovery/SKILL.md",
+      "sha256": "99d79481268295fcf135bcc7574b4412d47f1c18ed7b2a1cce7511a21ea682c0",
+      "size": 3842
+    },
+    {
+      "path": "skills/b09-build-compile-test-repair-failure-recovery/agents/openai.yaml",
+      "sha256": "0ef1b5661d021d7a2df6e4da89f1b6109ff5c287797432bc52332c91c49a54bf",
+      "size": 354
+    },
+    {
+      "path": "skills/b09-build-compile-test-repair-human-approval/SKILL.md",
+      "sha256": "aa45a333986c5143ad34b236be76596c37f932989e0d1f2ae3164a3c8db60fa6",
+      "size": 3827
+    },
+    {
+      "path": "skills/b09-build-compile-test-repair-human-approval/agents/openai.yaml",
+      "sha256": "da858b00082e49214b2cca878bec0b097415fd30dcadc1489684d6713ac8a3df",
+      "size": 348
+    },
+    {
+      "path": "skills/b09-build-compile-test-repair-integration-api/SKILL.md",
+      "sha256": "e6d7c774e0b0168126e1f7760e0d1ec745eb3a20a599e068098582b36519faf2",
+      "size": 3812
+    },
+    {
+      "path": "skills/b09-build-compile-test-repair-integration-api/agents/openai.yaml",
+      "sha256": "deab46366ecccd923434558e65a64f32bd3928d9b5b20eca99d53da4d8918508",
+      "size": 351
+    },
+    {
+      "path": "skills/b09-build-compile-test-repair-lifecycle-recertification/SKILL.md",
+      "sha256": "f337abcbaa4c76dd9b441de510a3a800ddfce3120291360cdd405b20733a5465",
+      "size": 3902
+    },
+    {
+      "path": "skills/b09-build-compile-test-repair-lifecycle-recertification/agents/openai.yaml",
+      "sha256": "c0025239f0fd127f0075d79f5633e51b9b8446785908d924c5b65b1b10fb2eeb",
+      "size": 374
+    },
+    {
+      "path": "skills/b09-build-compile-test-repair-lineage-reconciliation/SKILL.md",
+      "sha256": "3397ecc5519215b9c6b272344db51e13c9f125604457e0e28ecdaf440e4b4417",
+      "size": 3853
+    },
+    {
+      "path": "skills/b09-build-compile-test-repair-lineage-reconciliation/agents/openai.yaml",
+      "sha256": "87ca3aa4cde6aa276a3c6a163232e38a1a95f5ed754f8e0b09dec85dc75298c2",
+      "size": 357
+    },
+    {
+      "path": "skills/b09-build-compile-test-repair-observability-economics/SKILL.md",
+      "sha256": "119d668d190eeb60742aa54c9fa5bf723c6a726bfa47c458eb96a90aeaac5384",
+      "size": 3868
+    },
+    {
+      "path": "skills/b09-build-compile-test-repair-observability-economics/agents/openai.yaml",
+      "sha256": "84e407632259a7d741a76552e97fb95124fff791a47650dcb3d7fc0f8685eac3",
+      "size": 368
+    },
+    {
+      "path": "skills/b09-build-compile-test-repair-orchestrator/SKILL.md",
+      "sha256": "95e1d93fe886fe38ffc98f407878333f8dead6cfbc5b6a2ed766fa0a21ce4ff2",
+      "size": 3890
+    },
+    {
+      "path": "skills/b09-build-compile-test-repair-orchestrator/agents/openai.yaml",
+      "sha256": "51c489ac15495d33f6aad6d364c404da4563e9aa1e835bacf393119bf77110b3",
+      "size": 351
+    },
+    {
+      "path": "skills/b09-build-compile-test-repair-security-policy/SKILL.md",
+      "sha256": "0ba065c0c29b99097cf9e50e6d5e1a68a965ff9ae5f530f541a81c64c1a03337",
+      "size": 3847
+    },
+    {
+      "path": "skills/b09-build-compile-test-repair-security-policy/agents/openai.yaml",
+      "sha256": "ea57d6796a99502ffde4229326ff603138a5962fcfa224c8df6da42b34d80c7f",
+      "size": 352
+    },
+    {
+      "path": "skills/b09-build-compile-test-repair-workflow-runtime/SKILL.md",
+      "sha256": "e72a32d7d3cac283c6b5111d48c330c883ea62d386220334d335de7591486753",
+      "size": 3856
+    },
+    {
+      "path": "skills/b09-build-compile-test-repair-workflow-runtime/agents/openai.yaml",
+      "sha256": "d979a33165fc3bbe9f81247d50ec175ace376fc5aa8a1f527b435c186b337aac",
+      "size": 355
+    },
+    {
+      "path": "tests/README.md",
+      "sha256": "3d6173b38a8665de7224de1b6fd426cd4388f61691d9b29a0ab6583ad8ac3c85",
+      "size": 351
+    },
+    {
+      "path": "tests/test_catalog.json",
+      "sha256": "0d08c9da6c140fcba31563141571c728fde5e86489ad8494e586597d9bf36d8b",
+      "size": 1925
+    },
+    {
+      "path": "tools/validate_package.py",
+      "sha256": "281cd6663a38afc9e046323ef2c1a2f21d08e8cbfd490e54985526d73e0154f3",
+      "size": 3581
+    },
+    {
+      "path": "validate.sh",
+      "sha256": "a1afca2d69d8fa3d11c820c8381b06b6449e31b289196b3cdc4156de471dd6c4",
+      "size": 72
+    }
+  ],
+  "validation": {
+    "static": "passed",
+    "runtime": "not-executed"
+  },
+  "trust_boundary": "Static package validation is not runtime execution or production certification."
+}

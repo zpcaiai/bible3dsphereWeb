@@ -1,0 +1,33 @@
+{
+  "case_id": "viral-success-001",
+  "subject": {
+    "subject_type": "person",
+    "display_name": "示例成功导师",
+    "public_identifiers": [
+      "example_success_creator"
+    ]
+  },
+  "analysis_goal": "分析成功叙事、课程漏斗、受众欲望与长期塑造",
+  "platforms": [
+    "short_video",
+    "livestream"
+  ],
+  "time_window": {
+    "start": "2026-01-01",
+    "end": "2026-06-30"
+  },
+  "consent_scope": {
+    "allow_public_content_analysis": true,
+    "allow_spiritual_analysis": true,
+    "allow_gospel_bridge": true,
+    "allow_longitudinal_monitoring": false
+  },
+  "source_items": [
+    {
+      "type": "short_video",
+      "text": "穷人最大的问题是不够狠。购买我的课程，复制我的方法，任何人都能翻身。",
+      "public": true
+    }
+  ],
+  "sensitivity": "reputation_sensitive"
+}

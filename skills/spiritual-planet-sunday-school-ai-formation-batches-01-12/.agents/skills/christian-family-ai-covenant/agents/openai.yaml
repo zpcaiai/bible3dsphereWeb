@@ -1,0 +1,8 @@
+interface:
+  display_name: Family AI Covenant
+  short_description: Implement the family’s AI role, privacy, verification, authorship, age and human-responsibility principles.
+  default_prompt: Use $christian-family-ai-covenant for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

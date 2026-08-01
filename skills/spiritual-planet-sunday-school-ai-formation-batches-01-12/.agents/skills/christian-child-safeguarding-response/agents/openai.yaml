@@ -1,0 +1,9 @@
+interface:
+  display_name: Child Safeguarding Response
+  short_description: Implement minimal disclosure decisions, confidentiality explanation, S2/S3 interruption and authorized
+    human handoff.
+  default_prompt: Use $christian-child-safeguarding-response for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

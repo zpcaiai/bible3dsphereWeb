@@ -1,0 +1,9 @@
+interface:
+  display_name: Course Effectiveness Evaluation
+  short_description: Implement ethical usability and formation-support evaluation with consent, construct limits and adverse-signal
+    monitoring.
+  default_prompt: Use $christian-course-effectiveness-evaluation for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

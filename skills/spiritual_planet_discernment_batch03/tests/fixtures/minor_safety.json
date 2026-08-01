@@ -1,0 +1,26 @@
+{
+  "case_id": "viral-minor-003",
+  "subject": {
+    "subject_type": "person",
+    "display_name": "未成年内容创作者",
+    "public_identifiers": [
+      "minor_creator"
+    ]
+  },
+  "analysis_goal": "分析爆火原因",
+  "platforms": [
+    "short_video"
+  ],
+  "time_window": {
+    "start": "2026-01-01",
+    "end": "2026-07-01"
+  },
+  "consent_scope": {
+    "allow_public_content_analysis": true,
+    "allow_spiritual_analysis": false,
+    "allow_gospel_bridge": false,
+    "allow_longitudinal_monitoring": false
+  },
+  "source_items": [],
+  "sensitivity": "minor_involved"
+}

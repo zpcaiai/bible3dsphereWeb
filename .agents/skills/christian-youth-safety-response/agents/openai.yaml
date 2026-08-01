@@ -1,0 +1,9 @@
+interface:
+  display_name: Youth Safety Response
+  short_description: Implement no-blame S2/S3 handling for bullying, grooming, coercion, imagery, extortion, stalking, self-harm
+    and danger.
+  default_prompt: Use $christian-youth-safety-response for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

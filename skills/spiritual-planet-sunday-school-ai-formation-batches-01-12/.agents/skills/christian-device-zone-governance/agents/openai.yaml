@@ -1,0 +1,8 @@
+interface:
+  display_name: Device Zone Governance
+  short_description: Implement device rules for meals, bedrooms, homework, vehicles and shared spaces with explicit exceptions.
+  default_prompt: Use $christian-device-zone-governance for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

@@ -75,6 +75,7 @@ const SpiritualFormationPage = lazyWithRetry(() => import('./features/spiritual-
 const AttentionPage = lazyWithRetry(() => import('./features/attention/app/AttentionPage'))
 const FormationTwinPage = lazyWithRetry(() => import('./features/formation-twin/FormationTwinPage'))
 const SpiritualPlanetPlatformPage = lazyWithRetry(() => import('./features/spiritual-planet/SpiritualPlanetPlatformPage'))
+const AiFormationPage = lazyWithRetry(() => import('./features/ai-formation/AiFormationPage'))
 const DatingPriorityPage = lazyWithRetry(() => import('./DatingPriorityPage'))
 const DatingPriorityStatsPage = lazyWithRetry(() => import('./DatingPriorityStatsPage'))
 
@@ -179,6 +180,7 @@ function AppContent() {
   const [devotionInitialSection, setDevotionInitialSection] = useState('today')
   const [devotionInitialFeature, setDevotionInitialFeature] = useState(null)
   const [attentionInitialSection, setAttentionInitialSection] = useState('dashboard')
+  const [aiFormationInitialRoute, setAiFormationInitialRoute] = useState('')
   const [gardenClickCount, setGardenClickCount] = useState(0)
   const [sermonClickCount, setSermonClickCount] = useState(0)
   const [includeBiblicalExample, setIncludeBiblicalExample] = useState(true)
@@ -1282,6 +1284,12 @@ function AppContent() {
         setTimeout(() => handlePanelSwitch('attention'), 60)
         return
       }
+      const aiFormationPath = window.location.pathname.match(/^\/sunday-school\/ai-formation(?:\/(.*))?\/?$/)
+      if (aiFormationPath) {
+        setAiFormationInitialRoute(aiFormationPath[1] ? `/${aiFormationPath[1]}` : '')
+        setTimeout(() => handlePanelSwitch('ai-formation'), 60)
+        return
+      }
       const sp = new URLSearchParams(window.location.search)
       const panel = sp.get('panel')
       if (panel === 'attention') {
@@ -1325,7 +1333,7 @@ function AppContent() {
   }, [authLoading])
 
   function handlePanelSwitch(panel) {
-    const needsLogin = ['mydevotion', 'prayer', 'devotion', 'journal', 'evangelism', 'checkin', 'sharewall', 'innerlife', 'soul-question', 'growth-map', 'partner', 'bible-reading', 'communion', 'voice', 'attention', 'formation-twin', 'spiritual-planet']
+    const needsLogin = ['mydevotion', 'prayer', 'devotion', 'journal', 'evangelism', 'checkin', 'sharewall', 'innerlife', 'soul-question', 'growth-map', 'partner', 'bible-reading', 'communion', 'voice', 'attention', 'formation-twin', 'spiritual-planet', 'ai-formation']
     if (needsLogin.includes(panel) && !user) {
       const messages = {
         mydevotion: i18nT('登录后记录和分享你的灵修日记'),
@@ -1346,6 +1354,7 @@ function AppContent() {
         attention: i18nT('登录后使用守心模块，保存每日注意力立约'),
         'formation-twin': i18nT('登录后查看由你现有记录形成的情感—属灵生命镜像'),
         'spiritual-planet': i18nT('登录后进入统一的属灵星球门户'),
+        'ai-formation': i18nT('登录后进入AI时代心意更新与家庭门训'),
       }
       setLoginMessage(messages[panel])
       setPendingPanel(panel)
@@ -1416,12 +1425,24 @@ function AppContent() {
       checkin: 'checkin', prayer: 'prayer', devotion: 'devotion', 'formation-twin': 'formation-twin',
       'spiritual-formation': 'spiritual-formation', attention: 'attention', 'growth-map': 'growth-map',
       'mission-life': 'evangelism', 'personal-search': 'personal-search', partner: 'partner', communion: 'communion',
+      'ai-formation': 'ai-formation',
     }[target]
     if (target === 'devotion') {
       openDevotionTopics()
       return
     }
     if (existingPanel) handlePanelSwitch(existingPanel)
+  }
+
+  function openAiFormationTarget(target) {
+    const existingPanel = {
+      'formation-twin': 'formation-twin', attention: 'attention', 'spiritual-formation': 'spiritual-formation',
+      devotion: 'devotion', partner: 'partner', communion: 'communion',
+    }[target]
+    if (existingPanel) {
+      if (/^\/sunday-school\/ai-formation/.test(window.location.pathname)) window.history.replaceState({}, '', '/')
+      handlePanelSwitch(existingPanel)
+    }
   }
 
   function handleLoginSuccess(u) {
@@ -3198,6 +3219,25 @@ function AppContent() {
             {user ? (
               <Suspense fallback={null}>
                 <SpiritualPlanetPlatformPage user={user} onBack={() => setActivePanel('sphere')} onOpen={openSpiritualPlanetTarget} />
+              </Suspense>
+            ) : showLogin ? renderInlineLogin() : null}
+          </div>
+        )}
+
+        {/* 主日学 · AI时代心意更新与家庭门训 */}
+        {activePanel === 'ai-formation' && (
+          <div className="page-overlay">
+            {user ? (
+              <Suspense fallback={null}>
+                <AiFormationPage
+                  user={user}
+                  initialRoute={aiFormationInitialRoute}
+                  onOpen={openAiFormationTarget}
+                  onBack={() => {
+                    if (/^\/sunday-school\/ai-formation/.test(window.location.pathname)) window.history.replaceState({}, '', '/')
+                    setActivePanel('sphere')
+                  }}
+                />
               </Suspense>
             ) : showLogin ? renderInlineLogin() : null}
           </div>

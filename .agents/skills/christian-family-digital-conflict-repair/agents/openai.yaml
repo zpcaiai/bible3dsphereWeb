@@ -1,0 +1,8 @@
+interface:
+  display_name: Family Digital Conflict Repair
+  short_description: Implement fact separation, impact acknowledgment, proportional consequences, repair and rule adjustment.
+  default_prompt: Use $christian-family-digital-conflict-repair for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

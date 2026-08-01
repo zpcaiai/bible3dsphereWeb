@@ -1,0 +1,8 @@
+interface:
+  display_name: Human Interpretation and Correction Notes
+  short_description: Implement role-aware human context, correction, goal, barrier and support notes.
+  default_prompt: Use $christian-human-interpretation-note for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

@@ -1,0 +1,6 @@
+interface:
+  display_name: "Security, Privacy and Policy"
+  short_description: "Run this Batch capability with evidence gates"
+  default_prompt: "Use $b13-evidence-graph-continuous-certification-security-policy to execute this workflow with explicit evidence, validation, human approval boundaries, and rollback reporting."
+policy:
+  allow_implicit_invocation: true

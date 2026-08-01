@@ -1,0 +1,7 @@
+interface:
+  display_name: "属灵星球 AI时代心意更新完整项目编排"
+  short_description: "编排并验收主日学 AI Formation Batch 01–12"
+  default_prompt: "Use $spiritual-planet-ai-formation-complete-program-orchestrator to inspect the existing Spiritual Planet repository and implement Batches 01–12 in dependency order with theology, safety, privacy, testing and release evidence."
+policy:
+  products:
+    - CODEX

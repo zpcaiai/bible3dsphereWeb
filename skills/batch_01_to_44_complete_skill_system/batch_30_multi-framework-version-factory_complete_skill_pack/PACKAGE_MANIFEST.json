@@ -1,0 +1,326 @@
+{
+  "schema_version": "1.0.0",
+  "package_id": "batch-30-multi-framework-version-factory-complete-skill-pack",
+  "batch": 30,
+  "title": "Batch 30: Multi-Framework and Version Migration Factory",
+  "version": "1.0.0",
+  "root_skill": "batch-30-multi-framework-version-factory",
+  "generated_at": "2026-07-31T00:00:00Z",
+  "skill_count": 16,
+  "skills": [
+    "b30-multi-framework-version-factory-adapter-provider",
+    "b30-multi-framework-version-factory-capability-planning",
+    "b30-multi-framework-version-factory-certification-gate",
+    "b30-multi-framework-version-factory-corpus-benchmark",
+    "b30-multi-framework-version-factory-deterministic-engine",
+    "b30-multi-framework-version-factory-discovery-inventory",
+    "b30-multi-framework-version-factory-domain-model",
+    "b30-multi-framework-version-factory-failure-recovery",
+    "b30-multi-framework-version-factory-human-approval",
+    "b30-multi-framework-version-factory-integration-api",
+    "b30-multi-framework-version-factory-lifecycle-recertification",
+    "b30-multi-framework-version-factory-lineage-reconciliation",
+    "b30-multi-framework-version-factory-observability-economics",
+    "b30-multi-framework-version-factory-orchestrator",
+    "b30-multi-framework-version-factory-security-policy",
+    "b30-multi-framework-version-factory-workflow-runtime"
+  ],
+  "upstream_batch": 29,
+  "files": [
+    {
+      "path": "BATCH29_COMPATIBILITY.md",
+      "sha256": "2e748da02476db35ca0b24c4276bbfd411621718ba0b2cb44691ec316be095ef",
+      "size": 2115
+    },
+    {
+      "path": "CODEX_IMPLEMENTATION_PROMPT.md",
+      "sha256": "ea26bbe0131907e91c7df09dd2c2a4894ea5e1be68057300dae54723f79f55e7",
+      "size": 2273
+    },
+    {
+      "path": "IMPLEMENTATION_CHECKLIST.md",
+      "sha256": "9cb09c5af49187c2376c09b4564756c93abf4cd0669e091f25afb6a03047f653",
+      "size": 1778
+    },
+    {
+      "path": "README.md",
+      "sha256": "db5579e522cdf329f010bf454f6ff9dd526d5498ae0fada25448a688384eda7e",
+      "size": 1042
+    },
+    {
+      "path": "SKILL.md",
+      "sha256": "8a4c95df69cdd262a11d84cf88653540e2fbceb00ed7503a3a46fbd2a609c461",
+      "size": 4034
+    },
+    {
+      "path": "SKILL_INDEX.md",
+      "sha256": "aef747feabb021a9deaf8278628d78b5c59cd9e1515805897fe247c50711fdd5",
+      "size": 3110
+    },
+    {
+      "path": "VALIDATION_REPORT.md",
+      "sha256": "7c78aff982a68cc63fb039a8797ea0a17ebae380d28ee2a49a245f272d42c628",
+      "size": 572
+    },
+    {
+      "path": "agents/openai.yaml",
+      "sha256": "35e0f0166091020b78b7216fa7a2ed7c243c683173fdd6345a4ca16695b70e29",
+      "size": 371
+    },
+    {
+      "path": "examples/certificate.example.json",
+      "sha256": "8590b2e11a09e8436d07c81f38d15618ae7238a00d227c82f94a679754682f84",
+      "size": 452
+    },
+    {
+      "path": "examples/invocation.example.json",
+      "sha256": "4a72597b91a92f8c4ab61ab2feb7e55cb1292741f5aa23deaea1deec4d3c4b15",
+      "size": 279
+    },
+    {
+      "path": "install.sh",
+      "sha256": "cdaf3fdf0c010dd9e0fe29b4a92cd723ff35dd0617eaf14bb5f57e757bc2fa02",
+      "size": 305
+    },
+    {
+      "path": "policies/agent-boundary.yaml",
+      "sha256": "79adc8830adec220835b49067d29b50a3a1578f146a65e7d5b70a6d19ba09ab2",
+      "size": 150
+    },
+    {
+      "path": "policies/certification.yaml",
+      "sha256": "17f50ef51eb5cbf800b3b4990bfb399d4aed9c751cb7f440bee4a4d88ebf02ea",
+      "size": 182
+    },
+    {
+      "path": "policies/default-deny.yaml",
+      "sha256": "25c6a03403de8832018b82bfa5d9dd516d8f5136ba4974c85d40bdf8972f9366",
+      "size": 105
+    },
+    {
+      "path": "policies/evidence-first.yaml",
+      "sha256": "50408543ffa45cfea3461cd57bdabf39f9bdd422fc5b41cdfef4d3c679a058c2",
+      "size": 156
+    },
+    {
+      "path": "policies/human-approval.yaml",
+      "sha256": "d9a6b11cfe402c569440e95b1aa2377387e222a32b693c83fc278ddb1fd4482f",
+      "size": 143
+    },
+    {
+      "path": "schemas/batch-input.schema.json",
+      "sha256": "7d1c4b1e90a2c3133c47c8f518bd2705912a0caecc41be0520038f57f0b76ab9",
+      "size": 731
+    },
+    {
+      "path": "schemas/batch-output.schema.json",
+      "sha256": "869bb6c05cf25b02168b3817b923437c61ab07bc274a2d4236dac270e6c50f18",
+      "size": 832
+    },
+    {
+      "path": "schemas/capability-package.schema.json",
+      "sha256": "36488cb8f7b74aaf978d0561c636ead5e9b19b3aa227b0863e82558860ec9fb9",
+      "size": 1133
+    },
+    {
+      "path": "schemas/certification.schema.json",
+      "sha256": "d914616a0272ce7ac3acfcdcc953e829ad413b62932904826f9fec30c334f0f0",
+      "size": 1281
+    },
+    {
+      "path": "schemas/evidence-ref.schema.json",
+      "sha256": "5e0d5d1c538597b4cedb83435f742cc7260db1fc996ff7abe3fa50e6c20dd683",
+      "size": 996
+    },
+    {
+      "path": "schemas/workflow-run.schema.json",
+      "sha256": "7b8c5eda6c4e7d1067eacf109a76cb5be284d9bdc9beaf19742f00c18535c643",
+      "size": 848
+    },
+    {
+      "path": "skills/b30-multi-framework-version-factory-adapter-provider/SKILL.md",
+      "sha256": "e697d4c7db585da2b6d911c3a325cbdbe82e5c181217c84955186eedbef44ce8",
+      "size": 3951
+    },
+    {
+      "path": "skills/b30-multi-framework-version-factory-adapter-provider/agents/openai.yaml",
+      "sha256": "ac79a24d92fdc683b7e3a4735b1e3253ca662b49159ea2950f5982edc1843061",
+      "size": 357
+    },
+    {
+      "path": "skills/b30-multi-framework-version-factory-capability-planning/SKILL.md",
+      "sha256": "bddc02bd05a32fd6822982f49c88cb4d3840e0f3029b6f04444210001cad746e",
+      "size": 3853
+    },
+    {
+      "path": "skills/b30-multi-framework-version-factory-capability-planning/agents/openai.yaml",
+      "sha256": "76b52e18d6121aff4b2b3c0ed86f20e28ff4b6329775d63d12a9e66799750fe4",
+      "size": 364
+    },
+    {
+      "path": "skills/b30-multi-framework-version-factory-certification-gate/SKILL.md",
+      "sha256": "096ff307d8deb18353fbfcb10dc09ba0e62e91f50ef1a51f90b3c021128b5308",
+      "size": 3982
+    },
+    {
+      "path": "skills/b30-multi-framework-version-factory-certification-gate/agents/openai.yaml",
+      "sha256": "7c933856c747ce489c22a29363f9d52c234c2f1b45ac380e0e50746f2d6328ac",
+      "size": 364
+    },
+    {
+      "path": "skills/b30-multi-framework-version-factory-corpus-benchmark/SKILL.md",
+      "sha256": "3425f75cdb1c44442b8064d693bea1a91e10f27a9a79887bf6c9c5e884a48fe9",
+      "size": 3892
+    },
+    {
+      "path": "skills/b30-multi-framework-version-factory-corpus-benchmark/agents/openai.yaml",
+      "sha256": "2def03e4830d65ff5e101bcccdf99442df32c9ee6af25185d1484dd2a42e1e43",
+      "size": 362
+    },
+    {
+      "path": "skills/b30-multi-framework-version-factory-deterministic-engine/SKILL.md",
+      "sha256": "b53b10e63073cdc13d284255ccc9f0a9e017da9c00a71bd7d3a3f29c20d96808",
+      "size": 3869
+    },
+    {
+      "path": "skills/b30-multi-framework-version-factory-deterministic-engine/agents/openai.yaml",
+      "sha256": "85e16e99a5d56bc3d6c637241f6ecba431a302e5d6c31279c14a91040f5cff4d",
+      "size": 355
+    },
+    {
+      "path": "skills/b30-multi-framework-version-factory-discovery-inventory/SKILL.md",
+      "sha256": "87f2bfd3fb43ef522c9a5f0ec6fb16d5e883ef30d1211f5c017e1555863e34dd",
+      "size": 3896
+    },
+    {
+      "path": "skills/b30-multi-framework-version-factory-discovery-inventory/agents/openai.yaml",
+      "sha256": "d6a8e6c0fcd6792572d1d93fa0bd61b565ac41869a3155fe188ac2a8d59e768a",
+      "size": 357
+    },
+    {
+      "path": "skills/b30-multi-framework-version-factory-domain-model/SKILL.md",
+      "sha256": "54879e10120ca80244eebd8f90956344bd58b07d2c7c59ad20c8f5f5cc1a5f1a",
+      "size": 3923
+    },
+    {
+      "path": "skills/b30-multi-framework-version-factory-domain-model/agents/openai.yaml",
+      "sha256": "2408a705a9ade92910e8a1df7ad65cc52663fd91266928839b81fffecbbd2961",
+      "size": 361
+    },
+    {
+      "path": "skills/b30-multi-framework-version-factory-failure-recovery/SKILL.md",
+      "sha256": "33acec253177b8a9bd5303d90ab9f26f6f97ba46fdb03ef71224fa4d6fa80922",
+      "size": 3900
+    },
+    {
+      "path": "skills/b30-multi-framework-version-factory-failure-recovery/agents/openai.yaml",
+      "sha256": "0810abdcf19fbc585ae04b1f439332f29ef15c60042d029063479d0597ebc538",
+      "size": 360
+    },
+    {
+      "path": "skills/b30-multi-framework-version-factory-human-approval/SKILL.md",
+      "sha256": "cbb4d6d71c52dc8eb3e897fbb9c6836bd2b1590f4a0ecc447f2ec1c82ccf0d62",
+      "size": 3885
+    },
+    {
+      "path": "skills/b30-multi-framework-version-factory-human-approval/agents/openai.yaml",
+      "sha256": "9195bab701ce4961e2b311e94479a5ab64966d8ab795315abf9df22bdf304397",
+      "size": 354
+    },
+    {
+      "path": "skills/b30-multi-framework-version-factory-integration-api/SKILL.md",
+      "sha256": "ac2ba693f674068f6e8db173a2e05ff4c44510b2bf4b9b4d00c1b14c9ed3e18e",
+      "size": 3870
+    },
+    {
+      "path": "skills/b30-multi-framework-version-factory-integration-api/agents/openai.yaml",
+      "sha256": "c8410400b7effbf112991dd40f001ef4ecedffaea10b65a084c6a5601cd533c8",
+      "size": 357
+    },
+    {
+      "path": "skills/b30-multi-framework-version-factory-lifecycle-recertification/SKILL.md",
+      "sha256": "673b80e16f21b45e86ce139adf555b2e4f511bd0b37ef07a8bbfaac4d1817299",
+      "size": 3960
+    },
+    {
+      "path": "skills/b30-multi-framework-version-factory-lifecycle-recertification/agents/openai.yaml",
+      "sha256": "0b60c7b38493f873288f37fde6824b15024b124bab85673ab78e0f8094e4e4ce",
+      "size": 380
+    },
+    {
+      "path": "skills/b30-multi-framework-version-factory-lineage-reconciliation/SKILL.md",
+      "sha256": "6376669cb7952c3c8737f893d6d9f531860e90e1feef04d2b31874b88482c7af",
+      "size": 3911
+    },
+    {
+      "path": "skills/b30-multi-framework-version-factory-lineage-reconciliation/agents/openai.yaml",
+      "sha256": "41ff3907016540baeff86cc9f2c110a9297dc3d4fdc1e5678ff45f8e7b0b1b12",
+      "size": 363
+    },
+    {
+      "path": "skills/b30-multi-framework-version-factory-observability-economics/SKILL.md",
+      "sha256": "83d901e5743acd04577e18ba47822c131c8b2802a1318e6bbe7bebbd544b583f",
+      "size": 3926
+    },
+    {
+      "path": "skills/b30-multi-framework-version-factory-observability-economics/agents/openai.yaml",
+      "sha256": "56f4e82e1e25e709e7f4a613933df9d35dd8bc36d0fb2a3a9e870ba9ee6b316e",
+      "size": 374
+    },
+    {
+      "path": "skills/b30-multi-framework-version-factory-orchestrator/SKILL.md",
+      "sha256": "bd3a9d4ba4934a2b59d326364d1c475ad97238e26ff285aacc1098de2a0abf49",
+      "size": 3948
+    },
+    {
+      "path": "skills/b30-multi-framework-version-factory-orchestrator/agents/openai.yaml",
+      "sha256": "9354000330678a84db34e538328d7ee9588bb79043dae7ab498c43f8fd182d96",
+      "size": 357
+    },
+    {
+      "path": "skills/b30-multi-framework-version-factory-security-policy/SKILL.md",
+      "sha256": "0d3fee5fdae3bc34e663ff8f6c84775810ee4836958c30719a813df636468a31",
+      "size": 3905
+    },
+    {
+      "path": "skills/b30-multi-framework-version-factory-security-policy/agents/openai.yaml",
+      "sha256": "b5951249e0f1838d1f461e88867b35e149c6beb247a222b2c9d8d4c2652d10b5",
+      "size": 358
+    },
+    {
+      "path": "skills/b30-multi-framework-version-factory-workflow-runtime/SKILL.md",
+      "sha256": "c16def5524d4ea8d9bfed258d181d58034c930e2642edf72d799e0bf73680411",
+      "size": 3914
+    },
+    {
+      "path": "skills/b30-multi-framework-version-factory-workflow-runtime/agents/openai.yaml",
+      "sha256": "b4643d79f74d3468b74afdaee91053cb3a03e70bae3810a7c5bd686a7915d440",
+      "size": 361
+    },
+    {
+      "path": "tests/README.md",
+      "sha256": "812830a3a69edcd9a108a092fb991528fb63bc995a0656469e951751875e30a1",
+      "size": 397
+    },
+    {
+      "path": "tests/test_catalog.json",
+      "sha256": "8a6d0992a85ebadf9686667e98f36830400f3ad79d7e035d7cc17c80c3a741c7",
+      "size": 1923
+    },
+    {
+      "path": "tools/validate_package.py",
+      "sha256": "281cd6663a38afc9e046323ef2c1a2f21d08e8cbfd490e54985526d73e0154f3",
+      "size": 3581
+    },
+    {
+      "path": "validate.sh",
+      "sha256": "a1afca2d69d8fa3d11c820c8381b06b6449e31b289196b3cdc4156de471dd6c4",
+      "size": 72
+    }
+  ],
+  "validation": {
+    "static": "passed",
+    "runtime": "not-executed"
+  },
+  "trust_boundary": "Static package validation is not runtime execution or production certification."
+}

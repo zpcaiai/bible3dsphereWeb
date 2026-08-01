@@ -1,0 +1,48 @@
+{
+  "event_id": "e1",
+  "user_id": "u1",
+  "occurred_at": "2026-07-20T10:00:00+08:00",
+  "context": "work",
+  "trigger": "同事遗漏测试",
+  "automatic_interpretation": "只有我能把事情做好",
+  "desire_or_fear": [
+    "控制结果"
+  ],
+  "active_belief": [
+    "价值来自不可替代"
+  ],
+  "emotion": [
+    "愤怒"
+  ],
+  "body_signal": [
+    "胸口紧"
+  ],
+  "chosen_action": [
+    "接管任务"
+  ],
+  "avoided_action": [
+    "委派"
+  ],
+  "relationship_effect": [
+    "同事减少主动性"
+  ],
+  "immediate_reward": [
+    "恢复控制"
+  ],
+  "delayed_cost": [
+    "团队依赖"
+  ],
+  "gospel_truth_recalled": [
+    "我是管家，不是救主"
+  ],
+  "repair_action": [
+    "道歉并归还任务"
+  ],
+  "outcome": "完成修复",
+  "source_type": "self_report",
+  "evidence_quality": "E2",
+  "consent_scope": {
+    "allow_longitudinal_tracking": true
+  },
+  "limitations": []
+}

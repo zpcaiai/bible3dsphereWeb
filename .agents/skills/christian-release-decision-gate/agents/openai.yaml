@@ -1,0 +1,9 @@
+interface:
+  display_name: Human Release Decision Gate
+  short_description: Implement final gate aggregation, blocker policy, limited rollout, feature flag, rollback and incident
+    ownership.
+  default_prompt: Use $christian-release-decision-gate for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

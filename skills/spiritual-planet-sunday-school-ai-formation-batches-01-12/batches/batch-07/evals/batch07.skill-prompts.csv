@@ -1,0 +1,51 @@
+prompt,expected_skill,should_activate,case_type,notes
+请在属灵星球仓库实现Child Formation Orchestrator，复用现有路由和安全门。,spiritual-planet-child-formation-orchestrator,true,explicit-domain,应自动路由到焦点技能
+Use $spiritual-planet-child-formation-orchestrator to inspect and implement the repository changes with tests.,spiritual-planet-child-formation-orchestrator,true,explicit-mention,显式调用
+审查当前 Child Formation Orchestrator 的Schema、权限、隐私和E2E测试，不要新建平行应用。,spiritual-planet-child-formation-orchestrator,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,spiritual-planet-child-formation-orchestrator,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Early Childhood Responsive Care，复用现有路由和安全门。,christian-early-childhood-responsive-care,true,explicit-domain,应自动路由到焦点技能
+Use $christian-early-childhood-responsive-care to inspect and implement the repository changes with tests.,christian-early-childhood-responsive-care,true,explicit-mention,显式调用
+审查当前 Early Childhood Responsive Care 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-early-childhood-responsive-care,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-early-childhood-responsive-care,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Child Story and Imagination，复用现有路由和安全门。,christian-child-story-imagination,true,explicit-domain,应自动路由到焦点技能
+Use $christian-child-story-imagination to inspect and implement the repository changes with tests.,christian-child-story-imagination,true,explicit-mention,显式调用
+审查当前 Child Story and Imagination 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-child-story-imagination,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-child-story-imagination,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Embodied Play and Real-World Formation，复用现有路由和安全门。,christian-embodied-play-formation,true,explicit-domain,应自动路由到焦点技能
+Use $christian-embodied-play-formation to inspect and implement the repository changes with tests.,christian-embodied-play-formation,true,explicit-mention,显式调用
+审查当前 Embodied Play and Real-World Formation 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-embodied-play-formation,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-embodied-play-formation,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Child Screen Transition，复用现有路由和安全门。,christian-child-screen-transition,true,explicit-domain,应自动路由到焦点技能
+Use $christian-child-screen-transition to inspect and implement the repository changes with tests.,christian-child-screen-transition,true,explicit-mention,显式调用
+审查当前 Child Screen Transition 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-child-screen-transition,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-child-screen-transition,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Elementary Media Literacy，复用现有路由和安全门。,christian-elementary-media-literacy,true,explicit-domain,应自动路由到焦点技能
+Use $christian-elementary-media-literacy to inspect and implement the repository changes with tests.,christian-elementary-media-literacy,true,explicit-mention,显式调用
+审查当前 Elementary Media Literacy 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-elementary-media-literacy,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-elementary-media-literacy,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Elementary AI Literacy，复用现有路由和安全门。,christian-elementary-ai-literacy,true,explicit-domain,应自动路由到焦点技能
+Use $christian-elementary-ai-literacy to inspect and implement the repository changes with tests.,christian-elementary-ai-literacy,true,explicit-mention,显式调用
+审查当前 Elementary AI Literacy 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-elementary-ai-literacy,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-elementary-ai-literacy,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Child Privacy Literacy，复用现有路由和安全门。,christian-child-privacy-literacy,true,explicit-domain,应自动路由到焦点技能
+Use $christian-child-privacy-literacy to inspect and implement the repository changes with tests.,christian-child-privacy-literacy,true,explicit-mention,显式调用
+审查当前 Child Privacy Literacy 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-child-privacy-literacy,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-child-privacy-literacy,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Child Responsibility and Service，复用现有路由和安全门。,christian-child-responsibility-service,true,explicit-domain,应自动路由到焦点技能
+Use $christian-child-responsibility-service to inspect and implement the repository changes with tests.,christian-child-responsibility-service,true,explicit-mention,显式调用
+审查当前 Child Responsibility and Service 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-child-responsibility-service,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-child-responsibility-service,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Parent–Child Faith Conversation，复用现有路由和安全门。,christian-parent-child-faith-conversation,true,explicit-domain,应自动路由到焦点技能
+Use $christian-parent-child-faith-conversation to inspect and implement the repository changes with tests.,christian-parent-child-faith-conversation,true,explicit-mention,显式调用
+审查当前 Parent–Child Faith Conversation 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-parent-child-faith-conversation,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-parent-child-faith-conversation,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Child Safeguarding Response，复用现有路由和安全门。,christian-child-safeguarding-response,true,explicit-domain,应自动路由到焦点技能
+Use $christian-child-safeguarding-response to inspect and implement the repository changes with tests.,christian-child-safeguarding-response,true,explicit-mention,显式调用
+审查当前 Child Safeguarding Response 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-child-safeguarding-response,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-child-safeguarding-response,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Child Formation Course Integrator，复用现有路由和安全门。,child-formation-course-integrator,true,explicit-domain,应自动路由到焦点技能
+Use $child-formation-course-integrator to inspect and implement the repository changes with tests.,child-formation-course-integrator,true,explicit-mention,显式调用
+审查当前 Child Formation Course Integrator 的Schema、权限、隐私和E2E测试，不要新建平行应用。,child-formation-course-integrator,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,child-formation-course-integrator,false,negative,纯神学问答不应激活仓库技能
+在属灵星球主日学模块端到端实现 Batch 07，包含数据、页面、迁移、权限、内容、测试与报告。,spiritual-planet-child-formation-orchestrator,true,orchestrator,端到端请求
+帮我写一段个人祷告，不要修改任何项目。,spiritual-planet-child-formation-orchestrator,false,negative,非产品任务

@@ -1,0 +1,8 @@
+interface:
+  display_name: Youth Question and Doubt
+  short_description: Implement non-coercive question capture, source planning, provisional conclusions and follow-up.
+  default_prompt: Use $christian-youth-question-doubt for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

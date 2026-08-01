@@ -1,0 +1,8 @@
+interface:
+  display_name: "Christian Digital Sabbath Planner"
+  short_description: "Plan safe, configurable periods of digital rest."
+  default_prompt: "Use $christian-digital-sabbath-planner for this task."
+policy:
+  products:
+    - CODEX
+  allow_implicit_invocation: true

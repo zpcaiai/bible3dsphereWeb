@@ -1,0 +1,51 @@
+prompt,expected_skill,should_activate,case_type,notes
+请在属灵星球仓库实现Formation Twin Orchestrator，复用现有路由和安全门。,spiritual-planet-formation-twin-orchestrator,true,explicit-domain,应自动路由到焦点技能
+Use $spiritual-planet-formation-twin-orchestrator to inspect and implement the repository changes with tests.,spiritual-planet-formation-twin-orchestrator,true,explicit-mention,显式调用
+审查当前 Formation Twin Orchestrator 的Schema、权限、隐私和E2E测试，不要新建平行应用。,spiritual-planet-formation-twin-orchestrator,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,spiritual-planet-formation-twin-orchestrator,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Formation Twin Ontology，复用现有路由和安全门。,christian-formation-twin-ontology,true,explicit-domain,应自动路由到焦点技能
+Use $christian-formation-twin-ontology to inspect and implement the repository changes with tests.,christian-formation-twin-ontology,true,explicit-mention,显式调用
+审查当前 Formation Twin Ontology 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-formation-twin-ontology,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-formation-twin-ontology,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Formation Event Ledger，复用现有路由和安全门。,christian-formation-event-ledger,true,explicit-domain,应自动路由到焦点技能
+Use $christian-formation-event-ledger to inspect and implement the repository changes with tests.,christian-formation-event-ledger,true,explicit-mention,显式调用
+审查当前 Formation Event Ledger 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-formation-event-ledger,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-formation-event-ledger,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Formation State Snapshot，复用现有路由和安全门。,christian-formation-state-snapshot,true,explicit-domain,应自动路由到焦点技能
+Use $christian-formation-state-snapshot to inspect and implement the repository changes with tests.,christian-formation-state-snapshot,true,explicit-mention,显式调用
+审查当前 Formation State Snapshot 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-formation-state-snapshot,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-formation-state-snapshot,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Habit and Practice Trajectory，复用现有路由和安全门。,christian-habit-trajectory,true,explicit-domain,应自动路由到焦点技能
+Use $christian-habit-trajectory to inspect and implement the repository changes with tests.,christian-habit-trajectory,true,explicit-mention,显式调用
+审查当前 Habit and Practice Trajectory 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-habit-trajectory,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-habit-trajectory,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Attention Availability Trajectory，复用现有路由和安全门。,christian-attention-trajectory,true,explicit-domain,应自动路由到焦点技能
+Use $christian-attention-trajectory to inspect and implement the repository changes with tests.,christian-attention-trajectory,true,explicit-mention,显式调用
+审查当前 Attention Availability Trajectory 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-attention-trajectory,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-attention-trajectory,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Relationship Fruit Observation，复用现有路由和安全门。,christian-relationship-fruit-observation,true,explicit-domain,应自动路由到焦点技能
+Use $christian-relationship-fruit-observation to inspect and implement the repository changes with tests.,christian-relationship-fruit-observation,true,explicit-mention,显式调用
+审查当前 Relationship Fruit Observation 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-relationship-fruit-observation,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-relationship-fruit-observation,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Formation Review Window，复用现有路由和安全门。,christian-formation-review-window,true,explicit-domain,应自动路由到焦点技能
+Use $christian-formation-review-window to inspect and implement the repository changes with tests.,christian-formation-review-window,true,explicit-mention,显式调用
+审查当前 Formation Review Window 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-formation-review-window,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-formation-review-window,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Human Interpretation and Correction Notes，复用现有路由和安全门。,christian-human-interpretation-note,true,explicit-domain,应自动路由到焦点技能
+Use $christian-human-interpretation-note to inspect and implement the repository changes with tests.,christian-human-interpretation-note,true,explicit-mention,显式调用
+审查当前 Human Interpretation and Correction Notes 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-human-interpretation-note,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-human-interpretation-note,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Explainable Twin Recommendation，复用现有路由和安全门。,christian-twin-recommendation,true,explicit-domain,应自动路由到焦点技能
+Use $christian-twin-recommendation to inspect and implement the repository changes with tests.,christian-twin-recommendation,true,explicit-mention,显式调用
+审查当前 Explainable Twin Recommendation 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-twin-recommendation,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-twin-recommendation,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Formation Data Lifecycle，复用现有路由和安全门。,christian-formation-data-lifecycle,true,explicit-domain,应自动路由到焦点技能
+Use $christian-formation-data-lifecycle to inspect and implement the repository changes with tests.,christian-formation-data-lifecycle,true,explicit-mention,显式调用
+审查当前 Formation Data Lifecycle 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-formation-data-lifecycle,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-formation-data-lifecycle,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Formation Twin UI Integrator，复用现有路由和安全门。,formation-twin-course-integrator,true,explicit-domain,应自动路由到焦点技能
+Use $formation-twin-course-integrator to inspect and implement the repository changes with tests.,formation-twin-course-integrator,true,explicit-mention,显式调用
+审查当前 Formation Twin UI Integrator 的Schema、权限、隐私和E2E测试，不要新建平行应用。,formation-twin-course-integrator,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,formation-twin-course-integrator,false,negative,纯神学问答不应激活仓库技能
+在属灵星球主日学模块端到端实现 Batch 11，包含数据、页面、迁移、权限、内容、测试与报告。,spiritual-planet-formation-twin-orchestrator,true,orchestrator,端到端请求
+帮我写一段个人祷告，不要修改任何项目。,spiritual-planet-formation-twin-orchestrator,false,negative,非产品任务

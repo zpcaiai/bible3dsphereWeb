@@ -1,0 +1,6 @@
+interface:
+  display_name: "Batch 32: Client, UI, Desktop and Mobile Modernization Factory"
+  short_description: "Orchestrate this Batch with evidence gates"
+  default_prompt: "Use $batch-32-client-ui-modernization-factory to execute this workflow with explicit evidence, validation, human approval boundaries, and rollback reporting."
+policy:
+  allow_implicit_invocation: true

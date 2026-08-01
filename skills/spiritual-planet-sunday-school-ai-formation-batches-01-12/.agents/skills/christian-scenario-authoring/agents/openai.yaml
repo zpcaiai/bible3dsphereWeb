@@ -1,0 +1,8 @@
+interface:
+  display_name: Formation Scenario Authoring
+  short_description: Implement reviewed fictional scenario, node graph, learning goal and sensitivity tags.
+  default_prompt: Use $christian-scenario-authoring for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

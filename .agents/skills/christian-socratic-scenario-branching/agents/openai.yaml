@@ -1,0 +1,8 @@
+interface:
+  display_name: Socratic Scenario Branching
+  short_description: Implement observation-to-action question branches with skip and uncertainty.
+  default_prompt: Use $christian-socratic-scenario-branching for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

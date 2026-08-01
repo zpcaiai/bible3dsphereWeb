@@ -1,0 +1,8 @@
+interface:
+  display_name: "Christian Digital Rule of Life"
+  short_description: "Build a voluntary, editable, privacy-safe digital Rule of Life."
+  default_prompt: "Use $christian-digital-rule-of-life for this task."
+policy:
+  products:
+    - CODEX
+  allow_implicit_invocation: true

@@ -1,0 +1,6 @@
+interface:
+  display_name: "Domain Model and Versioned Schemas"
+  short_description: "Run this Batch capability with evidence gates"
+  default_prompt: "Use $b18-complete-project-generation-domain-model to execute this workflow with explicit evidence, validation, human approval boundaries, and rollback reporting."
+policy:
+  allow_implicit_invocation: true

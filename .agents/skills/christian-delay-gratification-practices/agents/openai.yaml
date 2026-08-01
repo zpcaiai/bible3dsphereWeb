@@ -1,0 +1,8 @@
+interface:
+  display_name: "Christian Delay Gratification Practices"
+  short_description: "Build gradual practices that restore choice before impulse."
+  default_prompt: "Use $christian-delay-gratification-practices for this task."
+policy:
+  products:
+    - CODEX
+  allow_implicit_invocation: true

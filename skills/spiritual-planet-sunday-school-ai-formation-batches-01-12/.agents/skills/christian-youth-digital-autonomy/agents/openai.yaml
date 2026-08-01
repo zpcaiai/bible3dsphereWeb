@@ -1,0 +1,8 @@
+interface:
+  display_name: Youth Digital Autonomy
+  short_description: Implement capability-level autonomy proposals, safety boundaries, review and recoverable rollback.
+  default_prompt: Use $christian-youth-digital-autonomy for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

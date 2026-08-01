@@ -1,0 +1,19 @@
+{
+  "case_id": "c2",
+  "subject_user_id": "u2",
+  "purpose": "未成年人虐待 concern",
+  "sensitivity": "L2",
+  "status": "review_needed",
+  "assigned_roles": [
+    "safeguarding_officer"
+  ],
+  "source_artifacts": [],
+  "active_questions": [],
+  "safety_flags": [
+    "minor_abuse"
+  ],
+  "retention_policy": {
+    "policy": "safeguarding"
+  },
+  "limitations": []
+}

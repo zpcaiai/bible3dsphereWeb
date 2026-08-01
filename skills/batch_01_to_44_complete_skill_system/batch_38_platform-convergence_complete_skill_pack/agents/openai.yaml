@@ -1,0 +1,6 @@
+interface:
+  display_name: "Batch 38: Canonical CapabilityPackage, Dependency Graph and Platform Convergence"
+  short_description: "Orchestrate this Batch with evidence gates"
+  default_prompt: "Use $batch-38-platform-convergence to execute this workflow with explicit evidence, validation, human approval boundaries, and rollback reporting."
+policy:
+  allow_implicit_invocation: true

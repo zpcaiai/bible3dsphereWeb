@@ -3,6 +3,8 @@ import BackButton from './BackButton'
 import { withExpansionChips, handleExpansionTarget } from './expansion/planetEntries'
 import PastoralPathCard, { PASTORAL_ROUTE_TARGETS } from './components/PastoralPathCard'
 import { a11yClickProps } from './lib/a11yClick';
+
+const AI_FORMATION_ENABLED = import.meta.env.VITE_AI_FORMATION_ENABLED === 'true'
 /**
  * PlanetHome — 属灵星球 · 成长地图（IA v1，增量、不删现有功能）
  * 把愿景的五大陆作为「人格塑造路径」的导航，路由到已有功能。
@@ -93,6 +95,16 @@ export default function PlanetHome({ user, onClose, go, openExpansion }) {
           </span>
           <span style={{ color: '#efd59d', fontSize: 20 }} aria-hidden="true">›</span>
         </button>
+        {AI_FORMATION_ENABLED && <button type="button" onClick={() => act('ai-formation')} style={{
+          width: '100%', display: 'flex', alignItems: 'center', gap: 13, textAlign: 'left', cursor: 'pointer',
+          margin: '0 0 12px', padding: '16px', borderRadius: 18, color: '#fff',
+          background: 'linear-gradient(135deg, rgba(105,75,180,0.25), rgba(39,105,126,0.16))',
+          border: '1px solid rgba(205,179,255,0.34)',
+        }}>
+          <span style={{ width: 44, height: 44, display: 'grid', placeItems: 'center', borderRadius: '50%', fontSize: 24, background: 'radial-gradient(circle at 35% 30%, #9675db, #29254f 70%)' }} aria-hidden="true">▦</span>
+          <span style={{ flex: 1 }}><strong style={{ display: 'block', fontSize: 15 }}>{i18nT('AI时代心意更新与家庭门训')}</strong><small style={{ display: 'block', marginTop: 4, color: 'rgba(255,255,255,0.56)', fontSize: 10.5, lineHeight: 1.5 }}>{i18nT('主日学 · 四条轨道 · 十二个 Batch · 审核后开放')}</small></span>
+          <span style={{ color: '#d8c5ff', fontSize: 20 }} aria-hidden="true">›</span>
+        </button>}
         <button type="button" onClick={() => act('formation-twin')} style={{
           width: '100%', display: 'flex', alignItems: 'center', gap: 13, textAlign: 'left', cursor: 'pointer',
           margin: '0 0 14px', padding: '16px', borderRadius: 18, color: '#fff',

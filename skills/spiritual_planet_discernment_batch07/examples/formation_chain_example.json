@@ -1,0 +1,44 @@
+{
+  "event_id": "evt-example-1",
+  "context": "团队代码评审",
+  "trigger": "同事遗漏一个测试条件",
+  "automatic_interpretation": "如果我不接管，项目一定会失败，也说明团队不可靠。",
+  "desire_or_fear": [
+    "必须控制结果",
+    "害怕显得无能"
+  ],
+  "active_belief": [
+    "我的价值取决于不可替代性"
+  ],
+  "emotion": [
+    "愤怒",
+    "焦虑"
+  ],
+  "body_signal": [
+    "胸口紧",
+    "语速加快"
+  ],
+  "chosen_action": [
+    "接管任务",
+    "公开批评同事"
+  ],
+  "relationship_effect": [
+    "同事沉默",
+    "团队减少主动性"
+  ],
+  "immediate_reward": [
+    "短期重新获得控制"
+  ],
+  "delayed_cost": [
+    "团队依赖加重",
+    "关系受损"
+  ],
+  "gospel_truth_recalled": [
+    "我是管家，不是救主",
+    "我的义不来自绩效"
+  ],
+  "repair_action": [
+    "私下道歉",
+    "归还任务并约定检查点"
+  ]
+}

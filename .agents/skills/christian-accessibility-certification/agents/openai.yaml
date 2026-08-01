@@ -1,0 +1,9 @@
+interface:
+  display_name: Accessibility Certification
+  short_description: Implement automated plus human accessibility certification for keyboard, screen reader, mobile, reduced
+    motion, contrast and cognitive load.
+  default_prompt: Use $christian-accessibility-certification for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

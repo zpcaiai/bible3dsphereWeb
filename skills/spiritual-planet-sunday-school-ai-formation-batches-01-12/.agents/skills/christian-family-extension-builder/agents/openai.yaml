@@ -1,0 +1,8 @@
+interface:
+  display_name: Family Extension Builder
+  short_description: Implement optional caregiver/family/youth-parent activities with alternatives.
+  default_prompt: Use $christian-family-extension-builder for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

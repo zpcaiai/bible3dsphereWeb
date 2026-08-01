@@ -1,0 +1,326 @@
+{
+  "schema_version": "1.0.0",
+  "package_id": "batch-27-canonical-database-ir-foundation-complete-skill-pack",
+  "batch": 27,
+  "title": "Batch 27: Canonical Database IR, Data Migration and Cutover Foundation",
+  "version": "1.0.0",
+  "root_skill": "batch-27-canonical-database-ir-foundation",
+  "generated_at": "2026-07-31T00:00:00Z",
+  "skill_count": 16,
+  "skills": [
+    "b27-canonical-database-ir-foundation-adapter-provider",
+    "b27-canonical-database-ir-foundation-capability-planning",
+    "b27-canonical-database-ir-foundation-certification-gate",
+    "b27-canonical-database-ir-foundation-corpus-benchmark",
+    "b27-canonical-database-ir-foundation-deterministic-engine",
+    "b27-canonical-database-ir-foundation-discovery-inventory",
+    "b27-canonical-database-ir-foundation-domain-model",
+    "b27-canonical-database-ir-foundation-failure-recovery",
+    "b27-canonical-database-ir-foundation-human-approval",
+    "b27-canonical-database-ir-foundation-integration-api",
+    "b27-canonical-database-ir-foundation-lifecycle-recertification",
+    "b27-canonical-database-ir-foundation-lineage-reconciliation",
+    "b27-canonical-database-ir-foundation-observability-economics",
+    "b27-canonical-database-ir-foundation-orchestrator",
+    "b27-canonical-database-ir-foundation-security-policy",
+    "b27-canonical-database-ir-foundation-workflow-runtime"
+  ],
+  "upstream_batch": 26,
+  "files": [
+    {
+      "path": "BATCH26_COMPATIBILITY.md",
+      "sha256": "72f6815ac98b44ca153594a9d1dbccdef6f01eab07818a9875160d7f701394ce",
+      "size": 2118
+    },
+    {
+      "path": "CODEX_IMPLEMENTATION_PROMPT.md",
+      "sha256": "e2b8154afb0a164eb15a26f7c454c5fb032e7dd2b55538324b12d0566793bfde",
+      "size": 2268
+    },
+    {
+      "path": "IMPLEMENTATION_CHECKLIST.md",
+      "sha256": "4ee01a09360c0746e8fcde6dd02c7aa6f53c16a6c9f1274b084af5e9e9289341",
+      "size": 1781
+    },
+    {
+      "path": "README.md",
+      "sha256": "aecce8f6c1a9c2de7f1cf44333cf82c83a495dc069b0f6cd47a11c3e7257f4db",
+      "size": 1049
+    },
+    {
+      "path": "SKILL.md",
+      "sha256": "edf252eb02a70631a620ffe02224ff00a1aad1cba79d6b1e01d3735cfff4d340",
+      "size": 4061
+    },
+    {
+      "path": "SKILL_INDEX.md",
+      "sha256": "93eee1d2c1b2e27dae7d1eff041edd1dec15c0e00c2c8a74ca7b8a27b722d5d0",
+      "size": 3141
+    },
+    {
+      "path": "VALIDATION_REPORT.md",
+      "sha256": "83768ee2b683e41359672b31159484417f7fbd03402fc3558302f48388c1f9e4",
+      "size": 572
+    },
+    {
+      "path": "agents/openai.yaml",
+      "sha256": "a629ca58605790329c619d93b9380bf2394283d50ddc54dfe9546a4e497b301d",
+      "size": 387
+    },
+    {
+      "path": "examples/certificate.example.json",
+      "sha256": "e26addc4b268c3c37a7f174b97581967633c8250d96745528551fc2cb1b19bee",
+      "size": 452
+    },
+    {
+      "path": "examples/invocation.example.json",
+      "sha256": "4fbd4b6f23c448a2628049f800d080e7724201c9410573f33735324014279f6e",
+      "size": 294
+    },
+    {
+      "path": "install.sh",
+      "sha256": "cdaf3fdf0c010dd9e0fe29b4a92cd723ff35dd0617eaf14bb5f57e757bc2fa02",
+      "size": 305
+    },
+    {
+      "path": "policies/agent-boundary.yaml",
+      "sha256": "79adc8830adec220835b49067d29b50a3a1578f146a65e7d5b70a6d19ba09ab2",
+      "size": 150
+    },
+    {
+      "path": "policies/certification.yaml",
+      "sha256": "17f50ef51eb5cbf800b3b4990bfb399d4aed9c751cb7f440bee4a4d88ebf02ea",
+      "size": 182
+    },
+    {
+      "path": "policies/default-deny.yaml",
+      "sha256": "25c6a03403de8832018b82bfa5d9dd516d8f5136ba4974c85d40bdf8972f9366",
+      "size": 105
+    },
+    {
+      "path": "policies/evidence-first.yaml",
+      "sha256": "50408543ffa45cfea3461cd57bdabf39f9bdd422fc5b41cdfef4d3c679a058c2",
+      "size": 156
+    },
+    {
+      "path": "policies/human-approval.yaml",
+      "sha256": "d9a6b11cfe402c569440e95b1aa2377387e222a32b693c83fc278ddb1fd4482f",
+      "size": 143
+    },
+    {
+      "path": "schemas/batch-input.schema.json",
+      "sha256": "266f958826f233f781681b3744f300074bf38948b26a9b63e4752017aae5eb42",
+      "size": 731
+    },
+    {
+      "path": "schemas/batch-output.schema.json",
+      "sha256": "b459a9a1c3aa7b2706c486014be6d200eed7977aca99cab3f5200d1a10521de0",
+      "size": 832
+    },
+    {
+      "path": "schemas/capability-package.schema.json",
+      "sha256": "e76ae89e7ecf784ee14ed64d02089e225571df7f7c0bfcb3ca047782d701f24f",
+      "size": 1133
+    },
+    {
+      "path": "schemas/certification.schema.json",
+      "sha256": "5b28137f13b57e3e50820b3dec60966ce1bb8be6c862da2fedad39c3c851de3c",
+      "size": 1281
+    },
+    {
+      "path": "schemas/evidence-ref.schema.json",
+      "sha256": "b6e865786ec9092f4d2c82e53e819814720abb05594eeabf0e20323bf78209c3",
+      "size": 996
+    },
+    {
+      "path": "schemas/workflow-run.schema.json",
+      "sha256": "408a862ec1cdd2d4ded4d699cb19fbf1d36b3b26abad19c5c4a3ae0cf9aab38d",
+      "size": 848
+    },
+    {
+      "path": "skills/b27-canonical-database-ir-foundation-adapter-provider/SKILL.md",
+      "sha256": "5221dd478fd9a2b1c4433f37f23149882aca0c13dd35a268a6cbabfdcb5a076d",
+      "size": 3967
+    },
+    {
+      "path": "skills/b27-canonical-database-ir-foundation-adapter-provider/agents/openai.yaml",
+      "sha256": "2b8e55a84b5158ad53d8c941dc27f18198d806b536e7d0347dd96fcf7fd63a23",
+      "size": 358
+    },
+    {
+      "path": "skills/b27-canonical-database-ir-foundation-capability-planning/SKILL.md",
+      "sha256": "7a96f51a92742e7105c0469ced9a252b16b963bf885386836b873c5344714cac",
+      "size": 3869
+    },
+    {
+      "path": "skills/b27-canonical-database-ir-foundation-capability-planning/agents/openai.yaml",
+      "sha256": "3bf1bed09791c286a6d01cc22bff4a39279b0817a05ed201c9c47397ae86bac6",
+      "size": 365
+    },
+    {
+      "path": "skills/b27-canonical-database-ir-foundation-certification-gate/SKILL.md",
+      "sha256": "c700fab09bc36ca3f91546f0921d6115e7bea9925c923a489cff287f6c30e223",
+      "size": 3998
+    },
+    {
+      "path": "skills/b27-canonical-database-ir-foundation-certification-gate/agents/openai.yaml",
+      "sha256": "77d6b8755c3ebaddaf108dd13e0a39243dec2dc961f8411d1626d1786982be24",
+      "size": 365
+    },
+    {
+      "path": "skills/b27-canonical-database-ir-foundation-corpus-benchmark/SKILL.md",
+      "sha256": "82408c3afe4eabaa233b3616011116afdff245a1ede8476bda939b2e9184b70a",
+      "size": 3908
+    },
+    {
+      "path": "skills/b27-canonical-database-ir-foundation-corpus-benchmark/agents/openai.yaml",
+      "sha256": "7b371e9b2d39935faede4871ad78af9b279fa97752504f3a75bb51a9d262eefa",
+      "size": 363
+    },
+    {
+      "path": "skills/b27-canonical-database-ir-foundation-deterministic-engine/SKILL.md",
+      "sha256": "c28c05a11de4687b581c0019eecfa7f7f1900596b30eb5befb85f4562372aceb",
+      "size": 3885
+    },
+    {
+      "path": "skills/b27-canonical-database-ir-foundation-deterministic-engine/agents/openai.yaml",
+      "sha256": "740bdcf071da5cffb65de9600f5091e2353e7dd52f71fb214f5c183e0a6e87b3",
+      "size": 356
+    },
+    {
+      "path": "skills/b27-canonical-database-ir-foundation-discovery-inventory/SKILL.md",
+      "sha256": "20d9b4a525846580f74f4942176890964844ff409515351d2e8b65c4aff19a68",
+      "size": 3912
+    },
+    {
+      "path": "skills/b27-canonical-database-ir-foundation-discovery-inventory/agents/openai.yaml",
+      "sha256": "cb604b8a5e52dd557306b56d5c0fece521b19ca404bf1b3b9eebd5216fd1c5b9",
+      "size": 358
+    },
+    {
+      "path": "skills/b27-canonical-database-ir-foundation-domain-model/SKILL.md",
+      "sha256": "32f14b0abe45f84ef729401b040d32f2a3d0209782827fc902bf191350e5bef7",
+      "size": 3939
+    },
+    {
+      "path": "skills/b27-canonical-database-ir-foundation-domain-model/agents/openai.yaml",
+      "sha256": "85d0c40f6b49cc331ba52643f3db9f3ec3d8723aeb7bb60c1c748aa6fb41f3df",
+      "size": 362
+    },
+    {
+      "path": "skills/b27-canonical-database-ir-foundation-failure-recovery/SKILL.md",
+      "sha256": "8f3125a6a10d69b1cda66dde5cfa05057ed4026435db6a241aba9c8c350c0f76",
+      "size": 3916
+    },
+    {
+      "path": "skills/b27-canonical-database-ir-foundation-failure-recovery/agents/openai.yaml",
+      "sha256": "9a44973d273edd1e9a906ffa65c42b7ad3392e59cc72a919497b7b7f492cf3c0",
+      "size": 361
+    },
+    {
+      "path": "skills/b27-canonical-database-ir-foundation-human-approval/SKILL.md",
+      "sha256": "d99a0ebbf6b28f5a69c3c67ca2a1351082e54d009b05d1a1661a4be400fd020b",
+      "size": 3901
+    },
+    {
+      "path": "skills/b27-canonical-database-ir-foundation-human-approval/agents/openai.yaml",
+      "sha256": "931c2a90c9878fb9b789f49c0f02f410710bd0859ef4064f3c5a920baf5c013c",
+      "size": 355
+    },
+    {
+      "path": "skills/b27-canonical-database-ir-foundation-integration-api/SKILL.md",
+      "sha256": "8fe563f777bfe849d9f3009ef34189ef316b96c786f8b9028651abce387ec586",
+      "size": 3886
+    },
+    {
+      "path": "skills/b27-canonical-database-ir-foundation-integration-api/agents/openai.yaml",
+      "sha256": "f2e82e57dd7f37d437b5b1f4fd35c5fa6e46c8a00d375d6f24c06a8bba25b7d8",
+      "size": 358
+    },
+    {
+      "path": "skills/b27-canonical-database-ir-foundation-lifecycle-recertification/SKILL.md",
+      "sha256": "e69385dba491326f4da8776b8a51f9e8fe61e4eda0a73d222c7c8335dfae18cc",
+      "size": 3976
+    },
+    {
+      "path": "skills/b27-canonical-database-ir-foundation-lifecycle-recertification/agents/openai.yaml",
+      "sha256": "8f5f4c1ffb5dc43ee6def969281c3fe3bd5c472d8d723bf9d93678c3328eb151",
+      "size": 381
+    },
+    {
+      "path": "skills/b27-canonical-database-ir-foundation-lineage-reconciliation/SKILL.md",
+      "sha256": "d157640c91386865664b1dd4c025d9491beddc052ee5275e1b144444d943f01b",
+      "size": 3927
+    },
+    {
+      "path": "skills/b27-canonical-database-ir-foundation-lineage-reconciliation/agents/openai.yaml",
+      "sha256": "ddf8bd2c308897376bbd335a5ba39f505f05af2228a9f45d23b82a617893048e",
+      "size": 364
+    },
+    {
+      "path": "skills/b27-canonical-database-ir-foundation-observability-economics/SKILL.md",
+      "sha256": "39e9f6a75e12c85832e2712fbbbc738b0e6f92cbf072342ae938213c6885c306",
+      "size": 3942
+    },
+    {
+      "path": "skills/b27-canonical-database-ir-foundation-observability-economics/agents/openai.yaml",
+      "sha256": "086245b383cbcad5229d07dc75ae9f9ad084e7bab0fe6bcfc4fa1caf2f9265c6",
+      "size": 375
+    },
+    {
+      "path": "skills/b27-canonical-database-ir-foundation-orchestrator/SKILL.md",
+      "sha256": "04231df374a5b2b263fe849fda22fe489d9cf966c796ed61bdf026ce52eb3a28",
+      "size": 3964
+    },
+    {
+      "path": "skills/b27-canonical-database-ir-foundation-orchestrator/agents/openai.yaml",
+      "sha256": "cd749d0e4a61a6074aee747fbedf3e9052c9bbc255fd45f62e5417b0309018c1",
+      "size": 358
+    },
+    {
+      "path": "skills/b27-canonical-database-ir-foundation-security-policy/SKILL.md",
+      "sha256": "176c654a26306cf5b76a9dcec5f1ebd26269293950a232930ba6f5739cd1ca31",
+      "size": 3921
+    },
+    {
+      "path": "skills/b27-canonical-database-ir-foundation-security-policy/agents/openai.yaml",
+      "sha256": "a062c3e029a9f6c2fe0367fce179fbef0a648367d34960cb6071f46b4be1b5fe",
+      "size": 359
+    },
+    {
+      "path": "skills/b27-canonical-database-ir-foundation-workflow-runtime/SKILL.md",
+      "sha256": "33c1fddc7d91cd11655e9781275eb098df47fc16b8fcec09be416e8a0115e6c7",
+      "size": 3930
+    },
+    {
+      "path": "skills/b27-canonical-database-ir-foundation-workflow-runtime/agents/openai.yaml",
+      "sha256": "cd92f58a99298aeb1f4c685327fff7ec36d826e593a5e45124c25053101dbffa",
+      "size": 362
+    },
+    {
+      "path": "tests/README.md",
+      "sha256": "790fc98713572b53011f7bc6a50627d0fea7f9065fc926bb949692bd37e29e54",
+      "size": 385
+    },
+    {
+      "path": "tests/test_catalog.json",
+      "sha256": "382b245560d8727ff3ec53366727ed5bc03c810e30ee089d25fa2bc9b4d53fa8",
+      "size": 1938
+    },
+    {
+      "path": "tools/validate_package.py",
+      "sha256": "281cd6663a38afc9e046323ef2c1a2f21d08e8cbfd490e54985526d73e0154f3",
+      "size": 3581
+    },
+    {
+      "path": "validate.sh",
+      "sha256": "a1afca2d69d8fa3d11c820c8381b06b6449e31b289196b3cdc4156de471dd6c4",
+      "size": 72
+    }
+  ],
+  "validation": {
+    "static": "passed",
+    "runtime": "not-executed"
+  },
+  "trust_boundary": "Static package validation is not runtime execution or production certification."
+}

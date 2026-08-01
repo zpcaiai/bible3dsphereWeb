@@ -1,0 +1,9 @@
+interface:
+  display_name: Skill Routing and Behavior Evals
+  short_description: Implement explicit, implicit, edge and negative activation evals plus process, output, style, efficiency
+    and safety rubrics.
+  default_prompt: Use $christian-skill-routing-evals for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

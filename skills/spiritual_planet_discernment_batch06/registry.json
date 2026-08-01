@@ -1,0 +1,76 @@
+{
+  "registry_version": "0.6.0",
+  "pack_count": 10,
+  "packs": [
+    {
+      "id": "creation_order",
+      "name_zh": "创造秩序",
+      "version": "0.6.0",
+      "tier": "TIER_1",
+      "path": "doctrine_packs/creation_order/pack.json"
+    },
+    {
+      "id": "sin_and_idolatry",
+      "name_zh": "罪与偶像",
+      "version": "0.6.0",
+      "tier": "TIER_1",
+      "path": "doctrine_packs/sin_and_idolatry/pack.json"
+    },
+    {
+      "id": "uses_of_law",
+      "name_zh": "律法功用",
+      "version": "0.6.0",
+      "tier": "TIER_1",
+      "path": "doctrine_packs/uses_of_law/pack.json"
+    },
+    {
+      "id": "christ_and_atonement",
+      "name_zh": "基督与代赎",
+      "version": "0.6.0",
+      "tier": "TIER_1",
+      "path": "doctrine_packs/christ_and_atonement/pack.json"
+    },
+    {
+      "id": "justification_by_faith",
+      "name_zh": "因信称义",
+      "version": "0.6.0",
+      "tier": "TIER_1",
+      "path": "doctrine_packs/justification_by_faith/pack.json"
+    },
+    {
+      "id": "adoption",
+      "name_zh": "被神收纳",
+      "version": "0.6.0",
+      "tier": "TIER_1",
+      "path": "doctrine_packs/adoption/pack.json"
+    },
+    {
+      "id": "union_with_christ",
+      "name_zh": "与基督联合",
+      "version": "0.6.0",
+      "tier": "TIER_1",
+      "path": "doctrine_packs/union_with_christ/pack.json"
+    },
+    {
+      "id": "sanctification_by_spirit",
+      "name_zh": "圣灵成圣",
+      "version": "0.6.0",
+      "tier": "TIER_1",
+      "path": "doctrine_packs/sanctification_by_spirit/pack.json"
+    },
+    {
+      "id": "church_community",
+      "name_zh": "教会共同体",
+      "version": "0.6.0",
+      "tier": "TIER_1",
+      "path": "doctrine_packs/church_community/pack.json"
+    },
+    {
+      "id": "eschatological_hope",
+      "name_zh": "终末盼望",
+      "version": "0.6.0",
+      "tier": "TIER_1",
+      "path": "doctrine_packs/eschatological_hope/pack.json"
+    }
+  ]
+}

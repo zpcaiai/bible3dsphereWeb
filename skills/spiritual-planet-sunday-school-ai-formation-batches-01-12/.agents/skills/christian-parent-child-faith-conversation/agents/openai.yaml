@@ -1,0 +1,8 @@
+interface:
+  display_name: Parent–Child Faith Conversation
+  short_description: Implement open questions, “I do not know,” disagreement, simple prayer and adult follow-up.
+  default_prompt: Use $christian-parent-child-faith-conversation for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

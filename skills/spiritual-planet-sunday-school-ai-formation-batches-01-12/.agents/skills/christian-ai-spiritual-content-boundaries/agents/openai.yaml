@@ -1,0 +1,8 @@
+interface:
+  display_name: "Christian AI Spiritual Content Boundaries"
+  short_description: "Guard AI-assisted prayer, devotionals, Bible study, sermons and pastoral content."
+  default_prompt: "Use $christian-ai-spiritual-content-boundaries for this task."
+policy:
+  products:
+    - CODEX
+  allow_implicit_invocation: true

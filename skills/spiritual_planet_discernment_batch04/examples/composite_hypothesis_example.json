@@ -1,0 +1,30 @@
+{
+  "case_id": "example-004",
+  "observations": [
+    {
+      "observation_id": "obs-1",
+      "description": "用户表示只有自己能把项目做好，并在团队犯错时非常愤怒。",
+      "evidence_level": "H2"
+    }
+  ],
+  "hypotheses": [
+    {
+      "hypothesis_id": "hyp-competence",
+      "pattern_id": "competence_justification",
+      "evidence_level": "H2",
+      "status": "TESTING"
+    },
+    {
+      "hypothesis_id": "hyp-control",
+      "pattern_id": "control_sovereignty",
+      "evidence_level": "H2",
+      "status": "TESTING"
+    }
+  ],
+  "composition": {
+    "interaction_type": "reinforcing",
+    "label": "不可替代者模式",
+    "warning": "这是一项可证伪解释，不是人格诊断。"
+  },
+  "self_mirror_question": "如果别人也能把事情做好，你会感到释放，还是感到自己失去价值？"
+}

@@ -1,0 +1,9 @@
+interface:
+  display_name: Scenario Runtime Orchestrator
+  short_description: Implement Batch 10 fictional scenario authoring, runtime, timelines, choices, consequences, Scripture/grace
+    interventions, Socratic branches, facilitator actions, safety, debrief a
+  default_prompt: Use $spiritual-planet-scenario-runtime-orchestrator for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

@@ -1,0 +1,278 @@
+{
+  "batch": 5,
+  "module_key": "sunday_school.ai_formation.parent_formation",
+  "skills": [
+    "spiritual-planet-parent-formation-orchestrator",
+    "christian-parent-digital-mirror",
+    "christian-parent-attention-availability",
+    "christian-parent-anxiety-transmission",
+    "christian-family-success-idol-discernment",
+    "christian-parent-child-repair",
+    "christian-parent-authority-grace",
+    "christian-co-parent-governance",
+    "christian-child-feedback-invitation",
+    "christian-parent-example-plan",
+    "christian-parent-safety-boundary",
+    "parent-formation-course-integrator"
+  ],
+  "counts": {
+    "skills": 12,
+    "schemas": 11,
+    "practices": 32,
+    "units": 9,
+    "lessons": 21,
+    "scenarios": 10
+  },
+  "practice_asset": "assets/parent-formation-practice-catalog.seed.yaml",
+  "curriculum_asset": "assets/parent-formation-curriculum.seed.yaml",
+  "scenario_asset": "assets/parent-formation-scenarios.seed.yaml",
+  "analytics_asset": "assets/analytics-events.example.yaml",
+  "schema_invariants": [
+    {
+      "schema": "parent-formation-mirror.schema.json",
+      "path": "properties.childBlameGenerated.const",
+      "expected": false
+    },
+    {
+      "schema": "parent-formation-mirror.schema.json",
+      "path": "properties.parentFitnessInferenceGenerated.const",
+      "expected": false
+    },
+    {
+      "schema": "parent-formation-mirror.schema.json",
+      "path": "properties.privateChildNarrativeStored.const",
+      "expected": false
+    },
+    {
+      "schema": "parent-attention-availability-assessment.schema.json",
+      "path": "properties.childAttentionScoreGenerated.const",
+      "expected": false
+    },
+    {
+      "schema": "parent-attention-availability-assessment.schema.json",
+      "path": "properties.covertObservationAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "parent-attention-availability-assessment.schema.json",
+      "path": "properties.audioVideoCaptureAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "parent-anxiety-transmission-reflection.schema.json",
+      "path": "properties.clinicalDiagnosisGenerated.const",
+      "expected": false
+    },
+    {
+      "schema": "parent-anxiety-transmission-reflection.schema.json",
+      "path": "properties.childDiagnosisGenerated.const",
+      "expected": false
+    },
+    {
+      "schema": "parent-anxiety-transmission-reflection.schema.json",
+      "path": "properties.rawConflictTranscriptStored.const",
+      "expected": false
+    },
+    {
+      "schema": "success-idol-discernment.schema.json",
+      "path": "properties.idolatryVerdictGenerated.const",
+      "expected": false
+    },
+    {
+      "schema": "success-idol-discernment.schema.json",
+      "path": "properties.childWorthLinkedToPerformance.const",
+      "expected": false
+    },
+    {
+      "schema": "success-idol-discernment.schema.json",
+      "path": "properties.theologyReviewRequired.const",
+      "expected": true
+    },
+    {
+      "schema": "parent-child-repair-record.schema.json",
+      "path": "properties.forgivenessDemanded.const",
+      "expected": false
+    },
+    {
+      "schema": "parent-child-repair-record.schema.json",
+      "path": "properties.childRequiredToComfortParent.const",
+      "expected": false
+    },
+    {
+      "schema": "parent-child-repair-record.schema.json",
+      "path": "properties.rawChildDisclosureStored.const",
+      "expected": false
+    },
+    {
+      "schema": "parent-authority-grace-plan.schema.json",
+      "path": "properties.reasonsExplained.const",
+      "expected": true
+    },
+    {
+      "schema": "parent-authority-grace-plan.schema.json",
+      "path": "properties.appealProcessAvailable.const",
+      "expected": true
+    },
+    {
+      "schema": "parent-authority-grace-plan.schema.json",
+      "path": "properties.humiliationAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "parent-authority-grace-plan.schema.json",
+      "path": "properties.physicalHarmAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "parent-authority-grace-plan.schema.json",
+      "path": "properties.spiritualThreatAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "parent-authority-grace-plan.schema.json",
+      "path": "properties.absoluteParentAuthorityClaimed.const",
+      "expected": false
+    },
+    {
+      "schema": "co-parent-governance-agreement.schema.json",
+      "path": "properties.childTriangulationAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "co-parent-governance-agreement.schema.json",
+      "path": "properties.secretRuleChangesAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "co-parent-governance-agreement.schema.json",
+      "path": "properties.oneParentSurveillanceAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "parent-example-practice-plan.schema.json",
+      "path": "properties.childParticipationOptional.const",
+      "expected": true
+    },
+    {
+      "schema": "parent-example-practice-plan.schema.json",
+      "path": "properties.publicStreakEnabled.const",
+      "expected": false
+    },
+    {
+      "schema": "parent-example-practice-plan.schema.json",
+      "path": "properties.shameNotificationEnabled.const",
+      "expected": false
+    },
+    {
+      "schema": "child-feedback-invitation.schema.json",
+      "path": "properties.childMaySkip.const",
+      "expected": true
+    },
+    {
+      "schema": "child-feedback-invitation.schema.json",
+      "path": "properties.retaliationAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "child-feedback-invitation.schema.json",
+      "path": "properties.beliefConformityRequired.const",
+      "expected": false
+    },
+    {
+      "schema": "child-feedback-invitation.schema.json",
+      "path": "properties.privateDisclosureSolicited.const",
+      "expected": false
+    },
+    {
+      "schema": "parent-formation-review.schema.json",
+      "path": "properties.parentScoreGenerated.const",
+      "expected": false
+    },
+    {
+      "schema": "parent-formation-review.schema.json",
+      "path": "properties.childSpiritualOutcomeAttributed.const",
+      "expected": false
+    },
+    {
+      "schema": "parent-formation-review.schema.json",
+      "path": "properties.crossFamilyComparisonGenerated.const",
+      "expected": false
+    },
+    {
+      "schema": "parent-safety-escalation-decision.schema.json",
+      "path": "properties.humanSafeguardingOwner.const",
+      "expected": true
+    },
+    {
+      "schema": "parent-safety-escalation-decision.schema.json",
+      "path": "properties.familyPreservationOverridesSafety.const",
+      "expected": false
+    },
+    {
+      "schema": "parent-safety-escalation-decision.schema.json",
+      "path": "properties.legalConclusionGenerated.const",
+      "expected": false
+    },
+    {
+      "schema": "parent-safety-escalation-decision.schema.json",
+      "path": "properties.narrativeStored.const",
+      "expected": false
+    }
+  ],
+  "forbidden_schema_keys": [
+    "salvationProbability",
+    "salvationScore",
+    "spiritualMaturityScore",
+    "holinessRank",
+    "addictionScore",
+    "hiddenSinScore",
+    "parentFitnessScore",
+    "sexualPurityScore",
+    "childObedienceScore",
+    "divineMessage",
+    "automaticDiagnosis",
+    "secretMonitoringToken",
+    "rawExplicitContent",
+    "privateMinorTranscript"
+  ],
+  "required_root_files": [
+    "README.md",
+    "CODEX_IMPLEMENTATION_PROMPT.md",
+    "SKILL_INDEX.md",
+    "BATCH01_04_COMPATIBILITY.md",
+    "IMPLEMENTATION_CHECKLIST.md",
+    "AGENTS.md.snippet",
+    "SOURCES.md",
+    "RELEASE_NOTES.md",
+    "PACKAGE_SPEC.json",
+    "evals/batch05.skill-prompts.csv",
+    "evals/batch05.behavior-cases.json",
+    "evals/batch05.behavior-rubric.md",
+    "assets/parent-formation-practice-catalog.seed.yaml",
+    "assets/parent-formation-curriculum.seed.yaml",
+    "assets/parent-formation-scenarios.seed.yaml",
+    "assets/analytics-events.example.yaml",
+    "schemas/parent-formation-mirror.schema.json",
+    "schemas/parent-attention-availability-assessment.schema.json",
+    "schemas/parent-anxiety-transmission-reflection.schema.json",
+    "schemas/success-idol-discernment.schema.json",
+    "schemas/parent-child-repair-record.schema.json",
+    "schemas/parent-authority-grace-plan.schema.json",
+    "schemas/co-parent-governance-agreement.schema.json",
+    "schemas/parent-example-practice-plan.schema.json",
+    "schemas/child-feedback-invitation.schema.json",
+    "schemas/parent-formation-review.schema.json",
+    "schemas/parent-safety-escalation-decision.schema.json",
+    "references/batch05-blueprint.md",
+    "references/api-persistence-blueprint.md",
+    "references/theology-and-formation-policy.md",
+    "references/privacy-safety-analytics-policy.md",
+    "references/testing-and-release-policy.md",
+    "references/parent-modeling-policy.md",
+    "references/success-anxiety-and-family-idolatry-policy.md",
+    "references/authority-grace-consequence-policy.md",
+    "references/parent-repair-policy.md",
+    "references/child-feedback-and-nonretaliation-policy.md",
+    "references/co-parent-governance-policy.md"
+  ]
+}

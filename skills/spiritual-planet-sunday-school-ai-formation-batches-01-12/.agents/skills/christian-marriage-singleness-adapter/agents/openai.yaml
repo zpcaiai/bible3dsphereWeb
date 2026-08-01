@@ -1,0 +1,8 @@
+interface:
+  display_name: Marriage and Singleness Course Adapter
+  short_description: Adapt identity, desire and recovery content for married and single adults without ranking either vocation.
+  default_prompt: Use $christian-marriage-singleness-adapter for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

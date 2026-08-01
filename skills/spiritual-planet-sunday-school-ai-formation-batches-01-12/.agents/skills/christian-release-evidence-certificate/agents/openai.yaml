@@ -1,0 +1,8 @@
+interface:
+  display_name: Release Evidence Certificate
+  short_description: Implement immutable evidence items and claim-to-evidence mapping for every readiness statement.
+  default_prompt: Use $christian-release-evidence-certificate for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

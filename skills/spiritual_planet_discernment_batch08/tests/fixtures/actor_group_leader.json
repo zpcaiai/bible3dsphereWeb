@@ -1,0 +1,17 @@
+{
+  "actor_id": "a2",
+  "display_name": "小组长乙",
+  "roles": [
+    "small_group_leader"
+  ],
+  "tenant_id": "church-1",
+  "church_relationships": [
+    {
+      "user_id": "u1",
+      "relationship": "group_leader"
+    }
+  ],
+  "professional_credentials": [],
+  "conflicts": [],
+  "status": "active"
+}

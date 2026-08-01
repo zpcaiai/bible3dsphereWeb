@@ -1,0 +1,8 @@
+interface:
+  display_name: Developmental Digital Permission Policy
+  short_description: Implement capability-specific, developmental permissions with trial periods, review and rollback.
+  default_prompt: Use $christian-age-permission-policy for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

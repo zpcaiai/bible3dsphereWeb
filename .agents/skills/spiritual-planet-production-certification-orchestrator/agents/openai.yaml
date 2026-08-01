@@ -1,0 +1,9 @@
+interface:
+  display_name: Production Certification Orchestrator
+  short_description: Implement Batch 12 release certification, red-team, evidence and human release governance across the
+    AI formation module.
+  default_prompt: Use $spiritual-planet-production-certification-orchestrator for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

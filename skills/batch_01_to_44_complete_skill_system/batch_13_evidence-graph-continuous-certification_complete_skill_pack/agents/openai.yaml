@@ -1,0 +1,6 @@
+interface:
+  display_name: "Batch 13: Evidence Graph, Independent Oracle and Continuous Certification"
+  short_description: "Orchestrate this Batch with evidence gates"
+  default_prompt: "Use $batch-13-evidence-graph-continuous-certification to execute this workflow with explicit evidence, validation, human approval boundaries, and rollback reporting."
+policy:
+  allow_implicit_invocation: true

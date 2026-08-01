@@ -1,0 +1,341 @@
+{
+  "schema_version": "1.0.0",
+  "package_id": "batch-01-competitive-landscape-complete-skill-pack",
+  "batch": 1,
+  "title": "Batch 1：竞争格局、产品定位与持续竞争情报",
+  "version": "1.0.0",
+  "root_skill": "batch-01-competitive-intelligence",
+  "generated_at": "2026-07-31T09:00:00+08:00",
+  "skill_count": 16,
+  "skills": [
+    "b01-battlecard-and-continuous-intelligence-gate",
+    "b01-commercial-economics-analyzer",
+    "b01-competitive-claim-benchmark-verifier",
+    "b01-competitive-evidence-harvester",
+    "b01-competitive-gap-opportunity-engine",
+    "b01-competitive-landscape-orchestrator",
+    "b01-competitor-capability-normalizer",
+    "b01-competitor-discovery-registry",
+    "b01-database-route-competitive-analyzer",
+    "b01-deployment-sovereignty-lockin-analyzer",
+    "b01-end-to-end-stage-coverage-analyzer",
+    "b01-language-framework-route-coverage",
+    "b01-modernization-capability-taxonomy",
+    "b01-modernization-market-boundary",
+    "b01-product-positioning-and-boundary",
+    "b01-verification-and-trust-model-analyzer"
+  ],
+  "upstream_batch": null,
+  "files": [
+    {
+      "path": "CODEX_IMPLEMENTATION_PROMPT.md",
+      "sha256": "ebb4d613108b9146245b781d8cdbd32c3c1b7d140c41e6a71ad810ae60ab70f6",
+      "size": 4009
+    },
+    {
+      "path": "FOUNDATION_COMPATIBILITY.md",
+      "sha256": "1df7f66b3a1bed9fb30542992ed1c086aad5c964c4dad68e14241fc9cd9cdea8",
+      "size": 2006
+    },
+    {
+      "path": "IMPLEMENTATION_CHECKLIST.md",
+      "sha256": "c3c21beb7ddff910a8a7e61772ea584da08f277d5dab895fc4d7f18307d72882",
+      "size": 2117
+    },
+    {
+      "path": "README.md",
+      "sha256": "9b6ea4beee1fd36dbb0845be7fa653d6ab875c8945fa3bc3e0070a3e061a400a",
+      "size": 2225
+    },
+    {
+      "path": "SKILL.md",
+      "sha256": "0967323a5e5e0a63f3fee955f6a0cd1ebd1dbe7bd8ed43f987741ec71b6c4894",
+      "size": 9690
+    },
+    {
+      "path": "SKILL_INDEX.md",
+      "sha256": "3e310733be8c5b9def3f99d1a8912d07fe4d8cc2fde0e639783c9b1667fd8633",
+      "size": 6631
+    },
+    {
+      "path": "VALIDATION_REPORT.md",
+      "sha256": "1c85138155350ba543134b30d8f15e6873aa327da67c038b197ae3dd510ce4e9",
+      "size": 1835
+    },
+    {
+      "path": "agents/openai.yaml",
+      "sha256": "29cfd3751466a249f72c6742b2652d16ee0e79d26863d89d7f69dafdd81dd202",
+      "size": 367
+    },
+    {
+      "path": "examples/battlecard.yaml",
+      "sha256": "9d8ccbb511c673a7f346ab5d2a33318e7c648dafe9acff38c4f4072489bd9373",
+      "size": 195
+    },
+    {
+      "path": "examples/capability-matrix.yaml",
+      "sha256": "3682af7de8bc040224763ca131344f5985e81919fd8b4beff647a7b17d60dfa5",
+      "size": 202
+    },
+    {
+      "path": "examples/competitor-profile.yaml",
+      "sha256": "4176932283ee8d3ef82ac0060cbec0cf119a4991e85cf1e9e4ab348273e3f911",
+      "size": 203
+    },
+    {
+      "path": "examples/positioning-decision.yaml",
+      "sha256": "fb3cccd57b6f3cab141b7865f29f82cfd96de56c7d7a69f38d18c8024a7fe6b9",
+      "size": 205
+    },
+    {
+      "path": "install.sh",
+      "sha256": "74b42ab182895a157f0f99178f4e99eff46189071402952ae621bfda18ae5bf5",
+      "size": 483
+    },
+    {
+      "path": "policies/claim-verification-policy.yaml",
+      "sha256": "90703e374995483c36edafcc420c96e925d41d37401259b467fd93abedb5076c",
+      "size": 338
+    },
+    {
+      "path": "policies/evidence-quality-policy.yaml",
+      "sha256": "507241d4e0b62ada231ca5164c3a8d2d943a669bdbbfd4e9a899d1134247ed14",
+      "size": 336
+    },
+    {
+      "path": "policies/legal-comparison-policy.yaml",
+      "sha256": "e5c2065648ec88ba5f20df4a1c49b99f169504a9dabd7ab796e440098f3baf05",
+      "size": 336
+    },
+    {
+      "path": "policies/scoring-policy.yaml",
+      "sha256": "7a3a1bc38798a45aae582874d370002fa732205dffbe26e56b9dde0410ec2977",
+      "size": 327
+    },
+    {
+      "path": "policies/stale-evidence-policy.yaml",
+      "sha256": "2f041c94f732a2be41bab36d2e1e8d72f7a09620b8faee5efd9cf476c9abdcc4",
+      "size": 334
+    },
+    {
+      "path": "schemas/battlecard.schema.json",
+      "sha256": "d56b09d616f81609156c09598aa557984770761feba084be8298d40104ac3dc8",
+      "size": 911
+    },
+    {
+      "path": "schemas/capability-fact.schema.json",
+      "sha256": "a37fe4c757a5b05704c577426a8688cc68304eda17398b982898cd57fa1a7bbb",
+      "size": 926
+    },
+    {
+      "path": "schemas/competitor-record.schema.json",
+      "sha256": "4340f04351f5d6199394f7af72f0a130c4bc8d2b86abbc2acdafe8546fa99362",
+      "size": 932
+    },
+    {
+      "path": "schemas/database-route.schema.json",
+      "sha256": "ffc561aeb820d79e4af58592e250583206c351718f86ea656ed037a9ad8dc22c",
+      "size": 923
+    },
+    {
+      "path": "schemas/market-boundary.schema.json",
+      "sha256": "363e4704de7b253806b4bd89bf6e15960a88c5b79d038a8c5de7736f41fc03e4",
+      "size": 926
+    },
+    {
+      "path": "schemas/positioning-decision.schema.json",
+      "sha256": "e44aa1251802cd6635e6e910b50ac72080b24e7e26fce844667bba71c6b8da5c",
+      "size": 941
+    },
+    {
+      "path": "schemas/route-coverage.schema.json",
+      "sha256": "04f30818b84a0da4170ea1d7854267079cd7086be3812c3cd9c077a9194ff83f",
+      "size": 923
+    },
+    {
+      "path": "schemas/trust-assessment.schema.json",
+      "sha256": "7fa0f9ed0523fa47e7ea6fbb26709c1da056fea0bff8eb6879385beeb6dedebf",
+      "size": 929
+    },
+    {
+      "path": "skills/b01-battlecard-and-continuous-intelligence-gate/SKILL.md",
+      "sha256": "e3059c7b74a48dc0cfec8cf917fea7fe378cc7dc88c8f2344a15c6029b04bf61",
+      "size": 3464
+    },
+    {
+      "path": "skills/b01-battlecard-and-continuous-intelligence-gate/agents/openai.yaml",
+      "sha256": "87f46a3bac12066bf3f74fa802835cc4cd531f716301c1b248ee3ea36dabafe1",
+      "size": 373
+    },
+    {
+      "path": "skills/b01-commercial-economics-analyzer/SKILL.md",
+      "sha256": "39d67538095a017c3616e49048591e350d57ba9da7fef2858181ca09362e0682",
+      "size": 3356
+    },
+    {
+      "path": "skills/b01-commercial-economics-analyzer/agents/openai.yaml",
+      "sha256": "3f702fe6cab4a1ef21cea20edb5f6af81721a32c913b5cca3c1ce48554f2f1ee",
+      "size": 345
+    },
+    {
+      "path": "skills/b01-competitive-claim-benchmark-verifier/SKILL.md",
+      "sha256": "e0b2fa0860cb516c752a1b2a11bba06d723791e46c6f415f1c68784747acbdd8",
+      "size": 3396
+    },
+    {
+      "path": "skills/b01-competitive-claim-benchmark-verifier/agents/openai.yaml",
+      "sha256": "7192061bc693196eea75836ef73cb8873a91ab9a9b1ac981044d4c5d3faa356c",
+      "size": 359
+    },
+    {
+      "path": "skills/b01-competitive-evidence-harvester/SKILL.md",
+      "sha256": "fe7187a90e71a4c4d0237762f6b80d1c089f1ea2ef4510372cc768ad1476e442",
+      "size": 3432
+    },
+    {
+      "path": "skills/b01-competitive-evidence-harvester/agents/openai.yaml",
+      "sha256": "660612ee359f0c6462f6b4f221b10fd5c6c1050055b248f0d3885491a115c51e",
+      "size": 347
+    },
+    {
+      "path": "skills/b01-competitive-gap-opportunity-engine/SKILL.md",
+      "sha256": "f8c43d73e1c2382401e15e4cd15afcb99c056f521ff227a6412c89721cd76515",
+      "size": 3371
+    },
+    {
+      "path": "skills/b01-competitive-gap-opportunity-engine/agents/openai.yaml",
+      "sha256": "f6293a5e1e5186911b46617145728ac796c23f243f46a65622aea19d641b10ff",
+      "size": 355
+    },
+    {
+      "path": "skills/b01-competitive-landscape-orchestrator/SKILL.md",
+      "sha256": "ff7410e65f55950e8fb8cc3357744cbd1299d24896f059ede0234c4c0560c956",
+      "size": 3482
+    },
+    {
+      "path": "skills/b01-competitive-landscape-orchestrator/agents/openai.yaml",
+      "sha256": "7c33809500aaab02a76faf4fee3367342b8f33ab0a88b9c7e917e31a8cf7c7af",
+      "size": 355
+    },
+    {
+      "path": "skills/b01-competitor-capability-normalizer/SKILL.md",
+      "sha256": "7b61f678b936c9a2d91d68fddac1cfa89fd29c6d3156607154182c9fbbb1c65b",
+      "size": 3358
+    },
+    {
+      "path": "skills/b01-competitor-capability-normalizer/agents/openai.yaml",
+      "sha256": "159c6067ca9c80d5e7448db682f516e200dce479d253511afcfb597979bd4568",
+      "size": 351
+    },
+    {
+      "path": "skills/b01-competitor-discovery-registry/SKILL.md",
+      "sha256": "d266cc81249f659201abf623dc8abb1ac51ca75f00b078a509abd037ab638ec1",
+      "size": 3450
+    },
+    {
+      "path": "skills/b01-competitor-discovery-registry/agents/openai.yaml",
+      "sha256": "31f2691ee27a6f3de249441131a835fd12c157824588135a60ce4d134db15be7",
+      "size": 345
+    },
+    {
+      "path": "skills/b01-database-route-competitive-analyzer/SKILL.md",
+      "sha256": "159d6bd46ec7a37fba720296c611fb539f8345c922d126a8baf060f70a9a126e",
+      "size": 3484
+    },
+    {
+      "path": "skills/b01-database-route-competitive-analyzer/agents/openai.yaml",
+      "sha256": "59d997579d46d6efd467788a6ccf8c57a9913381e00820a6db2a2c8407802514",
+      "size": 357
+    },
+    {
+      "path": "skills/b01-deployment-sovereignty-lockin-analyzer/SKILL.md",
+      "sha256": "9a9b7236d7b4b0b32069ab05f3c46f6d39bcc513b424d9ac52f047323652d297",
+      "size": 3438
+    },
+    {
+      "path": "skills/b01-deployment-sovereignty-lockin-analyzer/agents/openai.yaml",
+      "sha256": "c27c95fdb54c343feff4dcdc22652d4e6d1862f7d7f5325a29fbbcd82c03d1e9",
+      "size": 363
+    },
+    {
+      "path": "skills/b01-end-to-end-stage-coverage-analyzer/SKILL.md",
+      "sha256": "1acc68e7b72832fb909794c15bee6cc14d3168434ca4ccc086106ec4e1826042",
+      "size": 3371
+    },
+    {
+      "path": "skills/b01-end-to-end-stage-coverage-analyzer/agents/openai.yaml",
+      "sha256": "f0f3aabadffe0d4ef3a2de353e28b461703e0adcd5c6772d667c7f59fee3e956",
+      "size": 355
+    },
+    {
+      "path": "skills/b01-language-framework-route-coverage/SKILL.md",
+      "sha256": "d930e8aa1c2f380c31af1edb5ef902b7ff317db741082898e5eb2ab0b60eba1a",
+      "size": 3421
+    },
+    {
+      "path": "skills/b01-language-framework-route-coverage/agents/openai.yaml",
+      "sha256": "95ef06685bd6b7329387507ef0d98ec43f3594f702c1cd3ce238b9348ea18a24",
+      "size": 353
+    },
+    {
+      "path": "skills/b01-modernization-capability-taxonomy/SKILL.md",
+      "sha256": "ca3c711f181cb2262549050482d1811fdb76c1d29dcaf3f957761691fdb5a52e",
+      "size": 3458
+    },
+    {
+      "path": "skills/b01-modernization-capability-taxonomy/agents/openai.yaml",
+      "sha256": "3818f20e70f91cd473dc847549639fb1ae6b660e56673072e308d3a2c9bb45e6",
+      "size": 353
+    },
+    {
+      "path": "skills/b01-modernization-market-boundary/SKILL.md",
+      "sha256": "872798ed1f4591bdf6bdcd406a0cb2f7992ba7a9891c8f9a32495b08705ea7ec",
+      "size": 3422
+    },
+    {
+      "path": "skills/b01-modernization-market-boundary/agents/openai.yaml",
+      "sha256": "8b894cd27732a0d6c7d0c6a58c9869a89aee7a68cf269901cef94af988ee6681",
+      "size": 345
+    },
+    {
+      "path": "skills/b01-product-positioning-and-boundary/SKILL.md",
+      "sha256": "676090946c1dd7586fcd2cfa4a0f15871f112ed1d268c174ec38f4cfe388e807",
+      "size": 3454
+    },
+    {
+      "path": "skills/b01-product-positioning-and-boundary/agents/openai.yaml",
+      "sha256": "df3eb3ae4df88325a8b94487723929fa97fb5fccfa6c6b4257b59c726c121cc0",
+      "size": 351
+    },
+    {
+      "path": "skills/b01-verification-and-trust-model-analyzer/SKILL.md",
+      "sha256": "dbb37b3ae260e12898b024f60196e43f1a25ada6cfc43fb06773ae01e8dabbc3",
+      "size": 3377
+    },
+    {
+      "path": "skills/b01-verification-and-trust-model-analyzer/agents/openai.yaml",
+      "sha256": "cf639636aaa85c34c5b7e7d00aaaaa3a7f10f8f392bb631235e68c348c9e48e4",
+      "size": 361
+    },
+    {
+      "path": "tests/SCENARIOS.md",
+      "sha256": "e0fd5c55c9187c7f6fc411f09bd7797df39535589ebe42aa5a501bf88664ee22",
+      "size": 1352
+    },
+    {
+      "path": "tools/validate_package.py",
+      "sha256": "281cd6663a38afc9e046323ef2c1a2f21d08e8cbfd490e54985526d73e0154f3",
+      "size": 3581
+    },
+    {
+      "path": "validate.sh",
+      "sha256": "cdd1b72b6d2db5eb885005815aac6f6618eed65ed932038d76f52d99a3a0ab6b",
+      "size": 130
+    }
+  ],
+  "validation": {
+    "static": "passed",
+    "runtime": "not-executed"
+  },
+  "trust_boundary": "Static package validation is not runtime execution or production certification."
+}

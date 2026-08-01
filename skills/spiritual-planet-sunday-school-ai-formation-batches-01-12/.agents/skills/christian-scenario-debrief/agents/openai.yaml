@@ -1,0 +1,8 @@
+interface:
+  display_name: Scenario Debrief
+  short_description: Implement reason, fruit, truth, grace, action, practice and optional human follow-up without scores.
+  default_prompt: Use $christian-scenario-debrief for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

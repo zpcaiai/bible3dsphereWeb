@@ -1,0 +1,8 @@
+interface:
+  display_name: Choice and Consequence Engine
+  short_description: Implement plausible choice nodes, multi-horizon possible fruits, uncertainty and repair paths.
+  default_prompt: Use $christian-choice-consequence-engine for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

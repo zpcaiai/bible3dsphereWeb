@@ -1,0 +1,9 @@
+interface:
+  display_name: Youth Identity Pressure
+  short_description: Implement received identity, performed selves, pressure sources and truthful action without assigning
+    labels.
+  default_prompt: Use $christian-youth-identity-pressure for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

@@ -1,0 +1,9 @@
+interface:
+  display_name: Youth Identity and Autonomy Orchestrator
+  short_description: Implement Batch 08 youth identity, doubt, sexuality safety, social media, AI integrity, autonomy, stewardship,
+    mentoring, leaving-home readiness and safeguarding.
+  default_prompt: Use $spiritual-planet-youth-autonomy-orchestrator for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

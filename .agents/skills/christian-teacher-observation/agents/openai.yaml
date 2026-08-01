@@ -1,0 +1,8 @@
+interface:
+  display_name: Teacher Observation Boundaries
+  short_description: Implement limited teacher notes on observable participation, evidence use, help-seeking and barriers.
+  default_prompt: Use $christian-teacher-observation for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

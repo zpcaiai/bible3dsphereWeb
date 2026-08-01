@@ -1,0 +1,8 @@
+interface:
+  display_name: Scenario Safety Gate
+  short_description: Implement S0–S3 signals, interruption, authorized human ownership and support actions.
+  default_prompt: Use $christian-scenario-safety-gate for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

@@ -1,0 +1,17 @@
+{
+  "actor_id": "a1",
+  "display_name": "导师甲",
+  "roles": [
+    "mentor_discipler"
+  ],
+  "tenant_id": "church-1",
+  "church_relationships": [
+    {
+      "user_id": "u1",
+      "relationship": "mentor"
+    }
+  ],
+  "professional_credentials": [],
+  "conflicts": [],
+  "status": "active"
+}

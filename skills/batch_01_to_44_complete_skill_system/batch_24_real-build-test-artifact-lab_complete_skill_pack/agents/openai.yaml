@@ -1,0 +1,6 @@
+interface:
+  display_name: "Batch 24: Real Build, Test, Package and Artifact Execution Lab"
+  short_description: "Orchestrate this Batch with evidence gates"
+  default_prompt: "Use $batch-24-real-build-test-artifact-lab to execute this workflow with explicit evidence, validation, human approval boundaries, and rollback reporting."
+policy:
+  allow_implicit_invocation: true

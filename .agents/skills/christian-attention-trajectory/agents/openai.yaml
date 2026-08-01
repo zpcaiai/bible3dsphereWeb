@@ -1,0 +1,8 @@
+interface:
+  display_name: Attention Availability Trajectory
+  short_description: Implement chosen attention-practice signals and self-reported fruit without raw telemetry.
+  default_prompt: Use $christian-attention-trajectory for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

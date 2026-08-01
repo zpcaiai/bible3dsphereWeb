@@ -1,0 +1,8 @@
+interface:
+  display_name: Family Digital Sabbath
+  short_description: Implement prepared, exception-aware household digital Sabbath and reentry reflection.
+  default_prompt: Use $christian-family-digital-sabbath for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

@@ -1,0 +1,14 @@
+{
+  "event_id": "e3",
+  "user_id": "u3",
+  "occurred_at": "2026-07-22T10:00:00+08:00",
+  "context": "spiritual",
+  "trigger": "想到可能遗漏罪",
+  "automatic_interpretation": "我反复认罪几个小时，还是怕神不会赦免",
+  "source_type": "self_report",
+  "evidence_quality": "E1",
+  "consent_scope": {
+    "allow_longitudinal_tracking": true
+  },
+  "limitations": []
+}

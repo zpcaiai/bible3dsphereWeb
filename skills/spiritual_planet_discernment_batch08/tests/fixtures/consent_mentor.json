@@ -1,0 +1,23 @@
+{
+  "grant_id": "g1",
+  "subject_user_id": "u1",
+  "recipient_actor_id": "a1",
+  "purpose": "mentor formation review",
+  "allowed_categories": [
+    "L0",
+    "L1"
+  ],
+  "denied_categories": [
+    "L2",
+    "L3"
+  ],
+  "allowed_actions": [
+    "view_summary",
+    "annotate"
+  ],
+  "expires_at": "2026-08-31T23:59:59+08:00",
+  "reshare_allowed": false,
+  "revocable": true,
+  "status": "active",
+  "limitations": []
+}

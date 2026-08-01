@@ -1,0 +1,8 @@
+interface:
+  display_name: Consent-Based Accountability Support
+  short_description: Implement narrow, revocable human support and accountability plans without surveillance.
+  default_prompt: Use $christian-accountability-support-plan for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

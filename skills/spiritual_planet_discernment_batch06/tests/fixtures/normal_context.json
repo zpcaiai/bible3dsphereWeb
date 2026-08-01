@@ -1,0 +1,28 @@
+{
+  "case_id": "g1",
+  "faith_context": "christian",
+  "consent_scope": {
+    "allow_gospel_bridge": true
+  },
+  "presenting_issue": "我把工作表现当成自己的价值。",
+  "created_good": [
+    "责任感",
+    "能力"
+  ],
+  "distorted_desire": [
+    "必须不可替代"
+  ],
+  "functional_savior": [
+    "绩效"
+  ],
+  "pride_hypotheses": [
+    "competence_justification"
+  ],
+  "suffering_and_structural_factors": [],
+  "law_risk": "medium",
+  "shame_risk": "medium",
+  "scrupulosity_risk": "low",
+  "doctrine_familiarity": "intermediate",
+  "church_context": "local_church",
+  "preferred_depth": "standard"
+}

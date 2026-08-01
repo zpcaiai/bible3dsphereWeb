@@ -1,0 +1,8 @@
+interface:
+  display_name: Scripture Anchor Review
+  short_description: Implement reference parsing, citation/translation/context/rights checks and application authority labels.
+  default_prompt: Use $christian-scripture-anchor-review for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

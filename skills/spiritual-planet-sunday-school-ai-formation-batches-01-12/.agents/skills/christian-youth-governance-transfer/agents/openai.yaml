@@ -1,0 +1,8 @@
+interface:
+  display_name: Youth Governance Transfer Milestones
+  short_description: Implement evidence-category review for advancing, holding, trialing or temporarily rolling back autonomy.
+  default_prompt: Use $christian-youth-governance-transfer for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

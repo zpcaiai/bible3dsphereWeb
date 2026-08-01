@@ -1,0 +1,6 @@
+interface:
+  display_name: "Batch 28: Oracle, SQL Server, MySQL and PostgreSQL 12 Directional Route Packs"
+  short_description: "Orchestrate this Batch with evidence gates"
+  default_prompt: "Use $batch-28-relational-database-12-routes to execute this workflow with explicit evidence, validation, human approval boundaries, and rollback reporting."
+policy:
+  allow_implicit_invocation: true

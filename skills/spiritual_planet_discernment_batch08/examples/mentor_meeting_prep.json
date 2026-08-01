@@ -1,0 +1,39 @@
+{
+  "case_id": "case-example-mentor",
+  "meeting_purpose": "讨论工作中控制和能力称义",
+  "user_selected_focus": [
+    "本周一次团队冲突",
+    "委派实践是否迁移"
+  ],
+  "evidence_summary": [
+    {
+      "observation": "用户在同事遗漏测试后接管任务",
+      "status": "user_reported"
+    },
+    {
+      "observation": "事后道歉并归还任务",
+      "status": "user_reported"
+    }
+  ],
+  "uncertainties": [
+    "尚无同事反馈",
+    "无法判断该模式是否跨场景稳定"
+  ],
+  "priority_question": "如果别人经过训练也能做好，你首先感到释放还是失落？",
+  "gospel_truth": "你是管家，不是救主；你的义不来自不可替代性。",
+  "action_option": "选一个可承受风险的任务，委派后只保留约定检查点。",
+  "do_not_use_language": [
+    "你就是控制狂",
+    "你不同意就是骄傲"
+  ],
+  "shared_fields": [
+    "selected-event-summary",
+    "current-practice",
+    "priority-question"
+  ],
+  "redacted_fields": [
+    "unrelated-trauma-history",
+    "third-party-identities",
+    "full-dialogue-transcript"
+  ]
+}

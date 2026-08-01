@@ -1,0 +1,326 @@
+{
+  "schema_version": "1.0.0",
+  "package_id": "batch-34-portfolio-scale-migration-factory-complete-skill-pack",
+  "batch": 34,
+  "title": "Batch 34: Portfolio-Scale Multi-Repository Migration Factory",
+  "version": "1.0.0",
+  "root_skill": "batch-34-portfolio-scale-migration-factory",
+  "generated_at": "2026-07-31T00:00:00Z",
+  "skill_count": 16,
+  "skills": [
+    "b34-portfolio-scale-migration-factory-adapter-provider",
+    "b34-portfolio-scale-migration-factory-capability-planning",
+    "b34-portfolio-scale-migration-factory-certification-gate",
+    "b34-portfolio-scale-migration-factory-corpus-benchmark",
+    "b34-portfolio-scale-migration-factory-deterministic-engine",
+    "b34-portfolio-scale-migration-factory-discovery-inventory",
+    "b34-portfolio-scale-migration-factory-domain-model",
+    "b34-portfolio-scale-migration-factory-failure-recovery",
+    "b34-portfolio-scale-migration-factory-human-approval",
+    "b34-portfolio-scale-migration-factory-integration-api",
+    "b34-portfolio-scale-migration-factory-lifecycle-recertification",
+    "b34-portfolio-scale-migration-factory-lineage-reconciliation",
+    "b34-portfolio-scale-migration-factory-observability-economics",
+    "b34-portfolio-scale-migration-factory-orchestrator",
+    "b34-portfolio-scale-migration-factory-security-policy",
+    "b34-portfolio-scale-migration-factory-workflow-runtime"
+  ],
+  "upstream_batch": 33,
+  "files": [
+    {
+      "path": "BATCH33_COMPATIBILITY.md",
+      "sha256": "2b2728d216a1c9d4c4e1eee642349118bdc9612d109236d7157369f8c8aac6b1",
+      "size": 2096
+    },
+    {
+      "path": "CODEX_IMPLEMENTATION_PROMPT.md",
+      "sha256": "1944455cdae377c4f47d36ebb6b2a5d0e0ddd682747213a5450ef6e0e508b15b",
+      "size": 2285
+    },
+    {
+      "path": "IMPLEMENTATION_CHECKLIST.md",
+      "sha256": "b1417cb82c2b7034991a58012d5fe2dacbef87efb82dec6fe3e0a9cf6979ebc7",
+      "size": 1759
+    },
+    {
+      "path": "README.md",
+      "sha256": "3ae0805008e14fb36861568dcefac15b04873ebe76e268474e2223b5782cee7a",
+      "size": 1078
+    },
+    {
+      "path": "SKILL.md",
+      "sha256": "c3ce5a4420fa51722306a1e2b4f7ccd8fcf684c9f4a98ca9db4dc7497b21f840",
+      "size": 4085
+    },
+    {
+      "path": "SKILL_INDEX.md",
+      "sha256": "7cdbface03da257c88b56f929ca04478654b49818c9fa227e6481c9c611c386d",
+      "size": 3147
+    },
+    {
+      "path": "VALIDATION_REPORT.md",
+      "sha256": "cbef935416b8c73bca76cfbcc7a78c48f9a4fd8078c9ad8180cd1b2feedd1dd3",
+      "size": 572
+    },
+    {
+      "path": "agents/openai.yaml",
+      "sha256": "a05258612447061941dce92317f4015af541fb3c128b8d98b7be16b1fbcf473b",
+      "size": 378
+    },
+    {
+      "path": "examples/certificate.example.json",
+      "sha256": "38b36780a2aa3d67736842728937a5e9813ba449278634d1500a2b4dc192a008",
+      "size": 452
+    },
+    {
+      "path": "examples/invocation.example.json",
+      "sha256": "e07eb250bee69937caa89a12731c1da0e11595457a0a2053341247bcda34804d",
+      "size": 284
+    },
+    {
+      "path": "install.sh",
+      "sha256": "cdaf3fdf0c010dd9e0fe29b4a92cd723ff35dd0617eaf14bb5f57e757bc2fa02",
+      "size": 305
+    },
+    {
+      "path": "policies/agent-boundary.yaml",
+      "sha256": "79adc8830adec220835b49067d29b50a3a1578f146a65e7d5b70a6d19ba09ab2",
+      "size": 150
+    },
+    {
+      "path": "policies/certification.yaml",
+      "sha256": "17f50ef51eb5cbf800b3b4990bfb399d4aed9c751cb7f440bee4a4d88ebf02ea",
+      "size": 182
+    },
+    {
+      "path": "policies/default-deny.yaml",
+      "sha256": "25c6a03403de8832018b82bfa5d9dd516d8f5136ba4974c85d40bdf8972f9366",
+      "size": 105
+    },
+    {
+      "path": "policies/evidence-first.yaml",
+      "sha256": "50408543ffa45cfea3461cd57bdabf39f9bdd422fc5b41cdfef4d3c679a058c2",
+      "size": 156
+    },
+    {
+      "path": "policies/human-approval.yaml",
+      "sha256": "d9a6b11cfe402c569440e95b1aa2377387e222a32b693c83fc278ddb1fd4482f",
+      "size": 143
+    },
+    {
+      "path": "schemas/batch-input.schema.json",
+      "sha256": "b0bd71d73d8fa82bc199f6e25f489069d4d99dab914bbe4ac985758107d8af65",
+      "size": 731
+    },
+    {
+      "path": "schemas/batch-output.schema.json",
+      "sha256": "03e4b8d8df340f787ed35a9bc9a2f5bb571f5c42503f38904d76d8110f4fbd76",
+      "size": 832
+    },
+    {
+      "path": "schemas/capability-package.schema.json",
+      "sha256": "90ca8bcab850541b03330b9019ad2177365b9168e9760763e6f04e0931588429",
+      "size": 1133
+    },
+    {
+      "path": "schemas/certification.schema.json",
+      "sha256": "19ac7080a306a7074a98aec6c6a65401cef618584722221de9729865b0c386c7",
+      "size": 1281
+    },
+    {
+      "path": "schemas/evidence-ref.schema.json",
+      "sha256": "339aa0e0d15f674553db440fbeb5b2058f86bc5c5c6b8ebdb0cfb8b8c8e2b53b",
+      "size": 996
+    },
+    {
+      "path": "schemas/workflow-run.schema.json",
+      "sha256": "52406ca88a630fc8c1db97fa2ef693b31a2704515d6f5d8e511c68034abfdf39",
+      "size": 848
+    },
+    {
+      "path": "skills/b34-portfolio-scale-migration-factory-adapter-provider/SKILL.md",
+      "sha256": "b565f26b1845ac15335ebd9713bae8cfd15c3c36ebddca0b5d95b599aaf5bb0b",
+      "size": 3975
+    },
+    {
+      "path": "skills/b34-portfolio-scale-migration-factory-adapter-provider/agents/openai.yaml",
+      "sha256": "daa1fa6dbb6ebfbdf69e4e991042627e903b6c67b49fcb07035ed8159c592540",
+      "size": 359
+    },
+    {
+      "path": "skills/b34-portfolio-scale-migration-factory-capability-planning/SKILL.md",
+      "sha256": "5667392583b51075c71f4cee61c158f5b1066bdbecb59c52c755cecf3c222037",
+      "size": 3877
+    },
+    {
+      "path": "skills/b34-portfolio-scale-migration-factory-capability-planning/agents/openai.yaml",
+      "sha256": "b5a3350bd3ddb7ef0cc182b665d726feb4806e59b86b152be4cc1c3146575971",
+      "size": 366
+    },
+    {
+      "path": "skills/b34-portfolio-scale-migration-factory-certification-gate/SKILL.md",
+      "sha256": "9c242d78a61dad964d81b7b9ca2f2f6711810fc8796b7f49cf6a9e66c3b4400b",
+      "size": 4006
+    },
+    {
+      "path": "skills/b34-portfolio-scale-migration-factory-certification-gate/agents/openai.yaml",
+      "sha256": "529e031584f01313cd523bff29094c0d4b5ec58982cecb7925f4434216ede7a7",
+      "size": 366
+    },
+    {
+      "path": "skills/b34-portfolio-scale-migration-factory-corpus-benchmark/SKILL.md",
+      "sha256": "3a86eee6d155a86f74a34c176d3e356ce3b8a31b74277a8045d58e73a3f7d06d",
+      "size": 3916
+    },
+    {
+      "path": "skills/b34-portfolio-scale-migration-factory-corpus-benchmark/agents/openai.yaml",
+      "sha256": "331824ba11b5f866b504c85280073bbb2e794bb264123591ff6fffdd328dac8e",
+      "size": 364
+    },
+    {
+      "path": "skills/b34-portfolio-scale-migration-factory-deterministic-engine/SKILL.md",
+      "sha256": "059682d433782245c8674222dabbcba953396609476f8d590ab897e01e39f65c",
+      "size": 3893
+    },
+    {
+      "path": "skills/b34-portfolio-scale-migration-factory-deterministic-engine/agents/openai.yaml",
+      "sha256": "7923355ef22517d72d23dc57cce4796395bf67b78b8c5e0749d2601462ac0225",
+      "size": 357
+    },
+    {
+      "path": "skills/b34-portfolio-scale-migration-factory-discovery-inventory/SKILL.md",
+      "sha256": "e8feca8682bf9ad85e74774dbe9e4ff19d20fa0b4e4cfcd9148b0e90029c5592",
+      "size": 3920
+    },
+    {
+      "path": "skills/b34-portfolio-scale-migration-factory-discovery-inventory/agents/openai.yaml",
+      "sha256": "9f733b8d2f64f98cc3e7d5d8fe2a756cfc655772e1dc2e9f326a8cdadf174a68",
+      "size": 359
+    },
+    {
+      "path": "skills/b34-portfolio-scale-migration-factory-domain-model/SKILL.md",
+      "sha256": "4db8cf106225e0d815317e007646bbd0106a598258b657a058e1ac5f79620a49",
+      "size": 3947
+    },
+    {
+      "path": "skills/b34-portfolio-scale-migration-factory-domain-model/agents/openai.yaml",
+      "sha256": "560a90133a666a52bd2499da4ff8e4601ed096e15e8e2bde3edb07f4b1e17c10",
+      "size": 363
+    },
+    {
+      "path": "skills/b34-portfolio-scale-migration-factory-failure-recovery/SKILL.md",
+      "sha256": "741467ba166cb47864cdbe0917e48335e9035bd877d9f5e2c6cede4ac7e20526",
+      "size": 3924
+    },
+    {
+      "path": "skills/b34-portfolio-scale-migration-factory-failure-recovery/agents/openai.yaml",
+      "sha256": "b3b76fce3547057bb9f4f915d08d0239a9d3bb15e956becfa0e4c6758738e1db",
+      "size": 362
+    },
+    {
+      "path": "skills/b34-portfolio-scale-migration-factory-human-approval/SKILL.md",
+      "sha256": "9d9e45632a722f794b412b363804adf2a33e2eeef49b87dbb2d4640892e5ab20",
+      "size": 3909
+    },
+    {
+      "path": "skills/b34-portfolio-scale-migration-factory-human-approval/agents/openai.yaml",
+      "sha256": "78cecba498d714146b20e55c1cdd0ff072a50e9fc2a7b39c4fb094fc2e973866",
+      "size": 356
+    },
+    {
+      "path": "skills/b34-portfolio-scale-migration-factory-integration-api/SKILL.md",
+      "sha256": "b46f2264d7f701ac02010451ec683e3572acdf29cf8c5a3abca60ef118a6b5ec",
+      "size": 3894
+    },
+    {
+      "path": "skills/b34-portfolio-scale-migration-factory-integration-api/agents/openai.yaml",
+      "sha256": "5a84f7125769f4c79e9972814ba54c435a63ea26f5bf0b28fe298a7fd93b6627",
+      "size": 359
+    },
+    {
+      "path": "skills/b34-portfolio-scale-migration-factory-lifecycle-recertification/SKILL.md",
+      "sha256": "eaee269dbc03974df427a13ffe2db789a222cf8db02f63e4e1bec5a227395f06",
+      "size": 3984
+    },
+    {
+      "path": "skills/b34-portfolio-scale-migration-factory-lifecycle-recertification/agents/openai.yaml",
+      "sha256": "e840973c35ce099852f86bd2b6c6e861327ef57f813e3a40f98f2bb3714213ca",
+      "size": 382
+    },
+    {
+      "path": "skills/b34-portfolio-scale-migration-factory-lineage-reconciliation/SKILL.md",
+      "sha256": "d1dc69d5e37c5efd6a66a295e80535371056fee6b2817315838614d56f12065d",
+      "size": 3935
+    },
+    {
+      "path": "skills/b34-portfolio-scale-migration-factory-lineage-reconciliation/agents/openai.yaml",
+      "sha256": "40f86646a964e5e60d23e5bb9b1f3ffe8cb555524bd772866d20775be1c18bcd",
+      "size": 365
+    },
+    {
+      "path": "skills/b34-portfolio-scale-migration-factory-observability-economics/SKILL.md",
+      "sha256": "8a6942fafcc950bd86d651cfccec8586def57a8088aa150de70316d9a66fe9b5",
+      "size": 3950
+    },
+    {
+      "path": "skills/b34-portfolio-scale-migration-factory-observability-economics/agents/openai.yaml",
+      "sha256": "e6e69a235c5782b9e49ff74e68eefae98ed2bbf569167159ec090e062d415a76",
+      "size": 376
+    },
+    {
+      "path": "skills/b34-portfolio-scale-migration-factory-orchestrator/SKILL.md",
+      "sha256": "2b6164157c5bfa678d3abc54a664285bd12785af3ea6ec5955ac3aa30b76fc00",
+      "size": 3972
+    },
+    {
+      "path": "skills/b34-portfolio-scale-migration-factory-orchestrator/agents/openai.yaml",
+      "sha256": "4c455c074061d74fdbe2a4700b96eaf5f26ca7db39f09140c825ca8558ceb8d7",
+      "size": 359
+    },
+    {
+      "path": "skills/b34-portfolio-scale-migration-factory-security-policy/SKILL.md",
+      "sha256": "102025319db0ecc9921290497695f267ecb78f8f3dbdb85430f5b30c425669d9",
+      "size": 3929
+    },
+    {
+      "path": "skills/b34-portfolio-scale-migration-factory-security-policy/agents/openai.yaml",
+      "sha256": "171deadfc1d5e8d35ffb3c4db90076dfd196fef32d3a2ee8adca1136ea32ddf0",
+      "size": 360
+    },
+    {
+      "path": "skills/b34-portfolio-scale-migration-factory-workflow-runtime/SKILL.md",
+      "sha256": "963eb3e657e030f58a30b2b4c1cc6ce1302da44e98a5c810f558c99405a2ad72",
+      "size": 3938
+    },
+    {
+      "path": "skills/b34-portfolio-scale-migration-factory-workflow-runtime/agents/openai.yaml",
+      "sha256": "b1888c106a42e273bb13f678235330da7d71f6d0190243a209d36c15a62fec4b",
+      "size": 363
+    },
+    {
+      "path": "tests/README.md",
+      "sha256": "242361ad72e2396b9e629e088cc31c9638f7ca06ccefc9b17428943289f0b8ed",
+      "size": 373
+    },
+    {
+      "path": "tests/test_catalog.json",
+      "sha256": "f5ffbddbb41ca3ec9d1804d97cf3481baa29639574aac3103343917390dc62a9",
+      "size": 1928
+    },
+    {
+      "path": "tools/validate_package.py",
+      "sha256": "281cd6663a38afc9e046323ef2c1a2f21d08e8cbfd490e54985526d73e0154f3",
+      "size": 3581
+    },
+    {
+      "path": "validate.sh",
+      "sha256": "a1afca2d69d8fa3d11c820c8381b06b6449e31b289196b3cdc4156de471dd6c4",
+      "size": 72
+    }
+  ],
+  "validation": {
+    "static": "passed",
+    "runtime": "not-executed"
+  },
+  "trust_boundary": "Static package validation is not runtime execution or production certification."
+}

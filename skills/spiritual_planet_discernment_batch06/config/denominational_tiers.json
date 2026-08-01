@@ -1,0 +1,14 @@
+{
+  "TIER_1": {
+    "label": "福音核心",
+    "may_be_presented_as_common_christian_core": true
+  },
+  "TIER_2": {
+    "label": "传统内重要差异",
+    "must_label_scope": true
+  },
+  "TIER_3": {
+    "label": "次要与可保留意见",
+    "must_not_be_salvation_test": true
+  }
+}

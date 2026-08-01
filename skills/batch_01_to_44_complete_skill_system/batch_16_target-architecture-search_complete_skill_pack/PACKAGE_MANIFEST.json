@@ -1,0 +1,326 @@
+{
+  "schema_version": "1.0.0",
+  "package_id": "batch-16-target-architecture-search-complete-skill-pack",
+  "batch": 16,
+  "title": "Batch 16: Target Architecture Search and Migration Planning",
+  "version": "1.0.0",
+  "root_skill": "batch-16-target-architecture-search",
+  "generated_at": "2026-07-31T00:00:00Z",
+  "skill_count": 16,
+  "skills": [
+    "b16-target-architecture-search-adapter-provider",
+    "b16-target-architecture-search-capability-planning",
+    "b16-target-architecture-search-certification-gate",
+    "b16-target-architecture-search-corpus-benchmark",
+    "b16-target-architecture-search-deterministic-engine",
+    "b16-target-architecture-search-discovery-inventory",
+    "b16-target-architecture-search-domain-model",
+    "b16-target-architecture-search-failure-recovery",
+    "b16-target-architecture-search-human-approval",
+    "b16-target-architecture-search-integration-api",
+    "b16-target-architecture-search-lifecycle-recertification",
+    "b16-target-architecture-search-lineage-reconciliation",
+    "b16-target-architecture-search-observability-economics",
+    "b16-target-architecture-search-orchestrator",
+    "b16-target-architecture-search-security-policy",
+    "b16-target-architecture-search-workflow-runtime"
+  ],
+  "upstream_batch": 15,
+  "files": [
+    {
+      "path": "BATCH15_COMPATIBILITY.md",
+      "sha256": "0b10d0722b5ce9388d281175d25e4192455425d900061814d20bb4736948011a",
+      "size": 2121
+    },
+    {
+      "path": "CODEX_IMPLEMENTATION_PROMPT.md",
+      "sha256": "d5037c0ccab672543920d96a2a8906f0b0dcfa49294d40a78ab9835f3348da63",
+      "size": 2332
+    },
+    {
+      "path": "IMPLEMENTATION_CHECKLIST.md",
+      "sha256": "473472f4ec54f891ac45ff357e82b7d2caf1b1622892d2bee5c4d555622b5421",
+      "size": 1784
+    },
+    {
+      "path": "README.md",
+      "sha256": "c15733a6b36b90d65a6b36393c307902ae51a759b063e95e5d3129a84b989bce",
+      "size": 1099
+    },
+    {
+      "path": "SKILL.md",
+      "sha256": "59854becf9894c267cfb15fbe3aedb29cdf22d0d01a850ef69ca6f9e8ee5387e",
+      "size": 4012
+    },
+    {
+      "path": "SKILL_INDEX.md",
+      "sha256": "2910077c1bc4dd97a5bd8e036051ad25cb3a5a988e686e5bb6fd1e263c5b20a9",
+      "size": 3034
+    },
+    {
+      "path": "VALIDATION_REPORT.md",
+      "sha256": "4b01632aa2858835a244dce21af04a068dc1cd3ad0a5f33da1c47bb4240fb6c0",
+      "size": 572
+    },
+    {
+      "path": "agents/openai.yaml",
+      "sha256": "e4ff566b1ab4cf971be91e472975472f7bd3270a2741c9ea4b516b631861c81c",
+      "size": 370
+    },
+    {
+      "path": "examples/certificate.example.json",
+      "sha256": "473f834617d29a986825badf3d7b6f39af44a0c7d86edfabdc7a8135d98c7cb7",
+      "size": 452
+    },
+    {
+      "path": "examples/invocation.example.json",
+      "sha256": "3259993b668d56c2e3f78a52c15e66216d4c971d08491946996a732a9f2e08db",
+      "size": 283
+    },
+    {
+      "path": "install.sh",
+      "sha256": "cdaf3fdf0c010dd9e0fe29b4a92cd723ff35dd0617eaf14bb5f57e757bc2fa02",
+      "size": 305
+    },
+    {
+      "path": "policies/agent-boundary.yaml",
+      "sha256": "79adc8830adec220835b49067d29b50a3a1578f146a65e7d5b70a6d19ba09ab2",
+      "size": 150
+    },
+    {
+      "path": "policies/certification.yaml",
+      "sha256": "17f50ef51eb5cbf800b3b4990bfb399d4aed9c751cb7f440bee4a4d88ebf02ea",
+      "size": 182
+    },
+    {
+      "path": "policies/default-deny.yaml",
+      "sha256": "25c6a03403de8832018b82bfa5d9dd516d8f5136ba4974c85d40bdf8972f9366",
+      "size": 105
+    },
+    {
+      "path": "policies/evidence-first.yaml",
+      "sha256": "50408543ffa45cfea3461cd57bdabf39f9bdd422fc5b41cdfef4d3c679a058c2",
+      "size": 156
+    },
+    {
+      "path": "policies/human-approval.yaml",
+      "sha256": "d9a6b11cfe402c569440e95b1aa2377387e222a32b693c83fc278ddb1fd4482f",
+      "size": 143
+    },
+    {
+      "path": "schemas/batch-input.schema.json",
+      "sha256": "70facf2be7097fba7a835d881a3f3b800dfa05406adfb681a2a5fae0c725ad01",
+      "size": 731
+    },
+    {
+      "path": "schemas/batch-output.schema.json",
+      "sha256": "e66a62e0f0af55afde2139356b5fdafdee22fc9053a8eb32a344d6d32d025b00",
+      "size": 832
+    },
+    {
+      "path": "schemas/capability-package.schema.json",
+      "sha256": "4823ab56b1d06e3f344a0326d2bd07b8a25ef2451916fb1e4416c17f84cd9e00",
+      "size": 1133
+    },
+    {
+      "path": "schemas/certification.schema.json",
+      "sha256": "7849e22bef58853003f89ce540e1bf1cdf4517dbc3e5adfc5afcea99ca1d5314",
+      "size": 1281
+    },
+    {
+      "path": "schemas/evidence-ref.schema.json",
+      "sha256": "7ee4fb6ebc1d49777f200ee681ff5663220be1a6f948ebdc8d680ca1c02b3b2f",
+      "size": 996
+    },
+    {
+      "path": "schemas/workflow-run.schema.json",
+      "sha256": "c019c34ae98ea70afe1e05607e69e52aa4eebe53bb74077484866c42a8b13e3c",
+      "size": 848
+    },
+    {
+      "path": "skills/b16-target-architecture-search-adapter-provider/SKILL.md",
+      "sha256": "3abf5285fe24245743b9f47024d490cc738bb25db494591748e25da10a912215",
+      "size": 4025
+    },
+    {
+      "path": "skills/b16-target-architecture-search-adapter-provider/agents/openai.yaml",
+      "sha256": "bf21bbc93dbf9c2c1aaf660e05838a8c7be4390f71012a2f3456b52fb64fa7c8",
+      "size": 352
+    },
+    {
+      "path": "skills/b16-target-architecture-search-capability-planning/SKILL.md",
+      "sha256": "c25f134dc351ea46317e94114f5fd64023aa612e7c9d5ed51314627e668c3eee",
+      "size": 3927
+    },
+    {
+      "path": "skills/b16-target-architecture-search-capability-planning/agents/openai.yaml",
+      "sha256": "ad2da8752e77845b1283004c5ef77183b94722fb2c320fe9b0afd82aef2410fc",
+      "size": 359
+    },
+    {
+      "path": "skills/b16-target-architecture-search-certification-gate/SKILL.md",
+      "sha256": "0176805edaf35ef13a774b1187fb66b297c1954d1caf3bdfcde2077bfeae826a",
+      "size": 4056
+    },
+    {
+      "path": "skills/b16-target-architecture-search-certification-gate/agents/openai.yaml",
+      "sha256": "8cd963b309e0d0ae9e60a3fa5e835b871b8168a9eafbfc966bb92f26991baab1",
+      "size": 359
+    },
+    {
+      "path": "skills/b16-target-architecture-search-corpus-benchmark/SKILL.md",
+      "sha256": "7dad3ae74394a5a3ccf28f1c9735edf33e5b71bfcc2e5947519c3487a27d9fae",
+      "size": 3966
+    },
+    {
+      "path": "skills/b16-target-architecture-search-corpus-benchmark/agents/openai.yaml",
+      "sha256": "24b6e766bb28a10c18def17a9886febfc2d4ddff980e31d4326de25118c6580c",
+      "size": 357
+    },
+    {
+      "path": "skills/b16-target-architecture-search-deterministic-engine/SKILL.md",
+      "sha256": "3c58b80c9f93e35beedb2358af78e2f63bfaa6e306f5d604c362dd9c73bfc21b",
+      "size": 3943
+    },
+    {
+      "path": "skills/b16-target-architecture-search-deterministic-engine/agents/openai.yaml",
+      "sha256": "6f64e15a8186deae43e7e6cdf5aed22914d4f9d95421497ef1046d35cd414261",
+      "size": 350
+    },
+    {
+      "path": "skills/b16-target-architecture-search-discovery-inventory/SKILL.md",
+      "sha256": "f77fd1b28f7ee6796dd90cd6a42c5fd852de0efd05b904a8e7952d6039b5ff65",
+      "size": 3970
+    },
+    {
+      "path": "skills/b16-target-architecture-search-discovery-inventory/agents/openai.yaml",
+      "sha256": "90f057e1dec75586dbc145834611a66a5f1345aad46964132823abfcc8b4c728",
+      "size": 352
+    },
+    {
+      "path": "skills/b16-target-architecture-search-domain-model/SKILL.md",
+      "sha256": "6d2e892dc587981bf4a961080ba8d174a44c81933dda7d315db3372c6577aa03",
+      "size": 3997
+    },
+    {
+      "path": "skills/b16-target-architecture-search-domain-model/agents/openai.yaml",
+      "sha256": "dcea51c5e641014adad141e6ece2215f0157dfa8cfacbae1a0b38e2df1af739f",
+      "size": 356
+    },
+    {
+      "path": "skills/b16-target-architecture-search-failure-recovery/SKILL.md",
+      "sha256": "07b799d733f1c2ceb9040dea28c9a28efd373eb6477cd9c14d9ba42b81034a3f",
+      "size": 3974
+    },
+    {
+      "path": "skills/b16-target-architecture-search-failure-recovery/agents/openai.yaml",
+      "sha256": "64af273af3c95de553d7902e991355a27eec7650da12ed66135e44dd55efee34",
+      "size": 355
+    },
+    {
+      "path": "skills/b16-target-architecture-search-human-approval/SKILL.md",
+      "sha256": "310a26f6a29391ebb3ee5fe556b2bdb360d2734c4965c37153e795b4bf43fca0",
+      "size": 3959
+    },
+    {
+      "path": "skills/b16-target-architecture-search-human-approval/agents/openai.yaml",
+      "sha256": "f1c4d5a03d3d112f2e6434dd24fa59b4880aced36f7b363941fa43f52b788c06",
+      "size": 349
+    },
+    {
+      "path": "skills/b16-target-architecture-search-integration-api/SKILL.md",
+      "sha256": "d03a98b491771413739375e55b86408e7b021ae93a1ab8f894ebeeb67c4d1b69",
+      "size": 3944
+    },
+    {
+      "path": "skills/b16-target-architecture-search-integration-api/agents/openai.yaml",
+      "sha256": "a5316c4a568cfe69732f13bf4098a5e34cd80437736b90c1e9d1ba044e99708d",
+      "size": 352
+    },
+    {
+      "path": "skills/b16-target-architecture-search-lifecycle-recertification/SKILL.md",
+      "sha256": "5a1d040a325c4b4ac7dcfade9bb336e9ac0921ceafae50c33ca12296c2dee286",
+      "size": 4034
+    },
+    {
+      "path": "skills/b16-target-architecture-search-lifecycle-recertification/agents/openai.yaml",
+      "sha256": "4e9e31ff62392331d39d99930bc86a80c41a2ff11bdc46832f85e0bb1970c257",
+      "size": 375
+    },
+    {
+      "path": "skills/b16-target-architecture-search-lineage-reconciliation/SKILL.md",
+      "sha256": "5ec071728210919c3e3eec4b02d28cdd96aefdfa12631687a4f746eb58838129",
+      "size": 3985
+    },
+    {
+      "path": "skills/b16-target-architecture-search-lineage-reconciliation/agents/openai.yaml",
+      "sha256": "0f595c0e9f2cd03c5ee0010dbea145c03cfca89badeede9f0a2e4ed98ac0ecc5",
+      "size": 358
+    },
+    {
+      "path": "skills/b16-target-architecture-search-observability-economics/SKILL.md",
+      "sha256": "d44aaaed5fbfe7c5798fd4cd4d6354b2aaca71c35804604d415c296db173a996",
+      "size": 4000
+    },
+    {
+      "path": "skills/b16-target-architecture-search-observability-economics/agents/openai.yaml",
+      "sha256": "b872613d081c4d75b08bfda31966d8ccbd947dad5177ffc5efba410b59eda7ff",
+      "size": 369
+    },
+    {
+      "path": "skills/b16-target-architecture-search-orchestrator/SKILL.md",
+      "sha256": "ef5bd162ad01f34f375fc597fe17f3d3fb402086989babce67d2ea9b4d642178",
+      "size": 4022
+    },
+    {
+      "path": "skills/b16-target-architecture-search-orchestrator/agents/openai.yaml",
+      "sha256": "435b172154bca626e7ba3833db9a7fec87698166d52225abbcf1dcd7698ec5d9",
+      "size": 352
+    },
+    {
+      "path": "skills/b16-target-architecture-search-security-policy/SKILL.md",
+      "sha256": "d4117c6ee6f1cd440bc852d41a494f441c76c4323e051fad7ed8645de4f003ec",
+      "size": 3979
+    },
+    {
+      "path": "skills/b16-target-architecture-search-security-policy/agents/openai.yaml",
+      "sha256": "45128dbbf185def9f9682d89e61a998853f7561e6e4de47956bfc346a32d8865",
+      "size": 353
+    },
+    {
+      "path": "skills/b16-target-architecture-search-workflow-runtime/SKILL.md",
+      "sha256": "cc3a064411078957a74efbb5f0607c45c5d887a79063ea19e1ee71dca2a8363c",
+      "size": 3988
+    },
+    {
+      "path": "skills/b16-target-architecture-search-workflow-runtime/agents/openai.yaml",
+      "sha256": "d5dfebd7b4c9017402d74957762758a8eda99a70137324dcc0f78b6927d4518e",
+      "size": 356
+    },
+    {
+      "path": "tests/README.md",
+      "sha256": "38fa3605f5df14648e6b93ae0d43118019d4220b1282bfe5bace5ae6725972aa",
+      "size": 399
+    },
+    {
+      "path": "tests/test_catalog.json",
+      "sha256": "ad73a2ee392fa29a71d259708ea1863b804092a16f27808016cdc59ec208351b",
+      "size": 1927
+    },
+    {
+      "path": "tools/validate_package.py",
+      "sha256": "281cd6663a38afc9e046323ef2c1a2f21d08e8cbfd490e54985526d73e0154f3",
+      "size": 3581
+    },
+    {
+      "path": "validate.sh",
+      "sha256": "a1afca2d69d8fa3d11c820c8381b06b6449e31b289196b3cdc4156de471dd6c4",
+      "size": 72
+    }
+  ],
+  "validation": {
+    "static": "passed",
+    "runtime": "not-executed"
+  },
+  "trust_boundary": "Static package validation is not runtime execution or production certification."
+}

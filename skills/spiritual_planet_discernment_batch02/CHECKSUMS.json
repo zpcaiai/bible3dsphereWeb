@@ -1,0 +1,1011 @@
+{
+  "algorithm": "sha256",
+  "file_count": 201,
+  "files": [
+    {
+      "path": ".pytest_cache/.gitignore",
+      "sha256": "3ed731b65d06150c138e2dadb0be0697550888a6b47eb8c45ecc9adba8b8e9bd",
+      "bytes": 37
+    },
+    {
+      "path": ".pytest_cache/CACHEDIR.TAG",
+      "sha256": "37dc88ef9a0abeddbe81053a6dd8fdfb13afb613045ea1eb4a5c815a74a3bde4",
+      "bytes": 191
+    },
+    {
+      "path": ".pytest_cache/README.md",
+      "sha256": "73fd6fccdd802c419a6b2d983d6c3173b7da97558ac4b589edec2dfe443db9ad",
+      "bytes": 302
+    },
+    {
+      "path": ".pytest_cache/v/cache/nodeids",
+      "sha256": "f79d6320100b06d3311f0f8c7703683943dbe401f4bf0e1a0893a9c2ea44f2aa",
+      "bytes": 435
+    },
+    {
+      "path": "BATCH_02_ARCHITECTURE.md",
+      "sha256": "52ccab5bd287344f4626c4610ecda332267819444ef01de2ef3de9f9aa03a968",
+      "bytes": 1853
+    },
+    {
+      "path": "README.md",
+      "sha256": "49bcdbc8bade21862382ec3f166a53ffef1b4e31dfeff4b575657194efba9b7f",
+      "bytes": 1088
+    },
+    {
+      "path": "docs/DOMAIN_PACK_AUTHORING_STANDARD.md",
+      "sha256": "e4a4617557de3734d168acb7d8115b57c0cd6846122dc041f4011ef39d5881b7",
+      "bytes": 823
+    },
+    {
+      "path": "examples/composite_analysis_output.json",
+      "sha256": "962ad8337451605c9546fa9c05c967c46abfe1dc7fffdfd0a0e3d3477ccc517f",
+      "bytes": 929
+    },
+    {
+      "path": "manifest.json",
+      "sha256": "aa49f4f8d351a743e25951c4269445b5ea2979f5fdc1d8ad681c9898664cfbbe",
+      "bytes": 703
+    },
+    {
+      "path": "packs/01_expressive_individualism/SKILL.md",
+      "sha256": "733a02294a01c6fe93437e6ebe80d949034a180247127161a9305c88b18d582b",
+      "bytes": 5521
+    },
+    {
+      "path": "packs/01_expressive_individualism/gospel_bridges.json",
+      "sha256": "143006b3239c14abf7bf06565e3498d35ae061d899eb921c6703b7ccbf826171",
+      "bytes": 2134
+    },
+    {
+      "path": "packs/01_expressive_individualism/pack.json",
+      "sha256": "8f3fcde6716427550532cbe509fa14e70b99e8ce88b6a7f95e9947797edb26b2",
+      "bytes": 2678
+    },
+    {
+      "path": "packs/01_expressive_individualism/socratic_tree.json",
+      "sha256": "21ca2d9390c88235c98b2585d257d289b3d9fe619d23cd00b5245ab15284a059",
+      "bytes": 3335
+    },
+    {
+      "path": "packs/01_expressive_individualism/tests.json",
+      "sha256": "63c13c1028db4c94e327001ad110a7a9a113a018deedca24473c25c829aa1610",
+      "bytes": 1321
+    },
+    {
+      "path": "packs/02_therapeutic_culture/SKILL.md",
+      "sha256": "577f6bd393545210859d6174f4dbcb68326edbf3c0fccc6328bd0c50fe0a2e68",
+      "bytes": 5721
+    },
+    {
+      "path": "packs/02_therapeutic_culture/gospel_bridges.json",
+      "sha256": "a49b6d2a3851aff23339b6269597109fc47c90d14f16069f46a3f92a07916e3d",
+      "bytes": 2195
+    },
+    {
+      "path": "packs/02_therapeutic_culture/pack.json",
+      "sha256": "34a55d756dc8bd01709fcf129951bef8182986451a5118e68036a127f0c7666f",
+      "bytes": 2705
+    },
+    {
+      "path": "packs/02_therapeutic_culture/socratic_tree.json",
+      "sha256": "a89be480a70f1293a1db210c25a91580cbd9c14379218d14c52040dd06193edc",
+      "bytes": 3420
+    },
+    {
+      "path": "packs/02_therapeutic_culture/tests.json",
+      "sha256": "8c470f396b363924a5f936e0b8cb1b0811a7a6b2490d4e1c12d37159faea338c",
+      "bytes": 1325
+    },
+    {
+      "path": "packs/03_self_optimization_hustle/SKILL.md",
+      "sha256": "6c5c4f1a0e0383de2828c842df5dae96d91ac6cdb576f7d059c898546fe94c17",
+      "bytes": 5421
+    },
+    {
+      "path": "packs/03_self_optimization_hustle/gospel_bridges.json",
+      "sha256": "4696c0a2f550e762df0605984763eb0467fb91f9936aae613670d632ebde9ded",
+      "bytes": 2101
+    },
+    {
+      "path": "packs/03_self_optimization_hustle/pack.json",
+      "sha256": "44e77f985ac4fbb179499b7eb88f6c0833c1ac0a26024e9e609166641938dc04",
+      "bytes": 2526
+    },
+    {
+      "path": "packs/03_self_optimization_hustle/socratic_tree.json",
+      "sha256": "9d51cbb5fc135ac9b3d0b9d787438f29234ef737bee6325ff3a003d6b7d6ceb7",
+      "bytes": 3314
+    },
+    {
+      "path": "packs/03_self_optimization_hustle/tests.json",
+      "sha256": "516391262bfa194438ad1865f83097192e6c98f60e5d6f867e1be34196b5f112",
+      "bytes": 1297
+    },
+    {
+      "path": "packs/04_beauty_body_image/SKILL.md",
+      "sha256": "245a6c42b4dd3f3635f37886929eb09a7faf8846709156dd4dcbf7fdef988624",
+      "bytes": 5425
+    },
+    {
+      "path": "packs/04_beauty_body_image/gospel_bridges.json",
+      "sha256": "cb4fa88401e9a05b6c8f41fb5e1c02f45f3b67369f2ba915ead2f26d09e46a6c",
+      "bytes": 2133
+    },
+    {
+      "path": "packs/04_beauty_body_image/pack.json",
+      "sha256": "cfed9d48fe46fd041feec474935e56647795c5bbb9b62ea3d7f3ea6cef6ca3d7",
+      "bytes": 2510
+    },
+    {
+      "path": "packs/04_beauty_body_image/socratic_tree.json",
+      "sha256": "056b5657e3ead1f8098e5d2c9ae28e0d7edf417a84b835ecd7d7c84b34c365b4",
+      "bytes": 3328
+    },
+    {
+      "path": "packs/04_beauty_body_image/tests.json",
+      "sha256": "ad13078389267343b0e006b4325ea366ccde363cbe91011e489a86dd622c115b",
+      "bytes": 1284
+    },
+    {
+      "path": "packs/05_romantic_soulmate/SKILL.md",
+      "sha256": "22e7db558b23898915f4df72b969770dde88087d36c0d627222d0e76d2212f43",
+      "bytes": 5506
+    },
+    {
+      "path": "packs/05_romantic_soulmate/gospel_bridges.json",
+      "sha256": "c613b5d49885fdf152ae42c7631437c119f54ae5c773903cdd5f16e6b480fd0a",
+      "bytes": 2139
+    },
+    {
+      "path": "packs/05_romantic_soulmate/pack.json",
+      "sha256": "fe325504db891a5703c995e4fbc09f0beeb713660e2c37bba2b0d71bf7dfe249",
+      "bytes": 2578
+    },
+    {
+      "path": "packs/05_romantic_soulmate/socratic_tree.json",
+      "sha256": "c55c947e56d65ae60b64caca69a6858de77fb395f7dad174648b4cfb8bfab488",
+      "bytes": 3328
+    },
+    {
+      "path": "packs/05_romantic_soulmate/tests.json",
+      "sha256": "30aae998d7b879237a4a3e698d3aed469a1edf21702cd9ab5495c0c3bcac2c68",
+      "bytes": 1302
+    },
+    {
+      "path": "packs/06_modern_stoicism/SKILL.md",
+      "sha256": "2a06908efe25280cfe7711a690e2918d57c87c6929ed46a8a179aa2978a676ee",
+      "bytes": 5249
+    },
+    {
+      "path": "packs/06_modern_stoicism/gospel_bridges.json",
+      "sha256": "c22eff9bacf6e5f8a7a130cf92da1b3913766895c144e8eb9cf3e4867838f1ab",
+      "bytes": 2071
+    },
+    {
+      "path": "packs/06_modern_stoicism/pack.json",
+      "sha256": "91210fcee68b707bdffed09a6e01181613da78c351b79efc190c8ade50248820",
+      "bytes": 2415
+    },
+    {
+      "path": "packs/06_modern_stoicism/socratic_tree.json",
+      "sha256": "d75a3f05d88e732831317a6fc71de21387960c3114dedcb9ed73b64c4381c297",
+      "bytes": 3260
+    },
+    {
+      "path": "packs/06_modern_stoicism/tests.json",
+      "sha256": "a472ed6b5a438699b9f1ba81b7c6370132d112779910e6134286e03f569453ed",
+      "bytes": 1300
+    },
+    {
+      "path": "packs/07_consumerism/SKILL.md",
+      "sha256": "34851dd8c721e8c1dd6f22c99ee171802f7a1bcfe16dcb63afc42a9b2a233341",
+      "bytes": 5322
+    },
+    {
+      "path": "packs/07_consumerism/gospel_bridges.json",
+      "sha256": "38518bf39cfa80f8ba74d630911a904ebbb3c310db54ccbdbb5294f73f79b7ed",
+      "bytes": 2073
+    },
+    {
+      "path": "packs/07_consumerism/pack.json",
+      "sha256": "8f2e9bad8989495bfb695991d5913d99c9ec384f4b6cc525bfab94a365f09cd4",
+      "bytes": 2469
+    },
+    {
+      "path": "packs/07_consumerism/socratic_tree.json",
+      "sha256": "115bf733c1680e78e682dad660a0f2862d70dbbda2c3d337de309e8169182a41",
+      "bytes": 3271
+    },
+    {
+      "path": "packs/07_consumerism/tests.json",
+      "sha256": "645bf92b6b547d7395c9f2e87eb4b6bc1a1a92eac6df9efe0c8320ff35106561",
+      "bytes": 1290
+    },
+    {
+      "path": "packs/08_meritocracy_successism/SKILL.md",
+      "sha256": "9c83d10efbad221a84ecc3d659cd0d494651d3595950b4b90251cccb50725c98",
+      "bytes": 5348
+    },
+    {
+      "path": "packs/08_meritocracy_successism/gospel_bridges.json",
+      "sha256": "7435e520183f53368868efe5718e3a5bd0a0c7f2d73f32f7098786f45808dd57",
+      "bytes": 2111
+    },
+    {
+      "path": "packs/08_meritocracy_successism/pack.json",
+      "sha256": "21536033232d8344083bbd4fae20d4efbd243926a14259de692f1e7510a803aa",
+      "bytes": 2486
+    },
+    {
+      "path": "packs/08_meritocracy_successism/socratic_tree.json",
+      "sha256": "559029e9d5579e083b0239057699d8c2b0a427d42df9cd891f86e07043f0c5e3",
+      "bytes": 3291
+    },
+    {
+      "path": "packs/08_meritocracy_successism/tests.json",
+      "sha256": "abc63489ce07e715ea0dbd395516bdf81ea7c13aaf3cc48ec65fa98a123674ba",
+      "bytes": 1295
+    },
+    {
+      "path": "packs/09_market_absolutism/SKILL.md",
+      "sha256": "3ce501cbb54f900c03fab83ba43db2ccbd0ae6436d9155d2333eb36c644235d3",
+      "bytes": 5344
+    },
+    {
+      "path": "packs/09_market_absolutism/gospel_bridges.json",
+      "sha256": "d70b12cb1f6c156a0cd2f882bc11843da34cd93847d6e1ff99f744ee867fe710",
+      "bytes": 2088
+    },
+    {
+      "path": "packs/09_market_absolutism/pack.json",
+      "sha256": "2ad24b9659972e4685621da2da6777c8152363d59e792386f9426097ba51c5b3",
+      "bytes": 2504
+    },
+    {
+      "path": "packs/09_market_absolutism/socratic_tree.json",
+      "sha256": "57aa7d75867c5133dedb732c68d936b52d64792ca46576e51c0db47be8c810d6",
+      "bytes": 3274
+    },
+    {
+      "path": "packs/09_market_absolutism/tests.json",
+      "sha256": "cf1d7744eeb08773b55cc123fb0185dbe8928f42c28990293d163207769e6ffc",
+      "bytes": 1308
+    },
+    {
+      "path": "packs/10_antiwork_laying_flat/SKILL.md",
+      "sha256": "efccf9f9fce19247991f618dbf8acb714a0532a9b79f1e78efd59b738e62af96",
+      "bytes": 5497
+    },
+    {
+      "path": "packs/10_antiwork_laying_flat/gospel_bridges.json",
+      "sha256": "44dc045ce1f24594c0130b40be798e45457d53d2ab43cc5e36440d343a66bbd0",
+      "bytes": 2094
+    },
+    {
+      "path": "packs/10_antiwork_laying_flat/pack.json",
+      "sha256": "779175643cc3ff59ae23f806a6a1afa6fd28fe152dcb47bfdf3223a8fb4a4fe4",
+      "bytes": 2572
+    },
+    {
+      "path": "packs/10_antiwork_laying_flat/socratic_tree.json",
+      "sha256": "b9b5b1cf5d05e6d63335675baeedaad7d01efb8b795d847abdbe21139243d8a6",
+      "bytes": 3304
+    },
+    {
+      "path": "packs/10_antiwork_laying_flat/tests.json",
+      "sha256": "e3c01b8abb006af2f14c26d6e248d7804ae83afe234264da7859635d2e1aa82d",
+      "bytes": 1320
+    },
+    {
+      "path": "packs/11_prosperity_gospel/SKILL.md",
+      "sha256": "111b5fcec7dfff7b10c9c511b25d85bbe46ea0272c28b3125a5d420fe4b78f78",
+      "bytes": 5453
+    },
+    {
+      "path": "packs/11_prosperity_gospel/gospel_bridges.json",
+      "sha256": "408a8153f25a82cf793393b0b193e4beb3a1a869856572a754c72552cc1531bb",
+      "bytes": 2124
+    },
+    {
+      "path": "packs/11_prosperity_gospel/pack.json",
+      "sha256": "806ced8afe8cddc1ac3e83c6830ad32bfa20100c08c5a9ce1e177a032012a235",
+      "bytes": 2537
+    },
+    {
+      "path": "packs/11_prosperity_gospel/socratic_tree.json",
+      "sha256": "3c37d95bb50c44abed1d6ad3fa6884201c0e7ae7c5fb6bf7cb415ce6ba0a18f1",
+      "bytes": 3346
+    },
+    {
+      "path": "packs/11_prosperity_gospel/tests.json",
+      "sha256": "8b12afeeb2cba4d578eb5ea14e82a47501b0b81d0c92725c15b316c47b47d3d6",
+      "bytes": 1299
+    },
+    {
+      "path": "packs/12_wellness_manifestation/SKILL.md",
+      "sha256": "acabf9a45a776aa702f84b3b86fce8f05ee72e61833d2c617d3ea7bcb61858f4",
+      "bytes": 5582
+    },
+    {
+      "path": "packs/12_wellness_manifestation/gospel_bridges.json",
+      "sha256": "391c76a025d9e5f89c9ad0ecad06bd1c143edab517193ea7ccd10023e0337da0",
+      "bytes": 2192
+    },
+    {
+      "path": "packs/12_wellness_manifestation/pack.json",
+      "sha256": "ceffb3a1ef3f8b1480ab5b431e42453db86ad5b519fcd440f7a3b0be931772c2",
+      "bytes": 2671
+    },
+    {
+      "path": "packs/12_wellness_manifestation/socratic_tree.json",
+      "sha256": "268d4790fb17c93baff92c2c67becd6024d867b07bccad311771bc62dde4a149",
+      "bytes": 3363
+    },
+    {
+      "path": "packs/12_wellness_manifestation/tests.json",
+      "sha256": "0b1b7b0f3f80cedb6aa9f03d26c312f8735a1f829d70b39ca156d98bc8fa27a9",
+      "bytes": 1331
+    },
+    {
+      "path": "packs/13_secular_humanism/SKILL.md",
+      "sha256": "f36dfb68f5be9187a415200ef2fc9c54ee900a5ea198a5475e1d02ac066d9597",
+      "bytes": 5459
+    },
+    {
+      "path": "packs/13_secular_humanism/gospel_bridges.json",
+      "sha256": "47c3d59fc3dab6cc5f493740b80dea2a295643c906473b9f44b144c519d970e8",
+      "bytes": 2138
+    },
+    {
+      "path": "packs/13_secular_humanism/pack.json",
+      "sha256": "2a97b1d6d3915d480a2c6a65d2f46ff5b5a1f4402a60329129d582bd0b4d6b7a",
+      "bytes": 2570
+    },
+    {
+      "path": "packs/13_secular_humanism/socratic_tree.json",
+      "sha256": "64c8434f9bad59103d0c0581e3b8d972093216dfe33e9d12e382be6abc79e0a1",
+      "bytes": 3315
+    },
+    {
+      "path": "packs/13_secular_humanism/tests.json",
+      "sha256": "e77304066c8926a51a70b825361a351d7978304946080ec367ac387628ab145c",
+      "bytes": 1307
+    },
+    {
+      "path": "packs/14_relativism_postmodernism/SKILL.md",
+      "sha256": "e134075f3933678a9223be8a613c88c0c16c5e431f1ae8bbe158849b4fd3496e",
+      "bytes": 5625
+    },
+    {
+      "path": "packs/14_relativism_postmodernism/gospel_bridges.json",
+      "sha256": "0cb59fc1cb60506cd033600b136bd57a08d557c13887eb127438da0a16d8b57d",
+      "bytes": 2128
+    },
+    {
+      "path": "packs/14_relativism_postmodernism/pack.json",
+      "sha256": "13ae2d9b95e9cb0854a6c09ecfea0b01853475d07329327f09ffbe9f41bff9d5",
+      "bytes": 2660
+    },
+    {
+      "path": "packs/14_relativism_postmodernism/socratic_tree.json",
+      "sha256": "4c5f4cf8b7957eae5686040ef80e665c2e598ab255e912ce8013eedec87ad4c5",
+      "bytes": 3374
+    },
+    {
+      "path": "packs/14_relativism_postmodernism/tests.json",
+      "sha256": "669099abe57795ad30c48513322f3d348301fa2f00108732a9270e6828e36bd6",
+      "bytes": 1303
+    },
+    {
+      "path": "packs/15_scientism_naturalism/SKILL.md",
+      "sha256": "85974034d1915524cf270df9c55df49b5da50ff8154e40e15efac821840cf07a",
+      "bytes": 5566
+    },
+    {
+      "path": "packs/15_scientism_naturalism/gospel_bridges.json",
+      "sha256": "961818897e4c987b720e766c0f59e1d1f7179871a6ece293659e3411a89042e9",
+      "bytes": 2202
+    },
+    {
+      "path": "packs/15_scientism_naturalism/pack.json",
+      "sha256": "2c821b1a496a8ee10c385a853d8630d691bdaec11a3feb9d11ba9cdbcfa98546",
+      "bytes": 2636
+    },
+    {
+      "path": "packs/15_scientism_naturalism/socratic_tree.json",
+      "sha256": "f65886df51c34193bccdfb09d22fd4c470f1937dd4696ea1cf6e22d07932895c",
+      "bytes": 3355
+    },
+    {
+      "path": "packs/15_scientism_naturalism/tests.json",
+      "sha256": "1ea1727c066487580e540e704a959abaa4e4606febe8762f4911d0e5dd98dea6",
+      "bytes": 1299
+    },
+    {
+      "path": "packs/16_techno_solutionism_ai/SKILL.md",
+      "sha256": "7b7dc7b3cd0d4b571fa9adf38c00053453564083e6fb2f6ccf00ab6adc6feae6",
+      "bytes": 5555
+    },
+    {
+      "path": "packs/16_techno_solutionism_ai/gospel_bridges.json",
+      "sha256": "c655a4358d42f7c0d20fc26844b429f8d669fa8396faef86c1fe70c87fd9a57c",
+      "bytes": 2202
+    },
+    {
+      "path": "packs/16_techno_solutionism_ai/pack.json",
+      "sha256": "4730341f38738645b7ca1733ae18ae9090fc3a10af87564d3122dc3655901d03",
+      "bytes": 2655
+    },
+    {
+      "path": "packs/16_techno_solutionism_ai/socratic_tree.json",
+      "sha256": "38513aa262281439254765393aa468452d91255bbeb798bf9386af83ac562f10",
+      "bytes": 3328
+    },
+    {
+      "path": "packs/16_techno_solutionism_ai/tests.json",
+      "sha256": "5f6b208c72a7392f11f52177028b4dea1809372ed48323eae536ad7cca06ce8f",
+      "bytes": 1336
+    },
+    {
+      "path": "packs/17_transhumanism/SKILL.md",
+      "sha256": "1b73da2387f5b40cd7d5041af8f2f63e1d2f48018b567f5867623fec237f2782",
+      "bytes": 5437
+    },
+    {
+      "path": "packs/17_transhumanism/gospel_bridges.json",
+      "sha256": "e09b20ec97a901d8da923b3fdb94f80999e5561952afa44fb0c6d6372e9fb89b",
+      "bytes": 2117
+    },
+    {
+      "path": "packs/17_transhumanism/pack.json",
+      "sha256": "d90d57695408c854937698a66265eba33e75ad2c40e5ac3fb96dbb022171ecb1",
+      "bytes": 2556
+    },
+    {
+      "path": "packs/17_transhumanism/socratic_tree.json",
+      "sha256": "4322a73e170f79317c88f0cf7c520430bb7898cf5842eda00884999206dd167f",
+      "bytes": 3321
+    },
+    {
+      "path": "packs/17_transhumanism/tests.json",
+      "sha256": "cd95b15f6683f92e7d65bb5d2c37227d621616d82e2d075417697534e209111a",
+      "bytes": 1298
+    },
+    {
+      "path": "packs/18_conspiracy_epistemology/SKILL.md",
+      "sha256": "ea4b354d4e8dec3e7a0416b08af3c06e6ceb608b7cecccad04054337132f8398",
+      "bytes": 5416
+    },
+    {
+      "path": "packs/18_conspiracy_epistemology/gospel_bridges.json",
+      "sha256": "44e1387b45438d32451ef1375f77f76fa3a202254b7aa2fb45dce697597475e5",
+      "bytes": 2127
+    },
+    {
+      "path": "packs/18_conspiracy_epistemology/pack.json",
+      "sha256": "2c4be23a8b2a63213a1acd73bcc59592b1c64390e1df8d20afc15a85557a798c",
+      "bytes": 2562
+    },
+    {
+      "path": "packs/18_conspiracy_epistemology/socratic_tree.json",
+      "sha256": "7711f09c23ff7537c5bb408e96cbac7e6acc47d6a61b1b4773e6dfca3ca059f4",
+      "bytes": 3322
+    },
+    {
+      "path": "packs/18_conspiracy_epistemology/tests.json",
+      "sha256": "308b2f39c7c036b50f5e8323f1b8d88fe262d894d8084b4a5a1103dc6f10d1a5",
+      "bytes": 1311
+    },
+    {
+      "path": "packs/19_nationalism_civil_religion/SKILL.md",
+      "sha256": "01573c1bfbe55ce2034693c425fd8098d05492efba3c1385cb037c10be2ec0a2",
+      "bytes": 5366
+    },
+    {
+      "path": "packs/19_nationalism_civil_religion/gospel_bridges.json",
+      "sha256": "bc7010c41728e01a23dd1853b45ca6ac740e62b87df71a5ad4bd1e25e0649821",
+      "bytes": 2097
+    },
+    {
+      "path": "packs/19_nationalism_civil_religion/pack.json",
+      "sha256": "3756af5d0bfd76036b7dfb627b450a76631c26464f488dca2240a56b74165b5e",
+      "bytes": 2501
+    },
+    {
+      "path": "packs/19_nationalism_civil_religion/socratic_tree.json",
+      "sha256": "00b13abc064a9bd994ba412ece5f8e2a070064d76dace6ef819d2cb14023935b",
+      "bytes": 3307
+    },
+    {
+      "path": "packs/19_nationalism_civil_religion/tests.json",
+      "sha256": "256ac83a8ea26a537f1e1ad6d10e20af164fb149ce09de438f391aa45adc4376",
+      "bytes": 1305
+    },
+    {
+      "path": "packs/20_political_messianism/SKILL.md",
+      "sha256": "ef5087711424320a87234215389253b3b654419f40eec6567f7ad2825d1980a5",
+      "bytes": 5421
+    },
+    {
+      "path": "packs/20_political_messianism/gospel_bridges.json",
+      "sha256": "e5c6a241114b31e6bc5bc235a51e4cf896c9dbb96b3129099205e01cd18789c0",
+      "bytes": 2106
+    },
+    {
+      "path": "packs/20_political_messianism/pack.json",
+      "sha256": "ef29f5e669e4352ba48ec8698e63cc58441e3eb5073d19e7009f15c979d189ea",
+      "bytes": 2556
+    },
+    {
+      "path": "packs/20_political_messianism/socratic_tree.json",
+      "sha256": "f6b243664bbda411e04f000b6a8fc1136a1a0e7f12a3de6b7d836e1d774b32dc",
+      "bytes": 3307
+    },
+    {
+      "path": "packs/20_political_messianism/tests.json",
+      "sha256": "853391276193b14b1e4419167f2ef3153b0b324c91d0460f64742c92aecfde0f",
+      "bytes": 1308
+    },
+    {
+      "path": "packs/21_identity_politics_tribalism/SKILL.md",
+      "sha256": "ab345bccab4a0ca12b970c4209a1e29abccd89c98f491bbd336be52f7c9bb9ef",
+      "bytes": 5491
+    },
+    {
+      "path": "packs/21_identity_politics_tribalism/gospel_bridges.json",
+      "sha256": "1566d4f3acd104d24bca94da3ca0b7fb2dd2241373149124bb27e489ee09ee96",
+      "bytes": 2119
+    },
+    {
+      "path": "packs/21_identity_politics_tribalism/pack.json",
+      "sha256": "8c9c7078bec91f2648fd2d1f788baca47d418a3c5d83ef78a7ef7ebac66d7978",
+      "bytes": 2552
+    },
+    {
+      "path": "packs/21_identity_politics_tribalism/socratic_tree.json",
+      "sha256": "b660b7d27f8633aca24ec79686fa46a35601e53c0b49f079ba3eb9a0e7e995e2",
+      "bytes": 3374
+    },
+    {
+      "path": "packs/21_identity_politics_tribalism/tests.json",
+      "sha256": "abe6a47fc065edbedad0972193cf809702bfede0747725b06fbeda37ddbff1e1",
+      "bytes": 1318
+    },
+    {
+      "path": "packs/22_authoritarian_collectivism/SKILL.md",
+      "sha256": "8974b4d5a0ff07a7aa402fd4b2693012233f4c5294ed8ccfe3098a5e7de7637a",
+      "bytes": 5386
+    },
+    {
+      "path": "packs/22_authoritarian_collectivism/gospel_bridges.json",
+      "sha256": "6845d548dc7acc672117cbc8764e49b6221ca92a1cf46d65ddeb5e7350b7f0d9",
+      "bytes": 2091
+    },
+    {
+      "path": "packs/22_authoritarian_collectivism/pack.json",
+      "sha256": "197dac568228aeb66efb664b014fb967e538d21640e373b61600e33b8ad6e7a0",
+      "bytes": 2506
+    },
+    {
+      "path": "packs/22_authoritarian_collectivism/socratic_tree.json",
+      "sha256": "5823f758180756dcc72def789f16af9586239fe48930f3f94252af466565a3a2",
+      "bytes": 3328
+    },
+    {
+      "path": "packs/22_authoritarian_collectivism/tests.json",
+      "sha256": "4e8a2ac17f3451c7d4f6bea449eac93c38b85bd8c8fd672e4d2247367ed4a945",
+      "bytes": 1320
+    },
+    {
+      "path": "packs/23_revolutionary_utopianism/SKILL.md",
+      "sha256": "28ed4c390fee42c863dd452c219b9ea6763af715d10409021a88fcf5a5c08328",
+      "bytes": 5417
+    },
+    {
+      "path": "packs/23_revolutionary_utopianism/gospel_bridges.json",
+      "sha256": "bddb46805e441e87910b5c3967bce7e01f18f063a2ee322c865cda95eeaf9917",
+      "bytes": 2092
+    },
+    {
+      "path": "packs/23_revolutionary_utopianism/pack.json",
+      "sha256": "b788dfa52ae206f4fba2461bb0489391cd2a9cb7573432eefdd91e09f73705ec",
+      "bytes": 2520
+    },
+    {
+      "path": "packs/23_revolutionary_utopianism/socratic_tree.json",
+      "sha256": "be027afd06e4445d21eac41b7ab8fc35bcdc6106c28e7e102894037422ddd5cd",
+      "bytes": 3338
+    },
+    {
+      "path": "packs/23_revolutionary_utopianism/tests.json",
+      "sha256": "c5fa0bf6d1158cc95c7172991823ee117dce6d59c00c40269fb98e1a5d41b2a7",
+      "bytes": 1303
+    },
+    {
+      "path": "packs/24_liberal_rights_absolutism/SKILL.md",
+      "sha256": "f9fe4469a9447e7465c29caa3c04acfc430fe6d018529715aab710907b00b668",
+      "bytes": 5522
+    },
+    {
+      "path": "packs/24_liberal_rights_absolutism/gospel_bridges.json",
+      "sha256": "fb35cc2d4d45e25d91c7b818c87b8a43759bc48bb02e5c64ba0d58260646d533",
+      "bytes": 2138
+    },
+    {
+      "path": "packs/24_liberal_rights_absolutism/pack.json",
+      "sha256": "06551ba4b463a8898fa0ce61abd2ae9da85157edbb60a7269bbc3a6eead26a18",
+      "bytes": 2609
+    },
+    {
+      "path": "packs/24_liberal_rights_absolutism/socratic_tree.json",
+      "sha256": "18f517702d448e2e59f6ee93b6d09b6691e8f97b091a8441036a169d7fffe7d9",
+      "bytes": 3318
+    },
+    {
+      "path": "packs/24_liberal_rights_absolutism/tests.json",
+      "sha256": "d4b0a923ddfd573f1a5efced4f5f08773e9daee61dd382aa2fdf6d9dc04a7c63",
+      "bytes": 1313
+    },
+    {
+      "path": "packs/25_sexual_revolution/SKILL.md",
+      "sha256": "3d76d031967719c589c3729612ae293faa709381175d615560816f1024229ec6",
+      "bytes": 5485
+    },
+    {
+      "path": "packs/25_sexual_revolution/gospel_bridges.json",
+      "sha256": "65a6255e884430ecc8d1bb24d15176f608e1edfa6f9f84348c1ab1d9eed327fc",
+      "bytes": 2148
+    },
+    {
+      "path": "packs/25_sexual_revolution/pack.json",
+      "sha256": "91b3cb5a15b0a1045da319ed40d415272f679b3034fca3cf14e16201d143ce0b",
+      "bytes": 2608
+    },
+    {
+      "path": "packs/25_sexual_revolution/socratic_tree.json",
+      "sha256": "668a59f424143810b84cef195d7171470347791fb08c863bb3555ad202c5d590",
+      "bytes": 3322
+    },
+    {
+      "path": "packs/25_sexual_revolution/tests.json",
+      "sha256": "d6633601c53d7f31fe3232b1f7a5988386574c128c29cb92c00cf3f7bbf71837",
+      "bytes": 1332
+    },
+    {
+      "path": "packs/26_gender_self_creation/SKILL.md",
+      "sha256": "3973a063f9e8fc55874e79917e73d253f3ff061bbceedc619e4d43fdfca657a3",
+      "bytes": 5663
+    },
+    {
+      "path": "packs/26_gender_self_creation/gospel_bridges.json",
+      "sha256": "153df03d5d776a4365f86d8757c717466146df1f415ae794d4fd2b9b184916a5",
+      "bytes": 2193
+    },
+    {
+      "path": "packs/26_gender_self_creation/pack.json",
+      "sha256": "75a46f3ba899deb6ee9de117db0e383686a140ba82d740da924863bcc8765fc7",
+      "bytes": 2735
+    },
+    {
+      "path": "packs/26_gender_self_creation/socratic_tree.json",
+      "sha256": "57c74cdd5db999d7ae8c50335fb195dcf52c4026d6dba1eb622a3041691b72f8",
+      "bytes": 3376
+    },
+    {
+      "path": "packs/26_gender_self_creation/tests.json",
+      "sha256": "458041cfa29a3056f47c990c4979bc62dc3369d911dbf2cf3f8017d656db566d",
+      "bytes": 1311
+    },
+    {
+      "path": "packs/27_manosphere_status_masculinity/SKILL.md",
+      "sha256": "ce2fb7fc9c158301d15985848b853f19feca078bcc0af2ff511326c6f62d4be6",
+      "bytes": 5600
+    },
+    {
+      "path": "packs/27_manosphere_status_masculinity/gospel_bridges.json",
+      "sha256": "6b53f9870879a7a638e95309933183893731d3ab6de12c8b37b6c83d6258ecf3",
+      "bytes": 2148
+    },
+    {
+      "path": "packs/27_manosphere_status_masculinity/pack.json",
+      "sha256": "1c9765e6ced3e20f8badbf2e0e88163412163989007ee48e9bb4afd39fce3f4e",
+      "bytes": 2619
+    },
+    {
+      "path": "packs/27_manosphere_status_masculinity/socratic_tree.json",
+      "sha256": "5d8244fc13702c2c31fe741b35e013846b5c9d1993e0bebdce9f317dd3a1b635",
+      "bytes": 3382
+    },
+    {
+      "path": "packs/27_manosphere_status_masculinity/tests.json",
+      "sha256": "e2ed88d65947f63e73e675da3032e31bf8232ab71771c2b31c4f61f174bfcf02",
+      "bytes": 1326
+    },
+    {
+      "path": "packs/28_radical_feminist_reductionism/SKILL.md",
+      "sha256": "b74db6b2bcad85c9dccbda697fa70e0312617498c40e03645e9497111134ed83",
+      "bytes": 5554
+    },
+    {
+      "path": "packs/28_radical_feminist_reductionism/gospel_bridges.json",
+      "sha256": "ffc20be71ce3ba3bdbb902331a257d831d5fd88c2a7d090e0e2f4998063a7321",
+      "bytes": 2166
+    },
+    {
+      "path": "packs/28_radical_feminist_reductionism/pack.json",
+      "sha256": "d46e6fd9a3970d9c4edba93f4b9e3b266885d545953bee9e9a5bc214d405f650",
+      "bytes": 2689
+    },
+    {
+      "path": "packs/28_radical_feminist_reductionism/socratic_tree.json",
+      "sha256": "6ea127da360fef2f63fb0c1bfca418af7c5c81ad80d0c899edd05d11f7110b0d",
+      "bytes": 3349
+    },
+    {
+      "path": "packs/28_radical_feminist_reductionism/tests.json",
+      "sha256": "2432d06a2ad7c30bfedfbc88ff9e3fc1d9167b53db98a74e3b7faf3e0e202585",
+      "bytes": 1320
+    },
+    {
+      "path": "packs/29_hedonism_experience/SKILL.md",
+      "sha256": "03b81dea962a405c3be4ee11a2523ddf14442f3b3fa86d2a0ea46e623b3c5f8e",
+      "bytes": 5471
+    },
+    {
+      "path": "packs/29_hedonism_experience/gospel_bridges.json",
+      "sha256": "40172318437579e3b22533562decb32a78eec2e0861cd866b9380e5d49559387",
+      "bytes": 2162
+    },
+    {
+      "path": "packs/29_hedonism_experience/pack.json",
+      "sha256": "a4f3b01d619b1b428a83b33af185dc95b68348bc360676153fb4f08486def7d9",
+      "bytes": 2549
+    },
+    {
+      "path": "packs/29_hedonism_experience/socratic_tree.json",
+      "sha256": "5c26ac36b79c6e93ea6a560ef9bd173f1431237c0893e6487504adf455798b7e",
+      "bytes": 3336
+    },
+    {
+      "path": "packs/29_hedonism_experience/tests.json",
+      "sha256": "5bebd62a071e958151da86d5bb6acae9855c78c0b6cecd7300958c17f0717166",
+      "bytes": 1304
+    },
+    {
+      "path": "packs/30_nihilism_cynicism/SKILL.md",
+      "sha256": "b15f5618ae9b74ee17fc339508a9a9e9335691b12b1081112ebf59a7bd78a23b",
+      "bytes": 5383
+    },
+    {
+      "path": "packs/30_nihilism_cynicism/gospel_bridges.json",
+      "sha256": "e53f631ab572c6a506e39f6dac82611fc7dc0333838df45b99e0d3c159cb1b1c",
+      "bytes": 2040
+    },
+    {
+      "path": "packs/30_nihilism_cynicism/pack.json",
+      "sha256": "14a8af057a38fe87437dcd256be371f0422e97e9590f2eef22ab2b3f4bd0b888",
+      "bytes": 2484
+    },
+    {
+      "path": "packs/30_nihilism_cynicism/socratic_tree.json",
+      "sha256": "3b6984559bcd51b4827490444e69c8cfd3c41c7f08b1c76b971d2091c0200e84",
+      "bytes": 3286
+    },
+    {
+      "path": "packs/30_nihilism_cynicism/tests.json",
+      "sha256": "61c5877b037def77dd68af6c02b76dc07fcfbfea16908144e74170135e3aead0",
+      "bytes": 1314
+    },
+    {
+      "path": "packs/31_environmental_eco_spirituality/SKILL.md",
+      "sha256": "0d8a140e292773dc0e0aa907a3900bcbcb23e856220dcb937dd738ac6653525a",
+      "bytes": 5653
+    },
+    {
+      "path": "packs/31_environmental_eco_spirituality/gospel_bridges.json",
+      "sha256": "0f5aeba8dd3eb1b90f261753c195ba373da88939b5d60f7672686f5990658d2a",
+      "bytes": 2188
+    },
+    {
+      "path": "packs/31_environmental_eco_spirituality/pack.json",
+      "sha256": "8df938372254ed5f7b2be51ca58d239336b0095ba4cd34744d2a8bd6cca443fe",
+      "bytes": 2655
+    },
+    {
+      "path": "packs/31_environmental_eco_spirituality/socratic_tree.json",
+      "sha256": "568db933d648509388de3a0d37e9d1b977453a543403f9d9937a254b270e2080",
+      "bytes": 3398
+    },
+    {
+      "path": "packs/31_environmental_eco_spirituality/tests.json",
+      "sha256": "afa9659e89dba5eefe491551155121582936a28e97d0650ec805c1c36737d89c",
+      "bytes": 1318
+    },
+    {
+      "path": "packs/32_influencer_attention_culture/SKILL.md",
+      "sha256": "4e7083de6f00ada08af798bb81aa06652b472d08c495c632261b03e8ccccf83b",
+      "bytes": 5458
+    },
+    {
+      "path": "packs/32_influencer_attention_culture/gospel_bridges.json",
+      "sha256": "e59a89c6cc67ffd9a7c66c42ffc51d33aac8f76767bfe405fa002807ef2066f1",
+      "bytes": 2141
+    },
+    {
+      "path": "packs/32_influencer_attention_culture/pack.json",
+      "sha256": "3d3b6fea572eaac20417686e3413c6b9faf4dc2dde17239f3f1ce776be7cfbe7",
+      "bytes": 2581
+    },
+    {
+      "path": "packs/32_influencer_attention_culture/socratic_tree.json",
+      "sha256": "064bb402133699d360a450f6312f9d8f2fdff371cb372b2710634d580a66be10",
+      "bytes": 3309
+    },
+    {
+      "path": "packs/32_influencer_attention_culture/tests.json",
+      "sha256": "fc9b6b6985c8b437384f31dd4fcb0b92bdb6943b700929f22b38be16f61da710",
+      "bytes": 1307
+    },
+    {
+      "path": "pyproject.toml",
+      "sha256": "486c6b445f3105ac965eefc390f3355ebc5b6f54601c7361025a4d5d0b085854",
+      "bytes": 379
+    },
+    {
+      "path": "registry.json",
+      "sha256": "fb686cc0034105106e5bce7189d8862c43b1160ca648c3633d05e8844421e95a",
+      "bytes": 10876
+    },
+    {
+      "path": "schemas/domain_pack.schema.json",
+      "sha256": "551d096f15a1d921551b0250fc5a2c478d444fac915d1b98277e21a5e30070de",
+      "bytes": 1772
+    },
+    {
+      "path": "schemas/gospel_bridge.schema.json",
+      "sha256": "220cedcfbba5b03100b9a2e254cdc5b6ca35986ec948b6f496ef3e34b2369cb6",
+      "bytes": 527
+    },
+    {
+      "path": "schemas/socratic_question_tree.schema.json",
+      "sha256": "8ff951880c2cd7cb944c908d2992897cfe563d0ff4e8ac3514eb10074c668ee9",
+      "bytes": 904
+    },
+    {
+      "path": "src/discernment_domain_packs/__init__.py",
+      "sha256": "3370bf9c9dc0676e325f8d31c6247d9bb89335407237e12f8876f7e67bb1ea5c",
+      "bytes": 147
+    },
+    {
+      "path": "src/discernment_domain_packs/__pycache__/__init__.cpython-313.pyc",
+      "sha256": "baa9e7524d8f6370e8f3a3515a3851b69497354cc0a799db894932fe38b4d1d7",
+      "bytes": 341
+    },
+    {
+      "path": "src/discernment_domain_packs/__pycache__/loader.cpython-313.pyc",
+      "sha256": "376c3971aedd1aab7d174204cd01f66c7e733a36fca8f5f0f6780ca92baf17a1",
+      "bytes": 929
+    },
+    {
+      "path": "src/discernment_domain_packs/__pycache__/matcher.cpython-313.pyc",
+      "sha256": "b3e656191143df7343c858d61e28b7cc38c0bc5833a1d41920f14e76e4c92993",
+      "bytes": 2062
+    },
+    {
+      "path": "src/discernment_domain_packs/__pycache__/models.cpython-313.pyc",
+      "sha256": "79ac9c8dbdb83e8f01b125e2639d33f311be13dfc1d49a24890aafa71cca9350",
+      "bytes": 2185
+    },
+    {
+      "path": "src/discernment_domain_packs/__pycache__/registry.cpython-313.pyc",
+      "sha256": "9016e46365b17431a873cb3add27eda76b60a0ea823e0650c6ff368e03efbadf",
+      "bytes": 2962
+    },
+    {
+      "path": "src/discernment_domain_packs/__pycache__/validator.cpython-313.pyc",
+      "sha256": "34fc95ae99b32a7e4cb204ca66f1d9c69aab92f18d09d989acd35f301f913d7e",
+      "bytes": 1211
+    },
+    {
+      "path": "src/discernment_domain_packs/cli.py",
+      "sha256": "0d7a3303f7ea11267be45607ee213beb419e14416dec16ef19a1dc67bc20491d",
+      "bytes": 556
+    },
+    {
+      "path": "src/discernment_domain_packs/composer.py",
+      "sha256": "63390e621e10f9264ad752b32d60d696dabb92c18d3c22f382417a73dd5a25d0",
+      "bytes": 422
+    },
+    {
+      "path": "src/discernment_domain_packs/loader.py",
+      "sha256": "67d53487c4b73490a14ec09335d4d3d7ec7a7b987cde5a89e440b730d0fcac33",
+      "bytes": 340
+    },
+    {
+      "path": "src/discernment_domain_packs/matcher.py",
+      "sha256": "b9e24a6b5d6e4d07fe5e306dd2dbebe37699c29c04481fa593f061bddd888c4e",
+      "bytes": 1100
+    },
+    {
+      "path": "src/discernment_domain_packs/models.py",
+      "sha256": "5dd9ce640b95afad8522a68eec32a06f7ccf836cf6d39b47f1d3a03cb5c6ef62",
+      "bytes": 993
+    },
+    {
+      "path": "src/discernment_domain_packs/registry.py",
+      "sha256": "c25d0688e6217050f5680f6e980a92935b2df8cadb46f95cd4597f65130a5973",
+      "bytes": 1152
+    },
+    {
+      "path": "src/discernment_domain_packs/validator.py",
+      "sha256": "041d77ede45c5bab54b9d7b2c0bacd85868924e0708584ebae7527251598f7c4",
+      "bytes": 462
+    },
+    {
+      "path": "tests/__pycache__/test_matcher.cpython-313-pytest-9.0.2.pyc",
+      "sha256": "894716b6583ff4bc5df7d7b2995329301b01da7f0e12b7ae877d7e99c27d6d0c",
+      "bytes": 2765
+    },
+    {
+      "path": "tests/__pycache__/test_quality_gates.cpython-313-pytest-9.0.2.pyc",
+      "sha256": "1db74dd1f4b9026c7e1f7e73352703a09ae0ffe626af5b770f23bd2284c2ce4c",
+      "bytes": 4113
+    },
+    {
+      "path": "tests/__pycache__/test_registry.cpython-313-pytest-9.0.2.pyc",
+      "sha256": "4633775ee1485c4ce53f93a848ca61364d26bd3c2824667d9f3b80c319477909",
+      "bytes": 5374
+    },
+    {
+      "path": "tests/__pycache__/test_schema.cpython-313-pytest-9.0.2.pyc",
+      "sha256": "8709bf5f54651a8d9dfd927cc6b29a70fe112ea4fc066163f3e81e22ec5de55c",
+      "bytes": 3641
+    },
+    {
+      "path": "tests/acceptance.md",
+      "sha256": "cd1f52d65344e99e11e58f7d5e232f96d978a638f8bcbb9aa441e635e3b76b05",
+      "bytes": 1124
+    },
+    {
+      "path": "tests/fixtures/composite_influencer.json",
+      "sha256": "da8536e7ec63c77612f0cb005e9675b3683c2bc27d524b62925cda16568648ef",
+      "bytes": 401
+    },
+    {
+      "path": "tests/fixtures/healthy_productivity.json",
+      "sha256": "421bc3b110310f9e8041c3159bebb83a7517d5fcea817d20090593e67c8fc3ec",
+      "bytes": 240
+    },
+    {
+      "path": "tests/fixtures/scrupulosity.json",
+      "sha256": "9c5815082e2a5ea18a797a4924edab0fd97ce6ba4a26ddc9a99ffe795165ebfc",
+      "bytes": 184
+    },
+    {
+      "path": "tests/fixtures/seeker_consent.json",
+      "sha256": "e1796cedfd1fa7fb5c6d254bae8b10fbf4340dc405b694ad4a61b8438f7802b8",
+      "bytes": 174
+    },
+    {
+      "path": "tests/test_matcher.py",
+      "sha256": "0a16bd15b583dfb82659a8dd040cb3485fbbe2a518d3754ba21e8decf59852fe",
+      "bytes": 489
+    },
+    {
+      "path": "tests/test_quality_gates.py",
+      "sha256": "37ea1525ff12171572f4e4d966683af5434f00b17108ee38656669517e2ac5d6",
+      "bytes": 960
+    },
+    {
+      "path": "tests/test_registry.py",
+      "sha256": "4bbd701467a69cb88a82e53d734d66abb3fd2765afbdbe10c134f7516ff29c76",
+      "bytes": 533
+    },
+    {
+      "path": "tests/test_schema.py",
+      "sha256": "c3307719f3c7505f8ab48a5afebaabee09498287d346be6fb26052244b69643a",
+      "bytes": 1040
+    }
+  ]
+}

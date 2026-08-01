@@ -29,6 +29,7 @@ public/**/.env*
 
 # local render/output artifacts
 film_output/
+docs/ai-formation-certification/browser-artifacts/
 
 # python serverless function cache (api/)
 __pycache__/

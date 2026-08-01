@@ -1,0 +1,8 @@
+interface:
+  display_name: Formation Review Window
+  short_description: Implement 7/14/30/90-day evidence-linked pattern hypotheses and learner confirmation/rejection.
+  default_prompt: Use $christian-formation-review-window for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

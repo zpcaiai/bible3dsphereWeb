@@ -1,0 +1,12 @@
+{
+  "evidence_id": "ev2",
+  "control_id": "TGQ-001",
+  "evidence_type": "manual_review",
+  "locator": "reviews/theology-signoff.json",
+  "hash": "hash2",
+  "status": "valid",
+  "collected_at": "2026-07-31T10:00:00+00:00",
+  "expires_at": "2027-01-01T00:00:00+00:00",
+  "reviewer": "theology-reviewer",
+  "limitations": []
+}

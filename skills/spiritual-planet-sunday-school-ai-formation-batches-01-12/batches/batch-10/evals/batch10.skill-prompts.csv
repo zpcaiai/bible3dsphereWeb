@@ -1,0 +1,51 @@
+prompt,expected_skill,should_activate,case_type,notes
+请在属灵星球仓库实现Scenario Runtime Orchestrator，复用现有路由和安全门。,spiritual-planet-scenario-runtime-orchestrator,true,explicit-domain,应自动路由到焦点技能
+Use $spiritual-planet-scenario-runtime-orchestrator to inspect and implement the repository changes with tests.,spiritual-planet-scenario-runtime-orchestrator,true,explicit-mention,显式调用
+审查当前 Scenario Runtime Orchestrator 的Schema、权限、隐私和E2E测试，不要新建平行应用。,spiritual-planet-scenario-runtime-orchestrator,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,spiritual-planet-scenario-runtime-orchestrator,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Formation Scenario Authoring，复用现有路由和安全门。,christian-scenario-authoring,true,explicit-domain,应自动路由到焦点技能
+Use $christian-scenario-authoring to inspect and implement the repository changes with tests.,christian-scenario-authoring,true,explicit-mention,显式调用
+审查当前 Formation Scenario Authoring 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-scenario-authoring,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-scenario-authoring,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Scenario Runtime State Machine，复用现有路由和安全门。,christian-scenario-runtime,true,explicit-domain,应自动路由到焦点技能
+Use $christian-scenario-runtime to inspect and implement the repository changes with tests.,christian-scenario-runtime,true,explicit-mention,显式调用
+审查当前 Scenario Runtime State Machine 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-scenario-runtime,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-scenario-runtime,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Trigger–State Simulation，复用现有路由和安全门。,christian-trigger-state-simulation,true,explicit-domain,应自动路由到焦点技能
+Use $christian-trigger-state-simulation to inspect and implement the repository changes with tests.,christian-trigger-state-simulation,true,explicit-mention,显式调用
+审查当前 Trigger–State Simulation 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-trigger-state-simulation,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-trigger-state-simulation,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Choice and Consequence Engine，复用现有路由和安全门。,christian-choice-consequence-engine,true,explicit-domain,应自动路由到焦点技能
+Use $christian-choice-consequence-engine to inspect and implement the repository changes with tests.,christian-choice-consequence-engine,true,explicit-mention,显式调用
+审查当前 Choice and Consequence Engine 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-choice-consequence-engine,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-choice-consequence-engine,false,negative,纯神学问答不应激活仓库技能
+"请在属灵星球仓库实现Scripture, Grace and Repair Intervention，复用现有路由和安全门。",christian-scripture-grace-intervention,true,explicit-domain,应自动路由到焦点技能
+Use $christian-scripture-grace-intervention to inspect and implement the repository changes with tests.,christian-scripture-grace-intervention,true,explicit-mention,显式调用
+"审查当前 Scripture, Grace and Repair Intervention 的Schema、权限、隐私和E2E测试，不要新建平行应用。",christian-scripture-grace-intervention,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-scripture-grace-intervention,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Socratic Scenario Branching，复用现有路由和安全门。,christian-socratic-scenario-branching,true,explicit-domain,应自动路由到焦点技能
+Use $christian-socratic-scenario-branching to inspect and implement the repository changes with tests.,christian-socratic-scenario-branching,true,explicit-mention,显式调用
+审查当前 Socratic Scenario Branching 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-socratic-scenario-branching,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-socratic-scenario-branching,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Scenario Facilitator Tools，复用现有路由和安全门。,christian-scenario-facilitator,true,explicit-domain,应自动路由到焦点技能
+Use $christian-scenario-facilitator to inspect and implement the repository changes with tests.,christian-scenario-facilitator,true,explicit-mention,显式调用
+审查当前 Scenario Facilitator Tools 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-scenario-facilitator,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-scenario-facilitator,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Scenario Safety Gate，复用现有路由和安全门。,christian-scenario-safety-gate,true,explicit-domain,应自动路由到焦点技能
+Use $christian-scenario-safety-gate to inspect and implement the repository changes with tests.,christian-scenario-safety-gate,true,explicit-mention,显式调用
+审查当前 Scenario Safety Gate 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-scenario-safety-gate,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-scenario-safety-gate,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Scenario Debrief，复用现有路由和安全门。,christian-scenario-debrief,true,explicit-domain,应自动路由到焦点技能
+Use $christian-scenario-debrief to inspect and implement the repository changes with tests.,christian-scenario-debrief,true,explicit-mention,显式调用
+审查当前 Scenario Debrief 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-scenario-debrief,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-scenario-debrief,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Scenario Benchmark and Golden Runs，复用现有路由和安全门。,christian-scenario-benchmark,true,explicit-domain,应自动路由到焦点技能
+Use $christian-scenario-benchmark to inspect and implement the repository changes with tests.,christian-scenario-benchmark,true,explicit-mention,显式调用
+审查当前 Scenario Benchmark and Golden Runs 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-scenario-benchmark,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-scenario-benchmark,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Scenario Runtime UI Integrator，复用现有路由和安全门。,scenario-runtime-course-integrator,true,explicit-domain,应自动路由到焦点技能
+Use $scenario-runtime-course-integrator to inspect and implement the repository changes with tests.,scenario-runtime-course-integrator,true,explicit-mention,显式调用
+审查当前 Scenario Runtime UI Integrator 的Schema、权限、隐私和E2E测试，不要新建平行应用。,scenario-runtime-course-integrator,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,scenario-runtime-course-integrator,false,negative,纯神学问答不应激活仓库技能
+在属灵星球主日学模块端到端实现 Batch 10，包含数据、页面、迁移、权限、内容、测试与报告。,spiritual-planet-scenario-runtime-orchestrator,true,orchestrator,端到端请求
+帮我写一段个人祷告，不要修改任何项目。,spiritual-planet-scenario-runtime-orchestrator,false,negative,非产品任务

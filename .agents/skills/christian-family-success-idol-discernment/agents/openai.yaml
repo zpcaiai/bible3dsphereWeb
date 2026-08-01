@@ -1,0 +1,9 @@
+interface:
+  display_name: Family Success and Status Discernment
+  short_description: Implement review of grades, elite school, career, money, appearance and reputation as possible governing
+    family priorities.
+  default_prompt: Use $christian-family-success-idol-discernment for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

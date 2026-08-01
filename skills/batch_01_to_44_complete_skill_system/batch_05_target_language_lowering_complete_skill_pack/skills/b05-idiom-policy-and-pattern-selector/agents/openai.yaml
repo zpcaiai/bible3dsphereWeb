@@ -1,0 +1,6 @@
+interface:
+  display_name: "b05-idiom-policy-and-pattern-selector"
+  short_description: "Run this Batch capability with evidence gates"
+  default_prompt: "Use $b05-idiom-policy-and-pattern-selector to execute this workflow with explicit evidence, validation, human approval boundaries, and rollback reporting."
+policy:
+  allow_implicit_invocation: true

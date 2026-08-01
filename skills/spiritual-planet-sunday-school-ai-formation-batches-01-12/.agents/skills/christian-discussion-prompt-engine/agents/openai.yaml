@@ -1,0 +1,8 @@
+interface:
+  display_name: Discussion Prompt Engine
+  short_description: Implement observation-to-application question trees with skip and anti-coercion.
+  default_prompt: Use $christian-discussion-prompt-engine for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

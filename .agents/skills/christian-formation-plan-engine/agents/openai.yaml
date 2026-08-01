@@ -1,0 +1,8 @@
+interface:
+  display_name: "Christian Formation Plan Engine"
+  short_description: "Build explainable, editable 7/14/30/90-day formation plans."
+  default_prompt: "Use $christian-formation-plan-engine for this task."
+policy:
+  products:
+    - CODEX
+  allow_implicit_invocation: true

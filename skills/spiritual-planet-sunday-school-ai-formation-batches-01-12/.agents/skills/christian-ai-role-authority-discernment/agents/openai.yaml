@@ -1,0 +1,8 @@
+interface:
+  display_name: "Christian AI Role and Authority Discernment"
+  short_description: "Classify AI roles, stakes, delegation and authority boundaries."
+  default_prompt: "Use $christian-ai-role-authority-discernment for this task."
+policy:
+  products:
+    - CODEX
+  allow_implicit_invocation: true

@@ -1,0 +1,8 @@
+interface:
+  display_name: Student Material Generator
+  short_description: Implement age/readability variants, response privacy modes and accessible formats.
+  default_prompt: Use $christian-student-material-generator for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

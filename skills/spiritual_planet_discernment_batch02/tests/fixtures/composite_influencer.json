@@ -1,0 +1,11 @@
+{
+  "input": "某主播售卖高价成长课，声称只有成为高价值强者才能获得爱情和尊重，并把粉丝量当作成功证明。",
+  "expected_candidates": [
+    "meritocracy_successism",
+    "self_optimization_hustle",
+    "manosphere_status_masculinity",
+    "influencer_attention_culture",
+    "consumerism"
+  ],
+  "expected_behavior": "multi_pack_composition_not_single_label"
+}

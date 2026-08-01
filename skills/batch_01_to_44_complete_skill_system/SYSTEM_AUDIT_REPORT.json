@@ -1,0 +1,55 @@
+{
+  "result": "PASS",
+  "scope": "batch-01-to-44-static-skill-system",
+  "counts": {
+    "batches": 44,
+    "batch_root_skills": 44,
+    "child_skills": 744,
+    "total_skill_files": 788,
+    "unique_skill_names": 788,
+    "agent_interfaces": 788,
+    "json_schemas": 284,
+    "yaml_documents": 1030,
+    "python_scripts": 45,
+    "shell_scripts": 90,
+    "local_markdown_links": 34,
+    "manifest_files": 2659,
+    "frontmatter_violations": 0,
+    "skill_names_over_64_chars": 0,
+    "skill_folder_name_mismatches": 0
+  },
+  "schema_validator": "jsonschema.Draft202012Validator; PyYAML.safe_load",
+  "reconstruction": {
+    "scope": "Batch 01-05",
+    "files_reconstructed": {
+      "batch_01": 35,
+      "batch_02": 46,
+      "batch_03": 45,
+      "batch_04": 46,
+      "batch_05": 55
+    },
+    "total_files_reconstructed": 227,
+    "method": "deterministic generation from supplied SKILL_INDEX and manifest paths",
+    "original_payload_recovered": false
+  },
+  "codex_skill_contract": {
+    "frontmatter_fields": [
+      "name",
+      "description"
+    ],
+    "maximum_name_length": 64,
+    "folder_name_alignment": "required for all child and installed Skills",
+    "agent_interface_required": true,
+    "name_migrations": 22,
+    "folder_migrations": 138
+  },
+  "errors": [],
+  "warnings": [
+    "PROVENANCE_NOTICE: the intake checkout lacked 227 manifest-declared Batch 01-05 files. They were rebuilt deterministically from the supplied indexes and manifest paths; the new digests do not claim recovery of the unavailable original payloads.",
+    "RUNTIME_NOT_RUN: external toolchains, providers, databases, and workloads were not executed.",
+    "PRODUCTION_NOT_CERTIFIED: no deployment, customer acceptance, DR, or release gate was executed."
+  ],
+  "runtime_status": "NOT_RUN",
+  "production_status": "NOT_CERTIFIED",
+  "trust_boundary": "Static package validation is not runtime execution or production certification."
+}

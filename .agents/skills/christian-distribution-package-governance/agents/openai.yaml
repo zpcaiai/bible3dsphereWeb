@@ -1,0 +1,9 @@
+interface:
+  display_name: Distribution Package Governance
+  short_description: Implement artifact manifests, dependencies, schema compatibility, license/secret review, signatures and
+    install/rollback guides.
+  default_prompt: Use $christian-distribution-package-governance for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

@@ -1,0 +1,244 @@
+{
+  "batch": 9,
+  "module_key": "sunday_school.ai_formation.curriculum_teacher_engine",
+  "skills": [
+    "spiritual-planet-curriculum-teacher-engine-orchestrator",
+    "christian-course-domain-model",
+    "christian-lesson-generator",
+    "christian-scripture-anchor-review",
+    "christian-teacher-guide-generator",
+    "christian-student-material-generator",
+    "christian-discussion-prompt-engine",
+    "christian-scenario-exercise-builder",
+    "christian-family-extension-builder",
+    "christian-teacher-observation",
+    "christian-content-review-workflow",
+    "curriculum-teacher-course-integrator"
+  ],
+  "counts": {
+    "skills": 12,
+    "schemas": 12,
+    "practices": 30,
+    "units": 8,
+    "lessons": 20,
+    "scenarios": 12
+  },
+  "practice_asset": "assets/teacher-engine-control-catalog.seed.yaml",
+  "curriculum_asset": "assets/teacher-engine-curriculum.seed.yaml",
+  "scenario_asset": "assets/teacher-engine-scenarios.seed.yaml",
+  "analytics_asset": "assets/analytics-events.example.yaml",
+  "schema_invariants": [
+    {
+      "schema": "course-definition.schema.json",
+      "path": "properties.autoPublishAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "course-definition.schema.json",
+      "path": "properties.salvationOutcomeClaimed.const",
+      "expected": false
+    },
+    {
+      "schema": "course-definition.schema.json",
+      "path": "properties.learnerRankingEnabled.const",
+      "expected": false
+    },
+    {
+      "schema": "unit-definition.schema.json",
+      "path": "properties.autoReorderedByModel.const",
+      "expected": false
+    },
+    {
+      "schema": "lesson-definition.schema.json",
+      "path": "properties.autoPublishAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "lesson-definition.schema.json",
+      "path": "properties.unreviewedAiContentVisibleToLearners.const",
+      "expected": false
+    },
+    {
+      "schema": "activity-definition.schema.json",
+      "path": "properties.learnerMaySkipSensitiveActivity.const",
+      "expected": true
+    },
+    {
+      "schema": "activity-definition.schema.json",
+      "path": "properties.privateConfessionRequired.const",
+      "expected": false
+    },
+    {
+      "schema": "activity-definition.schema.json",
+      "path": "properties.competitiveSpiritualRankingEnabled.const",
+      "expected": false
+    },
+    {
+      "schema": "scripture-anchor-review.schema.json",
+      "path": "properties.modelMemoryUsedAsSource.const",
+      "expected": false
+    },
+    {
+      "schema": "scripture-anchor-review.schema.json",
+      "path": "properties.longCopyrightedTextStored.const",
+      "expected": false
+    },
+    {
+      "schema": "teacher-guide.schema.json",
+      "path": "properties.unreviewedAdvicePresentedAsApproved.const",
+      "expected": false
+    },
+    {
+      "schema": "student-handout.schema.json",
+      "path": "properties.sensitiveDisclosurePromptIncluded.const",
+      "expected": false
+    },
+    {
+      "schema": "student-handout.schema.json",
+      "path": "properties.spiritualAnswerScored.const",
+      "expected": false
+    },
+    {
+      "schema": "discussion-prompt-set.schema.json",
+      "path": "properties.predeterminedAnswerRequired.const",
+      "expected": false
+    },
+    {
+      "schema": "discussion-prompt-set.schema.json",
+      "path": "properties.leadingConfessionAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "discussion-prompt-set.schema.json",
+      "path": "properties.peerPressureToDiscloseAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "scenario-exercise-definition.schema.json",
+      "path": "properties.explicitSensitiveContentRendered.const",
+      "expected": false
+    },
+    {
+      "schema": "scenario-exercise-definition.schema.json",
+      "path": "properties.learnerRealHistoryRequired.const",
+      "expected": false
+    },
+    {
+      "schema": "scenario-exercise-definition.schema.json",
+      "path": "properties.shameEndingAllowed.const",
+      "expected": false
+    },
+    {
+      "schema": "scenario-exercise-definition.schema.json",
+      "path": "properties.safetyReviewRequired.const",
+      "expected": true
+    },
+    {
+      "schema": "family-extension-assignment.schema.json",
+      "path": "properties.participationRequiredForCourseCompletion.const",
+      "expected": false
+    },
+    {
+      "schema": "family-extension-assignment.schema.json",
+      "path": "properties.familyPrivateDataRequired.const",
+      "expected": false
+    },
+    {
+      "schema": "family-extension-assignment.schema.json",
+      "path": "properties.parentSurveillanceTaskIncluded.const",
+      "expected": false
+    },
+    {
+      "schema": "teacher-observation-record.schema.json",
+      "path": "properties.learnerSpiritualStateInferred.const",
+      "expected": false
+    },
+    {
+      "schema": "teacher-observation-record.schema.json",
+      "path": "properties.clinicalDiagnosisGenerated.const",
+      "expected": false
+    },
+    {
+      "schema": "teacher-observation-record.schema.json",
+      "path": "properties.privateDisclosureStored.const",
+      "expected": false
+    },
+    {
+      "schema": "teacher-observation-record.schema.json",
+      "path": "properties.usedForPublicRanking.const",
+      "expected": false
+    },
+    {
+      "schema": "content-review-workflow.schema.json",
+      "path": "properties.samePersonMayAuthorAndSoleApprove.const",
+      "expected": false
+    },
+    {
+      "schema": "content-review-workflow.schema.json",
+      "path": "properties.modelMayApprove.const",
+      "expected": false
+    },
+    {
+      "schema": "content-review-workflow.schema.json",
+      "path": "properties.publishWithoutAllRequiredApprovals.const",
+      "expected": false
+    }
+  ],
+  "forbidden_schema_keys": [
+    "salvationProbability",
+    "salvationScore",
+    "spiritualMaturityScore",
+    "holinessRank",
+    "addictionScore",
+    "hiddenSinScore",
+    "parentFitnessScore",
+    "sexualPurityScore",
+    "childObedienceScore",
+    "divineMessage",
+    "automaticDiagnosis",
+    "secretMonitoringToken",
+    "rawExplicitContent",
+    "privateMinorTranscript"
+  ],
+  "required_root_files": [
+    "README.md",
+    "CODEX_IMPLEMENTATION_PROMPT.md",
+    "SKILL_INDEX.md",
+    "BATCH01_08_COMPATIBILITY.md",
+    "IMPLEMENTATION_CHECKLIST.md",
+    "AGENTS.md.snippet",
+    "SOURCES.md",
+    "RELEASE_NOTES.md",
+    "PACKAGE_SPEC.json",
+    "evals/batch09.skill-prompts.csv",
+    "evals/batch09.behavior-cases.json",
+    "evals/batch09.behavior-rubric.md",
+    "assets/teacher-engine-control-catalog.seed.yaml",
+    "assets/teacher-engine-curriculum.seed.yaml",
+    "assets/teacher-engine-scenarios.seed.yaml",
+    "assets/analytics-events.example.yaml",
+    "schemas/course-definition.schema.json",
+    "schemas/unit-definition.schema.json",
+    "schemas/lesson-definition.schema.json",
+    "schemas/activity-definition.schema.json",
+    "schemas/scripture-anchor-review.schema.json",
+    "schemas/teacher-guide.schema.json",
+    "schemas/student-handout.schema.json",
+    "schemas/discussion-prompt-set.schema.json",
+    "schemas/scenario-exercise-definition.schema.json",
+    "schemas/family-extension-assignment.schema.json",
+    "schemas/teacher-observation-record.schema.json",
+    "schemas/content-review-workflow.schema.json",
+    "references/batch09-blueprint.md",
+    "references/api-persistence-blueprint.md",
+    "references/theology-and-formation-policy.md",
+    "references/privacy-safety-analytics-policy.md",
+    "references/testing-and-release-policy.md",
+    "references/course-domain-and-generation-policy.md",
+    "references/scripture-and-theology-review-policy.md",
+    "references/teacher-facilitation-and-observation-policy.md",
+    "references/student-material-privacy-accessibility-policy.md",
+    "references/discussion-and-scenario-authoring-policy.md",
+    "references/content-review-publication-policy.md"
+  ]
+}

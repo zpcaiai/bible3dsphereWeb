@@ -1,0 +1,47 @@
+prompt,expected_skill,should_activate,case_type,notes
+"请在属灵星球仓库实现Identity, Desire, Sexuality and Virtual Intimacy Orchestrator，复用现有路由和安全门。",spiritual-planet-identity-intimacy-recovery-orchestrator,true,explicit-domain,应自动路由到焦点技能
+Use $spiritual-planet-identity-intimacy-recovery-orchestrator to inspect and implement the repository changes with tests.,spiritual-planet-identity-intimacy-recovery-orchestrator,true,explicit-mention,显式调用
+"审查当前 Identity, Desire, Sexuality and Virtual Intimacy Orchestrator 的Schema、权限、隐私和E2E测试，不要新建平行应用。",spiritual-planet-identity-intimacy-recovery-orchestrator,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,spiritual-planet-identity-intimacy-recovery-orchestrator,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Gospel Identity Formation，复用现有路由和安全门。,christian-gospel-identity-formation,true,explicit-domain,应自动路由到焦点技能
+Use $christian-gospel-identity-formation to inspect and implement the repository changes with tests.,christian-gospel-identity-formation,true,explicit-mention,显式调用
+审查当前 Gospel Identity Formation 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-gospel-identity-formation,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-gospel-identity-formation,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Christian Desire Mapping，复用现有路由和安全门。,christian-desire-mapping,true,explicit-domain,应自动路由到焦点技能
+Use $christian-desire-mapping to inspect and implement the repository changes with tests.,christian-desire-mapping,true,explicit-mention,显式调用
+审查当前 Christian Desire Mapping 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-desire-mapping,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-desire-mapping,false,negative,纯神学问答不应激活仓库技能
+"请在属灵星球仓库实现Body, Sexuality and Covenant Formation，复用现有路由和安全门。",christian-body-sexuality-theology,true,explicit-domain,应自动路由到焦点技能
+Use $christian-body-sexuality-theology to inspect and implement the repository changes with tests.,christian-body-sexuality-theology,true,explicit-mention,显式调用
+"审查当前 Body, Sexuality and Covenant Formation 的Schema、权限、隐私和E2E测试，不要新建平行应用。",christian-body-sexuality-theology,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-body-sexuality-theology,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Pornography Trigger Timeline，复用现有路由和安全门。,christian-pornography-trigger-timeline,true,explicit-domain,应自动路由到焦点技能
+Use $christian-pornography-trigger-timeline to inspect and implement the repository changes with tests.,christian-pornography-trigger-timeline,true,explicit-mention,显式调用
+审查当前 Pornography Trigger Timeline 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-pornography-trigger-timeline,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-pornography-trigger-timeline,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Urge Interruption and Recovery，复用现有路由和安全门。,christian-urge-interruption-recovery,true,explicit-domain,应自动路由到焦点技能
+Use $christian-urge-interruption-recovery to inspect and implement the repository changes with tests.,christian-urge-interruption-recovery,true,explicit-mention,显式调用
+审查当前 Urge Interruption and Recovery 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-urge-interruption-recovery,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-urge-interruption-recovery,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现AI Companion Boundary，复用现有路由和安全门。,christian-ai-companion-boundary,true,explicit-domain,应自动路由到焦点技能
+Use $christian-ai-companion-boundary to inspect and implement the repository changes with tests.,christian-ai-companion-boundary,true,explicit-mention,显式调用
+审查当前 AI Companion Boundary 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-ai-companion-boundary,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-ai-companion-boundary,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Virtual Intimacy Discernment，复用现有路由和安全门。,christian-virtual-intimacy-discernment,true,explicit-domain,应自动路由到焦点技能
+Use $christian-virtual-intimacy-discernment to inspect and implement the repository changes with tests.,christian-virtual-intimacy-discernment,true,explicit-mention,显式调用
+审查当前 Virtual Intimacy Discernment 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-virtual-intimacy-discernment,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-virtual-intimacy-discernment,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Consent-Based Accountability Support，复用现有路由和安全门。,christian-accountability-support-plan,true,explicit-domain,应自动路由到焦点技能
+Use $christian-accountability-support-plan to inspect and implement the repository changes with tests.,christian-accountability-support-plan,true,explicit-mention,显式调用
+审查当前 Consent-Based Accountability Support 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-accountability-support-plan,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-accountability-support-plan,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Marriage and Singleness Course Adapter，复用现有路由和安全门。,christian-marriage-singleness-adapter,true,explicit-domain,应自动路由到焦点技能
+Use $christian-marriage-singleness-adapter to inspect and implement the repository changes with tests.,christian-marriage-singleness-adapter,true,explicit-mention,显式调用
+审查当前 Marriage and Singleness Course Adapter 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-marriage-singleness-adapter,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-marriage-singleness-adapter,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Identity and Intimacy Course Integrator，复用现有路由和安全门。,identity-intimacy-course-integrator,true,explicit-domain,应自动路由到焦点技能
+Use $identity-intimacy-course-integrator to inspect and implement the repository changes with tests.,identity-intimacy-course-integrator,true,explicit-mention,显式调用
+审查当前 Identity and Intimacy Course Integrator 的Schema、权限、隐私和E2E测试，不要新建平行应用。,identity-intimacy-course-integrator,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,identity-intimacy-course-integrator,false,negative,纯神学问答不应激活仓库技能
+在属灵星球主日学模块端到端实现 Batch 04，包含数据、页面、迁移、权限、内容、测试与报告。,spiritual-planet-identity-intimacy-recovery-orchestrator,true,orchestrator,端到端请求
+帮我写一段个人祷告，不要修改任何项目。,spiritual-planet-identity-intimacy-recovery-orchestrator,false,negative,非产品任务

@@ -1,0 +1,9 @@
+interface:
+  display_name: Christian Desire Mapping
+  short_description: Implement non-diagnostic desire mapping for triggers, desired goods, false promises, embodied signals
+    and chosen actions.
+  default_prompt: Use $christian-desire-mapping for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

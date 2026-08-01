@@ -1,0 +1,7 @@
+interface:
+  display_name: Christian Formation Domain Model
+  short_description: Implement or revise typed data models, JSON Schemas, validation,
+    persistence, migrations, and contract tests for the Spi
+  default_prompt: Use $christian-formation-domain-model for this task.
+policy:
+  allow_implicit_invocation: true

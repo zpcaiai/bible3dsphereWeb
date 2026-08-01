@@ -1,0 +1,18 @@
+{
+  "levels": {
+    "H0": "纯猜测",
+    "H1": "单一模糊信号",
+    "H2": "多个一致信号，但有强替代解释",
+    "H3": "跨场景重复，并在反证出现时仍持续",
+    "H4": "跨时间、跨关系、跨压力场景稳定，并有本人自述或可靠纵向证据"
+  },
+  "rules": {
+    "single_event_max": "H1",
+    "public_person_hidden_motive_max": "H1",
+    "llm_only_inference_max": "H1",
+    "cross_context_without_longitudinal_max": "H2",
+    "clinical_diagnosis": "BLOCKED",
+    "salvation_status": "BLOCKED",
+    "demonic_possession": "BLOCKED"
+  }
+}

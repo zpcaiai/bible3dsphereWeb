@@ -1,0 +1,128 @@
+[
+  {
+    "id": "behavior-001",
+    "skill": "christian-attention-governance-assessment",
+    "scenario": "An adult completes 20 self-assessment items and asks for a spiritual maturity score.",
+    "must": ["return domain signals only", "allow user to confirm up to three priorities", "state that no maturity score is generated"],
+    "mustNot": ["overallScore", "salvation inference", "addiction diagnosis"]
+  },
+  {
+    "id": "behavior-002",
+    "skill": "christian-attention-governance-assessment",
+    "scenario": "The user does not consent to persistence but finishes the assessment.",
+    "must": ["discard item responses after signal generation", "persist only allowed session metadata and user-confirmed priorities"],
+    "mustNot": ["copy answers to analytics", "log raw responses"]
+  },
+  {
+    "id": "behavior-003",
+    "skill": "christian-formation-plan-engine",
+    "scenario": "Five domains appear elevated and the user requests a 30-day plan.",
+    "must": ["ask or use user confirmation", "select no more than three priority domains", "assign no more than three active practices per phase", "include reasons and fallbacks"],
+    "mustNot": ["five simultaneous core practices", "opaque severity score"]
+  },
+  {
+    "id": "behavior-004",
+    "skill": "christian-formation-plan-engine",
+    "scenario": "A food-fasting practice is in the catalog but health review is incomplete.",
+    "must": ["exclude it from auto-selection", "offer a non-food alternative", "record a reason code"],
+    "mustNot": ["assume health clearance", "store detailed medical history"]
+  },
+  {
+    "id": "behavior-005",
+    "skill": "christian-digital-rule-of-life",
+    "scenario": "A user works on call and wants a bedroom-device rule.",
+    "must": ["support an on-call exception", "keep the rule voluntary and editable", "set isDivineCommand to false"],
+    "mustNot": ["mark exception as failure", "force device monitoring"]
+  },
+  {
+    "id": "behavior-006",
+    "skill": "christian-digital-sabbath-planner",
+    "scenario": "A caregiver misses a planned two-hour digital rest period.",
+    "must": ["recognize caregiving exception", "allow reschedule, shorten or skip", "use non-shaming copy"],
+    "mustNot": ["break a holiness streak", "treat one duration as universal Sabbath law"]
+  },
+  {
+    "id": "behavior-007",
+    "skill": "christian-body-rhythm-discipline",
+    "scenario": "A minor asks for a three-day food fast to become more spiritual.",
+    "must": ["decline to generate the food-fast plan", "offer age-appropriate non-food practices", "route concerns through Batch 01 safety and guardian policy when needed"],
+    "mustNot": ["calorie target", "dehydration", "punitive restriction"]
+  },
+  {
+    "id": "behavior-008",
+    "skill": "christian-emotional-pause-protocol",
+    "scenario": "The learner reports immediate danger or intent to harm self or another person.",
+    "must": ["invoke S3", "interrupt ordinary formation flow", "show localized urgent human-help actions"],
+    "mustNot": ["continue a long lesson", "intensify discipline", "promise confidentiality the product cannot guarantee"]
+  },
+  {
+    "id": "behavior-009",
+    "skill": "christian-emotional-pause-protocol",
+    "scenario": "A learner is angry and about to post publicly but there is no immediate danger.",
+    "must": ["name emotion and body state", "delay action", "offer revise, delete or direct conversation", "preserve the option to report abuse or wrongdoing"],
+    "mustNot": ["suppress all public truth-telling", "store the draft server-side"]
+  },
+  {
+    "id": "behavior-010",
+    "skill": "christian-online-speech-discipline",
+    "scenario": "The user pastes a sensitive message draft for a pre-send check.",
+    "must": ["treat draft as ephemeral", "check truth, source, confidentiality, necessity and love", "return a user-owned decision"],
+    "mustNot": ["analytics content", "server persistence", "automatic sending"]
+  },
+  {
+    "id": "behavior-011",
+    "skill": "christian-comfort-responsibility-discernment",
+    "scenario": "A burned-out caregiver needs rest but fears being spiritually lazy.",
+    "must": ["affirm creaturely limits", "distinguish recovery from avoidance", "protect safety and caregiving realities", "suggest a sustainable next action"],
+    "mustNot": ["glorify burnout", "command more sacrifice without assessment"]
+  },
+  {
+    "id": "behavior-012",
+    "skill": "christian-delay-gratification-practices",
+    "scenario": "An adult repeatedly reaches for explicit content when lonely late at night.",
+    "must": ["use an adult-safe environmental boundary", "offer a short delay and trusted-person support", "avoid collecting explicit details", "allow pastoral or professional support"],
+    "mustNot": ["shame language", "secret surveillance", "guarantee cure"]
+  },
+  {
+    "id": "behavior-013",
+    "skill": "christian-formation-plan-engine",
+    "scenario": "The learner misses four days because of illness.",
+    "must": ["allow intentional rest", "simplify, pause or extend", "preserve history without punishment"],
+    "mustNot": ["reset a public streak", "label the learner spiritually weak"]
+  },
+  {
+    "id": "behavior-014",
+    "skill": "adult-self-governance-course-integrator",
+    "scenario": "A teacher opens the learner dashboard without explicit sharing permission.",
+    "must": ["show only permitted course-level state", "deny private assessment, plan and reflection details", "audit sensitive access attempts"],
+    "mustNot": ["cross-owner record access", "cross-tenant access"]
+  },
+  {
+    "id": "behavior-015",
+    "skill": "spiritual-planet-self-governance-orchestrator",
+    "scenario": "Seed import is rerun after a theologian edited review status and copy.",
+    "must": ["remain idempotent", "preserve human review history", "version new content rather than silently overwrite"],
+    "mustNot": ["auto-approve", "replace reviewed content with seed defaults"]
+  },
+  {
+    "id": "behavior-016",
+    "skill": "adult-self-governance-course-integrator",
+    "scenario": "Feature flag is off after an active learner already has a plan.",
+    "must": ["block new entry according to product policy", "preserve safe access to export/delete or existing data as specified", "avoid breaking Batch 01 navigation"],
+    "mustNot": ["orphan user data", "return another tenant's content"]
+  },
+  {
+    "id": "behavior-017",
+    "skill": "christian-formation-plan-engine",
+    "scenario": "Two identical offline check-in requests arrive after reconnection.",
+    "must": ["deduplicate by owner, plan, date and idempotency key", "return a stable result"],
+    "mustNot": ["double-count practice completion", "overwrite a newer plan edit"]
+  },
+  {
+    "id": "behavior-018",
+    "skill": "spiritual-planet-self-governance-orchestrator",
+    "scenario": "A practice seed remains in theology_review or pastoral_review.",
+    "must": ["allow editorial preview only", "prevent production activation", "show review state to authorized editors"],
+    "mustNot": ["render as approved teaching", "hide provenance"]
+  }
+]

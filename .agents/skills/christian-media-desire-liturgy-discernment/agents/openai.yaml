@@ -1,0 +1,8 @@
+interface:
+  display_name: "Christian Media Desire and Liturgy Discernment"
+  short_description: "Analyze repeated media rituals, emotions, identity, rewards and fruit."
+  default_prompt: "Use $christian-media-desire-liturgy-discernment for this task."
+policy:
+  products:
+    - CODEX
+  allow_implicit_invocation: true

@@ -1,0 +1,549 @@
+{
+  "schema_version": "1.0.0",
+  "package_id": "batch-05-target-language-lowering-complete-skill-pack",
+  "batch": 5,
+  "title": "Batch 5：Target Language Lowering、Framework Backend 与 Idiomatic Code Generation",
+  "version": "1.0.0",
+  "root_skill": "batch-05-target-code-generation",
+  "generated_at": "2026-07-31",
+  "skill_count": 34,
+  "skills": [
+    "b05-api-web-di-serialization-framework-backend",
+    "b05-async-concurrency-cancellation-lowerer",
+    "b05-backend-conformance-corpus-benchmark",
+    "b05-build-dependency-toolchain-generator",
+    "b05-build-lint-typecheck-repair-loop",
+    "b05-config-secrets-observability-resilience-security-backend",
+    "b05-cpp-backend",
+    "b05-csharp-dotnet-backend",
+    "b05-exception-resource-lifetime-lowerer",
+    "b05-expression-statement-control-flow-lowerer",
+    "b05-flutter-dart-backend",
+    "b05-generated-project-completeness-and-certification-gate",
+    "b05-go-backend",
+    "b05-idiom-policy-and-pattern-selector",
+    "b05-incremental-regeneration-manual-region-protector",
+    "b05-java-jvm-backend",
+    "b05-messaging-scheduler-background-job-backend",
+    "b05-module-package-project-layout-planner",
+    "b05-nodejs-typescript-backend",
+    "b05-persistence-orm-transaction-framework-backend",
+    "b05-printer-formatter-import-and-style-organizer",
+    "b05-python-backend",
+    "b05-react-backend",
+    "b05-restricted-generation-agent-controller",
+    "b05-rust-backend",
+    "b05-source-target-map-and-provenance-exporter",
+    "b05-target-backend-sdk-and-plugin-registry",
+    "b05-target-generation-orchestrator",
+    "b05-target-lowering-plan-and-pass-manager",
+    "b05-target-native-ast-lst-emitter",
+    "b05-target-profile-and-platform-registry",
+    "b05-target-typed-ir-schema",
+    "b05-type-nullability-generics-and-numeric-lowerer",
+    "b05-vue-backend"
+  ],
+  "upstream_batch": 4,
+  "files": [
+    {
+      "path": "BATCH04_COMPATIBILITY.md",
+      "sha256": "d8221a917a8510115f9e72283eb29185a09f3345c6d749de5fb7450d9154152b",
+      "size": 4209
+    },
+    {
+      "path": "CODEX_IMPLEMENTATION_PROMPT.md",
+      "sha256": "cead53946ac257a6167ed38cda07610d6bf384bcc34d9a36bc39b401f2523faa",
+      "size": 9044
+    },
+    {
+      "path": "IMPLEMENTATION_CHECKLIST.md",
+      "sha256": "3632db02908ebb15eff0754e27b3f8e6e32c8426d449f1f5c23517330d1aa63e",
+      "size": 5082
+    },
+    {
+      "path": "README.md",
+      "sha256": "87435f85b1a8940eeff05c32d3ce656296276d0fc6206629ba001299f70fbf4e",
+      "size": 2811
+    },
+    {
+      "path": "SKILL.md",
+      "sha256": "216aacd8d5c3a51e2627bb3bf583236f6695c5569688ae067d9372ced8ac7bb8",
+      "size": 23265
+    },
+    {
+      "path": "SKILL_INDEX.md",
+      "sha256": "5cdbc650a7b586e887b32c61707b8396283057aa423172476ad98b42a416f624",
+      "size": 6848
+    },
+    {
+      "path": "VALIDATION_REPORT.md",
+      "sha256": "74939ac2fd99ac9c1a71bff352ac7cada91eac4bff72b25ad84c98072fd3d822",
+      "size": 3552
+    },
+    {
+      "path": "agents/openai.yaml",
+      "sha256": "75ae55d3f41c75a7ef8f40f730346790eb642f928fd28e604ad2fc204fbb0d47",
+      "size": 391
+    },
+    {
+      "path": "examples/java-spring-to-csharp-aspnet/generation-plan.yaml",
+      "sha256": "88cdd3d5a5c117db6a434c44620cee2390b02d0af9786270a3d85a2d6e39f43e",
+      "size": 200
+    },
+    {
+      "path": "examples/profiles/csharp12-aspnet8-postgresql.yaml",
+      "sha256": "32b4fdb02c535c5a8ba6017abb10954d1ea415aa17f30897df4c3ed3f1fab192",
+      "size": 212
+    },
+    {
+      "path": "examples/profiles/flutter-riverpod.yaml",
+      "sha256": "8136be485989ad3e0c984527e11f87147c035a64e30c3a20d01351bf555aa0b5",
+      "size": 201
+    },
+    {
+      "path": "examples/profiles/react-typescript-vite.yaml",
+      "sha256": "53a40d7ec2e01d297a8caa2d145fc95d504653734896d115e79173394493b4bc",
+      "size": 206
+    },
+    {
+      "path": "examples/vue-to-flutter/screen-intent.yaml",
+      "sha256": "188fc488d83b84baa1b461fb291cdb8ef32e1b21787839e0a95d234dd23baffc",
+      "size": 198
+    },
+    {
+      "path": "examples/vue-to-react/component-mapping.yaml",
+      "sha256": "aeb07edd8f1c887255293aaa4da24de8b41da350af541d40cc3ca6fd04187e68",
+      "size": 202
+    },
+    {
+      "path": "install.sh",
+      "sha256": "74b42ab182895a157f0f99178f4e99eff46189071402952ae621bfda18ae5bf5",
+      "size": 483
+    },
+    {
+      "path": "policies/default-agent-envelope.yaml",
+      "sha256": "0d44669f4f9ffdd56dc20f36805473d055094dc8d668956f5df9526b57203046",
+      "size": 335
+    },
+    {
+      "path": "policies/default-build-gate-policy.yaml",
+      "sha256": "5962fdaa6a96b16e454335f794519ce766f9f787a6cd2b194e71617375d9cce0",
+      "size": 338
+    },
+    {
+      "path": "policies/default-manual-region-policy.yaml",
+      "sha256": "a59ecabeef1b031f5cc8ac9bc65eade2de13861e2934adf662025f8d6dff8084",
+      "size": 341
+    },
+    {
+      "path": "policies/default-shim-policy.yaml",
+      "sha256": "ef62a80e5b88e42e556b45c9bf83269dc2c477de373f08fd0d24e08e8a90eec4",
+      "size": 332
+    },
+    {
+      "path": "policies/default-target-idiom-policy.yaml",
+      "sha256": "8bf2e464bdacf9939df78a93891d205932c9fa8dc3a58d559f3cb6b5beb3799a",
+      "size": 340
+    },
+    {
+      "path": "schemas/backend-plugin-manifest.schema.json",
+      "sha256": "014a0ac776aab3236f2f93657ee1319876fd67ff66f385c34fe90c5d55172d85",
+      "size": 950
+    },
+    {
+      "path": "schemas/generated-project-manifest.schema.json",
+      "sha256": "e8a84cb009f34f046a6b7939644b5c73ba3841648e7c75427dd70fe5972fdb88",
+      "size": 959
+    },
+    {
+      "path": "schemas/generation-certificate.schema.json",
+      "sha256": "27fe099519994fcbcde22ff91add40553d52205c2cfb206058b17554ee94a9d4",
+      "size": 947
+    },
+    {
+      "path": "schemas/generation-plan.schema.json",
+      "sha256": "3e9dfc495e0a62147ef36b26e6a3041b1bd9d1ffc8c521ccfef4d16e34d378b1",
+      "size": 926
+    },
+    {
+      "path": "schemas/source-target-map.schema.json",
+      "sha256": "d86bc07a5658992d7125eba4311dafb2beef5fb90e7778e801eeec152de9d9bb",
+      "size": 932
+    },
+    {
+      "path": "schemas/target-construction-intent.schema.json",
+      "sha256": "81519504d30be343362a8d3cfe86325b6c98a6536fc0c8745d305c51a6b6d80c",
+      "size": 959
+    },
+    {
+      "path": "schemas/target-profile.schema.json",
+      "sha256": "62101f1be6eafc2b486b2f73ffb3d46a01893951f3c3597d8a71fb3edfd9a710",
+      "size": 923
+    },
+    {
+      "path": "schemas/target-typed-ir.schema.json",
+      "sha256": "3a5eda2ae822caee61a104efdf2fcfb1afadbe964a438aaafc948ac1767a772a",
+      "size": 926
+    },
+    {
+      "path": "skills/b05-api-web-di-serialization-framework-backend/SKILL.md",
+      "sha256": "260e97f03bec0b95d9b8dae9c6dc0040ffe5dce798bfe3a7e56b301ce213a112",
+      "size": 3473
+    },
+    {
+      "path": "skills/b05-api-web-di-serialization-framework-backend/agents/openai.yaml",
+      "sha256": "048adb61bcc041f058939fe14710044395922b0769c827db38bd57cd7fb2904c",
+      "size": 371
+    },
+    {
+      "path": "skills/b05-async-concurrency-cancellation-lowerer/SKILL.md",
+      "sha256": "d49e005fc0c6cd5c6375cae2c493ac33191e7a1e33afd03cff8b8a2b9df6a3d4",
+      "size": 3457
+    },
+    {
+      "path": "skills/b05-async-concurrency-cancellation-lowerer/agents/openai.yaml",
+      "sha256": "36eb26b8d18290b4341d614cad64f4782a81d4702c380d500961e7378a97bf1e",
+      "size": 363
+    },
+    {
+      "path": "skills/b05-backend-conformance-corpus-benchmark/SKILL.md",
+      "sha256": "2f22ac90efe1e8682349ad86684fda39f61102f6eb02c0bf9c62e0cf7c50298b",
+      "size": 3429
+    },
+    {
+      "path": "skills/b05-backend-conformance-corpus-benchmark/agents/openai.yaml",
+      "sha256": "5a8da835022bcf70900af0534338ceccbbe76fbb76b888ea6e99a98d4eead101",
+      "size": 359
+    },
+    {
+      "path": "skills/b05-build-dependency-toolchain-generator/SKILL.md",
+      "sha256": "db9235fa3bdcc87c8876e8261bceab4dc64d216bf9aacf52fb376e9040990979",
+      "size": 3447
+    },
+    {
+      "path": "skills/b05-build-dependency-toolchain-generator/agents/openai.yaml",
+      "sha256": "d2c62c5e72866953315e0760f768381c808f17d10ed6cf67607a71c1c0c467fd",
+      "size": 359
+    },
+    {
+      "path": "skills/b05-build-lint-typecheck-repair-loop/SKILL.md",
+      "sha256": "5bb5c74a8f035728689b0368290aba7d0d383668e5f6678fcb6c3490a66e89a2",
+      "size": 3435
+    },
+    {
+      "path": "skills/b05-build-lint-typecheck-repair-loop/agents/openai.yaml",
+      "sha256": "4ad36d3b9f6d502c31d9ff6f720aca558ce87b629046bf230d5f14d38fed9880",
+      "size": 351
+    },
+    {
+      "path": "skills/b05-config-secrets-observability-resilience-security-backend/SKILL.md",
+      "sha256": "2e6fc6d5310a1f017d9369828dd6d452be49d46b58d2c1abadab3ca1de584b8a",
+      "size": 3529
+    },
+    {
+      "path": "skills/b05-config-secrets-observability-resilience-security-backend/agents/openai.yaml",
+      "sha256": "b21d472008a122fa4624665d73fd2923cea3b04bc1c494682ecadc4f71561bfe",
+      "size": 399
+    },
+    {
+      "path": "skills/b05-cpp-backend/SKILL.md",
+      "sha256": "8e40e319447eaa6a950d1e5e3348047dfefea26b563f15c188381b6b2b10367e",
+      "size": 3347
+    },
+    {
+      "path": "skills/b05-cpp-backend/agents/openai.yaml",
+      "sha256": "9c951ead012b86344851b32164942601f143f9c5504b740855d0284a8e388ef2",
+      "size": 309
+    },
+    {
+      "path": "skills/b05-csharp-dotnet-backend/SKILL.md",
+      "sha256": "1c3f5320e8b58202915ef1f37dda18af13f4d01cddf2cc70d1ca2da11f048d7a",
+      "size": 3387
+    },
+    {
+      "path": "skills/b05-csharp-dotnet-backend/agents/openai.yaml",
+      "sha256": "9d60d6dda53dc86f52e234af1d0a0aff2386c3f68c200fd3348c4d900d284f8b",
+      "size": 329
+    },
+    {
+      "path": "skills/b05-exception-resource-lifetime-lowerer/SKILL.md",
+      "sha256": "fe180afb558017320cf1d8f77766fbb39acf100a58f5d717ff7c17e3259d0706",
+      "size": 3445
+    },
+    {
+      "path": "skills/b05-exception-resource-lifetime-lowerer/agents/openai.yaml",
+      "sha256": "b9f4a3b3e9c2822cfa7cb0b44e22010b839fe85c1c10152a12f78c849660f1d7",
+      "size": 357
+    },
+    {
+      "path": "skills/b05-expression-statement-control-flow-lowerer/SKILL.md",
+      "sha256": "b23bd7d14a7b37ac7734ff3a571ba8c75e8f8128dac129fea53162a2a7cee614",
+      "size": 3469
+    },
+    {
+      "path": "skills/b05-expression-statement-control-flow-lowerer/agents/openai.yaml",
+      "sha256": "a702f035055c96f9802df64282dfb81e3017838f00a9cdafb1b49535ac93e71d",
+      "size": 369
+    },
+    {
+      "path": "skills/b05-flutter-dart-backend/SKILL.md",
+      "sha256": "5113828ad855d321b9705a3230005b8721c5648b0b9ae91746f95df1c3f0dbba",
+      "size": 3383
+    },
+    {
+      "path": "skills/b05-flutter-dart-backend/agents/openai.yaml",
+      "sha256": "f9ab405dc6063b5c9d78333f8b65baaf5696572f404e9fa542a6ac162f0ae2c1",
+      "size": 327
+    },
+    {
+      "path": "skills/b05-generated-project-completeness-and-certification-gate/SKILL.md",
+      "sha256": "a4129e6afc7771c6544ce9f317b1e76b80172413312da7b092b4114fb583ee72",
+      "size": 3509
+    },
+    {
+      "path": "skills/b05-generated-project-completeness-and-certification-gate/agents/openai.yaml",
+      "sha256": "ec3c61a89126449d7c5eb3189a5a9774e580636cd2ba835a4be9eb910d7ffc0a",
+      "size": 393
+    },
+    {
+      "path": "skills/b05-go-backend/SKILL.md",
+      "sha256": "2cf3f4bf7000830c8b304200fb63b086772dc4986c6abfad55457bfae29d4bc4",
+      "size": 3343
+    },
+    {
+      "path": "skills/b05-go-backend/agents/openai.yaml",
+      "sha256": "c45a6a4b81d7731800247ac5126dba79742e28271d3d7b2b46fe25d40e215373",
+      "size": 307
+    },
+    {
+      "path": "skills/b05-idiom-policy-and-pattern-selector/SKILL.md",
+      "sha256": "d570351b620389e328beef3592f3670100d6603a49628a0956767263e8bff24d",
+      "size": 3429
+    },
+    {
+      "path": "skills/b05-idiom-policy-and-pattern-selector/agents/openai.yaml",
+      "sha256": "f26a32ed213a7f56cfaf0a40cff729d574ea28c0ea71033121c60d87a85cee83",
+      "size": 353
+    },
+    {
+      "path": "skills/b05-incremental-regeneration-manual-region-protector/SKILL.md",
+      "sha256": "fb00203e6c5752aa62888f3bbe723cb9fccca0ba17af37b2af683d873661d50d",
+      "size": 3487
+    },
+    {
+      "path": "skills/b05-incremental-regeneration-manual-region-protector/agents/openai.yaml",
+      "sha256": "58eed705d65d980bdb6dd7fa8a59c9b46fbf0898742004fdc56e1925fba8abb8",
+      "size": 383
+    },
+    {
+      "path": "skills/b05-java-jvm-backend/SKILL.md",
+      "sha256": "a4391b3da35bd6dbcb02ab4506e42f943933d12e6fa0170ded9b97373142d3ba",
+      "size": 3367
+    },
+    {
+      "path": "skills/b05-java-jvm-backend/agents/openai.yaml",
+      "sha256": "e0374b39a9ea6a8e585c1976b57b65c7c33e97b18918a3939ad6179d5c134e58",
+      "size": 319
+    },
+    {
+      "path": "skills/b05-messaging-scheduler-background-job-backend/SKILL.md",
+      "sha256": "6ef57872151c3240ba63e0944f03533149440e34d3f108c0cd57b4ed672b39dc",
+      "size": 3473
+    },
+    {
+      "path": "skills/b05-messaging-scheduler-background-job-backend/agents/openai.yaml",
+      "sha256": "5a8a137272f5c13914c816878ebc7f13f17baab452b466ce99442cb10cbbfa6c",
+      "size": 371
+    },
+    {
+      "path": "skills/b05-module-package-project-layout-planner/SKILL.md",
+      "sha256": "5c494d720411048f7528d05d1960e10a0533b9683f5e698994d1dbb271aa31cc",
+      "size": 3451
+    },
+    {
+      "path": "skills/b05-module-package-project-layout-planner/agents/openai.yaml",
+      "sha256": "f0a0570419b615585d61cbd1105b2ac44c7f0d7d55ca3f418798669cb367cbfe",
+      "size": 361
+    },
+    {
+      "path": "skills/b05-nodejs-typescript-backend/SKILL.md",
+      "sha256": "3ed2f932878b4a742b651a40e84fdc767b9641483b77b7887993814aee5ff062",
+      "size": 3403
+    },
+    {
+      "path": "skills/b05-nodejs-typescript-backend/agents/openai.yaml",
+      "sha256": "772fa8ff1291cf1dc7009a317bb9652706aa6a8619358e498f28ee99058ad9d7",
+      "size": 337
+    },
+    {
+      "path": "skills/b05-persistence-orm-transaction-framework-backend/SKILL.md",
+      "sha256": "f618da2e61d135961aae379eaa3aaf54114b7463e7cd4e82faefc2fcdfab6e15",
+      "size": 3485
+    },
+    {
+      "path": "skills/b05-persistence-orm-transaction-framework-backend/agents/openai.yaml",
+      "sha256": "8a7745f6912551633ba389d9280f18dc928b87d0e33bd4d1aa8064976abbb997",
+      "size": 377
+    },
+    {
+      "path": "skills/b05-printer-formatter-import-and-style-organizer/SKILL.md",
+      "sha256": "41c7bccbfccd2ce504d99b4aa391497a728d36850b0446798825c95d1ff01bde",
+      "size": 3467
+    },
+    {
+      "path": "skills/b05-printer-formatter-import-and-style-organizer/agents/openai.yaml",
+      "sha256": "abaf2a913f3a974f62e51aedeb4c346de4d94544f60ccad454ef1e8570ab18b1",
+      "size": 375
+    },
+    {
+      "path": "skills/b05-python-backend/SKILL.md",
+      "sha256": "52024fc646aef0a53a8ea6bb7b8c00186ec671db625f42aefab81cb873806008",
+      "size": 3359
+    },
+    {
+      "path": "skills/b05-python-backend/agents/openai.yaml",
+      "sha256": "3bcbbe2f2fc772c97a92e5da21f44a58e4f9702ec3ba408cdeeda190e2c88ae9",
+      "size": 315
+    },
+    {
+      "path": "skills/b05-react-backend/SKILL.md",
+      "sha256": "012b643e1cdf53947ac0703f9e6fca17ec1f6a322156b9ea016cb348e2c05fb8",
+      "size": 3355
+    },
+    {
+      "path": "skills/b05-react-backend/agents/openai.yaml",
+      "sha256": "c832064ecfe3b4a20a9f846b56d3dc0fc3f34480c38aabae71e9efe5d8298160",
+      "size": 313
+    },
+    {
+      "path": "skills/b05-restricted-generation-agent-controller/SKILL.md",
+      "sha256": "66d121d439294278cc617604db6e203f89faa94a867d9460e506519c1f7fd465",
+      "size": 3447
+    },
+    {
+      "path": "skills/b05-restricted-generation-agent-controller/agents/openai.yaml",
+      "sha256": "2c0c56c31a94e3a1198f75283d85662564b830eda26526525564f4ef6efc73b7",
+      "size": 363
+    },
+    {
+      "path": "skills/b05-rust-backend/SKILL.md",
+      "sha256": "681789b94100403f611129223623a4ca99f84d107a1c3ae060b85e03b74c6441",
+      "size": 3351
+    },
+    {
+      "path": "skills/b05-rust-backend/agents/openai.yaml",
+      "sha256": "9a3b4dbdfb8da5345856a657135f75a69e3de86630865a3e31c8db2c70fa8c47",
+      "size": 311
+    },
+    {
+      "path": "skills/b05-source-target-map-and-provenance-exporter/SKILL.md",
+      "sha256": "9c9925f1181296cda5f7ee599a3b8f9a5d8430e3679eac96bf6eb6dbb58b749a",
+      "size": 3455
+    },
+    {
+      "path": "skills/b05-source-target-map-and-provenance-exporter/agents/openai.yaml",
+      "sha256": "51705464bf6a84bad96e56db7d560bdc88d60de6ee42f15e25e486d3338520bc",
+      "size": 369
+    },
+    {
+      "path": "skills/b05-target-backend-sdk-and-plugin-registry/SKILL.md",
+      "sha256": "d8c1edf5bc325aef52161e265a88b7c3cb91d115e324058f057a8288ef660643",
+      "size": 3455
+    },
+    {
+      "path": "skills/b05-target-backend-sdk-and-plugin-registry/agents/openai.yaml",
+      "sha256": "44fece473ba3c15d99fb7bccdf19ff46f11c47ce270c60b5a16360ec5bd0b3af",
+      "size": 363
+    },
+    {
+      "path": "skills/b05-target-generation-orchestrator/SKILL.md",
+      "sha256": "90d751a354660e6da965b8c482a5449ae26c5ecb7165803b17fc0af60db2ad1c",
+      "size": 3415
+    },
+    {
+      "path": "skills/b05-target-generation-orchestrator/agents/openai.yaml",
+      "sha256": "67dcf500f885f62f4ffc046935e3fc2aac5c0f55bcc570b25dfecc64dca8fb82",
+      "size": 347
+    },
+    {
+      "path": "skills/b05-target-lowering-plan-and-pass-manager/SKILL.md",
+      "sha256": "995a4c0eca9025229e4ab3517b60d507097dd31e3b56e95e2a82f92a7bd8b908",
+      "size": 3445
+    },
+    {
+      "path": "skills/b05-target-lowering-plan-and-pass-manager/agents/openai.yaml",
+      "sha256": "6256029d8ddd789aa9032db398ebc8d45ea4ff9ac6a67dad147f7a11d53361f4",
+      "size": 361
+    },
+    {
+      "path": "skills/b05-target-native-ast-lst-emitter/SKILL.md",
+      "sha256": "ceed330caa7617b661a3c1dfdec51666ec89aa4304a2549dce3536928c78b475",
+      "size": 3413
+    },
+    {
+      "path": "skills/b05-target-native-ast-lst-emitter/agents/openai.yaml",
+      "sha256": "9501cc81544bc175904e801190f56f1bb5cc8ff6ed7ca79bd91ce567dae38fbb",
+      "size": 345
+    },
+    {
+      "path": "skills/b05-target-profile-and-platform-registry/SKILL.md",
+      "sha256": "6baccd1e2e1ee3753e2d1c312babd8271d4a5b35bdff88f4f7a8f2f44e0a4a15",
+      "size": 3439
+    },
+    {
+      "path": "skills/b05-target-profile-and-platform-registry/agents/openai.yaml",
+      "sha256": "1d4616b491c4faf75336e358fd8197f68620ef378f33b0aca1efaaf6ee46892f",
+      "size": 359
+    },
+    {
+      "path": "skills/b05-target-typed-ir-schema/SKILL.md",
+      "sha256": "3268663275dd16ffed4864d709dce6cfce33424b7260a822d0ce5d84ddbdf415",
+      "size": 3377
+    },
+    {
+      "path": "skills/b05-target-typed-ir-schema/agents/openai.yaml",
+      "sha256": "b10982fd3c60f83a97641ec76ec6be121338094962370d8c7c4957bb50d9cd02",
+      "size": 331
+    },
+    {
+      "path": "skills/b05-type-nullability-generics-and-numeric-lowerer/SKILL.md",
+      "sha256": "b6b6a4be9428d0d2d9459755a79fc368b961e34f0b32d5ab5367c05dfe37e9a7",
+      "size": 3485
+    },
+    {
+      "path": "skills/b05-type-nullability-generics-and-numeric-lowerer/agents/openai.yaml",
+      "sha256": "44062b9c26084fc89300c2802a21cb1efc0229c1bfefee9a8eb789bffee838b1",
+      "size": 377
+    },
+    {
+      "path": "skills/b05-vue-backend/SKILL.md",
+      "sha256": "a48aa78fd1c27f3747888c8e9d78dde7539d56b8dd6f67696f9675a680619e7a",
+      "size": 3347
+    },
+    {
+      "path": "skills/b05-vue-backend/agents/openai.yaml",
+      "sha256": "0474ca59e8b16ccb9b4292f042cfef156a453a565509d28a1351d8109c2b3672",
+      "size": 309
+    },
+    {
+      "path": "tests/SCENARIOS.md",
+      "sha256": "40e3f66b257aebdef80e4d7267621579b1050422b0a2511f2071725247fe418e",
+      "size": 1378
+    },
+    {
+      "path": "tools/validate_package.py",
+      "sha256": "e493921d04475da0395fd2d5fcbf919bdfd8cf54b60a32e21225affdb85c0c55",
+      "size": 3581
+    },
+    {
+      "path": "validate.sh",
+      "sha256": "cdd1b72b6d2db5eb885005815aac6f6618eed65ed932038d76f52d99a3a0ab6b",
+      "size": 130
+    }
+  ],
+  "validation": {
+    "static": "passed",
+    "runtime": "not-executed"
+  },
+  "trust_boundary": "Static package validation is not runtime execution or production certification."
+}

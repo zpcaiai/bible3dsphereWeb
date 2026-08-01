@@ -1,0 +1,55 @@
+prompt,expected_skill,should_activate,case_type,notes
+请在属灵星球仓库实现Production Certification Orchestrator，复用现有路由和安全门。,spiritual-planet-production-certification-orchestrator,true,explicit-domain,应自动路由到焦点技能
+Use $spiritual-planet-production-certification-orchestrator to inspect and implement the repository changes with tests.,spiritual-planet-production-certification-orchestrator,true,explicit-mention,显式调用
+审查当前 Production Certification Orchestrator 的Schema、权限、隐私和E2E测试，不要新建平行应用。,spiritual-planet-production-certification-orchestrator,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,spiritual-planet-production-certification-orchestrator,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Theology Certification，复用现有路由和安全门。,christian-theology-certification,true,explicit-domain,应自动路由到焦点技能
+Use $christian-theology-certification to inspect and implement the repository changes with tests.,christian-theology-certification,true,explicit-mention,显式调用
+审查当前 Theology Certification 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-theology-certification,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-theology-certification,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Pastoral Safety Certification，复用现有路由和安全门。,christian-pastoral-safety-certification,true,explicit-domain,应自动路由到焦点技能
+Use $christian-pastoral-safety-certification to inspect and implement the repository changes with tests.,christian-pastoral-safety-certification,true,explicit-mention,显式调用
+审查当前 Pastoral Safety Certification 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-pastoral-safety-certification,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-pastoral-safety-certification,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Child Safety Red Team，复用现有路由和安全门。,christian-child-safety-red-team,true,explicit-domain,应自动路由到焦点技能
+Use $christian-child-safety-red-team to inspect and implement the repository changes with tests.,christian-child-safety-red-team,true,explicit-mention,显式调用
+审查当前 Child Safety Red Team 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-child-safety-red-team,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-child-safety-red-team,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Privacy and Security Audit，复用现有路由和安全门。,christian-privacy-security-audit,true,explicit-domain,应自动路由到焦点技能
+Use $christian-privacy-security-audit to inspect and implement the repository changes with tests.,christian-privacy-security-audit,true,explicit-mention,显式调用
+审查当前 Privacy and Security Audit 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-privacy-security-audit,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-privacy-security-audit,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Accessibility Certification，复用现有路由和安全门。,christian-accessibility-certification,true,explicit-domain,应自动路由到焦点技能
+Use $christian-accessibility-certification to inspect and implement the repository changes with tests.,christian-accessibility-certification,true,explicit-mention,显式调用
+审查当前 Accessibility Certification 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-accessibility-certification,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-accessibility-certification,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Content Quality Gate，复用现有路由和安全门。,christian-content-quality-gate,true,explicit-domain,应自动路由到焦点技能
+Use $christian-content-quality-gate to inspect and implement the repository changes with tests.,christian-content-quality-gate,true,explicit-mention,显式调用
+审查当前 Content Quality Gate 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-content-quality-gate,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-content-quality-gate,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Skill Routing and Behavior Evals，复用现有路由和安全门。,christian-skill-routing-evals,true,explicit-domain,应自动路由到焦点技能
+Use $christian-skill-routing-evals to inspect and implement the repository changes with tests.,christian-skill-routing-evals,true,explicit-mention,显式调用
+审查当前 Skill Routing and Behavior Evals 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-skill-routing-evals,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-skill-routing-evals,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Course Effectiveness Evaluation，复用现有路由和安全门。,christian-course-effectiveness-evaluation,true,explicit-domain,应自动路由到焦点技能
+Use $christian-course-effectiveness-evaluation to inspect and implement the repository changes with tests.,christian-course-effectiveness-evaluation,true,explicit-mention,显式调用
+审查当前 Course Effectiveness Evaluation 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-course-effectiveness-evaluation,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-course-effectiveness-evaluation,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Release Evidence Certificate，复用现有路由和安全门。,christian-release-evidence-certificate,true,explicit-domain,应自动路由到焦点技能
+Use $christian-release-evidence-certificate to inspect and implement the repository changes with tests.,christian-release-evidence-certificate,true,explicit-mention,显式调用
+审查当前 Release Evidence Certificate 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-release-evidence-certificate,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-release-evidence-certificate,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Distribution Package Governance，复用现有路由和安全门。,christian-distribution-package-governance,true,explicit-domain,应自动路由到焦点技能
+Use $christian-distribution-package-governance to inspect and implement the repository changes with tests.,christian-distribution-package-governance,true,explicit-mention,显式调用
+审查当前 Distribution Package Governance 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-distribution-package-governance,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-distribution-package-governance,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Human Release Decision Gate，复用现有路由和安全门。,christian-release-decision-gate,true,explicit-domain,应自动路由到焦点技能
+Use $christian-release-decision-gate to inspect and implement the repository changes with tests.,christian-release-decision-gate,true,explicit-mention,显式调用
+审查当前 Human Release Decision Gate 的Schema、权限、隐私和E2E测试，不要新建平行应用。,christian-release-decision-gate,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,christian-release-decision-gate,false,negative,纯神学问答不应激活仓库技能
+请在属灵星球仓库实现Production Certification UI Integrator，复用现有路由和安全门。,production-certification-course-integrator,true,explicit-domain,应自动路由到焦点技能
+Use $production-certification-course-integrator to inspect and implement the repository changes with tests.,production-certification-course-integrator,true,explicit-mention,显式调用
+审查当前 Production Certification UI Integrator 的Schema、权限、隐私和E2E测试，不要新建平行应用。,production-certification-course-integrator,true,review,实现审查
+请解释一个普通圣经概念，不涉及属灵星球产品或代码。,production-certification-course-integrator,false,negative,纯神学问答不应激活仓库技能
+在属灵星球主日学模块端到端实现 Batch 12，包含数据、页面、迁移、权限、内容、测试与报告。,spiritual-planet-production-certification-orchestrator,true,orchestrator,端到端请求
+帮我写一段个人祷告，不要修改任何项目。,spiritual-planet-production-certification-orchestrator,false,negative,非产品任务

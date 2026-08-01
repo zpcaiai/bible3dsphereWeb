@@ -1,0 +1,8 @@
+interface:
+  display_name: Elementary Media Literacy
+  short_description: Implement advertisement, attention-hook, emotion, comparison and hero/value questions for ages 7–12.
+  default_prompt: Use $christian-elementary-media-literacy for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

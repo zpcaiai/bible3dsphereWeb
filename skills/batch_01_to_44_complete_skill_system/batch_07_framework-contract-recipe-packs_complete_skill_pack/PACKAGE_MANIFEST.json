@@ -1,0 +1,326 @@
+{
+  "schema_version": "1.0.0",
+  "package_id": "batch-07-framework-contract-recipe-packs-complete-skill-pack",
+  "batch": 7,
+  "title": "Batch 07: Framework Contract Model and Framework Migration Recipe Packs",
+  "version": "1.0.0",
+  "root_skill": "batch-07-framework-contract-recipe-packs",
+  "generated_at": "2026-07-31T00:00:00Z",
+  "skill_count": 16,
+  "skills": [
+    "b07-framework-contract-recipe-packs-adapter-provider",
+    "b07-framework-contract-recipe-packs-capability-planning",
+    "b07-framework-contract-recipe-packs-certification-gate",
+    "b07-framework-contract-recipe-packs-corpus-benchmark",
+    "b07-framework-contract-recipe-packs-deterministic-engine",
+    "b07-framework-contract-recipe-packs-discovery-inventory",
+    "b07-framework-contract-recipe-packs-domain-model",
+    "b07-framework-contract-recipe-packs-failure-recovery",
+    "b07-framework-contract-recipe-packs-human-approval",
+    "b07-framework-contract-recipe-packs-integration-api",
+    "b07-framework-contract-recipe-packs-lifecycle-recertification",
+    "b07-framework-contract-recipe-packs-lineage-reconciliation",
+    "b07-framework-contract-recipe-packs-observability-economics",
+    "b07-framework-contract-recipe-packs-orchestrator",
+    "b07-framework-contract-recipe-packs-security-policy",
+    "b07-framework-contract-recipe-packs-workflow-runtime"
+  ],
+  "upstream_batch": 6,
+  "files": [
+    {
+      "path": "BATCH06_COMPATIBILITY.md",
+      "sha256": "461f091f99ce0ac53f2d729e0c52aa6200b01715f1b62ad98c7dd9223852496d",
+      "size": 2185
+    },
+    {
+      "path": "CODEX_IMPLEMENTATION_PROMPT.md",
+      "sha256": "9191ddfd69818f5f25625dfb3cdd2e22431c6f59c00912572e64f5076471295f",
+      "size": 2384
+    },
+    {
+      "path": "IMPLEMENTATION_CHECKLIST.md",
+      "sha256": "62ee5ca17978dfe681b3affe8f3228d385a26c63b4dcc6c127aff711c48fb042",
+      "size": 1848
+    },
+    {
+      "path": "README.md",
+      "sha256": "823358c507ede14bbdf88b4b64cf3c34601a52540cf9f156ec177e5df2a1f174",
+      "size": 1099
+    },
+    {
+      "path": "SKILL.md",
+      "sha256": "eaf76f750d62a025f04dc9d93bb12d8797a4d4c286d566d77a739c77e93d4dfa",
+      "size": 4161
+    },
+    {
+      "path": "SKILL_INDEX.md",
+      "sha256": "198ae2f9cb189252bac022df7272d93bb857924a9a8acd35b04cf8ead5cf237f",
+      "size": 3126
+    },
+    {
+      "path": "VALIDATION_REPORT.md",
+      "sha256": "7fba43fae7760ba373313367ef79b7395255690481022b17374e5673ac3df76f",
+      "size": 572
+    },
+    {
+      "path": "agents/openai.yaml",
+      "sha256": "bc6a8f364ac83961d51efcfd4354cd5fe45f0ed21132fc009f275e1d63494ac6",
+      "size": 387
+    },
+    {
+      "path": "examples/certificate.example.json",
+      "sha256": "ea01de6d400ecea7c2b824bc7bd09f8984b93e076169f156366248cf249c733f",
+      "size": 451
+    },
+    {
+      "path": "examples/invocation.example.json",
+      "sha256": "63c365bf97ff6d645ed29a66d0758123985e89109d10ed5ca969c21dea832068",
+      "size": 295
+    },
+    {
+      "path": "install.sh",
+      "sha256": "cdaf3fdf0c010dd9e0fe29b4a92cd723ff35dd0617eaf14bb5f57e757bc2fa02",
+      "size": 305
+    },
+    {
+      "path": "policies/agent-boundary.yaml",
+      "sha256": "79adc8830adec220835b49067d29b50a3a1578f146a65e7d5b70a6d19ba09ab2",
+      "size": 150
+    },
+    {
+      "path": "policies/certification.yaml",
+      "sha256": "17f50ef51eb5cbf800b3b4990bfb399d4aed9c751cb7f440bee4a4d88ebf02ea",
+      "size": 182
+    },
+    {
+      "path": "policies/default-deny.yaml",
+      "sha256": "25c6a03403de8832018b82bfa5d9dd516d8f5136ba4974c85d40bdf8972f9366",
+      "size": 105
+    },
+    {
+      "path": "policies/evidence-first.yaml",
+      "sha256": "50408543ffa45cfea3461cd57bdabf39f9bdd422fc5b41cdfef4d3c679a058c2",
+      "size": 156
+    },
+    {
+      "path": "policies/human-approval.yaml",
+      "sha256": "d9a6b11cfe402c569440e95b1aa2377387e222a32b693c83fc278ddb1fd4482f",
+      "size": 143
+    },
+    {
+      "path": "schemas/batch-input.schema.json",
+      "sha256": "52263004423e95293fa91bf08c47416de0f7921288f625b70001b9d180dd165f",
+      "size": 731
+    },
+    {
+      "path": "schemas/batch-output.schema.json",
+      "sha256": "2278a30170a9fc12c4a9cca33866d9634157851138ef4e027752a98be312f752",
+      "size": 832
+    },
+    {
+      "path": "schemas/capability-package.schema.json",
+      "sha256": "bf797b806ce4bdf80583d973767501e809c84725a59bae2b26969f6b56914ae3",
+      "size": 1133
+    },
+    {
+      "path": "schemas/certification.schema.json",
+      "sha256": "fd0ae63a320bf0cab2bc8497be3732e4557f6207b141ee9344c264c8e37ace4e",
+      "size": 1280
+    },
+    {
+      "path": "schemas/evidence-ref.schema.json",
+      "sha256": "6e08fb5b89ed802503ffc842db20fcbaa295c4f027f6f389c8b2c37c5de1f237",
+      "size": 996
+    },
+    {
+      "path": "schemas/workflow-run.schema.json",
+      "sha256": "c01cc949f99f1c1f43493e34f3da217c4f9bd584a44343a9e214d930925861ec",
+      "size": 848
+    },
+    {
+      "path": "skills/b07-framework-contract-recipe-packs-adapter-provider/SKILL.md",
+      "sha256": "34bfc76d43ed71007840fb74956c70e6444bb272666f092ab004ed65a051fe5b",
+      "size": 4088
+    },
+    {
+      "path": "skills/b07-framework-contract-recipe-packs-adapter-provider/agents/openai.yaml",
+      "sha256": "74d637ba0b455ae41657e982681a98857af4e90ee0d2b5a9214a40fc1e47539a",
+      "size": 357
+    },
+    {
+      "path": "skills/b07-framework-contract-recipe-packs-capability-planning/SKILL.md",
+      "sha256": "96c82860238faa139e542c2848d8a13b29bf2dd5b310391e5556d6a140aa4602",
+      "size": 3990
+    },
+    {
+      "path": "skills/b07-framework-contract-recipe-packs-capability-planning/agents/openai.yaml",
+      "sha256": "78eeb90c4aebdc5453d5c6848d987d0e8bfb8c30e18d25ac9cf3bf42daa7a022",
+      "size": 364
+    },
+    {
+      "path": "skills/b07-framework-contract-recipe-packs-certification-gate/SKILL.md",
+      "sha256": "8b69030a6ded809a3e2917b6fd876269980f05a72b08f3964009ececf05c2922",
+      "size": 4119
+    },
+    {
+      "path": "skills/b07-framework-contract-recipe-packs-certification-gate/agents/openai.yaml",
+      "sha256": "4ca1b16d5044d3389e26edda3d8508962b266b341995325220d7ccc597fb9353",
+      "size": 364
+    },
+    {
+      "path": "skills/b07-framework-contract-recipe-packs-corpus-benchmark/SKILL.md",
+      "sha256": "76c6217cea85312828d8ae89fb0e829f00af79f2c867875b24e3e16b8542136f",
+      "size": 4029
+    },
+    {
+      "path": "skills/b07-framework-contract-recipe-packs-corpus-benchmark/agents/openai.yaml",
+      "sha256": "0d13e63cddc4c0a0bf3dd1944f6821eee1d304242f080c49b73f255dfd6a09c5",
+      "size": 362
+    },
+    {
+      "path": "skills/b07-framework-contract-recipe-packs-deterministic-engine/SKILL.md",
+      "sha256": "07027a585992fca82bea890e92e82ce5293f259eb70b0bcf9f6660d31eca01cb",
+      "size": 4006
+    },
+    {
+      "path": "skills/b07-framework-contract-recipe-packs-deterministic-engine/agents/openai.yaml",
+      "sha256": "e80a2770186c9d8ee2d615406950f3f8d5c00a7fd367912d6ed561a90d19ba09",
+      "size": 355
+    },
+    {
+      "path": "skills/b07-framework-contract-recipe-packs-discovery-inventory/SKILL.md",
+      "sha256": "8be374e3a3a7ffc59650801dd5ee2bdf83e5b261940419cd91123c4c1c69fa66",
+      "size": 4033
+    },
+    {
+      "path": "skills/b07-framework-contract-recipe-packs-discovery-inventory/agents/openai.yaml",
+      "sha256": "ecf4d17a643a14783baf4bbe075fa2930ec468eab53a5bfcc74e8247548b284c",
+      "size": 357
+    },
+    {
+      "path": "skills/b07-framework-contract-recipe-packs-domain-model/SKILL.md",
+      "sha256": "9632e0d14706a56f015e69bbb8b5b5b07c2cb04b9f5f77f5ee5ea84f4cbbf765",
+      "size": 4060
+    },
+    {
+      "path": "skills/b07-framework-contract-recipe-packs-domain-model/agents/openai.yaml",
+      "sha256": "8a88386217067811bd104822b21ed57eb155f20d9e2081fe1d3eb03cb6257135",
+      "size": 361
+    },
+    {
+      "path": "skills/b07-framework-contract-recipe-packs-failure-recovery/SKILL.md",
+      "sha256": "44c9412d1f14fc3f2ffc662f40a29aa90e8eadc32ba36583d908a4a77f122634",
+      "size": 4037
+    },
+    {
+      "path": "skills/b07-framework-contract-recipe-packs-failure-recovery/agents/openai.yaml",
+      "sha256": "5af1122139b762d047d6261045e1cd88de678264ada32b6fc6bd0dc8306c0a15",
+      "size": 360
+    },
+    {
+      "path": "skills/b07-framework-contract-recipe-packs-human-approval/SKILL.md",
+      "sha256": "f6b9ddb1ce3796c05e20f9c08d5d9e3d75de9eda67bacd842a4d9c04e1635225",
+      "size": 4022
+    },
+    {
+      "path": "skills/b07-framework-contract-recipe-packs-human-approval/agents/openai.yaml",
+      "sha256": "a9a2efccd3d4067a2799b50b9eb84fad3dd1e7d00e2fceda7eda3206041cc0cf",
+      "size": 354
+    },
+    {
+      "path": "skills/b07-framework-contract-recipe-packs-integration-api/SKILL.md",
+      "sha256": "38ae698b0d7be19fab12eea4c6ae46dc7599c25a1c17b997710504ceaef162aa",
+      "size": 4007
+    },
+    {
+      "path": "skills/b07-framework-contract-recipe-packs-integration-api/agents/openai.yaml",
+      "sha256": "2fded881f399a5a9a54914f13fb7d29ba37c897709f1c1c7fe8ae9d2349e73a5",
+      "size": 357
+    },
+    {
+      "path": "skills/b07-framework-contract-recipe-packs-lifecycle-recertification/SKILL.md",
+      "sha256": "352a033963e73ff84e1e3b018f66daa179eb92945921f7c40c28b327fda5df4e",
+      "size": 4097
+    },
+    {
+      "path": "skills/b07-framework-contract-recipe-packs-lifecycle-recertification/agents/openai.yaml",
+      "sha256": "e79684723d6c9cacb6c4e0c39d660b1c31972eded2cc839f061affb297055bef",
+      "size": 380
+    },
+    {
+      "path": "skills/b07-framework-contract-recipe-packs-lineage-reconciliation/SKILL.md",
+      "sha256": "189934c2af7dc64eab67847c5c3b03a8e31898ea23c626600fae5be83b1e6f63",
+      "size": 4048
+    },
+    {
+      "path": "skills/b07-framework-contract-recipe-packs-lineage-reconciliation/agents/openai.yaml",
+      "sha256": "15b9bd3bec70ba18ddf3fbaf352ea500ee014718ba6cc335d181ba39fbb82777",
+      "size": 363
+    },
+    {
+      "path": "skills/b07-framework-contract-recipe-packs-observability-economics/SKILL.md",
+      "sha256": "71c0a76e604ac675a01ba26442671c3e4bff411f3423b862e34e9cc63b79d341",
+      "size": 4063
+    },
+    {
+      "path": "skills/b07-framework-contract-recipe-packs-observability-economics/agents/openai.yaml",
+      "sha256": "f7480479fe8f99d119bf613b03e30379e9e6a193b835895f405ce49f1f3b6014",
+      "size": 374
+    },
+    {
+      "path": "skills/b07-framework-contract-recipe-packs-orchestrator/SKILL.md",
+      "sha256": "334ff8c53e8fc76d39587080ab211f887c2f0b5d33f75668a3cab42e09d97b17",
+      "size": 4085
+    },
+    {
+      "path": "skills/b07-framework-contract-recipe-packs-orchestrator/agents/openai.yaml",
+      "sha256": "9e2938c29b9d2fd90d02d022bb7e42d94e63cf0e5300e18a23260052ba735216",
+      "size": 357
+    },
+    {
+      "path": "skills/b07-framework-contract-recipe-packs-security-policy/SKILL.md",
+      "sha256": "22785fe7eb851b16f3129b06014ac282be86a360bb8d0c63f8c87d41d2fb61a4",
+      "size": 4042
+    },
+    {
+      "path": "skills/b07-framework-contract-recipe-packs-security-policy/agents/openai.yaml",
+      "sha256": "fa7ef256931f5f7f8ee2697474a165b6b7ba5a8ffe1cfe82668f38446d63e8d0",
+      "size": 358
+    },
+    {
+      "path": "skills/b07-framework-contract-recipe-packs-workflow-runtime/SKILL.md",
+      "sha256": "3f8947fe7fce876d95c76f2fe3c2a19cdc404ed7269671c24c6170d9be3608ec",
+      "size": 4051
+    },
+    {
+      "path": "skills/b07-framework-contract-recipe-packs-workflow-runtime/agents/openai.yaml",
+      "sha256": "d95c9914737b7a33c7e491f842b3824d4e53a6fe845dbd37d888afa0a461e3c6",
+      "size": 361
+    },
+    {
+      "path": "tests/README.md",
+      "sha256": "9a8bd752502bdbf371a79b4f067e5affc7b0c49c074cde9703b29342b665c10d",
+      "size": 451
+    },
+    {
+      "path": "tests/test_catalog.json",
+      "sha256": "01e4ac3a1301f46bef3ffd74ec41eb395dda12a8bcefa7d750b71a4e242e98a4",
+      "size": 1938
+    },
+    {
+      "path": "tools/validate_package.py",
+      "sha256": "281cd6663a38afc9e046323ef2c1a2f21d08e8cbfd490e54985526d73e0154f3",
+      "size": 3581
+    },
+    {
+      "path": "validate.sh",
+      "sha256": "a1afca2d69d8fa3d11c820c8381b06b6449e31b289196b3cdc4156de471dd6c4",
+      "size": 72
+    }
+  ],
+  "validation": {
+    "static": "passed",
+    "runtime": "not-executed"
+  },
+  "trust_boundary": "Static package validation is not runtime execution or production certification."
+}

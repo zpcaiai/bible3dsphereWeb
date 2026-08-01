@@ -1,0 +1,8 @@
+interface:
+  display_name: Youth Mentor Consent and Safety
+  short_description: Implement approved mentor roles, safe contact modes, topics, consent, review and safeguarding boundaries.
+  default_prompt: Use $christian-youth-mentor-safety for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

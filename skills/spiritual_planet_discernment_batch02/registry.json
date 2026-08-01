@@ -1,0 +1,420 @@
+{
+  "version": "1.0.0",
+  "packs": [
+    {
+      "id": "expressive_individualism",
+      "name": "表达型个人主义",
+      "cluster": "自我与身份",
+      "version": "1.0.0",
+      "path": "packs/01_expressive_individualism",
+      "aliases": [
+        "做真实的自己",
+        "忠于内心",
+        "自我定义",
+        "expressive individualism"
+      ]
+    },
+    {
+      "id": "therapeutic_culture",
+      "name": "疗愈主义与情绪价值文化",
+      "cluster": "自我与身份",
+      "version": "1.0.0",
+      "path": "packs/02_therapeutic_culture",
+      "aliases": [
+        "疗愈文化",
+        "情绪价值",
+        "创伤叙事",
+        "therapeutic culture"
+      ]
+    },
+    {
+      "id": "self_optimization_hustle",
+      "name": "自我优化与奋斗机器文化",
+      "cluster": "自我与身份",
+      "version": "1.0.0",
+      "path": "packs/03_self_optimization_hustle",
+      "aliases": [
+        "自律成瘾",
+        "效率崇拜",
+        "hustle culture",
+        "极致自我优化"
+      ]
+    },
+    {
+      "id": "beauty_body_image",
+      "name": "颜值、身材与身体资本主义",
+      "cluster": "自我与身份",
+      "version": "1.0.0",
+      "path": "packs/04_beauty_body_image",
+      "aliases": [
+        "颜值经济",
+        "身材焦虑",
+        "body image culture",
+        "外貌资本"
+      ]
+    },
+    {
+      "id": "romantic_soulmate",
+      "name": "浪漫主义与灵魂伴侣救恩",
+      "cluster": "自我与身份",
+      "version": "1.0.0",
+      "path": "packs/05_romantic_soulmate",
+      "aliases": [
+        "灵魂伴侣",
+        "恋爱脑",
+        "浪漫爱情至上",
+        "soulmate ideology"
+      ]
+    },
+    {
+      "id": "modern_stoicism",
+      "name": "现代斯多葛式自我掌控",
+      "cluster": "自我与身份",
+      "version": "1.0.0",
+      "path": "packs/06_modern_stoicism",
+      "aliases": [
+        "斯多葛主义",
+        "情绪不动",
+        "self-mastery",
+        "现代坚忍哲学"
+      ]
+    },
+    {
+      "id": "consumerism",
+      "name": "消费主义",
+      "cluster": "经济与欲望",
+      "version": "1.0.0",
+      "path": "packs/07_consumerism",
+      "aliases": [
+        "消费升级",
+        "买买买",
+        "consumerism",
+        "身份消费"
+      ]
+    },
+    {
+      "id": "meritocracy_successism",
+      "name": "精英主义、功绩主义与成功崇拜",
+      "cluster": "经济与欲望",
+      "version": "1.0.0",
+      "path": "packs/08_meritocracy_successism",
+      "aliases": [
+        "成功学",
+        "精英崇拜",
+        "meritocracy",
+        "赢家叙事"
+      ]
+    },
+    {
+      "id": "market_absolutism",
+      "name": "市场绝对主义",
+      "cluster": "经济与欲望",
+      "version": "1.0.0",
+      "path": "packs/09_market_absolutism",
+      "aliases": [
+        "市场万能",
+        "经济人",
+        "market fundamentalism",
+        "利润至上"
+      ]
+    },
+    {
+      "id": "antiwork_laying_flat",
+      "name": "反内卷、躺平与反工作文化",
+      "cluster": "经济与欲望",
+      "version": "1.0.0",
+      "path": "packs/10_antiwork_laying_flat",
+      "aliases": [
+        "躺平",
+        "摆烂",
+        "antiwork",
+        "反内卷"
+      ]
+    },
+    {
+      "id": "prosperity_gospel",
+      "name": "成功神学与繁荣福音",
+      "cluster": "经济与欲望",
+      "version": "1.0.0",
+      "path": "packs/11_prosperity_gospel",
+      "aliases": [
+        "繁荣神学",
+        "成功神学",
+        "健康财富福音",
+        "prosperity gospel"
+      ]
+    },
+    {
+      "id": "wellness_manifestation",
+      "name": "显化、吸引力法则与新时代疗愈",
+      "cluster": "经济与欲望",
+      "version": "1.0.0",
+      "path": "packs/12_wellness_manifestation",
+      "aliases": [
+        "显化",
+        "吸引力法则",
+        "宇宙下单",
+        "manifestation",
+        "New Age wellness"
+      ]
+    },
+    {
+      "id": "secular_humanism",
+      "name": "世俗人文主义",
+      "cluster": "知识与技术",
+      "version": "1.0.0",
+      "path": "packs/13_secular_humanism",
+      "aliases": [
+        "人本主义",
+        "secular humanism",
+        "人类自主伦理"
+      ]
+    },
+    {
+      "id": "relativism_postmodernism",
+      "name": "相对主义与后现代怀疑",
+      "cluster": "知识与技术",
+      "version": "1.0.0",
+      "path": "packs/14_relativism_postmodernism",
+      "aliases": [
+        "后现代主义",
+        "没有绝对真理",
+        "relativism",
+        "权力话语"
+      ]
+    },
+    {
+      "id": "scientism_naturalism",
+      "name": "科学主义与封闭自然主义",
+      "cluster": "知识与技术",
+      "version": "1.0.0",
+      "path": "packs/15_scientism_naturalism",
+      "aliases": [
+        "科学主义",
+        "唯物自然主义",
+        "scientism",
+        "物理主义"
+      ]
+    },
+    {
+      "id": "techno_solutionism_ai",
+      "name": "技术解决主义与AI救世叙事",
+      "cluster": "知识与技术",
+      "version": "1.0.0",
+      "path": "packs/16_techno_solutionism_ai",
+      "aliases": [
+        "AI救世",
+        "技术乌托邦",
+        "solutionism",
+        "技术决定论"
+      ]
+    },
+    {
+      "id": "transhumanism",
+      "name": "超人类主义",
+      "cluster": "知识与技术",
+      "version": "1.0.0",
+      "path": "packs/17_transhumanism",
+      "aliases": [
+        "人类增强",
+        "永生科技",
+        "transhumanism",
+        "后人类主义"
+      ]
+    },
+    {
+      "id": "conspiracy_epistemology",
+      "name": "阴谋论式认识论",
+      "cluster": "知识与技术",
+      "version": "1.0.0",
+      "path": "packs/18_conspiracy_epistemology",
+      "aliases": [
+        "阴谋论",
+        "幕后黑手",
+        "conspiracy thinking",
+        "秘密真相"
+      ]
+    },
+    {
+      "id": "nationalism_civil_religion",
+      "name": "民族主义与国家公民宗教",
+      "cluster": "权力与共同体",
+      "version": "1.0.0",
+      "path": "packs/19_nationalism_civil_religion",
+      "aliases": [
+        "国家崇拜",
+        "文明优越",
+        "civil religion",
+        "民族复兴叙事"
+      ]
+    },
+    {
+      "id": "political_messianism",
+      "name": "政治弥赛亚主义",
+      "cluster": "权力与共同体",
+      "version": "1.0.0",
+      "path": "packs/20_political_messianism",
+      "aliases": [
+        "政治救世主",
+        "选举救国",
+        "political messianism",
+        "领袖崇拜"
+      ]
+    },
+    {
+      "id": "identity_politics_tribalism",
+      "name": "身份政治与部落化",
+      "cluster": "权力与共同体",
+      "version": "1.0.0",
+      "path": "packs/21_identity_politics_tribalism",
+      "aliases": [
+        "身份政治",
+        "阵营化",
+        "tribalism",
+        "群体身份决定论"
+      ]
+    },
+    {
+      "id": "authoritarian_collectivism",
+      "name": "威权集体主义",
+      "cluster": "权力与共同体",
+      "version": "1.0.0",
+      "path": "packs/22_authoritarian_collectivism",
+      "aliases": [
+        "集体高于个人",
+        "威权主义",
+        "authoritarian collectivism",
+        "总体性治理"
+      ]
+    },
+    {
+      "id": "revolutionary_utopianism",
+      "name": "革命乌托邦主义",
+      "cluster": "权力与共同体",
+      "version": "1.0.0",
+      "path": "packs/23_revolutionary_utopianism",
+      "aliases": [
+        "革命净化",
+        "乌托邦政治",
+        "revolutionary utopianism",
+        "历史必然论"
+      ]
+    },
+    {
+      "id": "liberal_rights_absolutism",
+      "name": "权利绝对主义与程序自由主义",
+      "cluster": "权力与共同体",
+      "version": "1.0.0",
+      "path": "packs/24_liberal_rights_absolutism",
+      "aliases": [
+        "权利至上",
+        "程序主义",
+        "rights absolutism",
+        "自由中立国家"
+      ]
+    },
+    {
+      "id": "sexual_revolution",
+      "name": "性革命与欲望伦理",
+      "cluster": "身体、性与关系",
+      "version": "1.0.0",
+      "path": "packs/25_sexual_revolution",
+      "aliases": [
+        "性解放",
+        "欲望自主",
+        "sexual revolution",
+        "同意伦理极简化"
+      ]
+    },
+    {
+      "id": "gender_self_creation",
+      "name": "性别自我创造与身体意义解构",
+      "cluster": "身体、性与关系",
+      "version": "1.0.0",
+      "path": "packs/26_gender_self_creation",
+      "aliases": [
+        "性别自我定义",
+        "身体与身份分离",
+        "gender self-creation",
+        "性别表达绝对化"
+      ]
+    },
+    {
+      "id": "manosphere_status_masculinity",
+      "name": "男性圈层、地位竞争与支配型男子气概",
+      "cluster": "身体、性与关系",
+      "version": "1.0.0",
+      "path": "packs/27_manosphere_status_masculinity",
+      "aliases": [
+        "男性觉醒",
+        "红药丸",
+        "manosphere",
+        "alpha masculinity"
+      ]
+    },
+    {
+      "id": "radical_feminist_reductionism",
+      "name": "激进性别权力还原论",
+      "cluster": "身体、性与关系",
+      "version": "1.0.0",
+      "path": "packs/28_radical_feminist_reductionism",
+      "aliases": [
+        "性别权力还原论",
+        "激进女性主义变体",
+        "gender power reductionism"
+      ]
+    },
+    {
+      "id": "hedonism_experience",
+      "name": "享乐主义与体验至上",
+      "cluster": "意义、快乐与自然",
+      "version": "1.0.0",
+      "path": "packs/29_hedonism_experience",
+      "aliases": [
+        "及时行乐",
+        "体验经济",
+        "hedonism",
+        "快乐最大化"
+      ]
+    },
+    {
+      "id": "nihilism_cynicism",
+      "name": "虚无主义与犬儒主义",
+      "cluster": "意义、快乐与自然",
+      "version": "1.0.0",
+      "path": "packs/30_nihilism_cynicism",
+      "aliases": [
+        "一切无意义",
+        "看透了",
+        "nihilism",
+        "cynicism"
+      ]
+    },
+    {
+      "id": "environmental_eco_spirituality",
+      "name": "环境主义与生态灵性绝对化",
+      "cluster": "意义、快乐与自然",
+      "version": "1.0.0",
+      "path": "packs/31_environmental_eco_spirituality",
+      "aliases": [
+        "生态主义",
+        "地球母亲",
+        "eco-spirituality",
+        "自然神圣化"
+      ]
+    },
+    {
+      "id": "influencer_attention_culture",
+      "name": "网红、流量与注意力文化",
+      "cluster": "意义、快乐与自然",
+      "version": "1.0.0",
+      "path": "packs/32_influencer_attention_culture",
+      "aliases": [
+        "网红文化",
+        "流量至上",
+        "attention economy",
+        "人设经济"
+      ]
+    }
+  ]
+}

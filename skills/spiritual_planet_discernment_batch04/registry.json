@@ -1,0 +1,60 @@
+{
+  "registry_version": "0.4.0",
+  "pack_count": 9,
+  "packs": [
+    {
+      "id": "epistemic_pride",
+      "name_zh": "认知自高",
+      "version": "0.4.0",
+      "path": "hypothesis_packs/epistemic_pride/pack.json"
+    },
+    {
+      "id": "competence_justification",
+      "name_zh": "能力称义",
+      "version": "0.4.0",
+      "path": "hypothesis_packs/competence_justification/pack.json"
+    },
+    {
+      "id": "moral_self_righteousness",
+      "name_zh": "道德自义",
+      "version": "0.4.0",
+      "path": "hypothesis_packs/moral_self_righteousness/pack.json"
+    },
+    {
+      "id": "victimhood_innocence",
+      "name_zh": "受害者无罪化",
+      "version": "0.4.0",
+      "path": "hypothesis_packs/victimhood_innocence/pack.json"
+    },
+    {
+      "id": "control_sovereignty",
+      "name_zh": "控制主权",
+      "version": "0.4.0",
+      "path": "hypothesis_packs/control_sovereignty/pack.json"
+    },
+    {
+      "id": "tribal_superiority",
+      "name_zh": "群体优越",
+      "version": "0.4.0",
+      "path": "hypothesis_packs/tribal_superiority/pack.json"
+    },
+    {
+      "id": "spiritual_pride",
+      "name_zh": "属灵骄傲",
+      "version": "0.4.0",
+      "path": "hypothesis_packs/spiritual_pride/pack.json"
+    },
+    {
+      "id": "false_humility",
+      "name_zh": "伪谦卑",
+      "version": "0.4.0",
+      "path": "hypothesis_packs/false_humility/pack.json"
+    },
+    {
+      "id": "messianic_self_image",
+      "name_zh": "弥赛亚自我形象",
+      "version": "0.4.0",
+      "path": "hypothesis_packs/messianic_self_image/pack.json"
+    }
+  ]
+}

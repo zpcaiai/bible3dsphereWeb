@@ -1,0 +1,23 @@
+{
+  "canonical_order": [
+    "creation_order",
+    "sin_and_idolatry",
+    "uses_of_law",
+    "christ_and_atonement",
+    "justification_by_faith",
+    "adoption",
+    "union_with_christ",
+    "sanctification_by_spirit",
+    "church_community",
+    "eschatological_hope"
+  ],
+  "required_for_full_gospel": [
+    "creation_order",
+    "sin_and_idolatry",
+    "christ_and_atonement",
+    "justification_by_faith",
+    "union_with_christ",
+    "sanctification_by_spirit",
+    "eschatological_hope"
+  ]
+}

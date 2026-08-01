@@ -1,0 +1,326 @@
+{
+  "schema_version": "1.0.0",
+  "package_id": "batch-41-release-progressive-delivery-complete-skill-pack",
+  "batch": 41,
+  "title": "Batch 41: Release Engineering, Progressive Delivery and Automated Rollback",
+  "version": "1.0.0",
+  "root_skill": "batch-41-release-progressive-delivery",
+  "generated_at": "2026-07-31T00:00:00Z",
+  "skill_count": 16,
+  "skills": [
+    "b41-release-progressive-delivery-adapter-provider",
+    "b41-release-progressive-delivery-capability-planning",
+    "b41-release-progressive-delivery-certification-gate",
+    "b41-release-progressive-delivery-corpus-benchmark",
+    "b41-release-progressive-delivery-deterministic-engine",
+    "b41-release-progressive-delivery-discovery-inventory",
+    "b41-release-progressive-delivery-domain-model",
+    "b41-release-progressive-delivery-failure-recovery",
+    "b41-release-progressive-delivery-human-approval",
+    "b41-release-progressive-delivery-integration-api",
+    "b41-release-progressive-delivery-lifecycle-recertification",
+    "b41-release-progressive-delivery-lineage-reconciliation",
+    "b41-release-progressive-delivery-observability-economics",
+    "b41-release-progressive-delivery-orchestrator",
+    "b41-release-progressive-delivery-security-policy",
+    "b41-release-progressive-delivery-workflow-runtime"
+  ],
+  "upstream_batch": 40,
+  "files": [
+    {
+      "path": "BATCH40_COMPATIBILITY.md",
+      "sha256": "fe6c4a9d371628665a7990622841ac044c0f6dc9b5ab46c89e8ac3f8e7bcf677",
+      "size": 2137
+    },
+    {
+      "path": "CODEX_IMPLEMENTATION_PROMPT.md",
+      "sha256": "bd384df11d86d0a0a8cb10f6ab2269ca7f6677141830a42c40f172ebdb0d74ed",
+      "size": 2309
+    },
+    {
+      "path": "IMPLEMENTATION_CHECKLIST.md",
+      "sha256": "ce8157ebcdab86bf01da7e116fc509d92db2296e07f66d5697d5c45918ce75ce",
+      "size": 1812
+    },
+    {
+      "path": "README.md",
+      "sha256": "c702f2d401615399baceeb9a32fb523453f3f2fd51382404967affe1a5b580e2",
+      "size": 1075
+    },
+    {
+      "path": "SKILL.md",
+      "sha256": "31622b860c8aceca70818e54932b970c13715ee2d23f47f381fe65131e3e12fb",
+      "size": 4038
+    },
+    {
+      "path": "SKILL_INDEX.md",
+      "sha256": "11d7f0046167ee27a80f8db7a555e18cf175a719db656d6d8187eafb38af7379",
+      "size": 3081
+    },
+    {
+      "path": "VALIDATION_REPORT.md",
+      "sha256": "83c3c41d13ac3f65c71db69b5ca1bbd2a440e7140c23bf7e3a715bd73ce0cb44",
+      "size": 572
+    },
+    {
+      "path": "agents/openai.yaml",
+      "sha256": "d81d2b63621eca7d7def77552276e28b511aec08afeaba768fbd866d7f201d14",
+      "size": 387
+    },
+    {
+      "path": "examples/certificate.example.json",
+      "sha256": "6d4f6d5eeda12c9420442a556fe1bcfca66a04230f14c31aa648de652d507718",
+      "size": 452
+    },
+    {
+      "path": "examples/invocation.example.json",
+      "sha256": "69eb1ccdf9fcd83f39f0d349acf512335b0af7446d5f1d8ceee27ce82eb0a7e5",
+      "size": 298
+    },
+    {
+      "path": "install.sh",
+      "sha256": "cdaf3fdf0c010dd9e0fe29b4a92cd723ff35dd0617eaf14bb5f57e757bc2fa02",
+      "size": 305
+    },
+    {
+      "path": "policies/agent-boundary.yaml",
+      "sha256": "79adc8830adec220835b49067d29b50a3a1578f146a65e7d5b70a6d19ba09ab2",
+      "size": 150
+    },
+    {
+      "path": "policies/certification.yaml",
+      "sha256": "17f50ef51eb5cbf800b3b4990bfb399d4aed9c751cb7f440bee4a4d88ebf02ea",
+      "size": 182
+    },
+    {
+      "path": "policies/default-deny.yaml",
+      "sha256": "25c6a03403de8832018b82bfa5d9dd516d8f5136ba4974c85d40bdf8972f9366",
+      "size": 105
+    },
+    {
+      "path": "policies/evidence-first.yaml",
+      "sha256": "50408543ffa45cfea3461cd57bdabf39f9bdd422fc5b41cdfef4d3c679a058c2",
+      "size": 156
+    },
+    {
+      "path": "policies/human-approval.yaml",
+      "sha256": "d9a6b11cfe402c569440e95b1aa2377387e222a32b693c83fc278ddb1fd4482f",
+      "size": 143
+    },
+    {
+      "path": "schemas/batch-input.schema.json",
+      "sha256": "72ffa546326e7487983222c18002ab7edd4b693d7103e87e3739cff276b2240d",
+      "size": 731
+    },
+    {
+      "path": "schemas/batch-output.schema.json",
+      "sha256": "cd68f0bb6d802b09004289e995861748df33e3c97f5974011dc2c8e0ed636319",
+      "size": 832
+    },
+    {
+      "path": "schemas/capability-package.schema.json",
+      "sha256": "210e100bee4fa33ecb9ff2d9240363a82fcb8e59a3e030053cb0f6a78e10bec2",
+      "size": 1133
+    },
+    {
+      "path": "schemas/certification.schema.json",
+      "sha256": "4c25397453dca840615955b8d4b1678dbff3e90cf8d9c66c45d19fb4e98deda3",
+      "size": 1281
+    },
+    {
+      "path": "schemas/evidence-ref.schema.json",
+      "sha256": "be84806aa174092f177824d8de479a9026c2a6719c0c611ccbd959f19c0087f7",
+      "size": 996
+    },
+    {
+      "path": "schemas/workflow-run.schema.json",
+      "sha256": "0a7e08bdaebe1edd622cbea0fe8b239ac95f0bf01f1c1377562c91b53d1c1696",
+      "size": 848
+    },
+    {
+      "path": "skills/b41-release-progressive-delivery-adapter-provider/SKILL.md",
+      "sha256": "6fc43ae6bae4cf05fdf6603c0b6a2aaf634df14aecb241d643af015e9d5e1b63",
+      "size": 3992
+    },
+    {
+      "path": "skills/b41-release-progressive-delivery-adapter-provider/agents/openai.yaml",
+      "sha256": "041a2985bb4d3037c734baa5b6a0e4c24dde978433f48f545d9bb2d1ee01f99b",
+      "size": 354
+    },
+    {
+      "path": "skills/b41-release-progressive-delivery-capability-planning/SKILL.md",
+      "sha256": "fd1cd97b0cc021892daad69430a2c27398d9bfe3e02048af6bb08a54ebb46f7b",
+      "size": 3894
+    },
+    {
+      "path": "skills/b41-release-progressive-delivery-capability-planning/agents/openai.yaml",
+      "sha256": "7c1854f90d8f2041a2e450b881d72a88d7a3bb09b357162807d9226d558788f7",
+      "size": 361
+    },
+    {
+      "path": "skills/b41-release-progressive-delivery-certification-gate/SKILL.md",
+      "sha256": "b2104bbab9c562686ec9999144eea4d2a4c7eb158383ae33cf26f0cd321f64e1",
+      "size": 4023
+    },
+    {
+      "path": "skills/b41-release-progressive-delivery-certification-gate/agents/openai.yaml",
+      "sha256": "a92ee2d49489d2d5ab49cfe57956dab12b43fb5abf94ce8f412cb34d5a7c52c6",
+      "size": 361
+    },
+    {
+      "path": "skills/b41-release-progressive-delivery-corpus-benchmark/SKILL.md",
+      "sha256": "2f1204834772dee35036d889bc97482ff4ef5009e77ff13b9f81339329fa562c",
+      "size": 3933
+    },
+    {
+      "path": "skills/b41-release-progressive-delivery-corpus-benchmark/agents/openai.yaml",
+      "sha256": "b584c5877a0ab5adba28501c5d7ad00ac7c32deaf106cb72e5cde6080b3035d2",
+      "size": 359
+    },
+    {
+      "path": "skills/b41-release-progressive-delivery-deterministic-engine/SKILL.md",
+      "sha256": "82c730543ec6838ed5394e96fbcb7b37c749dc75bbb09f1e8041789b9e9dc552",
+      "size": 3910
+    },
+    {
+      "path": "skills/b41-release-progressive-delivery-deterministic-engine/agents/openai.yaml",
+      "sha256": "79ec94bb3be2b96fea54681558a6b470e3977219192c7d4892d412b4b69e21dd",
+      "size": 352
+    },
+    {
+      "path": "skills/b41-release-progressive-delivery-discovery-inventory/SKILL.md",
+      "sha256": "ec4a9002dd19c4e9d555acb03ed0dbd08db1a98b904c1971f8db2dca79fa1154",
+      "size": 3937
+    },
+    {
+      "path": "skills/b41-release-progressive-delivery-discovery-inventory/agents/openai.yaml",
+      "sha256": "d94ed901a29ea3777de1c204a51fa0db4f83b6fcac159ae94e30a5ea0835c018",
+      "size": 354
+    },
+    {
+      "path": "skills/b41-release-progressive-delivery-domain-model/SKILL.md",
+      "sha256": "ceaec105155e237b5411838106a1e2045273e355b149e0195b188cdab0903c55",
+      "size": 3964
+    },
+    {
+      "path": "skills/b41-release-progressive-delivery-domain-model/agents/openai.yaml",
+      "sha256": "048eff2cedef16c4f17b774178267aff038174af91f6de7f3bfead2d5e25f10e",
+      "size": 358
+    },
+    {
+      "path": "skills/b41-release-progressive-delivery-failure-recovery/SKILL.md",
+      "sha256": "760c9903db2792e29820fad3d1b4d28b0de60ea78c075782cd88170c709af4a9",
+      "size": 3941
+    },
+    {
+      "path": "skills/b41-release-progressive-delivery-failure-recovery/agents/openai.yaml",
+      "sha256": "0648b62466ee48d346653c896c333df5c0b808b25af8492175b06b0914a63601",
+      "size": 357
+    },
+    {
+      "path": "skills/b41-release-progressive-delivery-human-approval/SKILL.md",
+      "sha256": "3b3894c54906a795fa4e0e936539db9c66aa62061fa07c6b56133bd48242e963",
+      "size": 3926
+    },
+    {
+      "path": "skills/b41-release-progressive-delivery-human-approval/agents/openai.yaml",
+      "sha256": "fbae04496619b31c3d038374f03eb51a349470478b75019c65fd725865bd3daa",
+      "size": 351
+    },
+    {
+      "path": "skills/b41-release-progressive-delivery-integration-api/SKILL.md",
+      "sha256": "b7be462b6adc2dfc4b6e3f413be1fc5fd2d72e750dfa70421d66ab529ece8fb7",
+      "size": 3911
+    },
+    {
+      "path": "skills/b41-release-progressive-delivery-integration-api/agents/openai.yaml",
+      "sha256": "e1016f0ee4712d935307d1503eebe4f2e04b0288cca669befef1a649e54c58e7",
+      "size": 354
+    },
+    {
+      "path": "skills/b41-release-progressive-delivery-lifecycle-recertification/SKILL.md",
+      "sha256": "3929c1b62d3ac4ebba07b2d21a53231b796c9a55e5a424152ca5251cb8dc7f26",
+      "size": 4001
+    },
+    {
+      "path": "skills/b41-release-progressive-delivery-lifecycle-recertification/agents/openai.yaml",
+      "sha256": "90b87d13fd4439b408e362426fefa50e24fc3e4c2c587e262f00253332855f2f",
+      "size": 377
+    },
+    {
+      "path": "skills/b41-release-progressive-delivery-lineage-reconciliation/SKILL.md",
+      "sha256": "665c1727bf00c87e03f725df14dbf95f9d82b650b12dbbca76c7ef30383a9def",
+      "size": 3952
+    },
+    {
+      "path": "skills/b41-release-progressive-delivery-lineage-reconciliation/agents/openai.yaml",
+      "sha256": "8db183931e927d22602145fcbe302754332b1d8ed0ab35d9c58f02dcec20ad23",
+      "size": 360
+    },
+    {
+      "path": "skills/b41-release-progressive-delivery-observability-economics/SKILL.md",
+      "sha256": "37aba673aafc458d66e527d160f264dd8a0cb0a668bf527d645bd9e2825e040e",
+      "size": 3967
+    },
+    {
+      "path": "skills/b41-release-progressive-delivery-observability-economics/agents/openai.yaml",
+      "sha256": "f05d6b1ab2cc7c17441476ee3af7bbb8dc823e79cee5207c85c4083f49f71ca4",
+      "size": 371
+    },
+    {
+      "path": "skills/b41-release-progressive-delivery-orchestrator/SKILL.md",
+      "sha256": "201ec6e7248ba34c889eb5e9b268f3461ab6ca5aef635e1318f84a2a847e06cb",
+      "size": 3989
+    },
+    {
+      "path": "skills/b41-release-progressive-delivery-orchestrator/agents/openai.yaml",
+      "sha256": "25fea6b71be1cf82a5837d5afe2b4e98f336595467cc3b0fa8d5d2b638621dc6",
+      "size": 354
+    },
+    {
+      "path": "skills/b41-release-progressive-delivery-security-policy/SKILL.md",
+      "sha256": "edab600a28f45e926c4d590268df13eddcdd624cf184c4c64bc2a6f3f2f58195",
+      "size": 3946
+    },
+    {
+      "path": "skills/b41-release-progressive-delivery-security-policy/agents/openai.yaml",
+      "sha256": "c819c2a4942d40e7bd4e1896cc8f1d035e3f1b1745c4982518f3ae8e425b3f90",
+      "size": 355
+    },
+    {
+      "path": "skills/b41-release-progressive-delivery-workflow-runtime/SKILL.md",
+      "sha256": "48910adcc9e5e30931a3dd34d78262f58c220cd76d0886c803c080e9d5476717",
+      "size": 3955
+    },
+    {
+      "path": "skills/b41-release-progressive-delivery-workflow-runtime/agents/openai.yaml",
+      "sha256": "7796f9c42d5eba86bbe095c54e0acd123a9c204e80e95e9a861fa36446018c9f",
+      "size": 358
+    },
+    {
+      "path": "tests/README.md",
+      "sha256": "0731c3bbdf763d9ef0c2bca9e3ce32a4ace9cc684f11472093d1d9cc0997ad2e",
+      "size": 397
+    },
+    {
+      "path": "tests/test_catalog.json",
+      "sha256": "f70dd6f6b23a46a002846ca12375433b6cb37bdc80e06515b7bfd9178dd8a969",
+      "size": 1942
+    },
+    {
+      "path": "tools/validate_package.py",
+      "sha256": "281cd6663a38afc9e046323ef2c1a2f21d08e8cbfd490e54985526d73e0154f3",
+      "size": 3581
+    },
+    {
+      "path": "validate.sh",
+      "sha256": "a1afca2d69d8fa3d11c820c8381b06b6449e31b289196b3cdc4156de471dd6c4",
+      "size": 72
+    }
+  ],
+  "validation": {
+    "static": "passed",
+    "runtime": "not-executed"
+  },
+  "trust_boundary": "Static package validation is not runtime execution or production certification."
+}

@@ -1,0 +1,8 @@
+interface:
+  display_name: Elementary AI Literacy
+  short_description: Implement adult-scaffolded first attempt, AI fallibility, verification, privacy and authorship.
+  default_prompt: Use $christian-elementary-ai-literacy for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

@@ -1,0 +1,37 @@
+{
+  "indispensable_controller": {
+    "components": [
+      "competence_justification",
+      "control_sovereignty"
+    ],
+    "interaction_type": "reinforcing"
+  },
+  "tribal_moral_innocence": {
+    "components": [
+      "moral_self_righteousness",
+      "tribal_superiority"
+    ],
+    "interaction_type": "reinforcing"
+  },
+  "spiritual_messiah": {
+    "components": [
+      "spiritual_pride",
+      "messianic_self_image"
+    ],
+    "interaction_type": "reinforcing"
+  },
+  "hidden_glory_exchange": {
+    "components": [
+      "false_humility",
+      "competence_justification"
+    ],
+    "interaction_type": "masking"
+  },
+  "wounded_innocence": {
+    "components": [
+      "victimhood_innocence",
+      "moral_self_righteousness"
+    ],
+    "interaction_type": "reinforcing"
+  }
+}

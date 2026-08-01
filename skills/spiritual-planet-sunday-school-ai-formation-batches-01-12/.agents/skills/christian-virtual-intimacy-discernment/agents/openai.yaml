@@ -1,0 +1,9 @@
+interface:
+  display_name: Virtual Intimacy Discernment
+  short_description: Build a reciprocity, embodiment, covenant, accountability and relationship-fruit analysis for virtual
+    intimacy.
+  default_prompt: Use $christian-virtual-intimacy-discernment for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

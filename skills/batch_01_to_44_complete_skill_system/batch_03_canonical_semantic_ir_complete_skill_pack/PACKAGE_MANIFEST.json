@@ -1,0 +1,439 @@
+{
+  "schema_version": "1.0.0",
+  "package_id": "batch-03-canonical-semantic-ir-complete-skill-pack",
+  "batch": 3,
+  "title": "Batch 3：统一源码摄取、解析前端与 Canonical Semantic IR Foundation",
+  "version": "1.0.0",
+  "root_skill": "batch-03-canonical-semantic-ir",
+  "generated_at": "2026-07-31T09:00:00+08:00",
+  "skill_count": 24,
+  "skills": [
+    "b03-api-message-and-contract-ir-builder",
+    "b03-binary-bytecode-and-native-metadata-ir",
+    "b03-build-config-and-resource-ir-builder",
+    "b03-build-context-and-toolchain-resolver",
+    "b03-callgraph-dispatch-reflection-and-dynamic-linker",
+    "b03-canonical-semantic-ir-schema-and-lowering",
+    "b03-canonical-type-system-and-language-relations",
+    "b03-control-flow-ssa-and-dataflow-builder",
+    "b03-effect-exception-concurrency-and-resource-modeler",
+    "b03-expression-statement-and-evaluation-order-lowerer",
+    "b03-formalizable-core-and-proof-obligation-contract",
+    "b03-frontend-adapter-sdk-and-registry",
+    "b03-frontend-conformance-and-ir-certification-gate",
+    "b03-generated-code-macro-and-metaprogramming-modeler",
+    "b03-incremental-ir-cache-and-chunk-store",
+    "b03-ir-foundation-orchestrator",
+    "b03-ir-query-diff-and-export-service",
+    "b03-language-version-and-region-detector",
+    "b03-native-lossless-syntax-ir-builder",
+    "b03-native-semantic-attribution-engine",
+    "b03-source-artifact-normalizer",
+    "b03-source-map-provenance-and-semantic-fingerprint",
+    "b03-sql-and-database-procedural-ir-builder",
+    "b03-symbol-identity-scope-and-linker"
+  ],
+  "upstream_batch": 2,
+  "files": [
+    {
+      "path": "BATCH02_COMPATIBILITY.md",
+      "sha256": "8f7f5ecc75799f0b063f5e80ada2f90fc3aad330901c0a0e4e6b2aa84b3c9945",
+      "size": 2217
+    },
+    {
+      "path": "CODEX_IMPLEMENTATION_PROMPT.md",
+      "sha256": "6a9c07f408fd70cfd1e2ea93d9595c41ec98fb572eb7b8f75f39dcfabc4e9dfa",
+      "size": 4315
+    },
+    {
+      "path": "IMPLEMENTATION_CHECKLIST.md",
+      "sha256": "d4f0af23a15f0f68ac4cbdde69d0093c34e0363dc48623612c94c5df1a3cb018",
+      "size": 2135
+    },
+    {
+      "path": "README.md",
+      "sha256": "d79003bfe89399bd66b14f2bae7cc96fa76b2f0b68a30ad2356b8b1d19e06dca",
+      "size": 2264
+    },
+    {
+      "path": "SKILL.md",
+      "sha256": "22c0db4bf19c005b0ff502ac788b20bdc6f1eba8d047b2c20bfa4d08d4fffec7",
+      "size": 12853
+    },
+    {
+      "path": "SKILL_INDEX.md",
+      "sha256": "035e7763d1a558f72045bc8997cab0db4df94192cd6b3756a6fa6d4d294d25e2",
+      "size": 9639
+    },
+    {
+      "path": "VALIDATION_REPORT.md",
+      "sha256": "14a4bb25540aea189b8f5e62aa157a8969538413f8c95086665b47ff8ec08692",
+      "size": 1838
+    },
+    {
+      "path": "agents/openai.yaml",
+      "sha256": "869d818d29c773df43a1b586efe8028b71ecb21f8799b6e9b34bc2e50168fe05",
+      "size": 385
+    },
+    {
+      "path": "examples/frontend-capability.yaml",
+      "sha256": "9122dd163719ad855de178fc0fc92674616c74276a4d7ff91fb5a3f400050d5e",
+      "size": 204
+    },
+    {
+      "path": "examples/ir-bundle-manifest.yaml",
+      "sha256": "24efaf83950f83e645d10f0384105994bff147152a70894f71581925a22fd518",
+      "size": 203
+    },
+    {
+      "path": "examples/proof-obligation.yaml",
+      "sha256": "5fb8f61e18ef92553429c0110b8cfa249192df170bd89762ce44ca90d749574a",
+      "size": 201
+    },
+    {
+      "path": "examples/sql-unit.yaml",
+      "sha256": "e4150320e10b204ffdfad2abc5484c5b00bd7725dfaa6d4a3a1b760b8e7b58fe",
+      "size": 193
+    },
+    {
+      "path": "install.sh",
+      "sha256": "74b42ab182895a157f0f99178f4e99eff46189071402952ae621bfda18ae5bf5",
+      "size": 483
+    },
+    {
+      "path": "policies/cache-invalidation-policy.yaml",
+      "sha256": "0866c56ac9d9d404028c8cf3a9a162085cf1831a4e89905078ee0e16312b6e3d",
+      "size": 338
+    },
+    {
+      "path": "policies/frontend-selection-policy.yaml",
+      "sha256": "ba318d055761ba889c7747d7f90eb4942e0b700ad805fcbd6051706e80031ae0",
+      "size": 338
+    },
+    {
+      "path": "policies/schema-evolution-policy.yaml",
+      "sha256": "b0b5bbe8e846569bfc6d3e2bd1094872c31acd784591bdf990e140410710c7a2",
+      "size": 336
+    },
+    {
+      "path": "policies/semantic-level-policy.yaml",
+      "sha256": "4f28483453459ca7833196434ef28c1fdf078b526dd9edd9c03800c8e46484eb",
+      "size": 334
+    },
+    {
+      "path": "policies/unknown-handling-policy.yaml",
+      "sha256": "925549cf5feabee0958e2aa563a0f0f05ab6268e21028240dfc8c6161ee19e71",
+      "size": 336
+    },
+    {
+      "path": "schemas/ir-bundle-manifest.schema.json",
+      "sha256": "629875f1fce3b0766eb7012dd5c317facbc21c9a68d1d7cea743332f2de77235",
+      "size": 935
+    },
+    {
+      "path": "schemas/ir-certificate.schema.json",
+      "sha256": "c9f869361ae5cfb207762666808034f6b8cba49281e03d0111dd22de89547c6e",
+      "size": 923
+    },
+    {
+      "path": "schemas/ir-node-header.schema.json",
+      "sha256": "cb27aa7d82afdc22a94946139a1a871c4c31893a42dabc349112318d4bec6582",
+      "size": 923
+    },
+    {
+      "path": "schemas/language-extension-capsule.schema.json",
+      "sha256": "263fb30e8689493143a5548b8b60f18377c18cae5a0c940b9c350e78e514ea7a",
+      "size": 959
+    },
+    {
+      "path": "schemas/proof-obligation.schema.json",
+      "sha256": "94a5402dec14986a6f5578280c84b7fb5a68d0c5c5f8b9892544a01477f4fa2e",
+      "size": 929
+    },
+    {
+      "path": "schemas/provenance-edge.schema.json",
+      "sha256": "f46fa2954e04acfbb6aabad760199e63df0099fe2cc36e9fc6bc570ded7704ac",
+      "size": 926
+    },
+    {
+      "path": "schemas/semantic-fact.schema.json",
+      "sha256": "97f07c012b425b6a85cf8ec80bf92d3981f8b79af376ad4c6cd29958acef4576",
+      "size": 920
+    },
+    {
+      "path": "schemas/source-span.schema.json",
+      "sha256": "d84ffadeb9686398e04ccdd7025e0966e0fd1c5dd700bf6e33cc2acfca173bcb",
+      "size": 914
+    },
+    {
+      "path": "schemas/symbol-identity.schema.json",
+      "sha256": "2e7dac5d8ae21d15af7e1e3f4481fcfe54d9162a766cc940c4e1053387de6015",
+      "size": 926
+    },
+    {
+      "path": "schemas/type-ref.schema.json",
+      "sha256": "c230142fabdd8c22bc06b31ac351aca9f8e508592c1df98e31131559c9d732b7",
+      "size": 905
+    },
+    {
+      "path": "skills/b03-api-message-and-contract-ir-builder/SKILL.md",
+      "sha256": "5d91d999ac84259492189a23f6a753e58b8dffc702188ae3dcb41e79efa19bb3",
+      "size": 3364
+    },
+    {
+      "path": "skills/b03-api-message-and-contract-ir-builder/agents/openai.yaml",
+      "sha256": "77899964be5c5342c0d0613538d4586d6e3b79e8fbfef941a0dfb4d3a19f30e4",
+      "size": 357
+    },
+    {
+      "path": "skills/b03-binary-bytecode-and-native-metadata-ir/SKILL.md",
+      "sha256": "979abf5761dad451b2d271ca09be75a37aa84824b9805deebc5afa5c03474be2",
+      "size": 3406
+    },
+    {
+      "path": "skills/b03-binary-bytecode-and-native-metadata-ir/agents/openai.yaml",
+      "sha256": "2eca36708917e93464e817f548f1acfc2e4f141682e43cb591385a083d0ce651",
+      "size": 363
+    },
+    {
+      "path": "skills/b03-build-config-and-resource-ir-builder/SKILL.md",
+      "sha256": "469bd8c6ca996d7dbe906d9ea3ae592f44883d6dcd6ea7b4eb8ab3dd415695c9",
+      "size": 3386
+    },
+    {
+      "path": "skills/b03-build-config-and-resource-ir-builder/agents/openai.yaml",
+      "sha256": "cc3dbcc25fab247279a3a4b99d73906edac357a9919049512dc93b57e05e028c",
+      "size": 359
+    },
+    {
+      "path": "skills/b03-build-context-and-toolchain-resolver/SKILL.md",
+      "sha256": "d44073dd845e4455e61da70514cc4d7e71a3a53f6aea7aec0a3ff952a3fbe474",
+      "size": 3448
+    },
+    {
+      "path": "skills/b03-build-context-and-toolchain-resolver/agents/openai.yaml",
+      "sha256": "699687ae614d9dff69334f1074a3357f32cbd97175f2ca5c7a204c5f8606d0c4",
+      "size": 359
+    },
+    {
+      "path": "skills/b03-callgraph-dispatch-reflection-and-dynamic-linker/SKILL.md",
+      "sha256": "700d59f673a9ddfe0986f34c752764739fa586ef31069f4e9121a10d54c181f9",
+      "size": 3384
+    },
+    {
+      "path": "skills/b03-callgraph-dispatch-reflection-and-dynamic-linker/agents/openai.yaml",
+      "sha256": "a46fe3da84c8e5f07535166e06665b0630d330c7a8792c10f36c595414827b04",
+      "size": 383
+    },
+    {
+      "path": "skills/b03-canonical-semantic-ir-schema-and-lowering/SKILL.md",
+      "sha256": "00ae99206059bf4775cb0300b4f9c6bf6dd97269d81da9e9b5cd4398b7990d23",
+      "size": 3437
+    },
+    {
+      "path": "skills/b03-canonical-semantic-ir-schema-and-lowering/agents/openai.yaml",
+      "sha256": "0c18942acb7d63203c7346b0392aa37f913c2879ce8289faee565170549b901c",
+      "size": 369
+    },
+    {
+      "path": "skills/b03-canonical-type-system-and-language-relations/SKILL.md",
+      "sha256": "bf55aa1f19fc447124d7441643371c4ec90e96ca26307ef84fb0e4a170ca6491",
+      "size": 3361
+    },
+    {
+      "path": "skills/b03-canonical-type-system-and-language-relations/agents/openai.yaml",
+      "sha256": "a72cb52f34b5beafe9118064baac50b0b4aa081d2a10e0e8bd7e71e927be2338",
+      "size": 375
+    },
+    {
+      "path": "skills/b03-control-flow-ssa-and-dataflow-builder/SKILL.md",
+      "sha256": "10ba39be5cb1e8237d00d6cbf64a8e509c4afd19b1af9aada726fc6ccde57840",
+      "size": 3358
+    },
+    {
+      "path": "skills/b03-control-flow-ssa-and-dataflow-builder/agents/openai.yaml",
+      "sha256": "260d68f3466ab52ca820560712ed604f909b2e400efa8d9592a922152ce4211d",
+      "size": 361
+    },
+    {
+      "path": "skills/b03-effect-exception-concurrency-and-resource-modeler/SKILL.md",
+      "sha256": "9724f89b86f38212359086ca3c228615d7fc5a7ee807c99b193ecc11415ea75d",
+      "size": 3417
+    },
+    {
+      "path": "skills/b03-effect-exception-concurrency-and-resource-modeler/agents/openai.yaml",
+      "sha256": "e4ec7ae5138d0f2a2e58039f5964ac8844cd41dcdd3fe8cfeac6598bbe8a3f53",
+      "size": 385
+    },
+    {
+      "path": "skills/b03-expression-statement-and-evaluation-order-lowerer/SKILL.md",
+      "sha256": "e2fa565e792be47253387cfb2bfe5a7a574c56838dc7e2464b7b5d5e7dbc7d16",
+      "size": 3480
+    },
+    {
+      "path": "skills/b03-expression-statement-and-evaluation-order-lowerer/agents/openai.yaml",
+      "sha256": "fec3e0b39bd83b05f7c142fac4dccfca41301ea6d12a055fb3b8287e401afc9c",
+      "size": 385
+    },
+    {
+      "path": "skills/b03-formalizable-core-and-proof-obligation-contract/SKILL.md",
+      "sha256": "eabfbfb038c1d28cea0150b04701783b88335a51c829b0931f8e6be605eedcb9",
+      "size": 3471
+    },
+    {
+      "path": "skills/b03-formalizable-core-and-proof-obligation-contract/agents/openai.yaml",
+      "sha256": "74821d3f05ea4203fa9b7584a2c3daad660f31f30cb39c64d7fff44939bc4c47",
+      "size": 381
+    },
+    {
+      "path": "skills/b03-frontend-adapter-sdk-and-registry/SKILL.md",
+      "sha256": "4e0b3e23fb541f30f9cbd216534b04b033eb2bb34be6bc86aaa5069d1d43a7ee",
+      "size": 3475
+    },
+    {
+      "path": "skills/b03-frontend-adapter-sdk-and-registry/agents/openai.yaml",
+      "sha256": "059c9ef5055d12d6f18b0015032ac21c0071404063648301e2814a8895370137",
+      "size": 353
+    },
+    {
+      "path": "skills/b03-frontend-conformance-and-ir-certification-gate/SKILL.md",
+      "sha256": "d2a1ebab7eb92fe11b74c0804802e32f2913f14049c0342d82c29d21f15a76eb",
+      "size": 3451
+    },
+    {
+      "path": "skills/b03-frontend-conformance-and-ir-certification-gate/agents/openai.yaml",
+      "sha256": "7bd251f16a62f6ba396ef021cb6cc65d04c8d3e7928df58db7583f51156969e4",
+      "size": 379
+    },
+    {
+      "path": "skills/b03-generated-code-macro-and-metaprogramming-modeler/SKILL.md",
+      "sha256": "8f395a6429032ccb3d6133f302207e56775accc46bb8e797fded2b40538f24bf",
+      "size": 3434
+    },
+    {
+      "path": "skills/b03-generated-code-macro-and-metaprogramming-modeler/agents/openai.yaml",
+      "sha256": "c32f3bcb059ab23ce55f73bdd8cf53f5a09bdf8f7441af0977731caede435363",
+      "size": 383
+    },
+    {
+      "path": "skills/b03-incremental-ir-cache-and-chunk-store/SKILL.md",
+      "sha256": "b79bac4e9f7d977a006c0ad95888b8639beb34c5496e3315b8aeddf1ca5fc335",
+      "size": 3429
+    },
+    {
+      "path": "skills/b03-incremental-ir-cache-and-chunk-store/agents/openai.yaml",
+      "sha256": "d81626811f988e027d35671d4180d06c58107e4ca774351e9bfedb0dfba31352",
+      "size": 359
+    },
+    {
+      "path": "skills/b03-ir-foundation-orchestrator/SKILL.md",
+      "sha256": "d9816d4babb62990a3e291754e54617e08790a1f64bc8d969ddaa4ff1d5a0e10",
+      "size": 3387
+    },
+    {
+      "path": "skills/b03-ir-foundation-orchestrator/agents/openai.yaml",
+      "sha256": "225d491f4ea174fee021fed83b3aa579d2a7e8d0381fb1c7fb2a10069370a0cd",
+      "size": 339
+    },
+    {
+      "path": "skills/b03-ir-query-diff-and-export-service/SKILL.md",
+      "sha256": "df7a80363dcf39c87f73c727980e20d5c75a94933becc2024f8437e0dc3a785f",
+      "size": 3383
+    },
+    {
+      "path": "skills/b03-ir-query-diff-and-export-service/agents/openai.yaml",
+      "sha256": "a0ef6cce922197a573c711b99e2876bc9c404e19f1c2a2ee5063d373e10a33c1",
+      "size": 351
+    },
+    {
+      "path": "skills/b03-language-version-and-region-detector/SKILL.md",
+      "sha256": "c38e7c751d410276ba743dce0f9649b9c67b2baef4022c8492020f4e4fafad35",
+      "size": 3395
+    },
+    {
+      "path": "skills/b03-language-version-and-region-detector/agents/openai.yaml",
+      "sha256": "84048b4709839be94fbe2a3f4f7810320ef502211a1b0a2e193bd27cc78d3d4f",
+      "size": 359
+    },
+    {
+      "path": "skills/b03-native-lossless-syntax-ir-builder/SKILL.md",
+      "sha256": "004a7c22129fd1496f451f3434fc193f0cee6e151c52f3f38bb143a32c97db8e",
+      "size": 3425
+    },
+    {
+      "path": "skills/b03-native-lossless-syntax-ir-builder/agents/openai.yaml",
+      "sha256": "253e601bf7176fd1f843104d5b778ce165e8d32a555411c42f033dc382c22269",
+      "size": 353
+    },
+    {
+      "path": "skills/b03-native-semantic-attribution-engine/SKILL.md",
+      "sha256": "ff3ccb87d77172820be90950b727a0c28798ecac94296462ac0e8f73ad44a2c8",
+      "size": 3411
+    },
+    {
+      "path": "skills/b03-native-semantic-attribution-engine/agents/openai.yaml",
+      "sha256": "f0e3b215aef03bb315ce07565258117bada3bfcedf2f11934458bc6b520dd16d",
+      "size": 355
+    },
+    {
+      "path": "skills/b03-source-artifact-normalizer/SKILL.md",
+      "sha256": "aa8ad99e21f34b4859f7b0ab52757982b6bb1b06d8f918f2e1e765728d71d156",
+      "size": 3419
+    },
+    {
+      "path": "skills/b03-source-artifact-normalizer/agents/openai.yaml",
+      "sha256": "74dd1a69d7f82a537c67c5afbd4c9e10b4d9f487ec6dd920a0190b439c0b9254",
+      "size": 339
+    },
+    {
+      "path": "skills/b03-source-map-provenance-and-semantic-fingerprint/SKILL.md",
+      "sha256": "993d250209d2f95b97a1928c7d2b143fb020ef8d1e325958d3001fba914c9167",
+      "size": 3417
+    },
+    {
+      "path": "skills/b03-source-map-provenance-and-semantic-fingerprint/agents/openai.yaml",
+      "sha256": "a55f77348b8ddfe9cbce0bc2c697df19ca14f630bb067d193ecba3cb61cea805",
+      "size": 379
+    },
+    {
+      "path": "skills/b03-sql-and-database-procedural-ir-builder/SKILL.md",
+      "sha256": "152cfe599a2277ba05844abe7840d72b0c006261a30e7f68eb81c995535efb0b",
+      "size": 3429
+    },
+    {
+      "path": "skills/b03-sql-and-database-procedural-ir-builder/agents/openai.yaml",
+      "sha256": "5e75f4215510950a6cc2c4218e085c5685b33697f824991d8f6fb37537f3bb1f",
+      "size": 363
+    },
+    {
+      "path": "skills/b03-symbol-identity-scope-and-linker/SKILL.md",
+      "sha256": "4bc6d171af40c33c4909bea65e78dcc1e10ee83678db22dbe0896fc7ca38162f",
+      "size": 3362
+    },
+    {
+      "path": "skills/b03-symbol-identity-scope-and-linker/agents/openai.yaml",
+      "sha256": "326fa66187a888e1bf54a541a2e0a8b318f32e703c308cb423b575e2983ffcda",
+      "size": 351
+    },
+    {
+      "path": "tests/SCENARIOS.md",
+      "sha256": "d9cac52d25b26f06ada3cef85190d71aecfa1b0ab8168a0fe126abc7a77effd9",
+      "size": 1373
+    },
+    {
+      "path": "tools/validate_package.py",
+      "sha256": "24cdf1a11c14f0d666eda7385352457d78b0398bc04532a3e126b20419a6ae2a",
+      "size": 3581
+    },
+    {
+      "path": "validate.sh",
+      "sha256": "cdd1b72b6d2db5eb885005815aac6f6618eed65ed932038d76f52d99a3a0ab6b",
+      "size": 130
+    }
+  ],
+  "validation": {
+    "static": "passed",
+    "runtime": "not-executed"
+  },
+  "trust_boundary": "Static package validation is not runtime execution or production certification."
+}

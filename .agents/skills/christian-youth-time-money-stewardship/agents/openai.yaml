@@ -1,0 +1,8 @@
+interface:
+  display_name: Youth Time and Money Stewardship
+  short_description: Implement weekly time buckets, personal money buckets, subscriptions and chosen adjustments.
+  default_prompt: Use $christian-youth-time-money-stewardship for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

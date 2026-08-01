@@ -1,0 +1,326 @@
+{
+  "schema_version": "1.0.0",
+  "package_id": "batch-12-benchmark-quality-economics-complete-skill-pack",
+  "batch": 12,
+  "title": "Batch 12: Benchmark, Quality Scoring and Migration Economics",
+  "version": "1.0.0",
+  "root_skill": "batch-12-benchmark-quality-economics",
+  "generated_at": "2026-07-31T00:00:00Z",
+  "skill_count": 16,
+  "skills": [
+    "b12-benchmark-quality-economics-adapter-provider",
+    "b12-benchmark-quality-economics-capability-planning",
+    "b12-benchmark-quality-economics-certification-gate",
+    "b12-benchmark-quality-economics-corpus-benchmark",
+    "b12-benchmark-quality-economics-deterministic-engine",
+    "b12-benchmark-quality-economics-discovery-inventory",
+    "b12-benchmark-quality-economics-domain-model",
+    "b12-benchmark-quality-economics-failure-recovery",
+    "b12-benchmark-quality-economics-human-approval",
+    "b12-benchmark-quality-economics-integration-api",
+    "b12-benchmark-quality-economics-lifecycle-recertification",
+    "b12-benchmark-quality-economics-lineage-reconciliation",
+    "b12-benchmark-quality-economics-observability-economics",
+    "b12-benchmark-quality-economics-orchestrator",
+    "b12-benchmark-quality-economics-security-policy",
+    "b12-benchmark-quality-economics-workflow-runtime"
+  ],
+  "upstream_batch": 11,
+  "files": [
+    {
+      "path": "BATCH11_COMPATIBILITY.md",
+      "sha256": "be678d79e6033c7d7dd3e6a158ccec13a0526738e82d89eb1446c3ee22ffde29",
+      "size": 2104
+    },
+    {
+      "path": "CODEX_IMPLEMENTATION_PROMPT.md",
+      "sha256": "565c67ba1ba2852ac72bd5527351e13995f0f2ac80072e6c2d1c6082d215f135",
+      "size": 2288
+    },
+    {
+      "path": "IMPLEMENTATION_CHECKLIST.md",
+      "sha256": "92a5c82a48134f5b1bc6fb40b9c8e3b752c6c2b65e8db3749e988a290f93b09d",
+      "size": 1767
+    },
+    {
+      "path": "README.md",
+      "sha256": "b379b07b34e52dba0f9306b57eaae6d74f19402d828b0480a353c3df9ee969f9",
+      "size": 1073
+    },
+    {
+      "path": "SKILL.md",
+      "sha256": "cef19f125ba7c54cd096dfe1ee58ec15f3be0b2594b2af76a489a70fc5e9842b",
+      "size": 3986
+    },
+    {
+      "path": "SKILL_INDEX.md",
+      "sha256": "a808aaaaf3d5acf2ef87cf44d2c70abd94fd473998ddc5543b5970ca4b8e62a8",
+      "size": 3051
+    },
+    {
+      "path": "VALIDATION_REPORT.md",
+      "sha256": "2532de66ac2e90da37ca6286613df61bf3360ccff01fda314c2b8232aba28711",
+      "size": 572
+    },
+    {
+      "path": "agents/openai.yaml",
+      "sha256": "fe1307daffaacb0b68b35053920e924632ca89e92608d9af53ef44e969bcb74c",
+      "size": 372
+    },
+    {
+      "path": "examples/certificate.example.json",
+      "sha256": "aa33dde4ca1920bd74bed4a9dec68383ef05745fe32b41f615461b96a9dc4743",
+      "size": 452
+    },
+    {
+      "path": "examples/invocation.example.json",
+      "sha256": "c3dc75df5b451040d4b7962a4d8bfb95a40fd4d878509c3276337b5a7da2f943",
+      "size": 284
+    },
+    {
+      "path": "install.sh",
+      "sha256": "cdaf3fdf0c010dd9e0fe29b4a92cd723ff35dd0617eaf14bb5f57e757bc2fa02",
+      "size": 305
+    },
+    {
+      "path": "policies/agent-boundary.yaml",
+      "sha256": "79adc8830adec220835b49067d29b50a3a1578f146a65e7d5b70a6d19ba09ab2",
+      "size": 150
+    },
+    {
+      "path": "policies/certification.yaml",
+      "sha256": "17f50ef51eb5cbf800b3b4990bfb399d4aed9c751cb7f440bee4a4d88ebf02ea",
+      "size": 182
+    },
+    {
+      "path": "policies/default-deny.yaml",
+      "sha256": "25c6a03403de8832018b82bfa5d9dd516d8f5136ba4974c85d40bdf8972f9366",
+      "size": 105
+    },
+    {
+      "path": "policies/evidence-first.yaml",
+      "sha256": "50408543ffa45cfea3461cd57bdabf39f9bdd422fc5b41cdfef4d3c679a058c2",
+      "size": 156
+    },
+    {
+      "path": "policies/human-approval.yaml",
+      "sha256": "d9a6b11cfe402c569440e95b1aa2377387e222a32b693c83fc278ddb1fd4482f",
+      "size": 143
+    },
+    {
+      "path": "schemas/batch-input.schema.json",
+      "sha256": "0bfe882aa1d3c1539b6515f0f09860ddeb60e2ea25328ee59d19e1833c1efa1e",
+      "size": 731
+    },
+    {
+      "path": "schemas/batch-output.schema.json",
+      "sha256": "e3ee3fe0a06d7c0074a5d32348d8273244ed664112cda373d86fc781ef02373b",
+      "size": 832
+    },
+    {
+      "path": "schemas/capability-package.schema.json",
+      "sha256": "8143b4bf912c27ea4acce06721342a1ea8c27519d1eed524d45d3b878a809194",
+      "size": 1133
+    },
+    {
+      "path": "schemas/certification.schema.json",
+      "sha256": "79adae8c4f3ae83a1ad90640cec030de4043f6c492e8960f7b34ea15cabb61c4",
+      "size": 1281
+    },
+    {
+      "path": "schemas/evidence-ref.schema.json",
+      "sha256": "c2a8e375bcb0c13c1a48ad9d3997fae183d3aeef3e4183ae91127cca6b1741da",
+      "size": 996
+    },
+    {
+      "path": "schemas/workflow-run.schema.json",
+      "sha256": "a85316ac9af4779695766a18893b83823ee337a3bed948a6206446b356f78681",
+      "size": 848
+    },
+    {
+      "path": "skills/b12-benchmark-quality-economics-adapter-provider/SKILL.md",
+      "sha256": "d4e65d2f597fb04cebb20b27b0e447e83c96cce491544eeb3a4df0481b19b5a3",
+      "size": 3958
+    },
+    {
+      "path": "skills/b12-benchmark-quality-economics-adapter-provider/agents/openai.yaml",
+      "sha256": "da7dc66f88f8086d14ea62076b36b63c5b59068c0ebb834bd920ee131640cd1d",
+      "size": 353
+    },
+    {
+      "path": "skills/b12-benchmark-quality-economics-capability-planning/SKILL.md",
+      "sha256": "12a6be4484319baaa421792d4c64c9d676788a1cd37255e61b6f5af0d5ff4aa2",
+      "size": 3860
+    },
+    {
+      "path": "skills/b12-benchmark-quality-economics-capability-planning/agents/openai.yaml",
+      "sha256": "c989637663d22ec39851610f357f7818a6dcb740ebfe82cee51ed2bcb14d1651",
+      "size": 360
+    },
+    {
+      "path": "skills/b12-benchmark-quality-economics-certification-gate/SKILL.md",
+      "sha256": "4e578e861a73e41cdbda5923a0e90eddc804dbdbd2dd8c7091ee8af2e733c935",
+      "size": 3989
+    },
+    {
+      "path": "skills/b12-benchmark-quality-economics-certification-gate/agents/openai.yaml",
+      "sha256": "af25006b507d0d5c111d1387f769cd9f38baa5a8e8a573d6928f4f387447ce97",
+      "size": 360
+    },
+    {
+      "path": "skills/b12-benchmark-quality-economics-corpus-benchmark/SKILL.md",
+      "sha256": "dc683977165c17cc3707865243f17e362644a3dadc6dc8e17913e3967e1cef27",
+      "size": 3899
+    },
+    {
+      "path": "skills/b12-benchmark-quality-economics-corpus-benchmark/agents/openai.yaml",
+      "sha256": "ac4e2e7322d5cdb45a4dd92328106eb5c7bbd35e769d061332aae8d5002ee1a7",
+      "size": 358
+    },
+    {
+      "path": "skills/b12-benchmark-quality-economics-deterministic-engine/SKILL.md",
+      "sha256": "95fb0895007ca824103d5eb0d871ee5a3ed42eedd6406fc26e7c26d71cc63f76",
+      "size": 3876
+    },
+    {
+      "path": "skills/b12-benchmark-quality-economics-deterministic-engine/agents/openai.yaml",
+      "sha256": "1bdf1015a41023314bd9bc11e1d745d3fe829057cbcd65e6a3afa7d6f80da895",
+      "size": 351
+    },
+    {
+      "path": "skills/b12-benchmark-quality-economics-discovery-inventory/SKILL.md",
+      "sha256": "52967a68aad34ff53ebfe382737a2cf164f1960343cb881ccbece9574250bd02",
+      "size": 3903
+    },
+    {
+      "path": "skills/b12-benchmark-quality-economics-discovery-inventory/agents/openai.yaml",
+      "sha256": "a71b8167a54ec366cf7547c4b050fa20251d66fe89f8b3814dc913fec205e9e9",
+      "size": 353
+    },
+    {
+      "path": "skills/b12-benchmark-quality-economics-domain-model/SKILL.md",
+      "sha256": "86c5d266812284e3a206876e9f7df8289faed349b3a963d7731c09b9b67cb735",
+      "size": 3930
+    },
+    {
+      "path": "skills/b12-benchmark-quality-economics-domain-model/agents/openai.yaml",
+      "sha256": "ce397a41d825f6f2586e2a070e3fe59cc02fa5e2167d65536ecf1f129253575e",
+      "size": 357
+    },
+    {
+      "path": "skills/b12-benchmark-quality-economics-failure-recovery/SKILL.md",
+      "sha256": "ea402271f225ff150d52cc7d8514acc65be04f840c8d653b883870d283c6e424",
+      "size": 3907
+    },
+    {
+      "path": "skills/b12-benchmark-quality-economics-failure-recovery/agents/openai.yaml",
+      "sha256": "b488e7ea0754bd86fef7acd7919b9ede1b13928ef91a96c8204f94bc57447032",
+      "size": 356
+    },
+    {
+      "path": "skills/b12-benchmark-quality-economics-human-approval/SKILL.md",
+      "sha256": "4ef5c5ba72d0b2e5cc2ff93b51259cf918924ef6cfe98535f5e02b4bf7037f64",
+      "size": 3892
+    },
+    {
+      "path": "skills/b12-benchmark-quality-economics-human-approval/agents/openai.yaml",
+      "sha256": "cf05ff5172057cb3b26afa67bfba1248fe344693fa585307ce883adb45292709",
+      "size": 350
+    },
+    {
+      "path": "skills/b12-benchmark-quality-economics-integration-api/SKILL.md",
+      "sha256": "2bd8bf5af44ad35e723dca097e0cdca990c60d24e4cd245230967ae0ab9bec5b",
+      "size": 3877
+    },
+    {
+      "path": "skills/b12-benchmark-quality-economics-integration-api/agents/openai.yaml",
+      "sha256": "73640b2c32c00515f73b5f9bd1855427c7b9d49356fde7f71405a8472262cdca",
+      "size": 353
+    },
+    {
+      "path": "skills/b12-benchmark-quality-economics-lifecycle-recertification/SKILL.md",
+      "sha256": "70a1acdb83be72fe1910798027b668c1e191d97bde3456c4acbfce9e58cfb5a8",
+      "size": 3967
+    },
+    {
+      "path": "skills/b12-benchmark-quality-economics-lifecycle-recertification/agents/openai.yaml",
+      "sha256": "c29eba53f4695b0dc65032eb4bd479a9a7661969eed3352f31e684ef04a041f5",
+      "size": 376
+    },
+    {
+      "path": "skills/b12-benchmark-quality-economics-lineage-reconciliation/SKILL.md",
+      "sha256": "4ad72f3d5dcb264a454b30b40011a3dc4b9a2f1b3dfd395604504a053bc9ebf4",
+      "size": 3918
+    },
+    {
+      "path": "skills/b12-benchmark-quality-economics-lineage-reconciliation/agents/openai.yaml",
+      "sha256": "3ac05e9ea76614444869069cb86de57227e4c1a79e0188010a31efa0af8ccb6f",
+      "size": 359
+    },
+    {
+      "path": "skills/b12-benchmark-quality-economics-observability-economics/SKILL.md",
+      "sha256": "0166f7fd68976366196c8869f8c444fe7fc4a54ba110f5b0c18196a8e3b1cb12",
+      "size": 3933
+    },
+    {
+      "path": "skills/b12-benchmark-quality-economics-observability-economics/agents/openai.yaml",
+      "sha256": "d45d7343110ce1f8bbdf24e7665a341d0d035ba7d2c4b124e3bc78bfb79e9de8",
+      "size": 370
+    },
+    {
+      "path": "skills/b12-benchmark-quality-economics-orchestrator/SKILL.md",
+      "sha256": "2a88ddf928519376ac877d6cc6b6c1df835a46541fda0e25e36d358cdf281dac",
+      "size": 3955
+    },
+    {
+      "path": "skills/b12-benchmark-quality-economics-orchestrator/agents/openai.yaml",
+      "sha256": "a7966a688454b513e2ff7a2c22120ec934eea782786f94042391b450b1708f42",
+      "size": 353
+    },
+    {
+      "path": "skills/b12-benchmark-quality-economics-security-policy/SKILL.md",
+      "sha256": "f64aa61d21c63aa7bb0cd3aea19cbb81cc3734707f0126c3a16b2e7da76277f9",
+      "size": 3912
+    },
+    {
+      "path": "skills/b12-benchmark-quality-economics-security-policy/agents/openai.yaml",
+      "sha256": "8d77dbb14a3149d7f469bceb8b67722bfbf9b8a432c8ab7844f87c9cfd44b475",
+      "size": 354
+    },
+    {
+      "path": "skills/b12-benchmark-quality-economics-workflow-runtime/SKILL.md",
+      "sha256": "58ad3565c706ed3e77db6b40618618dffb9617756294c828fdaa591b4959f62b",
+      "size": 3921
+    },
+    {
+      "path": "skills/b12-benchmark-quality-economics-workflow-runtime/agents/openai.yaml",
+      "sha256": "6c6a8c05d0ad7980877893060258183913d5b33a9db4cb8f7112cf0071b9577f",
+      "size": 357
+    },
+    {
+      "path": "tests/README.md",
+      "sha256": "c8c53dbe0b9efc58446975aede8ff07e7335000c974fa78679cb022fd091cacd",
+      "size": 381
+    },
+    {
+      "path": "tests/test_catalog.json",
+      "sha256": "7849f6580494fc0faa0ed8dc88c742fb6ff6815b07c13dc494459b9381d3ed82",
+      "size": 1928
+    },
+    {
+      "path": "tools/validate_package.py",
+      "sha256": "281cd6663a38afc9e046323ef2c1a2f21d08e8cbfd490e54985526d73e0154f3",
+      "size": 3581
+    },
+    {
+      "path": "validate.sh",
+      "sha256": "a1afca2d69d8fa3d11c820c8381b06b6449e31b289196b3cdc4156de471dd6c4",
+      "size": 72
+    }
+  ],
+  "validation": {
+    "static": "passed",
+    "runtime": "not-executed"
+  },
+  "trust_boundary": "Static package validation is not runtime execution or production certification."
+}

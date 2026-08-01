@@ -1,0 +1,8 @@
+interface:
+  display_name: "Spiritual Planet Self-Governance Orchestrator"
+  short_description: "Build the complete Batch 02 adult self-governance vertical slice."
+  default_prompt: "Use $spiritual-planet-self-governance-orchestrator for this task."
+policy:
+  products:
+    - CODEX
+  allow_implicit_invocation: true

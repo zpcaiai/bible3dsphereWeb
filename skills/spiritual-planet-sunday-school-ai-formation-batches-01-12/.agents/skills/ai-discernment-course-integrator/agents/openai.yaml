@@ -1,0 +1,8 @@
+interface:
+  display_name: "AI Discernment Course Integrator"
+  short_description: "Integrate Batch 03 routes, curriculum, teacher lab, UI and tests."
+  default_prompt: "Use $ai-discernment-course-integrator for this task."
+policy:
+  products:
+    - CODEX
+  allow_implicit_invocation: true

@@ -1,0 +1,9 @@
+interface:
+  display_name: 30-Day Parent Example Plan
+  short_description: Generate editable 7/14/30-day parent modeling plans across attention, anxiety, repair, rest, prayer and
+    service.
+  default_prompt: Use $christian-parent-example-plan for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true

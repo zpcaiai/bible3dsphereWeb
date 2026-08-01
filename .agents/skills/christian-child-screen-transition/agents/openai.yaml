@@ -1,0 +1,8 @@
+interface:
+  display_name: Child Screen Transition
+  short_description: Implement predictable warnings, next activities, caregiver co-regulation and post-transition repair.
+  default_prompt: Use $christian-child-screen-transition for this task.
+policy:
+  products:
+  - CODEX
+  allow_implicit_invocation: true
