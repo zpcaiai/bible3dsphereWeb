@@ -10,7 +10,7 @@
 - 后端开关：`SUNDAY_SCHOOL_AI_FORMATION_ENABLED=false`
 - 内容：67 个精确版本，覆盖 12 个 Batch；全部 `published_at=NULL`
 
-12 个 Batch 的代码、数据库、用户工作流、内容治理、情境运行时和证据控制台已经接入现有 split-repo 产品。它们尚不能对真实用户开放：神学、牧养、儿童安全、隐私/权利、内容质量、人工无障碍与最终发布签署没有授权人证据；staging 浏览器/部署证据也未运行。系统会因此保持 fail-closed。
+12 个 Batch 的代码、数据库、用户工作流、内容治理、情境运行时和证据控制台已经接入现有 split-repo 产品。真实 Chrome 自动验收、完整 229 文件 PostGIS 历史链、模块回滚/重放和受保护 Vercel Preview 已执行；Preview 与前后端默认开关保持关闭。它们仍不能对真实用户开放：神学、牧养、儿童安全、隐私/权利、内容质量、人工无障碍与最终发布签署没有授权人证据，后端独立 staging 也因 Hugging Face 未登录而未部署。
 
 ## 真实架构与文件
 
@@ -75,11 +75,15 @@
 | 前端生产 build | 2402 modules transformed | 0 |
 | AI Formation ESLint scope | 0 errors / 0 warnings | 0 |
 | 本地 Chrome Playwright + axe | 4/4 passed：桌面键盘/最小化数据、390×844 与 320×568 reflow/触控/减弱动态、admin fail-closed；0 axe violations | 0 |
+| 完整历史 PostGIS 迁移链 | PostgreSQL 16 / PostGIS 3.6.4 / vector 0.8.0；229/229 strict forward；幂等重跑 0；0238–0240 回滚并重放；67 content / 0 published | 0 |
+| 受保护 Vercel Preview | `dpl_47naQsGUAf4F7ACe7u7YXnyeCepV`，target=preview，READY，HTTP 200，`noindex`；`VITE_AI_FORMATION_ENABLED=false`；未提升 production | 0 |
+| 生产依赖审计 | `dompurify` 3.4.2→3.4.12；`npm audit --omit=dev`：0 vulnerabilities | 0 |
+| 当前 AI Formation PostgreSQL 集成 + contracts/evidence | 19 passed：owner/tenant、年龄、审核分权、发布分离、情境版本、缺证据拒绝 | 0 |
 | 前端全量（首次） | 691 passed / 1 failed：新增 6 个英文词条缺失 | 1 |
 | `npm run i18n:fill` + i18n contract | 6/6 补齐；focused 9 passed | 0 |
 | 前端全量（修复后） | 142 files / 692 tests passed | 0 |
 
-本地自动化证据快照见 `docs/AI_FORMATION_LOCAL_GATE_EVIDENCE.json`；tenant isolation、Skill eval 与 rollback rehearsal 的 `passed` 现在全部来自真实子进程退出码、执行时间和输出 SHA-256，不再由生成器预填。快照明确保持 `NOT_CERTIFIED`，不替代 staging 浏览器验收或人工签署。Batch 01–44 静态审计明细见 `skills/batch_01_to_44_complete_skill_system/SYSTEM_AUDIT_REPORT.md`。
+本地自动化证据快照见 `docs/AI_FORMATION_LOCAL_GATE_EVIDENCE.json`；tenant isolation、真实 Chrome/Axe、Skill eval 与 rollback rehearsal 的 `passed` 全部来自真实子进程退出码、执行时间和输出 SHA-256，不由生成器预填。完整历史链见后端 `docs/ai-formation-certification/postgis-migration-evidence.json`；67 个逐版本审核包见后端同目录；外部 Preview 与演练边界见 `docs/ai-formation-certification/release-drill-evidence.json`。所有证据继续明确保持 `NOT_CERTIFIED`。
 
 ## 回滚路径
 
@@ -90,10 +94,11 @@
 
 ## 尚未解决的生产阻断
 
-- 67 个内容版本的真实多角色人工审核与独立发布仍未发生。
+- 67 个内容版本已生成逐版本精确 hash 审核包，但真实多角色人工审核与独立发布仍未发生；仓库还缺组织 `statement_of_faith_version` 与来源权利 owner attestation。
 - theology、pastoral safety、child safety、privacy/security、content quality、manual accessibility 的具名 staging/production 证据缺失。
-- 本地 Chrome 自动化 E2E 已通过并保存 JSON/截图证据；但没有 staging URL、VoiceOver/屏幕阅读器、200%/400% 缩放、iPhone/Android 实机与具名人工签署。
-- 没有 staging deploy smoke、limited rollout、事故演练、生产回滚负责人签署。
-- 仓库完整 fresh-database migration 链依赖应用先建旧 base/MVFE 表，并且本机 pgvector 镜像没有 PostGIS；本模块 0238–0240 已独立 strict 验证，但完整历史链的 PostGIS 段仍会 warning/skip。
+- 本地真实 Chrome 自动化 E2E 已通过并保存 JSON/截图；Vercel Preview 已 READY 且 HTTP 200，但功能开关保持关闭。VoiceOver、200%/400% 人工缩放、iPhone/Android 实机与具名人工签署仍缺失。
+- 前端 Preview 已部署；后端 Hugging Face staging 因未登录而未部署，所以没有完整的 authenticated staging smoke。
+- 自动事故/回滚演练已通过，但 limited rollout 未签发，事故 owner、回滚 owner 和最终发布人均未签署。
+- 完整 fresh-database 历史链已在真实 PostGIS 环境 229/229 通过；仓库只有 0238–0240 提供 down SQL，因此更早历史迁移只验证 forward，不声称具备全链 rollback。
 
 因此，代码可作为 release candidate 交给授权审核和 staging gate；在这些阻断实际关闭前，不得标注为 production-ready、certified，也不得打开 feature flags。

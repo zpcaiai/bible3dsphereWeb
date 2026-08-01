@@ -1,0 +1,97 @@
+{
+  "evidenceVersion": "1.0.0",
+  "generatedAt": "2026-08-01T07:57:31Z",
+  "artifactId": "sunday-school-ai-formation",
+  "artifactVersion": "1.0.0-rc.20260801",
+  "localEvidenceArtifactSha256": "401a70ee47d4ac6a4b219a0ce880db4ac3620b07f416310563f8c6e66d065912",
+  "certificationStatus": "NOT_CERTIFIED",
+  "automatedApproval": false,
+  "frontendStagingPreview": {
+    "provider": "vercel",
+    "deploymentId": "dpl_47naQsGUAf4F7ACe7u7YXnyeCepV",
+    "scopeBinding": "deployment_id",
+    "sourceArtifactSha256": null,
+    "target": "preview",
+    "readyState": "READY",
+    "url": "https://bible3dsphere-q86a69xrj-zpchoney-6160s-projects.vercel.app",
+    "deploymentProtection": true,
+    "httpVerification": "passed",
+    "httpStatus": 200,
+    "robotsPolicy": "noindex",
+    "aiFormationFeatureFlag": false,
+    "productionPromotionPerformed": false
+  },
+  "backendStaging": {
+    "provider": "hugging_face_spaces",
+    "status": "BLOCKED",
+    "reasonCodes": [
+      "BACKEND_STAGING_CREDENTIAL_MISSING",
+      "FULL_STACK_STAGING_NOT_DEPLOYED"
+    ],
+    "featureFlag": false
+  },
+  "limitedRollout": {
+    "status": "NOT_ISSUED",
+    "rolloutPercent": 0,
+    "reasonCodes": [
+      "HUMAN_RELEASE_AUTHORITY_REQUIRED",
+      "HUMAN_GATES_INCOMPLETE",
+      "FULL_STACK_STAGING_REQUIRED"
+    ],
+    "authorizedBy": null
+  },
+  "incidentRollbackDrill": {
+    "simulationScope": "disposable local PostgreSQL plus protected Vercel preview with feature flag disabled",
+    "machineResult": "passed",
+    "containment": {
+      "frontendFeatureFlagDisabled": true,
+      "backendFeatureFlagDisabledByDefault": true,
+      "publishedContentCount": 0
+    },
+    "databaseExercise": {
+      "moduleForward": ["0238", "0239", "0240"],
+      "moduleRollback": ["0240", "0239", "0238"],
+      "moduleReapply": ["0238", "0239", "0240"],
+      "recordsTableRemoved": true,
+      "contentTableRemoved": true,
+      "transactionPersisted": false,
+      "fullHistoricalForwardCount": 229,
+      "fullHistoricalIdempotentReapplyCount": 0,
+      "postgisVersion": "3.6.4",
+      "vectorVersion": "0.8.0"
+    },
+    "humanIncidentOwner": null,
+    "humanRollbackOwner": null,
+    "humanSignoff": "NOT_SIGNED"
+  },
+  "contentReview": {
+    "contentVersionCount": 67,
+    "reviewStatus": "BLOCKED",
+    "artifactSha256": "e5f9c6c7b15aae0c5d3cb5b240e1aea2b23a9986da5ac6977384eb6a63e870e5",
+    "reasonCodes": [
+      "SOURCE_RIGHTS_OWNER_ATTESTATION_REQUIRED",
+      "STATEMENT_OF_FAITH_VERSION_REQUIRED",
+      "AUTHORIZED_HUMAN_REVIEWS_REQUIRED"
+    ]
+  },
+  "manualAcceptance": {
+    "screenReader": "NOT_SIGNED",
+    "physicalIOS": "NOT_SIGNED",
+    "physicalAndroid": "NOT_SIGNED",
+    "zoom200And400Percent": "NOT_SIGNED",
+    "authorizedReviewer": null
+  },
+  "productionDependencyAudit": {
+    "command": "npm audit --omit=dev --registry=https://registry.npmjs.org",
+    "result": "passed",
+    "exitCode": 0,
+    "vulnerabilityCount": 0,
+    "dompurifyVersion": "3.4.12"
+  },
+  "limitations": [
+    "The Vercel preview proves safe deployment with the module disabled, not a functional full-stack staging release.",
+    "The Vercel CLI exposed an immutable deployment ID but did not expose a source-bundle SHA-256; the local composite evidence hash is not presented as the deployment digest.",
+    "The browser API was mocked for deterministic UI transport tests; live authenticated staging API acceptance is still required.",
+    "No AI or automation has signed a human review, accessibility acceptance, limited release, incident, rollback, or final release decision."
+  ]
+}

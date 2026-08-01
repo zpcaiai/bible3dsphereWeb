@@ -1,0 +1,9 @@
+.agents/
+skills/
+docs/
+e2e/
+test-results/
+coverage/
+*.log
+AGENTS.md
+playwright.config.js
