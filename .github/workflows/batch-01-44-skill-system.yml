@@ -1,0 +1,47 @@
+name: Batch 01-44 skill system
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "skills/batch_01_to_44_complete_skill_system/**"
+      - ".github/workflows/batch-01-44-skill-system.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "skills/batch_01_to_44_complete_skill_system/**"
+      - ".github/workflows/batch-01-44-skill-system.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: batch-01-44-skill-system-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate claims, executors, transactions, and concurrency
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.12.11"
+
+      - name: Check generated Claim and executor registries
+        run: python3 skills/batch_01_to_44_complete_skill_system/runtime/build_registry.py --check
+
+      - name: Run the complete Batch 01-44 validation suite
+        run: skills/batch_01_to_44_complete_skill_system/validate.sh
+
+      - name: Exercise collision-safe installation and relocated runtime
+        run: python3 skills/batch_01_to_44_complete_skill_system/tools/skill_system.py self-test
+
+      - name: Verify generated artifacts are reproducible
+        run: git diff --exit-code -- skills/batch_01_to_44_complete_skill_system
