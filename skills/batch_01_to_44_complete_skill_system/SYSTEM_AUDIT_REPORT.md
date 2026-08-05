@@ -14,9 +14,9 @@ Date: 2026-08-01
 - total_skill_files: **788**
 - unique_skill_names: **788**
 - agent_interfaces: **788**
-- json_schemas: **288**
+- json_schemas: **290**
 - yaml_documents: **1030**
-- python_scripts: **51**
+- python_scripts: **53**
 - shell_scripts: **90**
 - local_markdown_links: **34**
 - manifest_files: **2659**
@@ -25,6 +25,7 @@ Date: 2026-08-01
 - skill_folder_name_mismatches: **0**
 - runtime_claims: **8149**
 - runtime_executors: **44**
+- runtime_skill_handlers: **788**
 
 ## Validation
 

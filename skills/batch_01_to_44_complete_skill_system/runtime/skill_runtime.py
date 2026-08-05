@@ -34,6 +34,7 @@ if str(RUNTIME_ROOT) not in sys.path:
     sys.path.insert(0, str(RUNTIME_ROOT))
 
 from domain_handlers import DomainHandlerError, execute_handler
+from skill_handlers import SkillHandlerError, execute_skill_handler, policies as skill_policies
 
 
 CLAIM_REGISTRY_PATH = RUNTIME_ROOT / "claim-oracle-registry.json"
@@ -411,15 +412,23 @@ def store_object(workspace: Path, data: bytes) -> dict[str, Any]:
 
 
 def verify_claim_subject(subject: Any, claim: Claim, corpus_role: str, outcome: str) -> None:
-    required = {"schema_version", "oracle_id", "executor_id", "batch", "skill", "claim", "corpus_role", "decision", "checks", "limitations"}
+    required = {"schema_version", "oracle_id", "executor_id", "batch", "skill", "claim", "corpus", "decision", "checks", "limitations"}
     if not isinstance(subject, dict) or set(subject) != required:
         raise RuntimeFailure("Claim-Oracle result fields are invalid")
     if outcome not in OUTCOMES:
         raise RuntimeFailure("Claim-Oracle result outcome is invalid")
+    corpus = subject.get("corpus")
+    if (not isinstance(corpus, dict) or set(corpus) != {"role", "id", "sha256", "independent"} or
+            corpus.get("role") != corpus_role or not isinstance(corpus.get("id"), str) or not corpus["id"] or
+            not isinstance(corpus.get("independent"), bool)):
+        raise RuntimeFailure("Claim-Oracle corpus identity is invalid")
+    require_digest(corpus.get("sha256"), "Claim-Oracle corpus.sha256")
+    if corpus_role in {"holdout", "representative", "production"} and corpus["independent"] is not True:
+        raise RuntimeFailure(f"Claim-Oracle {corpus_role} corpus is not independently owned")
     if (subject.get("schema_version") != "1.0" or subject.get("oracle_id") != claim.oracle_id or
             subject.get("executor_id") != claim.executor_id or subject.get("batch") != claim.batch or subject.get("skill") != claim.skill or
             subject.get("claim") != {"type": claim.claim_type, "index": claim.claim_index, "sha256": claim.sha256} or
-            subject.get("corpus_role") != corpus_role or corpus_role not in claim.corpora or subject.get("decision") != outcome):
+            corpus_role not in claim.corpora or subject.get("decision") != outcome):
         raise RuntimeFailure("Claim-Oracle result binding is invalid")
     checks = subject.get("checks")
     if not isinstance(checks, list) or not checks or any(not isinstance(item, dict) or set(item) != {"name", "outcome", "detail"} for item in checks):
@@ -432,7 +441,7 @@ def verify_claim_subject(subject: Any, claim: Claim, corpus_role: str, outcome: 
 
 def materialize_domain_result(result_file: Path, evidence_roots: tuple[Path, ...]) -> dict[str, Any]:
     payload = json.loads(read_regular(confined(result_file, evidence_roots), 8 * 1024 * 1024, "domain result").decode("utf-8"))
-    required = {"schema_version", "batch", "skill", "executor_id", "claim", "corpus", "source_fingerprint", "environment", "domain_contract", "toolchain", "assertions", "raw_evidence", "decision", "limitations"}
+    required = {"schema_version", "batch", "skill", "executor_id", "claim", "corpus", "source_fingerprint", "environment", "domain_contract", "skill_contract", "toolchain", "assertions", "raw_evidence", "decision", "limitations"}
     if not isinstance(payload, dict) or set(payload) != required or payload.get("schema_version") != "1.0":
         raise RuntimeFailure("domain result fields are invalid")
     registry = Registry.load()
@@ -507,7 +516,10 @@ def materialize_domain_result(result_file: Path, evidence_roots: tuple[Path, ...
     try:
         checks.extend(execute_handler(claim.batch, executor["handler"], payload.get("domain_contract"), claim.oracle_id,
                                       tools, assertions, observed_roles, decision))
-    except DomainHandlerError as exc:
+        checks.extend(execute_skill_handler(claim.skill, claim.batch, payload.get("skill_contract"), claim.oracle_id,
+                                            claim.claim_type, claim.claim_index, tools, assertions,
+                                            observed_roles, decision))
+    except (DomainHandlerError, SkillHandlerError) as exc:
         raise RuntimeFailure(str(exc)) from exc
     if decision not in OUTCOMES or decision == "PASS" and any(item["outcome"] != "PASS" for item in checks):
         raise RuntimeFailure("domain result decision contradicts its checks")
@@ -515,7 +527,7 @@ def materialize_domain_result(result_file: Path, evidence_roots: tuple[Path, ...
     if not isinstance(limitations, list) or any(not isinstance(item, str) for item in limitations):
         raise RuntimeFailure("domain result limitations are invalid")
     return {"schema_version": "1.0", "oracle_id": claim.oracle_id, "executor_id": claim.executor_id, "batch": claim.batch,
-            "skill": claim.skill, "claim": claim_value, "corpus_role": corpus_role, "decision": decision,
+            "skill": claim.skill, "claim": claim_value, "corpus": corpus, "decision": decision,
             "checks": checks, "limitations": limitations}
 
 
@@ -665,6 +677,7 @@ def gate(workspace: Path, skill: str) -> dict[str, Any]:
     for verification in verifications:
         by_evidence.setdefault(verification["evidence_id"], []).append(verification)
     corpora: dict[tuple[str, int], set[str]] = {}
+    corpus_digests: dict[tuple[str, int], dict[str, set[str]]] = {}
     findings = verify_event_chain(workspace)
     if source_fingerprint(Path(value["source_root"]), workspace_paths(workspace)["root"]) != value["source_fingerprint"]:
         findings.append("source changed after workspace initialization")
@@ -685,7 +698,8 @@ def gate(workspace: Path, skill: str) -> dict[str, Any]:
             subject_bytes = read_regular(object_path, MAX_FILE_BYTES, "Claim subject object")
             if digest_bytes(subject_bytes) != evidence["subject"]["sha256"] or len(subject_bytes) != evidence["subject"]["bytes"]:
                 raise RuntimeFailure("Claim subject object byte/digest mismatch")
-            verify_claim_subject(json.loads(subject_bytes), claim, evidence["corpus_role"], evidence["outcome"])
+            subject = json.loads(subject_bytes)
+            verify_claim_subject(subject, claim, evidence["corpus_role"], evidence["outcome"])
             decisions = []
             verifier_role = "holdout-verifier" if evidence["corpus_role"] == "holdout" else ("production-verifier" if evidence["corpus_role"] == "production" else "verifier")
             for decision in by_evidence.get(evidence["evidence_id"], []):
@@ -701,12 +715,20 @@ def gate(workspace: Path, skill: str) -> dict[str, Any]:
             adverse = [item for item in decisions if item.get("outcome") in {"FAIL", "INCONCLUSIVE"}]
             if evidence["outcome"] == "PASS" and passes and not adverse:
                 corpora.setdefault((claim.claim_type, claim.claim_index), set()).add(evidence["corpus_role"])
+                corpus_digests.setdefault((claim.claim_type, claim.claim_index), {}).setdefault(
+                    evidence["corpus_role"], set()
+                ).add(subject["corpus"]["sha256"])
             elif evidence["outcome"] == "PASS":
                 findings.append(f"{evidence['evidence_id']}: PASS lacks authenticated independent verification")
         except (KeyError, RuntimeFailure, json.JSONDecodeError) as exc:
             findings.append(f"{evidence.get('evidence_id')}: integrity failure: {exc}")
     missing = []
     for claim in claims:
+        digests = corpus_digests.get((claim.claim_type, claim.claim_index), {})
+        holdout = digests.get("holdout", set())
+        non_holdout = set().union(*(digests.get(role, set()) for role in ("development", "negative", "representative", "production")))
+        if holdout & non_holdout:
+            findings.append(f"{claim.oracle_id}: Holdout corpus digest is reused outside Holdout")
         observed = corpora.get((claim.claim_type, claim.claim_index), set())
         absent = sorted(set(claim.corpora) - observed)
         if absent:
@@ -774,7 +796,8 @@ def main() -> int:
     if args.command == "catalog":
         registry = Registry.load()
         result = {"namespace": registry.payload["namespace"], "skill_count": len(registry.by_skill),
-                  "claim_count": len(registry.by_claim), "executor_count": len(registry.executors), "certification_enabled": False}
+                  "claim_count": len(registry.by_claim), "executor_count": len(registry.executors),
+                  "skill_handler_count": len(skill_policies()), "certification_enabled": False}
     elif args.command == "init":
         result = initialize_workspace(args.workspace, args.source, args.trust_store)
     elif args.command == "domain-result":

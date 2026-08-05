@@ -449,6 +449,7 @@
   ],
   "runtime_claim_count": 8149,
   "domain_executor_count": 44,
+  "skill_handler_count": 788,
   "runtime_implementation_status": "IMPLEMENTED",
   "runtime_status": "LOCAL_RUNTIME_IMPLEMENTED",
   "external_runtime_status": "NOT_RUN",

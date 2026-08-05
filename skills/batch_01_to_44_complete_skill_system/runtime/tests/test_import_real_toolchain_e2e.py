@@ -115,7 +115,7 @@ class RealToolchainImporterTest(unittest.TestCase):
         self.assertEqual(4, len(paths))
         subjects = [json.loads(path.read_text(encoding="utf-8")) for path in paths if "subject" in path.name]
         self.assertEqual({31, 33}, {subject["batch"] for subject in subjects})
-        self.assertEqual({"development"}, {subject["corpus_role"] for subject in subjects})
+        self.assertEqual({"development"}, {subject["corpus"]["role"] for subject in subjects})
         self.assertTrue(all(subject["decision"] == "PASS" for subject in subjects))
 
     def test_rejects_restore_detail_mismatch(self) -> None:

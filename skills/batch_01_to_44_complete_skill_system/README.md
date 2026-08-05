@@ -14,6 +14,7 @@ This system combines Batch 01–05 domain-specific skill packs with the standard
 - Claim-specific Oracle obligations: **8,149**
 - Unique Batch domain-executor handlers: **44**
 - Callable Batch domain policies covered by executable tests: **44 / 44**
+- Unique digest-bound per-Skill handlers: **788 / 788**
 
 Read `BATCH_01_44_ROADMAP.md` first. Each Batch remains an independent, versioned, installable Skill bag with its own compatibility contract, implementation prompt, schemas, policies, tests, manifest and validation boundary.
 
@@ -35,7 +36,8 @@ digests, checksum coverage, JSON Schemas, YAML documents, Python and shell synta
 package-native validator, the immutable Claim/executor registries, and the transactional runtime
 test suite. The runtime tests cover Ed25519 role authentication, no-op false-positive rejection,
 independent Holdout, production evidence boundaries, source drift, rollback, concurrent idempotency,
-the event hash chain, all 44 callable domain handlers, and cross-Batch contract substitution. Full
+the event hash chain, all 44 callable domain handlers, all 788 unique per-Skill handlers, signed
+Provider-adapter idempotency, and cross-Batch/cross-Skill contract substitution. Full
 validation fails closed unless the locked `jsonschema` and `PyYAML`
 dependencies are installed; it runs Draft 2020-12 meta-schema validation and parses every YAML
 document with `yaml.safe_load`. It writes
@@ -65,12 +67,13 @@ python3 "$SKILL_RUNTIME" init \
 ```
 
 The native toolchain must emit a typed `domain-execution-result`. The package-owned dispatcher calls
-the exact registered Batch handler and requires its immutable `domain_contract`: operation,
-capabilities, and safety controls. Every capability must have a successful native-tool record, a
-matching byte-bound raw-evidence role, and a Claim-specific Oracle assertion. The shared runtime also
-checks the exact Skill/Claim/executor binding, tool version and argv digest, Corpus ownership, and
-environment. A Batch 31 result cannot substitute a Batch 33 contract, and repository content cannot
-select a command or handler:
+both the exact registered Batch handler and the selected Skill's unique callable handler. It requires
+the immutable Batch `domain_contract` plus a `skill_contract` bound to that Skill's source SHA-256,
+inputs, outputs, Workflow, tests, stop conditions, risk and effect class. Every Batch capability and
+the per-Skill execution role must have successful native-tool and byte-bound raw evidence plus
+Claim-specific Oracle assertions. The shared runtime also checks the exact Skill/Claim/executor
+binding, tool version and argv digest, Corpus ownership, and environment. Cross-Batch and cross-Skill
+contract substitution fails closed, and repository content cannot select a command or handler:
 
 ```bash
 python3 "$SKILL_RUNTIME" domain-result /absolute/path/to/domain-result.json \
@@ -82,6 +85,14 @@ Record the resulting subject with separate signed Executor and Oracle-Owner atte
 with a different signed Verifier, then evaluate the exact Skill gate. Output and test Claims require
 development/negative/Holdout composition; each Batch root additionally requires signed production
 evidence before it can reach `READY_FOR_HUMAN_DECISION`.
+
+For database, Cloud, SCM, compiler, browser and migration-tool side effects, use
+`runtime/provider_runtime.py`. It accepts only an operator-signed Adapter Registry with an exact
+executable digest, version, argv grammar, typed parameters, environment-reference allowlist, timeout,
+effect class and compensation operation. Mutations require a separate Approver; execution is
+shell-free, idempotency-keyed, fenced and durably journaled in SQLite WAL. Secrets are injected only
+from allowlisted process-environment references and redacted from captured bytes. A timed-out
+side effect becomes `UNKNOWN` and cannot be retried as success without reconciliation.
 
 ## Import the real database and Provider vertical slice
 

@@ -84,10 +84,13 @@ SYSTEM_REQUIRED_FILES = (
     "install.sh",
     "runtime/build_registry.py",
     "runtime/domain_handlers.py",
+    "runtime/skill_handlers.py",
     "runtime/import_real_toolchain_e2e.py",
+    "runtime/provider_runtime.py",
     "runtime/skill_runtime.py",
     "runtime/claim-oracle-registry.json",
     "runtime/domain-executor-registry.json",
+    "runtime/skill-executor-registry.json",
     "runtime/schemas/real-toolchain-e2e-report.schema.json",
     "requirements-validation.txt",
 )
@@ -934,6 +937,7 @@ def refresh_system_manifest() -> None:
         "packages": packages,
         "runtime_claim_count": 8149,
         "domain_executor_count": 44,
+        "skill_handler_count": 788,
         "runtime_implementation_status": "IMPLEMENTED",
         "runtime_status": "LOCAL_RUNTIME_IMPLEMENTED",
         "external_runtime_status": "NOT_RUN",
@@ -1062,6 +1066,7 @@ def check_shared_runtime(run_tests: bool, errors: list[str]) -> dict[str, int]:
     try:
         claims = json.loads((ROOT / "runtime/claim-oracle-registry.json").read_text(encoding="utf-8"))
         executors = json.loads((ROOT / "runtime/domain-executor-registry.json").read_text(encoding="utf-8"))
+        skill_executors = json.loads((ROOT / "runtime/skill-executor-registry.json").read_text(encoding="utf-8"))
     except Exception as exc:
         errors.append(f"shared runtime registry parse failed: {exc}")
         return {"runtime_claims": 0, "runtime_executors": 0}
@@ -1069,7 +1074,11 @@ def check_shared_runtime(run_tests: bool, errors: list[str]) -> dict[str, int]:
         errors.append("shared runtime must cover exactly 788 Skills and 8,149 Claims")
     if executors.get("executor_count") != 44:
         errors.append("shared runtime must register exactly 44 Batch executors")
-    return {"runtime_claims": int(claims.get("claim_count", 0)), "runtime_executors": int(executors.get("executor_count", 0))}
+    if skill_executors.get("skill_executor_count") != 788:
+        errors.append("shared runtime must register exactly 788 per-Skill handlers")
+    return {"runtime_claims": int(claims.get("claim_count", 0)),
+            "runtime_executors": int(executors.get("executor_count", 0)),
+            "runtime_skill_handlers": int(skill_executors.get("skill_executor_count", 0))}
 
 
 def check_markdown_links(scope: Path, errors: list[str]) -> int:
@@ -1557,6 +1566,7 @@ def command_self_test() -> int:
         raise AssertionError(f"legacy spec parser returned {len(specs)}, expected {expected}")
     with tempfile.TemporaryDirectory(prefix="batch-skill-install-test-") as directory:
         target = Path(directory) / "skills"
+        runtime_destination = target / ".batch-01-44-runtime"
         receipt = install_all(target, dry_run=False)
         if receipt["skill_count"] != 788:
             raise AssertionError(receipt)
@@ -1579,6 +1589,10 @@ def command_self_test() -> int:
             raise AssertionError("missing install receipt")
         if not (runtime_destination / "domain_handlers.py").is_file():
             raise AssertionError("installed shared runtime lacks callable domain handlers")
+        if not (runtime_destination / "skill_handlers.py").is_file():
+            raise AssertionError("installed shared runtime lacks callable per-Skill handlers")
+        if not (runtime_destination / "provider_runtime.py").is_file():
+            raise AssertionError("installed shared runtime lacks signed Provider runtime")
         try:
             install_all(target, dry_run=False)
         except FileExistsError:
@@ -1591,7 +1605,8 @@ def command_self_test() -> int:
             [sys.executable, str(target / ".batch-01-44-runtime/skill_runtime.py"), "catalog"],
             text=True, capture_output=True, check=False,
         )
-        if catalog.returncode or json.loads(catalog.stdout).get("claim_count") != 8149:
+        catalog_payload = json.loads(catalog.stdout) if not catalog.returncode else {}
+        if catalog.returncode or catalog_payload.get("claim_count") != 8149 or catalog_payload.get("skill_handler_count") != 788:
             raise AssertionError("installed shared runtime is not relocatable")
     print("PASS: parser, audit, validator, and collision-safe 788-Skill install")
     return 0

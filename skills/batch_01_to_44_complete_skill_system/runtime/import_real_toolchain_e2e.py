@@ -18,6 +18,8 @@ from typing import Any
 
 import skill_runtime
 from domain_handlers import POLICIES, contract_for_batch, evidence_role
+from skill_handlers import canonical_digest as skill_digest
+from skill_handlers import contract_for_skill, evidence_role as skill_evidence_role
 
 try:
     from jsonschema import Draft202012Validator
@@ -158,11 +160,24 @@ def materialize(report_path: Path, output: Path) -> list[Path]:
             bound_tools.append({**native_tool, "evidence_role": role})
             raw_references.append({"path": str(report_path.resolve()), "sha256": digest(report_bytes),
                                    "bytes": len(report_bytes), "role": role})
+        skill_contract = contract_for_skill(item.skill)
+        skill_role = skill_evidence_role(item.skill)
+        bound_tools.append({**tools[0], "evidence_role": skill_role})
+        raw_references.append({"path": str(report_path.resolve()), "sha256": digest(report_bytes),
+                               "bytes": len(report_bytes), "role": skill_role})
         assertions = [{"name": f"{item.oracle_id}:operation:{policy.operation}", "outcome": "PASS", "detail": detail}]
         assertions.extend({"name": f"{item.oracle_id}:capability:{capability}", "outcome": "PASS", "detail": detail}
                           for capability in policy.capabilities)
         assertions.extend({"name": f"{item.oracle_id}:safety:{control}", "outcome": "PASS", "detail": detail}
                           for control in policy.safety_controls)
+        assertions.extend([
+            {"name": f"{item.oracle_id}:skill-handler:{skill_contract['handler_id']}", "outcome": "PASS", "detail": detail},
+            {"name": f"{item.oracle_id}:skill-source:{skill_contract['source_sha256']}", "outcome": "PASS", "detail": detail},
+            {"name": f"{item.oracle_id}:skill-operation:{item.skill}", "outcome": "PASS", "detail": detail},
+            {"name": f"{item.oracle_id}:skill-claim:{item.claim_type}:{item.claim_index}", "outcome": "PASS",
+             "detail": skill_digest({"type": item.claim_type, "index": item.claim_index})},
+            {"name": f"{item.oracle_id}:skill-effect:{skill_contract['effect_class']}", "outcome": "PASS", "detail": skill_role},
+        ])
         payload = {
             "schema_version": "1.0", "batch": item.batch, "skill": item.skill, "executor_id": item.executor_id,
             "claim": {"type": item.claim_type, "index": item.claim_index, "sha256": item.sha256},
@@ -170,6 +185,7 @@ def materialize(report_path: Path, output: Path) -> list[Path]:
             "source_fingerprint": database["schema_sha256"],
             "environment": {"id": report["run_id"], "kind": "clean", "digest": environment_digest},
             "domain_contract": contract_for_batch(item.batch),
+            "skill_contract": skill_contract,
             "toolchain": bound_tools,
             "assertions": assertions,
             "raw_evidence": raw_references, "decision": "PASS",
