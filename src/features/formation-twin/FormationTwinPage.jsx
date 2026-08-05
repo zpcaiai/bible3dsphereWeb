@@ -4,6 +4,7 @@ import { StatTile } from '../../components/charts'
 import { t as i18nT } from '../../i18n/runtime'
 import { buildFormationTwinSnapshot, FORMATION_TWIN_INTEGRATIONS } from './formationTwinModel'
 import FormationTwinWorkspace from './FormationTwinWorkspace'
+import FormationTwinMaturity from './FormationTwinMaturity'
 import FormationTwinPatterns from './FormationTwinPatterns'
 import FormationTwinReflections from './FormationTwinReflections'
 import FormationTwinProtection from './FormationTwinProtection'
@@ -174,6 +175,17 @@ export default function FormationTwinPage({
         initialTab={workspaceTab}
         onSafety={() => open('sos')}
       />
+
+      <section className="ft-section" aria-labelledby="ft-maturity-title">
+        <div className="ft-section-heading">
+          <div>
+            <span>{i18nT('EMOTIONAL MATURITY · EMD-OS')}</span>
+            <h2 id="ft-maturity-title">{i18nT('情感成熟度：阶段描述与下一步')}</h2>
+          </div>
+          <p>{i18nT('阶段不是分数 · 安全优先于评估 · 可逐项撤回')}</p>
+        </div>
+        <FormationTwinMaturity user={user} onSafety={() => open('sos')} onOpen={open} />
+      </section>
 
       <section className="ft-section" aria-labelledby="ft-patterns-title">
         <div className="ft-section-heading">
