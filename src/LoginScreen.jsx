@@ -51,7 +51,7 @@ const labelStyle = { fontSize: '13px', color: 'rgba(255,255,255,0.72)', marginBo
 const REMEMBERED_EMAIL_KEY = 'bs_remember_email'
 const LEGACY_CREDENTIALS_KEY = 'bs_remember_creds'
 const DEFAULT_LOGIN_EMAIL = 'john@biblesphere.com'
-const DEFAULT_LOGIN_PASSWORD = 'John'
+const DEFAULT_LOGIN_PASSWORD = 'john'
 
 function loadRememberedEmail() {
   try {

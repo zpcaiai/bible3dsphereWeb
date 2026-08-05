@@ -798,4 +798,32 @@ export default {
 
   // ── 邮箱服务不可用时的登录页提示 ──
   "邮箱验证服务当前不可用，暂时无法自助注册或重置密码。这不是你的问题，请联系管理员。": "Email verification is currently unavailable, so self-service sign-up and password reset are on hold. This is not something you did wrong — please contact the administrator.",
+
+  // ── 情感成熟度试点：安全、同意与数据边界 ──
+  "条证据": "pieces of evidence",
+  "暂时无法加载": "Unable to load right now",
+  "登录后才会读取你的情感成熟度记录；访客只能查看模块边界。": "Your emotional-maturity records are loaded only after sign-in. Guests can view only the module boundaries.",
+  "先照顾此刻的安全，评估可以等。": "Take care of your immediate safety first. The assessment can wait.",
+  "你刚才写下的内容里有需要优先处理的信号。这一部分暂时停下，请使用危机安全入口并联系可信任的真人。": "What you wrote contains signals that need immediate attention. This section is paused; use the crisis-safety entry point and contact a trusted person.",
+  "用几句话说说最近的状态。系统会先做一次安全分流，再决定是否继续。": "Describe how things have been recently in a few sentences. The system will perform a safety triage before deciding whether to continue.",
+  "例如：最近和家人有一次冲突，我当时很生气，事后想了很久。": "For example: I recently had a conflict with a family member. I was very angry then and kept thinking about it afterward.",
+  "开始一次自评": "Start a self-assessment",
+  "我现在需要帮助": "I need help now",
+  "当前阶段描述（按情境与时间范围）": "Current stage description by context and time frame",
+  "还没有足够的证据形成阶段描述。系统不会为了填满页面而虚构一个结论。": "There is not enough evidence to form a stage description yet. The system will not invent a conclusion just to fill the page.",
+  "可以试的下一步": "Possible next steps",
+  "这些是既有训练模块，不是新的评分。一次只做一件。": "These are existing practice modules, not new scores. Work on one at a time.",
+  "我授权了什么（可逐项撤回）": "What I have authorized (revocable item by item)",
+  "这一项是使用本功能的前提": "This item is required to use this feature",
+  "这个功能不做什么": "What this feature does not do",
+  "不生成总分、百分位或与他人的排名。": "It does not produce an overall score, percentile, or ranking against other people.",
+  "不做临床诊断，也不评估救恩、圣灵同在或神的评价。": "It does not make clinical diagnoses or assess salvation, the presence of the Holy Spirit, or God's judgment.",
+  "不用于服事资格、按立或教会纪律判断。": "It is not used to decide ministry eligibility, ordination, or church discipline.",
+  "不替代牧者、可信关系、心理咨询或医疗服务。": "It does not replace pastors, trusted relationships, counseling, or medical care.",
+  "试点期不向任何第三方分享，包括牧者。": "During the pilot, nothing is shared with any third party, including pastors.",
+  "删除我的情感成熟度数据": "Delete my emotional-maturity data",
+  "删除会清空评估记录、证据、阶段描述与派生画像。备份副本会在保留期内自然过期，在此期间不会被恢复或使用。": "Deletion clears assessment records, evidence, stage descriptions, and derived profiles. Backup copies expire under the retention policy and will not be restored or used during that period.",
+  "删除这一部分数据": "Delete this section's data",
+  "情感成熟度：阶段描述与下一步": "Emotional maturity: stage description and next steps",
+  "阶段不是分数 · 安全优先于评估 · 可逐项撤回": "Stages are not scores · Safety comes before assessment · Consent is revocable item by item",
 }

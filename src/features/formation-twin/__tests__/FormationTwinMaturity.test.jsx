@@ -1,5 +1,5 @@
 import React from 'react'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { setRuntimeLang } from '../../../i18n/runtime'
 import FormationTwinMaturity from '../FormationTwinMaturity'
@@ -68,6 +68,7 @@ vi.mock('../emotionalMaturityApi', async (importOriginal) => {
   }
 })
 
+beforeEach(() => { setRuntimeLang('zh') })
 afterEach(() => { cleanup(); vi.clearAllMocks(); setRuntimeLang('zh') })
 
 describe('FormationTwinMaturity', () => {
