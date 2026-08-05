@@ -35,3 +35,6 @@ docs/ai-formation-certification/browser-artifacts/
 __pycache__/
 *.pyc
 .python-version
+
+# JetBrains 本地配置：workspace.xml 含本机路径与窗口状态，不该跨机器共享
+.idea/
