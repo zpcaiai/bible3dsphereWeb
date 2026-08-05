@@ -12,6 +12,7 @@
       "title": "Batch 1：竞争格局、产品定位与持续竞争情报",
       "skill_count": 16,
       "static_status": "passed",
+      "runtime_implementation_status": "IMPLEMENTED",
       "runtime_status": "NOT_RUN",
       "production_status": "NOT_CERTIFIED"
     },
@@ -21,6 +22,7 @@
       "title": "Batch 2：应用现代化自动评估",
       "skill_count": 21,
       "static_status": "passed",
+      "runtime_implementation_status": "IMPLEMENTED",
       "runtime_status": "NOT_RUN",
       "production_status": "NOT_CERTIFIED"
     },
@@ -30,6 +32,7 @@
       "title": "Batch 3：统一源码摄取、解析前端与 Canonical Semantic IR Foundation",
       "skill_count": 24,
       "static_status": "passed",
+      "runtime_implementation_status": "IMPLEMENTED",
       "runtime_status": "NOT_RUN",
       "production_status": "NOT_CERTIFIED"
     },
@@ -39,6 +42,7 @@
       "title": "Batch 4：跨语言语义映射、Transformation Rule DSL 与 Deterministic Recipe Engine",
       "skill_count": 25,
       "static_status": "passed",
+      "runtime_implementation_status": "IMPLEMENTED",
       "runtime_status": "NOT_RUN",
       "production_status": "NOT_CERTIFIED"
     },
@@ -48,6 +52,7 @@
       "title": "Batch 5：Target Language Lowering、Framework Backend 与 Idiomatic Code Generation",
       "skill_count": 34,
       "static_status": "passed",
+      "runtime_implementation_status": "IMPLEMENTED",
       "runtime_status": "NOT_RUN",
       "production_status": "NOT_CERTIFIED"
     },
@@ -57,6 +62,7 @@
       "title": "Batch 06: Standard Library, Dependency Mapping and Compatibility Runtime",
       "skill_count": 16,
       "static_status": "passed",
+      "runtime_implementation_status": "IMPLEMENTED",
       "runtime_status": "NOT_RUN",
       "production_status": "NOT_CERTIFIED"
     },
@@ -66,6 +72,7 @@
       "title": "Batch 07: Framework Contract Model and Framework Migration Recipe Packs",
       "skill_count": 16,
       "static_status": "passed",
+      "runtime_implementation_status": "IMPLEMENTED",
       "runtime_status": "NOT_RUN",
       "production_status": "NOT_CERTIFIED"
     },
@@ -75,6 +82,7 @@
       "title": "Batch 08: Repository-Aware Multi-Agent, Context and RAG System",
       "skill_count": 16,
       "static_status": "passed",
+      "runtime_implementation_status": "IMPLEMENTED",
       "runtime_status": "NOT_RUN",
       "production_status": "NOT_CERTIFIED"
     },
@@ -84,6 +92,7 @@
       "title": "Batch 09: Build, Compile, Test Repair and Bounded Fix Loop",
       "skill_count": 16,
       "static_status": "passed",
+      "runtime_implementation_status": "IMPLEMENTED",
       "runtime_status": "NOT_RUN",
       "production_status": "NOT_CERTIFIED"
     },
@@ -93,6 +102,7 @@
       "title": "Batch 10: Behavioral Equivalence, Golden Master and Differential Validation",
       "skill_count": 16,
       "static_status": "passed",
+      "runtime_implementation_status": "IMPLEMENTED",
       "runtime_status": "NOT_RUN",
       "production_status": "NOT_CERTIFIED"
     },
@@ -102,6 +112,7 @@
       "title": "Batch 11: Performance, Security and Production Semantics Validation",
       "skill_count": 16,
       "static_status": "passed",
+      "runtime_implementation_status": "IMPLEMENTED",
       "runtime_status": "NOT_RUN",
       "production_status": "NOT_CERTIFIED"
     },
@@ -111,6 +122,7 @@
       "title": "Batch 12: Benchmark, Quality Scoring and Migration Economics",
       "skill_count": 16,
       "static_status": "passed",
+      "runtime_implementation_status": "IMPLEMENTED",
       "runtime_status": "NOT_RUN",
       "production_status": "NOT_CERTIFIED"
     },
@@ -120,6 +132,7 @@
       "title": "Batch 13: Evidence Graph, Independent Oracle and Continuous Certification",
       "skill_count": 16,
       "static_status": "passed",
+      "runtime_implementation_status": "IMPLEMENTED",
       "runtime_status": "NOT_RUN",
       "production_status": "NOT_CERTIFIED"
     },
@@ -129,6 +142,7 @@
       "title": "Batch 14: Formal Verification and Proof-Carrying Migration",
       "skill_count": 16,
       "static_status": "passed",
+      "runtime_implementation_status": "IMPLEMENTED",
       "runtime_status": "NOT_RUN",
       "production_status": "NOT_CERTIFIED"
     },
@@ -138,6 +152,7 @@
       "title": "Batch 15: Counterexample-Guided Repair and Self-Evolving Validation",
       "skill_count": 16,
       "static_status": "passed",
+      "runtime_implementation_status": "IMPLEMENTED",
       "runtime_status": "NOT_RUN",
       "production_status": "NOT_CERTIFIED"
     },
@@ -147,6 +162,7 @@
       "title": "Batch 16: Target Architecture Search and Migration Planning",
       "skill_count": 16,
       "static_status": "passed",
+      "runtime_implementation_status": "IMPLEMENTED",
       "runtime_status": "NOT_RUN",
       "production_status": "NOT_CERTIFIED"
     },
@@ -156,6 +172,7 @@
       "title": "Batch 17: Migration Execution Operating System",
       "skill_count": 16,
       "static_status": "passed",
+      "runtime_implementation_status": "IMPLEMENTED",
       "runtime_status": "NOT_RUN",
       "production_status": "NOT_CERTIFIED"
     },
@@ -165,6 +182,7 @@
       "title": "Batch 18: Complete Project Generation Standard",
       "skill_count": 16,
       "static_status": "passed",
+      "runtime_implementation_status": "IMPLEMENTED",
       "runtime_status": "NOT_RUN",
       "production_status": "NOT_CERTIFIED"
     },
@@ -174,6 +192,7 @@
       "title": "Batch 19: 72 Directional Executable Generator Packs",
       "skill_count": 16,
       "static_status": "passed",
+      "runtime_implementation_status": "IMPLEMENTED",
       "runtime_status": "NOT_RUN",
       "production_status": "NOT_CERTIFIED"
     },
@@ -183,6 +202,7 @@
       "title": "Batch 20: Skill SDK, Runtime, Registry and Marketplace Productization",
       "skill_count": 16,
       "static_status": "passed",
+      "runtime_implementation_status": "IMPLEMENTED",
       "runtime_status": "NOT_RUN",
       "production_status": "NOT_CERTIFIED"
     },
@@ -192,6 +212,7 @@
       "title": "Batch 21: Real Repository Slice and Golden Workload Factory",
       "skill_count": 16,
       "static_status": "passed",
+      "runtime_implementation_status": "IMPLEMENTED",
       "runtime_status": "NOT_RUN",
       "production_status": "NOT_CERTIFIED"
     },
@@ -201,6 +222,7 @@
       "title": "Batch 22: Semantic Recovery Hardening and Runtime-Enriched CSIR",
       "skill_count": 16,
       "static_status": "passed",
+      "runtime_implementation_status": "IMPLEMENTED",
       "runtime_status": "NOT_RUN",
       "production_status": "NOT_CERTIFIED"
     },
@@ -210,6 +232,7 @@
       "title": "Batch 23: Framework Modernization Execution Packs",
       "skill_count": 16,
       "static_status": "passed",
+      "runtime_implementation_status": "IMPLEMENTED",
       "runtime_status": "NOT_RUN",
       "production_status": "NOT_CERTIFIED"
     },
@@ -219,6 +242,7 @@
       "title": "Batch 24: Real Build, Test, Package and Artifact Execution Lab",
       "skill_count": 16,
       "static_status": "passed",
+      "runtime_implementation_status": "IMPLEMENTED",
       "runtime_status": "NOT_RUN",
       "production_status": "NOT_CERTIFIED"
     },
@@ -228,6 +252,7 @@
       "title": "Batch 25: Behavioral Equivalence Gate and Independent Oracle System",
       "skill_count": 16,
       "static_status": "passed",
+      "runtime_implementation_status": "IMPLEMENTED",
       "runtime_status": "NOT_RUN",
       "production_status": "NOT_CERTIFIED"
     },
@@ -237,6 +262,7 @@
       "title": "Batch 26: Dual Run, Shadow Execution and State Reconciliation",
       "skill_count": 16,
       "static_status": "passed",
+      "runtime_implementation_status": "IMPLEMENTED",
       "runtime_status": "NOT_RUN",
       "production_status": "NOT_CERTIFIED"
     },
@@ -246,6 +272,7 @@
       "title": "Batch 27: Canonical Database IR, Data Migration and Cutover Foundation",
       "skill_count": 16,
       "static_status": "passed",
+      "runtime_implementation_status": "IMPLEMENTED",
       "runtime_status": "NOT_RUN",
       "production_status": "NOT_CERTIFIED"
     },
@@ -255,6 +282,7 @@
       "title": "Batch 28: Oracle, SQL Server, MySQL and PostgreSQL 12 Directional Route Packs",
       "skill_count": 16,
       "static_status": "passed",
+      "runtime_implementation_status": "IMPLEMENTED",
       "runtime_status": "NOT_RUN",
       "production_status": "NOT_CERTIFIED"
     },
@@ -264,6 +292,7 @@
       "title": "Batch 29: Multi-Language Route Certification Factory",
       "skill_count": 16,
       "static_status": "passed",
+      "runtime_implementation_status": "IMPLEMENTED",
       "runtime_status": "NOT_RUN",
       "production_status": "NOT_CERTIFIED"
     },
@@ -273,6 +302,7 @@
       "title": "Batch 30: Multi-Framework and Version Migration Factory",
       "skill_count": 16,
       "static_status": "passed",
+      "runtime_implementation_status": "IMPLEMENTED",
       "runtime_status": "NOT_RUN",
       "production_status": "NOT_CERTIFIED"
     },
@@ -282,6 +312,7 @@
       "title": "Batch 31: Database and Data-Platform Modernization Factory",
       "skill_count": 16,
       "static_status": "passed",
+      "runtime_implementation_status": "IMPLEMENTED",
       "runtime_status": "NOT_RUN",
       "production_status": "NOT_CERTIFIED"
     },
@@ -291,6 +322,7 @@
       "title": "Batch 32: Client, UI, Desktop and Mobile Modernization Factory",
       "skill_count": 16,
       "static_status": "passed",
+      "runtime_implementation_status": "IMPLEMENTED",
       "runtime_status": "NOT_RUN",
       "production_status": "NOT_CERTIFIED"
     },
@@ -300,6 +332,7 @@
       "title": "Batch 33: Cloud, IaC, Container and Platform Modernization Factory",
       "skill_count": 16,
       "static_status": "passed",
+      "runtime_implementation_status": "IMPLEMENTED",
       "runtime_status": "NOT_RUN",
       "production_status": "NOT_CERTIFIED"
     },
@@ -309,6 +342,7 @@
       "title": "Batch 34: Portfolio-Scale Multi-Repository Migration Factory",
       "skill_count": 16,
       "static_status": "passed",
+      "runtime_implementation_status": "IMPLEMENTED",
       "runtime_status": "NOT_RUN",
       "production_status": "NOT_CERTIFIED"
     },
@@ -318,6 +352,7 @@
       "title": "Batch 35: Advanced Verification, Fuzzing, Mutation and Formal Assurance Factory",
       "skill_count": 16,
       "static_status": "passed",
+      "runtime_implementation_status": "IMPLEMENTED",
       "runtime_status": "NOT_RUN",
       "production_status": "NOT_CERTIFIED"
     },
@@ -327,6 +362,7 @@
       "title": "Batch 36: Developer Experience, CLI, IDE and SCM Integration",
       "skill_count": 16,
       "static_status": "passed",
+      "runtime_implementation_status": "IMPLEMENTED",
       "runtime_status": "NOT_RUN",
       "production_status": "NOT_CERTIFIED"
     },
@@ -336,6 +372,7 @@
       "title": "Batch 37: Extension SDK, Marketplace and Supply-Chain Governance",
       "skill_count": 16,
       "static_status": "passed",
+      "runtime_implementation_status": "IMPLEMENTED",
       "runtime_status": "NOT_RUN",
       "production_status": "NOT_CERTIFIED"
     },
@@ -345,6 +382,7 @@
       "title": "Batch 38: Canonical CapabilityPackage, Dependency Graph and Platform Convergence",
       "skill_count": 16,
       "static_status": "passed",
+      "runtime_implementation_status": "IMPLEMENTED",
       "runtime_status": "NOT_RUN",
       "production_status": "NOT_CERTIFIED"
     },
@@ -354,6 +392,7 @@
       "title": "Batch 39: Durable Workflow, Runner Fleet and Provider Reliability",
       "skill_count": 16,
       "static_status": "passed",
+      "runtime_implementation_status": "IMPLEMENTED",
       "runtime_status": "NOT_RUN",
       "production_status": "NOT_CERTIFIED"
     },
@@ -363,6 +402,7 @@
       "title": "Batch 40: Adversarial Security, Privacy and Supply-Chain Assurance",
       "skill_count": 16,
       "static_status": "passed",
+      "runtime_implementation_status": "IMPLEMENTED",
       "runtime_status": "NOT_RUN",
       "production_status": "NOT_CERTIFIED"
     },
@@ -372,6 +412,7 @@
       "title": "Batch 41: Release Engineering, Progressive Delivery and Automated Rollback",
       "skill_count": 16,
       "static_status": "passed",
+      "runtime_implementation_status": "IMPLEMENTED",
       "runtime_status": "NOT_RUN",
       "production_status": "NOT_CERTIFIED"
     },
@@ -381,6 +422,7 @@
       "title": "Batch 42: Production Observability, SLO, Incident, HA/DR and Operations Readiness",
       "skill_count": 16,
       "static_status": "passed",
+      "runtime_implementation_status": "IMPLEMENTED",
       "runtime_status": "NOT_RUN",
       "production_status": "NOT_CERTIFIED"
     },
@@ -390,6 +432,7 @@
       "title": "Batch 43: Legacy Coexistence, Cutover, Hypercare and Continuous Modernization",
       "skill_count": 16,
       "static_status": "passed",
+      "runtime_implementation_status": "IMPLEMENTED",
       "runtime_status": "NOT_RUN",
       "production_status": "NOT_CERTIFIED"
     },
@@ -399,11 +442,16 @@
       "title": "Batch 44: Unified Production Release Gate and Continuous Recertification",
       "skill_count": 16,
       "static_status": "passed",
+      "runtime_implementation_status": "IMPLEMENTED",
       "runtime_status": "NOT_RUN",
       "production_status": "NOT_CERTIFIED"
     }
   ],
-  "runtime_status": "NOT_RUN",
+  "runtime_claim_count": 8149,
+  "domain_executor_count": 44,
+  "runtime_implementation_status": "IMPLEMENTED",
+  "runtime_status": "LOCAL_RUNTIME_IMPLEMENTED",
+  "external_runtime_status": "NOT_RUN",
   "production_status": "NOT_CERTIFIED",
   "trust_boundary": "Static package validation is not runtime execution or production certification."
 }

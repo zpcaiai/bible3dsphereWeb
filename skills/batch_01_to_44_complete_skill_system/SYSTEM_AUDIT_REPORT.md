@@ -14,20 +14,24 @@ Date: 2026-08-01
 - total_skill_files: **788**
 - unique_skill_names: **788**
 - agent_interfaces: **788**
-- json_schemas: **284**
+- json_schemas: **287**
 - yaml_documents: **1030**
-- python_scripts: **45**
+- python_scripts: **48**
 - shell_scripts: **90**
 - local_markdown_links: **34**
 - manifest_files: **2659**
 - frontmatter_violations: **0**
 - skill_names_over_64_chars: **0**
 - skill_folder_name_mismatches: **0**
+- runtime_claims: **8149**
+- runtime_executors: **44**
 
 ## Validation
 
-- Schema validator: `jsonschema.Draft202012Validator; PyYAML.safe_load`
-- Runtime status: **NOT_RUN**
+- Schema validator: `json-parse-only; yaml-parse-not-available`
+- Runtime implementation: **IMPLEMENTED** (8,149 Claim Oracles / 44 Batch executors)
+- Runtime status: **LOCAL_RUNTIME_IMPLEMENTED**
+- External runtime status: **NOT_RUN**
 - Production status: **NOT_CERTIFIED**
 
 ## Codex Skill contract closure
@@ -56,7 +60,7 @@ Date: 2026-08-01
 ## Warnings and limitations
 
 - PROVENANCE_NOTICE: the intake checkout lacked 227 manifest-declared Batch 01-05 files. They were rebuilt deterministically from the supplied indexes and manifest paths; the new digests do not claim recovery of the unavailable original payloads.
-- RUNTIME_NOT_RUN: external toolchains, providers, databases, and workloads were not executed.
+- EXTERNAL_RUNTIME_NOT_RUN: local runtime tests ran, but external toolchains, providers, databases, and workloads were not executed.
 - PRODUCTION_NOT_CERTIFIED: no deployment, customer acceptance, DR, or release gate was executed.
 
 ## Trust boundary

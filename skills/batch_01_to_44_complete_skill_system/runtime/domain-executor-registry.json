@@ -1,0 +1,667 @@
+{
+  "schema_version": "1.0",
+  "namespace": "batch-01-44-complete-skill-system",
+  "executor_count": 44,
+  "entries": [
+    {
+      "batch": 1,
+      "executor_id": "skill-system-b01-domain-executor-v1",
+      "handler": "competitive_landscape",
+      "requires_actual_toolchain": true,
+      "requires_raw_evidence": true,
+      "repository_commands_allowed": false,
+      "allowed_corpora": [
+        "development",
+        "negative",
+        "holdout",
+        "representative",
+        "production"
+      ]
+    },
+    {
+      "batch": 2,
+      "executor_id": "skill-system-b02-domain-executor-v1",
+      "handler": "application_modernization_assessment",
+      "requires_actual_toolchain": true,
+      "requires_raw_evidence": true,
+      "repository_commands_allowed": false,
+      "allowed_corpora": [
+        "development",
+        "negative",
+        "holdout",
+        "representative",
+        "production"
+      ]
+    },
+    {
+      "batch": 3,
+      "executor_id": "skill-system-b03-domain-executor-v1",
+      "handler": "canonical_semantic_ir",
+      "requires_actual_toolchain": true,
+      "requires_raw_evidence": true,
+      "repository_commands_allowed": false,
+      "allowed_corpora": [
+        "development",
+        "negative",
+        "holdout",
+        "representative",
+        "production"
+      ]
+    },
+    {
+      "batch": 4,
+      "executor_id": "skill-system-b04-domain-executor-v1",
+      "handler": "transformation_recipe_engine",
+      "requires_actual_toolchain": true,
+      "requires_raw_evidence": true,
+      "repository_commands_allowed": false,
+      "allowed_corpora": [
+        "development",
+        "negative",
+        "holdout",
+        "representative",
+        "production"
+      ]
+    },
+    {
+      "batch": 5,
+      "executor_id": "skill-system-b05-domain-executor-v1",
+      "handler": "target_language_lowering",
+      "requires_actual_toolchain": true,
+      "requires_raw_evidence": true,
+      "repository_commands_allowed": false,
+      "allowed_corpora": [
+        "development",
+        "negative",
+        "holdout",
+        "representative",
+        "production"
+      ]
+    },
+    {
+      "batch": 6,
+      "executor_id": "skill-system-b06-domain-executor-v1",
+      "handler": "standard-library-dependency-compatibility",
+      "requires_actual_toolchain": true,
+      "requires_raw_evidence": true,
+      "repository_commands_allowed": false,
+      "allowed_corpora": [
+        "development",
+        "negative",
+        "holdout",
+        "representative",
+        "production"
+      ]
+    },
+    {
+      "batch": 7,
+      "executor_id": "skill-system-b07-domain-executor-v1",
+      "handler": "framework-contract-recipe-packs",
+      "requires_actual_toolchain": true,
+      "requires_raw_evidence": true,
+      "repository_commands_allowed": false,
+      "allowed_corpora": [
+        "development",
+        "negative",
+        "holdout",
+        "representative",
+        "production"
+      ]
+    },
+    {
+      "batch": 8,
+      "executor_id": "skill-system-b08-domain-executor-v1",
+      "handler": "repository-aware-multi-agent",
+      "requires_actual_toolchain": true,
+      "requires_raw_evidence": true,
+      "repository_commands_allowed": false,
+      "allowed_corpora": [
+        "development",
+        "negative",
+        "holdout",
+        "representative",
+        "production"
+      ]
+    },
+    {
+      "batch": 9,
+      "executor_id": "skill-system-b09-domain-executor-v1",
+      "handler": "build-compile-test-repair",
+      "requires_actual_toolchain": true,
+      "requires_raw_evidence": true,
+      "repository_commands_allowed": false,
+      "allowed_corpora": [
+        "development",
+        "negative",
+        "holdout",
+        "representative",
+        "production"
+      ]
+    },
+    {
+      "batch": 10,
+      "executor_id": "skill-system-b10-domain-executor-v1",
+      "handler": "behavioral-equivalence-differential",
+      "requires_actual_toolchain": true,
+      "requires_raw_evidence": true,
+      "repository_commands_allowed": false,
+      "allowed_corpora": [
+        "development",
+        "negative",
+        "holdout",
+        "representative",
+        "production"
+      ]
+    },
+    {
+      "batch": 11,
+      "executor_id": "skill-system-b11-domain-executor-v1",
+      "handler": "performance-security-production-semantics",
+      "requires_actual_toolchain": true,
+      "requires_raw_evidence": true,
+      "repository_commands_allowed": false,
+      "allowed_corpora": [
+        "development",
+        "negative",
+        "holdout",
+        "representative",
+        "production"
+      ]
+    },
+    {
+      "batch": 12,
+      "executor_id": "skill-system-b12-domain-executor-v1",
+      "handler": "benchmark-quality-economics",
+      "requires_actual_toolchain": true,
+      "requires_raw_evidence": true,
+      "repository_commands_allowed": false,
+      "allowed_corpora": [
+        "development",
+        "negative",
+        "holdout",
+        "representative",
+        "production"
+      ]
+    },
+    {
+      "batch": 13,
+      "executor_id": "skill-system-b13-domain-executor-v1",
+      "handler": "evidence-graph-continuous-certification",
+      "requires_actual_toolchain": true,
+      "requires_raw_evidence": true,
+      "repository_commands_allowed": false,
+      "allowed_corpora": [
+        "development",
+        "negative",
+        "holdout",
+        "representative",
+        "production"
+      ]
+    },
+    {
+      "batch": 14,
+      "executor_id": "skill-system-b14-domain-executor-v1",
+      "handler": "formal-verification-proof-carrying",
+      "requires_actual_toolchain": true,
+      "requires_raw_evidence": true,
+      "repository_commands_allowed": false,
+      "allowed_corpora": [
+        "development",
+        "negative",
+        "holdout",
+        "representative",
+        "production"
+      ]
+    },
+    {
+      "batch": 15,
+      "executor_id": "skill-system-b15-domain-executor-v1",
+      "handler": "counterexample-guided-repair",
+      "requires_actual_toolchain": true,
+      "requires_raw_evidence": true,
+      "repository_commands_allowed": false,
+      "allowed_corpora": [
+        "development",
+        "negative",
+        "holdout",
+        "representative",
+        "production"
+      ]
+    },
+    {
+      "batch": 16,
+      "executor_id": "skill-system-b16-domain-executor-v1",
+      "handler": "target-architecture-search",
+      "requires_actual_toolchain": true,
+      "requires_raw_evidence": true,
+      "repository_commands_allowed": false,
+      "allowed_corpora": [
+        "development",
+        "negative",
+        "holdout",
+        "representative",
+        "production"
+      ]
+    },
+    {
+      "batch": 17,
+      "executor_id": "skill-system-b17-domain-executor-v1",
+      "handler": "migration-execution-os",
+      "requires_actual_toolchain": true,
+      "requires_raw_evidence": true,
+      "repository_commands_allowed": false,
+      "allowed_corpora": [
+        "development",
+        "negative",
+        "holdout",
+        "representative",
+        "production"
+      ]
+    },
+    {
+      "batch": 18,
+      "executor_id": "skill-system-b18-domain-executor-v1",
+      "handler": "complete-project-generation",
+      "requires_actual_toolchain": true,
+      "requires_raw_evidence": true,
+      "repository_commands_allowed": false,
+      "allowed_corpora": [
+        "development",
+        "negative",
+        "holdout",
+        "representative",
+        "production"
+      ]
+    },
+    {
+      "batch": 19,
+      "executor_id": "skill-system-b19-domain-executor-v1",
+      "handler": "seventy-two-directional-route-packs",
+      "requires_actual_toolchain": true,
+      "requires_raw_evidence": true,
+      "repository_commands_allowed": false,
+      "allowed_corpora": [
+        "development",
+        "negative",
+        "holdout",
+        "representative",
+        "production"
+      ]
+    },
+    {
+      "batch": 20,
+      "executor_id": "skill-system-b20-domain-executor-v1",
+      "handler": "skill-sdk-runtime-registry",
+      "requires_actual_toolchain": true,
+      "requires_raw_evidence": true,
+      "repository_commands_allowed": false,
+      "allowed_corpora": [
+        "development",
+        "negative",
+        "holdout",
+        "representative",
+        "production"
+      ]
+    },
+    {
+      "batch": 21,
+      "executor_id": "skill-system-b21-domain-executor-v1",
+      "handler": "real-repository-golden-workload",
+      "requires_actual_toolchain": true,
+      "requires_raw_evidence": true,
+      "repository_commands_allowed": false,
+      "allowed_corpora": [
+        "development",
+        "negative",
+        "holdout",
+        "representative",
+        "production"
+      ]
+    },
+    {
+      "batch": 22,
+      "executor_id": "skill-system-b22-domain-executor-v1",
+      "handler": "semantic-recovery-hardening",
+      "requires_actual_toolchain": true,
+      "requires_raw_evidence": true,
+      "repository_commands_allowed": false,
+      "allowed_corpora": [
+        "development",
+        "negative",
+        "holdout",
+        "representative",
+        "production"
+      ]
+    },
+    {
+      "batch": 23,
+      "executor_id": "skill-system-b23-domain-executor-v1",
+      "handler": "framework-modernization-execution",
+      "requires_actual_toolchain": true,
+      "requires_raw_evidence": true,
+      "repository_commands_allowed": false,
+      "allowed_corpora": [
+        "development",
+        "negative",
+        "holdout",
+        "representative",
+        "production"
+      ]
+    },
+    {
+      "batch": 24,
+      "executor_id": "skill-system-b24-domain-executor-v1",
+      "handler": "real-build-test-artifact-lab",
+      "requires_actual_toolchain": true,
+      "requires_raw_evidence": true,
+      "repository_commands_allowed": false,
+      "allowed_corpora": [
+        "development",
+        "negative",
+        "holdout",
+        "representative",
+        "production"
+      ]
+    },
+    {
+      "batch": 25,
+      "executor_id": "skill-system-b25-domain-executor-v1",
+      "handler": "behavioral-equivalence-gate",
+      "requires_actual_toolchain": true,
+      "requires_raw_evidence": true,
+      "repository_commands_allowed": false,
+      "allowed_corpora": [
+        "development",
+        "negative",
+        "holdout",
+        "representative",
+        "production"
+      ]
+    },
+    {
+      "batch": 26,
+      "executor_id": "skill-system-b26-domain-executor-v1",
+      "handler": "dual-run-shadow-reconciliation",
+      "requires_actual_toolchain": true,
+      "requires_raw_evidence": true,
+      "repository_commands_allowed": false,
+      "allowed_corpora": [
+        "development",
+        "negative",
+        "holdout",
+        "representative",
+        "production"
+      ]
+    },
+    {
+      "batch": 27,
+      "executor_id": "skill-system-b27-domain-executor-v1",
+      "handler": "canonical-database-ir-foundation",
+      "requires_actual_toolchain": true,
+      "requires_raw_evidence": true,
+      "repository_commands_allowed": false,
+      "allowed_corpora": [
+        "development",
+        "negative",
+        "holdout",
+        "representative",
+        "production"
+      ]
+    },
+    {
+      "batch": 28,
+      "executor_id": "skill-system-b28-domain-executor-v1",
+      "handler": "relational-database-12-routes",
+      "requires_actual_toolchain": true,
+      "requires_raw_evidence": true,
+      "repository_commands_allowed": false,
+      "allowed_corpora": [
+        "development",
+        "negative",
+        "holdout",
+        "representative",
+        "production"
+      ]
+    },
+    {
+      "batch": 29,
+      "executor_id": "skill-system-b29-domain-executor-v1",
+      "handler": "multi-language-route-factory",
+      "requires_actual_toolchain": true,
+      "requires_raw_evidence": true,
+      "repository_commands_allowed": false,
+      "allowed_corpora": [
+        "development",
+        "negative",
+        "holdout",
+        "representative",
+        "production"
+      ]
+    },
+    {
+      "batch": 30,
+      "executor_id": "skill-system-b30-domain-executor-v1",
+      "handler": "multi-framework-version-factory",
+      "requires_actual_toolchain": true,
+      "requires_raw_evidence": true,
+      "repository_commands_allowed": false,
+      "allowed_corpora": [
+        "development",
+        "negative",
+        "holdout",
+        "representative",
+        "production"
+      ]
+    },
+    {
+      "batch": 31,
+      "executor_id": "skill-system-b31-domain-executor-v1",
+      "handler": "database-data-platform-factory",
+      "requires_actual_toolchain": true,
+      "requires_raw_evidence": true,
+      "repository_commands_allowed": false,
+      "allowed_corpora": [
+        "development",
+        "negative",
+        "holdout",
+        "representative",
+        "production"
+      ]
+    },
+    {
+      "batch": 32,
+      "executor_id": "skill-system-b32-domain-executor-v1",
+      "handler": "client-ui-modernization-factory",
+      "requires_actual_toolchain": true,
+      "requires_raw_evidence": true,
+      "repository_commands_allowed": false,
+      "allowed_corpora": [
+        "development",
+        "negative",
+        "holdout",
+        "representative",
+        "production"
+      ]
+    },
+    {
+      "batch": 33,
+      "executor_id": "skill-system-b33-domain-executor-v1",
+      "handler": "cloud-iac-platform-factory",
+      "requires_actual_toolchain": true,
+      "requires_raw_evidence": true,
+      "repository_commands_allowed": false,
+      "allowed_corpora": [
+        "development",
+        "negative",
+        "holdout",
+        "representative",
+        "production"
+      ]
+    },
+    {
+      "batch": 34,
+      "executor_id": "skill-system-b34-domain-executor-v1",
+      "handler": "portfolio-scale-migration-factory",
+      "requires_actual_toolchain": true,
+      "requires_raw_evidence": true,
+      "repository_commands_allowed": false,
+      "allowed_corpora": [
+        "development",
+        "negative",
+        "holdout",
+        "representative",
+        "production"
+      ]
+    },
+    {
+      "batch": 35,
+      "executor_id": "skill-system-b35-domain-executor-v1",
+      "handler": "advanced-verification-factory",
+      "requires_actual_toolchain": true,
+      "requires_raw_evidence": true,
+      "repository_commands_allowed": false,
+      "allowed_corpora": [
+        "development",
+        "negative",
+        "holdout",
+        "representative",
+        "production"
+      ]
+    },
+    {
+      "batch": 36,
+      "executor_id": "skill-system-b36-domain-executor-v1",
+      "handler": "developer-experience-integration",
+      "requires_actual_toolchain": true,
+      "requires_raw_evidence": true,
+      "repository_commands_allowed": false,
+      "allowed_corpora": [
+        "development",
+        "negative",
+        "holdout",
+        "representative",
+        "production"
+      ]
+    },
+    {
+      "batch": 37,
+      "executor_id": "skill-system-b37-domain-executor-v1",
+      "handler": "extension-marketplace-governance",
+      "requires_actual_toolchain": true,
+      "requires_raw_evidence": true,
+      "repository_commands_allowed": false,
+      "allowed_corpora": [
+        "development",
+        "negative",
+        "holdout",
+        "representative",
+        "production"
+      ]
+    },
+    {
+      "batch": 38,
+      "executor_id": "skill-system-b38-domain-executor-v1",
+      "handler": "platform-convergence",
+      "requires_actual_toolchain": true,
+      "requires_raw_evidence": true,
+      "repository_commands_allowed": false,
+      "allowed_corpora": [
+        "development",
+        "negative",
+        "holdout",
+        "representative",
+        "production"
+      ]
+    },
+    {
+      "batch": 39,
+      "executor_id": "skill-system-b39-domain-executor-v1",
+      "handler": "durable-workflow-runner-reliability",
+      "requires_actual_toolchain": true,
+      "requires_raw_evidence": true,
+      "repository_commands_allowed": false,
+      "allowed_corpora": [
+        "development",
+        "negative",
+        "holdout",
+        "representative",
+        "production"
+      ]
+    },
+    {
+      "batch": 40,
+      "executor_id": "skill-system-b40-domain-executor-v1",
+      "handler": "adversarial-security-privacy",
+      "requires_actual_toolchain": true,
+      "requires_raw_evidence": true,
+      "repository_commands_allowed": false,
+      "allowed_corpora": [
+        "development",
+        "negative",
+        "holdout",
+        "representative",
+        "production"
+      ]
+    },
+    {
+      "batch": 41,
+      "executor_id": "skill-system-b41-domain-executor-v1",
+      "handler": "release-progressive-delivery",
+      "requires_actual_toolchain": true,
+      "requires_raw_evidence": true,
+      "repository_commands_allowed": false,
+      "allowed_corpora": [
+        "development",
+        "negative",
+        "holdout",
+        "representative",
+        "production"
+      ]
+    },
+    {
+      "batch": 42,
+      "executor_id": "skill-system-b42-domain-executor-v1",
+      "handler": "production-operations-readiness",
+      "requires_actual_toolchain": true,
+      "requires_raw_evidence": true,
+      "repository_commands_allowed": false,
+      "allowed_corpora": [
+        "development",
+        "negative",
+        "holdout",
+        "representative",
+        "production"
+      ]
+    },
+    {
+      "batch": 43,
+      "executor_id": "skill-system-b43-domain-executor-v1",
+      "handler": "legacy-coexistence-retirement",
+      "requires_actual_toolchain": true,
+      "requires_raw_evidence": true,
+      "repository_commands_allowed": false,
+      "allowed_corpora": [
+        "development",
+        "negative",
+        "holdout",
+        "representative",
+        "production"
+      ]
+    },
+    {
+      "batch": 44,
+      "executor_id": "skill-system-b44-domain-executor-v1",
+      "handler": "unified-production-release-gate",
+      "requires_actual_toolchain": true,
+      "requires_raw_evidence": true,
+      "repository_commands_allowed": false,
+      "allowed_corpora": [
+        "development",
+        "negative",
+        "holdout",
+        "representative",
+        "production"
+      ]
+    }
+  ]
+}

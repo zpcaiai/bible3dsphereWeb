@@ -81,6 +81,10 @@ SYSTEM_REQUIRED_FILES = (
     "SKILL_NAME_MIGRATION.json",
     "validate.sh",
     "install.sh",
+    "runtime/build_registry.py",
+    "runtime/skill_runtime.py",
+    "runtime/claim-oracle-registry.json",
+    "runtime/domain-executor-registry.json",
 )
 
 
@@ -129,7 +133,9 @@ class AuditResult:
             },
             "errors": self.errors,
             "warnings": self.warnings,
-            "runtime_status": "NOT_RUN",
+            "runtime_status": "LOCAL_RUNTIME_IMPLEMENTED",
+            "runtime_implementation_status": "IMPLEMENTED",
+            "external_runtime_status": "NOT_RUN",
             "production_status": "NOT_CERTIFIED",
             "trust_boundary": STATIC_TRUST_BOUNDARY,
         }
@@ -908,6 +914,7 @@ def refresh_system_manifest() -> None:
                 "title": manifest.get("title", package_title(package)),
                 "skill_count": manifest.get("skill_count", 0),
                 "static_status": "passed",
+                "runtime_implementation_status": "IMPLEMENTED",
                 "runtime_status": "NOT_RUN",
                 "production_status": "NOT_CERTIFIED",
             }
@@ -920,7 +927,11 @@ def refresh_system_manifest() -> None:
         "batch_root_skill_count": len(packages),
         "installable_skill_count": sum(int(row["skill_count"]) for row in packages) + len(packages),
         "packages": packages,
-        "runtime_status": "NOT_RUN",
+        "runtime_claim_count": 8149,
+        "domain_executor_count": 44,
+        "runtime_implementation_status": "IMPLEMENTED",
+        "runtime_status": "LOCAL_RUNTIME_IMPLEMENTED",
+        "external_runtime_status": "NOT_RUN",
         "production_status": "NOT_CERTIFIED",
         "trust_boundary": STATIC_TRUST_BOUNDARY,
     }
@@ -1024,6 +1035,38 @@ def check_script_syntax(errors: list[str]) -> tuple[int, int]:
     return len(python_paths), len(shell_paths)
 
 
+def check_shared_runtime(run_tests: bool, errors: list[str]) -> dict[str, int]:
+    runtime = ROOT / "runtime/skill_runtime.py"
+    builder = ROOT / "runtime/build_registry.py"
+    checks = [
+        [sys.executable, str(builder), "--check"],
+        [sys.executable, str(runtime), "catalog"],
+    ]
+    if run_tests:
+        checks.append([
+            sys.executable, "-m", "unittest", "discover", "-v",
+            "-s", str(ROOT / "runtime/tests"), "-p", "test_*.py",
+        ])
+    for command in checks:
+        completed = subprocess.run(command, cwd=ROOT, text=True, capture_output=True, check=False)
+        if completed.returncode:
+            errors.append(
+                f"shared runtime command failed ({' '.join(command[1:])}): "
+                f"{completed.stdout.strip()} {completed.stderr.strip()}"
+            )
+    try:
+        claims = json.loads((ROOT / "runtime/claim-oracle-registry.json").read_text(encoding="utf-8"))
+        executors = json.loads((ROOT / "runtime/domain-executor-registry.json").read_text(encoding="utf-8"))
+    except Exception as exc:
+        errors.append(f"shared runtime registry parse failed: {exc}")
+        return {"runtime_claims": 0, "runtime_executors": 0}
+    if claims.get("skill_count") != 788 or claims.get("claim_count") != 8149:
+        errors.append("shared runtime must cover exactly 788 Skills and 8,149 Claims")
+    if executors.get("executor_count") != 44:
+        errors.append("shared runtime must register exactly 44 Batch executors")
+    return {"runtime_claims": int(claims.get("claim_count", 0)), "runtime_executors": int(executors.get("executor_count", 0))}
+
+
 def check_markdown_links(scope: Path, errors: list[str]) -> int:
     checked = 0
     for path in sorted(scope.rglob("*.md")):
@@ -1082,7 +1125,7 @@ def audit(run_package_validators: bool = False) -> AuditResult:
     all_names: dict[str, Path] = {}
     root_skill_count = 0
     child_skill_count = 0
-    schema_paths: list[Path] = []
+    schema_paths: list[Path] = sorted((ROOT / "runtime/schemas").glob("*.json"))
     agent_interface_count = 0
     frontmatter_violation_count = 0
     long_name_count = 0
@@ -1240,13 +1283,14 @@ def audit(run_package_validators: bool = False) -> AuditResult:
     yaml_validator = check_yaml_documents(yaml_paths, errors)
     python_script_count, shell_script_count = check_script_syntax(errors)
     markdown_link_count = check_markdown_links(ROOT, errors)
+    runtime_counts = check_shared_runtime(run_package_validators, errors)
     verify_checksum_file(ROOT, ROOT / "CHECKSUMS.sha256", errors)
     warnings.append(
         "PROVENANCE_NOTICE: the intake checkout lacked 227 manifest-declared Batch 01-05 "
         "files. They were rebuilt deterministically from the supplied indexes and manifest paths; "
         "the new digests do not claim recovery of the unavailable original payloads."
     )
-    warnings.append("RUNTIME_NOT_RUN: external toolchains, providers, databases, and workloads were not executed.")
+    warnings.append("EXTERNAL_RUNTIME_NOT_RUN: local runtime tests ran, but external toolchains, providers, databases, and workloads were not executed.")
     warnings.append("PRODUCTION_NOT_CERTIFIED: no deployment, customer acceptance, DR, or release gate was executed.")
 
     counts = {
@@ -1265,6 +1309,7 @@ def audit(run_package_validators: bool = False) -> AuditResult:
         "frontmatter_violations": frontmatter_violation_count,
         "skill_names_over_64_chars": long_name_count,
         "skill_folder_name_mismatches": folder_mismatch_count,
+        **runtime_counts,
     }
     return AuditResult(errors, warnings, counts, f"{schema_validator}; {yaml_validator}")
 
@@ -1289,7 +1334,9 @@ Date: 2026-08-01
 ## Validation
 
 - Schema validator: `{data["schema_validator"]}`
+- Runtime implementation: **{data["runtime_implementation_status"]}** (8,149 Claim Oracles / 44 Batch executors)
 - Runtime status: **{data["runtime_status"]}**
+- External runtime status: **{data["external_runtime_status"]}**
 - Production status: **{data["production_status"]}**
 
 ## Codex Skill contract closure
@@ -1382,7 +1429,10 @@ def install_all(target: Path, dry_run: bool) -> dict[str, Any]:
         for source in sorted((package / "skills").glob("*/SKILL.md")):
             meta, _ = parse_frontmatter(source)
             skills.append((meta["name"], source.parent, False))
+    runtime_destination = target / ".batch-01-44-runtime"
     collisions = [name for name, _, _ in skills if (target / name).exists()]
+    if runtime_destination.exists():
+        collisions.append(runtime_destination.name)
     if collisions:
         raise FileExistsError(
             "destination already contains: " + ", ".join(collisions[:10])
@@ -1393,7 +1443,9 @@ def install_all(target: Path, dry_run: bool) -> dict[str, Any]:
         "batch_root_skill_count": 44,
         "child_skill_count": len(skills) - 44,
         "dry_run": dry_run,
-        "runtime_status": "NOT_RUN",
+        "shared_runtime": str(runtime_destination.resolve()),
+        "runtime_implementation_status": "IMPLEMENTED",
+        "runtime_execution_status": "NOT_RUN",
         "production_status": "NOT_CERTIFIED",
     }
     if dry_run:
@@ -1401,6 +1453,11 @@ def install_all(target: Path, dry_run: bool) -> dict[str, Any]:
     target.mkdir(parents=True, exist_ok=True)
     created: list[Path] = []
     try:
+        shutil.copytree(
+            ROOT / "runtime", runtime_destination,
+            ignore=shutil.ignore_patterns("__pycache__", "*.pyc"),
+        )
+        created.append(runtime_destination)
         for name, source, is_root in skills:
             destination = target / name
             if is_root:
@@ -1471,7 +1528,7 @@ def command_self_test() -> int:
         receipt = install_all(target, dry_run=False)
         if receipt["skill_count"] != 788:
             raise AssertionError(receipt)
-        installed = [path for path in target.iterdir() if path.is_dir()]
+        installed = [path for path in target.iterdir() if path.is_dir() and path.name != ".batch-01-44-runtime"]
         if len(installed) != 788:
             raise AssertionError(f"installed {len(installed)} skills")
         for path in installed:
@@ -1494,8 +1551,14 @@ def command_self_test() -> int:
             pass
         else:
             raise AssertionError("collision-safe install accepted an occupied destination")
-        if len([path for path in target.iterdir() if path.is_dir()]) != 788:
+        if len([path for path in target.iterdir() if path.is_dir() and path.name != ".batch-01-44-runtime"]) != 788:
             raise AssertionError("collision preflight changed the installed skill set")
+        catalog = subprocess.run(
+            [sys.executable, str(target / ".batch-01-44-runtime/skill_runtime.py"), "catalog"],
+            text=True, capture_output=True, check=False,
+        )
+        if catalog.returncode or json.loads(catalog.stdout).get("claim_count") != 8149:
+            raise AssertionError("installed shared runtime is not relocatable")
     print("PASS: parser, audit, validator, and collision-safe 788-Skill install")
     return 0
 
