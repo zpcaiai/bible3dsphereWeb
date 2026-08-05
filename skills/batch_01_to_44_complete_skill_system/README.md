@@ -16,9 +16,15 @@ This system combines Batch 01–05 domain-specific skill packs with the standard
 
 Read `BATCH_01_44_ROADMAP.md` first. Each Batch remains an independent, versioned, installable Skill bag with its own compatibility contract, implementation prompt, schemas, policies, tests, manifest and validation boundary.
 
+`ORIGINAL_PAYLOAD_RECOVERY.json` records the source-archive search and the exact unresolved Batch
+01–05 provenance boundary. All discovered archive copies are byte-identical and omit the same 227
+files; deterministic reconstruction remains explicitly `RECONSTRUCTED_NOT_ORIGINAL` until a source
+owner supplies authoritative original bytes.
+
 ## Validate the complete system
 
 ```bash
+python3 -m pip install -r requirements-validation.txt
 ./validate.sh
 ```
 
@@ -28,8 +34,9 @@ digests, checksum coverage, JSON Schemas, YAML documents, Python and shell synta
 package-native validator, the immutable Claim/executor registries, and the transactional runtime
 test suite. The runtime tests cover Ed25519 role authentication, no-op false-positive rejection,
 independent Holdout, production evidence boundaries, source drift, rollback, concurrent idempotency,
-and the event hash chain. When Python `jsonschema` 4.x is available it also runs Draft 2020-12
-meta-schema validation; otherwise the report explicitly records `json-parse-only`. It writes
+and the event hash chain. Full validation fails closed unless the locked `jsonschema` and `PyYAML`
+dependencies are installed; it runs Draft 2020-12 meta-schema validation and parses every YAML
+document with `yaml.safe_load`. It writes
 `SYSTEM_AUDIT_REPORT.md` and `SYSTEM_AUDIT_REPORT.json`.
 
 ## Install all child Skills
@@ -70,7 +77,24 @@ with a different signed Verifier, then evaluate the exact Skill gate. Output and
 development/negative/Holdout composition; each Batch root additionally requires signed production
 evidence before it can reach `READY_FOR_HUMAN_DECISION`.
 
-The local runtime is implemented and tested, but it does not manufacture an external toolchain,
-provider, independent organization, customer, database, cloud, DR exercise, or production operation.
-Those executions remain `NOT_RUN`; certification remains `NOT_CERTIFIED`, and every local gate keeps
-`certified=false`.
+## Import the real database and Provider vertical slice
+
+The repository-migration E2E runner produces a strict report for PostgreSQL 16→17
+`pg_dump`/`pg_restore`, detail reconciliation, checksum-bound expand migration, restore, MinIO S3
+put/get/delete/cleanup and authenticated GitHub exact-commit reads. Import that byte-bound report into
+the Batch 31 database and Batch 33 Provider Claim-specific Oracles:
+
+```bash
+python3 runtime/import_real_toolchain_e2e.py \
+  /absolute/path/to/real-toolchain-e2e-report.json \
+  --output /absolute/new/import-directory
+```
+
+The importer fails closed on cleanup, reconciliation, rollback, idempotency, Provider identity or
+Corpus-boundary drift. It materializes development evidence only. It cannot add signatures, mark an
+independent Holdout as executed, perform a customer production cutover, or certify the system.
+
+The local runtime and this disposable integration route are implemented and tested. Other external
+toolchains, Providers, independently owned Holdout, representative customer workloads, cloud apply,
+DR exercises, production operations and certification remain `NOT_RUN` until their exact authorized
+executions occur; certification remains `NOT_CERTIFIED`, and every local gate keeps `certified=false`.

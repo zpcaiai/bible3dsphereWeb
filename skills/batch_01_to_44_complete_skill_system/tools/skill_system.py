@@ -79,12 +79,16 @@ SYSTEM_REQUIRED_FILES = (
     "BATCH_01_44_ROADMAP.md",
     "SYSTEM_MANIFEST.json",
     "SKILL_NAME_MIGRATION.json",
+    "ORIGINAL_PAYLOAD_RECOVERY.json",
     "validate.sh",
     "install.sh",
     "runtime/build_registry.py",
+    "runtime/import_real_toolchain_e2e.py",
     "runtime/skill_runtime.py",
     "runtime/claim-oracle-registry.json",
     "runtime/domain-executor-registry.json",
+    "runtime/schemas/real-toolchain-e2e-report.schema.json",
+    "requirements-validation.txt",
 )
 
 
@@ -1121,6 +1125,25 @@ def audit(run_package_validators: bool = False) -> AuditResult:
     for required in SYSTEM_REQUIRED_FILES:
         if not (ROOT / required).is_file():
             errors.append(f"system: missing {required}")
+    recovery_path = ROOT / "ORIGINAL_PAYLOAD_RECOVERY.json"
+    if recovery_path.is_file():
+        try:
+            recovery = json.loads(recovery_path.read_text(encoding="utf-8"))
+            archive = recovery.get("source_archive") or {}
+            if (recovery.get("decision") != "BLOCKED_SOURCE_PAYLOAD_UNAVAILABLE" or
+                    recovery.get("original_payload_recovered") is not False or
+                    recovery.get("reconstructed_files") != sum(LEGACY_RECONSTRUCTION.values()) or
+                    recovery.get("reconstruction_status") != "RECONSTRUCTED_NOT_ORIGINAL" or
+                    archive.get("sha256") != "441856edf1912dae33b35624e00a7a1839a97286993c2604fd3f791e5e146467" or
+                    archive.get("bytes") != 2874266):
+                errors.append("original payload recovery record is stale or overclaims recovery")
+            source_archive = ROOT.with_suffix(".zip")
+            if source_archive.is_file():
+                archive_bytes = source_archive.read_bytes()
+                if len(archive_bytes) != archive.get("bytes") or sha256_bytes(archive_bytes) != archive.get("sha256"):
+                    errors.append("source archive differs from the locked recovery record")
+        except Exception as exc:
+            errors.append(f"original payload recovery record is invalid: {exc}")
 
     all_names: dict[str, Path] = {}
     root_skill_count = 0
@@ -1281,6 +1304,14 @@ def audit(run_package_validators: bool = False) -> AuditResult:
     schema_validator = check_json_schemas(schema_paths, errors)
     yaml_paths = sorted(list(ROOT.rglob("*.yaml")) + list(ROOT.rglob("*.yml")))
     yaml_validator = check_yaml_documents(yaml_paths, errors)
+    if run_package_validators and schema_validator != "jsonschema.Draft202012Validator":
+        errors.append(
+            "full validation requires jsonschema; install requirements-validation.txt"
+        )
+    if run_package_validators and yaml_validator != "PyYAML.safe_load":
+        errors.append(
+            "full validation requires PyYAML; install requirements-validation.txt"
+        )
     python_script_count, shell_script_count = check_script_syntax(errors)
     markdown_link_count = check_markdown_links(ROOT, errors)
     runtime_counts = check_shared_runtime(run_package_validators, errors)

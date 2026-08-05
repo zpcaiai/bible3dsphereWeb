@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0",
+  "namespace": "batch-01-44-original-payload-recovery",
+  "decision": "BLOCKED_SOURCE_PAYLOAD_UNAVAILABLE",
+  "source_archive": {
+    "sha256": "441856edf1912dae33b35624e00a7a1839a97286993c2604fd3f791e5e146467",
+    "bytes": 2874266,
+    "files": 1724,
+    "batch_01_05_files_per_batch": [8, 8, 8, 8, 8],
+    "batch_06_44_files_per_batch": 43
+  },
+  "copies_checked": [
+    "repository attachment archive",
+    "ELMOS attachment archive",
+    "Downloads intake archive"
+  ],
+  "copy_digest_result": "ALL_IDENTICAL",
+  "additional_sources_checked": [
+    "reachable Git history",
+    "unreachable Git commits",
+    "Spotlight-indexed archives",
+    "user Trash",
+    "local Time Machine snapshots"
+  ],
+  "original_payload_recovered": false,
+  "reconstructed_files": 227,
+  "reconstruction_status": "RECONSTRUCTED_NOT_ORIGINAL",
+  "closure_requirement": "Provide a source-owner archive containing the missing Batch 01-05 files or authoritative per-file source digests and bytes."
+}

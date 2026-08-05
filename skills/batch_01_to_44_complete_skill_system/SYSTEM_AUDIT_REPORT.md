@@ -14,9 +14,9 @@ Date: 2026-08-01
 - total_skill_files: **788**
 - unique_skill_names: **788**
 - agent_interfaces: **788**
-- json_schemas: **287**
+- json_schemas: **288**
 - yaml_documents: **1030**
-- python_scripts: **48**
+- python_scripts: **50**
 - shell_scripts: **90**
 - local_markdown_links: **34**
 - manifest_files: **2659**
@@ -28,7 +28,7 @@ Date: 2026-08-01
 
 ## Validation
 
-- Schema validator: `json-parse-only; yaml-parse-not-available`
+- Schema validator: `jsonschema.Draft202012Validator; PyYAML.safe_load`
 - Runtime implementation: **IMPLEMENTED** (8,149 Claim Oracles / 44 Batch executors)
 - Runtime status: **LOCAL_RUNTIME_IMPLEMENTED**
 - External runtime status: **NOT_RUN**

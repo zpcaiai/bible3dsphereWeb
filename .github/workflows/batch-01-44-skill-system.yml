@@ -34,6 +34,9 @@ jobs:
         with:
           python-version: "3.12.11"
 
+      - name: Install locked validation dependencies
+        run: python3 -m pip install --disable-pip-version-check -r skills/batch_01_to_44_complete_skill_system/requirements-validation.txt
+
       - name: Check generated Claim and executor registries
         run: python3 skills/batch_01_to_44_complete_skill_system/runtime/build_registry.py --check
 
@@ -45,3 +48,57 @@ jobs:
 
       - name: Verify generated artifacts are reproducible
         run: git diff --exit-code -- skills/batch_01_to_44_complete_skill_system
+
+  real-toolchain-e2e:
+    name: PostgreSQL migration, Providers, and Claim import
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Check out Batch 01-44 repository
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+
+      - name: Check out immutable repository-migration executor
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          repository: zpcaiai/elmos
+          ref: 8896a48b5ef6bf5c2d9d65e2f420fbfe0a5c0c5e
+          path: external/elmos
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.12.11"
+
+      - name: Install locked Schema and YAML validators
+        run: python3 -m pip install --disable-pip-version-check -r skills/batch_01_to_44_complete_skill_system/requirements-validation.txt
+
+      - name: Run real migration and Provider execution
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 external/elmos/skills/repository-migration-platform-skills-batch1-38/scripts/real_toolchain_e2e.py \
+            --output "$RUNNER_TEMP/rmp-real-e2e" \
+            --source-image "postgres@sha256:253815cf7579ffa05e1673d92e78d37273e61be0e4414e9a1449337d7925be94" \
+            --target-image "postgres@sha256:fbcea1bd13b6a882cd6caa6b58db3ae5c102efe50ec625b3e2a5cbc50db5bfe4" \
+            --github-repository "zpcaiai/elmos" \
+            --github-sha "8896a48b5ef6bf5c2d9d65e2f420fbfe0a5c0c5e"
+
+      - name: Validate and import exact Batch 31 and Batch 33 Claims
+        env:
+          PYTHONPATH: skills/batch_01_to_44_complete_skill_system/runtime
+        run: |
+          python3 skills/batch_01_to_44_complete_skill_system/runtime/import_real_toolchain_e2e.py \
+            "$RUNNER_TEMP/rmp-real-e2e/real-toolchain-e2e-report.json" \
+            --output "$RUNNER_TEMP/batch01-44-real-import"
+
+      - name: Preserve content-addressed execution and import evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: batch-01-44-real-toolchain-e2e-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/rmp-real-e2e
+            ${{ runner.temp }}/batch01-44-real-import
+          if-no-files-found: error
+          retention-days: 30
