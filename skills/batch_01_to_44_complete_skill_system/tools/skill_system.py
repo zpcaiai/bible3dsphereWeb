@@ -83,6 +83,7 @@ SYSTEM_REQUIRED_FILES = (
     "validate.sh",
     "install.sh",
     "runtime/build_registry.py",
+    "runtime/domain_handlers.py",
     "runtime/import_real_toolchain_e2e.py",
     "runtime/skill_runtime.py",
     "runtime/claim-oracle-registry.json",
@@ -1576,6 +1577,8 @@ def command_self_test() -> int:
             raise AssertionError("; ".join(installed_link_errors[:10]))
         if not (target / "batch-01-44-install-receipt.json").is_file():
             raise AssertionError("missing install receipt")
+        if not (runtime_destination / "domain_handlers.py").is_file():
+            raise AssertionError("installed shared runtime lacks callable domain handlers")
         try:
             install_all(target, dry_run=False)
         except FileExistsError:

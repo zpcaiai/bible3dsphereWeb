@@ -17,6 +17,7 @@ from pathlib import Path
 from typing import Any
 
 import skill_runtime
+from domain_handlers import POLICIES, contract_for_batch, evidence_role
 
 try:
     from jsonschema import Draft202012Validator
@@ -114,7 +115,7 @@ def claim(skill: str, claim_type: str, index: int) -> skill_runtime.Claim:
 def tool(name: str, version: str, operation: list[str]) -> dict[str, Any]:
     if not isinstance(version, str) or not version:
         raise skill_runtime.RuntimeFailure(f"tool version is missing: {name}")
-    return {"name": name, "version": version, "argv_sha256": digest(canonical_bytes(operation)), "exit_code": 0, "evidence_role": "real-toolchain-e2e-report"}
+    return {"name": name, "version": version, "argv_sha256": digest(canonical_bytes(operation)), "exit_code": 0}
 
 
 def materialize(report_path: Path, output: Path) -> list[Path]:
@@ -145,18 +146,33 @@ def materialize(report_path: Path, output: Path) -> list[Path]:
         ),
     ]
     environment_digest = digest(canonical_bytes({"database": database, "providers": providers}))
-    raw_reference = {"path": str(report_path.resolve()), "sha256": digest(report_bytes), "bytes": len(report_bytes), "role": "real-toolchain-e2e-report"}
     generated: list[Path] = []
     for item, tools, detail in mappings:
+        policy = POLICIES[item.batch]
+        if len(tools) != len(policy.capabilities):
+            raise skill_runtime.RuntimeFailure(f"Batch {item.batch} real-toolchain mapping does not cover its domain capabilities")
+        bound_tools = []
+        raw_references = []
+        for native_tool, capability in zip(tools, policy.capabilities, strict=True):
+            role = evidence_role(policy, capability)
+            bound_tools.append({**native_tool, "evidence_role": role})
+            raw_references.append({"path": str(report_path.resolve()), "sha256": digest(report_bytes),
+                                   "bytes": len(report_bytes), "role": role})
+        assertions = [{"name": f"{item.oracle_id}:operation:{policy.operation}", "outcome": "PASS", "detail": detail}]
+        assertions.extend({"name": f"{item.oracle_id}:capability:{capability}", "outcome": "PASS", "detail": detail}
+                          for capability in policy.capabilities)
+        assertions.extend({"name": f"{item.oracle_id}:safety:{control}", "outcome": "PASS", "detail": detail}
+                          for control in policy.safety_controls)
         payload = {
             "schema_version": "1.0", "batch": item.batch, "skill": item.skill, "executor_id": item.executor_id,
             "claim": {"type": item.claim_type, "index": item.claim_index, "sha256": item.sha256},
             "corpus": {"role": "development", "id": "real-toolchain-development-v1", "sha256": database["data_sha256"], "independent": False},
             "source_fingerprint": database["schema_sha256"],
             "environment": {"id": report["run_id"], "kind": "clean", "digest": environment_digest},
-            "toolchain": tools,
-            "assertions": [{"name": f"{item.oracle_id}:real-toolchain-contract", "outcome": "PASS", "detail": detail}],
-            "raw_evidence": [raw_reference], "decision": "PASS",
+            "domain_contract": contract_for_batch(item.batch),
+            "toolchain": bound_tools,
+            "assertions": assertions,
+            "raw_evidence": raw_references, "decision": "PASS",
             "limitations": [*report["limitations"], "imported as development evidence only"],
         }
         result_path = output / f"batch{item.batch:02d}-domain-result.json"

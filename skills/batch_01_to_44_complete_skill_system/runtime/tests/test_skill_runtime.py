@@ -18,6 +18,7 @@ assert SPEC and SPEC.loader
 runtime = importlib.util.module_from_spec(SPEC)
 sys.modules[SPEC.name] = runtime
 SPEC.loader.exec_module(runtime)
+import domain_handlers
 
 
 class SkillRuntimeTest(unittest.TestCase):
@@ -77,11 +78,27 @@ class SkillRuntimeTest(unittest.TestCase):
                 "signature": base64.urlsafe_b64encode(signature.read_bytes()).decode("ascii").rstrip("=")}
 
     def domain_result(self, claim: object, corpus: str, *, independent: bool | None = None, tool: str = "fixture-native-tool") -> Path:
-        raw = self.root / f"raw-{claim.claim_type}-{claim.claim_index}-{corpus}.log"
-        raw.write_text(f"native bytes for {claim.oracle_id} {corpus}\n", encoding="utf-8")
-        raw_bytes = raw.read_bytes()
+        policy = domain_handlers.POLICIES[claim.batch]
         if independent is None:
             independent = corpus in {"holdout", "representative", "production"}
+        toolchain = []
+        raw_evidence = []
+        for index, capability in enumerate(policy.capabilities):
+            role = domain_handlers.evidence_role(policy, capability)
+            raw = self.root / f"raw-b{claim.batch:02d}-{claim.claim_type}-{claim.claim_index}-{corpus}-{capability}.log"
+            raw.write_text(f"native bytes for {claim.oracle_id} {corpus} {capability}\n", encoding="utf-8")
+            raw_bytes = raw.read_bytes()
+            toolchain.append({"name": tool if tool != "fixture-native-tool" else f"fixture-native-tool-{index + 1}",
+                              "version": "1.0.0", "argv_sha256": runtime.canonical_digest([policy.operation, capability]),
+                              "exit_code": 0, "evidence_role": role})
+            raw_evidence.append({"path": str(raw), "sha256": runtime.digest_bytes(raw_bytes),
+                                 "bytes": len(raw_bytes), "role": role})
+        assertions = [{"name": f"{claim.oracle_id}:operation:{policy.operation}", "outcome": "PASS",
+                       "detail": "Batch-specific operation completed against byte-bound evidence"}]
+        assertions.extend({"name": f"{claim.oracle_id}:capability:{capability}", "outcome": "PASS",
+                           "detail": "Capability contract passed"} for capability in policy.capabilities)
+        assertions.extend({"name": f"{claim.oracle_id}:safety:{control}", "outcome": "PASS",
+                           "detail": "Safety control remained enforced"} for control in policy.safety_controls)
         payload = {
             "schema_version": "1.0", "batch": claim.batch, "skill": claim.skill, "executor_id": claim.executor_id,
             "claim": {"type": claim.claim_type, "index": claim.claim_index, "sha256": claim.sha256},
@@ -90,11 +107,10 @@ class SkillRuntimeTest(unittest.TestCase):
             "source_fingerprint": runtime.metadata(self.workspace)["source_fingerprint"],
             "environment": {"id": f"environment-{corpus}", "kind": "production" if corpus == "production" else ("holdout" if corpus == "holdout" else "clean"),
                             "digest": runtime.canonical_digest(f"environment-{corpus}")},
-            "toolchain": [{"name": tool, "version": "1.0.0", "argv_sha256": runtime.canonical_digest("exact-package-command"),
-                           "exit_code": 0, "evidence_role": "native-log"}],
-            "assertions": [{"name": f"{claim.oracle_id}:exact-contract", "outcome": "PASS",
-                            "detail": "Claim-specific semantics passed against byte-bound raw evidence"}],
-            "raw_evidence": [{"path": str(raw), "sha256": runtime.digest_bytes(raw_bytes), "bytes": len(raw_bytes), "role": "native-log"}],
+            "domain_contract": domain_handlers.contract_for_batch(claim.batch),
+            "toolchain": toolchain,
+            "assertions": assertions,
+            "raw_evidence": raw_evidence,
             "decision": "PASS", "limitations": [],
         }
         path = self.root / f"domain-{claim.claim_type}-{claim.claim_index}-{corpus}.json"
@@ -140,6 +156,30 @@ class SkillRuntimeTest(unittest.TestCase):
         self.assertEqual(8149, len(registry.by_claim))
         self.assertEqual(list(range(1, 45)), sorted(registry.executors))
         self.assertEqual(44, len({entry["handler"] for entry in registry.executors.values()}))
+        self.assertEqual(set(entry["handler"] for entry in registry.executors.values()), set(domain_handlers.HANDLERS))
+        self.assertEqual(44, len({id(handler) for handler in domain_handlers.HANDLERS.values()}))
+
+    def test_all_44_domain_handlers_execute_their_exact_contract(self) -> None:
+        registry = runtime.Registry.load()
+        claims_by_batch = {claim.batch: claim for claim in registry.by_claim.values()}
+        for batch in range(1, 45):
+            claim = claims_by_batch[batch]
+            subject = runtime.materialize_domain_result(
+                self.domain_result(claim, claim.corpora[0]), (self.root.resolve(),)
+            )
+            self.assertEqual("PASS", subject["decision"])
+            self.assertTrue(any(check["name"] == f"domain-handler:{domain_handlers.POLICIES[batch].handler}"
+                                for check in subject["checks"]))
+
+    def test_cross_batch_domain_contract_substitution_is_rejected(self) -> None:
+        registry = runtime.Registry.load()
+        claim = next(item for item in registry.by_claim.values() if item.batch == 31)
+        path = self.domain_result(claim, claim.corpora[0])
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        payload["domain_contract"] = domain_handlers.contract_for_batch(33)
+        path.write_text(json.dumps(payload), encoding="utf-8")
+        with self.assertRaisesRegex(runtime.RuntimeFailure, "does not match handler"):
+            runtime.materialize_domain_result(path, (self.root.resolve(),))
 
     def test_generic_noop_is_not_a_domain_executor(self) -> None:
         claim = runtime.Registry.load().by_skill[self.skill][0]

@@ -13,6 +13,7 @@ This system combines Batch 01–05 domain-specific skill packs with the standard
 - Codex interfaces (`agents/openai.yaml`): **788**
 - Claim-specific Oracle obligations: **8,149**
 - Unique Batch domain-executor handlers: **44**
+- Callable Batch domain policies covered by executable tests: **44 / 44**
 
 Read `BATCH_01_44_ROADMAP.md` first. Each Batch remains an independent, versioned, installable Skill bag with its own compatibility contract, implementation prompt, schemas, policies, tests, manifest and validation boundary.
 
@@ -34,7 +35,8 @@ digests, checksum coverage, JSON Schemas, YAML documents, Python and shell synta
 package-native validator, the immutable Claim/executor registries, and the transactional runtime
 test suite. The runtime tests cover Ed25519 role authentication, no-op false-positive rejection,
 independent Holdout, production evidence boundaries, source drift, rollback, concurrent idempotency,
-and the event hash chain. Full validation fails closed unless the locked `jsonschema` and `PyYAML`
+the event hash chain, all 44 callable domain handlers, and cross-Batch contract substitution. Full
+validation fails closed unless the locked `jsonschema` and `PyYAML`
 dependencies are installed; it runs Draft 2020-12 meta-schema validation and parses every YAML
 document with `yaml.safe_load`. It writes
 `SYSTEM_AUDIT_REPORT.md` and `SYSTEM_AUDIT_REPORT.json`.
@@ -62,9 +64,13 @@ python3 "$SKILL_RUNTIME" init \
   --trust-store /absolute/path/to/actor-trust-store.json
 ```
 
-The native toolchain must emit a typed `domain-execution-result`. The package-owned Batch handler
-checks the exact Skill/Claim/executor binding, tool version and argv digest, Claim-specific Oracle
-assertions, Corpus ownership, environment, and raw evidence bytes:
+The native toolchain must emit a typed `domain-execution-result`. The package-owned dispatcher calls
+the exact registered Batch handler and requires its immutable `domain_contract`: operation,
+capabilities, and safety controls. Every capability must have a successful native-tool record, a
+matching byte-bound raw-evidence role, and a Claim-specific Oracle assertion. The shared runtime also
+checks the exact Skill/Claim/executor binding, tool version and argv digest, Corpus ownership, and
+environment. A Batch 31 result cannot substitute a Batch 33 contract, and repository content cannot
+select a command or handler:
 
 ```bash
 python3 "$SKILL_RUNTIME" domain-result /absolute/path/to/domain-result.json \

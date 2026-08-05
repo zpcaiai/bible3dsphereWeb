@@ -17,6 +17,7 @@ import os
 import sqlite3
 import stat
 import subprocess
+import sys
 import tempfile
 import time
 from contextlib import contextmanager
@@ -29,6 +30,12 @@ from typing import Any, Iterator
 
 RUNTIME_ROOT = Path(__file__).resolve().parent
 SYSTEM_ROOT = RUNTIME_ROOT.parent
+if str(RUNTIME_ROOT) not in sys.path:
+    sys.path.insert(0, str(RUNTIME_ROOT))
+
+from domain_handlers import DomainHandlerError, execute_handler
+
+
 CLAIM_REGISTRY_PATH = RUNTIME_ROOT / "claim-oracle-registry.json"
 EXECUTOR_REGISTRY_PATH = RUNTIME_ROOT / "domain-executor-registry.json"
 MAX_FILE_BYTES = 512 * 1024 * 1024
@@ -425,7 +432,7 @@ def verify_claim_subject(subject: Any, claim: Claim, corpus_role: str, outcome: 
 
 def materialize_domain_result(result_file: Path, evidence_roots: tuple[Path, ...]) -> dict[str, Any]:
     payload = json.loads(read_regular(confined(result_file, evidence_roots), 8 * 1024 * 1024, "domain result").decode("utf-8"))
-    required = {"schema_version", "batch", "skill", "executor_id", "claim", "corpus", "source_fingerprint", "environment", "toolchain", "assertions", "raw_evidence", "decision", "limitations"}
+    required = {"schema_version", "batch", "skill", "executor_id", "claim", "corpus", "source_fingerprint", "environment", "domain_contract", "toolchain", "assertions", "raw_evidence", "decision", "limitations"}
     if not isinstance(payload, dict) or set(payload) != required or payload.get("schema_version") != "1.0":
         raise RuntimeFailure("domain result fields are invalid")
     registry = Registry.load()
@@ -467,6 +474,8 @@ def materialize_domain_result(result_file: Path, evidence_roots: tuple[Path, ...
             raise RuntimeFailure(f"toolchain[{index}] identity is invalid")
         if Path(tool["name"]).name.lower() in {"true", "false", "echo", "printf", "noop"}:
             raise RuntimeFailure(f"toolchain[{index}] is a generic/no-op command, not a domain executor")
+        if not isinstance(tool.get("exit_code"), int) or isinstance(tool.get("exit_code"), bool):
+            raise RuntimeFailure(f"toolchain[{index}].exit_code must be an integer")
         require_digest(tool.get("argv_sha256"), f"toolchain[{index}].argv_sha256")
         roles.add(tool["evidence_role"])
         checks.append({"name": f"toolchain:{tool['name']}@{tool['version']}", "outcome": "PASS" if tool.get("exit_code") == 0 else "FAIL", "detail": f"exit_code={tool.get('exit_code')}"})
@@ -495,6 +504,11 @@ def materialize_domain_result(result_file: Path, evidence_roots: tuple[Path, ...
     if not roles.issubset(observed_roles):
         raise RuntimeFailure(f"raw evidence lacks roles: {sorted(roles - observed_roles)}")
     decision = payload.get("decision")
+    try:
+        checks.extend(execute_handler(claim.batch, executor["handler"], payload.get("domain_contract"), claim.oracle_id,
+                                      tools, assertions, observed_roles, decision))
+    except DomainHandlerError as exc:
+        raise RuntimeFailure(str(exc)) from exc
     if decision not in OUTCOMES or decision == "PASS" and any(item["outcome"] != "PASS" for item in checks):
         raise RuntimeFailure("domain result decision contradicts its checks")
     limitations = payload.get("limitations")
