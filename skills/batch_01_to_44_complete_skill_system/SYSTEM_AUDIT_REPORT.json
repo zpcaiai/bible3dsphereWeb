@@ -46,10 +46,17 @@
     "name_migrations": 22,
     "folder_migrations": 138
   },
+  "engineering_protocols": {
+    "seven_day_soak_clock": "controlled-test",
+    "evidence_class": "engineering-only",
+    "real_seven_day_elapsed": false,
+    "production_protocol_simulated": true
+  },
   "errors": [],
   "warnings": [
     "PROVENANCE_NOTICE: the intake checkout lacked 227 manifest-declared Batch 01-05 files. They were rebuilt deterministically from the supplied indexes and manifest paths; the new digests do not claim recovery of the unavailable original payloads.",
     "EXTERNAL_RUNTIME_NOT_RUN: local runtime tests ran, but external toolchains, providers, databases, and workloads were not executed.",
+    "CONTROLLED_CLOCK_ENGINEERING_ONLY: the seven-day policy is exercised with an explicit controlled test clock; no real seven-day production run is claimed.",
     "PRODUCTION_NOT_CERTIFIED: no deployment, customer acceptance, DR, or release gate was executed."
   ],
   "runtime_status": "LOCAL_RUNTIME_IMPLEMENTED",

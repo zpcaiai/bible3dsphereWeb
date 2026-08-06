@@ -80,9 +80,18 @@ def confined(path: Path, roots: tuple[Path, ...], label: str) -> Path:
     return resolved
 
 
+def confined_child(root: Path, relative: str, label: str) -> Path:
+    resolved_root = root.expanduser().resolve(strict=True)
+    candidate = (resolved_root / safe_relative(relative)).resolve(strict=True)
+    if candidate == resolved_root or resolved_root not in candidate.parents:
+        raise RecoveryFailure(f"{label} escapes its authoritative root")
+    return candidate
+
+
 def expected_paths(system_root: Path) -> list[str]:
     root = system_root.expanduser().resolve(strict=True)
-    batches = sorted(path for path in root.iterdir() if path.is_dir() and path.name.startswith("batch_"))[:5]
+    batches = sorted(path for path in root.iterdir()
+                     if path.is_dir() and not path.is_symlink() and path.name.startswith("batch_"))[:5]
     if len(batches) != 5:
         raise RecoveryFailure("exactly five legacy Batch directories are required")
     result: list[str] = []
@@ -91,7 +100,17 @@ def expected_paths(system_root: Path) -> list[str]:
         for folder in ("schemas", "policies", "examples"):
             files.extend(sorted(path for path in (batch / folder).rglob("*") if path.is_file() and path.suffix != ".tmp"))
         files.extend((batch / "tests" / "SCENARIOS.md", batch / "tools" / "validate_package.py"))
-        relatives = sorted(path.relative_to(root).as_posix() for path in files if path.is_file())
+        safe_files = []
+        for path in files:
+            if not path.is_file():
+                continue
+            if path.is_symlink():
+                raise RecoveryFailure(f"reconstructed inventory contains a symbolic link: {path}")
+            resolved = path.resolve(strict=True)
+            if root not in resolved.parents:
+                raise RecoveryFailure(f"reconstructed inventory escapes package: {path}")
+            safe_files.append(path)
+        relatives = sorted(path.relative_to(root).as_posix() for path in safe_files)
         if len(relatives) != EXPECTED_COUNTS[index]:
             raise RecoveryFailure(f"Batch {index + 1:02d} reconstructed inventory drifted: {len(relatives)}")
         result.extend(relatives)
@@ -171,12 +190,16 @@ def verify_and_stage(system_root: Path, bundle_root: Path, manifest_path: Path,
             raise RecoveryFailure("recovery entry is duplicated or lacks authoritative provenance")
         original_sha = skill_runtime.require_digest(entry.get("original_sha256"), "original_sha256")
         reconstructed_sha = skill_runtime.require_digest(entry.get("reconstructed_sha256"), "reconstructed_sha256")
-        if not isinstance(entry.get("original_bytes"), int) or entry["original_bytes"] < 0:
+        if (not isinstance(entry.get("original_bytes"), int) or isinstance(entry.get("original_bytes"), bool) or
+                entry["original_bytes"] < 0):
             raise RecoveryFailure("original_bytes is invalid")
-        target_data = read_regular(root / relative, MAX_FILE_BYTES, "reconstructed target")
+        target_data = read_regular(confined_child(root, relative, "reconstructed target"), MAX_FILE_BYTES,
+                                   "reconstructed target")
         if digest_bytes(target_data) != reconstructed_sha:
             raise RecoveryFailure(f"reconstructed target drifted: {relative}")
-        original_data = read_regular(bundle / "payloads" / relative, MAX_FILE_BYTES, "original payload")
+        payload_root = confined(bundle / "payloads", (bundle,), "recovery payload root")
+        original_data = read_regular(confined_child(payload_root, relative, "original payload"),
+                                     MAX_FILE_BYTES, "original payload")
         if digest_bytes(original_data) != original_sha or len(original_data) != entry["original_bytes"]:
             raise RecoveryFailure(f"original payload byte/digest mismatch: {relative}")
         by_path[relative] = entry
@@ -200,8 +223,10 @@ def verify_and_stage(system_root: Path, bundle_root: Path, manifest_path: Path,
         raise RecoveryFailure("recovery stage already exists")
     try:
         for relative in expected:
-            source = bundle / "payloads" / relative
-            mode = stat.S_IMODE((root / relative).stat().st_mode)
+            payload_root = confined(bundle / "payloads", (bundle,), "recovery payload root")
+            source = confined_child(payload_root, relative, "original payload")
+            target = confined_child(root, relative, "reconstructed target")
+            mode = stat.S_IMODE(target.stat().st_mode)
             _write_exclusive(stage_root / relative, read_regular(source, MAX_FILE_BYTES, "original payload"), mode)
         stage_manifest = {"schema_version": "1.0", "recovery_id": recovery_id, "manifest_sha256": manifest_sha,
                           "entries_root": entries_root, "source_archive_sha256": archive_sha, "file_count": 227,
@@ -242,14 +267,16 @@ def apply_staged(system_root: Path, stage_path: Path, manifest_path: Path, apply
     lock_descriptor = os.open(lock_path, os.O_RDWR | os.O_CREAT | getattr(os, "O_CLOEXEC", 0), 0o600)
     replaced: list[str] = []
     journal: dict[str, Any] = {}
+    receipt: dict[str, Any] = {}
     try:
         fcntl.flock(lock_descriptor, fcntl.LOCK_EX)
         for relative in inventory:
-            current = read_regular(root / relative, MAX_FILE_BYTES, "reconstructed target")
+            current = read_regular(confined_child(root, relative, "reconstructed target"),
+                                   MAX_FILE_BYTES, "reconstructed target")
             if digest_bytes(current) != entries[relative]["reconstructed_sha256"]:
                 raise RecoveryFailure(f"target changed before apply: {relative}")
         for relative in inventory:
-            target = root / relative
+            target = confined_child(root, relative, "reconstructed target")
             backup = backup_root / relative
             _write_exclusive(backup, read_regular(target, MAX_FILE_BYTES, "reconstructed target"), stat.S_IMODE(target.stat().st_mode))
         for directory in sorted({(backup_root / relative).parent for relative in inventory}):
@@ -259,28 +286,39 @@ def apply_staged(system_root: Path, stage_path: Path, manifest_path: Path, apply
                    "file_count": 227, "target_root": str(root), "backup_root": str(backup_root), "replaced": []}
         _atomic_record(journal_path, journal)
         for relative in inventory:
-            target, staged = root / relative, stage / relative
+            target = confined_child(root, relative, "reconstructed target")
+            staged = confined_child(stage, relative, "staged original")
             _atomic_replace_bytes(target, read_regular(staged, MAX_FILE_BYTES, "staged original"),
                                   stat.S_IMODE(target.stat().st_mode), recovery_id)
             replaced.append(relative)
             journal = {**journal, "replaced": list(replaced)}
             _atomic_record(journal_path, journal)
         for relative in inventory:
-            observed = read_regular(root / relative, MAX_FILE_BYTES, "recovered original")
+            observed = read_regular(confined_child(root, relative, "recovered original"),
+                                    MAX_FILE_BYTES, "recovered original")
             if digest_bytes(observed) != entries[relative]["original_sha256"]:
                 raise RecoveryFailure(f"post-apply verification failed: {relative}")
-        journal = {**journal, "status": "APPLIED_PENDING_VERIFICATION", "replaced": list(replaced)}
+        journal_core = {**journal, "status": "APPLIED_PENDING_VERIFICATION", "replaced": list(replaced)}
+        receipt = {"schema_version": "1.0", "recovery_id": recovery_id,
+                   "status": "APPLIED_PENDING_VERIFICATION", "original_payload_recovered": False,
+                   "file_count": 227, "manifest_sha256": manifest_sha,
+                   "entries_root": stage_receipt["entries_root"],
+                   "source_archive_sha256": stage_receipt["source_archive_sha256"],
+                   "source_authorization": stage_receipt["source_authorization"],
+                   "apply_approval": approval, "backup_path": str(backup_root),
+                   "journal_sha256": digest(journal_core)}
+        journal = {**journal_core, "pending_receipt": receipt}
         _atomic_record(journal_path, journal)
     except Exception:
         for relative in inventory:
-            target = root / relative
+            target = confined_child(root, relative, "recovery target")
             temporary = target.with_name(target.name + f".{recovery_id}.tmp")
             if temporary.is_file():
                 temporary.unlink()
         for relative in reversed(replaced):
-            backup = backup_root / relative
+            backup = confined_child(backup_root, relative, "recovery backup")
             if backup.is_file():
-                target = root / relative
+                target = confined_child(root, relative, "recovery target")
                 _atomic_replace_bytes(target, read_regular(backup, MAX_FILE_BYTES, "recovery backup"),
                                       stat.S_IMODE(target.stat().st_mode), recovery_id + "-rollback")
         if journal and journal_path.exists():
@@ -289,11 +327,6 @@ def apply_staged(system_root: Path, stage_path: Path, manifest_path: Path, apply
     finally:
         fcntl.flock(lock_descriptor, fcntl.LOCK_UN)
         os.close(lock_descriptor)
-    receipt = {"schema_version": "1.0", "recovery_id": recovery_id, "status": "APPLIED_PENDING_VERIFICATION",
-               "original_payload_recovered": False, "file_count": 227, "manifest_sha256": manifest_sha,
-               "entries_root": stage_receipt["entries_root"], "source_archive_sha256": stage_receipt["source_archive_sha256"],
-               "source_authorization": stage_receipt["source_authorization"], "apply_approval": approval,
-               "backup_path": str(backup_root), "journal_sha256": digest(journal)}
     receipt_path = workspace_root / f"{recovery_id}-APPLY_RECEIPT.json"
     _write_exclusive(receipt_path, canonical_bytes(receipt), 0o600)
     return receipt
@@ -301,7 +334,7 @@ def apply_staged(system_root: Path, stage_path: Path, manifest_path: Path, apply
 
 def recover_interrupted(system_root: Path, manifest_path: Path, workspace: Path,
                         approved_roots: tuple[Path, ...]) -> dict[str, Any]:
-    """Rollback a process-crashed APPLYING journal without trusting its replaced list."""
+    """Rollback APPLYING or reconstruct a missing receipt after a durable apply commit."""
     root = system_root.expanduser().resolve(strict=True)
     manifest = json.loads(read_regular(confined(manifest_path, approved_roots, "recovery manifest"),
                                        16 * 1024 * 1024, "recovery manifest"))
@@ -309,8 +342,9 @@ def recover_interrupted(system_root: Path, manifest_path: Path, workspace: Path,
     workspace_root = workspace.expanduser().resolve(strict=True)
     journal_path = workspace_root / f"{recovery_id}-RECOVERY_JOURNAL.json"
     journal = json.loads(read_regular(journal_path, 16 * 1024 * 1024, "recovery journal"))
-    if journal.get("status") != "APPLYING" or journal.get("manifest_sha256") != digest(manifest):
-        raise RecoveryFailure("no matching interrupted APPLYING journal")
+    if journal.get("status") not in {"APPLYING", "APPLIED_PENDING_VERIFICATION"} or \
+            journal.get("manifest_sha256") != digest(manifest):
+        raise RecoveryFailure("no matching interrupted recovery journal")
     backup_root = Path(journal["backup_root"]).expanduser().resolve(strict=True)
     if workspace_root not in backup_root.parents:
         raise RecoveryFailure("recovery backup escapes workspace")
@@ -320,22 +354,41 @@ def recover_interrupted(system_root: Path, manifest_path: Path, workspace: Path,
     restored = 0
     try:
         fcntl.flock(lock_descriptor, fcntl.LOCK_EX)
+        if journal["status"] == "APPLIED_PENDING_VERIFICATION":
+            pending = journal.get("pending_receipt")
+            journal_core = {key: value for key, value in journal.items() if key != "pending_receipt"}
+            if (not isinstance(pending, dict) or pending.get("status") != "APPLIED_PENDING_VERIFICATION" or
+                    pending.get("original_payload_recovered") is not False or
+                    pending.get("journal_sha256") != digest(journal_core)):
+                raise RecoveryFailure("pending apply receipt is missing or tampered")
+            for relative in inventory:
+                target = confined_child(root, relative, "recovered original")
+                if digest_bytes(read_regular(target, MAX_FILE_BYTES, "recovered original")) != entries[relative]["original_sha256"]:
+                    raise RecoveryFailure(f"pending apply target differs from original payload: {relative}")
+            receipt_path = workspace_root / f"{recovery_id}-APPLY_RECEIPT.json"
+            if receipt_path.exists():
+                if json.loads(read_regular(receipt_path, 16 * 1024 * 1024, "apply receipt")) != pending:
+                    raise RecoveryFailure("existing apply receipt differs from the journal")
+            else:
+                _write_exclusive(receipt_path, canonical_bytes(pending), 0o600)
+            return {**pending, "receipt_recovered_after_crash": True}
         for relative in inventory:
-            target = root / relative
+            target = confined_child(root, relative, "recovery target")
             temporary = target.with_name(target.name + f".{recovery_id}.tmp")
             if temporary.is_file():
                 temporary.unlink()
                 _fsync_directory(target.parent)
             observed = digest_bytes(read_regular(target, MAX_FILE_BYTES, "recovery target"))
             if observed == entries[relative]["original_sha256"]:
-                backup = backup_root / relative
+                backup = confined_child(backup_root, relative, "recovery backup")
                 _atomic_replace_bytes(target, read_regular(backup, MAX_FILE_BYTES, "recovery backup"),
                                       stat.S_IMODE(target.stat().st_mode), recovery_id + "-crash-rollback")
                 restored += 1
             elif observed != entries[relative]["reconstructed_sha256"]:
                 raise RecoveryFailure(f"interrupted target has an unknown digest: {relative}")
         for relative in inventory:
-            if digest_bytes(read_regular(root / relative, MAX_FILE_BYTES, "restored target")) != entries[relative]["reconstructed_sha256"]:
+            if digest_bytes(read_regular(confined_child(root, relative, "restored target"),
+                                         MAX_FILE_BYTES, "restored target")) != entries[relative]["reconstructed_sha256"]:
                 raise RecoveryFailure(f"crash rollback verification failed: {relative}")
         final_journal = {**journal, "status": "ROLLED_BACK_AFTER_CRASH", "replaced": []}
         _atomic_record(journal_path, final_journal)
@@ -362,12 +415,15 @@ def verify_applied(system_root: Path, manifest_path: Path, apply_receipt_path: P
     workspace_root = workspace.expanduser().resolve(strict=True)
     journal = json.loads(read_regular(workspace_root / f"{receipt['recovery_id']}-RECOVERY_JOURNAL.json",
                                       16 * 1024 * 1024, "recovery journal"))
-    if journal.get("status") != "APPLIED_PENDING_VERIFICATION" or digest(journal) != receipt.get("journal_sha256"):
+    journal_core = {key: value for key, value in journal.items() if key != "pending_receipt"}
+    if (journal.get("status") != "APPLIED_PENDING_VERIFICATION" or
+            journal.get("pending_receipt") != receipt or digest(journal_core) != receipt.get("journal_sha256")):
         raise RecoveryFailure("apply journal is stale or tampered")
     entries = {entry["path"]: entry for entry in manifest["entries"]}
     inventory = expected_paths(root)
     for relative in inventory:
-        if digest_bytes(read_regular(root / relative, MAX_FILE_BYTES, "recovered original")) != entries[relative]["original_sha256"]:
+        if digest_bytes(read_regular(confined_child(root, relative, "recovered original"),
+                                     MAX_FILE_BYTES, "recovered original")) != entries[relative]["original_sha256"]:
             raise RecoveryFailure(f"independent recovery verification failed: {relative}")
     receipt_sha = digest(receipt)
     verifier = skill_runtime.TrustStore.load(trust_path).verify(verification, "recovery-verifier",

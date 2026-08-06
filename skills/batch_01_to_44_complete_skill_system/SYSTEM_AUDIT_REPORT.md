@@ -55,16 +55,20 @@ Date: 2026-08-01
   identify the reconstructed files and must not be represented as the original signed artifacts.
 - Recovery code: `runtime/original_payload_recovery.py` requires the exact 227 paths, original and
   reconstructed digests, an authoritative archive, source-owner signature and independent apply
-  approval; it uses a persistent crash journal and requires a separate post-apply recovery verifier.
+  approval; it rejects symlink escape, durably reconstructs a missing post-commit apply receipt,
+  and requires a separate post-apply recovery verifier.
 
 ## Production closure code path
 
-- `runtime/production_closure.py` binds read-only customer snapshot metadata, sealed independent
-  Holdout, exact Provider/account/Region/operation receipts, monotonic fencing, near-real-time seven-day
+- `runtime/production_closure.py` binds read-only customer snapshot metadata, Claim-specific Oracle
+  Holdout, exact versioned Provider/account/Region/Adapter/IaC/control evidence, monotonic fencing,
   thresholded soak telemetry and exact run/release/account-bound independent assessment import in a
-  hash-chained SQLite WAL authority.
-- A sealed Holdout is custody evidence only; production closure additionally requires byte-bound
-  per-Claim results and separate predeclared Holdout Executor and Verifier signatures.
+  hash-chained SQLite WAL authority whose current records must match their latest events.
+- A sealed Holdout is custody evidence only; production closure additionally requires distinct
+  signed partition identities, a complete Claim-to-Oracle map and separate Oracle Owner, Executor and
+  Verifier signatures.
+- The seven-day protocol fixture uses `controlled-test` time and is permanently labeled
+  `engineering-only` with `real_seven_day_elapsed=false`; it cannot prepare an external gate.
 - Test and sandbox fixtures remain engineering evidence. Production/customer/provider/long-duration
   execution and independent certification remain `NOT_RUN` / `NOT_CERTIFIED` until real authorized
   evidence is supplied.
@@ -77,6 +81,7 @@ Date: 2026-08-01
 
 - PROVENANCE_NOTICE: the intake checkout lacked 227 manifest-declared Batch 01-05 files. They were rebuilt deterministically from the supplied indexes and manifest paths; the new digests do not claim recovery of the unavailable original payloads.
 - EXTERNAL_RUNTIME_NOT_RUN: local runtime tests ran, but external toolchains, providers, databases, and workloads were not executed.
+- CONTROLLED_CLOCK_ENGINEERING_ONLY: the seven-day policy is exercised with an explicit controlled test clock; no real seven-day production run is claimed.
 - PRODUCTION_NOT_CERTIFIED: no deployment, customer acceptance, DR, or release gate was executed.
 
 ## Trust boundary

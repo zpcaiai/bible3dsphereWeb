@@ -145,6 +145,12 @@ class AuditResult:
                 "name_migrations": 22,
                 "folder_migrations": 138,
             },
+            "engineering_protocols": {
+                "seven_day_soak_clock": "controlled-test",
+                "evidence_class": "engineering-only",
+                "real_seven_day_elapsed": False,
+                "production_protocol_simulated": True,
+            },
             "errors": self.errors,
             "warnings": self.warnings,
             "runtime_status": "LOCAL_RUNTIME_IMPLEMENTED",
@@ -1338,6 +1344,7 @@ def audit(run_package_validators: bool = False) -> AuditResult:
         "the new digests do not claim recovery of the unavailable original payloads."
     )
     warnings.append("EXTERNAL_RUNTIME_NOT_RUN: local runtime tests ran, but external toolchains, providers, databases, and workloads were not executed.")
+    warnings.append("CONTROLLED_CLOCK_ENGINEERING_ONLY: the seven-day policy is exercised with an explicit controlled test clock; no real seven-day production run is claimed.")
     warnings.append("PRODUCTION_NOT_CERTIFIED: no deployment, customer acceptance, DR, or release gate was executed.")
 
     counts = {
@@ -1406,16 +1413,20 @@ Date: 2026-08-01
   identify the reconstructed files and must not be represented as the original signed artifacts.
 - Recovery code: `runtime/original_payload_recovery.py` requires the exact 227 paths, original and
   reconstructed digests, an authoritative archive, source-owner signature and independent apply
-  approval; it uses a persistent crash journal and requires a separate post-apply recovery verifier.
+  approval; it rejects symlink escape, durably reconstructs a missing post-commit apply receipt,
+  and requires a separate post-apply recovery verifier.
 
 ## Production closure code path
 
-- `runtime/production_closure.py` binds read-only customer snapshot metadata, sealed independent
-  Holdout, exact Provider/account/Region/operation receipts, monotonic fencing, near-real-time seven-day
+- `runtime/production_closure.py` binds read-only customer snapshot metadata, Claim-specific Oracle
+  Holdout, exact versioned Provider/account/Region/Adapter/IaC/control evidence, monotonic fencing,
   thresholded soak telemetry and exact run/release/account-bound independent assessment import in a
-  hash-chained SQLite WAL authority.
-- A sealed Holdout is custody evidence only; production closure additionally requires byte-bound
-  per-Claim results and separate predeclared Holdout Executor and Verifier signatures.
+  hash-chained SQLite WAL authority whose current records must match their latest events.
+- A sealed Holdout is custody evidence only; production closure additionally requires distinct
+  signed partition identities, a complete Claim-to-Oracle map and separate Oracle Owner, Executor and
+  Verifier signatures.
+- The seven-day protocol fixture uses `controlled-test` time and is permanently labeled
+  `engineering-only` with `real_seven_day_elapsed=false`; it cannot prepare an external gate.
 - Test and sandbox fixtures remain engineering evidence. Production/customer/provider/long-duration
   execution and independent certification remain `NOT_RUN` / `NOT_CERTIFIED` until real authorized
   evidence is supplied.

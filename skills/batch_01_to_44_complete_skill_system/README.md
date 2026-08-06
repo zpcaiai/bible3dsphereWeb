@@ -24,7 +24,8 @@ files; deterministic reconstruction remains explicitly `RECONSTRUCTED_NOT_ORIGIN
 owner supplies authoritative original bytes. `runtime/original_payload_recovery.py` now provides the
 complete recovery path: exact 227-file inventory, source-archive and per-file digest verification,
 source-owner Ed25519 signature, independent apply approval, isolated staging, exclusive locking,
-fsync, backups, atomic replacement, persistent crash journal and digest-driven restart rollback.
+fsync, backups, atomic replacement, child-path symlink confinement, persistent crash journal,
+digest-driven restart rollback and post-commit apply-receipt reconstruction.
 Apply remains `APPLIED_PENDING_VERIFICATION` / `original_payload_recovered=false` until a third,
 independent recovery verifier checks all 227 original bytes and signs the final receipt. It has not
 been run against the package because no authoritative source bundle exists.
@@ -45,8 +46,9 @@ independent Holdout, production evidence boundaries, source drift, rollback, con
 the event hash chain, all 44 callable domain handlers, all 788 unique per-Skill handlers, signed
 Provider-adapter idempotency, and cross-Batch/cross-Skill contract substitution. Full
 validation also covers read-only customer snapshot intake, sealed independent Holdout, cutover and
-rollback transitions, concurrent one-winner fencing, bounded soak telemetry, independent assessment
-import, exact 227-file recovery, tamper rejection, process-crash recovery and independent post-apply
+rollback transitions, concurrent one-winner fencing, controlled-clock seven-day protocol validation,
+Claim-specific Oracle Holdout, independent assessment import, exact 227-file recovery, symlink/tamper
+rejection, process-crash and missing-receipt recovery, and independent post-apply
 verification. Full
 validation fails closed unless the locked `jsonschema` and `PyYAML`
 dependencies are installed; it runs Draft 2020-12 meta-schema validation and parses every YAML
@@ -105,17 +107,20 @@ from allowlisted process-environment references and redacted from captured bytes
 side effect becomes `UNKNOWN` and cannot be retried as success without reconciliation.
 
 `runtime/production_closure.py` connects those Provider receipts to an authorized customer lifecycle:
-read-only customer snapshot metadata, sealed Holdout, exact Provider/account/Region/operation and
-native Adapter receipts, cutover/rollback state machine, near-real-time soak heartbeats, availability/
-error thresholds and independent assessment import. Customer bytes are verified in place but only
-counts and digests are persisted. Production soak requires at least seven days with six-hour maximum
-gaps; production assessments bind the exact run, cutover, release and account and always retain
-`certified=false` locally.
+read-only customer snapshot metadata, Claim-specific Oracle Holdout, exact versioned Provider API,
+account model, Region, Adapter/IaC, identity, least-privilege, state-backend and rollback evidence,
+cutover/rollback state machine, thresholded soak heartbeats and independent assessment import.
+Customer bytes are verified in place but only counts and digests are persisted; current SQLite records
+must match their latest hash-chain event. Production soak requires at least seven real days with
+six-hour maximum gaps. The accelerated protocol fixture uses an explicit `controlled-test` clock and
+is permanently `engineering-only` with `real_seven_day_elapsed=false`; production assessments bind
+the exact run, cutover, release and account and always retain `certified=false` locally.
 
-A sealed Holdout is custody evidence only. `record-holdout-result` requires byte-bound per-Claim
-evidence, a native execution receipt, and separate predeclared Holdout Executor and Verifier
-signatures. Production v2 cutover and soak require the exact passing result for the same tenant,
-release and Provider account.
+A sealed Holdout is custody evidence only. Production Holdout additionally requires distinct
+development/Holdout partition IDs, an immutable Oracle Registry digest, a complete Claim→Oracle/version
+map and separate predeclared Oracle Owner, Holdout Executor and Verifier signatures. Production v2
+cutover and soak require the exact `oracle_bound=true` passing result for the same tenant, release and
+Provider account.
 
 ## Import the real database and Provider vertical slice
 
