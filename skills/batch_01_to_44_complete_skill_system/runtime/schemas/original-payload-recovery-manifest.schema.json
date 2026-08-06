@@ -5,10 +5,22 @@
   "type": "object",
   "required": ["schema_version", "namespace", "recovery_id", "source_archive", "entries"],
   "properties": {
-    "schema_version": {"const": "1.0"},
+    "schema_version": {"enum": ["1.0", "2.0"]},
     "namespace": {"const": "batch-01-05-original-payload"},
     "recovery_id": {"type": "string", "minLength": 1, "maxLength": 256, "pattern": "^[^/\\\\\\s]+$"},
+    "tenant_id": {"type": "string", "minLength": 1, "maxLength": 256, "pattern": "^[^/\\\\\\s]+$"},
     "source_archive": {"$ref": "#/$defs/artifact"},
+    "source_identity": {
+      "type": "object", "additionalProperties": false,
+      "required": ["repository_id", "source_revision_sha256", "owner_organization_id", "acquired_at"],
+      "properties": {
+        "repository_id": {"type": "string", "minLength": 1, "pattern": "^[^/\\\\\\s]+$"},
+        "source_revision_sha256": {"$ref": "#/$defs/digest"},
+        "owner_organization_id": {"type": "string", "minLength": 1, "pattern": "^[^/\\\\\\s]+$"},
+        "acquired_at": {"type": "string", "format": "date-time"}
+      }
+    },
+    "custody_evidence": {"$ref": "#/$defs/artifact"},
     "entries": {
       "type": "array", "minItems": 227, "maxItems": 227,
       "items": {
@@ -24,6 +36,15 @@
       }
     }
   },
+  "allOf": [
+    {
+      "if": {"properties": {"schema_version": {"const": "2.0"}}, "required": ["schema_version"]},
+      "then": {"required": ["tenant_id", "source_identity", "custody_evidence"]},
+      "else": {"not": {"anyOf": [
+        {"required": ["tenant_id"]}, {"required": ["source_identity"]}, {"required": ["custody_evidence"]}
+      ]}}
+    }
+  ],
   "$defs": {
     "digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
     "artifact": {

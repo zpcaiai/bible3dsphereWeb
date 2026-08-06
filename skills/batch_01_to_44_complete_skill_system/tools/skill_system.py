@@ -88,6 +88,7 @@ SYSTEM_REQUIRED_FILES = (
     "runtime/import_real_toolchain_e2e.py",
     "runtime/provider_runtime.py",
     "runtime/production_closure.py",
+    "runtime/external_authority.py",
     "runtime/original_payload_recovery.py",
     "runtime/skill_runtime.py",
     "runtime/claim-oracle-registry.json",
@@ -95,6 +96,8 @@ SYSTEM_REQUIRED_FILES = (
     "runtime/skill-executor-registry.json",
     "runtime/schemas/real-toolchain-e2e-report.schema.json",
     "runtime/schemas/production-closure-record.schema.json",
+    "runtime/schemas/actor-trust-store.schema.json",
+    "runtime/schemas/external-authority-policy.schema.json",
     "runtime/schemas/holdout-execution-result.schema.json",
     "runtime/schemas/original-payload-recovery-manifest.schema.json",
     "runtime/schemas/original-payload-recovery-receipt.schema.json",
@@ -1343,7 +1346,11 @@ def audit(run_package_validators: bool = False) -> AuditResult:
         "files. They were rebuilt deterministically from the supplied indexes and manifest paths; "
         "the new digests do not claim recovery of the unavailable original payloads."
     )
-    warnings.append("EXTERNAL_RUNTIME_NOT_RUN: local runtime tests ran, but external toolchains, providers, databases, and workloads were not executed.")
+    warnings.append(
+        "CUSTOMER_EXTERNAL_RUNTIME_NOT_RUN: attachment CI executes the disposable PostgreSQL/MinIO/GitHub "
+        "development tuple, but customer Provider accounts, independent Holdout, production workloads, "
+        "cutover, long-duration operations, and external certification were not executed."
+    )
     warnings.append("CONTROLLED_CLOCK_ENGINEERING_ONLY: the seven-day policy is exercised with an explicit controlled test clock; no real seven-day production run is claimed.")
     warnings.append("PRODUCTION_NOT_CERTIFIED: no deployment, customer acceptance, DR, or release gate was executed.")
 
@@ -1411,20 +1418,21 @@ Date: 2026-08-01
   package validation/install helpers.
 - Evidence boundary: **the unavailable original payloads were not recovered**. Current digests
   identify the reconstructed files and must not be represented as the original signed artifacts.
-- Recovery code: `runtime/original_payload_recovery.py` requires the exact 227 paths, original and
-  reconstructed digests, an authoritative archive, source-owner signature and independent apply
-  approval; it rejects symlink escape, durably reconstructs a missing post-commit apply receipt,
-  and requires a separate post-apply recovery verifier.
+- Recovery code requires the exact 227 paths, original and reconstructed digests, an authoritative
+  archive, exact source revision, content-addressed custody receipt, digest-pinned external
+  source-provenance Trust Store and internal governance approval. Source owner, apply approver and
+  final verifier must be three distinct organizations. Legacy/local exercises remain fail-closed.
 
 ## Production closure code path
 
 - `runtime/production_closure.py` binds read-only customer snapshot metadata, Claim-specific Oracle
   Holdout, exact versioned Provider/account/Region/Adapter/IaC/control evidence, monotonic fencing,
-  thresholded soak telemetry and exact run/release/account-bound independent assessment import in a
+  Provider-bound raw soak telemetry, signed watchdog timeout termination and exact
+  run/release/account-bound independently authorized assessment import in a
   hash-chained SQLite WAL authority whose current records must match their latest events.
 - A sealed Holdout is custody evidence only; production closure additionally requires distinct
-  signed partition identities, a complete Claim-to-Oracle map and separate Oracle Owner, Executor and
-  Verifier signatures.
+  signed partition identities, a complete Claim-to-Oracle map, separate Oracle Owner, Executor and
+  Verifier signatures, and organization-level separation in the exact approved v2 Trust Store.
 - The seven-day protocol fixture uses `controlled-test` time and is permanently labeled
   `engineering-only` with `real_seven_day_elapsed=false`; it cannot prepare an external gate.
 - Test and sandbox fixtures remain engineering evidence. Production/customer/provider/long-duration
@@ -1627,6 +1635,8 @@ def command_self_test() -> int:
             raise AssertionError("installed shared runtime lacks signed Provider runtime")
         if not (runtime_destination / "production_closure.py").is_file():
             raise AssertionError("installed shared runtime lacks production closure control plane")
+        if not (runtime_destination / "external_authority.py").is_file():
+            raise AssertionError("installed shared runtime lacks external authority verification")
         if not (runtime_destination / "original_payload_recovery.py").is_file():
             raise AssertionError("installed shared runtime lacks authenticated original-payload recovery")
         try:

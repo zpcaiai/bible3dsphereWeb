@@ -21,6 +21,7 @@ from pathlib import Path, PurePosixPath
 from typing import Any
 
 import skill_runtime
+import external_authority
 
 
 EXPECTED_COUNTS = (35, 46, 45, 46, 55)
@@ -86,6 +87,36 @@ def confined_child(root: Path, relative: str, label: str) -> Path:
     if candidate == resolved_root or resolved_root not in candidate.parents:
         raise RecoveryFailure(f"{label} escapes its authoritative root")
     return candidate
+
+
+def artifact_reference(value: Any, roots: tuple[Path, ...], label: str,
+                       maximum: int = MAX_FILE_BYTES) -> dict[str, Any]:
+    if not isinstance(value, dict) or set(value) != {"path", "sha256", "bytes"}:
+        raise RecoveryFailure(f"{label} reference is invalid")
+    data = read_regular(confined(Path(value["path"]), roots, label), maximum, label)
+    expected = skill_runtime.require_digest(value.get("sha256"), f"{label} sha256")
+    if digest_bytes(data) != expected or value.get("bytes") != len(data):
+        raise RecoveryFailure(f"{label} byte/digest mismatch")
+    return {"sha256": expected, "bytes": len(data)}
+
+
+def source_identity(value: Any) -> dict[str, Any]:
+    required = {"repository_id", "source_revision_sha256", "owner_organization_id", "acquired_at"}
+    if not isinstance(value, dict) or set(value) != required:
+        raise RecoveryFailure("source identity fields are invalid")
+    repository = safe_relative(value.get("repository_id"))
+    if "/" in repository:
+        raise RecoveryFailure("source repository_id must be a single segment")
+    owner = safe_relative(value.get("owner_organization_id"))
+    if "/" in owner:
+        raise RecoveryFailure("source owner organization must be a single segment")
+    acquired = skill_runtime.parse_time(value.get("acquired_at"), "source acquired_at")
+    if acquired > skill_runtime.parse_time(skill_runtime.now_text(), "current time"):
+        raise RecoveryFailure("source acquisition cannot be future-dated")
+    return {"repository_id": repository,
+            "source_revision_sha256": skill_runtime.require_digest(
+                value.get("source_revision_sha256"), "source revision sha256"),
+            "owner_organization_id": owner, "acquired_at": value["acquired_at"]}
 
 
 def expected_paths(system_root: Path) -> list[str]:
@@ -160,7 +191,10 @@ def _atomic_replace_bytes(target: Path, data: bytes, mode: int, token: str) -> N
 
 def verify_and_stage(system_root: Path, bundle_root: Path, manifest_path: Path,
                      source_authorization: dict[str, Any], trust_path: Path,
-                     workspace: Path, approved_roots: tuple[Path, ...]) -> dict[str, Any]:
+                     workspace: Path, approved_roots: tuple[Path, ...], *,
+                     authority_policy_path: Path | None = None,
+                     authority_approval: dict[str, Any] | None = None,
+                     internal_trust_path: Path | None = None) -> dict[str, Any]:
     root = system_root.expanduser().resolve(strict=True)
     bundle = confined(bundle_root, approved_roots, "recovery bundle")
     raw_manifest = read_regular(confined(manifest_path, approved_roots, "recovery manifest"),
@@ -169,8 +203,11 @@ def verify_and_stage(system_root: Path, bundle_root: Path, manifest_path: Path,
         manifest = json.loads(raw_manifest)
     except json.JSONDecodeError as exc:
         raise RecoveryFailure("recovery manifest is invalid JSON") from exc
-    required = {"schema_version", "namespace", "recovery_id", "source_archive", "entries"}
-    if (not isinstance(manifest, dict) or set(manifest) != required or manifest.get("schema_version") != "1.0" or
+    base = {"schema_version", "namespace", "recovery_id", "source_archive", "entries"}
+    schema_version = manifest.get("schema_version") if isinstance(manifest, dict) else None
+    required = base | ({"tenant_id", "source_identity", "custody_evidence"}
+                       if schema_version == "2.0" else set())
+    if (not isinstance(manifest, dict) or set(manifest) != required or schema_version not in {"1.0", "2.0"} or
             manifest.get("namespace") != "batch-01-05-original-payload"):
         raise RecoveryFailure("recovery manifest identity/fields are invalid")
     recovery_id = safe_relative(manifest.get("recovery_id"))
@@ -206,18 +243,60 @@ def verify_and_stage(system_root: Path, bundle_root: Path, manifest_path: Path,
     if sorted(by_path) != expected:
         raise RecoveryFailure("recovery manifest paths do not exactly match the 227 reconstructed files")
     archive = manifest.get("source_archive")
-    if not isinstance(archive, dict) or set(archive) != {"path", "sha256", "bytes"}:
-        raise RecoveryFailure("source archive reference is invalid")
-    archive_data = read_regular(confined(Path(archive["path"]), approved_roots, "source archive"),
-                                MAX_ARCHIVE_BYTES, "source archive")
-    archive_sha = skill_runtime.require_digest(archive.get("sha256"), "source archive sha256")
-    if digest_bytes(archive_data) != archive_sha or archive.get("bytes") != len(archive_data):
-        raise RecoveryFailure("source archive byte/digest mismatch")
+    archive_ref = artifact_reference(archive, approved_roots, "source archive", MAX_ARCHIVE_BYTES)
+    archive_sha = archive_ref["sha256"]
     manifest_sha = digest(manifest)
     entries_root = digest([{key: entry[key] for key in sorted(entry)} for entry in entries])
-    authorization = skill_runtime.TrustStore.load(trust_path).verify(source_authorization, "source-owner",
-        {"recovery_id": recovery_id, "manifest_sha256": manifest_sha, "entries_root": entries_root,
-         "source_archive_sha256": archive_sha, "file_count": 227})
+    external_source = None
+    normalized_source = None
+    custody_ref = None
+    signature_bindings = {"recovery_id": recovery_id, "manifest_sha256": manifest_sha,
+                          "entries_root": entries_root, "source_archive_sha256": archive_sha,
+                          "file_count": 227}
+    if schema_version == "2.0":
+        tenant_id = safe_relative(manifest.get("tenant_id"))
+        if "/" in tenant_id:
+            raise RecoveryFailure("recovery tenant_id must be a single segment")
+        normalized_source = source_identity(manifest.get("source_identity"))
+        custody_ref = artifact_reference(manifest.get("custody_evidence"), approved_roots, "custody evidence")
+        try:
+            custody = json.loads(read_regular(confined(Path(manifest["custody_evidence"]["path"]), approved_roots,
+                                                       "custody evidence"), MAX_FILE_BYTES, "custody evidence"))
+        except json.JSONDecodeError as exc:
+            raise RecoveryFailure("custody evidence is invalid JSON") from exc
+        custody_fields = {"schema_version", "custody_id", "recovery_id", "source_archive_sha256",
+                          "source_revision_sha256", "transferred_by_organization_id",
+                          "received_by_organization_id", "transferred_at"}
+        if (not isinstance(custody, dict) or set(custody) != custody_fields or
+                custody.get("schema_version") != "1.0" or custody.get("recovery_id") != recovery_id or
+                custody.get("source_archive_sha256") != archive_sha or
+                custody.get("source_revision_sha256") != normalized_source["source_revision_sha256"] or
+                custody.get("transferred_by_organization_id") != normalized_source["owner_organization_id"]):
+            raise RecoveryFailure("custody evidence differs from the exact source tuple")
+        safe_relative(custody.get("custody_id"))
+        skill_runtime.parse_time(custody.get("transferred_at"), "custody transferred_at")
+        if authority_policy_path is None or authority_approval is None or internal_trust_path is None:
+            raise RecoveryFailure("original source recovery requires an approved external provenance authority")
+        try:
+            source_trust, external_source = external_authority.authorize(
+                authority_policy_path, authority_approval, internal_trust_path, trust_path,
+                tenant_id, "source-provenance", approved_roots)
+        except (external_authority.ExternalAuthorityError, skill_runtime.RuntimeFailure) as exc:
+            raise RecoveryFailure(f"external source authority rejected: {exc}") from exc
+        if (external_source["authority_organization_id"] != normalized_source["owner_organization_id"] or
+                custody.get("received_by_organization_id") !=
+                external_source["approved_by"].get("organization_id")):
+            raise RecoveryFailure("source authority or custody organizations differ from the approved chain")
+        signature_bindings.update({"source_identity_sha256": digest(normalized_source),
+                                   "custody_evidence_sha256": custody_ref["sha256"],
+                                   "external_store_sha256": external_source["external_store_sha256"]})
+    else:
+        source_trust = skill_runtime.TrustStore.load(trust_path)
+    authorization = source_trust.verify(source_authorization, "source-owner", signature_bindings)
+    if schema_version == "2.0" and (authorization.get("organization_id") !=
+                                     external_source["authority_organization_id"] or
+                                     authorization.get("authority_class") != "source-archive"):
+        raise RecoveryFailure("source owner is not bound to the approved archive authority")
     stage_root = workspace.expanduser().resolve() / "staged" / recovery_id
     if stage_root.exists():
         raise RecoveryFailure("recovery stage already exists")
@@ -228,9 +307,13 @@ def verify_and_stage(system_root: Path, bundle_root: Path, manifest_path: Path,
             target = confined_child(root, relative, "reconstructed target")
             mode = stat.S_IMODE(target.stat().st_mode)
             _write_exclusive(stage_root / relative, read_regular(source, MAX_FILE_BYTES, "original payload"), mode)
-        stage_manifest = {"schema_version": "1.0", "recovery_id": recovery_id, "manifest_sha256": manifest_sha,
+        stage_manifest = {"schema_version": schema_version, "recovery_id": recovery_id, "manifest_sha256": manifest_sha,
                           "entries_root": entries_root, "source_archive_sha256": archive_sha, "file_count": 227,
-                          "status": "VERIFIED_STAGED", "source_authorization": authorization}
+                          "status": "VERIFIED_STAGED", "source_authorization": authorization,
+                          "external_source_authorized": external_source is not None,
+                          **({"source_identity": normalized_source, "custody_evidence": custody_ref,
+                              "external_source_authority": external_source}
+                             if external_source is not None else {})}
         _write_exclusive(stage_root / "STAGE_RECEIPT.json", canonical_bytes(stage_manifest), 0o600)
     except Exception:
         shutil.rmtree(stage_root, ignore_errors=True)
@@ -249,12 +332,22 @@ def apply_staged(system_root: Path, stage_path: Path, manifest_path: Path, apply
     if stage_receipt.get("manifest_sha256") != manifest_sha or stage_receipt.get("status") != "VERIFIED_STAGED":
         raise RecoveryFailure("staged recovery is stale or unverified")
     recovery_id = stage_receipt["recovery_id"]
-    approval = skill_runtime.TrustStore.load(trust_path).verify(apply_approval, "recovery-approver",
+    apply_trust = skill_runtime.TrustStore.load(trust_path)
+    approval = apply_trust.verify(apply_approval, "recovery-approver",
         {"recovery_id": recovery_id, "manifest_sha256": manifest_sha,
          "entries_root": stage_receipt["entries_root"], "target_root_sha256": digest(expected_paths(root)),
          "file_count": 227})
     if approval["actor_id"] == stage_receipt["source_authorization"]["actor_id"]:
         raise RecoveryFailure("recovery approver must be independent from source owner")
+    if stage_receipt.get("external_source_authorized") is True:
+        source_authority = stage_receipt.get("external_source_authority")
+        source_org = stage_receipt["source_authorization"].get("organization_id")
+        if (apply_trust.schema_version != "2.0" or apply_trust.purpose != "workspace-actors" or
+                not isinstance(source_authority, dict) or
+                approval.get("trust_store_sha256") != source_authority.get("approved_by", {}).get("trust_store_sha256") or
+                not source_org or not approval.get("organization_id") or
+                source_org == approval["organization_id"]):
+            raise RecoveryFailure("source owner and recovery approver require distinct approved organizations")
     workspace_root = workspace.expanduser().resolve()
     workspace_root.mkdir(parents=True, exist_ok=True)
     backup_root = workspace_root / "backups" / recovery_id
@@ -299,14 +392,19 @@ def apply_staged(system_root: Path, stage_path: Path, manifest_path: Path, apply
             if digest_bytes(observed) != entries[relative]["original_sha256"]:
                 raise RecoveryFailure(f"post-apply verification failed: {relative}")
         journal_core = {**journal, "status": "APPLIED_PENDING_VERIFICATION", "replaced": list(replaced)}
-        receipt = {"schema_version": "1.0", "recovery_id": recovery_id,
+        receipt = {"schema_version": stage_receipt.get("schema_version", "1.0"), "recovery_id": recovery_id,
                    "status": "APPLIED_PENDING_VERIFICATION", "original_payload_recovered": False,
                    "file_count": 227, "manifest_sha256": manifest_sha,
                    "entries_root": stage_receipt["entries_root"],
                    "source_archive_sha256": stage_receipt["source_archive_sha256"],
                    "source_authorization": stage_receipt["source_authorization"],
                    "apply_approval": approval, "backup_path": str(backup_root),
-                   "journal_sha256": digest(journal_core)}
+                   "journal_sha256": digest(journal_core),
+                   "external_source_authorized": stage_receipt.get("external_source_authorized", False),
+                   **({"source_identity": stage_receipt["source_identity"],
+                       "custody_evidence": stage_receipt["custody_evidence"],
+                       "external_source_authority": stage_receipt["external_source_authority"]}
+                      if stage_receipt.get("external_source_authorized") is True else {})}
         journal = {**journal_core, "pending_receipt": receipt}
         _atomic_record(journal_path, journal)
     except Exception:
@@ -426,12 +524,25 @@ def verify_applied(system_root: Path, manifest_path: Path, apply_receipt_path: P
                                      MAX_FILE_BYTES, "recovered original")) != entries[relative]["original_sha256"]:
             raise RecoveryFailure(f"independent recovery verification failed: {relative}")
     receipt_sha = digest(receipt)
-    verifier = skill_runtime.TrustStore.load(trust_path).verify(verification, "recovery-verifier",
+    verification_trust = skill_runtime.TrustStore.load(trust_path)
+    verifier = verification_trust.verify(verification, "recovery-verifier",
         {"recovery_id": receipt["recovery_id"], "manifest_sha256": receipt["manifest_sha256"],
          "apply_receipt_sha256": receipt_sha, "entries_root": receipt["entries_root"], "file_count": 227})
     conflicted = {receipt["source_authorization"]["actor_id"], receipt["apply_approval"]["actor_id"]}
     if verifier["actor_id"] in conflicted:
         raise RecoveryFailure("recovery verifier must be independent from source owner and approver")
+    source_authority = receipt.get("external_source_authority")
+    organizations = {receipt["source_authorization"].get("organization_id"),
+                     receipt["apply_approval"].get("organization_id"), verifier.get("organization_id")}
+    if (receipt.get("schema_version") != "2.0" or receipt.get("external_source_authorized") is not True or
+            not isinstance(source_authority, dict) or source_authority.get("revoked") is not False or
+            verification_trust.schema_version != "2.0" or verification_trust.purpose != "workspace-actors" or
+            receipt["apply_approval"].get("trust_store_sha256") != verification_trust.digest or
+            source_authority.get("approved_by", {}).get("trust_store_sha256") != verification_trust.digest or
+            None in organizations or len(organizations) != 3 or
+            receipt["source_authorization"].get("authority_class") != "source-archive" or
+            verifier.get("authority_class") != "independent-verifier"):
+        raise RecoveryFailure("original recovery requires external provenance and three organization-independent roles")
     final = {**receipt, "status": "RECOVERED_ORIGINAL", "original_payload_recovered": True,
              "apply_receipt_sha256": receipt_sha, "independent_verifier": verifier}
     final_path = workspace_root / f"{receipt['recovery_id']}-VERIFIED_RECOVERY_RECEIPT.json"
@@ -462,6 +573,9 @@ def main() -> int:
     stage.add_argument("--manifest", type=Path, required=True)
     stage.add_argument("--source-authorization", type=Path, required=True)
     stage.add_argument("--trust-store", type=Path, required=True)
+    stage.add_argument("--external-authority-policy", type=Path)
+    stage.add_argument("--authority-approval", type=Path)
+    stage.add_argument("--internal-trust-store", type=Path)
     stage.add_argument("--workspace", type=Path, required=True)
     stage.add_argument("--approved-root", type=Path, action="append", required=True)
     apply = sub.add_parser("apply")
@@ -493,7 +607,11 @@ def main() -> int:
         roots = tuple(path.expanduser().resolve(strict=True) for path in args.approved_root)
         if args.command == "stage":
             result = verify_and_stage(args.system_root, args.bundle_root, args.manifest,
-                json_file(args.source_authorization, "source authorization"), args.trust_store, args.workspace, roots)
+                json_file(args.source_authorization, "source authorization"), args.trust_store, args.workspace, roots,
+                authority_policy_path=args.external_authority_policy,
+                authority_approval=(json_file(args.authority_approval, "authority approval")
+                                    if args.authority_approval else None),
+                internal_trust_path=args.internal_trust_store)
         elif args.command == "apply":
             result = apply_staged(args.system_root, args.stage_path, args.manifest,
                 json_file(args.apply_approval, "apply approval"), args.trust_store, args.workspace, roots)

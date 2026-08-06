@@ -23,12 +23,13 @@ Read `BATCH_01_44_ROADMAP.md` first. Each Batch remains an independent, versione
 files; deterministic reconstruction remains explicitly `RECONSTRUCTED_NOT_ORIGINAL` until a source
 owner supplies authoritative original bytes. `runtime/original_payload_recovery.py` now provides the
 complete recovery path: exact 227-file inventory, source-archive and per-file digest verification,
-source-owner Ed25519 signature, independent apply approval, isolated staging, exclusive locking,
-fsync, backups, atomic replacement, child-path symlink confinement, persistent crash journal,
-digest-driven restart rollback and post-commit apply-receipt reconstruction.
-Apply remains `APPLIED_PENDING_VERIFICATION` / `original_payload_recovered=false` until a third,
-independent recovery verifier checks all 227 original bytes and signs the final receipt. It has not
-been run against the package because no authoritative source bundle exists.
+exact source revision, content-addressed custody receipt, and a digest-pinned external source-provenance
+Trust Store approved by internal governance. Staging, exclusive locking, fsync, backups, atomic
+replacement, child-path symlink confinement, persistent crash journal, digest-driven restart rollback
+and post-commit receipt reconstruction are implemented. Apply remains
+`APPLIED_PENDING_VERIFICATION` / `original_payload_recovered=false` until source owner, apply approver
+and final verifier are proven to be three distinct organizations and all 227 bytes are independently
+verified. Legacy/local exercises cannot set the flag. No authoritative source bundle has been supplied.
 
 ## Validate the complete system
 
@@ -109,16 +110,23 @@ side effect becomes `UNKNOWN` and cannot be retried as success without reconcili
 `runtime/production_closure.py` connects those Provider receipts to an authorized customer lifecycle:
 read-only customer snapshot metadata, Claim-specific Oracle Holdout, exact versioned Provider API,
 account model, Region, Adapter/IaC, identity, least-privilege, state-backend and rollback evidence,
-cutover/rollback state machine, thresholded soak heartbeats and independent assessment import.
+cutover/rollback state machine, Provider-bound raw soak telemetry, signed heartbeat-timeout termination
+and externally authorized assessment import.
 Customer bytes are verified in place but only counts and digests are persisted; current SQLite records
 must match their latest hash-chain event. Production soak requires at least seven real days with
 six-hour maximum gaps. The accelerated protocol fixture uses an explicit `controlled-test` clock and
-is permanently `engineering-only` with `real_seven_day_elapsed=false`; production assessments bind
-the exact run, cutover, release and account and always retain `certified=false` locally.
+is permanently `engineering-only` with `real_seven_day_elapsed=false`; `soak-status` exposes the exact
+heartbeat deadline and `expire-soak` atomically fails an overdue run. Production assessments bind the
+exact run, cutover, release and account and require a digest-pinned, organization-independent external
+certification Trust Store; all local records retain `certified=false`.
+Readiness evaluates one linked Snapshot→Holdout→Result→Cutover→Soak→Assessment chain and emits its
+`selected_chain`; unrelated failed history stays immutable and counted but cannot poison a complete
+chain. Event-chain or current-record tampering still blocks every decision.
 
-A sealed Holdout is custody evidence only. Production Holdout additionally requires distinct
-development/Holdout partition IDs, an immutable Oracle Registry digest, a complete Claim→Oracle/version
-map and separate predeclared Oracle Owner, Holdout Executor and Verifier signatures. Production v2
+A sealed Holdout is custody evidence only. Production Holdout additionally requires a v2 Actor Trust
+Store with organization-level separation, distinct development/Holdout partition IDs, an immutable
+Oracle Registry digest, a complete Claim→Oracle/version map and separate predeclared Oracle Owner,
+Holdout Executor and Verifier signatures. Production v2
 cutover and soak require the exact `oracle_bound=true` passing result for the same tenant, release and
 Provider account.
 

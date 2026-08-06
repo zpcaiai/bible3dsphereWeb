@@ -195,6 +195,8 @@ class Actor:
     public_key: bytes
     not_before: datetime
     not_after: datetime
+    organization_id: str | None
+    authority_class: str | None
 
 
 @dataclass(frozen=True)
@@ -203,6 +205,9 @@ class TrustStore:
     digest: str
     actors: dict[str, Actor]
     revoked_records: frozenset[str]
+    schema_version: str
+    store_id: str | None
+    purpose: str | None
 
     @classmethod
     def load(cls, path: Path) -> "TrustStore":
@@ -210,8 +215,14 @@ class TrustStore:
         raw = read_regular(resolved, 1024 * 1024, "actor trust store")
         payload = json.loads(raw.decode("utf-8"))
         entries = payload.get("actors")
-        if payload.get("schema_version") != "1.0" or not isinstance(entries, list):
+        schema_version = payload.get("schema_version")
+        if schema_version not in {"1.0", "2.0"} or not isinstance(entries, list):
             raise RuntimeFailure("actor trust store identity is invalid")
+        store_id = payload.get("store_id") if schema_version == "2.0" else None
+        purpose = payload.get("purpose") if schema_version == "2.0" else None
+        if schema_version == "2.0" and (not isinstance(store_id, str) or not store_id or
+                purpose not in {"workspace-actors", "external-certification", "source-provenance"}):
+            raise RuntimeFailure("version 2 trust store identity/purpose is invalid")
         actors: dict[str, Actor] = {}
         actor_ids: set[str] = set()
         key_ids: set[str] = set()
@@ -220,9 +231,13 @@ class TrustStore:
             if not isinstance(entry, dict):
                 raise RuntimeFailure(f"actors[{index}] is invalid")
             actor_id, key_id, roles, relative = (entry.get("actor_id"), entry.get("key_id"), entry.get("roles"), entry.get("public_key_path"))
+            organization_id = entry.get("organization_id") if schema_version == "2.0" else None
+            authority_class = entry.get("authority_class") if schema_version == "2.0" else None
             if (not isinstance(actor_id, str) or not actor_id or actor_id in actor_ids or not isinstance(key_id, str) or not key_id or
                     key_id in key_ids or not isinstance(roles, list) or not roles or any(not isinstance(role, str) or not role for role in roles) or
-                    not isinstance(relative, str) or not relative):
+                    not isinstance(relative, str) or not relative or
+                    (schema_version == "2.0" and (not isinstance(organization_id, str) or not organization_id or
+                                                  not isinstance(authority_class, str) or not authority_class))):
                 raise RuntimeFailure(f"actors[{index}] identity/roles are invalid")
             key_path = (resolved.parent / relative).resolve(strict=True)
             if resolved.parent not in key_path.parents:
@@ -234,11 +249,13 @@ class TrustStore:
             if entry.get("revoked") is True:
                 continue
             actors[actor_id] = Actor(actor_id, key_id, frozenset(roles), public_key,
-                                     parse_time(entry.get("not_before"), "not_before"), parse_time(entry.get("not_after"), "not_after"))
+                                     parse_time(entry.get("not_before"), "not_before"), parse_time(entry.get("not_after"), "not_after"),
+                                     organization_id, authority_class)
         revoked = payload.get("revoked_record_ids", [])
         if not isinstance(revoked, list) or any(not isinstance(item, str) or not item for item in revoked):
             raise RuntimeFailure("revoked_record_ids is invalid")
-        return cls(resolved, canonical_digest({"store": hashlib.sha256(raw).hexdigest(), "keys": key_digests}), actors, frozenset(revoked))
+        return cls(resolved, canonical_digest({"store": hashlib.sha256(raw).hexdigest(), "keys": key_digests}),
+                   actors, frozenset(revoked), schema_version, store_id, purpose)
 
     def verify(self, envelope: Any, role: str, bindings: dict[str, Any]) -> dict[str, Any]:
         if not isinstance(envelope, dict) or set(envelope) != {"algorithm", "key_id", "payload", "signature"}:
@@ -278,7 +295,9 @@ class TrustStore:
         if completed.returncode:
             raise RuntimeFailure("signed actor signature verification failed")
         return {"actor_id": actor.actor_id, "key_id": actor.key_id, "role": role, "record_id": record_id,
-                "payload_sha256": canonical_digest(payload), "trust_store_sha256": self.digest}
+                "payload_sha256": canonical_digest(payload), "trust_store_sha256": self.digest,
+                "trust_store_id": self.store_id, "organization_id": actor.organization_id,
+                "authority_class": actor.authority_class}
 
 
 def source_fingerprint(source: Path, excluded: Path | None = None) -> str:

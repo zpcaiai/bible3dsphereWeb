@@ -5,7 +5,7 @@
   "type": "object",
   "required": ["schema_version", "recovery_id", "status", "file_count"],
   "properties": {
-    "schema_version": {"const": "1.0"},
+    "schema_version": {"enum": ["1.0", "2.0"]},
     "recovery_id": {"type": "string", "minLength": 1, "pattern": "^[^/\\\\\\s]+$"},
     "status": {"enum": ["VERIFIED_STAGED", "APPLIED_PENDING_VERIFICATION", "ROLLED_BACK_AFTER_CRASH", "RECOVERED_ORIGINAL"]},
     "file_count": {"const": 227},
@@ -14,6 +14,10 @@
     "source_archive_sha256": {"$ref": "#/$defs/digest"},
     "apply_receipt_sha256": {"$ref": "#/$defs/digest"},
     "original_payload_recovered": {"type": "boolean"},
+    "external_source_authorized": {"type": "boolean"},
+    "source_identity": {"type": "object"},
+    "custody_evidence": {"type": "object"},
+    "external_source_authority": {"type": "object"},
     "independent_verifier": {"type": "object"}
   },
   "allOf": [
@@ -28,8 +32,13 @@
     {
       "if": {"properties": {"status": {"const": "RECOVERED_ORIGINAL"}}, "required": ["status"]},
       "then": {
-        "properties": {"original_payload_recovered": {"const": true}},
-        "required": ["original_payload_recovered", "apply_receipt_sha256", "independent_verifier"]
+        "properties": {
+          "schema_version": {"const": "2.0"},
+          "original_payload_recovered": {"const": true},
+          "external_source_authorized": {"const": true}
+        },
+        "required": ["original_payload_recovered", "external_source_authorized", "source_identity",
+                     "custody_evidence", "external_source_authority", "apply_receipt_sha256", "independent_verifier"]
       }
     }
   ],
