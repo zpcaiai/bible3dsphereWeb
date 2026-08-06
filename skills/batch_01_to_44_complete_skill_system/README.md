@@ -21,7 +21,13 @@ Read `BATCH_01_44_ROADMAP.md` first. Each Batch remains an independent, versione
 `ORIGINAL_PAYLOAD_RECOVERY.json` records the source-archive search and the exact unresolved Batch
 01–05 provenance boundary. All discovered archive copies are byte-identical and omit the same 227
 files; deterministic reconstruction remains explicitly `RECONSTRUCTED_NOT_ORIGINAL` until a source
-owner supplies authoritative original bytes.
+owner supplies authoritative original bytes. `runtime/original_payload_recovery.py` now provides the
+complete recovery path: exact 227-file inventory, source-archive and per-file digest verification,
+source-owner Ed25519 signature, independent apply approval, isolated staging, exclusive locking,
+fsync, backups, atomic replacement, persistent crash journal and digest-driven restart rollback.
+Apply remains `APPLIED_PENDING_VERIFICATION` / `original_payload_recovered=false` until a third,
+independent recovery verifier checks all 227 original bytes and signs the final receipt. It has not
+been run against the package because no authoritative source bundle exists.
 
 ## Validate the complete system
 
@@ -38,6 +44,10 @@ test suite. The runtime tests cover Ed25519 role authentication, no-op false-pos
 independent Holdout, production evidence boundaries, source drift, rollback, concurrent idempotency,
 the event hash chain, all 44 callable domain handlers, all 788 unique per-Skill handlers, signed
 Provider-adapter idempotency, and cross-Batch/cross-Skill contract substitution. Full
+validation also covers read-only customer snapshot intake, sealed independent Holdout, cutover and
+rollback transitions, concurrent one-winner fencing, bounded soak telemetry, independent assessment
+import, exact 227-file recovery, tamper rejection, process-crash recovery and independent post-apply
+verification. Full
 validation fails closed unless the locked `jsonschema` and `PyYAML`
 dependencies are installed; it runs Draft 2020-12 meta-schema validation and parses every YAML
 document with `yaml.safe_load`. It writes
@@ -93,6 +103,19 @@ effect class and compensation operation. Mutations require a separate Approver; 
 shell-free, idempotency-keyed, fenced and durably journaled in SQLite WAL. Secrets are injected only
 from allowlisted process-environment references and redacted from captured bytes. A timed-out
 side effect becomes `UNKNOWN` and cannot be retried as success without reconciliation.
+
+`runtime/production_closure.py` connects those Provider receipts to an authorized customer lifecycle:
+read-only customer snapshot metadata, sealed Holdout, exact Provider/account/Region/operation and
+native Adapter receipts, cutover/rollback state machine, near-real-time soak heartbeats, availability/
+error thresholds and independent assessment import. Customer bytes are verified in place but only
+counts and digests are persisted. Production soak requires at least seven days with six-hour maximum
+gaps; production assessments bind the exact run, cutover, release and account and always retain
+`certified=false` locally.
+
+A sealed Holdout is custody evidence only. `record-holdout-result` requires byte-bound per-Claim
+evidence, a native execution receipt, and separate predeclared Holdout Executor and Verifier
+signatures. Production v2 cutover and soak require the exact passing result for the same tenant,
+release and Provider account.
 
 ## Import the real database and Provider vertical slice
 

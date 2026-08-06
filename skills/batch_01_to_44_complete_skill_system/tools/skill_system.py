@@ -87,11 +87,17 @@ SYSTEM_REQUIRED_FILES = (
     "runtime/skill_handlers.py",
     "runtime/import_real_toolchain_e2e.py",
     "runtime/provider_runtime.py",
+    "runtime/production_closure.py",
+    "runtime/original_payload_recovery.py",
     "runtime/skill_runtime.py",
     "runtime/claim-oracle-registry.json",
     "runtime/domain-executor-registry.json",
     "runtime/skill-executor-registry.json",
     "runtime/schemas/real-toolchain-e2e-report.schema.json",
+    "runtime/schemas/production-closure-record.schema.json",
+    "runtime/schemas/holdout-execution-result.schema.json",
+    "runtime/schemas/original-payload-recovery-manifest.schema.json",
+    "runtime/schemas/original-payload-recovery-receipt.schema.json",
     "requirements-validation.txt",
 )
 
@@ -1398,6 +1404,21 @@ Date: 2026-08-01
   package validation/install helpers.
 - Evidence boundary: **the unavailable original payloads were not recovered**. Current digests
   identify the reconstructed files and must not be represented as the original signed artifacts.
+- Recovery code: `runtime/original_payload_recovery.py` requires the exact 227 paths, original and
+  reconstructed digests, an authoritative archive, source-owner signature and independent apply
+  approval; it uses a persistent crash journal and requires a separate post-apply recovery verifier.
+
+## Production closure code path
+
+- `runtime/production_closure.py` binds read-only customer snapshot metadata, sealed independent
+  Holdout, exact Provider/account/Region/operation receipts, monotonic fencing, near-real-time seven-day
+  thresholded soak telemetry and exact run/release/account-bound independent assessment import in a
+  hash-chained SQLite WAL authority.
+- A sealed Holdout is custody evidence only; production closure additionally requires byte-bound
+  per-Claim results and separate predeclared Holdout Executor and Verifier signatures.
+- Test and sandbox fixtures remain engineering evidence. Production/customer/provider/long-duration
+  execution and independent certification remain `NOT_RUN` / `NOT_CERTIFIED` until real authorized
+  evidence is supplied.
 
 ## Errors
 
@@ -1593,6 +1614,10 @@ def command_self_test() -> int:
             raise AssertionError("installed shared runtime lacks callable per-Skill handlers")
         if not (runtime_destination / "provider_runtime.py").is_file():
             raise AssertionError("installed shared runtime lacks signed Provider runtime")
+        if not (runtime_destination / "production_closure.py").is_file():
+            raise AssertionError("installed shared runtime lacks production closure control plane")
+        if not (runtime_destination / "original_payload_recovery.py").is_file():
+            raise AssertionError("installed shared runtime lacks authenticated original-payload recovery")
         try:
             install_all(target, dry_run=False)
         except FileExistsError:

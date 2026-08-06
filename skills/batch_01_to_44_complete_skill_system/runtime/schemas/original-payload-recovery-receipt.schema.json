@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bible3d.example/schemas/batch-01-05/original-payload-recovery-receipt.schema.json",
+  "title": "Batch 01-05 Original Payload Recovery Receipt",
+  "type": "object",
+  "required": ["schema_version", "recovery_id", "status", "file_count"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "recovery_id": {"type": "string", "minLength": 1, "pattern": "^[^/\\\\\\s]+$"},
+    "status": {"enum": ["VERIFIED_STAGED", "APPLIED_PENDING_VERIFICATION", "ROLLED_BACK_AFTER_CRASH", "RECOVERED_ORIGINAL"]},
+    "file_count": {"const": 227},
+    "manifest_sha256": {"$ref": "#/$defs/digest"},
+    "entries_root": {"$ref": "#/$defs/digest"},
+    "source_archive_sha256": {"$ref": "#/$defs/digest"},
+    "apply_receipt_sha256": {"$ref": "#/$defs/digest"},
+    "original_payload_recovered": {"type": "boolean"},
+    "independent_verifier": {"type": "object"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"status": {"const": "APPLIED_PENDING_VERIFICATION"}}, "required": ["status"]},
+      "then": {"properties": {"original_payload_recovered": {"const": false}}, "required": ["original_payload_recovered"]}
+    },
+    {
+      "if": {"properties": {"status": {"const": "ROLLED_BACK_AFTER_CRASH"}}, "required": ["status"]},
+      "then": {"properties": {"original_payload_recovered": {"const": false}}, "required": ["original_payload_recovered"]}
+    },
+    {
+      "if": {"properties": {"status": {"const": "RECOVERED_ORIGINAL"}}, "required": ["status"]},
+      "then": {
+        "properties": {"original_payload_recovered": {"const": true}},
+        "required": ["original_payload_recovered", "apply_receipt_sha256", "independent_verifier"]
+      }
+    }
+  ],
+  "$defs": {"digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}},
+  "additionalProperties": true
+}

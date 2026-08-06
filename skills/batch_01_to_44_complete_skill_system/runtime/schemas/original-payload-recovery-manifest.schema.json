@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bible3d.example/schemas/batch-01-05/original-payload-recovery-manifest.schema.json",
+  "title": "Batch 01-05 Original Payload Recovery Manifest",
+  "type": "object",
+  "required": ["schema_version", "namespace", "recovery_id", "source_archive", "entries"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "namespace": {"const": "batch-01-05-original-payload"},
+    "recovery_id": {"type": "string", "minLength": 1, "maxLength": 256, "pattern": "^[^/\\\\\\s]+$"},
+    "source_archive": {"$ref": "#/$defs/artifact"},
+    "entries": {
+      "type": "array", "minItems": 227, "maxItems": 227,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["path", "original_sha256", "original_bytes", "reconstructed_sha256", "provenance"],
+        "properties": {
+          "path": {"type": "string", "minLength": 1},
+          "original_sha256": {"$ref": "#/$defs/digest"},
+          "original_bytes": {"type": "integer", "minimum": 0},
+          "reconstructed_sha256": {"$ref": "#/$defs/digest"},
+          "provenance": {"const": "authoritative-source-owner"}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "artifact": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "sha256", "bytes"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {"$ref": "#/$defs/digest"},
+        "bytes": {"type": "integer", "minimum": 0}
+      }
+    }
+  },
+  "additionalProperties": false
+}

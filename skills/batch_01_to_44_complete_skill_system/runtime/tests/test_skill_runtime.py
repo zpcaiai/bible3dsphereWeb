@@ -3,11 +3,13 @@ from __future__ import annotations
 import base64
 import importlib.util
 import json
+import shutil
 import subprocess
 import sys
 import tempfile
 import unittest
 from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from unittest import mock
 
@@ -21,6 +23,8 @@ SPEC.loader.exec_module(runtime)
 import domain_handlers
 import skill_handlers
 import provider_runtime
+import production_closure
+import original_payload_recovery
 
 
 class SkillRuntimeTest(unittest.TestCase):
@@ -42,7 +46,11 @@ class SkillRuntimeTest(unittest.TestCase):
             "executor-production": ["production-executor"], "oracle-owner": ["oracle-owner"],
             "verifier-dev": ["verifier"], "verifier-holdout": ["holdout-verifier"],
             "verifier-production": ["production-verifier"],
-            "adapter-admin": ["adapter-admin"], "approver": ["approver"],
+            "adapter-admin": ["adapter-admin"], "approver": ["approver", "production-approver"],
+            "data-owner": ["data-owner"], "holdout-custodian": ["holdout-custodian"],
+            "operations-owner": ["operations-owner"], "independent-certifier": ["independent-certifier"],
+            "source-owner": ["source-owner"], "recovery-approver": ["recovery-approver"],
+            "recovery-verifier": ["recovery-verifier"],
         }
         entries = []
         for actor_id, actor_roles in roles.items():
@@ -79,6 +87,24 @@ class SkillRuntimeTest(unittest.TestCase):
                         "-in", str(source), "-out", str(signature)], check=True, capture_output=True)
         return {"algorithm": "ed25519", "key_id": f"key-{actor_id}", "payload": payload,
                 "signature": base64.urlsafe_b64encode(signature.read_bytes()).decode("ascii").rstrip("=")}
+
+    def provider_receipt(self, cutover: dict, target_state: str, operation: str, token: str,
+                         *, provider: dict | None = None, effect_state: str = "SUCCEEDED") -> dict:
+        native = self.root / f"native-provider-{token}.json"
+        native.write_text(json.dumps({"state": effect_state, "operation": operation}), encoding="utf-8")
+        native_ref = {"path": str(native), "sha256": production_closure.digest_bytes(native.read_bytes()),
+                      "bytes": native.stat().st_size}
+        wrapper = {"schema_version": "1.0", "receipt_id": f"receipt-{token}",
+            "cutover_id": cutover["cutover_id"], "tenant_id": cutover["tenant_id"],
+            "target_key": cutover["target_key"], "target_state": target_state,
+            "provider": provider or cutover["provider"], "operation": operation,
+            "adapter_receipt": native_ref, "effect_state": effect_state,
+            "request_sha256": production_closure.digest_bytes(f"request-{token}".encode()),
+            "issued_at": production_closure.now_text()}
+        path = self.root / f"provider-wrapper-{token}.json"
+        path.write_text(json.dumps(wrapper), encoding="utf-8")
+        return {"path": str(path), "sha256": production_closure.digest_bytes(path.read_bytes()),
+                "bytes": path.stat().st_size}
 
     def domain_result(self, claim: object, corpus: str, *, independent: bool | None = None,
                       tool: str = "fixture-native-tool", corpus_digest: str | None = None) -> Path:
@@ -392,6 +418,421 @@ class SkillRuntimeTest(unittest.TestCase):
         (self.source / "Main.java").write_text("final class Main { int changed; }\n", encoding="utf-8")
         with self.assertRaisesRegex(runtime.RuntimeFailure, "source changed"):
             runtime.record_evidence(self.workspace, envelope, (self.root.resolve(),))
+
+    def test_customer_provider_cutover_soak_and_external_assessment_close_at_local_ceiling(self) -> None:
+        snapshot_data = self.root / "customer-snapshot.bin"
+        snapshot_data.write_bytes(b"masked customer fixture")
+        snapshot_manifest = {"schema_version": "1.0", "snapshot_id": "snapshot-001", "tenant_id": "tenant-001",
+            "environment_class": "test", "classification": "synthetic", "purpose": "migration-validation", "read_only": True,
+            "files": [{"path": str(snapshot_data), "sha256": production_closure.digest_bytes(snapshot_data.read_bytes()),
+                       "bytes": snapshot_data.stat().st_size}]}
+        snapshot_path = self.root / "snapshot.json"
+        snapshot_path.write_text(json.dumps(snapshot_manifest), encoding="utf-8")
+        snapshot_auth = self.sign("data-owner", {"snapshot_id": "snapshot-001", "tenant_id": "tenant-001",
+            "manifest_sha256": production_closure.digest(snapshot_manifest), "environment_class": "test",
+            "purpose": "migration-validation"}, "snapshot")
+        snapshot = production_closure.register_snapshot(
+            self.workspace, snapshot_path, snapshot_auth, self.trust_store, (self.root.resolve(),))
+        self.assertEqual("metadata-and-content-digests-only", snapshot["data_minimization"])
+        self.assertNotIn(str(snapshot_data), json.dumps(snapshot))
+
+        holdout_data = self.root / "holdout.bin"
+        holdout_data.write_bytes(b"sealed untouched holdout")
+        holdout_manifest = {"schema_version": "1.0", "holdout_id": "holdout-001", "tenant_id": "tenant-001",
+            "environment_class": "test", "corpus": {"path": str(holdout_data),
+                "sha256": production_closure.digest_bytes(holdout_data.read_bytes()), "bytes": holdout_data.stat().st_size},
+            "development_corpus_sha256": production_closure.digest_bytes(b"development"),
+            "transformation_author_ids": ["author-a"], "executor_ids": ["executor-holdout"],
+            "verifier_ids": ["verifier-holdout"]}
+        holdout_path = self.root / "holdout.json"
+        holdout_path.write_text(json.dumps(holdout_manifest), encoding="utf-8")
+        holdout_auth = self.sign("holdout-custodian", {"holdout_id": "holdout-001", "tenant_id": "tenant-001",
+            "manifest_sha256": production_closure.digest(holdout_manifest),
+            "corpus_sha256": holdout_manifest["corpus"]["sha256"], "environment_class": "test"}, "holdout")
+        holdout = production_closure.register_holdout(
+            self.workspace, holdout_path, holdout_auth, self.trust_store, (self.root.resolve(),))
+        self.assertTrue(holdout["sealed"])
+
+        execution = self.root / "holdout-execution.json"
+        execution.write_text(json.dumps({"state": "SUCCEEDED"}), encoding="utf-8")
+        claim = self.root / "holdout-claim.json"
+        claim.write_text(json.dumps({"claim": "route-equivalence", "outcome": "PASS"}), encoding="utf-8")
+        holdout_result = {"schema_version": "1.0", "result_id": "holdout-result-001",
+            "holdout_id": "holdout-001", "tenant_id": "tenant-001",
+            "target_release_sha256": production_closure.digest_bytes(b"release"),
+            "provider_account_sha256": production_closure.digest_bytes(b"sandbox-account"),
+            "execution_receipt": {"path": str(execution),
+                "sha256": production_closure.digest_bytes(execution.read_bytes()), "bytes": execution.stat().st_size},
+            "decision": "PASS", "claim_results": [{"claim_id": "route-equivalence", "outcome": "PASS",
+                "evidence": {"path": str(claim), "sha256": production_closure.digest_bytes(claim.read_bytes()),
+                             "bytes": claim.stat().st_size}}],
+            "started_at": "2026-01-01T00:00:00Z", "finished_at": "2026-01-01T00:00:01Z"}
+        holdout_result_path = self.root / "holdout-result.json"
+        holdout_result_path.write_text(json.dumps(holdout_result), encoding="utf-8")
+        bad_holdout_path = self.root / "holdout-result-mismatched.json"
+        bad_holdout_path.write_text(json.dumps({**holdout_result, "decision": "FAIL"}), encoding="utf-8")
+        with self.assertRaisesRegex(production_closure.ClosureFailure, "differs from claim outcomes"):
+            production_closure.record_holdout_result(self.workspace, bad_holdout_path, {}, {}, self.trust_store,
+                                                     (self.root.resolve(),))
+        normalized = [{"claim_id": "route-equivalence", "outcome": "PASS",
+            "evidence": {"sha256": holdout_result["claim_results"][0]["evidence"]["sha256"],
+                         "bytes": claim.stat().st_size}}]
+        holdout_root = production_closure.digest({"holdout_corpus_sha256": holdout["corpus"]["sha256"],
+            "execution_receipt_sha256": holdout_result["execution_receipt"]["sha256"],
+            "claim_results": normalized})
+        result_bindings = {"result_id": "holdout-result-001", "holdout_id": "holdout-001",
+            "tenant_id": "tenant-001", "manifest_sha256": production_closure.digest(holdout_result),
+            "evidence_root": holdout_root, "target_release_sha256": holdout_result["target_release_sha256"],
+            "provider_account_sha256": holdout_result["provider_account_sha256"], "decision": "PASS"}
+        executor_auth = self.sign("executor-holdout", result_bindings, "holdout-result-executor")
+        verifier_auth = self.sign("verifier-holdout", {**result_bindings, "executor_id": "executor-holdout"},
+                                  "holdout-result-verifier")
+        recorded = production_closure.record_holdout_result(self.workspace, holdout_result_path,
+            executor_auth, verifier_auth, self.trust_store, (self.root.resolve(),))
+        self.assertTrue(recorded["independent"])
+
+        plan = {"schema_version": "1.0", "cutover_id": "cutover-001", "tenant_id": "tenant-001",
+            "snapshot_id": "snapshot-001", "target_key": "sandbox-target",
+            "target_release_sha256": production_closure.digest_bytes(b"release"),
+            "rollback_adapter_id": "fixture-provider", "rollback_operation": "undo",
+            "preconditions": ["reconciled", "rollback-ready"]}
+        plan_path = self.root / "cutover.json"
+        plan_path.write_text(json.dumps(plan), encoding="utf-8")
+        plan_auth = self.sign("approver", {"cutover_id": "cutover-001", "tenant_id": "tenant-001",
+            "plan_sha256": production_closure.digest(plan), "snapshot_id": "snapshot-001",
+            "target_key": "sandbox-target"}, "cutover-plan")
+        production_closure.plan_cutover(self.workspace, plan_path, plan_auth, self.trust_store, (self.root.resolve(),))
+        transitions = (("PLANNED", "PRECHECKED", "operations-owner"), ("PRECHECKED", "APPROVED", "approver"),
+                       ("APPROVED", "EXECUTING", "operations-owner"), ("EXECUTING", "VERIFYING", "verifier-production"),
+                       ("VERIFYING", "SUCCEEDED", "verifier-production"))
+        for fencing, (source_state, target_state, actor) in enumerate(transitions, 1):
+            receipt_path = self.root / f"receipt-{target_state}.json"
+            receipt_path.write_text(json.dumps({"state": target_state, "fencing": fencing}), encoding="utf-8")
+            receipt = {"path": str(receipt_path), "sha256": production_closure.digest_bytes(receipt_path.read_bytes()),
+                       "bytes": receipt_path.stat().st_size}
+            attestation = self.sign(actor, {"cutover_id": "cutover-001", "tenant_id": "tenant-001",
+                "expected_state": source_state, "target_state": target_state, "fencing_token": fencing,
+                "receipt_sha256": receipt["sha256"]}, f"cutover-{target_state}")
+            cutover = production_closure.transition_cutover(self.workspace, "cutover-001", source_state, target_state,
+                fencing, receipt, attestation, self.trust_store, (self.root.resolve(),))
+        self.assertEqual("SUCCEEDED", cutover["state"])
+
+        production_closure.start_soak(self.workspace, "cutover-001", "soak-001", "test",
+                                      "2026-01-01T00:00:00Z", 60, 40)
+        for sequence, observed_at in ((1, "2026-01-01T00:00:30Z"), (2, "2026-01-01T00:01:00Z")):
+            metrics = {"requests": 100, "errors": 0, "critical_failures": 0, "availability": 1.0}
+            heartbeat = self.sign("operations-owner", {"run_id": "soak-001", "sequence": sequence,
+                "observed_at": observed_at, "metrics_sha256": production_closure.digest(metrics)}, f"heartbeat-{sequence}")
+            production_closure.observe_soak(self.workspace, "soak-001", sequence, observed_at, metrics,
+                                            heartbeat, self.trust_store)
+        running = production_closure.Store(self.workspace).get("soak", "soak-001")
+        evidence_root = production_closure.soak_evidence_root(running)
+        finish = self.sign("verifier-production", {"run_id": "soak-001", "sequence": 3,
+            "observed_at": "2026-01-01T00:01:01Z", "target_state": "PASSED", "evidence_root": evidence_root},
+            "soak-finish")
+        soak = production_closure.finish_soak(self.workspace, "soak-001", 3, "2026-01-01T00:01:01Z",
+                                              finish, self.trust_store)
+        self.assertEqual("engineering-only", soak["evidence_class"])
+
+        report = {"schema_version": "1.0", "assessment_id": "assessment-001", "tenant_id": "tenant-001",
+            "scope": "fixture-only", "decision": "NOT_CERTIFIED", "evidence_root": soak["evidence_root"],
+            "limitations": ["synthetic fixture"], "issued_at": "2026-01-01T00:00:00Z",
+            "expires_at": "2099-01-01T00:00:00Z"}
+        report_path = self.root / "assessment.json"
+        report_path.write_text(json.dumps(report), encoding="utf-8")
+        unbound = {**report, "assessment_id": "assessment-unbound",
+                   "evidence_root": production_closure.digest_bytes(b"unbound-evidence")}
+        unbound_path = self.root / "assessment-unbound.json"
+        unbound_path.write_text(json.dumps(unbound), encoding="utf-8")
+        unbound_auth = self.sign("independent-certifier", {"assessment_id": "assessment-unbound",
+            "tenant_id": "tenant-001", "report_sha256": production_closure.digest(unbound),
+            "evidence_root": unbound["evidence_root"], "decision": "NOT_CERTIFIED"}, "assessment-unbound")
+        with self.assertRaisesRegex(production_closure.ClosureFailure, "not a PASSED tenant soak"):
+            production_closure.import_assessment(
+                self.workspace, unbound_path, unbound_auth, self.trust_store, (self.root.resolve(),))
+        report_auth = self.sign("independent-certifier", {"assessment_id": "assessment-001", "tenant_id": "tenant-001",
+            "report_sha256": production_closure.digest(report), "evidence_root": soak["evidence_root"],
+            "decision": "NOT_CERTIFIED"}, "assessment")
+        imported = production_closure.import_assessment(
+            self.workspace, report_path, report_auth, self.trust_store, (self.root.resolve(),))
+        self.assertFalse(imported["certified"])
+        readiness = production_closure.readiness(self.workspace, "tenant-001")
+        self.assertEqual("LOCAL_TOOLKIT_PASS", readiness["decision"])
+        self.assertEqual("NOT_CERTIFIED", readiness["production_status"])
+        self.assertEqual([], readiness["findings"])
+
+    def test_production_closure_rejects_holdout_reuse_and_short_production_soak(self) -> None:
+        corpus = self.root / "shared.bin"
+        corpus.write_bytes(b"shared")
+        corpus_sha = production_closure.digest_bytes(corpus.read_bytes())
+        value = {"schema_version": "1.0", "holdout_id": "holdout-shared", "tenant_id": "tenant-001",
+            "environment_class": "test", "corpus": {"path": str(corpus), "sha256": corpus_sha, "bytes": 6},
+            "development_corpus_sha256": corpus_sha, "transformation_author_ids": ["author"],
+            "executor_ids": ["executor"], "verifier_ids": ["verifier"]}
+        path = self.root / "shared-holdout.json"
+        path.write_text(json.dumps(value), encoding="utf-8")
+        with self.assertRaisesRegex(production_closure.ClosureFailure, "reuses development"):
+            production_closure.register_holdout(self.workspace, path, {}, self.trust_store, (self.root.resolve(),))
+        store = production_closure.Store(self.workspace)
+        cutover = {"cutover_id": "completed-cutover", "tenant_id": "tenant-001", "state": "SUCCEEDED"}
+        store.create("cutover", "completed-cutover", "tenant-001", "production", "SUCCEEDED", cutover, "CUTOVER_SUCCEEDED")
+        with self.assertRaisesRegex(production_closure.ClosureFailure, "at least seven days"):
+            production_closure.start_soak(self.workspace, "completed-cutover", "short-soak", "production",
+                                          "2026-01-01T00:00:00Z", 60, 30)
+        soak = {"schema_version": "1.0", "run_id": "stale-soak", "cutover_id": "completed-cutover",
+            "tenant_id": "tenant-001", "environment_class": "test", "state": "RUNNING", "version": 0,
+            "started_at": "2026-01-01T00:00:00Z", "required_seconds": 60, "max_gap_seconds": 40,
+            "last_sequence": 1, "last_observed_at": "2026-01-01T00:00:30Z",
+            "observations": [{"metrics_sha256": production_closure.digest({"ok": True})}], "critical_failures": 0}
+        store.create("soak", "stale-soak", "tenant-001", "test", "RUNNING", soak, "SOAK_STARTED")
+        with self.assertRaisesRegex(production_closure.ClosureFailure, "exceeds gap"):
+            production_closure.finish_soak(self.workspace, "stale-soak", 2, "2026-01-01T00:01:20Z", {}, self.trust_store)
+        self.assertIn("soak run has not reached PASSED", production_closure.readiness(self.workspace, "tenant-001")["findings"])
+
+    def test_cutover_transition_race_has_one_winner_and_a_valid_event_chain(self) -> None:
+        store = production_closure.Store(self.workspace)
+        cutover = {"schema_version": "1.0", "cutover_id": "cutover-race", "tenant_id": "tenant-001",
+            "state": "PLANNED", "version": 0, "fencing_token": 0, "approval": {"actor_id": "approver"},
+            "transitions": []}
+        store.create("cutover", "cutover-race", "tenant-001", "test", "PLANNED", cutover, "CUTOVER_PLANNED")
+        receipt_path = self.root / "race-receipt.json"
+        receipt_path.write_text("{}", encoding="utf-8")
+        receipt = {"path": str(receipt_path), "sha256": production_closure.digest_bytes(receipt_path.read_bytes()),
+                   "bytes": receipt_path.stat().st_size}
+        attestation = self.sign("operations-owner", {"cutover_id": "cutover-race", "tenant_id": "tenant-001",
+            "expected_state": "PLANNED", "target_state": "PRECHECKED", "fencing_token": 1,
+            "receipt_sha256": receipt["sha256"]}, "cutover-race")
+
+        def transition(_: int) -> str:
+            try:
+                production_closure.transition_cutover(self.workspace, "cutover-race", "PLANNED", "PRECHECKED", 1,
+                    receipt, attestation, self.trust_store, (self.root.resolve(),))
+                return "won"
+            except production_closure.ClosureFailure:
+                return "conflict"
+
+        with ThreadPoolExecutor(max_workers=16) as pool:
+            outcomes = list(pool.map(transition, range(32)))
+        self.assertEqual(1, outcomes.count("won"))
+        self.assertEqual(31, outcomes.count("conflict"))
+        self.assertEqual("PRECHECKED", store.get("cutover", "cutover-race")["state"])
+        self.assertEqual([], store.chain_findings())
+
+    def test_provider_receipt_and_seven_day_soak_are_exact_realtime_and_fail_closed(self) -> None:
+        start = datetime.now(timezone.utc).replace(microsecond=0)
+        profile = {"provider_id": "fixture-cloud",
+            "account_binding_sha256": production_closure.digest_bytes(b"account-a"),
+            "region": "test-region-1", "adapter_id": "fixture-provider", "precheck_operation": "inspect",
+            "execute_operation": "apply", "verify_operation": "inspect", "rollback_operation": "undo"}
+        store = production_closure.Store(self.workspace)
+        store.create("snapshot", "provider-snapshot", "tenant-001", "production", "REGISTERED",
+            {"schema_version": "1.0", "snapshot_id": "provider-snapshot", "tenant_id": "tenant-001",
+             "environment_class": "production"}, "SNAPSHOT_REGISTERED")
+        release = production_closure.digest_bytes(b"release")
+        store.create("holdout-result", "provider-holdout-result", "tenant-001", "production", "PASS",
+            {"schema_version": "1.0", "result_id": "provider-holdout-result", "holdout_id": "provider-holdout",
+             "tenant_id": "tenant-001", "decision": "PASS", "target_release_sha256": release,
+             "provider_account_sha256": profile["account_binding_sha256"]}, "HOLDOUT_RESULT_RECORDED")
+        plan = {"schema_version": "2.0", "cutover_id": "exact-cutover", "tenant_id": "tenant-001",
+            "snapshot_id": "provider-snapshot", "holdout_result_id": "provider-holdout-result",
+            "target_key": "target", "target_release_sha256": release, "rollback_adapter_id": "fixture-provider",
+            "rollback_operation": "undo", "preconditions": ["reconciled", "rollback-ready"], "provider": profile}
+        plan_path = self.root / "exact-cutover-plan.json"
+        plan_path.write_text(json.dumps(plan), encoding="utf-8")
+        plan_auth = self.sign("approver", {"cutover_id": "exact-cutover", "tenant_id": "tenant-001",
+            "plan_sha256": production_closure.digest(plan), "snapshot_id": "provider-snapshot",
+            "target_key": "target"}, "exact-cutover-plan")
+        cutover = production_closure.plan_cutover(self.workspace, plan_path, plan_auth, self.trust_store,
+                                                  (self.root.resolve(),))
+        wrong = self.provider_receipt(cutover, "PRECHECKED", "inspect", "wrong",
+                                      provider={**profile, "region": "other-region-1"})
+        wrong_auth = self.sign("operations-owner", {"cutover_id": "exact-cutover", "tenant_id": "tenant-001",
+            "expected_state": "PLANNED", "target_state": "PRECHECKED", "fencing_token": 1,
+            "receipt_sha256": wrong["sha256"]}, "wrong-provider")
+        with self.assertRaisesRegex(production_closure.ClosureFailure, "differs from the approved plan"):
+            production_closure.transition_cutover(self.workspace, "exact-cutover", "PLANNED", "PRECHECKED", 1,
+                wrong, wrong_auth, self.trust_store, (self.root.resolve(),))
+        correct = self.provider_receipt(cutover, "PRECHECKED", "inspect", "correct")
+        correct_auth = self.sign("operations-owner", {"cutover_id": "exact-cutover", "tenant_id": "tenant-001",
+            "expected_state": "PLANNED", "target_state": "PRECHECKED", "fencing_token": 1,
+            "receipt_sha256": correct["sha256"]}, "correct-provider")
+        result = production_closure.transition_cutover(self.workspace, "exact-cutover", "PLANNED", "PRECHECKED", 1,
+            correct, correct_auth, self.trust_store, (self.root.resolve(),))
+        self.assertEqual("test-region-1", result["transitions"][0]["receipt"]["provider"]["region"])
+
+        soak_cutover = {**cutover, "cutover_id": "soak-cutover", "state": "SUCCEEDED", "version": 5,
+            "fencing_token": 5, "holdout_result_id": "production-holdout-result",
+            "transitions": [{"to": "SUCCEEDED",
+                "recorded_at": start.isoformat().replace("+00:00", "Z")} ]}
+        store.create("holdout-result", "production-holdout-result", "tenant-001", "production", "PASS",
+            {"schema_version": "1.0", "result_id": "production-holdout-result",
+             "holdout_id": "production-holdout", "tenant_id": "tenant-001", "decision": "PASS",
+             "target_release_sha256": soak_cutover["target_release_sha256"],
+             "provider_account_sha256": profile["account_binding_sha256"]}, "HOLDOUT_RESULT_RECORDED")
+        store.create("cutover", "soak-cutover", "tenant-001", "production", "SUCCEEDED",
+                     soak_cutover, "CUTOVER_SUCCEEDED")
+        with mock.patch.object(production_closure, "utc_now", return_value=start + timedelta(seconds=1)):
+            with self.assertRaisesRegex(production_closure.ClosureFailure, "conservative telemetry policy"):
+                production_closure.start_soak(self.workspace, "soak-cutover", "weak-soak", "production",
+                    (start + timedelta(seconds=1)).isoformat(), production_closure.PRODUCTION_SOAK_SECONDS,
+                    production_closure.PRODUCTION_SOAK_SECONDS, 0.99, 0.01, 1)
+            production_closure.start_soak(self.workspace, "soak-cutover", "production-soak", "production",
+                (start + timedelta(seconds=1)).isoformat(), production_closure.PRODUCTION_SOAK_SECONDS,
+                production_closure.PRODUCTION_MAX_GAP_SECONDS, 0.999, 0.001, 28)
+        for sequence in range(1, 29):
+            observed = start + timedelta(seconds=1 + sequence * production_closure.PRODUCTION_MAX_GAP_SECONDS)
+            observed_text = observed.isoformat().replace("+00:00", "Z")
+            metrics = {"requests": 10_000, "errors": 1, "critical_failures": 0, "availability": 0.9999}
+            heartbeat = self.sign("operations-owner", {"run_id": "production-soak", "sequence": sequence,
+                "observed_at": observed_text, "metrics_sha256": production_closure.digest(metrics)},
+                f"production-soak-{sequence}")
+            with mock.patch.object(production_closure, "utc_now", return_value=observed):
+                production_closure.observe_soak(self.workspace, "production-soak", sequence, observed_text,
+                                                metrics, heartbeat, self.trust_store)
+        running = store.get("soak", "production-soak")
+        evidence_root = production_closure.soak_evidence_root(running)
+        finished = start + timedelta(seconds=2 + production_closure.PRODUCTION_SOAK_SECONDS)
+        finished_text = finished.isoformat().replace("+00:00", "Z")
+        final = self.sign("verifier-production", {"run_id": "production-soak", "sequence": 29,
+            "observed_at": finished_text, "target_state": "PASSED", "evidence_root": evidence_root},
+            "production-soak-final")
+        with mock.patch.object(production_closure, "utc_now", return_value=finished):
+            soak = production_closure.finish_soak(self.workspace, "production-soak", 29, finished_text,
+                                                  final, self.trust_store)
+        self.assertEqual("PASSED", soak["state"])
+        self.assertEqual("production", soak["evidence_class"])
+        legacy = {"schema_version": "1.0", "assessment_id": "legacy-production-assessment",
+            "tenant_id": "tenant-001", "scope": "synthetic-production-protocol-test", "decision": "CERTIFIED",
+            "evidence_root": soak["evidence_root"], "limitations": ["local synthetic clock"],
+            "issued_at": start.isoformat().replace("+00:00", "Z"), "expires_at": "2099-01-01T00:00:00Z"}
+        legacy_path = self.root / "legacy-production-assessment.json"
+        legacy_path.write_text(json.dumps(legacy), encoding="utf-8")
+        legacy_auth = self.sign("independent-certifier", {"assessment_id": "legacy-production-assessment",
+            "tenant_id": "tenant-001", "report_sha256": production_closure.digest(legacy),
+            "evidence_root": soak["evidence_root"], "decision": "CERTIFIED"}, "legacy-production-assessment")
+        with self.assertRaisesRegex(production_closure.ClosureFailure, "exact run, release, and provider account"):
+            production_closure.import_assessment(self.workspace, legacy_path, legacy_auth, self.trust_store,
+                                                 (self.root.resolve(),))
+        exact = {**legacy, "schema_version": "2.0", "assessment_id": "exact-production-assessment",
+            "run_id": "production-soak", "cutover_id": "soak-cutover",
+            "target_release_sha256": soak_cutover["target_release_sha256"],
+            "provider_account_sha256": profile["account_binding_sha256"]}
+        exact_path = self.root / "exact-production-assessment.json"
+        exact_path.write_text(json.dumps(exact), encoding="utf-8")
+        exact_auth = self.sign("independent-certifier", {"assessment_id": "exact-production-assessment",
+            "tenant_id": "tenant-001", "report_sha256": production_closure.digest(exact),
+            "evidence_root": soak["evidence_root"], "decision": "CERTIFIED"}, "exact-production-assessment")
+        imported = production_closure.import_assessment(self.workspace, exact_path, exact_auth, self.trust_store,
+                                                        (self.root.resolve(),))
+        self.assertFalse(imported["certified"])
+        self.assertFalse(production_closure.readiness(self.workspace, "tenant-001")["certified"])
+
+    def test_original_payload_recovery_requires_exact_signed_227_file_bundle_and_applies_atomically(self) -> None:
+        canonical_root = Path(__file__).resolve().parents[2]
+        expected = original_payload_recovery.expected_paths(canonical_root)
+        fake_system, bundle = self.root / "fake-system", self.root / "recovery-bundle"
+        entries = []
+        for relative in expected:
+            reconstructed = f"reconstructed:{relative}\n".encode()
+            original = f"authoritative-original:{relative}\n".encode()
+            target, payload = fake_system / relative, bundle / "payloads" / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            payload.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(reconstructed)
+            payload.write_bytes(original)
+            entries.append({"path": relative, "original_sha256": original_payload_recovery.digest_bytes(original),
+                "original_bytes": len(original), "reconstructed_sha256": original_payload_recovery.digest_bytes(reconstructed),
+                "provenance": "authoritative-source-owner"})
+        archive = bundle / "authoritative-source.zip"
+        archive.write_bytes(b"signed source archive fixture")
+        manifest = {"schema_version": "1.0", "namespace": "batch-01-05-original-payload",
+            "recovery_id": "recovery-001", "source_archive": {"path": str(archive),
+                "sha256": original_payload_recovery.digest_bytes(archive.read_bytes()), "bytes": archive.stat().st_size},
+            "entries": entries}
+        manifest_path = bundle / "manifest.json"
+        manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+        entries_root = original_payload_recovery.digest([{key: item[key] for key in sorted(item)} for item in entries])
+        source_auth = self.sign("source-owner", {"recovery_id": "recovery-001",
+            "manifest_sha256": original_payload_recovery.digest(manifest), "entries_root": entries_root,
+            "source_archive_sha256": manifest["source_archive"]["sha256"], "file_count": 227}, "source-recovery")
+
+        first_payload = bundle / "payloads" / expected[0]
+        original_first = first_payload.read_bytes()
+        first_payload.write_bytes(b"tampered")
+        with self.assertRaisesRegex(original_payload_recovery.RecoveryFailure, "byte/digest mismatch"):
+            original_payload_recovery.verify_and_stage(fake_system, bundle, manifest_path, source_auth,
+                self.trust_store, self.root / "recovery-workspace-bad", (self.root.resolve(),))
+        first_payload.write_bytes(original_first)
+
+        recovery_workspace = self.root / "recovery-workspace"
+        staged = original_payload_recovery.verify_and_stage(fake_system, bundle, manifest_path, source_auth,
+            self.trust_store, recovery_workspace, (self.root.resolve(),))
+        self.assertEqual("VERIFIED_STAGED", staged["status"])
+        approval = self.sign("recovery-approver", {"recovery_id": "recovery-001",
+            "manifest_sha256": original_payload_recovery.digest(manifest), "entries_root": entries_root,
+            "target_root_sha256": original_payload_recovery.digest(original_payload_recovery.expected_paths(fake_system)),
+            "file_count": 227}, "apply-recovery")
+        real_replace = original_payload_recovery.os.replace
+        replacement_count = 0
+        injected = False
+
+        def fail_third_target_replace(source: str | Path, destination: str | Path) -> None:
+            nonlocal replacement_count, injected
+            if str(source).endswith(".recovery-001.tmp"):
+                replacement_count += 1
+                if replacement_count == 3 and not injected:
+                    injected = True
+                    raise OSError("injected atomic replacement failure")
+            real_replace(source, destination)
+
+        with mock.patch.object(original_payload_recovery.os, "replace", side_effect=fail_third_target_replace):
+            with self.assertRaisesRegex(OSError, "injected atomic replacement failure"):
+                original_payload_recovery.apply_staged(fake_system, Path(staged["stage_path"]), manifest_path,
+                    approval, self.trust_store, recovery_workspace, (self.root.resolve(),))
+        for entry in entries:
+            self.assertEqual(entry["reconstructed_sha256"],
+                             original_payload_recovery.digest_bytes((fake_system / entry["path"]).read_bytes()))
+        shutil.rmtree(recovery_workspace / "backups" / "recovery-001")
+
+        replacement_count = 0
+        def crash_third_target_replace(source: str | Path, destination: str | Path) -> None:
+            nonlocal replacement_count
+            if str(source).endswith(".recovery-001.tmp"):
+                replacement_count += 1
+                if replacement_count == 3:
+                    raise KeyboardInterrupt("simulated process termination")
+            real_replace(source, destination)
+
+        with mock.patch.object(original_payload_recovery.os, "replace", side_effect=crash_third_target_replace):
+            with self.assertRaisesRegex(KeyboardInterrupt, "simulated process termination"):
+                original_payload_recovery.apply_staged(fake_system, Path(staged["stage_path"]), manifest_path,
+                    approval, self.trust_store, recovery_workspace, (self.root.resolve(),))
+        recovered = original_payload_recovery.recover_interrupted(
+            fake_system, manifest_path, recovery_workspace, (self.root.resolve(),))
+        self.assertEqual("ROLLED_BACK_AFTER_CRASH", recovered["status"])
+        self.assertFalse(recovered["original_payload_recovered"])
+        for entry in entries:
+            self.assertEqual(entry["reconstructed_sha256"],
+                             original_payload_recovery.digest_bytes((fake_system / entry["path"]).read_bytes()))
+        shutil.rmtree(recovery_workspace / "backups" / "recovery-001")
+
+        receipt = original_payload_recovery.apply_staged(fake_system, Path(staged["stage_path"]), manifest_path,
+            approval, self.trust_store, recovery_workspace, (self.root.resolve(),))
+        self.assertEqual("APPLIED_PENDING_VERIFICATION", receipt["status"])
+        self.assertFalse(receipt["original_payload_recovered"])
+        self.assertEqual(227, receipt["file_count"])
+        for entry in entries:
+            self.assertEqual(entry["original_sha256"],
+                             original_payload_recovery.digest_bytes((fake_system / entry["path"]).read_bytes()))
+        receipt_path = recovery_workspace / "recovery-001-APPLY_RECEIPT.json"
+        verification = self.sign("recovery-verifier", {"recovery_id": "recovery-001",
+            "manifest_sha256": original_payload_recovery.digest(manifest),
+            "apply_receipt_sha256": original_payload_recovery.digest(receipt), "entries_root": entries_root,
+            "file_count": 227}, "verify-recovery")
+        verified = original_payload_recovery.verify_applied(fake_system, manifest_path, receipt_path,
+            verification, self.trust_store, recovery_workspace, (self.root.resolve(),))
+        self.assertEqual("RECOVERED_ORIGINAL", verified["status"])
+        self.assertTrue(verified["original_payload_recovered"])
 
 
 if __name__ == "__main__":

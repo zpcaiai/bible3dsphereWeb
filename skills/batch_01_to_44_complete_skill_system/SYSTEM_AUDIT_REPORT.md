@@ -14,9 +14,9 @@ Date: 2026-08-01
 - total_skill_files: **788**
 - unique_skill_names: **788**
 - agent_interfaces: **788**
-- json_schemas: **290**
+- json_schemas: **294**
 - yaml_documents: **1030**
-- python_scripts: **53**
+- python_scripts: **55**
 - shell_scripts: **90**
 - local_markdown_links: **34**
 - manifest_files: **2659**
@@ -53,6 +53,21 @@ Date: 2026-08-01
   package validation/install helpers.
 - Evidence boundary: **the unavailable original payloads were not recovered**. Current digests
   identify the reconstructed files and must not be represented as the original signed artifacts.
+- Recovery code: `runtime/original_payload_recovery.py` requires the exact 227 paths, original and
+  reconstructed digests, an authoritative archive, source-owner signature and independent apply
+  approval; it uses a persistent crash journal and requires a separate post-apply recovery verifier.
+
+## Production closure code path
+
+- `runtime/production_closure.py` binds read-only customer snapshot metadata, sealed independent
+  Holdout, exact Provider/account/Region/operation receipts, monotonic fencing, near-real-time seven-day
+  thresholded soak telemetry and exact run/release/account-bound independent assessment import in a
+  hash-chained SQLite WAL authority.
+- A sealed Holdout is custody evidence only; production closure additionally requires byte-bound
+  per-Claim results and separate predeclared Holdout Executor and Verifier signatures.
+- Test and sandbox fixtures remain engineering evidence. Production/customer/provider/long-duration
+  execution and independent certification remain `NOT_RUN` / `NOT_CERTIFIED` until real authorized
+  evidence is supplied.
 
 ## Errors
 
