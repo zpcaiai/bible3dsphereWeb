@@ -13,7 +13,7 @@ import { prefersReducedMotion } from '../../prefersReducedMotion'
 const chipBase = {
   display: 'inline-flex', alignItems: 'center', gap: 6,
   padding: '6px 11px', borderRadius: 999, fontSize: 12.5,
-  cursor: 'pointer', border: '1px solid rgba(255,255,255,0.18)',
+  cursor: 'pointer', borderWidth: 1, borderStyle: 'solid', borderColor: 'rgba(255,255,255,0.18)',
   background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.72)',
   transition: 'background .18s, color .18s, border-color .18s',
 }

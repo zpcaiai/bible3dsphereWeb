@@ -1,34 +1,54 @@
 {
-  "evidenceVersion": "1.0.0",
-  "generatedAt": "2026-08-01T07:57:31Z",
+  "evidenceVersion": "1.1.0",
+  "generatedAt": "2026-08-06T04:44:54Z",
   "artifactId": "sunday-school-ai-formation",
-  "artifactVersion": "1.0.0-rc.20260801",
-  "localEvidenceArtifactSha256": "401a70ee47d4ac6a4b219a0ce880db4ac3620b07f416310563f8c6e66d065912",
+  "artifactVersion": "1.0.0-rc.20260806",
+  "localEvidenceArtifactSha256": "af8000a6897293979a84ca4fa4e48925ae045a590ea9ee2033ba44366ec9bfed",
   "certificationStatus": "NOT_CERTIFIED",
   "automatedApproval": false,
   "frontendStagingPreview": {
     "provider": "vercel",
-    "deploymentId": "dpl_47naQsGUAf4F7ACe7u7YXnyeCepV",
-    "scopeBinding": "deployment_id",
-    "sourceArtifactSha256": null,
+    "deploymentId": "dpl_62R11CqCgXN5FZAJ13BRF3dh3Hd2",
+    "scopeBinding": "deployment_id_and_static_artifact_sha256",
+    "sourceArtifactSha256": "af8000a6897293979a84ca4fa4e48925ae045a590ea9ee2033ba44366ec9bfed",
     "target": "preview",
     "readyState": "READY",
-    "url": "https://bible3dsphere-q86a69xrj-zpchoney-6160s-projects.vercel.app",
+    "url": "https://bible3dsphere-rbcl24gd9-zpchoney-6160s-projects.vercel.app",
     "deploymentProtection": true,
-    "httpVerification": "passed",
-    "httpStatus": 200,
-    "robotsPolicy": "noindex",
-    "aiFormationFeatureFlag": false,
+    "unauthenticatedHttpStatus": 302,
+    "authenticatedHttpVerification": "passed",
+    "authenticatedRouteHttpStatus": 200,
+    "robotsPolicy": "noindex, nofollow",
+    "aiFormationFeatureFlag": true,
     "productionPromotionPerformed": false
   },
   "backendStaging": {
     "provider": "hugging_face_spaces",
     "status": "BLOCKED",
+    "productionRewriteReachability": {
+      "result": "passed",
+      "unauthenticatedManifestStatus": 401
+    },
     "reasonCodes": [
       "BACKEND_STAGING_CREDENTIAL_MISSING",
-      "FULL_STACK_STAGING_NOT_DEPLOYED"
+      "SEPARATE_BACKEND_STAGING_NOT_DEPLOYED",
+      "PRODUCTION_BACKEND_IS_NOT_STAGING_EVIDENCE"
     ],
     "featureFlag": false
+  },
+  "localFullStackAcceptance": {
+    "status": "passed",
+    "browser": "Google Chrome via Playwright",
+    "transport": "same_origin_vite_proxy_to_fastapi",
+    "database": "disposable PostgreSQL 16 with PostGIS 3.6.1 and vector 0.8.6",
+    "httpWriteStatus": 201,
+    "persistedRecordType": "learner_context",
+    "persistedStatus": "active",
+    "retentionDays": 90,
+    "auditReasonCode": "USER_EXPLICIT_SUBMISSION",
+    "databaseRecordCount": 4,
+    "browserResultsSha256": "dffe68cc2db54bd26a41a84cb095537496d70f80081bfe7223f33799a9bafce6",
+    "screenshotSha256": "7508601e08e351da787d72147ea0b93d19bbc1e2be9ea9d814ea1b85486d175b"
   },
   "limitedRollout": {
     "status": "NOT_ISSUED",
@@ -41,24 +61,25 @@
     "authorizedBy": null
   },
   "incidentRollbackDrill": {
-    "simulationScope": "disposable local PostgreSQL plus protected Vercel preview with feature flag disabled",
+    "simulationScope": "disposable local PostGIS plus protected Vercel preview",
     "machineResult": "passed",
     "containment": {
-      "frontendFeatureFlagDisabled": true,
-      "backendFeatureFlagDisabledByDefault": true,
-      "publishedContentCount": 0
+      "frontendFeatureFlagDefaultDisabled": true,
+      "backendFeatureFlagDefaultDisabled": true,
+      "publishedContentCount": 0,
+      "humanReviewsCount": 0
     },
     "databaseExercise": {
-      "moduleForward": ["0238", "0239", "0240"],
-      "moduleRollback": ["0240", "0239", "0238"],
-      "moduleReapply": ["0238", "0239", "0240"],
+      "moduleForward": ["0238", "0239", "0240", "0241"],
+      "moduleRollback": ["0241", "0240", "0239", "0238"],
+      "moduleReapply": ["0238", "0239", "0240", "0241"],
       "recordsTableRemoved": true,
       "contentTableRemoved": true,
-      "transactionPersisted": false,
-      "fullHistoricalForwardCount": 229,
+      "fullHistoricalForwardCount": 230,
       "fullHistoricalIdempotentReapplyCount": 0,
-      "postgisVersion": "3.6.4",
-      "vectorVersion": "0.8.0"
+      "postgisVersion": "3.6.1",
+      "vectorVersion": "0.8.6",
+      "migrationManifestSha256": "55e6e214f38dc7974fd5ca1100c08a1460842679877da5149f8530749516c0f7"
     },
     "humanIncidentOwner": null,
     "humanRollbackOwner": null,
@@ -66,6 +87,9 @@
   },
   "contentReview": {
     "contentVersionCount": 67,
+    "publishedContentCount": 0,
+    "humanReviewCount": 0,
+    "requiredDistinctReviewRoles": 5,
     "reviewStatus": "BLOCKED",
     "artifactSha256": "e5f9c6c7b15aae0c5d3cb5b240e1aea2b23a9986da5ac6977384eb6a63e870e5",
     "reasonCodes": [
@@ -74,24 +98,35 @@
       "AUTHORIZED_HUMAN_REVIEWS_REQUIRED"
     ]
   },
-  "manualAcceptance": {
+  "accessibilityAcceptance": {
+    "automatedChromeDesktop": "passed",
+    "automatedChrome390x844": "passed",
+    "automatedChrome320x568": "passed",
+    "automatedZoom400Percent": "passed",
+    "axeViolations": 0,
     "screenReader": "NOT_SIGNED",
     "physicalIOS": "NOT_SIGNED",
     "physicalAndroid": "NOT_SIGNED",
-    "zoom200And400Percent": "NOT_SIGNED",
     "authorizedReviewer": null
   },
-  "productionDependencyAudit": {
-    "command": "npm audit --omit=dev --registry=https://registry.npmjs.org",
-    "result": "passed",
-    "exitCode": 0,
-    "vulnerabilityCount": 0,
-    "dompurifyVersion": "3.4.12"
+  "qualityAndPerformance": {
+    "eslintErrors": 0,
+    "eslintWarnings": 0,
+    "frontendTestFilesPassed": 145,
+    "frontendTestsPassed": 715,
+    "mockBrowserTestsPassed": 6,
+    "liveFullStackBrowserTestsPassed": 1,
+    "mockBrowserResultsSha256": "63f64413283c53a2b5753b661d19a13ac378d00b922870a3bb2d02bdc6828ef8",
+    "liveBrowserResultsSha256": "dffe68cc2db54bd26a41a84cb095537496d70f80081bfe7223f33799a9bafce6",
+    "startupBytes": 734176,
+    "startupBudgetBytes": 900000,
+    "eagerSpecialistAssets": [],
+    "precachedSpecialistAssets": []
   },
   "limitations": [
-    "The Vercel preview proves safe deployment with the module disabled, not a functional full-stack staging release.",
-    "The Vercel CLI exposed an immutable deployment ID but did not expose a source-bundle SHA-256; the local composite evidence hash is not presented as the deployment digest.",
-    "The browser API was mocked for deterministic UI transport tests; live authenticated staging API acceptance is still required.",
-    "No AI or automation has signed a human review, accessibility acceptance, limited release, incident, rollback, or final release decision."
+    "The Vercel preview is a protected frontend preview; its rewrite reaches the production backend and is not separate backend staging evidence.",
+    "The real authenticated browser-to-FastAPI-to-PostGIS acceptance was executed locally against a disposable database, not against staging.",
+    "No AI or automation has signed a human content review, accessibility acceptance, limited release, incident, rollback, or final release decision.",
+    "Only migrations 0238-0241 have repository rollback SQL; all 230 historical migrations were verified forward, but older migrations are not claimed reversible."
   ]
 }

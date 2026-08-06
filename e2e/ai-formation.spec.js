@@ -102,7 +102,7 @@ for (const device of [
         const rect = button.getBoundingClientRect()
         return { text: button.textContent?.trim(), width: rect.width, height: rect.height }
       })
-      .filter(({ width, height }) => width < 24 || height < 24))
+      .filter(({ width, height }) => width < 44 || height < 44))
     expect(undersizedTargets).toEqual([])
     const accessibility = await new AxeBuilder({ page }).include('.aif-page').analyze()
     expect(accessibility.violations).toEqual([])
@@ -116,4 +116,17 @@ test('admin certification deep link remains fail-closed', async ({ page }) => {
   await expect(page.getByText('NOT_CERTIFIED').first()).toBeVisible()
   const accessibility = await new AxeBuilder({ page }).include('.aif-page').analyze()
   expect(accessibility.violations).toEqual([])
+})
+
+test('400 percent zoom preserves a single-axis reflow and semantic landmarks', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 })
+  await openModule(page)
+  await page.evaluate(() => { document.body.style.zoom = '400%' })
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)
+  expect(overflow).toBeLessThanOrEqual(1)
+  await expect(page.getByRole('main')).toBeVisible()
+  const moduleRegion = page.locator('#aif-main')
+  await expect(moduleRegion).toHaveRole('region')
+  const snapshot = await moduleRegion.ariaSnapshot()
+  expect(snapshot).toContain('选择与你当前责任相符的轨道')
 })

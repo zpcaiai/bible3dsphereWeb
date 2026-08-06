@@ -5,13 +5,18 @@ import { defineConfig } from '@playwright/test'
 // a misleading 502.
 process.env.NO_PROXY = '127.0.0.1,localhost'
 process.env.no_proxy = '127.0.0.1,localhost'
+const acceptancePort = process.env.PLAYWRIGHT_PORT || '4173'
+const acceptanceBaseURL = `http://127.0.0.1:${acceptancePort}`
+const browserResultsFile = process.env.AI_FORMATION_LIVE_E2E
+  ? './docs/ai-formation-certification/browser-results-live.json'
+  : './docs/ai-formation-certification/browser-results.json'
 
 export default defineConfig({
   testDir: './e2e',
   outputDir: './docs/ai-formation-certification/browser-artifacts',
-  reporter: [['line'], ['json', { outputFile: './docs/ai-formation-certification/browser-results.json' }]],
+  reporter: [['line'], ['json', { outputFile: browserResultsFile }]],
   use: {
-    baseURL: 'http://127.0.0.1:4173',
+    baseURL: acceptanceBaseURL,
     browserName: 'chromium',
     headless: true,
     launchOptions: {
@@ -22,8 +27,8 @@ export default defineConfig({
     screenshot: 'only-on-failure',
   },
   webServer: {
-    command: 'VITE_AI_FORMATION_ENABLED=true npm run build && npm run preview -- --host 127.0.0.1',
-    url: 'http://127.0.0.1:4173',
+    command: `VITE_AI_FORMATION_ENABLED=true npm run build && npm run preview -- --host 127.0.0.1 --port ${acceptancePort}`,
+    url: acceptanceBaseURL,
     timeout: 180_000,
     reuseExistingServer: false,
   },

@@ -1,6 +1,9 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { fileURLToPath, URL } from 'node:url'
+import { createHash } from 'node:crypto'
+
+const localApiTarget = process.env.VITE_LOCAL_API_TARGET?.trim() || 'http://localhost:8000'
 
 // 构建时产出 /precache-manifest.json（全部 hashed 产物路径），
 // sw.js 安装阶段读取并预缓存——二次访问全静态秒开，也根治旧 chunk 404。
@@ -11,15 +14,17 @@ function precacheManifestPlugin() {
     generateBundle(_, bundle) {
       // 排除巨型按需场景包（语音降噪 wasm/livekit/PDF/地图）——只在进入对应功能时下载，
       // 避免 SW 安装阶段预取 4MB+ 拖慢首装与流量
-      const PRECACHE_EXCLUDE = /(krisp|livekit|maplibre|mapbox|deck|^assets\/pdf-)/
+      const PRECACHE_EXCLUDE = /(krisp|livekit|maplibre|mapbox|deck|three|mirrorData|jspdf|html2canvas|^assets\/pdf-)/
       const files = Object.keys(bundle)
         .filter((f) => /\.(js|css|woff2?)$/.test(f))
         .filter((f) => !PRECACHE_EXCLUDE.test(f))
         .map((f) => '/' + f)
+        .sort()
+      const version = createHash('sha256').update(files.join('\n')).digest('hex').slice(0, 16)
       this.emitFile({
         type: 'asset',
         fileName: 'precache-manifest.json',
-        source: JSON.stringify({ version: Date.now(), files }),
+        source: JSON.stringify({ version, files }),
       })
     },
   }
@@ -44,25 +49,18 @@ export default defineConfig({
     // libraries (maps, 3D, voice denoise, PDF). Keep warnings for abnormal
     // growth while avoiding noise for expected deferred chunks.
     chunkSizeWarningLimit: 1000,
+    // Match specialist modules explicitly so shared application code stays with
+    // its natural importer and out of eager modulepreload dependencies.
     rollupOptions: {
       output: {
-        manualChunks: {
-          'three': ['three', '@react-three/fiber', '@react-three/drei'],
-          'maplibre-gl': ['maplibre-gl'],
-          'deck-luma': [
-            '@deck.gl/core',
-            '@deck.gl/layers',
-            '@deck.gl/mapbox',
-            '@luma.gl/core',
-            '@luma.gl/engine',
-            '@luma.gl/shadertools',
-            '@luma.gl/webgl',
-            '@math.gl/core',
-            '@math.gl/web-mercator',
-          ],
-          'pdf': ['jspdf', 'html2canvas'],
-          'livekit-client': ['livekit-client'],
-          'krisp': ['@livekit/krisp-noise-filter'],
+        onlyExplicitManualChunks: true,
+        manualChunks(id) {
+          if (id.includes('/node_modules/@livekit/krisp-noise-filter/')) return 'krisp'
+          if (id.includes('/node_modules/livekit-client/')) return 'livekit-client'
+          if (id.endsWith('/src/EmotionSphereScene.jsx')) return 'three'
+          if (/\/node_modules\/(?:three|@react-three|three-stdlib|postprocessing|troika-[^/]+|meshline|camera-controls|maath|its-fine|suspend-react)\//.test(id)) return 'three'
+          if (id.includes('/node_modules/maplibre-gl/')) return 'maplibre-gl'
+          if (/\/node_modules\/(?:@deck\.gl|@luma\.gl|@math\.gl)\//.test(id)) return 'deck-luma'
         },
       },
     },
@@ -72,7 +70,7 @@ export default defineConfig({
     host: '0.0.0.0',
     proxy: {
       '/api': {
-        target: 'http://localhost:8000',
+        target: localApiTarget,
         changeOrigin: true,
       },
       '/wdbible': {
@@ -87,7 +85,7 @@ export default defineConfig({
     host: '0.0.0.0',
     proxy: {
       '/api': {
-        target: 'http://localhost:8000',
+        target: localApiTarget,
         changeOrigin: true,
       },
       '/wdbible': {

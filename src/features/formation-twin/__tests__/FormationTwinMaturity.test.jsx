@@ -4,7 +4,18 @@ import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/re
 import { setRuntimeLang } from '../../../i18n/runtime'
 import FormationTwinMaturity from '../FormationTwinMaturity'
 import { isRenderableStage, REQUIRED_STAGE_FIELDS } from '../emotionalMaturityApi'
-import { eraseMaturityData, getProfile, runTriage } from '../emotionalMaturityApi'
+import {
+  eraseMaturityData,
+  getConsentScopes,
+  getGrowthRoute,
+  getNextAssessmentItem,
+  getProfile,
+  grantConsent,
+  runTriage,
+  scoreAssessment,
+  submitAssessmentIntake,
+  submitAssessmentResponse,
+} from '../emotionalMaturityApi'
 
 /**
  * 这一屏最容易出错的不是取不到数据，而是把「当前一段时间的表现」渲染成「我的等级」。
@@ -41,6 +52,7 @@ const scopes = {
     EMD_SELF_ASSESSMENT: '进行一次性的私人情感成熟度自评',
     EMD_BEHAVIOR_EVIDENCE: '记录并使用最近真实行为作为证据',
   },
+  granted_scopes: ['EMD_SELF_ASSESSMENT'],
   withheld_scopes: { EMD_PASTORAL_SHARE: '试点档未认证第三方分享，因此不提供该同意项' },
 }
 
@@ -59,12 +71,19 @@ vi.mock('../emotionalMaturityApi', async (importOriginal) => {
     getDisplayContract: vi.fn(async () => contract),
     getPilotCapabilities: vi.fn(async () => capabilities),
     getConsentScopes: vi.fn(async () => scopes),
-    getProfile: vi.fn(async () => ({ dimensions: [goodStage] })),
-    getGrowthRoute: vi.fn(async () => ({ assignments: [] })),
+    getProfile: vi.fn(async () => ({ profile: { emd_profile_id: 'profile-1', dimensions: [goodStage] } })),
+    getGrowthRoute: vi.fn(async () => ({ route: { assignments: [] } })),
     runTriage: vi.fn(async () => ({ assessment_allowed: true, safety_level: 'NONE' })),
-    grantConsent: vi.fn(async () => ({ granted_scopes: ['EMD_SELF_ASSESSMENT'] })),
+    submitAssessmentIntake: vi.fn(async () => ({ status: 'READY' })),
+    getNextAssessmentItem: vi.fn(async () => ({ decision: 'stop' })),
+    submitAssessmentResponse: vi.fn(async () => ({ raw_text_stored: false })),
+    scoreAssessment: vi.fn(async () => ({ emd_profile_id: 'profile-2' })),
+    createGrowthRoute: vi.fn(async () => ({ assignments: [] })),
+    grantConsent: vi.fn(async () => ({ decision: 'GRANTED', session_id: 'session-1', granted_scopes: ['EMD_SELF_ASSESSMENT'] })),
     withdrawConsent: vi.fn(async () => ({ ok: true })),
-    eraseMaturityData: vi.fn(async () => ({ receipt: { user_message: '你的情感成熟度数据已删除。' } })),
+    eraseMaturityData: vi.fn(async () => ({
+      receipt: { user_message: '你的情感成熟度数据已删除。备份副本会在备份保留期内自然过期。' },
+    })),
   }
 })
 
@@ -124,7 +143,7 @@ describe('FormationTwinMaturity', () => {
 
   it('缺字段的阶段不渲染，而不是渲染一半', async () => {
     getProfile.mockResolvedValueOnce({
-      dimensions: [{ ...goodStage, context: '' }, { ...goodStage, dimension_code: 'D2' }],
+      profile: { dimensions: [{ ...goodStage, context: '' }, { ...goodStage, dimension_code: 'D2' }] },
     })
     render(<FormationTwinMaturity user={{ email: 'a@b.c' }} />)
     await waitFor(() => expect(screen.getAllByTestId('emd-stage-card').length).toBe(1))
@@ -145,11 +164,56 @@ describe('FormationTwinMaturity', () => {
     await screen.findByTestId('emd-stage-card')
 
     fireEvent.change(screen.getByLabelText(/用几句话说说最近的状态/), { target: { value: '我不想活了' } })
-    fireEvent.click(screen.getByText('开始一次自评'))
+    fireEvent.click(screen.getByText('完成安全分流并开始自评'))
 
     await waitFor(() => expect(screen.getByTestId('emd-safety-block')).toBeTruthy())
     expect(screen.queryByTestId('emd-stage-card')).toBeNull()
     expect(onSafety).toHaveBeenCalled()
+    expect(runTriage).toHaveBeenCalledWith({ session_id: 'session-1', free_text: '我不想活了' })
+  })
+
+  it('未授权时不能启动，并可显式授权后再进入分流', async () => {
+    getConsentScopes.mockResolvedValueOnce({ ...scopes, granted_scopes: [] })
+    render(<FormationTwinMaturity user={{ email: 'a@b.c' }} />)
+    const start = await screen.findByRole('button', { name: '完成安全分流并开始自评' })
+    expect(start.disabled).toBe(true)
+    fireEvent.click(screen.getByRole('button', { name: '授权私人自评' }))
+    await waitFor(() => expect(grantConsent).toHaveBeenCalledWith({
+      requested_scopes: ['EMD_SELF_ASSESSMENT'],
+      granted_scopes: ['EMD_SELF_ASSESSMENT'],
+      user_acknowledged_limits: true,
+    }))
+    await waitFor(() => expect(start.disabled).toBe(false))
+  })
+
+  it('安全分流后执行可跳过题目，并从真实后端响应生成阶段描述', async () => {
+    getNextAssessmentItem
+      .mockResolvedValueOnce({
+        decision: 'ask_item',
+        rendered_item: {
+          item_id: 'D2-SR-001', dimension_code: 'D2', item_type: 'SR',
+          item_type_label: '自我描述', rendered_text: '情绪上来时，我通常能注意到。',
+          response_mode: 'likert', skippable: true, skip_note: '跳过不会被解读为回避。',
+        },
+      })
+      .mockResolvedValueOnce({ decision: 'stop' })
+    render(<FormationTwinMaturity user={{ email: 'a@b.c' }} />)
+    fireEvent.click(await screen.findByRole('button', { name: '完成安全分流并开始自评' }))
+    expect(await screen.findByTestId('emd-assessment-item')).toBeTruthy()
+    const questionHeading = screen.getByRole('heading', { name: '情绪上来时，我通常能注意到。' })
+    expect(document.activeElement).toBe(questionHeading)
+    expect(screen.getByText(/第 1 题，最多 6 题/)).toBeTruthy()
+    fireEvent.click(screen.getByLabelText(/^3/))
+    fireEvent.click(screen.getByRole('button', { name: '保存并继续' }))
+    await waitFor(() => expect(submitAssessmentResponse).toHaveBeenCalledWith(expect.objectContaining({
+      session_id: 'session-1', item_id: 'D2-SR-001', raw_response: '3', source_type: 'self_report',
+    })))
+    await waitFor(() => expect(scoreAssessment).toHaveBeenCalledWith(expect.objectContaining({ session_id: 'session-1' })))
+    expect(submitAssessmentIntake).toHaveBeenCalledWith({ session_id: 'session-1', submitted: {} })
+    expect(await screen.findByTestId('emd-assessment-complete')).toBeTruthy()
+    expect(screen.queryByRole('button', { name: '完成安全分流并开始自评' })).toBeNull()
+    fireEvent.click(screen.getByRole('button', { name: '开始一次新的私人自评' }))
+    expect(screen.getByRole('button', { name: '完成安全分流并开始自评' })).toBeTruthy()
   })
 
   it('试点期被关掉的同意项要说明原因，而不是悄悄消失', async () => {
@@ -164,16 +228,55 @@ describe('FormationTwinMaturity', () => {
   })
 
   it('没有证据时不虚构结论', async () => {
-    getProfile.mockResolvedValueOnce({ dimensions: [] })
+    getProfile.mockResolvedValueOnce({ profile: { dimensions: [] } })
     render(<FormationTwinMaturity user={{ email: 'a@b.c' }} />)
     expect((await screen.findByTestId('emd-empty')).textContent).toContain('不会为了填满页面而虚构')
+  })
+
+  it('可选的历史路由加载失败时仍保留阶段描述和新的自评入口', async () => {
+    getGrowthRoute.mockRejectedValueOnce(new Error('route unavailable'))
+    render(<FormationTwinMaturity user={{ email: 'a@b.c' }} />)
+    expect(await screen.findByTestId('emd-stage-card')).toBeTruthy()
+    expect(screen.getByText(/已有阶段描述或下一步暂时无法加载/)).toBeTruthy()
+    expect(screen.getByRole('button', { name: '完成安全分流并开始自评' })).toBeTruthy()
+  })
+
+  it('真实行为题需要可见确认且把发生状态提交给服务器', async () => {
+    getConsentScopes.mockResolvedValueOnce({
+      ...scopes,
+      granted_scopes: ['EMD_SELF_ASSESSMENT', 'EMD_BEHAVIOR_EVIDENCE'],
+    })
+    getNextAssessmentItem
+      .mockResolvedValueOnce({
+        decision: 'ask_item',
+        rendered_item: {
+          item_id: 'D2-BE-001', dimension_code: 'D2', item_type: 'BE',
+          item_type_label: '最近真实行为事件', rendered_text: '最近一次情绪上来时，你实际做了什么？',
+          response_mode: 'open_text', skip_note: '可以跳过。',
+        },
+      })
+      .mockResolvedValueOnce({ decision: 'stop' })
+    render(<FormationTwinMaturity user={{ email: 'a@b.c' }} />)
+    fireEvent.click(await screen.findByRole('button', { name: '完成安全分流并开始自评' }))
+    fireEvent.change(await screen.findByLabelText('你的回答（可跳过）'), { target: { value: '我先暂停，再说明我的感受。' } })
+    const save = screen.getByRole('button', { name: '保存并继续' })
+    expect(save.disabled).toBe(true)
+    fireEvent.click(screen.getByLabelText(/我确认回答描述的是最近真实发生的事/))
+    expect(save.disabled).toBe(false)
+    fireEvent.click(save)
+    await waitFor(() => expect(submitAssessmentResponse).toHaveBeenCalledWith(expect.objectContaining({
+      item_id: 'D2-BE-001', source_type: 'recent_behavior', occurred_in_real_life: true,
+    })))
   })
 
   it('删除后回执如实提到备份保留期', async () => {
     render(<FormationTwinMaturity user={{ email: 'a@b.c' }} />)
     await screen.findByTestId('emd-stage-card')
     fireEvent.click(screen.getByText('删除这一部分数据'))
+    expect(eraseMaturityData).not.toHaveBeenCalled()
+    fireEvent.click(screen.getByRole('button', { name: '确认永久删除' }))
     await waitFor(() => expect(eraseMaturityData).toHaveBeenCalled())
     await waitFor(() => expect(screen.queryByTestId('emd-stage-card')).toBeNull())
+    expect(screen.getByRole('status').textContent).toContain('备份保留期')
   })
 })

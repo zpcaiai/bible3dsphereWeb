@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import BackButton from '../../BackButton'
 import { t as i18nT } from '../../i18n/runtime'
 import { fetchAiFormationManifest, saveAiFormationRecord } from './api'
@@ -145,15 +145,22 @@ export default function AiFormationPage({
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(runtimeEnabled)
   const [error, setError] = useState('')
+  const contentRef = useRef(null)
   const load = useCallback(async () => {
     if (!runtimeEnabled) return
     setLoading(true); setError('')
     try { setData(await manifestLoader()) } catch (caught) { setError(caught.message || i18nT('模块加载失败')) } finally { setLoading(false) }
   }, [manifestLoader, runtimeEnabled])
   useEffect(() => { load() }, [load])
-  const permissions = Array.isArray(user?.permissions) ? user.permissions : []
-  const teacher = Boolean(user?.is_admin || user?.role === 'admin' || user?.role === 'teacher' || permissions.includes('sunday_school.ai_formation.manage'))
+  // The current backend protects every review/certification endpoint with the
+  // existing platform-admin check.  Do not render a teacher-only path that the
+  // server will then reject; a future granular permission must land on both
+  // sides of this boundary in the same change.
+  const teacher = Boolean(user?.is_admin || user?.role === 'admin')
   const activeTab = tab === 'governance' && !teacher ? 'overview' : tab
+  useEffect(() => {
+    if (!loading && data) contentRef.current?.focus()
+  }, [activeTab, data, loading])
   const tracks = data?.tracks?.length ? data.tracks.map((item) => {
     const local = TRACKS.find((track) => track.id === item.id)
     return {
@@ -170,10 +177,11 @@ export default function AiFormationPage({
   if (data?.enabled === false) return <Disabled onBack={onBack} />
   const openTrack = (track) => { setSelectedBatch(track.batchIds[0]); setTab('batches') }
   return (
-    <section className="aif-page" aria-labelledby="aif-page-title">
+    <section className="aif-page">
+      <a className="aif-skip-link" href="#aif-main">{i18nT('跳到主要内容')}</a>
       <header className="aif-header"><BackButton onClick={onBack} /><div><span className="aif-kicker">SUNDAY SCHOOL · AI FORMATION</span><h1 id="aif-page-title">{i18nT(data?.manifest?.title?.['zh-CN'] || 'AI时代心意更新与家庭门训')}</h1><p>{i18nT('一个模块 · 四条轨道 · 十二个依赖有序的 Batch')}</p></div><span className="aif-alpha">RELEASE CANDIDATE</span></header>
       <nav className="aif-nav" aria-label={i18nT('AI时代心意更新导航')}>{NAV.filter(([id]) => id !== 'governance' || teacher).map(([id, label]) => <button type="button" key={id} aria-current={activeTab === id ? 'page' : undefined} onClick={() => setTab(id)}>{i18nT(label)}</button>)}</nav>
-      <div className="aif-content">
+      <div id="aif-main" className="aif-content" ref={contentRef} tabIndex="-1" role="region" aria-labelledby="aif-page-title">
         {activeTab === 'overview' && <Overview manifest={data?.manifest || { status: 'draft' }} tracks={tracks} onSelectTrack={openTrack} teacher={teacher} onTeacher={() => setTab('governance')} />}
         {activeTab === 'context' && <ContextIntake recordSaver={recordSaver} onRecommend={(trackId) => openTrack(TRACKS.find((item) => item.id === trackId))} />}
         {activeTab === 'batches' && <BatchMatrix batches={batches} selectedId={selectedBatch} onSelect={setSelectedBatch} onOpenTwin={() => onOpen('formation-twin')} />}

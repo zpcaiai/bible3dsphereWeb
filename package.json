@@ -9,6 +9,7 @@
     "lint:fix": "eslint . --fix",
     "prebuild": "npm run i18n:fill && npm run i18n:audit",
     "build": "vite build",
+    "postbuild": "node scripts/audit_startup_bundle.mjs",
     "i18n:fill": "node scripts/i18n_autoen_fill.mjs",
     "i18n:fill:dry": "node scripts/i18n_autoen_fill.mjs --dry-run",
     "i18n:audit": "node scripts/i18n_autoen_fill.mjs --check",

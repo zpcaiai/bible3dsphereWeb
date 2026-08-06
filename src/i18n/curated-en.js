@@ -826,4 +826,10 @@ export default {
   "删除这一部分数据": "Delete this section's data",
   "情感成熟度：阶段描述与下一步": "Emotional maturity: stage description and next steps",
   "阶段不是分数 · 安全优先于评估 · 可逐项撤回": "Stages are not scores · Safety comes before assessment · Consent is revocable item by item",
+
+  // ── AI Formation governance and keyboard navigation ──
+  "跳到主要内容": "Skip to main content",
+  "批准前必须逐项完成当前角色的全部人工核对。": "Complete every required human-review check for this role before approving.",
+  "所需独立人工审核": "Required independent human reviews",
+  "逐项确认人工审核范围": "Confirm each required review item",
 }

@@ -3,19 +3,23 @@ import { API_BASE } from '../../api'
 const ROOT = `${API_BASE}/v1/formation-twin/emotional-maturity`
 
 async function request(path, options = {}) {
+  const hasJsonBody = options.body !== undefined
+    && !(typeof FormData !== 'undefined' && options.body instanceof FormData)
   const response = await fetch(`${ROOT}${path}`, {
-    credentials: 'same-origin',
+    credentials: 'include',
     ...options,
     headers: {
-      ...(options.body instanceof FormData ? {} : { 'Content-Type': 'application/json' }),
+      ...(hasJsonBody ? { 'Content-Type': 'application/json' } : {}),
       ...options.headers,
     },
   })
   const data = await response.json().catch(() => ({}))
   if (!response.ok) {
     const detail = Array.isArray(data.detail)
-      ? data.detail.map((item) => item.msg).join('；')
-      : data.detail
+      ? data.detail.map((item) => item?.msg || item?.message || String(item)).join('；')
+      : typeof data.detail === 'object' && data.detail !== null
+        ? data.detail.message || data.detail.msg || JSON.stringify(data.detail)
+        : data.detail
     const error = new Error(detail || `请求失败（${response.status}）`)
     error.status = response.status
     throw error
@@ -45,10 +49,27 @@ export function withdrawConsent(consentScope) {
 export function runTriage(payload) {
   return request('/triage', { method: 'POST', body: JSON.stringify(payload) })
 }
+export function submitAssessmentIntake(payload) {
+  return request('/intake', { method: 'POST', body: JSON.stringify(payload) })
+}
+export function getNextAssessmentItem(payload) {
+  return request('/items/next', { method: 'POST', body: JSON.stringify(payload) })
+}
+export function submitAssessmentResponse(payload) {
+  return request('/responses', { method: 'POST', body: JSON.stringify(payload) })
+}
+export function scoreAssessment(payload) {
+  return request('/score', { method: 'POST', body: JSON.stringify(payload) })
+}
 export function getProfile() { return request('/profile') }
-// 后端端点是 /route（不是 /growth-route）；名字对不上会静默 404，
-// 而本组件把 404 当成「还没做过评估」，所以错误会以「没有数据」的样子出现。
+// GET 只读取最近一次已保存路由；POST 才会生成新路由，避免页面加载产生副作用。
 export function getGrowthRoute() { return request('/route') }
+export function createGrowthRoute(emdProfileId, maxDimensions = 2) {
+  return request('/route', {
+    method: 'POST',
+    body: JSON.stringify({ emd_profile_id: emdProfileId, max_dimensions: maxDimensions }),
+  })
+}
 
 // ── 个人权利 ────────────────────────────────────────────────────────────────
 export function getDeletionPlan() { return request('/deletion-plan') }

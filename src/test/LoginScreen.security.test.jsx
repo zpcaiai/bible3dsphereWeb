@@ -24,6 +24,8 @@ describe('LoginScreen credential safety', () => {
     mergeAutoEn(autoEn)
     setRuntimeLang('zh')
     localStorage.clear()
+    mockEmailAuthStatus.mockClear()
+    mockEmailAuthStatus.mockResolvedValue({ selfRegisterEnabled: true, message: '' })
   })
 
   afterEach(() => {
@@ -32,23 +34,25 @@ describe('LoginScreen credential safety', () => {
     localStorage.clear()
   })
 
-  it('uses the Spirit Emotion Sphere product subtitle', () => {
+  it('uses the Spirit Emotion Sphere product subtitle', async () => {
     render(<LoginScreen />)
     expect(screen.getByText('Spirit Emotion Sphere')).toBeTruthy()
     expect(screen.queryByText('Bible Emotion Sphere')).toBeNull()
+    await waitFor(() => expect(mockEmailAuthStatus).toHaveBeenCalledOnce())
   })
 
-  it('shows and prefills the default login credentials', () => {
+  it('shows and prefills the default login credentials', async () => {
     render(<LoginScreen />)
 
     const credentials = screen.getByLabelText('默认登录账号')
     expect(credentials.textContent).toContain('john@biblesphere.com')
-    expect(credentials.textContent).toContain('john')
+    expect(credentials.textContent).toContain('John')
     expect(screen.getByLabelText('邮箱').value).toBe('john@biblesphere.com')
-    expect(screen.getByLabelText('密码').value).toBe('john')
+    expect(screen.getByLabelText('密码').value).toBe('John')
+    await waitFor(() => expect(mockEmailAuthStatus).toHaveBeenCalledOnce())
   })
 
-  it('removes legacy stored credentials and uses only the configured defaults', () => {
+  it('removes legacy stored credentials and uses only the configured defaults', async () => {
     localStorage.setItem('bs_remember_creds', JSON.stringify({
       email: 'legacy@example.com',
       password: 'plaintext-password',
@@ -57,9 +61,10 @@ describe('LoginScreen credential safety', () => {
     render(<LoginScreen />)
 
     expect(screen.getByLabelText('邮箱').value).toBe('john@biblesphere.com')
-    expect(screen.getByLabelText('密码').value).toBe('john')
+    expect(screen.getByLabelText('密码').value).toBe('John')
     expect(localStorage.getItem('bs_remember_creds')).toBeNull()
     expect(screen.getByText('记住邮箱')).toBeTruthy()
+    await waitFor(() => expect(mockEmailAuthStatus).toHaveBeenCalledOnce())
   })
 
   it('remembers only the email after a successful login', async () => {
@@ -75,7 +80,7 @@ describe('LoginScreen credential safety', () => {
     expect(JSON.stringify({ ...localStorage })).not.toContain('strong-password')
   })
 
-  it('renders the complete login flow in English without Chinese leakage', () => {
+  it('renders the complete login flow in English without Chinese leakage', async () => {
     setRuntimeLang('en')
 
     const { container } = render(<LoginScreen />)
@@ -86,6 +91,7 @@ describe('LoginScreen credential safety', () => {
     expect(screen.getByRole('button', { name: 'Chinese' })).toBeTruthy()
     expect(screen.getByRole('tab', { name: 'Log in' })).toBeTruthy()
     expect(screen.getByLabelText('Email')).toBeTruthy()
+    await waitFor(() => expect(mockEmailAuthStatus).toHaveBeenCalledOnce())
   })
 })
 

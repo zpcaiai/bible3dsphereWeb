@@ -4,7 +4,7 @@
 
 ## 无障碍人工验收
 
-精确前端制品 SHA-256：运行验收时填写。环境：staging。
+当前受保护 Preview 制品 SHA-256：`af8000a6897293979a84ca4fa4e48925ae045a590ea9ee2033ba44366ec9bfed`。环境：Vercel Preview；后端仍非独立 staging。
 
 | 检查 | 证据 | 人工结论 |
 |---|---|---|
@@ -15,16 +15,20 @@
 | 减弱动态效果 | 系统设置生效，无必要信息依赖动画 | 未签署 |
 | 认知与敏感流程 | 可跳过、可暂停、语言清楚、无倒计时/羞辱、S3 出口明确 | 未签署 |
 
+自动化辅助证据（不等同人工签署）：Google Chrome 桌面、390×844、320×568、400% 缩放、减弱动态、44px 触控目标与 axe 扫描均通过，0 axe violation；截图和 JSON 位于 `docs/ai-formation-certification/`。当前机器未连接可用 iPhone/Android 实机，VoiceOver 也未处于运行状态，因此不得将这些项标记为人工 PASS。
+
 签署必须包含审核人 ID、设备/OS/浏览器版本、时间、制品 hash、发现及复测证据。
 
 ## staging、有限发布和事故/回滚演练
 
 | 检查 | 接受标准 | 人工结论 |
 |---|---|---|
-| staging deploy smoke | 精确部署 URL/ID；前后端健康；Feature Flag 仅 staging 打开 | 未签署 |
+| staging deploy smoke | 前端 `dpl_62R11CqCgXN5FZAJ13BRF3dh3Hd2` 为 READY/HTTP 200/受保护/noindex；独立后端 staging 尚缺 | 未签署 |
 | 有限发布 | 1–99%；明确受众；监控与停止条件；儿童/敏感内容仍受审核门限制 | 未签署 |
 | 事故演练 | 事故 owner 响应、Feature Flag 关闭、内容停用、用户沟通与证据保存 | 未签署 |
 | 应用回滚 | 回到上一已知良好制品并完成 smoke | 未签署 |
-| 数据库回滚 | 0240→0238 后重新前进；用户数据先导出/处置 | 未签署 |
+| 数据库回滚 | 0241→0238 后重新前进；用户数据先导出/处置 | 未签署 |
+
+机器演练证据：一次性 PostGIS 环境完成 230/230 历史迁移、0238–0241 逆序回滚和重放；本地真实 Chrome 通过同源代理调用 FastAPI，以 HTTP 201 写入 90 天保留的最小化 `learner_context` 并生成审计记录。事故 owner、回滚 owner、有限发布与最终发布仍须由具名授权人签署。
 
 最终签署人不得由自动化、AI 或制品作者代替。

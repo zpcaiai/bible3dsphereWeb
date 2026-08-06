@@ -51,9 +51,9 @@ describe('AiFormationPage', () => {
     await waitFor(() => expect(saver).toHaveBeenCalledWith('learner_context', expect.objectContaining({ age_band: '13_15' }), expect.any(String)))
   })
 
-  it('shows fail-closed release gates only to the teacher path', async () => {
+  it('shows fail-closed release gates only to the platform-admin path', async () => {
     const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue({ ok: true, json: async () => ({ content: [] }) })
-    render(<AiFormationPage enabled user={{ email: 'teacher@example.test', role: 'teacher' }} onBack={() => {}} manifestLoader={loader} recordSaver={vi.fn()} />)
+    render(<AiFormationPage enabled user={{ email: 'admin@example.test', role: 'admin', is_admin: true }} onBack={() => {}} manifestLoader={loader} recordSaver={vi.fn()} />)
     await screen.findByText('选择与你当前责任相符的轨道')
     fireEvent.click(screen.getByText('进入教师与审核工作台'))
     expect(screen.getByText('生产认证与人工发布决策')).toBeTruthy()
@@ -64,6 +64,13 @@ describe('AiFormationPage', () => {
 
   it('does not expose the governance route to a learner', async () => {
     render(<AiFormationPage enabled initialRoute="/admin" user={{ email: 'learner@example.test', permissions: 'sunday_school.ai_formation.manage' }} onBack={() => {}} manifestLoader={loader} recordSaver={vi.fn()} />)
+    expect(await screen.findByText('选择与你当前责任相符的轨道')).toBeTruthy()
+    expect(screen.queryByRole('button', { name: '审核与发布' })).toBeNull()
+    expect(screen.queryByText('生产认证与人工发布决策')).toBeNull()
+  })
+
+  it('does not promise a teacher-only governance path the backend will reject', async () => {
+    render(<AiFormationPage enabled initialRoute="/admin" user={{ email: 'teacher@example.test', role: 'teacher', permissions: ['sunday_school.ai_formation.manage'] }} onBack={() => {}} manifestLoader={loader} recordSaver={vi.fn()} />)
     expect(await screen.findByText('选择与你当前责任相符的轨道')).toBeTruthy()
     expect(screen.queryByRole('button', { name: '审核与发布' })).toBeNull()
     expect(screen.queryByText('生产认证与人工发布决策')).toBeNull()

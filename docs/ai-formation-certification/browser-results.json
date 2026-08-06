@@ -4,7 +4,8 @@
       "/opt/homebrew/Cellar/node/26.0.0/bin/node",
       "/Users/stephen/Documents/Projects/DoctorPro/bible3dsphereWeb/node_modules/.bin/playwright",
       "test",
-      "e2e/ai-formation.spec.js"
+      "e2e/ai-formation.spec.js",
+      "e2e/new-features-closure.spec.js"
     ],
     "configFile": "/Users/stephen/Documents/Projects/DoctorPro/bible3dsphereWeb/playwright.config.js",
     "rootDir": "/Users/stephen/Documents/Projects/DoctorPro/bible3dsphereWeb/e2e",
@@ -18,7 +19,7 @@
     "grepInvert": null,
     "maxFailures": 0,
     "metadata": {
-      "actualWorkers": 1
+      "actualWorkers": 2
     },
     "preserveOutput": "always",
     "projects": [
@@ -27,7 +28,7 @@
         "repeatEach": 1,
         "retries": 0,
         "metadata": {
-          "actualWorkers": 1
+          "actualWorkers": 2
         },
         "id": "",
         "name": "",
@@ -63,7 +64,7 @@
     "version": "1.62.1",
     "workers": 4,
     "webServer": {
-      "command": "VITE_AI_FORMATION_ENABLED=true npm run build && npm run preview -- --host 127.0.0.1",
+      "command": "VITE_AI_FORMATION_ENABLED=true npm run build && npm run preview -- --host 127.0.0.1 --port 4173",
       "url": "http://127.0.0.1:4173",
       "timeout": 180000,
       "reuseExistingServer": false
@@ -92,12 +93,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1546,
+                  "duration": 10936,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-08-01T07:46:20.414Z",
+                  "startTime": "2026-08-06T04:38:51.849Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -126,12 +127,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 977,
+                  "duration": 3482,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-08-01T07:46:22.506Z",
+                  "startTime": "2026-08-06T04:39:04.354Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -160,12 +161,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 881,
+                  "duration": 2238,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-08-01T07:46:23.489Z",
+                  "startTime": "2026-08-06T04:39:07.861Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -194,12 +195,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 907,
+                  "duration": 2072,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-08-01T07:46:24.377Z",
+                  "startTime": "2026-08-06T04:39:10.127Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -211,15 +212,91 @@
           "file": "ai-formation.spec.js",
           "line": 113,
           "column": 1
+        },
+        {
+          "title": "400 percent zoom preserves a single-axis reflow and semantic landmarks",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1363,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-08-06T04:39:12.213Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "644b75c25ab7a015057d-55e5901f60c5b1c86be1",
+          "file": "ai-formation.spec.js",
+          "line": 121,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "new-features-closure.spec.js",
+      "file": "new-features-closure.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "mobile Chrome: Sunday School placement and EMD assessment are end-to-end closed",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 1,
+                  "status": "passed",
+                  "duration": 14499,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-08-06T04:38:51.765Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9919e0356df293b00df7-0e2bcad0421f5e95468e",
+          "file": "new-features-closure.spec.js",
+          "line": 130,
+          "column": 1
         }
       ]
     }
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-08-01T07:46:09.133Z",
-    "duration": 16342.762,
-    "expected": 4,
+    "startTime": "2026-08-06T04:38:12.590Z",
+    "duration": 61355.094000000005,
+    "expected": 6,
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0

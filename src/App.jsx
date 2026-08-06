@@ -5,7 +5,7 @@ import lazyWithRetry from './lazyWithRetry'
 import AppErrorBoundary from './AppErrorBoundary'
 import AccessibilityGuard from './components/a11y/AccessibilityGuard'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { API_BASE, fetchBiblicalExample, fetchBibleVideo, fetchCommunityHeatmap, fetchDailySnapshot, fetchEmotionTrajectory, fetchFaithQA, fetchFeatureDetail, fetchGuidance, fetchHistory, fetchLayout, fetchMeditationQuestions, fetchSermon, fetchStats, fetchTTS, fetchVersePrayer, runQuery, saveJournal, trackStats, updateUserProfile, fetchMyChurch, regenerateChurchCode, leaveChurch } from './api'
+import { API_BASE, fetchBiblicalExample, fetchCommunityHeatmap, fetchDailySnapshot, fetchEmotionTrajectory, fetchFaithQA, fetchFeatureDetail, fetchGuidance, fetchHistory, fetchLayout, fetchMeditationQuestions, fetchSermon, fetchStats, fetchVersePrayer, runQuery, saveJournal, trackStats, updateUserProfile, fetchMyChurch, regenerateChurchCode, leaveChurch } from './api'
 import ChurchOnboardingModal from './ChurchOnboardingModal'
 import SOSModal from './SOSModal'
 import { checkSOSKeywords } from './sosKeywords'
@@ -16,14 +16,12 @@ import { useAuth } from './hooks/useAuth'
 import { useSpeechInput } from './hooks/useSpeechInput'
 import { isIosInstallable, promptInstall, subscribeToInstallPrompt } from './pwa'
 import { escapeHtml } from './sanitize'
-import { getOrCreateVisitorId, verseGroupsFromResult, buildComparisonRows, formatLoginTime } from './utils'
+import { getOrCreateVisitorId, verseGroupsFromResult, formatLoginTime } from './utils'
 import { useEmotionStore } from './store'
 const EmotionSphereScene = lazyWithRetry(() => import('./EmotionSphereScene').then(m => ({ default: m.EmotionSphereScene })))
 import LoginScreen from './LoginScreen'
 import TranslatableParagraph from './TranslatableParagraph'
 import { TTSButton, TTSFullBar } from './useGlobalAudio.jsx'
-import { ttsServerParamsFor, pickVoiceFor, speechLangFor } from './voice'
-import { notifyEnglishSpeechUnavailable, prepareSpeechText } from './speechText'
 import LanguageToggle from './i18n/LanguageToggle'
 import GlobalToast from './components/GlobalToast'
 import ConfirmDialog from './components/ConfirmDialog'
@@ -89,6 +87,14 @@ const queryClient = new QueryClient({
   },
 })
 
+function notifyUser(message, type = 'error') {
+  if (window.showToast) {
+    window.showToast(message, type)
+  } else {
+    window.alert(message)
+  }
+}
+
 function AppContent() {
   const { user, setUser, authLoading, handleLogout } = useAuth()
   const setGuardianWidgetMode = useGuardianStore((state) => state.setWidgetMode)
@@ -108,10 +114,8 @@ function AppContent() {
   const [editProfileLoading, setEditProfileLoading] = useState(false)
 
   const {
-    layoutItems,
     historyItems,
     selectedFeature,
-    selectedFeatureDetail,
     queryResult,
     languageFilter,
     topFeatures,
@@ -128,8 +132,6 @@ function AppContent() {
     setSphereLoading,
     setQueryResult,
     setLanguageFilter,
-    setTopFeatures,
-    setTopVerses,
     setLoading,
     setError,
     setCommunityHeatmap,
@@ -137,22 +139,16 @@ function AppContent() {
 
   const DEFAULT_QUERY_TEXT = '我感到很痛苦，也很想被安慰，但仍然想抓住一点盼望（也可以提问任何基督信仰的问题）'
   const [query, setQuery] = useState('')
-  const [includeGuidance, setIncludeGuidance] = useState(true)
-  const [rerankMode, setRerankMode] = useState('llm')
-  const [rerankCandidates, setRerankCandidates] = useState(20)
-  const [rerankWeight, setRerankWeight] = useState(0.3)
+  const includeGuidance = true
+  const rerankMode = 'llm'
+  const rerankCandidates = 20
+  const rerankWeight = 0.3
   const [guidance, setGuidance] = useState(null)
   const [biblicalExample, setBiblicalExample] = useState(null)
   const [sermon, setSermon] = useState(null)
-  const [sermonLoading, setSermonLoading] = useState(false)
   const [faithQa, setFaithQa] = useState(null)
   const [faithQaLoading, setFaithQaLoading] = useState(false)
   const [faithQaError, setFaithQaError] = useState(null)
-  const [videoLoading, setVideoLoading] = useState(false)
-  const [videoUrl, setVideoUrl]         = useState(null)
-  const [videoErr, setVideoErr]         = useState('')
-  const [videoVerseInput, setVideoVerseInput] = useState('')
-  const [videoInputErr, setVideoInputErr]     = useState('')
   const [savingJournal, setSavingJournal] = useState(false)
   const [dailySnapshot, setDailySnapshot] = useState(null)
   const [dailySnapshotLoading, setDailySnapshotLoading] = useState(false)
@@ -181,9 +177,9 @@ function AppContent() {
   const [devotionInitialFeature, setDevotionInitialFeature] = useState(null)
   const [attentionInitialSection, setAttentionInitialSection] = useState('dashboard')
   const [aiFormationInitialRoute, setAiFormationInitialRoute] = useState('')
+  const [aiFormationReturnPanel, setAiFormationReturnPanel] = useState('sphere')
   const [gardenClickCount, setGardenClickCount] = useState(0)
-  const [sermonClickCount, setSermonClickCount] = useState(0)
-  const [includeBiblicalExample, setIncludeBiblicalExample] = useState(true)
+  const includeBiblicalExample = true
   const [comparisonMode, setComparisonMode] = useState(true)
   const [canInstall, setCanInstall] = useState(false)
   const [installMessage, setInstallMessage] = useState('')
@@ -197,12 +193,8 @@ function AppContent() {
   const [meditationQuestions, setMeditationQuestions] = useState({})
   const [meditationLoading, setMeditationLoading] = useState(null)
 
-  // TTS 播放状态: 'idle' | 'playing' | 'paused'
-  const [ttsState, setTtsState] = useState('idle')
-
   // 语音输入相关状态（由 useSpeechInput hook 管理）
   const [isPolishing, setIsPolishing] = useState(false)
-  const googleTTSAudioRef = useRef(null)  // 用于 Google Cloud TTS 播放
 
   // 语音输入 hook — encapsulates MediaRecorder + backend transcription + browser detection
   const {
@@ -314,6 +306,9 @@ function AppContent() {
             setVisitStats(stats)
           }
         } catch {
+          if (!cancelled) {
+            setVisitStats({ page_views: 0, unique_visitors: 0 })
+          }
         }
       }
     }
@@ -333,18 +328,7 @@ function AppContent() {
     return unsubscribe
   }, [])
 
-  const clusters = useMemo(() => {
-    const map = new Map()
-    for (const item of layoutItems) {
-      const key = (item.source_keyword || 'emotion').toLowerCase()
-      if (!map.has(key)) map.set(key, [])
-      map.get(key).push(item)
-    }
-    return [...map.entries()].slice(0, 6)
-  }, [layoutItems])
-
   const verseGroups = useMemo(() => verseGroupsFromResult(queryResult, languageFilter), [queryResult, languageFilter])
-  const comparisonRows = useMemo(() => buildComparisonRows(queryResult), [queryResult])
 
   async function doQuery() {
     if (!query.trim()) {
@@ -423,230 +407,10 @@ function AppContent() {
     }
   }
 
-  // 构建 TTS 播放文本
-  function buildSpeakText() {
-    const parts = []
-    // 1. 核心情绪
-    if (guidance?.core_emotions?.length) parts.push('核心情绪：' + guidance.core_emotions.join('、'))
-    // 2. 心理评估
-    if (guidance?.psychological_assessment) parts.push('心理评估。' + guidance.psychological_assessment)
-    // 3. 属灵剖析
-    if (sermon?.spiritual_diagnosis) parts.push('属灵剖析。' + sermon.spiritual_diagnosis)
-    // 4. 核心需要
-    if (guidance?.core_need) parts.push('核心需要：' + guidance.core_need)
-    // 6. 属灵引导
-    if (guidance?.spiritual_guidance) parts.push('属灵引导。' + guidance.spiritual_guidance)
-
-    // 7. 圣经榜样
-    if (biblicalExample) {
-      const parts_be = ['圣经榜样']
-      if (biblicalExample.person) parts_be.push('人物：' + biblicalExample.person)
-      if (biblicalExample.similar_situation) parts_be.push('相似处境：' + biblicalExample.similar_situation)
-      if (biblicalExample.biblical_response) parts_be.push('圣经回应：' + biblicalExample.biblical_response)
-      if (biblicalExample.key_verse) parts_be.push('关键经文：' + biblicalExample.key_verse)
-      parts.push(parts_be.join('。'))
-    }
-
-    // 8. 历史见证
-    if (sermon?.historical_case) {
-      const hc = sermon.historical_case
-      parts.push('历史见证。' + [hc.person, hc.story, hc.lesson].filter(Boolean).join('。'))
-    }
-
-    // 9. 专属讲道
-    if (sermon) {
-      if (sermon.title) parts.push('专属讲道：' + sermon.title)
-      if (sermon.theme_verse) parts.push('主题经文：' + sermon.theme_verse)
-      if (sermon.introduction) parts.push('引言。' + sermon.introduction)
-      sermon.sections?.forEach(s => { if (s.content) parts.push(s.heading + '。' + s.content) })
-      if (sermon.application) {
-        const app = Array.isArray(sermon.application) ? sermon.application.join('。') : sermon.application
-        parts.push('属灵操练。' + app)
-      }
-      if (sermon.encouragement) parts.push('勉励与安慰。' + sermon.encouragement)
-      if (sermon.prayer) parts.push('祝祷。' + sermon.prayer)
-    }
-
-    // 10. 应用建议 (Application from Biblical Example)
-    if (biblicalExample?.application || guidance?.coping_suggestions?.length) {
-      const parts_app = ['应用建议 (Application from Biblical Example)']
-      if (guidance?.coping_suggestions?.length) {
-        parts_app.push('日常应对：' + guidance.coping_suggestions.join('。'))
-      }
-      if (biblicalExample?.application) {
-        parts_app.push('圣经操练：' + biblicalExample.application)
-      }
-      parts.push(parts_app.join('。'))
-    }
-
-    // 11. 结语
-    if (sermon?.conclusion) parts.push('结语与盼望。' + sermon.conclusion)
-
-    return parts.join('\n\n')
-  }
-
-  // 选择最佳语音：优先高质量女声，支持中英文
-  function selectBestVoice(voices) {
-    // 优先的高质量女声名单（中文+英文支持）
-    const preferredVoices = [
-      'Xiaoxiao',      // 微软云希 中文女声
-      'Tingting',      // 苹果婷婷
-      'Yaoyao',        // 苹果瑶瑶
-      'Meijia',        // 苹果美佳
-      'Zhiyu',         // 微软云知
-      'Xiaoyi',        // 微软云忆
-      'Yunyang',       // 微软云扬（男声备选）
-      'Microsoft Yaoyao',
-      'Microsoft Xiaoxiao',
-      'Microsoft Zhiyu',
-      'Ting-Ting',
-      'Google 普通话',
-      'Google 國語',
-    ]
-
-    // 首先尝试找中文女声
-    for (const name of preferredVoices) {
-      const voice = voices.find(v =>
-        v.name.includes(name) || v.voiceURI.includes(name)
-      )
-      if (voice) return voice
-    }
-
-    // fallback: 任何中文女声
-    const zhFemale = voices.find(v =>
-      v.lang?.startsWith('zh') && (v.name.includes('Female') || v.name.includes('女'))
-    )
-    if (zhFemale) return zhFemale
-
-    // fallback: 任何中文语音
-    const zhVoice = voices.find(v => v.lang?.startsWith('zh'))
-    if (zhVoice) return zhVoice
-
-    // 最后选择默认语音
-    return voices[0] || null
-  }
-
-
-  // 使用浏览器原生 TTS（作为 fallback）
-  function speakWithNativeTTS(text) {
-    if (!window.speechSynthesis) {
-      (window.showToast || window.alert)(i18nT('您的浏览器不支持文字转语音功能'), 'error')
-      return
-    }
-
-    window.speechSynthesis.cancel()
-    const utter = new SpeechSynthesisUtterance(text)
-    // 按文本实际语言挑嗓音：英文内容用英文嗓音，中文用中文女声
-    utter.lang = speechLangFor(text)
-    utter.rate = 0.85
-    utter.pitch = 1.05
-
-    const bestVoice = pickVoiceFor(text)
-      || (speechLangFor(text).startsWith('zh') ? selectBestVoice(window.speechSynthesis.getVoices()) : null)
-    if (bestVoice) {
-      utter.voice = bestVoice
-      console.log('[TTS Native] 使用语音:', bestVoice.name)
-    }
-
-    utter.onstart = () => setTtsState('playing')
-    utter.onend = () => setTtsState('idle')
-    utter.onerror = (e) => {
-      console.error('[TTS Native] 播放错误:', e)
-      setTtsState('idle')
-    }
-    window.speechSynthesis.speak(utter)
-  }
-
-  async function speakContent() {
-    const sourceText = buildSpeakText()
-    if (!sourceText.trim()) return
-
-    // 暂停/继续控制
-    if (ttsState === 'playing') {
-      if (googleTTSAudioRef.current) {
-        googleTTSAudioRef.current.pause()
-      } else {
-        window.speechSynthesis.pause()
-      }
-      setTtsState('paused')
-      return
-    }
-    if (ttsState === 'paused') {
-      if (googleTTSAudioRef.current) {
-        googleTTSAudioRef.current.play()
-      } else {
-        window.speechSynthesis.resume()
-      }
-      setTtsState('playing')
-      return
-    }
-
-    // 停止之前的播放
-    stopSpeaking()
-    setTtsState('playing')
-
-    let text
-    try {
-      text = await prepareSpeechText(sourceText)
-    } catch {
-      setTtsState('idle')
-      notifyEnglishSpeechUnavailable()
-      return
-    }
-
-    try {
-      // 优先后端高质量 TTS（ElevenLabs/Edge Neural）；按文本语言统一选嗓音
-      const [lang, voiceName] = ttsServerParamsFor(text)
-      console.log('[TTS] 尝试后端 TTS...', lang, voiceName)
-      const audioBlob = await fetchTTS(text, lang, voiceName)
-
-      // 创建音频元素播放
-      const audioUrl = URL.createObjectURL(audioBlob)
-      const audio = new Audio(audioUrl)
-      googleTTSAudioRef.current = audio
-
-      audio.onended = () => {
-        setTtsState('idle')
-        googleTTSAudioRef.current = null
-        URL.revokeObjectURL(audioUrl)
-      }
-      audio.onerror = (e) => {
-        console.error('[TTS Google] 播放错误:', e)
-        setTtsState('idle')
-        googleTTSAudioRef.current = null
-      }
-
-      await audio.play()
-      console.log('[TTS] 使用 Google Cloud TTS 播放')
-
-    } catch (error) {
-      console.log('[TTS] Google Cloud 失败，fallback 到浏览器原生 TTS:', error.message)
-      googleTTSAudioRef.current = null
-
-      // Fallback 到浏览器原生 TTS
-      speakWithNativeTTS(text)
-    }
-  }
-
-  function stopSpeaking() {
-    // 停止 Google TTS
-    if (googleTTSAudioRef.current) {
-      googleTTSAudioRef.current.pause()
-      googleTTSAudioRef.current.currentTime = 0
-      googleTTSAudioRef.current = null
-    }
-    // 停止原生 TTS
-    if (window.speechSynthesis) {
-      window.speechSynthesis.cancel()
-    }
-    setTtsState('idle')
-  }
-
   // 使用后端 API 进行语义标点添加
   async function addSemanticPunctuation(text) {
     if (!text) return text
 
-    console.log('[punctuation] 开始语义标点处理，原文:', text)
     try {
       const response = await fetch('/api/punctuation', {
         method: 'POST',
@@ -663,7 +427,6 @@ function AppContent() {
       }
 
       const data = await response.json()
-      console.log('[punctuation] API返回:', data)
       return data.text || text
     } catch (err) {
       console.error('[punctuation] 请求异常:', err)
@@ -708,33 +471,6 @@ function AppContent() {
 1. 添加完整的标点符号（逗号、句号、问号、感叹号等），使语句通顺易读
 2. 保持原文的情感和恳求语气
 3. 润色后内容要自然、有属灵深度
-
-请直接返回润色后的内容，不要添加解释或评论。`
-
-      const response = await runQuery({ query: prompt, enableRerank: false })
-      const polished = response?.text?.trim() || text
-      onPolished(polished)
-    } catch (err) {
-      console.error('润色失败:', err)
-      setRecordingError('文字润色失败，请检查网络连接')
-    } finally {
-      setIsPolishing(false)
-    }
-  }
-
-  // 润色祷告文字
-  async function polishPrayerText(text, onPolished) {
-    if (!text.trim()) return
-    setIsPolishing(true)
-    try {
-      const prompt = `请帮我润色以下祷告内容，使其更加真诚、流畅、有属灵深度，同时保持原有的情感和恳求。润色后内容不要超过500字。
-
-原文：${text}
-
-要求：
-1. 添加完整的标点符号（逗号、句号、问号、感叹号等），使语句通顺易读
-2. 保持祷告的真诚语气和属灵深度
-3. 段落分明，便于阅读
 
 请直接返回润色后的内容，不要添加解释或评论。`
 
@@ -1196,7 +932,7 @@ function AppContent() {
       pdf.save(filename)
     } catch (err) {
       console.error('PDF generation failed:', err)
-      (window.showToast || window.alert)(i18nT('PDF 生成失败，请重试'), 'error')
+      notifyUser(i18nT('PDF 生成失败，请重试'))
     }
   }
 
@@ -1266,6 +1002,18 @@ function AppContent() {
     }
   }
 
+  const openRoutedPanel = useCallback((panel) => {
+    if (!user) {
+      const message = panel === 'attention'
+        ? i18nT('登录后使用守心模块，保存每日注意力立约')
+        : i18nT('登录后进入AI时代心意更新与家庭门训')
+      setLoginMessage(message)
+      setPendingPanel(panel)
+      setShowLogin(true)
+    }
+    setActivePanel(panel)
+  }, [user])
+
   // 分享深链：/?share=book:<id> 或 /?share=hymn:<id>
   useEffect(() => {
     if (authLoading) return
@@ -1281,13 +1029,13 @@ function AppContent() {
       const pathMatch = window.location.pathname.match(/^\/attention(?:\/([^/]+))?\/?$/)
       if (pathMatch) {
         setAttentionInitialSection(pathMatch[1] || 'dashboard')
-        setTimeout(() => handlePanelSwitch('attention'), 60)
+        setTimeout(() => openRoutedPanel('attention'), 60)
         return
       }
       const aiFormationPath = window.location.pathname.match(/^\/sunday-school\/ai-formation(?:\/(.*))?\/?$/)
       if (aiFormationPath) {
         setAiFormationInitialRoute(aiFormationPath[1] ? `/${aiFormationPath[1]}` : '')
-        setTimeout(() => handlePanelSwitch('ai-formation'), 60)
+        setTimeout(() => openRoutedPanel('ai-formation'), 60)
         return
       }
       const sp = new URLSearchParams(window.location.search)
@@ -1299,7 +1047,7 @@ function AppContent() {
         sp.delete('attentionSection')
         const nextSearch = sp.toString()
         window.history.replaceState({}, '', `${window.location.pathname}${nextSearch ? `?${nextSearch}` : ''}${window.location.hash}`)
-        setTimeout(() => handlePanelSwitch('attention'), 60)
+        setTimeout(() => openRoutedPanel('attention'), 60)
         return
       }
       if (panel === 'spiritual-formation') {
@@ -1330,7 +1078,7 @@ function AppContent() {
         else if (kind === 'hymn') setActivePanel('prayer')
       }, 60)
     } catch { /* ignore */ }
-  }, [authLoading])
+  }, [authLoading, openRoutedPanel])
 
   function handlePanelSwitch(panel) {
     const needsLogin = ['mydevotion', 'prayer', 'devotion', 'journal', 'evangelism', 'checkin', 'sharewall', 'innerlife', 'soul-question', 'growth-map', 'partner', 'bible-reading', 'communion', 'voice', 'attention', 'formation-twin', 'spiritual-planet', 'ai-formation']
@@ -1431,7 +1179,10 @@ function AppContent() {
       openDevotionTopics()
       return
     }
-    if (existingPanel) handlePanelSwitch(existingPanel)
+    if (existingPanel) {
+      if (target === 'ai-formation') setAiFormationReturnPanel('spiritual-planet')
+      handlePanelSwitch(existingPanel)
+    }
   }
 
   function openAiFormationTarget(target) {
@@ -1576,7 +1327,7 @@ function AppContent() {
                     setUser(updatedUser)
                     setShowEditProfile(false)
                   } catch (e) {
-                    (window.showToast || window.alert)('保存失败: ' + e.message, 'error')
+                    notifyUser('保存失败: ' + e.message)
                   } finally {
                     setEditProfileLoading(false)
                   }
@@ -2951,6 +2702,10 @@ function AppContent() {
             <ShareWallPage
               user={user}
               onBack={() => setActivePanel('sphere')}
+              onOpenAiFormation={() => {
+                setAiFormationReturnPanel('sharewall')
+                handlePanelSwitch('ai-formation')
+              }}
             />
           </div>
         )}
@@ -3235,7 +2990,8 @@ function AppContent() {
                   onOpen={openAiFormationTarget}
                   onBack={() => {
                     if (/^\/sunday-school\/ai-formation/.test(window.location.pathname)) window.history.replaceState({}, '', '/')
-                    setActivePanel('sphere')
+                    setActivePanel(aiFormationReturnPanel)
+                    setAiFormationReturnPanel('sphere')
                   }}
                 />
               </Suspense>

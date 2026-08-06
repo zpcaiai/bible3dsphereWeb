@@ -11,6 +11,8 @@ import { getToken } from './auth'
 import TestimonyWallPage from './TestimonyWallPage'
 import { a11yClickProps } from './lib/a11yClick';
 
+const AI_FORMATION_ENABLED = import.meta.env.VITE_AI_FORMATION_ENABLED === 'true'
+
 // 读取旧的 localStorage 分享记录（来自 ChatPage / DevotionNotePage / SermonJournalPage）
 function getLegacySharedNotes() {
   try {
@@ -483,7 +485,7 @@ function fmtModified(ts) {
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`
 }
 
-function SundaySchoolView() {
+function SundaySchoolVideos() {
   const [videos, setVideos] = useState(null)
   const [err, setErr] = useState('')
   const [playing, setPlaying] = useState(null)   // video_url of currently playing
@@ -591,7 +593,44 @@ function SundaySchoolView() {
   )
 }
 
-export default function ShareWallPage({ user, onBack }) {
+function SundaySchoolView({ onOpenAiFormation }) {
+  return (
+    <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '12px 14px' }}>
+      <section style={{
+        marginBottom: 14, borderRadius: 16, padding: 16,
+        background: 'linear-gradient(135deg, rgba(90,200,250,0.16), rgba(139,92,246,0.16))',
+        border: '1px solid rgba(90,200,250,0.28)', color: '#fff',
+      }} aria-labelledby="sunday-ai-formation-title">
+        <div style={{ fontSize: 11, letterSpacing: '0.12em', color: '#8bdcff', marginBottom: 7 }}>SUNDAY SCHOOL · AI FORMATION</div>
+        <h2 id="sunday-ai-formation-title" style={{ fontSize: 18, margin: '0 0 7px' }}>{i18nT('AI时代心意更新与家庭门训')}</h2>
+        <p style={{ fontSize: 13, lineHeight: 1.65, color: 'rgba(255,255,255,0.72)', margin: '0 0 12px' }}>
+          {i18nT('成人、家庭、儿童青少年与教师四条轨道；未审核内容保持锁定，AI不替代牧者、良心或真人照护。')}
+        </p>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7, marginBottom: 12 }}>
+          {['四条轨道', 'Batch 01–12', 'S0–S3', '人工审核'].map((label) => (
+            <span key={label} style={{ fontSize: 11, border: '1px solid rgba(255,255,255,0.18)', borderRadius: 999, padding: '3px 8px', color: 'rgba(255,255,255,0.72)' }}>{i18nT(label)}</span>
+          ))}
+        </div>
+        <button
+          type="button"
+          onClick={onOpenAiFormation}
+          style={{
+            minHeight: 42, width: '100%', border: '1px solid rgba(90,200,250,0.44)', borderRadius: 10,
+            background: 'rgba(90,200,250,0.18)', color: '#bdefff', fontWeight: 700, cursor: 'pointer',
+          }}
+        >
+          {i18nT(AI_FORMATION_ENABLED ? '打开课程模块' : '查看审核与开放状态')} <span aria-hidden="true">›</span>
+        </button>
+      </section>
+      <section aria-labelledby="sunday-video-title">
+        <h2 id="sunday-video-title" style={{ fontSize: 14, margin: '2px 0 10px', color: 'rgba(255,255,255,0.72)' }}>{i18nT('主日学视频')}</h2>
+        <SundaySchoolVideos />
+      </section>
+    </div>
+  )
+}
+
+export default function ShareWallPage({ user, onBack, onOpenAiFormation }) {
   const [notes, setNotes] = useState([])
   const [selectedNote, setSelectedNote] = useState(null)
   const [expandedCards, setExpandedCards] = useState({})
@@ -624,7 +663,6 @@ export default function ShareWallPage({ user, onBack }) {
           setNotes([...apiNotes, ...extra])
           // Auto-clear legacy after successful API load
           localStorage.removeItem('devotion_notes_shared')
-          console.log('[sharewall] migrated & cleared', extra.length, 'legacy notes')
         } else {
           setNotes(apiNotes)
         }
@@ -745,7 +783,7 @@ export default function ShareWallPage({ user, onBack }) {
       {faithTab === 'faith' && <FaithDocumentView />}
 
       {/* Sunday school video view */}
-      {faithTab === 'sunday' && <SundaySchoolView />}
+      {faithTab === 'sunday' && <SundaySchoolView onOpenAiFormation={onOpenAiFormation} />}
 
       {/* Note list */}
       <div ref={listRef} style={{ flex: 1, overflowY: 'auto', padding: '12px 14px', position: 'relative', display: faithTab === 'share' ? 'block' : 'none' }}>

@@ -5654,7 +5654,7 @@ canvas {
 
 /* ═══ 统一返回按钮：圆形磨砂 + 白箭头（恢复 ffebe64 误删；.app-back-btn 组件 + 旧 .checkin-back-btn 复用同款）═══ */
 .app-back-btn, .checkin-back-btn {
-  width: 40px; height: 40px;
+  width: 44px; height: 44px;
   background: rgba(255,255,255,0.14);
   border: 1px solid rgba(255,255,255,0.25); border-radius: 50%;
   color: #fff;

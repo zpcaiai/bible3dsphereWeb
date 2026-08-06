@@ -35,7 +35,7 @@ const primaryBtnStyle = (disabled) => ({
   minHeight: '50px',
   border: 'none',
   borderRadius: '12px',
-  background: '#007aff',
+  background: '#0063cc',
   color: '#fff',
   fontSize: '17px',
   fontWeight: 600,
@@ -51,7 +51,7 @@ const labelStyle = { fontSize: '13px', color: 'rgba(255,255,255,0.72)', marginBo
 const REMEMBERED_EMAIL_KEY = 'bs_remember_email'
 const LEGACY_CREDENTIALS_KEY = 'bs_remember_creds'
 const DEFAULT_LOGIN_EMAIL = 'john@biblesphere.com'
-const DEFAULT_LOGIN_PASSWORD = 'john'
+const DEFAULT_LOGIN_PASSWORD = 'John'
 
 function loadRememberedEmail() {
   try {
@@ -92,7 +92,7 @@ export default function LoginScreen({ onLogin, onBack, message }) {
   const needsEmailService = tab === 'register' || tab === 'reset'
   const emailServiceDown = !authStatus.selfRegisterEnabled
   return (
-    <div style={{
+    <main style={{
       width: '100%', minHeight: '100dvh', background: '#000',
       display: 'flex', flexDirection: 'column', alignItems: 'center',
       justifyContent: 'flex-start', padding: '24px 20px', boxSizing: 'border-box',
@@ -105,7 +105,7 @@ export default function LoginScreen({ onLogin, onBack, message }) {
       <div style={{ textAlign: 'center', marginTop: 'auto', marginBottom: '32px' }}>
         <div style={{ fontSize: '64px', lineHeight: 1, marginBottom: '12px' }}>🔮</div>
         <h1 style={{ margin: 0, fontSize: '26px', fontWeight: 700, color: '#fff', letterSpacing: '-0.02em' }}>{i18nT('属灵星球')}</h1>
-        <p style={{ margin: '6px 0 0', fontSize: '14px', color: 'rgba(255,255,255,0.4)' }}>Spirit Emotion Sphere</p>
+        <p style={{ margin: '6px 0 0', fontSize: '14px', color: 'rgba(255,255,255,0.62)' }}>Spirit Emotion Sphere</p>
       </div>
 
       <div style={cardStyle}>
@@ -141,13 +141,13 @@ export default function LoginScreen({ onLogin, onBack, message }) {
               onClick={() => setTab(key)}
               title={emailServiceDown && key !== 'login' ? authStatus.message : undefined}
               style={{
-                flex: 1, minHeight: '36px', border: 'none', borderRadius: '8px', fontFamily: 'inherit',
+                flex: 1, minHeight: '44px', border: 'none', borderRadius: '8px', fontFamily: 'inherit',
                 fontSize: '14px', fontWeight: 500, cursor: 'pointer',
-                background: tab === key ? '#007aff' : 'transparent',
+                background: tab === key ? '#0063cc' : 'transparent',
                 // 服务不可用时把注册/重置标记为暗淡，但仍可点开——点进去要能看到原因，
                 // 直接 disabled 会变成「按不动又不说为什么」，更让人困惑。
                 color: tab === key ? '#fff'
-                  : (emailServiceDown && key !== 'login') ? 'rgba(255,255,255,0.28)' : 'rgba(255,255,255,0.5)',
+                  : (emailServiceDown && key !== 'login') ? 'rgba(255,255,255,0.66)' : 'rgba(255,255,255,0.72)',
                 transition: 'background 0.2s, color 0.2s',
               }}
             >{label}{emailServiceDown && key !== 'login' ? ' ⚠' : ''}</button>
@@ -184,7 +184,7 @@ export default function LoginScreen({ onLogin, onBack, message }) {
         <div>{i18nT('本站内容为开发者 Ethan 原创，仅供个人灵修学习，不得用于商业用途，最终解释权归开发者所有')}</div>
         <a href="mailto:zpchoney@gmail.com" style={{ color: 'rgba(90,200,250,0.7)', textDecoration: 'none' }}>zpchoney@gmail.com</a>
       </div>
-    </div>
+    </main>
   )
 }
 
@@ -246,7 +246,7 @@ function LoginForm({ email, setEmail, onLogin, onReset }) {
           type="email" required value={email} onChange={e => setEmail(e.target.value)}
           placeholder="you@example.com" autoComplete="email"
           style={inputStyle}
-         aria-label="you@example.com"/>
+        />
       </div>
       <div>
         <label htmlFor="login-password" style={labelStyle}>{i18nT('密码')}</label>
@@ -255,7 +255,7 @@ function LoginForm({ email, setEmail, onLogin, onReset }) {
           type="password" required value={password} onChange={e => setPassword(e.target.value)}
           placeholder={i18nT('输入密码')} autoComplete="current-password"
           style={inputStyle}
-         aria-label={i18nT('输入密码')}/>
+        />
       </div>
       <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: 'rgba(255,255,255,0.5)', cursor: 'pointer' }}>
         <input
@@ -362,7 +362,7 @@ function RegisterForm({ email, setEmail, onDone, onLogin }) {
             type="email" required value={email} onChange={e => handleEmailChange(e.target.value)}
             placeholder="you@example.com" autoComplete="email"
             style={{ ...inputStyle, flex: 1 }}
-           aria-label="you@example.com"/>
+          />
           <button
             type="button"
             onClick={handleSendCode}
@@ -370,7 +370,7 @@ function RegisterForm({ email, setEmail, onDone, onLogin }) {
             style={{
               flexShrink: 0, minHeight: '48px', padding: '0 14px', border: 'none',
               borderRadius: '12px', fontSize: '13px', fontWeight: 500, fontFamily: 'inherit',
-              background: 'rgba(0,122,255,0.2)', color: '#007aff', cursor: 'pointer',
+              background: 'rgba(0,122,255,0.2)', color: '#5ac8fa', cursor: 'pointer',
               opacity: (sendLoading || countdown > 0 || !email.includes('@')) ? 0.5 : 1,
               whiteSpace: 'nowrap',
             }}
@@ -386,7 +386,7 @@ function RegisterForm({ email, setEmail, onDone, onLogin }) {
           type="text" required value={code} onChange={e => setCode(e.target.value)}
           placeholder={i18nT('6位验证码')} maxLength={6} inputMode="numeric"
           style={inputStyle}
-         aria-label={i18nT('6位验证码')}/>
+        />
         {devCode && (
           <p style={{ fontSize: '12px', color: '#34c759', margin: '6px 0 0', textAlign: 'center' }}>
             {i18nT('开发模式 — 验证码:')} <b>{devCode}</b>{i18nT('（请在上方输入）')}
@@ -400,7 +400,7 @@ function RegisterForm({ email, setEmail, onDone, onLogin }) {
           type="password" required value={password} onChange={e => setPassword(e.target.value)}
           placeholder={i18nT('设置登录密码')} autoComplete="new-password" minLength={6}
           style={inputStyle}
-         aria-label={i18nT('设置登录密码')}/>
+        />
       </div>
       <div>
         <label htmlFor="register-nickname" style={labelStyle}>{i18nT('昵称（选填）')}</label>
@@ -409,7 +409,7 @@ function RegisterForm({ email, setEmail, onDone, onLogin }) {
           type="text" value={nickname} onChange={e => setNickname(e.target.value)}
           placeholder={i18nT('你的名字')}
           style={inputStyle}
-         aria-label={i18nT('你的名字')}/>
+        />
       </div>
       {error && <p style={errorText}>{error}</p>}
       <button type="submit" disabled={regLoading || !codeSent} style={primaryBtnStyle(regLoading || !codeSent)}>
@@ -501,7 +501,7 @@ function ResetPasswordForm({ email, setEmail, onDone }) {
             type="email" required value={email} onChange={e => setEmail(e.target.value)}
             placeholder="you@example.com" autoComplete="email"
             style={{ ...inputStyle, flex: 1 }}
-           aria-label="you@example.com"/>
+          />
           <button
             type="button"
             onClick={handleSendCode}
@@ -509,7 +509,7 @@ function ResetPasswordForm({ email, setEmail, onDone }) {
             style={{
               flexShrink: 0, minHeight: '48px', padding: '0 14px', border: 'none',
               borderRadius: '12px', fontSize: '13px', fontWeight: 500, fontFamily: 'inherit',
-              background: 'rgba(0,122,255,0.2)', color: '#007aff', cursor: 'pointer',
+              background: 'rgba(0,122,255,0.2)', color: '#5ac8fa', cursor: 'pointer',
               opacity: (sendLoading || countdown > 0 || !email.includes('@')) ? 0.5 : 1,
               whiteSpace: 'nowrap',
             }}
@@ -525,7 +525,7 @@ function ResetPasswordForm({ email, setEmail, onDone }) {
           type="text" required value={code} onChange={e => setCode(e.target.value)}
           placeholder={i18nT('6位验证码')} maxLength={6} inputMode="numeric"
           style={inputStyle}
-         aria-label={i18nT('6位验证码')}/>
+        />
         {devCode && (
           <p style={{ fontSize: '12px', color: '#34c759', margin: '6px 0 0', textAlign: 'center' }}>
             {i18nT('开发模式 — 验证码:')} <b>{devCode}</b>{i18nT('（请在上方输入）')}
@@ -539,7 +539,7 @@ function ResetPasswordForm({ email, setEmail, onDone }) {
           type="password" required value={password} onChange={e => setPassword(e.target.value)}
           placeholder={i18nT('设置新密码')} autoComplete="new-password" minLength={6}
           style={inputStyle}
-         aria-label={i18nT('设置新密码')}/>
+        />
       </div>
       <div>
         <label htmlFor="reset-password-confirm" style={labelStyle}>{i18nT('确认密码')}</label>
@@ -548,7 +548,7 @@ function ResetPasswordForm({ email, setEmail, onDone }) {
           type="password" required value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)}
           placeholder={i18nT('再次输入新密码')} autoComplete="new-password"
           style={inputStyle}
-         aria-label={i18nT('再次输入新密码')}/>
+        />
       </div>
       {error && <p style={errorText}>{error}</p>}
       <button type="submit" disabled={resetLoading || !codeSent} style={primaryBtnStyle(resetLoading || !codeSent)}>
@@ -560,7 +560,7 @@ function ResetPasswordForm({ email, setEmail, onDone }) {
           onClick={onDone}
           style={{
             background: 'none', border: 'none', padding: 0,
-            fontSize: '13px', color: 'rgba(255,255,255,0.4)', cursor: 'pointer',
+            fontSize: '13px', color: 'rgba(255,255,255,0.72)', cursor: 'pointer',
             fontFamily: 'inherit',
           }}
         >
