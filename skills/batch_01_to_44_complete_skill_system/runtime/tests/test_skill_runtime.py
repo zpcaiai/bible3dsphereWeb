@@ -387,6 +387,112 @@ class SkillRuntimeTest(unittest.TestCase):
         with self.assertRaisesRegex(provider_runtime.ProviderRuntimeError, "fencing token must be greater"):
             provider_runtime.execute(self.workspace, request_path, self.adapter_registry(), self.trust_store, (self.root.resolve(),))
 
+    def test_provider_compensation_graph_rejects_fake_rollback_topologies(self) -> None:
+        envelope = json.loads(self.adapter_registry().read_text(encoding="utf-8"))
+        adapter = envelope["payload"]["adapters"][0]
+
+        read_only_with_compensation = json.loads(json.dumps(adapter))
+        read_only_with_compensation["operations"][0]["compensation_operation"] = "undo"
+        with self.assertRaisesRegex(provider_runtime.ProviderRuntimeError,
+                                    "read-only operation.*cannot declare compensation"):
+            provider_runtime.parse_adapter(read_only_with_compensation)
+
+        self_compensating = json.loads(json.dumps(adapter))
+        self_compensating["operations"][1]["compensation_operation"] = "apply"
+        with self.assertRaisesRegex(provider_runtime.ProviderRuntimeError, "cannot compensate itself"):
+            provider_runtime.parse_adapter(self_compensating)
+
+        cyclic = json.loads(json.dumps(adapter))
+        cyclic["operations"][2]["compensation_operation"] = "apply"
+        with self.assertRaisesRegex(provider_runtime.ProviderRuntimeError,
+                                    "cannot require another compensation"):
+            provider_runtime.parse_adapter(cyclic)
+
+    def test_provider_audit_chain_detects_current_record_and_receipt_tampering(self) -> None:
+        request = {
+            "schema_version": "1.0", "skill": self.skill, "adapter_id": "fixture-provider",
+            "operation": "inspect", "parameters": {"target": "audit-target"},
+            "idempotency_key": "audit-idempotency", "fencing_token": 1,
+            "source_fingerprint": runtime.metadata(self.workspace)["source_fingerprint"],
+            "approval": None, "compensates_request_sha256": None,
+        }
+        request_path = self.root / "provider-audit-request.json"
+        request_path.write_text(json.dumps(request), encoding="utf-8")
+        receipt = provider_runtime.execute(
+            self.workspace, request_path, self.adapter_registry(), self.trust_store, (self.root.resolve(),)
+        )
+        store = provider_runtime.ProviderStore(self.workspace)
+        self.assertEqual([], store.verify_event_chain())
+        connection = store.connect()
+        try:
+            tampered = {**receipt, "decision": "FAIL"}
+            connection.execute(
+                "UPDATE executions SET receipt_json=? WHERE request_sha256=?",
+                (json.dumps(tampered), receipt["request_sha256"]),
+            )
+        finally:
+            connection.close()
+        findings = store.verify_event_chain()
+        self.assertTrue(any("differs from latest event" in item for item in findings))
+        with self.assertRaisesRegex(provider_runtime.ProviderRuntimeError, "Provider state audit failed"):
+            provider_runtime.execute(
+                self.workspace, request_path, self.adapter_registry(), self.trust_store, (self.root.resolve(),)
+            )
+
+    def test_provider_v1_state_migrates_fail_closed_without_manufactured_record_digests(self) -> None:
+        legacy = self.root / "legacy-provider-state"
+        legacy.mkdir()
+        database = legacy / "provider-state.sqlite3"
+        connection = provider_runtime.sqlite3.connect(database)
+        try:
+            connection.executescript("""
+                CREATE TABLE executions(
+                    idempotency_key TEXT PRIMARY KEY, request_sha256 TEXT NOT NULL,
+                    target_key TEXT NOT NULL, state TEXT NOT NULL, fencing_token INTEGER NOT NULL,
+                    receipt_json TEXT, updated_at TEXT NOT NULL
+                );
+                CREATE TABLE events(
+                    sequence INTEGER PRIMARY KEY AUTOINCREMENT, event_type TEXT NOT NULL,
+                    request_sha256 TEXT NOT NULL, previous_hash TEXT NOT NULL,
+                    event_hash TEXT NOT NULL UNIQUE, created_at TEXT NOT NULL
+                );
+            """)
+            request_sha256 = "sha256:" + "1" * 64
+            created_at = "2026-01-01T00:00:00Z"
+            event_hash = provider_runtime.digest({
+                "event_type": "PROVIDER_EXECUTION_STARTED", "request_sha256": request_sha256,
+                "previous_hash": "GENESIS", "created_at": created_at,
+            })
+            connection.execute(
+                "INSERT INTO executions VALUES(?,?,?,?,?,?,?)",
+                ("legacy-key", request_sha256, "legacy-target", "RUNNING", 1, None, created_at),
+            )
+            connection.execute(
+                "INSERT INTO events(event_type,request_sha256,previous_hash,event_hash,created_at) VALUES(?,?,?,?,?)",
+                ("PROVIDER_EXECUTION_STARTED", request_sha256, "GENESIS", event_hash, created_at),
+            )
+            connection.execute("PRAGMA user_version=1")
+            connection.commit()
+        finally:
+            connection.close()
+        store = provider_runtime.ProviderStore(legacy)
+        with store.connect() as migrated:
+            self.assertEqual(provider_runtime.PROVIDER_SCHEMA_VERSION,
+                             int(migrated.execute("PRAGMA user_version").fetchone()[0]))
+            self.assertIn("record_sha256", {row[1] for row in migrated.execute("PRAGMA table_info(events)")})
+        findings = store.verify_event_chain()
+        self.assertTrue(any("legacy and lacks a record digest" in item for item in findings))
+        self.assertTrue(any("differs from latest event" in item for item in findings))
+
+    def test_external_authority_paths_must_be_inside_approved_roots(self) -> None:
+        external_store, policy_path, approval = self.external_certification_authority("tenant-001")
+        with self.assertRaisesRegex(production_closure.external_authority.ExternalAuthorityError,
+                                    "external Trust Store escapes approved roots"):
+            production_closure.external_authority.authorize(
+                policy_path, approval, self.trust_store, external_store, "tenant-001",
+                "independent-certification", (policy_path.resolve(),),
+            )
+
     def test_mutating_provider_operation_requires_and_atomically_records_compensation(self) -> None:
         source_fingerprint = runtime.metadata(self.workspace)["source_fingerprint"]
         registry_path = self.adapter_registry()
@@ -425,6 +531,7 @@ class SkillRuntimeTest(unittest.TestCase):
         original = provider_runtime.ProviderStore(self.workspace).execution(applied["request_sha256"])
         self.assertEqual("COMPENSATED", original["state"])
         self.assertEqual(undone["request_sha256"], original["receipt"]["compensation_request_sha256"])
+        self.assertEqual([], provider_runtime.ProviderStore(self.workspace).verify_event_chain())
 
     def test_all_44_domain_handlers_execute_their_exact_contract(self) -> None:
         registry = runtime.Registry.load()
@@ -1055,6 +1162,86 @@ class SkillRuntimeTest(unittest.TestCase):
             production_closure.finish_soak(self.workspace, "expired-production-soak", 2, revival_text,
                                            revival, self.trust_store, clock=clock)
         self.assertEqual("NOT_RUN", readiness["external_runtime_status"])
+
+    def test_soak_timeout_and_heartbeat_races_have_one_atomic_winner(self) -> None:
+        start = datetime(2026, 1, 1, tzinfo=timezone.utc)
+        start_text = start.isoformat().replace("+00:00", "Z")
+        store = production_closure.Store(self.workspace)
+        cutover = {
+            "schema_version": "1.0", "cutover_id": "race-cutover", "tenant_id": "tenant-001",
+            "environment_class": "test", "target_key": "race-target", "state": "SUCCEEDED",
+            "version": 0, "approval": {"actor_id": "approver"}, "transitions": [],
+        }
+        store.create("cutover", "race-cutover", "tenant-001", "test", "SUCCEEDED",
+                     cutover, "CUTOVER_SUCCEEDED")
+
+        def timeout_attestation(run_id: str, clock: production_closure.ControlledTestClock) -> dict:
+            status = production_closure.soak_status(self.workspace, run_id, clock)
+            current = store.get("soak", run_id)
+            observed_at = clock.now().isoformat().replace("+00:00", "Z")
+            return self.sign("verifier-production", {
+                "run_id": run_id, "sequence": current["last_sequence"] + 1,
+                "observed_at": observed_at, "target_state": "FAILED",
+                "evidence_root": production_closure.soak_evidence_root(current),
+                "heartbeat_deadline": status["heartbeat_deadline"], "reason": "HEARTBEAT_TIMEOUT",
+            }, f"timeout-{run_id}")
+
+        expire_clock = production_closure.ControlledTestClock(start)
+        production_closure.start_soak(self.workspace, "race-cutover", "expire-race", "test",
+                                      start_text, 60, 60, clock=expire_clock)
+        expire_clock.set(start + timedelta(seconds=61))
+        expire_at = expire_clock.now().isoformat().replace("+00:00", "Z")
+        expiration = timeout_attestation("expire-race", expire_clock)
+
+        def expire_once(_: int) -> str:
+            try:
+                production_closure.expire_soak(self.workspace, "expire-race", expire_at,
+                                               expiration, self.trust_store, expire_clock)
+                return "won"
+            except production_closure.ClosureFailure:
+                return "lost"
+
+        with ThreadPoolExecutor(max_workers=16) as pool:
+            outcomes = list(pool.map(expire_once, range(32)))
+        self.assertEqual(1, outcomes.count("won"))
+        self.assertEqual("FAILED", store.get("soak", "expire-race")["state"])
+
+        heartbeat_clock = production_closure.ControlledTestClock(start)
+        production_closure.start_soak(self.workspace, "race-cutover", "heartbeat-race", "test",
+                                      start_text, 60, 60, clock=heartbeat_clock)
+        heartbeat_clock.set(start + timedelta(seconds=61))
+        heartbeat_at = (start + timedelta(seconds=60)).isoformat().replace("+00:00", "Z")
+        metrics = {"requests": 1, "errors": 0, "critical_failures": 0, "availability": 1.0}
+        heartbeat = self.sign("operations-owner", {
+            "run_id": "heartbeat-race", "sequence": 1, "observed_at": heartbeat_at,
+            "metrics_sha256": production_closure.digest(metrics),
+        }, "heartbeat-race")
+        timeout = timeout_attestation("heartbeat-race", heartbeat_clock)
+        timeout_at = heartbeat_clock.now().isoformat().replace("+00:00", "Z")
+
+        def race(action: str) -> str:
+            try:
+                if action == "heartbeat":
+                    production_closure.observe_soak(
+                        self.workspace, "heartbeat-race", 1, heartbeat_at, metrics,
+                        heartbeat, self.trust_store, heartbeat_clock,
+                    )
+                else:
+                    production_closure.expire_soak(
+                        self.workspace, "heartbeat-race", timeout_at, timeout,
+                        self.trust_store, heartbeat_clock,
+                    )
+                return action
+            except production_closure.ClosureFailure:
+                return "lost"
+
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            outcomes = list(pool.map(race, ("heartbeat", "timeout")))
+        self.assertEqual(1, sum(item in {"heartbeat", "timeout"} for item in outcomes))
+        raced = store.get("soak", "heartbeat-race")
+        self.assertIn(raced["state"], {"RUNNING", "FAILED"})
+        self.assertEqual(1, raced["last_sequence"])
+        self.assertEqual([], store.chain_findings())
 
     def test_original_payload_recovery_requires_exact_signed_227_file_bundle_and_applies_atomically(self) -> None:
         canonical_root = Path(__file__).resolve().parents[2]

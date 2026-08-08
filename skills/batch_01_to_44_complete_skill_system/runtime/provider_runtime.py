@@ -34,6 +34,7 @@ MAX_DESCRIPTOR_BYTES = 8 * 1024 * 1024
 IDENTIFIER = re.compile(r"^[a-z][a-z0-9-]{0,62}[a-z0-9]$")
 SAFE_ENVIRONMENT = {"PATH", "LANG", "LC_ALL", "TMPDIR", "SSL_CERT_FILE", "SSL_CERT_DIR"}
 FINAL_STATES = {"SUCCEEDED", "FAILED", "UNKNOWN", "COMPENSATED"}
+PROVIDER_SCHEMA_VERSION = 2
 
 
 class ProviderRuntimeError(ValueError):
@@ -181,11 +182,29 @@ def parse_adapter(value: Any) -> Adapter:
         operations[operation.name] = operation
     referenced_compensations = {item.compensation_operation for item in operations.values() if item.compensation_operation}
     for operation in operations.values():
-        if (operation.effect_class != "read-only" and operation.compensation_operation not in operations and
-                operation.name not in referenced_compensations):
+        if operation.effect_class == "read-only":
+            if operation.compensation_operation is not None:
+                raise ProviderRuntimeError(
+                    f"adapter {adapter_id} read-only operation {operation.name} cannot declare compensation"
+                )
+            continue
+        if operation.compensation_operation == operation.name:
+            raise ProviderRuntimeError(f"adapter {adapter_id} operation {operation.name} cannot compensate itself")
+        if operation.name in referenced_compensations:
+            if operation.compensation_operation is not None:
+                raise ProviderRuntimeError(
+                    f"adapter {adapter_id} compensation {operation.name} cannot require another compensation"
+                )
+            continue
+        if operation.compensation_operation not in operations:
             raise ProviderRuntimeError(f"adapter {adapter_id} mutating operation {operation.name} lacks a registered compensation")
-        if operation.compensation_operation and operations[operation.compensation_operation].effect_class == "read-only":
+        compensation = operations[operation.compensation_operation]
+        if compensation.effect_class == "read-only":
             raise ProviderRuntimeError(f"adapter {adapter_id} compensation {operation.compensation_operation} cannot be read-only")
+        if compensation.compensation_operation is not None:
+            raise ProviderRuntimeError(
+                f"adapter {adapter_id} compensation {operation.compensation_operation} cannot require another compensation"
+            )
     return Adapter(adapter_id, capability, executable, expected, version, tuple(environment), operations)
 
 
@@ -218,6 +237,11 @@ class ProviderStore:
         self.root.mkdir(parents=True, exist_ok=True)
         self.path = self.root / "provider-state.sqlite3"
         with self.connect() as connection:
+            current_version = int(connection.execute("PRAGMA user_version").fetchone()[0])
+            if current_version not in {0, 1, PROVIDER_SCHEMA_VERSION}:
+                raise ProviderRuntimeError(
+                    f"unsupported Provider state schema {current_version}; expected {PROVIDER_SCHEMA_VERSION}"
+                )
             connection.executescript("""
                 CREATE TABLE IF NOT EXISTS executions(
                     idempotency_key TEXT PRIMARY KEY,
@@ -233,12 +257,16 @@ class ProviderStore:
                     sequence INTEGER PRIMARY KEY AUTOINCREMENT,
                     event_type TEXT NOT NULL,
                     request_sha256 TEXT NOT NULL,
+                    record_sha256 TEXT,
                     previous_hash TEXT NOT NULL,
                     event_hash TEXT NOT NULL UNIQUE,
                     created_at TEXT NOT NULL
                 );
             """)
-            connection.execute("PRAGMA user_version=1")
+            event_columns = {row[1] for row in connection.execute("PRAGMA table_info(events)")}
+            if "record_sha256" not in event_columns:
+                connection.execute("ALTER TABLE events ADD COLUMN record_sha256 TEXT")
+            connection.execute(f"PRAGMA user_version={PROVIDER_SCHEMA_VERSION}")
 
     def connect(self) -> sqlite3.Connection:
         connection = sqlite3.connect(self.path, timeout=30, isolation_level=None)
@@ -248,12 +276,28 @@ class ProviderStore:
         connection.execute("PRAGMA busy_timeout=30000")
         return connection
 
-    def _event(self, connection: sqlite3.Connection, event_type: str, request_sha256: str, created_at: str) -> None:
+    @staticmethod
+    def _execution_digest(row: sqlite3.Row) -> str:
+        receipt = json.loads(row["receipt_json"]) if row["receipt_json"] else None
+        return digest({
+            "idempotency_key": row["idempotency_key"], "request_sha256": row["request_sha256"],
+            "target_key": row["target_key"], "state": row["state"],
+            "fencing_token": int(row["fencing_token"]),
+            "receipt_sha256": digest(receipt) if isinstance(receipt, dict) else None,
+            "updated_at": row["updated_at"],
+        })
+
+    def _event(self, connection: sqlite3.Connection, event_type: str, request_sha256: str,
+               record_sha256: str, created_at: str) -> None:
         row = connection.execute("SELECT event_hash FROM events ORDER BY sequence DESC LIMIT 1").fetchone()
         previous = row[0] if row else "GENESIS"
-        event_hash = digest({"event_type": event_type, "request_sha256": request_sha256, "previous_hash": previous, "created_at": created_at})
-        connection.execute("INSERT INTO events(event_type,request_sha256,previous_hash,event_hash,created_at) VALUES(?,?,?,?,?)",
-                           (event_type, request_sha256, previous, event_hash, created_at))
+        event_hash = digest({"event_type": event_type, "request_sha256": request_sha256,
+                             "record_sha256": record_sha256, "previous_hash": previous,
+                             "created_at": created_at})
+        connection.execute(
+            "INSERT INTO events(event_type,request_sha256,record_sha256,previous_hash,event_hash,created_at) VALUES(?,?,?,?,?,?)",
+            (event_type, request_sha256, record_sha256, previous, event_hash, created_at),
+        )
 
     def begin(self, idempotency_key: str, request_sha256: str, target_key: str,
               fencing_token: int) -> dict[str, Any] | None:
@@ -274,7 +318,11 @@ class ProviderStore:
             created = now_text()
             connection.execute("INSERT INTO executions VALUES(?,?,?,?,?,?,?)",
                                (idempotency_key, request_sha256, target_key, "RUNNING", fencing_token, None, created))
-            self._event(connection, "PROVIDER_EXECUTION_STARTED", request_sha256, created)
+            inserted = connection.execute(
+                "SELECT * FROM executions WHERE idempotency_key=?", (idempotency_key,)
+            ).fetchone()
+            self._event(connection, "PROVIDER_EXECUTION_STARTED", request_sha256,
+                        self._execution_digest(inserted), created)
             connection.commit()
             return None
         except Exception:
@@ -295,16 +343,22 @@ class ProviderStore:
         connection = self.connect()
         try:
             connection.execute("BEGIN IMMEDIATE")
+            finished_at = receipt["finished_at"]
             cursor = connection.execute(
                 "UPDATE executions SET state=?,receipt_json=?,updated_at=? WHERE idempotency_key=? AND request_sha256=? AND fencing_token=? AND state='RUNNING'",
-                (receipt["state"], canonical_bytes(receipt).decode("utf-8"), now_text(), idempotency_key, request_sha256, fencing_token),
+                (receipt["state"], canonical_bytes(receipt).decode("utf-8"), finished_at,
+                 idempotency_key, request_sha256, fencing_token),
             )
             if cursor.rowcount != 1:
                 raise ProviderRuntimeError("Provider execution fencing/state conflict")
-            self._event(connection, "PROVIDER_EXECUTION_" + receipt["state"], request_sha256, receipt["finished_at"])
+            completed = connection.execute(
+                "SELECT * FROM executions WHERE idempotency_key=?", (idempotency_key,)
+            ).fetchone()
+            self._event(connection, "PROVIDER_EXECUTION_" + receipt["state"], request_sha256,
+                        self._execution_digest(completed), finished_at)
             if compensates_request_sha256 and receipt["state"] == "SUCCEEDED":
                 original = connection.execute(
-                    "SELECT state,receipt_json FROM executions WHERE request_sha256=?", (compensates_request_sha256,)
+                    "SELECT * FROM executions WHERE request_sha256=?", (compensates_request_sha256,)
                 ).fetchone()
                 if original is None or original["state"] != "SUCCEEDED" or not original["receipt_json"]:
                     raise ProviderRuntimeError("compensated Provider execution is missing or not safely compensatable")
@@ -316,7 +370,11 @@ class ProviderStore:
                                "compensated_at": receipt["finished_at"]}
                 connection.execute("UPDATE executions SET state='COMPENSATED',receipt_json=?,updated_at=? WHERE request_sha256=?",
                                    (canonical_bytes(compensated).decode("utf-8"), receipt["finished_at"], compensates_request_sha256))
-                self._event(connection, "PROVIDER_EXECUTION_COMPENSATED", compensates_request_sha256, receipt["finished_at"])
+                compensated_row = connection.execute(
+                    "SELECT * FROM executions WHERE request_sha256=?", (compensates_request_sha256,)
+                ).fetchone()
+                self._event(connection, "PROVIDER_EXECUTION_COMPENSATED", compensates_request_sha256,
+                            self._execution_digest(compensated_row), receipt["finished_at"])
             connection.commit()
         except Exception:
             connection.rollback()
@@ -327,14 +385,53 @@ class ProviderStore:
     def verify_event_chain(self) -> list[str]:
         with self.connect() as connection:
             rows = connection.execute("SELECT * FROM events ORDER BY sequence").fetchall()
+            executions = connection.execute("SELECT * FROM executions ORDER BY idempotency_key").fetchall()
+            integrity = str(connection.execute("PRAGMA integrity_check").fetchone()[0])
         previous = "GENESIS"
         findings: list[str] = []
+        if integrity != "ok":
+            findings.append(f"Provider SQLite integrity check failed: {integrity}")
+        latest: dict[str, str] = {}
+        current_requests: set[str] = set()
+        expected_sequence = 1
         for row in rows:
-            expected = digest({"event_type": row["event_type"], "request_sha256": row["request_sha256"],
-                               "previous_hash": previous, "created_at": row["created_at"]})
+            if int(row["sequence"]) != expected_sequence:
+                findings.append(f"Provider event sequence gap before {row['sequence']}")
+            expected_sequence = int(row["sequence"]) + 1
+            record_sha256 = row["record_sha256"]
+            if record_sha256 is None:
+                findings.append(f"Provider event sequence {row['sequence']} is legacy and lacks a record digest")
+                expected = digest({"event_type": row["event_type"], "request_sha256": row["request_sha256"],
+                                   "previous_hash": previous, "created_at": row["created_at"]})
+            else:
+                expected = digest({"event_type": row["event_type"], "request_sha256": row["request_sha256"],
+                                   "record_sha256": record_sha256, "previous_hash": previous,
+                                   "created_at": row["created_at"]})
+                latest[str(row["request_sha256"])] = str(record_sha256)
             if row["previous_hash"] != previous or row["event_hash"] != expected:
                 findings.append(f"Provider event sequence {row['sequence']} hash-chain mismatch")
             previous = row["event_hash"]
+        for row in executions:
+            request_sha256 = str(row["request_sha256"])
+            current_requests.add(request_sha256)
+            try:
+                current_sha256 = self._execution_digest(row)
+                receipt = json.loads(row["receipt_json"]) if row["receipt_json"] else None
+            except (json.JSONDecodeError, TypeError, ValueError):
+                findings.append(f"Provider execution record is invalid for {request_sha256}")
+                continue
+            if latest.get(request_sha256) != current_sha256:
+                findings.append(f"Provider execution differs from latest event for {request_sha256}")
+            if row["state"] == "RUNNING":
+                if receipt is not None:
+                    findings.append(f"running Provider execution unexpectedly has a receipt for {request_sha256}")
+            elif (not isinstance(receipt, dict) or receipt.get("request_sha256") != request_sha256 or
+                  receipt.get("idempotency_key") != row["idempotency_key"] or receipt.get("state") != row["state"] or
+                  receipt.get("fencing_token") != int(row["fencing_token"])):
+                findings.append(f"Provider execution metadata differs from its receipt for {request_sha256}")
+        for request_sha256 in latest:
+            if request_sha256 not in current_requests:
+                findings.append(f"Provider latest event has no current execution for {request_sha256}")
         return findings
 
 
@@ -431,6 +528,9 @@ def execute(workspace: Path, request_path: Path, registry_path: Path, trust_stor
         environment[key] = os.environ[key]
     environment["ELMOS_IDEMPOTENCY_KEY"] = idempotency_key
     store = ProviderStore(workspace)
+    audit_findings = store.verify_event_chain()
+    if audit_findings:
+        raise ProviderRuntimeError(f"Provider state audit failed: {audit_findings[0]}")
     if compensates_request_sha256 is not None:
         original = store.execution(compensates_request_sha256)
         if (original is None or original["state"] != "SUCCEEDED" or not isinstance(original["receipt"], dict) or

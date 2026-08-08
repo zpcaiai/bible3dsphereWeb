@@ -105,7 +105,11 @@ executable digest, version, argv grammar, typed parameters, environment-referenc
 effect class and compensation operation. Mutations require a separate Approver; execution is
 shell-free, idempotency-keyed, fenced and durably journaled in SQLite WAL. Secrets are injected only
 from allowlisted process-environment references and redacted from captured bytes. A timed-out
-side effect becomes `UNKNOWN` and cannot be retried as success without reconciliation.
+side effect becomes `UNKNOWN` and cannot be retried as success without reconciliation. Compensation
+must be a distinct one-level terminal operation; read-only compensation, self-compensation and
+compensation chains/cycles are rejected. Before every side effect, the current execution record and
+receipt digest must match the latest hash-chain event. Provider state Schema v1 is upgraded to v2
+without inventing missing historical record digests; legacy state remains fail-closed until reconciled.
 
 `runtime/production_closure.py` connects those Provider receipts to an authorized customer lifecycle:
 read-only customer snapshot metadata, Claim-specific Oracle Holdout, exact versioned Provider API,
@@ -118,7 +122,8 @@ six-hour maximum gaps. The accelerated protocol fixture uses an explicit `contro
 is permanently `engineering-only` with `real_seven_day_elapsed=false`; `soak-status` exposes the exact
 heartbeat deadline and `expire-soak` atomically fails an overdue run. Production assessments bind the
 exact run, cutover, release and account and require a digest-pinned, organization-independent external
-certification Trust Store; all local records retain `certified=false`.
+certification Trust Store. The external policy, external Trust Store and internal approval Trust Store
+must all resolve below an explicitly approved evidence root; all local records retain `certified=false`.
 Readiness evaluates one linked Snapshot→Holdout→Result→Cutover→Soak→Assessment chain and emits its
 `selected_chain`; unrelated failed history stays immutable and counted but cannot poison a complete
 chain. Event-chain or current-record tampering still blocks every decision.
