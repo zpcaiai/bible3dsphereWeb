@@ -50,6 +50,7 @@ describe('runtime emotion localization', () => {
       'home.quick.mirrorGraph',
       'home.quick.bibleMaps',
       'home.quick.pilgrimProgress',
+      'home.quick.oracles',
       'home.snapshot.soulQuestion',
       'home.snapshot.worldview',
       'home.snapshot.quickDevotion',

@@ -41,6 +41,7 @@ const namespacedZh = {
   'home.quick.mirrorGraph': '人物图谱',
   'home.quick.bibleMaps': '圣经地图',
   'home.quick.pilgrimProgress': '天路历程',
+  'home.quick.oracles': '列国默示',
 
   'home.snapshot.title': '今日灵命状态',
   '重新同步': '重新同步',
@@ -177,6 +178,7 @@ const namespacedEn = {
   'home.quick.mirrorGraph': 'People Graph',
   'home.quick.bibleMaps': 'Bible Maps',
   'home.quick.pilgrimProgress': "The Pilgrim's Progress",
+  'home.quick.oracles': 'Oracles',
 
   'home.snapshot.title': "Today's Spiritual Status",
   '重新同步': 'Retry sync',

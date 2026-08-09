@@ -1624,7 +1624,7 @@ function AppContent() {
           <section className="mobile-pane" style={{display: 'block'}}>
             <div className="mobile-card-stack">
 
-              {/* 圣经地图 / 语音通话 快捷入口（置于今日灵命快照上方）*/}
+              {/* 首页快捷入口（置于今日灵命快照上方）*/}
               <div style={{ display: 'flex', gap: '4px', margin: '0 0 4px' }}>
                 {[
                   { icon: '🎙', labelKey: 'home.quick.voice', panel: 'voice' },
@@ -1632,6 +1632,7 @@ function AppContent() {
                   { icon: '🕸', labelKey: 'home.quick.mirrorGraph', panel: 'mirror-graph' },
                   { icon: '🗺', labelKey: 'home.quick.bibleMaps', panel: 'bible-maps' },
                   { icon: '🚶', labelKey: 'home.quick.pilgrimProgress', url: 'https://pilgrims.holiness.uk/' },
+                  { icon: '📜', labelKey: 'home.quick.oracles', url: 'https://holiness.uk/oracles.html' },
                 ].map((item) => (
                   <button key={item.panel || item.url}
                     onClick={() => item.url ? window.open(item.url, '_blank', 'noopener,noreferrer') : handlePanelSwitch(item.panel)}
