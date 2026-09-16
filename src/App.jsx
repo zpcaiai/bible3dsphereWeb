@@ -2083,14 +2083,14 @@ function AppContent() {
                     >
                       {i18nT(faithQaLoading ? 'home.pour.thinking' : 'home.pour.ask')}
                     </button>
-                    {/* 经文搜索：凭印象找经文（语义检索），置于提问按钮之下，同款蓝色 */}
+                    {/* 经文搜索：次要操作，采用磨砂次级按钮 */}
                     <button
                       type="button"
-                      className="primary-btn"
-                      style={{ width: '100%', marginTop: '8px' }}
+                      className="secondary-btn"
+                      style={{ width: '100%', marginTop: '10px' }}
                       onClick={() => handlePanelSwitch('bible-search')}
                     >
-                      {i18nT('home.pour.bibleSearch')}
+                      🔍 {i18nT('home.pour.bibleSearch')}
                     </button>
                     {/* 短视频功能已隐藏 */}
                   </div>
@@ -3059,62 +3059,46 @@ function AppContent() {
         </Suspense>
         </AppErrorBoundary>
 
-        {/* 底部 Tab Bar */}
+        {/* 底部 Tab Bar: 5 大核心功能区 */}
         {!suppressGlobalChrome ? <nav className="mobile-bottom-nav glass" aria-label={i18nT('主要导航')}>
           <button
             className={`mobile-nav-item ${activePanel === 'sphere' ? 'active' : ''}`}
             onClick={() => setActivePanel('sphere')}
+            aria-label={i18nT('星球')}
           >
             <span className="mobile-nav-icon">🔮</span>
             <span className="mobile-nav-label">{i18nT('星球')}</span>
           </button>
           <button
-            className={`mobile-nav-item ${activePanel === 'mirror' ? 'active' : ''}`}
-            onClick={() => handlePanelSwitch('mirror')}
-          >
-            <span className="mobile-nav-icon">🪞</span>
-            <span className="mobile-nav-label">{i18nT('镜鉴')}</span>
-          </button>
-          <button
-            className={`mobile-nav-item ${activePanel === 'sharewall' ? 'active' : ''}`}
-            onClick={() => handlePanelSwitch('sharewall')}
-          >
-            <span className="mobile-nav-icon">🌟</span>
-            <span className="mobile-nav-label">{i18nT('分享')}</span>
-          </button>
-          <button
-            className={`mobile-nav-item ${activePanel === 'journal' ? 'active' : ''}`}
-            onClick={() => handlePanelSwitch('journal')}
+            className={`mobile-nav-item ${['devotion', 'journal', 'mccheyne', 'bible-reading'].includes(activePanel) ? 'active' : ''}`}
+            onClick={() => handlePanelSwitch('devotion')}
+            aria-label={i18nT('灵修')}
           >
             <span className="mobile-nav-icon">📖</span>
-            <span className="mobile-nav-label">{i18nT('主日')}</span>
-          </button>
-          <button
-            className={`mobile-nav-item ${activePanel === 'evangelism' ? 'active' : ''}`}
-            onClick={() => handlePanelSwitch('evangelism')}
-          >
-            <span className="mobile-nav-icon">🌍</span>
-            <span className="mobile-nav-label">{i18nT('宣教')}</span>
-          </button>
-          <button
-            className={`mobile-nav-item ${activePanel === 'prayer' ? 'active' : ''}`}
-            onClick={() => handlePanelSwitch('prayer')}
-          >
-            <span className="mobile-nav-icon">🙏</span>
-            <span className="mobile-nav-label">{i18nT('代祷')}</span>
-          </button>
-          <button
-            className={`mobile-nav-item ${activePanel === 'devotion' ? 'active' : ''}`}
-            onClick={() => handlePanelSwitch('devotion')}
-          >
-            <span className="mobile-nav-icon">📔</span>
             <span className="mobile-nav-label">{i18nT('灵修')}</span>
           </button>
           <button
-            className={`mobile-nav-item ${activePanel === 'innerlife' ? 'active' : ''}`}
-            onClick={() => handlePanelSwitch('innerlife')}
+            className={`mobile-nav-item ${['prayer', 'evangelism', 'sharewall', 'partner', 'voice', 'communion'].includes(activePanel) ? 'active' : ''}`}
+            onClick={() => handlePanelSwitch('prayer')}
+            aria-label={i18nT('团契')}
           >
-            <span className="mobile-nav-icon">⚖️</span>
+            <span className="mobile-nav-icon">🤝</span>
+            <span className="mobile-nav-label">{i18nT('团契')}</span>
+          </button>
+          <button
+            className={`mobile-nav-item ${['ai-formation', 'spiritual-formation', 'formation-twin', 'spiritual-planet'].includes(activePanel) ? 'active' : ''}`}
+            onClick={() => handlePanelSwitch('ai-formation')}
+            aria-label={i18nT('门训')}
+          >
+            <span className="mobile-nav-icon">🛡️</span>
+            <span className="mobile-nav-label">{i18nT('门训')}</span>
+          </button>
+          <button
+            className={`mobile-nav-item ${['innerlife', 'mirror', 'mirror-graph', 'soul-question', 'growth-map', 'attention'].includes(activePanel) ? 'active' : ''}`}
+            onClick={() => handlePanelSwitch('innerlife')}
+            aria-label={i18nT('心迹')}
+          >
+            <span className="mobile-nav-icon">🕊️</span>
             <span className="mobile-nav-label">{i18nT('心迹')}</span>
           </button>
         </nav> : null}

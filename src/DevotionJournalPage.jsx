@@ -1,5 +1,6 @@
 import { t as i18nT } from './i18n/runtime'
 import { useEffect, useRef, useState } from 'react'
+import BackButton from './BackButton'
 import { SuggestMenu } from './components/SuggestField'
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
@@ -172,11 +173,7 @@ function JournalEditor({ initial, token, onSaved, onCancel }) {
     <div className="dj-editor">
       {/* Editor header */}
       <div className="dj-editor-header">
-        <button className="checkin-back-btn" onClick={onCancel}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="15 18 9 12 15 6" />
-          </svg>
-        </button>
+        <BackButton onClick={onCancel} ariaLabel={i18nT('返回')} />
         <div className="dj-editor-hcenter">
           <div className="dj-editor-htitle">{isNew ? '新建灵修日记' : '编辑灵修日记'}</div>
           <div className="dj-editor-hdate">{formatDate(form.date)}</div>
@@ -405,11 +402,7 @@ function JournalDetail({ journal, onEdit, onBack }) {
   return (
     <div className="dj-detail">
       <div className="dj-editor-header">
-        <button className="checkin-back-btn" onClick={onBack}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="15 18 9 12 15 6" />
-          </svg>
-        </button>
+        <BackButton onClick={onBack} ariaLabel={i18nT('返回')} />
         <div className="dj-editor-hcenter">
           <div className="dj-editor-htitle">{journal.title || '灵修日记'}</div>
           <div className="dj-editor-hdate">{formatDate(journal.date)}</div>
@@ -633,11 +626,7 @@ export default function DevotionJournalPage({ user, token, onBack, contained = f
     return (
       <div className="dj-page" style={pageStyle}>
         <header className="dj-header" style={safeHeaderStyle}>
-          <button className="checkin-back-btn" onClick={onBack}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="15 18 9 12 15 6" />
-            </svg>
-          </button>
+          <BackButton onClick={onBack} ariaLabel={i18nT('返回')} />
           <div className="dj-header-center">
             <div className="dj-page-title">{i18nT('📔 灵修日记')}</div>
           </div>
@@ -714,11 +703,7 @@ export default function DevotionJournalPage({ user, token, onBack, contained = f
       {deleteDialog}
 
       <header className="dj-header" style={safeHeaderStyle}>
-        <button className="checkin-back-btn" onClick={onBack}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="15 18 9 12 15 6" />
-          </svg>
-        </button>
+        <BackButton onClick={onBack} ariaLabel={i18nT('返回')} />
         <div className="dj-header-center">
           <div className="dj-page-title">{i18nT('📔 灵修日记')}</div>
           <div className="dj-page-sub">{total > 0 ? `共 ${total} 篇` : '每日与神同行'}</div>

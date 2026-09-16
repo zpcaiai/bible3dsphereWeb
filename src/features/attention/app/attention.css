@@ -2,7 +2,8 @@
   min-height: 100%;
   display: grid;
   grid-template-columns: minmax(190px, 236px) minmax(0, 1fr);
-  background: #f4f6f2;
+  background: var(--bg-space, #070b12);
+  color: #e8ecf4;
 }
 
 .attn-shell-content {
@@ -18,8 +19,8 @@
   overflow-y: auto;
   padding: 20px 14px;
   color: #eef4ef;
-  background: #24372f;
-  border-right: 1px solid #1b2c25;
+  background: #0d1512;
+  border-right: 1px solid rgba(82, 183, 136, 0.15);
 }
 
 .attn-brand {
@@ -98,18 +99,18 @@
   max-width: 1080px;
   margin: 0 auto 16px;
   padding: 12px 14px;
-  color: #2e463a;
-  background: #e7efe9;
-  border: 1px solid #b8cbbf;
+  color: #a7f3d0;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.28);
   border-radius: 6px;
 }
 
 .attn-share-preview {
   margin-top: 14px;
   padding: 14px;
-  color: #2d382f;
-  background: #f7f3e8;
-  border: 1px solid #d8c99f;
+  color: #f6c870;
+  background: rgba(246, 200, 112, 0.12);
+  border: 1px solid rgba(246, 200, 112, 0.28);
   border-radius: 6px;
 }
 

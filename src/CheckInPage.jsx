@@ -4,6 +4,7 @@ import { SuggestMenu } from './components/SuggestField'
 const CHK_PRAYER_OPTS = ['为家人的健康与平安', '为工作 / 学业', '为一个还未信主的朋友', '为教会与牧者', '为我正在做的决定', '为我心里的挣扎与软弱', '为国家 / 世界的需要']
 const CHK_GRAT_OPTS = ['感谢今天的平安', '感谢一位家人 / 朋友', '感谢神的供应', '感谢一次及时的帮助', '感谢主的话语与同在']
 import { submitCheckin, postFormationEvent } from './api'
+import BackButton from './BackButton'
 
 const MOOD_OPTIONS = ['非常好', '比较好', '一般', '比较差', '很差']
 const SLEEP_OPTIONS = ['充足', '尚可', '较少', '很少', '失眠']
@@ -195,11 +196,7 @@ export default function CheckInPage({ user, emotionLabel, emotionQuery, token, o
   return (
     <div className="checkin-page">
       <header className="checkin-header">
-        <button className="checkin-back-btn" onClick={onBack} aria-label={i18nT('返回')}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="15 18 9 12 15 6" />
-          </svg>
-        </button>
+        <BackButton onClick={onBack} ariaLabel={i18nT('返回')} />
         <div className="checkin-header-center">
           <div className="checkin-greeting">
             {i18nT('你好，')}{user?.nickname || '弟兄姊妹'} 👋

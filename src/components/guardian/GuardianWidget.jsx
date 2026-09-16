@@ -194,7 +194,7 @@ export default function GuardianWidget() {
 
   return (
     <div ref={rootRef} className="guardian-widget-root" style={{ position: 'fixed', zIndex: 1200,
-      ...(pos ? { left: pos.x, top: pos.y } : { bottom: 20, right: 20 }),
+      ...(pos ? { left: pos.x, top: pos.y } : { bottom: 'calc(var(--tab-bar-height, 64px) + 16px)', right: 16 }),
       display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8 }}>
       {expanded && (
         <div className="guardian-panel guardian-panel--compact" data-testid="guardian-panel" style={{

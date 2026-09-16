@@ -1,5 +1,6 @@
 import { t as i18nT } from './i18n/runtime'
 import { useEffect, useRef, useState } from 'react'
+import BackButton from './BackButton'
 import { SuggestMenu } from './components/SuggestField'
 const SJ_OPTS = {
   summary: ['核心主题是…', '主题经文：', '讲员的主要要点：', '最触动我的一句话：', '信息指向基督…'],
@@ -473,11 +474,7 @@ export default function SermonJournalPage({ user, token, onBack }) {
     <div className="sj-page">
       {/* Header */}
       <header className="sj-header">
-        <button className="checkin-back-btn" onClick={view === 'list' ? onBack : () => setView('list')} aria-label={i18nT('返回')}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="15 18 9 12 15 6" />
-          </svg>
-        </button>
+        <BackButton onClick={view === 'list' ? onBack : () => setView('list')} ariaLabel={i18nT('返回')} />
         <div className="sj-header-center">
           <div className="sj-title">
             {view === 'list' ? '📖 主日信息' : view === 'edit' ? '✏️ 编辑信息' : '📖 主日信息'}

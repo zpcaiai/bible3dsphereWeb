@@ -832,4 +832,25 @@ export default {
   "批准前必须逐项完成当前角色的全部人工核对。": "Complete every required human-review check for this role before approving.",
   "所需独立人工审核": "Required independent human reviews",
   "逐项确认人工审核范围": "Confirm each required review item",
+
+  // ── Bottom Nav and Evangelism Page ──
+  "团契": "Fellowship",
+  "提交福音代祷": "Submit gospel intercession",
+  "🌍 福音宣扬": "🌍 Gospel Proclamation",
+
+  // ── SoulDashboard Category Tabs ──
+  "每日操练": "Daily Practices",
+  "辨析成长": "Discernment & Growth",
+  "团契教会": "Fellowship & Church",
+  "平台治理": "Platform & Governance",
+  "团契与教会生活": "Fellowship & Church Life",
+  "属灵导师与问责": "Spiritual Mentor & Accountability",
+  "代祷与守望网络": "Intercession & Watch Network",
+  "属灵数字孪生": "Spiritual Digital Twin",
+  "机构治理后台": "Organization Governance Console",
+  "扎根地方教会 · 真实彼此相交": "Rooted in local church · genuine mutual fellowship",
+  "同行者支持与深度牧养辅导": "Companion support and in-depth pastoral care",
+  "同心合意向神陈明各样祈求": "Bring all supplications before God in one accord",
+  "合乎圣经伦理的属灵成长镜像": "Biblically ethical spiritual growth mirror",
+  "教会/团契多租户权限与内容治理": "Church & fellowship multi-tenant permissions & content governance",
 }

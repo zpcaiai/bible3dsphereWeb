@@ -1,5 +1,6 @@
 import { t as i18nT } from './i18n/runtime'
 import { useEffect, useState } from 'react'
+import BackButton from './BackButton'
 import { fetchPartnerStatus, requestPartner, respondPartner, sendEncouragement, fetchSpiritualHealthCheck } from './api'
 
 const ENCOURAGEMENT_VERSES = [
@@ -68,11 +69,7 @@ export default function SpiritualPartnerPage({ user, token, onBack }) {
   return (
     <div className="pw-page">
       <header className="pw-header">
-        <button className="checkin-back-btn" onClick={onBack} aria-label={i18nT('返回')}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="15 18 9 12 15 6" />
-          </svg>
-        </button>
+        <BackButton onClick={onBack} ariaLabel={i18nT('返回')} />
         <div className="pw-header-center">
           <div className="pw-title">{i18nT('🤝 属灵伙伴')}</div>
           <div className="pw-subtitle">{i18nT('同行者让灵命更持久')}</div>

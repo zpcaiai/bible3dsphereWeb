@@ -2,14 +2,14 @@
   color-scheme: dark;
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   
-  /* iOS 风格颜色 */
+  /* iOS 风格基础变量 */
   --ios-bg: #000000;
   --ios-surface: rgba(28, 28, 30, 0.85);
   --ios-surface-solid: #1c1c1e;
   --ios-border: rgba(255, 255, 255, 0.08);
   --ios-text: #ffffff;
-  --ios-text-secondary: rgba(255, 255, 255, 0.6);
-  --ios-text-tertiary: rgba(255, 255, 255, 0.3);
+  --ios-text-secondary: rgba(255, 255, 255, 0.78);
+  --ios-text-tertiary: rgba(255, 255, 255, 0.62);
   --ios-accent: #007aff;
   --ios-accent-secondary: #5ac8fa;
   --ios-success: #34c759;
@@ -17,6 +17,40 @@
   --ios-danger: #ff3b30;
   --ios-purple: #af52de;
   --ios-pink: #ff2d55;
+  
+  /* ── 全局 Design Tokens: 基底、磨砂玻璃与天体宇宙配色 ── */
+  --bg-space: #060811;
+  --bg-space-deep: #030408;
+  --surface-glass-subtle: rgba(255, 255, 255, 0.04);
+  --surface-glass-card: rgba(18, 22, 36, 0.72);
+  --surface-glass-card-hover: rgba(26, 32, 54, 0.85);
+  --border-glass: rgba(255, 255, 255, 0.10);
+  --border-glass-hover: rgba(255, 255, 255, 0.20);
+  --border-glass-accent: rgba(78, 168, 222, 0.35);
+
+  /* 语义化天体色彩 (调和雅致，替代硬编码高饱和刺眼色彩) */
+  --celestial-gold: #f6c870;       /* 属灵洞见 / 尊荣金句 */
+  --celestial-gold-bg: rgba(246, 200, 112, 0.12);
+  --celestial-gold-border: rgba(246, 200, 112, 0.30);
+  --celestial-blue: #4ea8de;       /* 默想 / 经文探究 */
+  --celestial-blue-bg: rgba(78, 168, 222, 0.14);
+  --celestial-blue-border: rgba(78, 168, 222, 0.32);
+  --celestial-purple: #9d8df1;     /* 祷告相交 / 内省镜鉴 */
+  --celestial-purple-bg: rgba(157, 141, 241, 0.15);
+  --celestial-purple-border: rgba(157, 141, 241, 0.32);
+  --celestial-emerald: #52b788;    /* 生命结实 / 打卡成长 */
+  --celestial-emerald-bg: rgba(82, 183, 136, 0.14);
+  --celestial-emerald-border: rgba(82, 183, 136, 0.32);
+  --celestial-rose: #e76f51;       /* 警诫警戒 / 悔改归正 */
+  --celestial-rose-bg: rgba(231, 111, 81, 0.14);
+  --celestial-rose-border: rgba(231, 111, 81, 0.32);
+
+  /* 触控与排版 */
+  --touch-target-min: 44px;
+  --font-serif-scripture: 'Source Han Serif SC', 'Songti SC', 'STSong', Georgia, serif;
+  --shadow-glass: 0 12px 40px rgba(0, 0, 0, 0.35);
+  --shadow-glow-blue: 0 0 24px rgba(78, 168, 222, 0.25);
+  --shadow-glow-gold: 0 0 24px rgba(246, 200, 112, 0.25);
   
   /* 安全区域 */
   --safe-top: env(safe-area-inset-top, 0px);
@@ -314,6 +348,37 @@ button, input, textarea {
   opacity: 0.4;
   cursor: not-allowed;
   box-shadow: none;
+}
+
+.secondary-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 10px 18px;
+  background: var(--surface-glass, rgba(255, 255, 255, 0.08));
+  border: 1px solid var(--border-glass, rgba(255, 255, 255, 0.16));
+  border-radius: 14px;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: transform 0.12s ease, background 0.15s ease, border-color 0.15s ease;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+}
+.secondary-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+.secondary-btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+.secondary-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 .install-btn {
@@ -626,8 +691,10 @@ button, input, textarea {
 .mobile-sphere-stage {
   width: 100%;
   flex-shrink: 0;
-  height: 60vh;
-  height: 60dvh;
+  height: 42vh;
+  height: 42dvh;
+  min-height: 280px;
+  max-height: 420px;
   overflow: hidden;
   border-radius: 20px;
   background: radial-gradient(circle at center, #1a1a2e 0%, #000000 70%);
@@ -681,17 +748,11 @@ button, input, textarea {
   bottom: 0;
   padding: 8px 8px calc(8px + var(--safe-bottom));
   display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: minmax(56px, 1fr);
-  grid-template-columns: none;
+  grid-template-columns: repeat(5, 1fr);
   gap: 2px;
-  overflow-x: auto;
-  overflow-y: hidden;
-  overscroll-behavior-x: contain;
-  scroll-snap-type: x proximity;
-  scrollbar-width: none;
+  overflow: visible;
   z-index: 1000;
-  background: rgba(0, 0, 0, 0.75);
+  background: rgba(0, 0, 0, 0.82);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   border-top: 0.5px solid var(--ios-border);
@@ -713,14 +774,13 @@ button, input, textarea {
   align-items: center;
   justify-content: center;
   gap: 3px;
-  transition: color 0.2s ease;
-  padding: 4px 4px;
-  scroll-snap-align: center;
+  transition: all 0.2s ease;
+  padding: 4px 2px;
 }
 
 .mobile-nav-item.active {
   color: var(--ios-accent);
-  background: transparent;
+  background: rgba(255, 255, 255, 0.06);
 }
 
 .mobile-nav-icon {
@@ -730,9 +790,10 @@ button, input, textarea {
 }
 
 .mobile-nav-label {
-  font-size: 11px;
-  line-height: 1;
+  font-size: 12px;
+  line-height: 1.1;
   font-weight: 500;
+  letter-spacing: 0.01em;
 }
 
 .auth-input:focus-visible,
@@ -1593,12 +1654,14 @@ canvas {
   }
 
   .mobile-sphere-stage {
-    height: 55vh;
-    border-radius: 20px;
-    /* The 3D orbit controller listens for pointer gestures. On touch screens,
-       keep vertical one-finger movement owned by the page scroll container. */
-    touch-action: pan-y pinch-zoom;
-  }
+  height: 38vh;
+  min-height: 260px;
+  max-height: 360px;
+  border-radius: 20px;
+  /* The 3D orbit controller listens for pointer gestures. On touch screens,
+     keep vertical one-finger movement owned by the page scroll container. */
+  touch-action: pan-y pinch-zoom;
+}
 
   .mobile-sphere-stage > div,
   .mobile-sphere-stage canvas {
@@ -3578,7 +3641,9 @@ canvas {
   }
 
   .mobile-sphere-stage {
-    height: 50vh;
+    height: 36vh;
+    min-height: 240px;
+    max-height: 320px;
   }
 
   .history-list {
@@ -5791,3 +5856,54 @@ select:focus-visible,
 .confirm-btn:active { filter: brightness(0.94); }
 @keyframes confirm-fade { from { opacity: 0 } to { opacity: 1 } }
 @keyframes confirm-pop { from { opacity: 0; transform: translateY(8px) scale(0.98) } to { opacity: 1; transform: none } }
+
+/* ── Desktop Widescreen Layout Centering & Framing (>= 1024px) ── */
+@media (min-width: 1024px) {
+  .mobile-app-shell {
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 60px rgba(0, 0, 0, 0.65);
+    position: relative;
+  }
+
+  .mobile-bottom-nav {
+    max-width: 900px;
+    width: 100%;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .subpage-language-row {
+    max-width: 900px;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .page-overlay > .checkin-page,
+  .page-overlay > .pw-page,
+  .page-overlay > .devotion-journal-page,
+  .page-overlay > .evangelism-page,
+  .page-overlay > .daily-soul-question-page,
+  .page-overlay > .sermon-journal-page,
+  .page-overlay > .spiritual-partner-page,
+  .page-overlay > .growth-map-page,
+  .page-overlay > .bible-reading-page,
+  .checkin-overlay > .checkin-page {
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    min-height: 100vh;
+    box-shadow: 0 0 60px rgba(0, 0, 0, 0.65);
+  }
+}

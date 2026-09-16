@@ -1,5 +1,6 @@
 import { t as i18nT } from './i18n/runtime'
 import { useCallback, useEffect, useState } from 'react'
+import BackButton from './BackButton'
 import { fetchMilestones } from './api'
 import { API_BASE } from './api'
 import { Radar } from './components/charts'
@@ -103,11 +104,7 @@ export default function GrowthMapPage({ user, token, onBack }) {
   return (
     <div className="pw-page">
       <header className="pw-header">
-        <button className="checkin-back-btn" onClick={onBack} aria-label={i18nT('返回')}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="15 18 9 12 15 6" />
-          </svg>
-        </button>
+        <BackButton onClick={onBack} ariaLabel={i18nT('返回')} />
         <div className="pw-header-center">
           <div className="pw-title">{i18nT('📊 灵命成长图谱')}</div>
           <div className="pw-subtitle">{i18nT('SFDS 8维度灵命轨迹可视化')}</div>

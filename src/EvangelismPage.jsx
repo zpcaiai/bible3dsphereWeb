@@ -1,5 +1,6 @@
 import { t as i18nT } from './i18n/runtime'
 import { useEffect, useRef, useState } from 'react'
+import BackButton from './BackButton'
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
 import { amenEvangelismPrayer, deleteEvangelismPrayer, fetchEvangelismPrayers, restoreEvangelismPrayer, submitEvangelismPrayer, updateEvangelismPrayer, runQuery, fetchSeekersClassCourses, transcribeAudioBlob, fetchEvangelismContacts, createEvangelismContact, updateEvangelismContact, deleteEvangelismContact, prayForEvangelismContact, reviewEvangelismTestimony } from './api'
@@ -829,13 +830,9 @@ export default function EvangelismPage({ user, token, organizationId, onBack, on
     <div className="pw-page">
       {/* Header */}
       <header className="pw-header">
-        <button className="checkin-back-btn" onClick={onBack} aria-label={i18nT('返回')}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="15 18 9 12 15 6" />
-          </svg>
-        </button>
+        <BackButton onClick={onBack} ariaLabel={i18nT('返回')} />
         <div className="pw-header-center">
-          <div className="pw-title">{subTab === 'mission' ? (missionView === 'roadmap' ? '🧭 宣教 · 我的旅程' : missionView === 'console' ? '🛠️ 宣教 · 工作台' : '🌉 宣教 · 邻舍之桥') : subTab === 'map' ? '🗺️ 圣经地图' : subTab === 'seekers' ? '📚 慕道班' : '🌍 传FY'}</div>
+          <div className="pw-title">{subTab === 'mission' ? (missionView === 'roadmap' ? '🧭 宣教 · 我的旅程' : missionView === 'console' ? '🛠️ 宣教 · 工作台' : '🌉 宣教 · 邻舍之桥') : subTab === 'map' ? '🗺️ 圣经地图' : subTab === 'seekers' ? '📚 慕道班' : '🌍 福音宣扬'}</div>
           <div className="pw-subtitle">{subTab === 'mission' ? (missionView === 'roadmap' ? '聆听 · 辨识 · 装备 · 差派 · 整全预备' : missionView === 'console' ? '按真实记录推进宣教生命周期' : '关怀 · 探索 · 装备 · 安全同行') : subTab === 'map' ? '圣经世界地理与宣教足迹' : subTab === 'seekers' ? '慕道班课程 · 文字 / PPT / 视频' : (total > 0 ? `共 ${total} 条祷告` : '为福音传遍天下祷告')}</div>
         </div>
         {subTab === 'fy' && onPrayerWall && (
@@ -854,7 +851,7 @@ export default function EvangelismPage({ user, token, organizationId, onBack, on
         <button
           className="pw-compose-btn"
           onClick={() => setShowCompose(true)}
-          title={i18nT('提交传FY祷告')}
+          title={i18nT('提交福音代祷')}
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M12 5v14M5 12h14" />
@@ -863,13 +860,13 @@ export default function EvangelismPage({ user, token, organizationId, onBack, on
         )}
       </header>
 
-      {/* 子标签：传FY / 宣教 / 圣经地图 / 慕道班 */}
+      {/* 子标签：福音宣扬 / 宣教 / 圣经地图 / 慕道班 */}
       <div className="ev-subtabs">
         <button
           className={`ev-subtab ${subTab === 'fy' ? 'active' : ''}`}
           onClick={() => setSubTab('fy')}
         >
-          {i18nT('🌍 传FY')}
+          {i18nT('🌍 福音宣扬')}
         </button>
         <button
           className={`ev-subtab ${subTab === 'mission' ? 'active' : ''}`}

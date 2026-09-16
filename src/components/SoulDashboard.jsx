@@ -188,6 +188,7 @@ export default function SoulDashboard({ user, onOpenDevotion }) {
   const [fmState, setFmState]      = useState(null)
   const [fmNext, setFmNext]        = useState(null)
   const [fmTimeline, setFmTimeline] = useState([])
+  const [practiceTab, setPracticeTab] = useState('daily') // 'daily' | 'growth' | 'church' | 'admin'
 
   useEffect(() => { const t = getToken(); if (!t) return; fetchWeeklyPastoral(t).then(setPastoral).catch((err) => { console.warn('[SoulDashboard.jsx] ignored async error', err) }) }, [])
 
@@ -339,542 +340,248 @@ export default function SoulDashboard({ user, onOpenDevotion }) {
         </div>
       )}
 
-      {/* ── 今日心镜 头部 ── */}
+      {/* ── 模块分类切换 Tab ── */}
       <div style={{
-        background: 'linear-gradient(135deg, rgba(52,199,89,0.1) 0%, rgba(90,200,250,0.08) 100%)',
-        borderRadius: '0 0 20px 20px',
-        padding: '20px 16px 18px',
-        borderBottom: '1px solid rgba(255,255,255,0.06)',
-        marginBottom: 16,
+        display: 'flex',
+        gap: 6,
+        margin: '12px 16px 14px',
+        padding: 4,
+        background: 'rgba(255,255,255,0.04)',
+        borderRadius: 12,
+        border: '1px solid rgba(255,255,255,0.08)',
       }}>
-        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 14 }}>
-          <div>
-            <div style={{ fontSize: 20, fontWeight: 700, color: '#fff', letterSpacing: 1 }}>{i18nT('今日心镜')}</div>
-            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', marginTop: 2 }}>{todayLabel()}</div>
-          </div>
-          <span style={{ fontSize: 28 }}>🪞</span>
-        </div>
+        {[
+          { key: 'daily', label: i18nT('每日操练'), icon: '🌅' },
+          { key: 'growth', label: i18nT('辨析成长'), icon: '🧭' },
+          { key: 'church', label: i18nT('团契教会'), icon: '⛪' },
+          { key: 'admin', label: i18nT('平台治理'), icon: '⚙️' },
+        ].map(t => {
+          const active = practiceTab === t.key
+          return (
+            <button
+              key={t.key}
+              type="button"
+              onClick={() => setPracticeTab(t.key)}
+              style={{
+                flex: 1,
+                padding: '8px 4px',
+                borderRadius: 9,
+                fontSize: 12,
+                fontWeight: active ? 700 : 500,
+                color: active ? '#fff' : 'rgba(255,255,255,0.6)',
+                background: active ? 'linear-gradient(135deg, rgba(16,185,129,0.35), rgba(5,150,105,0.25))' : 'transparent',
+                border: active ? '1px solid rgba(16,185,129,0.5)' : '1px solid transparent',
+                cursor: 'pointer',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: 2,
+                transition: 'all 0.2s ease',
+              }}
+            >
+              <span style={{ fontSize: 14 }}>{t.icon}</span>
+              <span>{t.label}</span>
+            </button>
+          )
+        })}
+      </div>
 
-        {/* 一句洞见 */}
-        <div style={{
-          background: 'rgba(255,255,255,0.05)',
-          borderRadius: 12,
-          padding: '12px 14px',
-          borderLeft: '3px solid rgba(52,199,89,0.5)',
-          marginBottom: 14,
-        }}>
-          <div style={{ fontSize: 10, color: 'rgba(52,199,89,0.7)', fontWeight: 700, letterSpacing: 1, marginBottom: 6 }}>{i18nT('✦ 今日洞见')}</div>
-          <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.88)', lineHeight: 1.65, fontStyle: 'italic' }}>{insight}</div>
-        </div>
-
-        {/* 3 信号 */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8 }}>
-          {signals.map((s, i) => (
-            <div key={i} style={{
-              background: 'rgba(0,0,0,0.25)', borderRadius: 12, padding: '10px 8px',
-              textAlign: 'center', border: `1px solid ${s.color}25`,
-            }}>
-              <div style={{ fontSize: 18, marginBottom: 4 }}>{s.icon}</div>
-              <div style={{ fontSize: 13, fontWeight: 700, color: s.color, marginBottom: 2 }}>{s.value}</div>
-              <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.35)' }}>{s.label}</div>
-              {s.sub && <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.22)', marginTop: 2 }}>{s.sub}</div>}
+      {/* ── Tab 1: 每日操练 ── */}
+      {practiceTab === 'daily' && (
+        <div>
+          {/* 晨更/晚祷提醒 */}
+          <button onClick={() => setOverlay('reminder')} style={{ display: 'flex', alignItems: 'center', gap: 10, width: 'calc(100% - 32px)', textAlign: 'left', cursor: 'pointer', margin: '0 16px 12px', borderRadius: 14, padding: '12px 16px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', color: '#fff' }}>
+            <span style={{ fontSize: 20 }}>🔔</span>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 13.5, fontWeight: 700 }}>{i18nT('晨更 · 晚祷提醒')}</div>
+              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', marginTop: 2 }}>{i18nT('让灵修有节奏——开启每日温柔提醒')}</div>
             </div>
-          ))}
-        </div>
-      </div>
+            <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)' }}>›</span>
+          </button>
 
-      {/* ── 使命生活 Mission Life ── */}
-      <button onClick={() => setOverlay('mission-life')} style={{ display: 'block', width: 'calc(100% - 32px)', textAlign: 'left', cursor: 'pointer', margin: '0 16px 12px', borderRadius: 14, padding: '14px 16px',
-        background: 'linear-gradient(135deg, rgba(52,199,89,0.16), rgba(245,181,63,0.10))', border: '1px solid rgba(52,199,89,0.25)', color: '#fff' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <span style={{ fontSize: 24 }}>🌍</span>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 14, fontWeight: 700 }}>{i18nT('使命生活 · 把信仰活进日常')}</div>
-            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>{i18nT('职业 · 家庭 · 邻舍 · 金钱 · 安息为证')}</div>
-          </div>
-          <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)' }}>›</span>
-        </div>
-      </button>
-
-      {/* ── 诗篇祷告 Psalm Prayer ── */}
-      <button onClick={() => setOverlay('psalm')} style={{ display: 'block', width: 'calc(100% - 32px)', textAlign: 'left', cursor: 'pointer', margin: '0 16px 12px', borderRadius: 14, padding: '14px 16px',
-        background: 'linear-gradient(135deg, rgba(125,211,252,0.16), rgba(139,92,246,0.10))', border: '1px solid rgba(125,211,252,0.25)', color: '#fff' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <span style={{ fontSize: 24 }}>🎵</span>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 14, fontWeight: 700 }}>{i18nT('诗篇祷告 · 用诗篇向神倾诉')}</div>
-            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>{i18nT('哀歌 · 赞美 · 认罪 · 信靠 · 诚实不假装')}</div>
-          </div>
-          <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)' }}>›</span>
-        </div>
-      </button>
-
-      {/* ── 祷告规则 · 每日节奏 ── */}
-      <button onClick={() => setOverlay('prayer-rule')} style={{ display: 'block', width: 'calc(100% - 32px)', textAlign: 'left', cursor: 'pointer', margin: '0 16px 12px', borderRadius: 14, padding: '14px 16px',
-        background: 'linear-gradient(135deg, rgba(139,92,246,0.16), rgba(90,200,250,0.10))', border: '1px solid rgba(139,92,246,0.25)', color: '#fff' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <span style={{ fontSize: 24 }}>🕯</span>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 14, fontWeight: 700 }}>{i18nT('祷告规则 · 每日节奏')}</div>
-            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>{i18nT('晨 / 午 / 晚 · 与神相交不是表现')}</div>
-          </div>
-          <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)' }}>›</span>
-        </div>
-      </button>
-
-      {/* ── 代祷名单 ── */}
-      <button onClick={() => setOverlay('intercession')} style={{ display: 'block', width: 'calc(100% - 32px)', textAlign: 'left', cursor: 'pointer', margin: '0 16px 12px', borderRadius: 14, padding: '14px 16px',
-        background: 'linear-gradient(135deg, rgba(245,181,63,0.16), rgba(255,107,107,0.10))', border: '1px solid rgba(245,181,63,0.25)', color: '#fff' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <span style={{ fontSize: 24 }}>🙏</span>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 14, fontWeight: 700 }}>{i18nT('代祷名单')}</div>
-            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>{i18nT('持续为人代求 · 把结果交托给神')}</div>
-          </div>
-          <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)' }}>›</span>
-        </div>
-      </button>
-
-      {/* ── 操练与神同在 ── */}
-      <button onClick={() => setOverlay('presence')} style={{ display: 'block', width: 'calc(100% - 32px)', textAlign: 'left', cursor: 'pointer', margin: '0 16px 12px', borderRadius: 14, padding: '14px 16px',
-        background: 'linear-gradient(135deg, rgba(125,211,252,0.16), rgba(52,199,89,0.10))', border: '1px solid rgba(125,211,252,0.25)', color: '#fff' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <span style={{ fontSize: 24 }}>🌿</span>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 14, fontWeight: 700 }}>{i18nT('操练与神同在')}</div>
-            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>{i18nT('30–60 秒回到神面前 · 不是打卡')}</div>
-          </div>
-          <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)' }}>›</span>
-        </div>
-      </button>
-
-      {/* ── 试探抵抗 ── */}
-      <button onClick={() => setOverlay('temptation')} style={{ display: 'block', width: 'calc(100% - 32px)', textAlign: 'left', cursor: 'pointer', margin: '0 16px 12px', borderRadius: 14, padding: '14px 16px',
-        background: 'linear-gradient(135deg, rgba(255,107,107,0.16), rgba(245,181,63,0.10))', border: '1px solid rgba(255,107,107,0.25)', color: '#fff' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <span style={{ fontSize: 24 }}>🛡</span>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 14, fontWeight: 700 }}>{i18nT('试探抵抗')}</div>
-            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>{i18nT('试探不是身份 · 选下一个忠心小步')}</div>
-          </div>
-          <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)' }}>›</span>
-        </div>
-      </button>
-
-      {/* ── 圣灵果子追踪 ── */}
-      <button onClick={() => setOverlay('fruit')} style={{ display: 'block', width: 'calc(100% - 32px)', textAlign: 'left', cursor: 'pointer', margin: '0 16px 12px', borderRadius: 14, padding: '14px 16px',
-        background: 'linear-gradient(135deg, rgba(52,199,89,0.16), rgba(125,211,252,0.10))', border: '1px solid rgba(52,199,89,0.25)', color: '#fff' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <span style={{ fontSize: 24 }}>🍇</span>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 14, fontWeight: 700 }}>{i18nT('圣灵果子追踪')}</div>
-            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>{i18nT('反思镜子，不是属灵成绩')}</div>
-          </div>
-          <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)' }}>›</span>
-        </div>
-      </button>
-
-      {/* ── 安息与休息 ── */}
-      <button onClick={() => setOverlay('sabbath')} style={{ display: 'block', width: 'calc(100% - 32px)', textAlign: 'left', cursor: 'pointer', margin: '0 16px 12px', borderRadius: 14, padding: '14px 16px',
-        background: 'linear-gradient(135deg, rgba(125,211,252,0.16), rgba(52,199,89,0.10))', border: '1px solid rgba(125,211,252,0.25)', color: '#fff' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <span style={{ fontSize: 24 }}>🌙</span>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 14, fontWeight: 700 }}>{i18nT('安息与休息')}</div>
-            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>{i18nT('抵抗效率偶像 · 恢复敬拜与信靠')}</div>
-          </div>
-          <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)' }}>›</span>
-        </div>
-      </button>
-
-      {/* ── 禁食与简朴 ── */}
-      <button onClick={() => setOverlay('fasting')} style={{ display: 'block', width: 'calc(100% - 32px)', textAlign: 'left', cursor: 'pointer', margin: '0 16px 12px', borderRadius: 14, padding: '14px 16px',
-        background: 'linear-gradient(135deg, rgba(245,181,63,0.16), rgba(52,199,89,0.10))', border: '1px solid rgba(245,181,63,0.25)', color: '#fff' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <span style={{ fontSize: 24 }}>🍃</span>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 14, fontWeight: 700 }}>{i18nT('禁食与简朴')}</div>
-            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>{i18nT('训练欲望 · 慷慨与自由 · 安全第一')}</div>
-          </div>
-          <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)' }}>›</span>
-        </div>
-      </button>
-
-      {/* ── 导师陪跑 ── */}
-      <button onClick={() => setOverlay('mentor')} style={{ display: 'block', width: 'calc(100% - 32px)', textAlign: 'left', cursor: 'pointer', margin: '0 16px 12px', borderRadius: 14, padding: '14px 16px',
-        background: 'linear-gradient(135deg, rgba(139,92,246,0.16), rgba(125,211,252,0.10))', border: '1px solid rgba(139,92,246,0.25)', color: '#fff' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <span style={{ fontSize: 24 }}>🤝</span>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 14, fontWeight: 700 }}>{i18nT('导师陪跑')}</div>
-            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>{i18nT('同意范围内的陪伴 · 提问/观察/计划')}</div>
-          </div>
-          <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)' }}>›</span>
-        </div>
-      </button>
-
-      {/* ── 小组监督 ── */}
-      <button onClick={() => setOverlay('acc-group')} style={{ display: 'block', width: 'calc(100% - 32px)', textAlign: 'left', cursor: 'pointer', margin: '0 16px 12px', borderRadius: 14, padding: '14px 16px',
-        background: 'linear-gradient(135deg, rgba(245,181,63,0.16), rgba(52,199,89,0.10))', border: '1px solid rgba(245,181,63,0.25)', color: '#fff' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <span style={{ fontSize: 24 }}>👥</span>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 14, fontWeight: 700 }}>{i18nT('小组监督')}</div>
-            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>{i18nT('同意制 · 坚固爱与信,不羞辱')}</div>
-          </div>
-          <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)' }}>›</span>
-        </div>
-      </button>
-
-      {/* ── 门徒成长路径 ── */}
-      <button onClick={() => setOverlay('disciple-path')} style={{ display: 'block', width: 'calc(100% - 32px)', textAlign: 'left', cursor: 'pointer', margin: '0 16px 12px', borderRadius: 14, padding: '14px 16px',
-        background: 'linear-gradient(135deg, rgba(52,199,89,0.16), rgba(139,92,246,0.10))', border: '1px solid rgba(52,199,89,0.25)', color: '#fff' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <span style={{ fontSize: 24 }}>🌱</span>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 14, fontWeight: 700 }}>{i18nT('门徒成长路径')}</div>
-            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>{i18nT('阶段评估 → 个性化路径')}</div>
-          </div>
-          <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)' }}>›</span>
-        </div>
-      </button>
-
-      {/* ── 教会生活整合 ── */}
-      <button onClick={() => setOverlay('church-life')} style={{ display: 'block', width: 'calc(100% - 32px)', textAlign: 'left', cursor: 'pointer', margin: '0 16px 12px', borderRadius: 14, padding: '14px 16px',
-        background: 'linear-gradient(135deg, rgba(125,211,252,0.16), rgba(245,181,63,0.10))', border: '1px solid rgba(125,211,252,0.25)', color: '#fff' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <span style={{ fontSize: 24 }}>⛪</span>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 14, fontWeight: 700 }}>{i18nT('教会生活整合')}</div>
-            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>{i18nT('渐进重返 · 创伤先医治')}</div>
-          </div>
-          <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)' }}>›</span>
-        </div>
-      </button>
-
-      {/* ── 教义学习 ── */}
-      <button onClick={() => setOverlay('doctrine')} style={{ display: 'block', width: 'calc(100% - 32px)', textAlign: 'left', cursor: 'pointer', margin: '0 16px 12px', borderRadius: 14, padding: '14px 16px',
-        background: 'linear-gradient(135deg, rgba(139,92,246,0.16), rgba(245,181,63,0.10))', border: '1px solid rgba(139,92,246,0.25)', color: '#fff' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <span style={{ fontSize: 24 }}>📚</span>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 14, fontWeight: 700 }}>{i18nT('教义学习')}</div>
-            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>{i18nT('经文/教义/传统/应用 · 连接成长')}</div>
-          </div>
-          <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)' }}>›</span>
-        </div>
-      </button>
-
-      {/* ── 情感—属灵形成孪生 ── */}
-      <button onClick={() => setOverlay('spiritual-planet')} style={{ display: 'block', width: 'calc(100% - 32px)', textAlign: 'left', cursor: 'pointer', margin: '0 16px 12px', borderRadius: 14, padding: '14px 16px',
-        background: 'radial-gradient(circle at 15% 25%, rgba(232,184,107,0.15), transparent 35%), linear-gradient(135deg, rgba(93,76,166,0.24), rgba(35,82,112,0.16))', border: '1px solid rgba(232,184,107,0.3)', color: '#fff' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <span style={{ fontSize: 24 }}>🪐</span>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 14, fontWeight: 700 }}>{i18nT('属灵星球 · 统一门户')}</div>
-            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>{i18nT('今日镜像 · 统一行动 · 时间线 · 隐私审计')}</div>
-          </div>
-          <span style={{ fontSize: 18, color: '#efd59d' }}>›</span>
-        </div>
-      </button>
-
-      {/* ── 情感—属灵形成孪生 ── */}
-      <button onClick={() => setOverlay('formation-twin')} style={{ display: 'block', width: 'calc(100% - 32px)', textAlign: 'left', cursor: 'pointer', margin: '0 16px 12px', borderRadius: 14, padding: '14px 16px',
-        background: 'linear-gradient(135deg, rgba(90,200,250,0.18), rgba(139,92,246,0.18))', border: '1px solid rgba(167,139,250,0.32)', color: '#fff' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <span style={{ fontSize: 24 }}>✦</span>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 14, fontWeight: 700 }}>{i18nT('情感—属灵形成孪生')}</div>
-            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>{i18nT('整合现有生命记录 · 标注证据与不确定性 · 危机优先')}</div>
-          </div>
-          <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)' }}>›</span>
-        </div>
-      </button>
-
-      {/* ── 今日成长统一面板 ── */}
-      <button onClick={() => setOverlay('formation-home')} style={{ display: 'block', width: 'calc(100% - 32px)', textAlign: 'left', cursor: 'pointer', margin: '0 16px 12px', borderRadius: 14, padding: '14px 16px',
-        background: 'linear-gradient(135deg, rgba(139,92,246,0.22), rgba(245,181,63,0.14))', border: '1px solid rgba(139,92,246,0.35)', color: '#fff' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <span style={{ fontSize: 24 }}>🧭</span>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 14, fontWeight: 700 }}>{i18nT('今日成长 · 统一面板')}</div>
-            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>{i18nT('快照 · 计划 · 推荐 · 说出需要,带你到对的操练')}</div>
-          </div>
-          <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)' }}>›</span>
-        </div>
-      </button>
-
-      {/* ── AI 属灵导师对话 ── */}
-      <button onClick={() => setOverlay('ai-tutor')} style={{ display: 'block', width: 'calc(100% - 32px)', textAlign: 'left', cursor: 'pointer', margin: '0 16px 12px', borderRadius: 14, padding: '14px 16px',
-        background: 'linear-gradient(135deg, rgba(125,211,252,0.18), rgba(139,92,246,0.12))', border: '1px solid rgba(125,211,252,0.28)', color: '#fff' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <span style={{ fontSize: 24 }}>🕊️</span>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 14, fontWeight: 700 }}>{i18nT('属灵导师对话')}</div>
-            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>{i18nT('记忆接地的陪伴 · 危机优先引导真实的人')}</div>
-          </div>
-          <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)' }}>›</span>
-        </div>
-      </button>
-
-      {/* ── 属灵记忆库 ── */}
-      <button onClick={() => setOverlay('spiritual-memory')} style={{ display: 'block', width: 'calc(100% - 32px)', textAlign: 'left', cursor: 'pointer', margin: '0 16px 12px', borderRadius: 14, padding: '14px 16px',
-        background: 'linear-gradient(135deg, rgba(52,199,89,0.14), rgba(125,211,252,0.10))', border: '1px solid rgba(52,199,89,0.22)', color: '#fff' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <span style={{ fontSize: 24 }}>🧠</span>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 14, fontWeight: 700 }}>{i18nT('属灵记忆库')}</div>
-            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>{i18nT('你拥有的成长记忆 · 敏感内容默认不外泄')}</div>
-          </div>
-          <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)' }}>›</span>
-        </div>
-      </button>
-
-      {/* ── 成长分析 ── */}
-      <button onClick={() => setOverlay('analytics')} style={{ display: 'block', width: 'calc(100% - 32px)', textAlign: 'left', cursor: 'pointer', margin: '0 16px 12px', borderRadius: 14, padding: '14px 16px',
-        background: 'linear-gradient(135deg, rgba(125,211,252,0.16), rgba(139,92,246,0.10))', border: '1px solid rgba(125,211,252,0.25)', color: '#fff' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <span style={{ fontSize: 24 }}>📊</span>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 14, fontWeight: 700 }}>{i18nT('成长分析')}</div>
-            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>{i18nT('恩典证据 · 迹象 · 月度报告(不排名)')}</div>
-          </div>
-          <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)' }}>›</span>
-        </div>
-      </button>
-
-      {/* ── 成长可视化 ── */}
-      <button onClick={() => setOverlay('charts')} style={{ display: 'block', width: 'calc(100% - 32px)', textAlign: 'left', cursor: 'pointer', margin: '0 16px 12px', borderRadius: 14, padding: '14px 16px',
-        background: 'linear-gradient(135deg, rgba(125,211,252,0.16), rgba(52,199,89,0.10))', border: '1px solid rgba(125,211,252,0.25)', color: '#fff' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <span style={{ fontSize: 24 }}>📈</span>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 14, fontWeight: 700 }}>{i18nT('成长可视化')}</div>
-            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>{i18nT('操练热力图 · 每周趋势(迹象,不是成绩)')}</div>
-          </div>
-          <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)' }}>›</span>
-        </div>
-      </button>
-
-      {/* ── 灵镜观心 MVFE ── */}
-      <button onClick={() => setOverlay('mvfe')} style={{ display: 'block', width: 'calc(100% - 32px)', textAlign: 'left', cursor: 'pointer', margin: '0 16px 12px', borderRadius: 14, padding: '14px 16px',
-        background: 'linear-gradient(135deg, rgba(199,200,255,0.16), rgba(125,211,252,0.10))', border: '1px solid rgba(199,200,255,0.25)', color: '#fff' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <span style={{ fontSize: 24 }}>🧬</span>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 14, fontWeight: 700 }}>{i18nT('灵镜观心')}</div>
-            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>{i18nT('HIDOS 人格形成动态观测')}</div>
-          </div>
-          <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)' }}>›</span>
-        </div>
-      </button>
-
-      {/* ── 计划与组织 ── */}
-      <button onClick={() => setOverlay('productization')} style={{ display: 'block', width: 'calc(100% - 32px)', textAlign: 'left', cursor: 'pointer', margin: '0 16px 12px', borderRadius: 14, padding: '14px 16px',
-        background: 'linear-gradient(135deg, rgba(139,92,246,0.16), rgba(125,211,252,0.10))', border: '1px solid rgba(139,92,246,0.25)', color: '#fff' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <span style={{ fontSize: 24 }}>💳</span>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 14, fontWeight: 700 }}>{i18nT('计划与组织')}</div>
-            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>{i18nT('个人/小组/教会/机构 · 危机不受订阅限制')}</div>
-          </div>
-          <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)' }}>›</span>
-        </div>
-      </button>
-
-      {/* ── 组织管理台 ── */}
-      <button onClick={() => setOverlay('org-console')} style={{ display: 'block', width: 'calc(100% - 32px)', textAlign: 'left', cursor: 'pointer', margin: '0 16px 12px', borderRadius: 14, padding: '14px 16px',
-        background: 'linear-gradient(135deg, rgba(139,92,246,0.16), rgba(125,211,252,0.10))', border: '1px solid rgba(139,92,246,0.25)', color: '#fff' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <span style={{ fontSize: 24 }}>🏛️</span>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 14, fontWeight: 700 }}>{i18nT('组织管理台')}</div>
-            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>{i18nT('按组织隔离 + 角色授权 · 仅社区数据(隐私不外泄)')}</div>
-          </div>
-          <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)' }}>›</span>
-        </div>
-      </button>
-
-      {/* ── 订阅与计费 ── */}
-      <button onClick={() => setOverlay('billing')} style={{ display: 'block', width: 'calc(100% - 32px)', textAlign: 'left', cursor: 'pointer', margin: '0 16px 12px', borderRadius: 14, padding: '14px 16px',
-        background: 'linear-gradient(135deg, rgba(125,211,252,0.16), rgba(139,92,246,0.10))', border: '1px solid rgba(125,211,252,0.25)', color: '#fff' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <span style={{ fontSize: 24 }}>💳</span>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 14, fontWeight: 700 }}>{i18nT('订阅与计费')}</div>
-            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>{i18nT('危机/安全永久免费 · Stripe 升级')}</div>
-          </div>
-          <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)' }}>›</span>
-        </div>
-      </button>
-
-      {/* ── 平台管理台 ── */}
-      <button onClick={() => setOverlay('platform-admin')} style={{ display: 'block', width: 'calc(100% - 32px)', textAlign: 'left', cursor: 'pointer', margin: '0 16px 12px', borderRadius: 14, padding: '14px 16px',
-        background: 'linear-gradient(135deg, rgba(255,107,107,0.14), rgba(139,92,246,0.10))', border: '1px solid rgba(255,107,107,0.25)', color: '#fff' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <span style={{ fontSize: 24 }}>🛡️</span>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 14, fontWeight: 700 }}>{i18nT('平台管理台')}</div>
-            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>{i18nT('安全审核优先 · 仅平台管理员')}</div>
-          </div>
-          <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)' }}>›</span>
-        </div>
-      </button>
-
-      {/* ── 圣经默想 Lectio Divina ── */}
-      <button onClick={() => setOverlay('lectio')} style={{ display: 'block', width: 'calc(100% - 32px)', textAlign: 'left', cursor: 'pointer', margin: '0 16px 12px', borderRadius: 14, padding: '14px 16px',
-        background: 'linear-gradient(135deg, rgba(52,199,89,0.16), rgba(90,200,250,0.10))', border: '1px solid rgba(52,199,89,0.25)', color: '#fff' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <span style={{ fontSize: 24 }}>📖</span>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 14, fontWeight: 700 }}>{i18nT('圣经默想 · 慢读神的话')}</div>
-            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>{i18nT('读经 · 默想 · 祷告 · 默观 · 一个微顺服')}</div>
-          </div>
-          <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)' }}>›</span>
-        </div>
-      </button>
-
-      {/* ── 今日省察 Examen ── */}
-      <button onClick={() => setOverlay('examen')} style={{ display: 'block', width: 'calc(100% - 32px)', textAlign: 'left', cursor: 'pointer', margin: '0 16px 12px', borderRadius: 14, padding: '14px 16px',
-        background: 'linear-gradient(135deg, rgba(139,92,246,0.16), rgba(90,200,250,0.10))', border: '1px solid rgba(139,92,246,0.25)', color: '#fff' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <span style={{ fontSize: 24 }}>🌗</span>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 14, fontWeight: 700 }}>{i18nT('今日省察 · 与神同回顾这一天')}</div>
-            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>{i18nT('安慰 / 枯涩 · 感恩 · 求恕 · 明日一个微顺服')}</div>
-          </div>
-          <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)' }}>›</span>
-        </div>
-      </button>
-
-      {/* ── 福音诊断室（双引擎核心循环）── */}
-      <button onClick={() => setOverlay('gospel')} style={{ display: 'block', width: 'calc(100% - 32px)', textAlign: 'left', cursor: 'pointer', margin: '0 16px 12px', borderRadius: 14, padding: '14px 16px',
-        background: 'linear-gradient(135deg, rgba(218,119,242,0.16), rgba(255,212,59,0.10))', border: '1px solid rgba(218,119,242,0.28)', color: '#fff' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <span style={{ fontSize: 24 }}>🔬</span>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 14, fontWeight: 700 }}>{i18nT('福音诊断室 · 从情绪挖到福音')}</div>
-            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>{i18nT('钟马田挖到偶像与不信 · 司布真带你回到基督')}</div>
-          </div>
-          <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)' }}>›</span>
-        </div>
-      </button>
-
-      {/* ── 属灵低潮体检 ── */}
-      <button onClick={() => setOverlay('checkup')} style={{ display: 'flex', alignItems: 'center', gap: 10, width: 'calc(100% - 32px)', textAlign: 'left', cursor: 'pointer', margin: '0 16px 12px', borderRadius: 14, padding: '12px 16px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', color: '#fff' }}>
-        <span style={{ fontSize: 20 }}>🩺</span>
-        <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 13.5, fontWeight: 700 }}>{i18nT('属灵低潮体检')}</div>
-          <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', marginTop: 2 }}>{i18nT('钟马田：不要听自己，要向自己传讲福音')}</div>
-        </div>
-        <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)' }}>›</span>
-      </button>
-
-      {/* ── 晨更/晚祷提醒 ── */}
-      <button onClick={() => setOverlay('reminder')} style={{ display: 'flex', alignItems: 'center', gap: 10, width: 'calc(100% - 32px)', textAlign: 'left', cursor: 'pointer', margin: '0 16px 12px', borderRadius: 14, padding: '12px 16px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', color: '#fff' }}>
-        <span style={{ fontSize: 20 }}>🔔</span>
-        <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 13.5, fontWeight: 700 }}>{i18nT('晨更 · 晚祷提醒')}</div>
-          <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', marginTop: 2 }}>{i18nT('让灵修有节奏——开启每日温柔提醒')}</div>
-        </div>
-        <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)' }}>›</span>
-      </button>
-
-      {/* ── 灵修操练 Hub ── */}
-      <button onClick={() => setOverlay('hub')} style={{ display: 'flex', alignItems: 'center', gap: 10, width: 'calc(100% - 32px)', textAlign: 'left', cursor: 'pointer', margin: '0 16px 12px', borderRadius: 14, padding: '12px 16px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', color: '#fff' }}>
-        <span style={{ fontSize: 20 }}>✦</span>
-        <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 13.5, fontWeight: 700 }}>{i18nT('灵修操练')}</div>
-          <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', marginTop: 2 }}>{i18nT('感恩 · 认罪与赦免 · 教会历 · 灵修问责 · 我的数据')}</div>
-        </div>
-        <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)' }}>›</span>
-      </button>
-
-      {/* ── 心镜入口：偶像监测 · 等候之路 ── */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 10, margin: '0 16px 16px' }}>
-        <button onClick={() => setOverlay('idolatry')} style={{ textAlign: 'left', cursor: 'pointer', border: '1px solid rgba(139,92,246,0.25)', borderRadius: 14, padding: '14px', background: 'linear-gradient(135deg, rgba(139,92,246,0.16), rgba(236,72,153,0.10))', color: '#fff' }}>
-          <div style={{ fontSize: 22, marginBottom: 6 }}>🧭</div>
-          <div style={{ fontSize: 13.5, fontWeight: 700 }}>{i18nT('偶像监测')}</div>
-          <div style={{ fontSize: 10.5, color: 'rgba(255,255,255,0.5)', marginTop: 2, lineHeight: 1.5 }}>{i18nT('什么正在取代神成为内心中心？')}</div>
-        </button>
-        <button onClick={() => setOverlay('waiting')} style={{ textAlign: 'left', cursor: 'pointer', border: '1px solid rgba(52,199,89,0.25)', borderRadius: 14, padding: '14px', background: 'linear-gradient(135deg, rgba(52,199,89,0.14), rgba(90,200,250,0.10))', color: '#fff' }}>
-          <div style={{ fontSize: 22, marginBottom: 6 }}>🕯️</div>
-          <div style={{ fontSize: 13.5, fontWeight: 700 }}>{i18nT('等候之路')}</div>
-          <div style={{ fontSize: 10.5, color: 'rgba(255,255,255,0.5)', marginTop: 2, lineHeight: 1.5 }}>{i18nT('从等待戈多，到等候上帝')}</div>
-        </button>
-      </div>
-
-      {/* ── 本周牧养小结 ── */}
-      {pastoral && pastoral.title && (
-        <div style={{ margin: '0 16px 16px', borderRadius: 14, padding: '16px',
-          background: 'linear-gradient(135deg, rgba(255,212,59,0.10), rgba(139,92,246,0.08))',
-          border: '1px solid rgba(255,212,59,0.20)' }}>
-          <div style={{ fontSize: 10, color: 'rgba(255,212,59,0.8)', fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>✦ {pastoral.title}</div>
-          {pastoral.gods_work && <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.82)', lineHeight: 1.75 }}>{pastoral.gods_work}</div>}
-          {pastoral.invitation && (
-            <div style={{ marginTop: 10, fontSize: 12.5, color: '#5ac8fa', lineHeight: 1.7 }}>🕊 {pastoral.invitation}</div>
-          )}
-          {pastoral.scripture && (
-            <div style={{ marginTop: 10, borderLeft: '3px solid rgba(167,139,250,0.5)', paddingLeft: 10, fontSize: 12, color: 'rgba(255,255,255,0.66)', fontStyle: 'italic' }}>
-              「{pastoral.scripture.text}」<span style={{ color: 'rgba(167,139,250,0.8)', fontStyle: 'normal' }}> —— {pastoral.scripture.ref}</span>
+          {/* 灵修操练 Hub */}
+          <button onClick={() => setOverlay('hub')} style={{ display: 'flex', alignItems: 'center', gap: 10, width: 'calc(100% - 32px)', textAlign: 'left', cursor: 'pointer', margin: '0 16px 12px', borderRadius: 14, padding: '12px 16px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', color: '#fff' }}>
+            <span style={{ fontSize: 20 }}>✦</span>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 13.5, fontWeight: 700 }}>{i18nT('灵修操练')}</div>
+              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', marginTop: 2 }}>{i18nT('感恩 · 认罪与赦免 · 教会历 · 灵修问责 · 我的数据')}</div>
             </div>
-          )}
-        </div>
-      )}
+            <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)' }}>›</span>
+          </button>
 
-      {/* ── 今日操练 ── */}
-      <div style={{
-        margin: '0 16px 16px',
-        background: 'rgba(90,200,250,0.05)',
-        border: '1px solid rgba(90,200,250,0.18)',
-        borderRadius: 14,
-        padding: '14px 16px',
-      }}>
-        <div style={{ fontSize: 10, color: 'rgba(90,200,250,0.7)', fontWeight: 700, letterSpacing: 1, marginBottom: 10 }}>{i18nT('今日操练建议')}</div>
-        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
-          <span style={{ fontSize: 28, flexShrink: 0 }}>{practice.icon}</span>
-          <div>
-            <div style={{ fontSize: 14, fontWeight: 700, color: '#5ac8fa', marginBottom: 5 }}>{practice.title}</div>
-            <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.72)', lineHeight: 1.65 }}>{practice.desc}</div>
-          </div>
-        </div>
-      </div>
-
-      {/* ── 八维属灵概览 ── */}
-      {hasFormation && (
-        <div style={{
-          margin: '0 16px 16px',
-          background: 'rgba(255,255,255,0.04)',
-          borderRadius: 14,
-          padding: '14px 16px',
-          border: '1px solid rgba(255,255,255,0.06)',
-        }}>
-          <div style={{ fontSize: 13, fontWeight: 700, color: 'rgba(255,255,255,0.75)', marginBottom: 12 }}>{i18nT('✦ 八维属灵概览')}</div>
-
-          <div style={{ fontSize: 10, color: 'rgba(52,199,89,0.6)', fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>{i18nT('成长亮点')}</div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: needsAttention.length ? 14 : 4 }}>
-            {topGrowth.map(d => <DimRow key={d.key} dim={d} score={d.score} />)}
-          </div>
-
-          {needsAttention.length > 0 && (
-            <>
-              <div style={{ fontSize: 10, color: 'rgba(248,113,113,0.6)', fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>{i18nT('需要关注')}</div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 4 }}>
-                {needsAttention.map(d => <DimRow key={d.key} dim={d} score={d.score} />)}
+          {/* 今日操练建议 */}
+          <div style={{
+            margin: '0 16px 16px',
+            background: 'rgba(90,200,250,0.05)',
+            border: '1px solid rgba(90,200,250,0.18)',
+            borderRadius: 14,
+            padding: '14px 16px',
+          }}>
+            <div style={{ fontSize: 10, color: 'rgba(90,200,250,0.7)', fontWeight: 700, letterSpacing: 1, marginBottom: 10 }}>{i18nT('今日操练建议')}</div>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+              <span style={{ fontSize: 28, flexShrink: 0 }}>{practice.icon}</span>
+              <div>
+                <div style={{ fontSize: 14, fontWeight: 700, color: '#5ac8fa', marginBottom: 5 }}>{practice.title}</div>
+                <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.72)', lineHeight: 1.65 }}>{practice.desc}</div>
               </div>
-            </>
-          )}
-
-          <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.2)', marginTop: 8 }}>
-            {i18nT('轨迹方向:')} {(formation?.trajectory_direction || '—').replace(/_/g,' ')} {i18nT('· 数据点:')} {formation?.data_points || 0}
+            </div>
           </div>
+
+          {/* 本周牧养小结 */}
+          {pastoral && pastoral.title && (
+            <div style={{ margin: '0 16px 16px', borderRadius: 14, padding: '16px',
+              background: 'linear-gradient(135deg, rgba(255,212,59,0.10), rgba(139,92,246,0.08))',
+              border: '1px solid rgba(255,212,59,0.20)' }}>
+              <div style={{ fontSize: 10, color: 'rgba(255,212,59,0.8)', fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>✦ {pastoral.title}</div>
+              {pastoral.gods_work && <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.82)', lineHeight: 1.75 }}>{pastoral.gods_work}</div>}
+              {pastoral.invitation && (
+                <div style={{ marginTop: 10, fontSize: 12.5, color: '#5ac8fa', lineHeight: 1.7 }}>🕊 {pastoral.invitation}</div>
+              )}
+              {pastoral.scripture && (
+                <div style={{ marginTop: 10, borderLeft: '3px solid rgba(167,139,250,0.5)', paddingLeft: 10, fontSize: 12, color: 'rgba(255,255,255,0.66)', fontStyle: 'italic' }}>
+                  「{pastoral.scripture.text}」<span style={{ color: 'rgba(167,139,250,0.8)', fontStyle: 'normal' }}> —— {pastoral.scripture.ref}</span>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
 
-      {/* ── 灵镜观心 MVFE ── */}
-      {(mvfeData || mvfeLast) && (
-        <MvfeSection mvfeData={mvfeData} mvfeLast={mvfeLast} onSelectDecision={setSelDec} />
+      {/* ── Tab 2: 辨析成长 ── */}
+      {practiceTab === 'growth' && (
+        <div>
+          {/* 福音诊断室（双引擎核心循环） */}
+          <button onClick={() => setOverlay('gospel')} style={{ display: 'block', width: 'calc(100% - 32px)', textAlign: 'left', cursor: 'pointer', margin: '0 16px 12px', borderRadius: 14, padding: '14px 16px',
+            background: 'linear-gradient(135deg, rgba(218,119,242,0.16), rgba(255,212,59,0.10))', border: '1px solid rgba(218,119,242,0.28)', color: '#fff' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <span style={{ fontSize: 24 }}>🔬</span>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 14, fontWeight: 700 }}>{i18nT('福音诊断室 · 从情绪挖到福音')}</div>
+                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>{i18nT('钟马田挖到偶像与不信 · 司布真带你回到基督')}</div>
+              </div>
+              <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)' }}>›</span>
+            </div>
+          </button>
+
+          {/* 属灵低潮体检 */}
+          <button onClick={() => setOverlay('checkup')} style={{ display: 'flex', alignItems: 'center', gap: 10, width: 'calc(100% - 32px)', textAlign: 'left', cursor: 'pointer', margin: '0 16px 12px', borderRadius: 14, padding: '12px 16px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', color: '#fff' }}>
+            <span style={{ fontSize: 20 }}>🩺</span>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 13.5, fontWeight: 700 }}>{i18nT('属灵低潮体检')}</div>
+              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', marginTop: 2 }}>{i18nT('钟马田：不要听自己，要向自己传讲福音')}</div>
+            </div>
+            <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)' }}>›</span>
+          </button>
+
+          {/* 心镜入口：偶像监测 · 等候之路 */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 10, margin: '0 16px 16px' }}>
+            <button onClick={() => setOverlay('idolatry')} style={{ textAlign: 'left', cursor: 'pointer', border: '1px solid rgba(139,92,246,0.25)', borderRadius: 14, padding: '14px', background: 'linear-gradient(135deg, rgba(139,92,246,0.16), rgba(236,72,153,0.10))', color: '#fff' }}>
+              <div style={{ fontSize: 22, marginBottom: 6 }}>🧭</div>
+              <div style={{ fontSize: 13.5, fontWeight: 700 }}>{i18nT('偶像监测')}</div>
+              <div style={{ fontSize: 10.5, color: 'rgba(255,255,255,0.5)', marginTop: 2, lineHeight: 1.5 }}>{i18nT('什么正在取代神成为内心中心？')}</div>
+            </button>
+            <button onClick={() => setOverlay('waiting')} style={{ textAlign: 'left', cursor: 'pointer', border: '1px solid rgba(52,199,89,0.25)', borderRadius: 14, padding: '14px', background: 'linear-gradient(135deg, rgba(52,199,89,0.14), rgba(90,200,250,0.10))', color: '#fff' }}>
+              <div style={{ fontSize: 22, marginBottom: 6 }}>🕯️</div>
+              <div style={{ fontSize: 13.5, fontWeight: 700 }}>{i18nT('等候之路')}</div>
+              <div style={{ fontSize: 10.5, color: 'rgba(255,255,255,0.5)', marginTop: 2, lineHeight: 1.5 }}>{i18nT('从等待戈多，到等候上帝')}</div>
+            </button>
+          </div>
+
+          {/* 八维属灵概览 */}
+          {hasFormation && (
+            <div style={{
+              margin: '0 16px 16px',
+              background: 'rgba(255,255,255,0.04)',
+              borderRadius: 14,
+              padding: '14px 16px',
+              border: '1px solid rgba(255,255,255,0.06)',
+            }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: 'rgba(255,255,255,0.75)', marginBottom: 12 }}>{i18nT('✦ 八维属灵概览')}</div>
+
+              <div style={{ fontSize: 10, color: 'rgba(52,199,89,0.6)', fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>{i18nT('成长亮点')}</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: needsAttention.length ? 14 : 4 }}>
+                {topGrowth.map(d => <DimRow key={d.key} dim={d} score={d.score} />)}
+              </div>
+
+              {needsAttention.length > 0 && (
+                <>
+                  <div style={{ fontSize: 10, color: 'rgba(248,113,113,0.6)', fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>{i18nT('需要关注')}</div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 4 }}>
+                    {needsAttention.map(d => <DimRow key={d.key} dim={d} score={d.score} />)}
+                  </div>
+                </>
+              )}
+
+              <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.2)', marginTop: 8 }}>
+                {i18nT('轨迹方向:')} {(formation?.trajectory_direction || '—').replace(/_/g,' ')} {i18nT('· 数据点:')} {formation?.data_points || 0}
+              </div>
+            </div>
+          )}
+        </div>
       )}
+
+      {/* ── Tab 3: 团契教会 ── */}
+      {practiceTab === 'church' && (
+        <div style={{ padding: '0 16px 16px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <button onClick={() => setOverlay('church-life')} style={{ display: 'flex', alignItems: 'center', gap: 12, width: '100%', textAlign: 'left', cursor: 'pointer', borderRadius: 14, padding: '14px 16px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', color: '#fff' }}>
+            <span style={{ fontSize: 24 }}>⛪</span>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 14, fontWeight: 700 }}>{i18nT('团契与教会生活')}</div>
+              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', marginTop: 2 }}>{i18nT('扎根地方教会 · 真实彼此相交')}</div>
+            </div>
+            <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)' }}>›</span>
+          </button>
+
+          <button onClick={() => setOverlay('mentor')} style={{ display: 'flex', alignItems: 'center', gap: 12, width: '100%', textAlign: 'left', cursor: 'pointer', borderRadius: 14, padding: '14px 16px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', color: '#fff' }}>
+            <span style={{ fontSize: 24 }}>👥</span>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 14, fontWeight: 700 }}>{i18nT('属灵导师与问责')}</div>
+              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', marginTop: 2 }}>{i18nT('同行者支持与深度牧养辅导')}</div>
+            </div>
+            <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)' }}>›</span>
+          </button>
+
+          <button onClick={() => setOverlay('intercession')} style={{ display: 'flex', alignItems: 'center', gap: 12, width: '100%', textAlign: 'left', cursor: 'pointer', borderRadius: 14, padding: '14px 16px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', color: '#fff' }}>
+            <span style={{ fontSize: 24 }}>🙏</span>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 14, fontWeight: 700 }}>{i18nT('代祷与守望网络')}</div>
+              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', marginTop: 2 }}>{i18nT('同心合意向神陈明各样祈求')}</div>
+            </div>
+            <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)' }}>›</span>
+          </button>
+        </div>
+      )}
+
+      {/* ── Tab 4: 平台治理 ── */}
+      {practiceTab === 'admin' && (
+        <div style={{ padding: '0 16px 16px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <button onClick={() => setOverlay('formation-twin')} style={{ display: 'flex', alignItems: 'center', gap: 12, width: '100%', textAlign: 'left', cursor: 'pointer', borderRadius: 14, padding: '14px 16px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', color: '#fff' }}>
+            <span style={{ fontSize: 24 }}>🧬</span>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 14, fontWeight: 700 }}>{i18nT('属灵数字孪生')}</div>
+              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', marginTop: 2 }}>{i18nT('合乎圣经伦理的属灵成长镜像')}</div>
+            </div>
+            <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)' }}>›</span>
+          </button>
+
+          <button onClick={() => setOverlay('org-console')} style={{ display: 'flex', alignItems: 'center', gap: 12, width: '100%', textAlign: 'left', cursor: 'pointer', borderRadius: 14, padding: '14px 16px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', color: '#fff' }}>
+            <span style={{ fontSize: 24 }}>🏛️</span>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 14, fontWeight: 700 }}>{i18nT('机构治理后台')}</div>
+              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', marginTop: 2 }}>{i18nT('教会/团契多租户权限与内容治理')}</div>
+            </div>
+            <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)' }}>›</span>
+          </button>
+
+          {/* 灵镜观心 MVFE */}
+          {(mvfeData || mvfeLast) && (
+            <div style={{ marginTop: 8 }}>
+              <MvfeSection mvfeData={mvfeData} mvfeLast={mvfeLast} onSelectDecision={setSelDec} />
+            </div>
+          )}
+        </div>
+      )}
+
       {selectedDec && <DecisionDetailModal decision={selectedDec} onClose={() => setSelDec(null)} />}
 
       {overlay && (

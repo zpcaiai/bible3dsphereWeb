@@ -1,5 +1,6 @@
 import { t as i18nT } from './i18n/runtime'
 import { useEffect, useRef, useState } from 'react'
+import BackButton from './BackButton'
 import { SuggestMenu } from './components/SuggestField'
 const DSQ_OPTS = ['我现在最真实的感受是…', '这件事让我想到神…', '我需要在这方面成长', '我想诚实地承认…', '我盼望神在这件事上帮助我…']
 import { fetchDailySoulQuestion, saveSoulAnswer, fetchSoulQuestionHistory } from './api'
@@ -73,11 +74,7 @@ export default function DailySoulQuestionPage({ user, token, onBack }) {
   return (
     <div className="pw-page">
       <header className="pw-header">
-        <button className="checkin-back-btn" onClick={onBack} aria-label={i18nT('返回')}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="15 18 9 12 15 6" />
-          </svg>
-        </button>
+        <BackButton onClick={onBack} ariaLabel={i18nT('返回')} />
         <div className="pw-header-center">
           <div className="pw-title">{i18nT('🔍 每日灵魂一问')}</div>
           <div className="pw-subtitle">{i18nT('每天一个诚实的问题，是属灵成长的开始')}</div>

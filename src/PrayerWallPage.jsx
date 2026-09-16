@@ -1,5 +1,6 @@
 import { t as i18nT } from './i18n/runtime'
 import { useEffect, useRef, useState } from 'react'
+import BackButton from './BackButton'
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
 import { amenPrayer, deletePrayer, fetchPrayers, restorePrayer, submitPrayer, updatePrayer, updatePrayerStatus, runQuery, transcribeAudioBlob } from './api'
@@ -520,11 +521,7 @@ export default function PrayerWallPage({ user, token, onBack }) {
     <div className="pw-page">
       {/* Header */}
       <header className="pw-header">
-        <button className="checkin-back-btn" onClick={onBack} aria-label={i18nT('返回')}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="15 18 9 12 15 6" />
-          </svg>
-        </button>
+        <BackButton onClick={onBack} ariaLabel={i18nT('返回')} />
         <div className="pw-header-center">
           <div className="pw-title">{subTab === 'hymn' ? '🎵 诗歌' : subTab === 'disciple' ? '🧬 门徒塑造' : subTab === 'gift' ? '🎁 恩赐呼召' : '🙏 代祷墙'}</div>
           <div className="pw-subtitle">{subTab === 'hymn' ? '安静敬拜 · 曲谱与歌词' : subTab === 'disciple' ? '从慕道友到倍增者 · 门徒塑造引擎' : subTab === 'gift' ? '辨识恩赐 · 果子 · 使命 · 服事方向' : (total > 0 ? `共 ${total} 条祷告` : '众人的祷告')}</div>
