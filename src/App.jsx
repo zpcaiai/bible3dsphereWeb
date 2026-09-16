@@ -1540,24 +1540,31 @@ function AppContent() {
                   )}
                 </div>
                 <button
+                  type="button"
                   onClick={() => { setEditNickname(user?.nickname || ''); setEditAvatar(user?.avatar || ''); setShowEditProfile(true) }}
                   title={i18nT('修改资料')}
+                  aria-label={i18nT('修改资料')}
                   style={{
-                    background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)',
-                    borderRadius: '7px', color: 'rgba(255,255,255,0.45)',
-                    fontSize: '11px', padding: '3px 8px',
-                    cursor: 'pointer', fontFamily: 'inherit',
+                    width: '30px', height: '30px',
+                    background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)',
+                    borderRadius: '50%', color: 'rgba(255,255,255,0.75)',
+                    fontSize: '12px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                    cursor: 'pointer', fontFamily: 'inherit', transition: 'all 0.15s ease',
                   }}
                 >
                   ✏️
                 </button>
                 <button
+                  type="button"
                   onClick={handleLogout}
+                  title={i18nT('退出登录')}
+                  aria-label={i18nT('退出登录')}
                   style={{
-                    background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)',
-                    borderRadius: '7px', color: 'rgba(255,255,255,0.45)',
-                    fontSize: '11px', padding: '3px 8px',
-                    cursor: 'pointer', fontFamily: 'inherit',
+                    width: '30px', height: '30px',
+                    background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)',
+                    borderRadius: '50%', color: 'rgba(255,255,255,0.75)',
+                    fontSize: '12px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                    cursor: 'pointer', fontFamily: 'inherit', transition: 'all 0.15s ease',
                   }}
                 >
                   🚪
@@ -1727,37 +1734,73 @@ function AppContent() {
                     <span style={{ color: '#aeb2ff', fontSize: 18 }} aria-hidden="true">›</span>
                   </button>
                   {/* 快捷入口按钮行 */}
-                  <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                  {/* 快捷入口分类分组 */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     {[
-                      { icon: '🔍', labelKey: 'home.snapshot.soulQuestion', panel: 'soul-question' },
-                      { icon: '🧭', labelKey: 'home.snapshot.worldview', panel: 'worldview' },
-                      { icon: '⏱', labelKey: 'home.snapshot.quickDevotion', action: () => setShowQuickDevotion(true) },
-                      { icon: '🕯️', labelKey: 'home.snapshot.topicDevotion', action: () => openDevotionTopics() },
-                      { icon: '📊', labelKey: 'home.snapshot.growthMap', panel: 'growth-map' },
-                      { icon: '📈', labelKey: 'home.snapshot.growth', panel: 'engineering' },
-                      { icon: '🤝', labelKey: 'home.snapshot.partner', panel: 'partner' },
-                      { icon: '📖', labelKey: 'home.snapshot.bibleReading', panel: 'bible-reading' },
-                      { icon: '📅', labelKey: 'home.snapshot.mccheyne', panel: 'mccheyne' },
-                      { icon: '🃏', labelKey: 'home.snapshot.memoryDeck', panel: 'memory-deck' },
-                      { icon: '🗃', labelKey: 'home.snapshot.personalSearch', panel: 'personal-search' },
-                      { icon: '📦', labelKey: 'home.snapshot.exportData', panel: 'export-data' },
-                    ].map((item, i) => (
-                      <button key={i}
-                        onClick={() => item.action ? item.action() : handlePanelSwitch(item.panel)}
-                        style={{
-                          fontSize: '11px', padding: '4px 10px',
-                          background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)',
-                          borderRadius: '20px', color: 'rgba(255,255,255,0.7)', cursor: 'pointer',
-                        }}
-                      >
-                        {item.icon} {i18nT(item.labelKey)}
-                      </button>
+                      {
+                        group: i18nT('📖 读经灵修'),
+                        items: [
+                          { icon: '⏱', labelKey: 'home.snapshot.quickDevotion', action: () => setShowQuickDevotion(true) },
+                          { icon: '🕯️', labelKey: 'home.snapshot.topicDevotion', action: () => openDevotionTopics() },
+                          { icon: '📖', labelKey: 'home.snapshot.bibleReading', panel: 'bible-reading' },
+                          { icon: '📅', labelKey: 'home.snapshot.mccheyne', panel: 'mccheyne' },
+                        ],
+                      },
+                      {
+                        group: i18nT('🌱 辨析成长'),
+                        items: [
+                          { icon: '🔍', labelKey: 'home.snapshot.soulQuestion', panel: 'soul-question' },
+                          { icon: '🧭', labelKey: 'home.snapshot.worldview', panel: 'worldview' },
+                          { icon: '📊', labelKey: 'home.snapshot.growthMap', panel: 'growth-map' },
+                          { icon: '📈', labelKey: 'home.snapshot.growth', panel: 'engineering' },
+                          { icon: '🤝', labelKey: 'home.snapshot.partner', panel: 'partner' },
+                        ],
+                      },
+                      {
+                        group: i18nT('🗃 记忆工具'),
+                        items: [
+                          { icon: '🃏', labelKey: 'home.snapshot.memoryDeck', panel: 'memory-deck' },
+                          { icon: '🗃', labelKey: 'home.snapshot.personalSearch', panel: 'personal-search' },
+                          { icon: '📦', labelKey: 'home.snapshot.exportData', panel: 'export-data' },
+                        ],
+                      },
+                    ].map((grp, gIdx) => (
+                      <div key={gIdx} style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+                        <span style={{ fontSize: '10.5px', color: 'rgba(255,255,255,0.45)', fontWeight: 600, flexShrink: 0 }}>{grp.group}</span>
+                        <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap', flex: 1 }}>
+                          {grp.items.map((item, i) => (
+                            <button key={i}
+                              type="button"
+                              onClick={() => item.action ? item.action() : handlePanelSwitch(item.panel)}
+                              style={{
+                                fontSize: '11px', padding: '4px 9px',
+                                background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)',
+                                borderRadius: '14px', color: 'rgba(255,255,255,0.78)', cursor: 'pointer',
+                                transition: 'background 0.15s ease',
+                              }}
+                            >
+                              {item.icon} {i18nT(item.labelKey)}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
                     ))}
                   </div>
-                  {/* 灵修勉励语 */}
-                  <p style={{ marginTop: '12px', marginBottom: 0, fontSize: '12px', lineHeight: 1.7, color: 'rgba(255,255,255,0.62)' }}>
-                    {i18nT('稳定的灵修生活是基督徒得力的源泉，也是基督徒生命成长的秘诀。祂的儿女蒙恩的方式，就是建立敬虔的灵修习惯并坚持每日操练灵修。坚持长期主义，必做元帅的精兵。每天太阳照常升起，我们也要每天向着天国奔跑，直到太阳不再升起的日子！')}
-                  </p>
+                  {/* 灵修勉励语 - 金色微卡片 */}
+                  <div style={{
+                    marginTop: '14px',
+                    padding: '10px 14px',
+                    background: 'var(--celestial-gold-bg, rgba(246, 200, 112, 0.08))',
+                    borderLeft: '3px solid var(--celestial-gold, #f6c870)',
+                    borderRadius: '0 10px 10px 0',
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4, fontSize: 11, fontWeight: 700, color: 'var(--celestial-gold, #f6c870)', letterSpacing: '0.04em' }}>
+                      <span>📜</span><span>{i18nT('属灵劝勉')}</span>
+                    </div>
+                    <p style={{ margin: 0, fontSize: '12px', lineHeight: 1.7, color: 'rgba(255,255,255,0.76)' }}>
+                      {i18nT('稳定的灵修生活是基督徒得力的源泉，也是基督徒生命成长的秘诀。祂的儿女蒙恩的方式，就是建立敬虔的灵修习惯并坚持每日操练灵修。坚持长期主义，必做元帅的精兵。每天太阳照常升起，我们也要每天向着天国奔跑，直到太阳不再升起的日子！')}
+                    </p>
+                  </div>
               </section>
 
               <PastoralPathCard user={user} compact onOpen={handlePastoralRoute} />
@@ -1951,14 +1994,15 @@ function AppContent() {
                     {/* 微信内置浏览器提示 */}
                     {isWeChat && (
                       <div style={{
-                        padding: '8px 12px',
-                        background: '#fff3cd',
-                        borderRadius: '8px',
+                        padding: '10px 14px',
+                        background: 'var(--celestial-gold-bg, rgba(246, 200, 112, 0.12))',
+                        border: '1px solid var(--celestial-gold-border, rgba(246, 200, 112, 0.30))',
+                        borderRadius: '10px',
                         fontSize: '12px',
-                        color: '#856404',
+                        color: 'var(--celestial-gold, #f6c870)',
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '6px',
+                        gap: '8px',
                         flex: 1,
                       }}>
                         <span>⚠️</span>

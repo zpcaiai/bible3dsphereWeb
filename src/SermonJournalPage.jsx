@@ -583,7 +583,7 @@ export default function SermonJournalPage({ user, token, onBack }) {
                         <><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></>
                       )}
                     </svg>
-                    {j.shared ? '撤回' : '分享'}
+                    {j.shared ? i18nT('撤回') : i18nT('分享')}
                   </button>
                   {isAdmin && (
                     <>
@@ -648,26 +648,30 @@ export default function SermonJournalPage({ user, token, onBack }) {
               <div className="sj-field-group">
                 <div className="sj-field">
                   <label className="sj-label">{i18nT('主日日期')}</label>
-                  <div className="sj-date-picker" style={{ flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+                  <div className="sj-date-picker" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', width: '100%', maxWidth: 360 }}>
                     <button
-                      className="sj-date-btn"
-                      onClick={() => updateField('date', getNextSunday(current.date))}
-                      title={i18nT('下一周')}
-                    >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <polyline points="18 15 12 9 6 15" />
-                      </svg>
-                    </button>
-                    <div className="sj-date-display">
-                      {formatDateWithWeek(current.date)}
-                    </div>
-                    <button
+                      type="button"
                       className="sj-date-btn"
                       onClick={() => updateField('date', getPreviousSunday(current.date))}
                       title={i18nT('上一周')}
+                      style={{ minWidth: 36, minHeight: 36, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
                     >
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <polyline points="6 9 12 15 18 9" />
+                        <polyline points="15 18 9 12 15 6" />
+                      </svg>
+                    </button>
+                    <div className="sj-date-display" style={{ flex: 1, textAlign: 'center', fontWeight: 600 }}>
+                      {formatDateWithWeek(current.date)}
+                    </div>
+                    <button
+                      type="button"
+                      className="sj-date-btn"
+                      onClick={() => updateField('date', getNextSunday(current.date))}
+                      title={i18nT('下一周')}
+                      style={{ minWidth: 36, minHeight: 36, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="9 18 15 12 9 6" />
                       </svg>
                     </button>
                   </div>

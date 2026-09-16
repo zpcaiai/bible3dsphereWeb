@@ -418,7 +418,7 @@ export default function HymnPlayer() {
         <button className="hymn-nav-btn" onClick={goPrev} aria-label={i18nT('上一首')}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 6h2v12H7zm3.5 6l8.5 6V6z" /></svg>
         </button>
-        <button className="hymn-play-btn" onClick={togglePlay} disabled={audioErr} aria-label={playing ? '暂停' : '播放'}>
+        <button className="hymn-play-btn" onClick={togglePlay} disabled={audioErr} aria-label={i18nT(playing ? '暂停' : '播放')}>
           {playing ? (
             <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1" /><rect x="14" y="5" width="4" height="14" rx="1" /></svg>
           ) : (

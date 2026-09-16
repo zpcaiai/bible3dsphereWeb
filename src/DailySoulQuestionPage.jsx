@@ -79,9 +79,43 @@ export default function DailySoulQuestionPage({ user, token, onBack }) {
           <div className="pw-title">{i18nT('🔍 每日灵魂一问')}</div>
           <div className="pw-subtitle">{i18nT('每天一个诚实的问题，是属灵成长的开始')}</div>
         </div>
-        <div style={{ display: 'flex', gap: 6 }}>
-          <button onClick={() => setView('today')} style={{ fontSize: 11, padding: '4px 10px', borderRadius: 8, border: 'none', background: view === 'today' ? 'rgba(88,86,214,0.4)' : 'rgba(255,255,255,0.1)', color: '#fff', cursor: 'pointer' }}>{i18nT('今日')}</button>
-          <button onClick={() => setView('history')} style={{ fontSize: 11, padding: '4px 10px', borderRadius: 8, border: 'none', background: view === 'history' ? 'rgba(88,86,214,0.4)' : 'rgba(255,255,255,0.1)', color: '#fff', cursor: 'pointer' }}>{i18nT('回顾')}</button>
+        <div style={{ display: 'flex', gap: 4, background: 'rgba(255,255,255,0.06)', borderRadius: 10, padding: 3, border: '1px solid rgba(255,255,255,0.1)' }}>
+          <button
+            type="button"
+            onClick={() => setView('today')}
+            style={{
+              fontSize: 12,
+              fontWeight: view === 'today' ? 700 : 500,
+              minHeight: 34,
+              padding: '0 12px',
+              borderRadius: 8,
+              border: view === 'today' ? '1px solid rgba(88,86,214,0.5)' : '1px solid transparent',
+              background: view === 'today' ? 'rgba(88,86,214,0.45)' : 'transparent',
+              color: view === 'today' ? '#fff' : 'rgba(255,255,255,0.65)',
+              cursor: 'pointer',
+              transition: 'all 0.15s ease',
+            }}
+          >
+            {i18nT('今日')}
+          </button>
+          <button
+            type="button"
+            onClick={() => setView('history')}
+            style={{
+              fontSize: 12,
+              fontWeight: view === 'history' ? 700 : 500,
+              minHeight: 34,
+              padding: '0 12px',
+              borderRadius: 8,
+              border: view === 'history' ? '1px solid rgba(88,86,214,0.5)' : '1px solid transparent',
+              background: view === 'history' ? 'rgba(88,86,214,0.45)' : 'transparent',
+              color: view === 'history' ? '#fff' : 'rgba(255,255,255,0.65)',
+              cursor: 'pointer',
+              transition: 'all 0.15s ease',
+            }}
+          >
+            {i18nT('回顾')}
+          </button>
         </div>
       </header>
 
@@ -174,7 +208,7 @@ export default function DailySoulQuestionPage({ user, token, onBack }) {
                           padding: '10px 24px', cursor: answer.trim() ? 'pointer' : 'default',
                         }}
                       >
-                        {submitting ? '记录中...' : '✅ 记录回答'}
+                        {submitting ? i18nT('记录中...') : i18nT('✅ 记录回答')}
                       </button>
                     </div>
                   </div>

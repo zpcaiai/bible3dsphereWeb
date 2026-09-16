@@ -853,4 +853,18 @@ export default {
   "同心合意向神陈明各样祈求": "Bring all supplications before God in one accord",
   "合乎圣经伦理的属灵成长镜像": "Biblically ethical spiritual growth mirror",
   "教会/团契多租户权限与内容治理": "Church & fellowship multi-tenant permissions & content governance",
+
+  // ── Priority A & B Polish Items ──
+  "记录中...": "Recording...",
+  "✅ 记录回答": "✅ Record Answer",
+  "撤回": "Recall",
+  "分享": "Share",
+  "暂停": "Pause",
+  "播放": "Play",
+  "📖 读经灵修": "📖 Scripture & Devotion",
+  "🌱 辨析成长": "🌱 Discernment & Growth",
+  "🗃 记忆工具": "🗃 Memory & Tools",
+  "属灵劝勉": "Spiritual Encouragement",
+  "上周": "Previous Week",
+  "下周": "Next Week",
 }

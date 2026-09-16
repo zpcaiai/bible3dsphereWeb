@@ -97,11 +97,41 @@ export default function SOSModal({ onClose, onPrayerWall }) {
         {/* Actions */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {onPrayerWall && (
-            <button onClick={onPrayerWall} style={{ padding: '12px', background: 'rgba(0,122,255,0.2)', border: '1px solid rgba(0,122,255,0.4)', borderRadius: 12, color: '#5eb0ff', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>
+            <button
+              type="button"
+              onClick={onPrayerWall}
+              style={{
+                minHeight: '44px',
+                padding: '12px 16px',
+                background: 'linear-gradient(135deg, rgba(0,122,255,0.25), rgba(90,200,250,0.18))',
+                border: '1px solid rgba(0,122,255,0.45)',
+                borderRadius: 14,
+                color: '#70baff',
+                fontSize: 14,
+                fontWeight: 600,
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+              }}
+            >
               {i18nT('🙏 在代祷墙上提出来，让弟兄姐妹同心代祷')}
             </button>
           )}
-          <button onClick={onClose} style={{ padding: '12px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, color: 'rgba(255,255,255,0.6)', fontSize: 13, cursor: 'pointer' }}>
+          <button
+            type="button"
+            onClick={onClose}
+            style={{
+              minHeight: '44px',
+              padding: '12px 16px',
+              background: 'rgba(255,255,255,0.08)',
+              border: '1px solid rgba(255,255,255,0.18)',
+              borderRadius: 14,
+              color: 'rgba(255,255,255,0.82)',
+              fontSize: 14,
+              fontWeight: 500,
+              cursor: 'pointer',
+              transition: 'all 0.15s ease',
+            }}
+          >
             {i18nT('我明白了，继续')}
           </button>
         </div>
