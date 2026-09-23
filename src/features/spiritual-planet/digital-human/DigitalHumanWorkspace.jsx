@@ -26,11 +26,16 @@ function EvidenceBadge({ level }) {
   return <span className={`dh-grounding ${level === 'G0_UNSUPPORTED' ? 'blocked' : ''}`}>{level}</span>
 }
 
-export default function DigitalHumanWorkspace() {
+export default function DigitalHumanWorkspace({
+  initialCharacterId = 'david',
+  lockCharacter = false,
+  showOperations = true,
+  variant = 'full',
+}) {
   const [catalog, setCatalog] = useState([])
   const [catalogMeta, setCatalogMeta] = useState(null)
   const [runtime, setRuntime] = useState(null)
-  const [selectedId, setSelectedId] = useState('david')
+  const [selectedId, setSelectedId] = useState(initialCharacterId)
   const [search, setSearch] = useState('')
   const [question, setQuestion] = useState('')
   const [messages, setMessages] = useState([])
@@ -70,6 +75,12 @@ export default function DigitalHumanWorkspace() {
       .finally(() => active && setLoading(false))
     return () => { active = false }
   }, [])
+
+  useEffect(() => {
+    setSelectedId(initialCharacterId)
+    setMessages([])
+    sessionId.current = makeId('session')
+  }, [initialCharacterId])
 
   const submitQuestion = useCallback(async (rawQuestion) => {
     const text = rawQuestion.trim()
@@ -182,28 +193,28 @@ export default function DigitalHumanWorkspace() {
     } catch (caught) { setError(caught.message) }
   }
 
-  if (loading) return <section className="dh-shell"><p role="status">正在加载 100 人经文约束目录…</p></section>
+  if (loading) return <section className={`dh-shell ${variant === 'embedded' ? 'dh-embedded' : ''}`}><p role="status">正在加载 100 人经文约束目录…</p></section>
 
   return (
-    <section className="dh-shell" aria-label="圣经人物数字人">
+    <section className={`dh-shell ${variant === 'embedded' ? 'dh-embedded' : ''}`} aria-label={`${selected?.canonicalName || '圣经人物'}数字人`}>
       <header className="dh-intro">
         <div><span>BIBLE DIGITAL HUMAN · v{catalogMeta?.contentVersion}</span><h2>圣经人物 · 经文约束对话</h2><p>AI 只协助检索与表达，不是启示、良心、牧者或最终解释权威。</p></div>
-        <div className="dh-assurance"><strong>{catalogMeta?.characterCount || catalog.length}</strong><small>人物 · {catalogMeta?.truthCaseCount || 0} Truth Cases</small></div>
+        <div className="dh-assurance"><strong>{lockCharacter ? (selected?.canonicalName || '—') : (catalogMeta?.characterCount || catalog.length)}</strong><small>{lockCharacter ? `${selected?.englishName || selectedId} · characterId ${selectedId}` : `人物 · ${catalogMeta?.truthCaseCount || 0} Truth Cases`}</small></div>
       </header>
 
       <div className="dh-status" role="status"><span>{STATE_LABELS[uiState]}</span><small>内容 {runtime?.contentReviewState || 'UNKNOWN'} · RAG {runtime?.retrievalMode || 'UNKNOWN'} · Avatar {avatarState} · Realtime {realtimeState}</small></div>
       {error && <div className="dh-error" role="alert">{error}<button type="button" onClick={() => { setError(''); setUiState(UI_STATES.IDLE) }}>关闭</button></div>}
 
-      <div className="dh-layout">
-        <aside className="dh-catalog">
+      <div className={`dh-layout ${lockCharacter ? 'dh-layout-locked' : ''}`}>
+        {!lockCharacter && <aside className="dh-catalog">
           <div className="dh-search"><input aria-label="搜索圣经人物" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="姓名、英文名或 characterId" /><button type="button" onClick={resolveSearch}>识别</button></div>
           {!!identityCandidates.length && <div className="dh-candidates" role="group" aria-label="请选择具体人物"><strong>这个名称对应多位人物，请明确选择：</strong>{identityCandidates.map((item) => <button type="button" key={item.characterId} onClick={() => { setSelectedId(item.characterId); setIdentityCandidates([]) }}>{item.stableLabel}</button>)}</div>}
           <div className="dh-character-list">{filtered.map((item) => <button type="button" className={selectedId === item.id ? 'active' : ''} key={item.id} onClick={() => { setSelectedId(item.id); setMessages([]); sessionId.current = makeId('session') }}><span>{item.canonicalName}</span><small>{item.englishName} · {item.catalogTier}</small></button>)}</div>
-        </aside>
+        </aside>}
 
         <div className="dh-experience">
           <section className="dh-stage">
-            {runtime?.liveSpeakEnabled && selected?.runtimeReady ? <iframe ref={iframeRef} title={`${selected.canonicalName} LiveSpeak Avatar`} src={runtime.liveSpeakEmbedUrl} allow="microphone" sandbox="allow-scripts allow-same-origin" /> : <div className="dh-portrait-fallback"><span aria-hidden="true">◇</span><strong>{selected?.canonicalName}</strong><small>{selected?.englishName} · 文本安全回退</small><p>{selected?.runtimeReady ? 'LiveSpeak 当前不可用。' : 'GLB、Voice 或内容尚未完成人工审批，因此不加载 Avatar。'}</p></div>}
+            {runtime?.liveSpeakEnabled && selected?.runtimeReady ? <iframe ref={iframeRef} title={`${selected.canonicalName} LiveSpeak Avatar`} src={runtime.liveSpeakEmbedUrl} allow="microphone" sandbox="allow-scripts allow-same-origin" /> : <div className="dh-portrait-fallback">{selected?.avatar?.portraitUrl ? <img src={selected.avatar.portraitUrl} alt={`${selected.canonicalName}数字人艺术重建肖像`} /> : <span aria-hidden="true">◇</span>}<strong>{selected?.canonicalName}</strong><small>{selected?.englishName} · 文本安全回退</small><p>{selected?.runtimeReady ? 'LiveSpeak 当前不可用。' : 'GLB、Voice 或内容尚未完成人工审批，因此不加载 Avatar。'}</p></div>}
             <p className="dh-disclosure">{selected?.disclosure}</p>
           </section>
 
@@ -219,7 +230,7 @@ export default function DigitalHumanWorkspace() {
           <p className="dh-privacy">默认不持久化原始麦克风音频或转录正文；审计仅保存人物、证据等级、引用、原因码、延迟与 Trace ID。</p>
         </div>
       </div>
-      <DigitalHumanOperationsPanel enabled={runtime?.operationsDashboardEnabled} />
+      {showOperations && <DigitalHumanOperationsPanel enabled={runtime?.operationsDashboardEnabled} />}
     </section>
   )
 }

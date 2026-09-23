@@ -23,7 +23,12 @@ import { CHARACTER_JOURNEYS, buildCharacterMapConfig } from './data/characterJou
 import { getRuntimeLang } from './i18n/runtime'
 import { useAutoTranslate, AutoText } from './autoTranslate'
 const RelationshipGraphView = lazy(() => import('./RelationshipGraphView'))
+const DigitalHumanWorkspace = lazy(() => import('./features/spiritual-planet/digital-human/DigitalHumanWorkspace'))
 import { a11yClickProps } from './lib/a11yClick';
+
+const MIRROR_DIGITAL_HUMAN_IDS = Object.freeze({
+  大卫: 'david',
+})
 
 const ERAS = ['全部', '族长时代', '出埃及时代', '士师时代', '进入迦南时代', '王国时代', '被掳归回时代', '新约时代', '教会时代']
 const ROLES = ['全部', '主&救主', '族长', '君王', '先知', '祭司', '女性', '使徒', '其他']
@@ -191,6 +196,7 @@ function useLocalizedCard(rawChar) {
 function CharacterCard({ char: _rawChar, onClick }) {
   const char = useLocalizedCard(_rawChar)
   const typeTag = char.tags.find(t => ['正面榜样','警戒为主','混合型'].includes(t)) || char.type
+  const digitalHumanId = MIRROR_DIGITAL_HUMAN_IDS[char.name]
   return (
     <div onClick={() => onClick(char)} style={{
       background: 'rgba(255,255,255,0.06)', borderRadius: 14,
@@ -237,8 +243,41 @@ function CharacterCard({ char: _rawChar, onClick }) {
             ✝ <AutoText>{char.typology.level}</AutoText>
           </span>
         )}
+        {digitalHumanId && (
+          <span data-testid={`digital-human-badge-${digitalHumanId}`} style={{ fontSize: 11, padding: '2px 8px', borderRadius: 20,
+            background: 'rgba(138,112,240,0.18)', color: '#c8b7ff',
+            border: '1px solid rgba(177,153,255,0.42)' }}>
+            ◈ <AutoText>{i18nT('数字人可对话')}</AutoText>
+          </span>
+        )}
       </div>
     </div>
+  )
+}
+
+function DigitalHumanMirrorExperience({ char }) {
+  const characterId = MIRROR_DIGITAL_HUMAN_IDS[char.name]
+  if (!characterId) return null
+  return (
+    <section aria-label={`${char.name}的数字人镜鉴`} style={{
+      marginBottom: 20, padding: 14, borderRadius: 16,
+      border: '1px solid rgba(177,153,255,.32)',
+      background: 'radial-gradient(circle at 90% 8%,rgba(138,112,240,.18),transparent 38%),rgba(255,255,255,.035)',
+    }}>
+      <header style={{ display: 'flex', alignItems: 'start', justifyContent: 'space-between', gap: 12, marginBottom: 12 }}>
+        <div>
+          <span style={{ color: '#c8b7ff', fontSize: 10, letterSpacing: 1.2 }}>BIBLE DIGITAL HUMAN · CHARACTER {characterId}</span>
+          <h3 style={{ margin: '4px 0', color: '#fff', fontSize: 19 }}>{char.name}的数字人镜鉴</h3>
+          <p style={{ margin: 0, color: 'rgba(255,255,255,.62)', fontSize: 12, lineHeight: 1.6 }}>
+            经文约束回答与镜鉴资料共享同一人物身份；形象和声音是教育性艺术重建，不代表真实历史肖像或原声。
+          </p>
+        </div>
+        <span style={{ flexShrink: 0, padding: '4px 9px', borderRadius: 20, background: 'rgba(83,203,142,.12)', color: '#9ee8bd', fontSize: 10 }}>characterId · {characterId}</span>
+      </header>
+      <Suspense fallback={<div role="status" style={{ minHeight: 220, display: 'grid', placeContent: 'center', color: 'rgba(255,255,255,.6)' }}>正在加载{char.name}数字人…</div>}>
+        <DigitalHumanWorkspace initialCharacterId={characterId} lockCharacter showOperations={false} variant="embedded" />
+      </Suspense>
+    </section>
   )
 }
 
@@ -436,6 +475,8 @@ function CharacterDetail({ char: _rawChar, onBack, user, token }) {
           </div>
         </div>
       </div>
+
+      <DigitalHumanMirrorExperience char={char} />
 
       {/* 1. 人物简介 */}
       <div style={sectionStyle}>
