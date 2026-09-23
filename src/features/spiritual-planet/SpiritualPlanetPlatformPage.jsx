@@ -14,13 +14,14 @@ import {
   transitionUnifiedAction,
 } from './platformApi'
 import DiscernmentWorkspace from './DiscernmentWorkspace'
+import DigitalHumanWorkspace from './digital-human/DigitalHumanWorkspace'
 import './spiritualPlanetPlatform.css'
 
 const AI_FORMATION_ENABLED = import.meta.env.VITE_AI_FORMATION_ENABLED === 'true'
 
 const NAV = [
   ['home', '首页', '◉'], ['today', '今日', '☀'], ['twin', '孪生', '✦'],
-  ['discernment', '洞鉴别', '⌬'], ['practices', '操练', '◇'], ['calling', '呼召', '⌁'], ['collaboration', '同行', '♡'],
+  ['discernment', '洞鉴别', '⌬'], ['characters', '圣经人物', '◈'], ['practices', '操练', '◇'], ['calling', '呼召', '⌁'], ['collaboration', '同行', '♡'],
   ...(AI_FORMATION_ENABLED ? [['sunday_school', '主日学', '▦']] : []),
   ['timeline', '时间线', '◷'], ['search', '搜索', '⌕'], ['actions', '行动', '✓'], ['privacy', '隐私', '◎'],
 ]
@@ -252,6 +253,7 @@ export default function SpiritualPlanetPlatformPage({ user, onBack, onOpen }) {
         {loading && tab === 'home' ? <Loading /> : tab === 'home' ? <HomePanel home={home} recommendation={recommendation} busyDecision={busyDecision} onDecision={decide} onOpen={onOpen} onReload={loadCore} /> : null}
         {['today', 'twin', 'practices', 'calling', 'collaboration', 'sunday_school'].includes(tab) && <ModulePanel kind={tab} onOpen={onOpen} />}
         {tab === 'discernment' && <DiscernmentWorkspace />}
+        {tab === 'characters' && <DigitalHumanWorkspace />}
         {tab === 'timeline' && <TimelinePanel items={timeline} loading={loading} module={timelineModule} setModule={setTimelineModule} />}
         {tab === 'search' && <SearchPanel />}
         {tab === 'actions' && <ActionsPanel actions={actions} loading={loading} onChange={changeAction} />}

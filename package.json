@@ -19,6 +19,7 @@
     "test:watch": "NODE_OPTIONS=--no-warnings vitest",
     "test:coverage": "NODE_OPTIONS=--no-warnings vitest run --coverage",
     "test:e2e:ai-formation": "playwright test e2e/ai-formation.spec.js",
+    "test:e2e:digital-human:live": "playwright test --config=playwright.digital-human-live.config.js",
     "attention:seed": "node scripts/attention/seed-attention-demo.mjs",
     "attention:reset-demo": "node scripts/attention/reset-attention-demo.mjs",
     "attention:audit:security": "node scripts/attention/audit-attention-security.mjs",
