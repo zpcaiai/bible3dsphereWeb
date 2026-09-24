@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "digital-human-preview-asset/v1",
+  "assetId": "shared-preview-portrait-3d-v1",
+  "file": "shared-preview-portrait-3d-v1.jpg",
+  "sha256": "22267ab4c5cd3331cd528f3aa53886df9b59d1d81277871143b4d68cfe872951",
+  "dimensions": {
+    "width": 768,
+    "height": 768
+  },
+  "generatedAt": "2026-09-24T02:09:00Z",
+  "generationMethod": "OpenAI built-in image generation with source-image style transfer",
+  "renderMedium": "3D_CGI_PBR",
+  "reviewState": "PREVIEW_ONLY",
+  "sharedAcrossCharacters": true,
+  "historicalLikeness": false,
+  "description": "Identity-neutral 3D CGI digital-human placeholder portrait with PBR materials and cinematic lighting.",
+  "restrictions": [
+    "Do not present as an authentic historical likeness.",
+    "Do not include in an APPROVED production asset manifest.",
+    "Replace with a character-specific reviewed GLB and portrait before public release."
+  ]
+}

@@ -4,6 +4,7 @@ import { validateCharacterProfile, validateDigitalHumanResponse } from './contra
 import { DIGITAL_HUMAN_STATES } from './DigitalHumanAdapter'
 import { LiveKitRealtimeSession, REALTIME_STATES } from './LiveKitRealtimeSession'
 import { MetaPersonLiveSpeakAdapter } from './MetaPersonLiveSpeakAdapter'
+import { SHARED_PREVIEW_PORTRAIT_URL, speakSharedPreviewDisclosure } from './previewAssets'
 import DigitalHumanOperationsPanel from './DigitalHumanOperationsPanel'
 import './digitalHuman.css'
 
@@ -45,11 +46,13 @@ export default function DigitalHumanWorkspace({
   const [error, setError] = useState('')
   const [identityCandidates, setIdentityCandidates] = useState([])
   const [loading, setLoading] = useState(true)
+  const [previewVoicePlaying, setPreviewVoicePlaying] = useState(false)
   const sessionId = useRef(makeId('session'))
   const turnInFlight = useRef(false)
   const iframeRef = useRef(null)
   const avatarAdapter = useRef(null)
   const realtimeAdapter = useRef(null)
+  const stopPreviewVoice = useRef(null)
   const submitRef = useRef(null)
   const reportProvider = useCallback((provider, state, latencyMs = 0) => {
     recordDigitalHumanProviderTelemetry({ provider, state, latencyMs }).catch(() => {})
@@ -81,6 +84,8 @@ export default function DigitalHumanWorkspace({
     setMessages([])
     sessionId.current = makeId('session')
   }, [initialCharacterId])
+
+  useEffect(() => () => stopPreviewVoice.current?.(), [])
 
   const submitQuestion = useCallback(async (rawQuestion) => {
     const text = rawQuestion.trim()
@@ -122,12 +127,12 @@ export default function DigitalHumanWorkspace({
     const adapter = new LiveKitRealtimeSession({
       onStateChange: (next) => {
         setRealtimeState(next)
-        const mapped = { IDLE: 'READY', LISTENING: 'READY', ERROR: 'ERROR', DISCONNECTED: 'DISCONNECTED', RECOVERING: 'RECOVERING' }[next]
+        const mapped = { IDLE: 'READY', LISTENING: 'READY', PROCESSING: 'READY', ERROR: 'ERROR', DISCONNECTED: 'DISCONNECTED', RECOVERING: 'RECOVERING' }[next]
         if (mapped) reportProvider('livekit', mapped)
       },
       onFinalTranscript: (text) => {
         setUiState(UI_STATES.TRANSCRIBING)
-        submitRef.current?.(text)
+        return submitRef.current?.(text)
       },
     })
     realtimeAdapter.current = adapter
@@ -193,6 +198,28 @@ export default function DigitalHumanWorkspace({
     } catch (caught) { setError(caught.message) }
   }
 
+  const togglePreviewVoice = () => {
+    if (previewVoicePlaying) {
+      stopPreviewVoice.current?.()
+      stopPreviewVoice.current = null
+      setPreviewVoicePlaying(false)
+      return
+    }
+    setError('')
+    try {
+      setPreviewVoicePlaying(true)
+      stopPreviewVoice.current = speakSharedPreviewDisclosure({
+        onEnd: () => {
+          stopPreviewVoice.current = null
+          setPreviewVoicePlaying(false)
+        },
+      })
+    } catch (caught) {
+      setPreviewVoicePlaying(false)
+      setError(caught.message)
+    }
+  }
+
   if (loading) return <section className={`dh-shell ${variant === 'embedded' ? 'dh-embedded' : ''}`}><p role="status">正在加载 100 人经文约束目录…</p></section>
 
   return (
@@ -214,7 +241,7 @@ export default function DigitalHumanWorkspace({
 
         <div className="dh-experience">
           <section className="dh-stage">
-            {runtime?.liveSpeakEnabled && selected?.runtimeReady ? <iframe ref={iframeRef} title={`${selected.canonicalName} LiveSpeak Avatar`} src={runtime.liveSpeakEmbedUrl} allow="microphone" sandbox="allow-scripts allow-same-origin" /> : <div className="dh-portrait-fallback">{selected?.avatar?.portraitUrl ? <img src={selected.avatar.portraitUrl} alt={`${selected.canonicalName}数字人艺术重建肖像`} /> : <span aria-hidden="true">◇</span>}<strong>{selected?.canonicalName}</strong><small>{selected?.englishName} · 文本安全回退</small><p>{selected?.runtimeReady ? 'LiveSpeak 当前不可用。' : 'GLB、Voice 或内容尚未完成人工审批，因此不加载 Avatar。'}</p></div>}
+            {runtime?.liveSpeakEnabled && selected?.runtimeReady ? <iframe ref={iframeRef} title={`${selected.canonicalName} LiveSpeak Avatar`} src={runtime.liveSpeakEmbedUrl} allow="microphone" sandbox="allow-scripts allow-same-origin" /> : <div className="dh-portrait-fallback"><img src={selected?.avatar?.portraitUrl || SHARED_PREVIEW_PORTRAIT_URL} alt={selected?.avatar?.portraitUrl ? `${selected.canonicalName}数字人艺术重建肖像` : `${selected?.canonicalName || '圣经人物'}共用3D艺术占位肖像`} /><strong>{selected?.canonicalName}</strong><small>{selected?.englishName} · 文本安全回退</small>{!selected?.avatar?.portraitUrl && <span className="dh-preview-label">共享3D艺术占位肖像 · 非历史真实肖像</span>}<p>{selected?.runtimeReady ? 'LiveSpeak 当前不可用。' : 'GLB、Voice 或内容尚未完成人工审批，因此不加载 Avatar。'}</p><button className="dh-preview-voice" type="button" onClick={togglePreviewVoice}>{previewVoicePlaying ? '停止默认预览音色' : '试听默认预览音色'}</button></div>}
             <p className="dh-disclosure">{selected?.disclosure}</p>
           </section>
 
@@ -225,7 +252,7 @@ export default function DigitalHumanWorkspace({
 
           <form className="dh-composer" onSubmit={(event) => { event.preventDefault(); submitQuestion(question) }}>
             <textarea aria-label="向当前圣经人物提问" value={question} onChange={(event) => setQuestion(event.target.value)} maxLength={1200} placeholder={`向${selected?.canonicalName || '人物'}提问；未有足够证据时系统会拒绝断言。`} />
-            <div><button type="button" onClick={toggleMic} disabled={!runtime?.liveKitEnabled || uiState === UI_STATES.SPEAKING}>{realtimeState === REALTIME_STATES.LISTENING ? '停止收音' : '语音提问'}</button><button className="primary" type="submit" disabled={!question.trim() || turnInFlight.current || uiState === UI_STATES.SPEAKING}>发送并核验</button></div>
+            <div><button type="button" onClick={toggleMic} disabled={!runtime?.liveKitEnabled || uiState === UI_STATES.SPEAKING || realtimeState === REALTIME_STATES.PROCESSING}>{realtimeState === REALTIME_STATES.LISTENING ? '停止收音' : realtimeState === REALTIME_STATES.PROCESSING ? '正在处理语音' : '语音提问'}</button><button className="primary" type="submit" disabled={!question.trim() || turnInFlight.current || uiState === UI_STATES.SPEAKING}>发送并核验</button></div>
           </form>
           <p className="dh-privacy">默认不持久化原始麦克风音频或转录正文；审计仅保存人物、证据等级、引用、原因码、延迟与 Trace ID。</p>
         </div>
