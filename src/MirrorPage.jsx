@@ -22,13 +22,10 @@ import BibleMap from './BibleMap'
 import { CHARACTER_JOURNEYS, buildCharacterMapConfig } from './data/characterJourneys'
 import { getRuntimeLang } from './i18n/runtime'
 import { useAutoTranslate, AutoText } from './autoTranslate'
+import { getMirrorDigitalHumanId } from './features/spiritual-planet/digital-human/mirrorCharacterMap'
 const RelationshipGraphView = lazy(() => import('./RelationshipGraphView'))
 const DigitalHumanWorkspace = lazy(() => import('./features/spiritual-planet/digital-human/DigitalHumanWorkspace'))
 import { a11yClickProps } from './lib/a11yClick';
-
-const MIRROR_DIGITAL_HUMAN_IDS = Object.freeze({
-  大卫: 'david',
-})
 
 const ERAS = ['全部', '族长时代', '出埃及时代', '士师时代', '进入迦南时代', '王国时代', '被掳归回时代', '新约时代', '教会时代']
 const ROLES = ['全部', '主&救主', '族长', '君王', '先知', '祭司', '女性', '使徒', '其他']
@@ -196,7 +193,7 @@ function useLocalizedCard(rawChar) {
 function CharacterCard({ char: _rawChar, onClick }) {
   const char = useLocalizedCard(_rawChar)
   const typeTag = char.tags.find(t => ['正面榜样','警戒为主','混合型'].includes(t)) || char.type
-  const digitalHumanId = MIRROR_DIGITAL_HUMAN_IDS[char.name]
+  const digitalHumanId = getMirrorDigitalHumanId(char)
   return (
     <div onClick={() => onClick(char)} style={{
       background: 'rgba(255,255,255,0.06)', borderRadius: 14,
@@ -250,13 +247,20 @@ function CharacterCard({ char: _rawChar, onClick }) {
             ◈ <AutoText>{i18nT('数字人可对话')}</AutoText>
           </span>
         )}
+        {char.contentReviewState && char.contentReviewState !== 'APPROVED' && (
+          <span data-testid={`content-review-${char.id}`} style={{ fontSize: 11, padding: '2px 8px', borderRadius: 20,
+            background: 'rgba(232,184,107,.12)', color: '#efd59d',
+            border: '1px solid rgba(232,184,107,.32)' }}>
+            <AutoText>{i18nT('内容待人工审核')}</AutoText>
+          </span>
+        )}
       </div>
     </div>
   )
 }
 
 function DigitalHumanMirrorExperience({ char }) {
-  const characterId = MIRROR_DIGITAL_HUMAN_IDS[char.name]
+  const characterId = getMirrorDigitalHumanId(char)
   if (!characterId) return null
   return (
     <section aria-label={`${char.name}的数字人镜鉴`} style={{

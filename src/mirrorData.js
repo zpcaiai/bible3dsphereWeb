@@ -35866,6 +35866,62 @@ export const MIRROR_CHARACTERS = [
    "Don't slack or give up halfway",
    "Often examine: have I fulfilled the ministry received from the Lord?"
   ]
+ },
+ {
+  "id": 796,
+  "name": "腓利（传福音者）",
+  "en": "Philip the Evangelist",
+  "era": "新约时代",
+  "role": "其他",
+  "type": "正面",
+  "lesson": "顺从圣灵，向人传讲基督",
+  "tags": [
+   "其他",
+   "正面榜样"
+  ],
+  "contentReviewState": "REVIEW_PENDING",
+  "ref": "徒6，徒8，徒21",
+  "summary": "初代教会选出的七位服事者之一；他在撒马利亚传讲基督，又按圣灵引导向埃提阿伯太监讲解以赛亚书。",
+  "witness": "《使徒行传》记载，腓利是有好名声、被圣灵充满、智慧充足的七位服事者之一。他在撒马利亚宣讲基督，后来顺从主使者和圣灵的引导走近埃提阿伯太监的车，从以赛亚书开始向他传讲耶稣。多年后，他被称为传福音的腓利，并接待保罗一行。",
+  "follow": [
+   "在教会实际需要中忠心服事",
+   "顺从圣灵的引导接近正在寻求的人",
+   "从经文出发清楚传讲耶稣"
+  ],
+  "caution": [
+   "圣经没有把使徒腓力和传福音者腓利认定为同一人，不应混淆人物身份",
+   "圣经未记载的外貌、声音和私人心理活动不可当作事实"
+  ],
+  "applications": [
+   "在一项具体需要中忠心承担服事",
+   "聆听并顺服合乎圣经的带领，主动接近一位寻求者",
+   "练习从一段经文清楚说明福音，而不是只表达个人感受"
+  ],
+  "scriptures": [
+   "徒6:1-6",
+   "徒8:4-13",
+   "徒8:26-40",
+   "徒21:8-10"
+  ],
+  "prayer": "主啊，求祢使我在实际服事中忠心，也赐我顺服和清楚讲解经文的心，使我所说的指向基督，而不是高举自己。阿们。",
+  "lesson_en": "Following the Spirit and proclaiming Christ from Scripture",
+  "summary_en": "One of the seven servants chosen by the early church; he proclaimed Christ in Samaria and, under the Spirit's direction, explained Isaiah to the Ethiopian official.",
+  "witness_en": "Acts records Philip as one of seven men of good reputation, full of the Spirit and wisdom. He proclaimed Christ in Samaria, then obeyed the angel's and the Spirit's direction to approach the Ethiopian official's chariot and began with Isaiah to tell him the good news about Jesus. Years later he is called Philip the evangelist and hosts Paul and his companions.",
+  "prayer_en": "Lord, make me faithful in practical service and give me an obedient heart that explains Scripture clearly, so that my words point to Christ rather than to myself. Amen.",
+  "follow_en": [
+   "Serving faithfully where the church has practical needs",
+   "Following the Spirit's direction to approach a person who is seeking",
+   "Beginning with Scripture and clearly proclaiming Jesus"
+  ],
+  "caution_en": [
+   "Scripture does not identify Philip the Apostle and Philip the Evangelist as the same person; their identities must not be conflated",
+   "Unrecorded appearance, voice and private thoughts must not be presented as facts"
+  ],
+  "applications_en": [
+   "Faithfully take responsibility for one concrete need",
+   "Follow biblically faithful guidance and approach someone who is seeking",
+   "Practice explaining the gospel from a passage of Scripture instead of offering only personal impressions"
+  ]
  }
 ];
 
