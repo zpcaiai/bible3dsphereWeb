@@ -45,6 +45,7 @@ describe('runtime emotion localization', () => {
   it('keeps every requested homepage button English-only in EN mode', () => {
     setRuntimeLang('en')
     const keys = [
+      'home.quick.seekers',
       'home.quick.voice',
       'home.quick.communion',
       'home.quick.mirrorGraph',

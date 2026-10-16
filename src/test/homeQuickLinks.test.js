@@ -5,6 +5,11 @@ import { describe, expect, it } from 'vitest'
 const APP_SOURCE = readFileSync(join(process.cwd(), 'src/App.jsx'), 'utf8')
 
 describe('homepage quick links', () => {
+  it('exposes the public Seekers Class page as a same-tab link', () => {
+    expect(APP_SOURCE).toContain("{ icon: '📚', labelKey: 'home.quick.seekers', href: '/seekers' },")
+    expect(APP_SOURCE).toContain("href={item.href}")
+  })
+
   it('places the nations oracle link immediately after Pilgrim Progress', () => {
     const pilgrimEntry = "{ icon: '🚶', labelKey: 'home.quick.pilgrimProgress', url: 'https://pilgrims.holiness.uk/' },"
     const oracleEntry = "{ icon: '📜', labelKey: 'home.quick.oracles', url: 'https://holiness.uk/oracles.html' },"

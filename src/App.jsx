@@ -1634,26 +1634,30 @@ function AppContent() {
               {/* 首页快捷入口（置于今日灵命快照上方）*/}
               <div style={{ display: 'flex', gap: '4px', margin: '0 0 4px' }}>
                 {[
+                  { icon: '📚', labelKey: 'home.quick.seekers', href: '/seekers' },
                   { icon: '🎙', labelKey: 'home.quick.voice', panel: 'voice' },
                   { icon: '💬', labelKey: 'home.quick.communion', panel: 'communion' },
                   { icon: '🕸', labelKey: 'home.quick.mirrorGraph', panel: 'mirror-graph' },
                   { icon: '🗺', labelKey: 'home.quick.bibleMaps', panel: 'bible-maps' },
                   { icon: '🚶', labelKey: 'home.quick.pilgrimProgress', url: 'https://pilgrims.holiness.uk/' },
                   { icon: '📜', labelKey: 'home.quick.oracles', url: 'https://holiness.uk/oracles.html' },
-                ].map((item) => (
-                  <button key={item.panel || item.url}
-                    onClick={() => item.url ? window.open(item.url, '_blank', 'noopener,noreferrer') : handlePanelSwitch(item.panel)}
+                ].map((item) => {
+                  const Entry = item.href ? 'a' : 'button'
+                  return <Entry key={item.panel || item.url || item.href}
+                    href={item.href}
+                    type={item.href ? undefined : 'button'}
+                    onClick={item.href ? undefined : () => item.url ? window.open(item.url, '_blank', 'noopener,noreferrer') : handlePanelSwitch(item.panel)}
                     style={{
                       flex: 1, minWidth: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 'clamp(2px, 0.8vw, 6px)',
                       fontSize: 'clamp(9px, 2.3vw, 13px)', padding: 'clamp(5px, 1.5vw, 9px) clamp(1px, 0.8vw, 8px)',
                       background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)',
                       borderRadius: '12px', color: 'rgba(255,255,255,0.78)', cursor: 'pointer', fontFamily: 'inherit',
-                      whiteSpace: 'nowrap',
+                      whiteSpace: 'nowrap', textDecoration: 'none',
                     }}
                   >
                     <span style={{ fontSize: 'clamp(12px, 3vw, 16px)' }}>{item.icon}</span>{i18nT(item.labelKey)}
-                  </button>
-                ))}
+                  </Entry>
+                })}
               </div>
 
               {/* 今日灵命状态卡：访客也能看见入口，登录后加载个人状态 */}
