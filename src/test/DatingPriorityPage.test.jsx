@@ -13,6 +13,9 @@ vi.mock('../api', () => ({
 
 import DatingPriorityPage, { rankWeightedPoints } from '../DatingPriorityPage'
 import { getDatingPriorityItems, getDatingVetoItems } from '../datingPriorityData'
+import { setRuntimeLang } from '../i18n/runtime'
+import autoEn from '../i18n/auto-en'
+import { mergeAutoEn } from '../i18n/translations'
 
 const CURRENT_STATS = {
   total: 8,
@@ -35,6 +38,7 @@ const CURRENT_STATS = {
 
 describe('DatingPriorityPage', () => {
   beforeEach(() => {
+    setRuntimeLang('zh')
     window.localStorage.clear()
     window.scrollTo = vi.fn()
     submitSurveyMock.mockReset()
@@ -45,6 +49,27 @@ describe('DatingPriorityPage', () => {
 
   afterEach(() => {
     cleanup()
+    setRuntimeLang('zh')
+  })
+
+  it('renders the complete English survey locally while keeping canonical submission labels', async () => {
+    mergeAutoEn(autoEn)
+    setRuntimeLang('en')
+    const onSubmit = vi.fn()
+    const { container } = render(<DatingPriorityPage onSubmit={onSubmit} />)
+
+    expect(screen.getByRole('heading', { name: 'Long-term partner priorities' })).toBeTruthy()
+    fireEvent.click(screen.getByRole('button', { name: /I am choosing a male partner/ }))
+
+    expect(container.textContent).not.toMatch(/[一-鿿]/)
+    expect(screen.getByRole('heading', { name: 'Current priorities' })).toBeTruthy()
+    fireEvent.click(screen.getByRole('button', { name: /Honesty and integrity/ }))
+    fireEvent.click(screen.getByRole('button', { name: 'Submit anonymously and view results' }))
+
+    await waitFor(() => expect(screen.getByRole('heading', { name: 'Survey completed' })).toBeTruthy())
+    expect(container.textContent).not.toMatch(/[一-鿿]/)
+    expect(onSubmit.mock.calls[0][0].selected[0].label).toBe('诚实守信')
+    expect(onSubmit.mock.calls[0][0].selected[0].category).toBe('人品与关系品质')
   })
 
   it('keeps every supplied factor in the corresponding perspective', () => {

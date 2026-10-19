@@ -718,6 +718,58 @@ button, input, textarea {
   padding: 0 8px;
 }
 
+.home-quick-links {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 4px;
+  margin: 0 0 4px;
+}
+
+.home-quick-link {
+  min-width: 0;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 7px 5px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 12px;
+  color: rgba(255,255,255,0.78);
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+.home-quick-link-icon {
+  flex: 0 0 auto;
+  font-size: 15px;
+}
+
+@media (max-width: 767px) {
+  .home-quick-links {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .home-quick-links {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .home-quick-link {
+    padding: 8px 7px;
+    font-size: 12px;
+  }
+}
+
 .mobile-summary-card, .mobile-card {
   padding: 16px;
   margin: 0;

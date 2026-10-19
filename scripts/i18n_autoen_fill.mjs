@@ -58,6 +58,16 @@ function collectKeys() {
           const key = mm[2]
           if (/[一-鿿]/.test(key)) keys.add(key.replace(/\\"/g, '"').replace(/\\'/g, "'"))
         }
+        // Data catalogues localize their exported values through a mapper, so
+        // the individual literals are not direct t('...') calls. An explicit
+        // marker enrolls every quoted Chinese value in the same build audit.
+        if (txt.includes('@i18n-data-file')) {
+          const literalRe = /(["'])((?:\\.|(?!\1).)*?)\1/g
+          while ((mm = literalRe.exec(txt))) {
+            const key = mm[2]
+            if (/[一-鿿]/.test(key)) keys.add(key.replace(/\\"/g, '"').replace(/\\'/g, "'"))
+          }
+        }
       }
     }
   }

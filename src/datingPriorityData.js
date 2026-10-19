@@ -1,3 +1,9 @@
+// @i18n-data-file
+// The survey catalogue is authored as data, so its strings cannot be wrapped
+// one by one in JSX. Keep the canonical catalogue readable and let the i18n
+// audit collect every Chinese literal in this marked file. Rendering code
+// localizes these values at the UI boundary; submissions retain the canonical
+// labels so Chinese and English answers aggregate into the same statistics.
 export const DATING_PRIORITY_PERSPECTIVES = {
   female_to_male: {
     label: '女性选择男性',

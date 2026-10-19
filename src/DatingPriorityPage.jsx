@@ -189,7 +189,7 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
       }
       window.scrollTo?.({ top: 0, behavior: 'smooth' })
     } catch (error) {
-      setSubmitError(error?.message || '匿名提交失败，请稍后重试')
+      setSubmitError(error?.message || i18nT('匿名提交失败，请稍后重试'))
     } finally {
       setSubmitting(false)
     }
@@ -223,10 +223,10 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
   }
 
   const headerStep = !perspectiveKey
-    ? '开始'
+    ? i18nT('开始')
     : stage === 'select'
-      ? '选择与排序'
-      : '完成'
+      ? i18nT('选择与排序')
+      : i18nT('完成')
 
   return (
     <main className="dating-priority-page">
@@ -234,7 +234,7 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
         <BackButton onClick={backFromHeader} />
         <div className="dp-header-copy">
           <p className="dp-eyebrow">{headerStep}</p>
-          <h1>长期伴侣选择优先级</h1>
+          <h1>{i18nT('长期伴侣选择优先级')}</h1>
         </div>
       </header>
 
@@ -243,11 +243,8 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
           <>
             <section className="dp-intro">
               <div>
-                <h2>认真辨认，什么对你真正重要</h2>
-                <p>
-                  假设你正在选择一位可能结婚并长期共同生活的伴侣，请根据真实的结婚决策作答，
-                  而不是社会普遍认为“应该重视”的因素。选多少项都可以，点选顺序就是优先级。
-                </p>
+                <h2>{i18nT('认真辨认，什么对你真正重要')}</h2>
+                <p>{i18nT('假设你正在选择一位可能结婚并长期共同生活的伴侣，请根据真实的结婚决策作答，而不是社会普遍认为“应该重视”的因素。选多少项都可以，点选顺序就是优先级。')}</p>
               </div>
               <div className="dp-intro-mark" aria-hidden="true">∞</div>
             </section>
@@ -282,7 +279,7 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
 
             <section aria-labelledby="perspective-title">
               <div className="dp-section-heading">
-                <h2 id="perspective-title">选择答题视角</h2>
+                <h2 id="perspective-title">{i18nT('选择答题视角')}</h2>
               </div>
               <div className="dp-perspective-grid">
                 {Object.entries(DATING_PRIORITY_PERSPECTIVES).map(([key, option]) => {
@@ -296,8 +293,8 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
                     >
                       <span className="dp-perspective-icon" aria-hidden="true">{option.icon}</span>
                       <span>
-                        <strong>{option.shortLabel}</strong>
-                        <small>{option.label} · 共 {count} 个备选因素</small>
+                        <strong>{i18nT(option.shortLabel)}</strong>
+                        <small>{i18nT(option.label)} · {i18nT('共 {count} 个备选因素', { count })}</small>
                       </span>
                     </button>
                   )
@@ -311,36 +308,33 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
           <>
             <section className="dp-intro">
               <div>
-                <h2>选出你最重视的因素，并按重要性排序</h2>
-                <p>
-                  每次点选会依次成为第 1、第 2……优先级，权重按这个顺序自动计算，你不需要手动配分。
-                  再次点击即可反选，后续项目会自动前移。你也可以一项都不选，或在提交前清空全部选择。
-                </p>
+                <h2>{i18nT('选出你最重视的因素，并按重要性排序')}</h2>
+                <p>{i18nT('每次点选会依次成为第 1、第 2……优先级，权重按这个顺序自动计算，你不需要手动配分。再次点击即可反选，后续项目会自动前移。你也可以一项都不选，或在提交前清空全部选择。')}</p>
               </div>
               <div className="dp-intro-mark" aria-hidden="true">{perspective.icon}</div>
             </section>
 
             <div className="dp-toolbar" aria-live="polite">
               <div className="dp-toolbar-copy">
-                <strong>{perspective.shortLabel}</strong>
+                <strong>{i18nT(perspective.shortLabel)}</strong>
               </div>
-              <div className="dp-counter">已选 {selectedIds.length} 项</div>
+              <div className="dp-counter">{i18nT('已选 {count} 项', { count: selectedIds.length })}</div>
             </div>
 
             <section className="dp-selection-panel" aria-labelledby="selected-heading">
               <div className="dp-section-heading">
-                <h2 id="selected-heading">当前优先级</h2>
+                <h2 id="selected-heading">{i18nT('当前优先级')}</h2>
                 <button
                   type="button"
                   className="dp-text-button"
                   onClick={clearSelection}
                   disabled={selectedIds.length === 0}
                 >
-                  全部反选
+                  {i18nT('全部反选')}
                 </button>
               </div>
               {selectedIds.length === 0 ? (
-                <p className="dp-empty-selection">尚未选择。0 项也是有效答案，你可以直接提交。</p>
+                <p className="dp-empty-selection">{i18nT('尚未选择。0 项也是有效答案，你可以直接提交。')}</p>
               ) : (
                 <ol className="dp-rank-list">
                   {selectedIds.map((id, index) => {
@@ -348,11 +342,11 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
                     return (
                       <li className="dp-rank-item" key={id}>
                         <span className="dp-rank-number">{index + 1}</span>
-                        <span className="dp-rank-label">{item?.label}</span>
+                        <span className="dp-rank-label">{i18nT(item?.label || '')}</span>
                         <button
                           type="button"
                           className="dp-rank-remove"
-                          aria-label={`反选${item?.label}`}
+                          aria-label={i18nT('反选{label}', { label: i18nT(item?.label || '') })}
                           onClick={() => toggleItem(id)}
                         >
                           ×
@@ -370,8 +364,8 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
                 <section className="dp-category" key={category.key} aria-labelledby={`category-${category.key}`}>
                   <h2 className="dp-category-title" id={`category-${category.key}`}>
                     <span aria-hidden="true">{category.icon}</span>
-                    {category.label}
-                    <span>{categoryItems.length} 项</span>
+                    {i18nT(category.label)}
+                    <span>{i18nT('{count} 项', { count: categoryItems.length })}</span>
                   </h2>
                   <div className="dp-options-grid">
                     {categoryItems.map((item) => {
@@ -388,8 +382,8 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
                         >
                           <span className="dp-option-check" aria-hidden="true">✓</span>
                           <span className="dp-option-copy">
-                            <strong>{item.label}</strong>
-                            {item.description && <small>{item.description}</small>}
+                            <strong>{i18nT(item.label)}</strong>
+                            {item.description && <small>{i18nT(item.description)}</small>}
                           </span>
                           {selected && <span className="dp-option-rank">#{rank + 1}</span>}
                         </button>
@@ -403,8 +397,8 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
             <section className="dp-veto-section" aria-labelledby="veto-heading">
               <div className="dp-section-heading">
                 <div>
-                  <p className="dp-veto-eyebrow">独立多选 · 不占用前面的 10 项名额</p>
-                  <h2 id="veto-heading">哪些情况会成为你的否决条件？</h2>
+                  <p className="dp-veto-eyebrow">{i18nT('独立多选 · 不占用前面的 10 项名额')}</p>
+                  <h2 id="veto-heading">{i18nT('哪些情况会成为你的否决条件？')}</h2>
                 </div>
                 <button
                   type="button"
@@ -412,14 +406,12 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
                   onClick={() => setSelectedVetoIds([])}
                   disabled={selectedVetoIds.length === 0}
                 >
-                  清空否决条件
+                  {i18nT('清空否决条件')}
                 </button>
               </div>
-              <p className="dp-veto-help">
-                以下顺序仅用于呈现，不会改变你的优先级排序。请选择所有适用于你的条件，也可以一项不选。
-              </p>
+              <p className="dp-veto-help">{i18nT('以下顺序仅用于呈现，不会改变你的优先级排序。请选择所有适用于你的条件，也可以一项不选。')}</p>
               <div className="dp-veto-count" aria-live="polite">
-                已选 {selectedVetoIds.length} / {vetoItems.length}
+                {i18nT('已选 {selected} / {total}', { selected: selectedVetoIds.length, total: vetoItems.length })}
               </div>
               <div className="dp-veto-grid">
                 {vetoItems.map((item) => {
@@ -435,7 +427,7 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
                     >
                       <span className="dp-veto-rank">{item.rank}</span>
                       <span className="dp-veto-copy">
-                        <strong>{item.label}</strong>
+                        <strong>{i18nT(item.label)}</strong>
                       </span>
                       <span className="dp-veto-check" aria-hidden="true">✓</span>
                     </button>
@@ -454,7 +446,7 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
                   setSelectedVetoIds([])
                 }}
               >
-                清空全部选择
+                {i18nT('清空全部选择')}
               </button>
               <button
                 type="button"
@@ -462,7 +454,7 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
                 disabled={submitting}
                 onClick={submitSelection}
               >
-                {submitting ? '正在匿名提交…' : '匿名提交并查看统计'}
+                {submitting ? i18nT('正在匿名提交…') : i18nT('匿名提交并查看统计')}
               </button>
             </div>
             {submitError && <div className="dp-submit-error" role="alert">{submitError}</div>}
@@ -472,15 +464,15 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
         {perspectiveKey && stage === 'complete' && result && (
           <section className="dp-complete" aria-labelledby="complete-heading">
             <div className="dp-complete-icon" aria-hidden="true">✓</div>
-            <h2 id="complete-heading">问卷已完成</h2>
+            <h2 id="complete-heading">{i18nT('问卷已完成')}</h2>
             <p>
-              你的回答已保存在当前浏览器中。
+              {i18nT('你的回答已保存在当前浏览器中。')}
               {result.selected.length === 0
-                ? '你没有选择优先因素，这仍是一份完整且有效的回答。'
-                : `你选择了 ${result.selected.length} 项，权重已按你的点选顺序自动计算。`}
+                ? i18nT('你没有选择优先因素，这仍是一份完整且有效的回答。')
+                : i18nT('你选择了 {count} 项，权重已按你的点选顺序自动计算。', { count: result.selected.length })}
               {result.vetoes.length > 0
-                ? ` 同时选择了 ${result.vetoes.length} 项否决条件。`
-                : ' 你没有选择否决条件。'}
+                ? ` ${i18nT('同时选择了 {count} 项否决条件。', { count: result.vetoes.length })}`
+                : ` ${i18nT('你没有选择否决条件。')}`}
             </p>
 
             <section className="dp-my-response" aria-labelledby="my-response-heading">
@@ -504,9 +496,9 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
                       >
                         <span className="dp-rank-number">{item.rank}</span>
                         <div className="dp-result-copy">
-                          <strong>{item.label}</strong>
-                          {item.category && <span>{item.category}</span>}
-                          {item.description && <small>{item.description}</small>}
+                          <strong>{i18nT(item.label)}</strong>
+                          {item.category && <span>{i18nT(item.category)}</span>}
+                          {item.description && <small>{i18nT(item.description)}</small>}
                         </div>
                         <span className="dp-result-score">{i18nT('权重')} {item.score}</span>
                       </li>
@@ -524,7 +516,7 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
                     {result.vetoes.map((item) => (
                       <li data-testid="submitted-veto" key={`${item.suppliedRank}-${item.label}`}>
                         <span>{item.suppliedRank}</span>
-                        <strong>{item.label}</strong>
+                        <strong>{i18nT(item.label)}</strong>
                       </li>
                     ))}
                   </ol>
@@ -538,23 +530,23 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
               <section className="dp-current-stats" aria-labelledby="current-stats-heading">
                 <div className="dp-stats-heading">
                   <div>
-                    <p>匿名聚合 · 不显示任何个人答案</p>
-                    <h3 id="current-stats-heading">当前统计结果</h3>
+                    <p>{i18nT('匿名聚合 · 不显示任何个人答案')}</p>
+                    <h3 id="current-stats-heading">{i18nT('当前统计结果')}</h3>
                   </div>
-                  <strong>{stats.total || 0}<span> 份</span></strong>
+                  <strong>{stats.total || 0}<span> {i18nT('份')}</span></strong>
                 </div>
 
                 {(stats.priority_stats || []).length > 0 ? (
                   <div className="dp-stats-group">
-                    <h4>所有被选择的因素 · 按选择率排序</h4>
+                    <h4>{i18nT('所有被选择的因素 · 按选择率排序')}</h4>
                     <ol className="dp-stats-list">
                       {stats.priority_stats.map((item, index) => (
                         <li key={`${item.category}-${item.label}`}>
                           <span className="dp-stat-rank">{index + 1}</span>
                           <div className="dp-stat-main">
                             <div>
-                              <strong>{item.label}</strong>
-                              <span>{item.selection_rate}% 选择 · 平均第 {item.avg_rank} 位 · 平均权重 {item.avg_score}</span>
+                              <strong>{i18nT(item.label)}</strong>
+                              <span>{i18nT('{rate}% 选择 · 平均第 {rank} 位 · 平均权重 {score}', { rate: item.selection_rate, rank: item.avg_rank, score: item.avg_score })}</span>
                             </div>
                             <div className="dp-stat-bar" aria-hidden="true">
                               <i style={{ width: `${Math.min(100, item.selection_rate)}%` }} />
@@ -565,20 +557,20 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
                     </ol>
                   </div>
                 ) : (
-                  <p className="dp-stats-empty">当前还没有优先因素统计。</p>
+                  <p className="dp-stats-empty">{i18nT('当前还没有优先因素统计。')}</p>
                 )}
 
                 {(stats.veto_stats || []).length > 0 && (
                   <div className="dp-stats-group dp-stats-veto-group">
-                    <h4>所有被选择的否决条件 · 按选择率排序</h4>
+                    <h4>{i18nT('所有被选择的否决条件 · 按选择率排序')}</h4>
                     <ol className="dp-stats-list">
                       {stats.veto_stats.map((item, index) => (
                         <li key={item.label}>
                           <span className="dp-stat-rank">{index + 1}</span>
                           <div className="dp-stat-main">
                             <div>
-                              <strong>{item.label}</strong>
-                              <span>{item.selection_rate}% 选择</span>
+                              <strong>{i18nT(item.label)}</strong>
+                              <span>{i18nT('{rate}% 选择', { rate: item.selection_rate })}</span>
                             </div>
                             <div className="dp-stat-bar dp-stat-veto-bar" aria-hidden="true">
                               <i style={{ width: `${Math.min(100, item.selection_rate)}%` }} />
@@ -590,9 +582,7 @@ export default function DatingPriorityPage({ onBack, onSubmit }) {
                   </div>
                 )}
 
-                <p className="dp-stats-privacy">
-                  统计仅包含同一答题视角下的匿名聚合结果；不会显示或返回浏览器匿名标识。
-                </p>
+                <p className="dp-stats-privacy">{i18nT('统计仅包含同一答题视角下的匿名聚合结果；不会显示或返回浏览器匿名标识。')}</p>
               </section>
             )}
 

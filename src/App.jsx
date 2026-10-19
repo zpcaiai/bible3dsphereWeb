@@ -1632,7 +1632,7 @@ function AppContent() {
             <div className="mobile-card-stack">
 
               {/* 首页快捷入口（置于今日灵命快照上方）*/}
-              <div style={{ display: 'flex', gap: '4px', margin: '0 0 4px' }}>
+              <div className="home-quick-links">
                 {[
                   { icon: '📚', labelKey: 'home.quick.seekers', href: '/seekers' },
                   { icon: '🎙', labelKey: 'home.quick.voice', panel: 'voice' },
@@ -1644,18 +1644,12 @@ function AppContent() {
                 ].map((item) => {
                   const Entry = item.href ? 'a' : 'button'
                   return <Entry key={item.panel || item.url || item.href}
+                    className="home-quick-link"
                     href={item.href}
                     type={item.href ? undefined : 'button'}
                     onClick={item.href ? undefined : () => item.url ? window.open(item.url, '_blank', 'noopener,noreferrer') : handlePanelSwitch(item.panel)}
-                    style={{
-                      flex: 1, minWidth: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 'clamp(2px, 0.8vw, 6px)',
-                      fontSize: 'clamp(9px, 2.3vw, 13px)', padding: 'clamp(5px, 1.5vw, 9px) clamp(1px, 0.8vw, 8px)',
-                      background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)',
-                      borderRadius: '12px', color: 'rgba(255,255,255,0.78)', cursor: 'pointer', fontFamily: 'inherit',
-                      whiteSpace: 'nowrap', textDecoration: 'none',
-                    }}
                   >
-                    <span style={{ fontSize: 'clamp(12px, 3vw, 16px)' }}>{item.icon}</span>{i18nT(item.labelKey)}
+                    <span className="home-quick-link-icon">{item.icon}</span>{i18nT(item.labelKey)}
                   </Entry>
                 })}
               </div>
@@ -3182,6 +3176,35 @@ function AppContent() {
     )
 }
 
+function StandaloneDatingPriorityRoute({ initialView = 'survey' }) {
+  const [view, setView] = useState(initialView)
+
+  const goHome = () => {
+    window.history.replaceState({}, '', '/')
+    window.location.reload()
+  }
+
+  const openSurvey = () => {
+    window.history.replaceState({}, '', '/amor-survey')
+    setView('survey')
+  }
+
+  return (
+    <div className="standalone-subpage-shell" style={{ minHeight: '100dvh', background: '#0d0d14' }}>
+      <div className="subpage-language-row">
+        <LanguageToggle />
+      </div>
+      <Suspense fallback={<div style={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'rgba(255,255,255,0.7)' }}>{i18nT('加载中…')}</div>}>
+        {view === 'stats' ? (
+          <DatingPriorityStatsPage onBack={goHome} onOpenSurvey={openSurvey} />
+        ) : (
+          <DatingPriorityPage onBack={goHome} />
+        )}
+      </Suspense>
+    </div>
+  )
+}
+
 // ── 灵修 Tab 容器: 晨恩日新日历 + 灵修日记 ─────────────────────────────────────
 export default function App() {
   if (/^\/caregiver\/?$/.test(window.location.pathname)) {
@@ -3197,6 +3220,20 @@ export default function App() {
     return (
       <QueryClientProvider client={queryClient}>
         <SeekersStandalonePage />
+      </QueryClientProvider>
+    )
+  }
+  if (isDatingPriorityPath(window.location.pathname)) {
+    return (
+      <QueryClientProvider client={queryClient}>
+        <StandaloneDatingPriorityRoute />
+      </QueryClientProvider>
+    )
+  }
+  if (isDatingPriorityStatsPath(window.location.pathname)) {
+    return (
+      <QueryClientProvider client={queryClient}>
+        <StandaloneDatingPriorityRoute initialView="stats" />
       </QueryClientProvider>
     )
   }

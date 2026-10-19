@@ -10,6 +10,9 @@ vi.mock('../api', () => ({
 }))
 
 import DatingPriorityStatsPage from '../DatingPriorityStatsPage'
+import autoEn from '../i18n/auto-en'
+import { setRuntimeLang } from '../i18n/runtime'
+import { mergeAutoEn } from '../i18n/translations'
 
 function stats(total, suffix) {
   return {
@@ -27,6 +30,7 @@ function stats(total, suffix) {
 
 describe('DatingPriorityStatsPage', () => {
   beforeEach(() => {
+    setRuntimeLang('zh')
     fetchStatsMock.mockReset()
     fetchStatsMock
       .mockResolvedValueOnce(stats(8, 'A'))
@@ -36,6 +40,23 @@ describe('DatingPriorityStatsPage', () => {
   afterEach(() => {
     cleanup()
     vi.useRealTimers()
+    setRuntimeLang('zh')
+  })
+
+  it('renders empty English aggregates without runtime translation placeholders', async () => {
+    mergeAutoEn(autoEn)
+    setRuntimeLang('en')
+    fetchStatsMock.mockReset()
+    fetchStatsMock
+      .mockResolvedValueOnce({ total: 0, priority_stats: [], veto_stats: [] })
+      .mockResolvedValueOnce({ total: 0, priority_stats: [], veto_stats: [] })
+
+    const { container } = render(<DatingPriorityStatsPage />)
+
+    await screen.findByRole('heading', { name: 'Long-term partner priority stats' })
+    await waitFor(() => expect(screen.getAllByText('No deal-breaker results yet.')).toHaveLength(2))
+    expect(container.textContent).not.toContain('Translating…')
+    expect(container.textContent).not.toMatch(/[一-鿿]/)
   })
 
   it('loads and shows the latest full aggregates for both perspectives', async () => {

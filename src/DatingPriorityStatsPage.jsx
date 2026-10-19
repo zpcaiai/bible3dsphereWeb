@@ -12,7 +12,9 @@ function StatList({ items, veto = false }) {
   if (!items.length) {
     return (
       <p className="dp-stats-empty">
-        {i18nT(veto ? '当前还没有否决条件统计。' : '当前还没有优先因素统计。')}
+        {veto
+          ? i18nT('当前还没有否决条件统计。')
+          : i18nT('当前还没有优先因素统计。')}
       </p>
     )
   }
@@ -20,9 +22,9 @@ function StatList({ items, veto = false }) {
   return (
     <div className={`dp-stats-group${veto ? ' dp-stats-veto-group' : ''}`}>
       <h4>
-        {i18nT(veto
-          ? '所有被选择的否决条件 · 按选择率排序'
-          : '所有被选择的因素 · 按选择率排序')}
+        {veto
+          ? i18nT('所有被选择的否决条件 · 按选择率排序')
+          : i18nT('所有被选择的因素 · 按选择率排序')}
       </h4>
       <ol className="dp-stats-list">
         {items.map((item, index) => (
@@ -30,7 +32,7 @@ function StatList({ items, veto = false }) {
             <span className="dp-stat-rank">{index + 1}</span>
             <div className="dp-stat-main">
               <div>
-                <strong>{item.label}</strong>
+                <strong>{i18nT(item.label)}</strong>
                 <span>
                   {veto
                     ? i18nT('{rate}% 选择', { rate: item.selection_rate })
