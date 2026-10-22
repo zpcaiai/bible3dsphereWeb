@@ -24,4 +24,11 @@ describe('digital-human response gate', () => {
   it('rejects speech before human review', () => {
     expect(() => validateDigitalHumanResponse({ ...base, contentReviewState: 'THEOLOGY_REVIEW' }, 'david')).toThrow(/未审核/)
   })
+
+  it.each([
+    { speechApproved: 'false' }, { spokenText: '' }, { contentReviewState: 'trust-me' },
+    { answerType: 'PROPHECY' }, { references: [{ sourceType: 'SCRIPTURE', locator: 'John 1', claimSupport: 'MADE_UP' }] },
+  ])('rejects malformed content instead of allowing provider playback: %o', (patch) => {
+    expect(() => validateDigitalHumanResponse({ ...base, ...patch }, 'david')).toThrow()
+  })
 })

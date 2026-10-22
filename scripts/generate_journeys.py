@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
 Generate character journey data for missing mirror characters.
-Reads mirrorData.js and generates stops for characters not in characterJourneys.js.
+Reads the canonical mirrorData.json catalogue and generates missing journey stops.
 """
-import re
 import json
+from pathlib import Path
 
 # Common era→default location mapping
 ERA_DEFAULTS = {
@@ -110,16 +110,14 @@ def get_stops_for_char(name, era, ref):
         "event": f"主要事奉地/活动地——{name}的事迹见{ref or '圣经'}"
     }]
 
+def load_mirror_characters():
+    catalogue = Path(__file__).resolve().parents[1] / 'src' / 'mirrorData.json'
+    with catalogue.open(encoding='utf-8') as f:
+        return json.load(f)['MIRROR_CHARACTERS']
+
+
 def main():
-    with open('mirrorData.js', 'r', encoding='utf-8') as f:
-        content = f.read()
-
-    match = re.search(r'export const MIRROR_CHARACTERS = (\[.*?\]);', content, re.DOTALL)
-    if not match:
-        print("Could not parse mirrorData.js")
-        return
-
-    mirror_chars = json.loads(match.group(1))
+    mirror_chars = load_mirror_characters()
 
     with open('/tmp/missing.txt', 'r', encoding='utf-8') as f:
         missing_names = [line.strip() for line in f if line.strip()]
