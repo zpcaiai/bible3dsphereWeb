@@ -23,9 +23,17 @@ import { CHARACTER_JOURNEYS, buildCharacterMapConfig } from './data/characterJou
 import { getRuntimeLang } from './i18n/runtime'
 import { useAutoTranslate, AutoText } from './autoTranslate'
 import { getMirrorDigitalHumanId } from './features/spiritual-planet/digital-human/mirrorCharacterMap'
-const RelationshipGraphView = lazy(() => import('./RelationshipGraphView'))
+const RelationshipGraphView = lazyWithRetry(() => import('./RelationshipGraphView'), {
+  retryKey: 'mirror-graph-chunk-reload',
+  renderError: ({ retry, onBack }) => <div role="alert" style={{ padding: 32, color: '#fff' }}>
+    <p>{i18nT('数据加载失败，请检查网络后重试')}</p>
+    <button onClick={retry}>{i18nT('重试')}</button>
+    <button onClick={onBack}>{i18nT('返回')}</button>
+  </div>,
+})
 const DigitalHumanWorkspace = lazy(() => import('./features/spiritual-planet/digital-human/DigitalHumanWorkspace'))
 import { a11yClickProps } from './lib/a11yClick';
+import lazyWithRetry from './lazyWithRetry'
 
 const ERAS = ['全部', '族长时代', '出埃及时代', '士师时代', '进入迦南时代', '王国时代', '被掳归回时代', '新约时代', '教会时代']
 const ROLES = ['全部', '主&救主', '族长', '君王', '先知', '祭司', '女性', '使徒', '其他']

@@ -29,6 +29,12 @@ const NODE_TYPE_LABEL = {
 }
 const colorOf = (t) => NODE_COLORS[t] || '#aeaeb2'
 
+// The public site already proxies /api. Keep graph requests on that origin
+// even when an older build setting points directly at the HF runtime.
+export function graphApiBase(base, hostname) {
+  return ['holiness.uk', 'www.holiness.uk'].includes(hostname.toLowerCase()) ? '/api' : base
+}
+
 // ── 时间先后排序：用 era（时代）+ firstAppearance（首次经文）派生年代序 ──
 const ERA_ORDER = [
   ['创世', 0], ['起初', 0], ['创造', 0], ['族长', 1], ['出埃及', 2], ['旷野', 2], ['西奈', 2], ['律法', 2],
@@ -74,6 +80,7 @@ export default function RelationshipGraphView({ token, onBack, initialFocus = ''
   const [raw, setRaw] = useState({ nodes: [], edges: [] })
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [requestVersion, setRequestVersion] = useState(0)
   const [focusInput, setFocusInput] = useState(initialFocus)
   const [focus, setFocus] = useState(initialFocus)
   const [depth, setDepth] = useState(1)
@@ -95,12 +102,13 @@ export default function RelationshipGraphView({ token, onBack, initialFocus = ''
     if (focus) { params.set('focus', focus); params.set('depth', String(depth)) }
     // 分类筛选改为「前端只高亮、不剔除」：不再按 node_type 向后端硬过滤，保留全部节点。
     params.set('limit', focus ? '260' : '180')
-    fetch(`${API_BASE}/characters/knowledge-graph?${params.toString()}`, {
+    fetch(`${graphApiBase(API_BASE, window.location.hostname)}/characters/knowledge-graph?${params.toString()}`, {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     })
       .then((r) => r.ok ? r.json() : Promise.reject(new Error('HTTP ' + r.status)))
       .then((j) => {
         if (!alive) return
+        if (j?.success === false) throw new Error(en ? 'Graph data unavailable. Please retry.' : '图谱数据暂不可用，请重试。')
         const data = j?.data || j || {}
         setRaw({ nodes: data.nodes || [], edges: data.edges || [] })
         setSelected(null)
@@ -108,7 +116,7 @@ export default function RelationshipGraphView({ token, onBack, initialFocus = ''
       })
       .catch((e) => { if (alive) { setError(String(e.message || e)); setLoading(false) } })
     return () => { alive = false }
-  }, [focus, depth, token])
+  }, [focus, depth, token, requestVersion])
 
   // ---- container size ----
   useEffect(() => {
@@ -325,7 +333,10 @@ export default function RelationshipGraphView({ token, onBack, initialFocus = ''
       {/* Canvas */}
       <div ref={wrapRef} style={{ position: 'relative', flex: 1, minHeight: 420, borderRadius: 14, overflow: 'hidden', background: 'radial-gradient(circle at 50% 40%, rgba(40,40,60,0.45), rgba(10,10,18,0.6))', border: '1px solid rgba(255,255,255,0.08)', touchAction: 'none' }}>
         {loading && <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'rgba(255,255,255,0.6)', fontSize: 14 }}>{en ? 'Loading graph…' : '加载图谱中…'}</div>}
-        {error && !loading && <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ff6b6b', fontSize: 13, padding: 20, textAlign: 'center' }}>{(en ? 'Failed to load: ' : '加载失败：') + error}</div>}
+        {error && !loading && <div role="alert" style={{ position: 'absolute', inset: 0, zIndex: 1, display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'center', justifyContent: 'center', color: '#ff6b6b', fontSize: 13, padding: 20, textAlign: 'center' }}>
+          <span>{(en ? 'Failed to load: ' : '加载失败：') + error}</span>
+          <button onClick={() => setRequestVersion(n => n + 1)}>{en ? 'Retry' : '重试'}</button>
+        </div>}
         {!loading && !error && nodes.length === 0 && <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'rgba(255,255,255,0.5)', fontSize: 14 }}>{en ? 'No data' : '暂无数据'}</div>}
         {!loading && !error && nodes.length > 0 && edges.length === 0 && (
           <div style={{ position: 'absolute', top: 14, left: '50%', transform: 'translateX(-50%)', maxWidth: 470, pointerEvents: 'none', textAlign: 'center', background: 'rgba(0,0,0,0.55)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 12, padding: '12px 16px', color: 'rgba(255,255,255,0.82)', fontSize: 13, lineHeight: 1.7 }}>
