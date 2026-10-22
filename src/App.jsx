@@ -157,7 +157,9 @@ function AppContent() {
   const [navRestore] = useState(() => {
     try {
       const ts = Number(window.sessionStorage.getItem('lang-switch') || 0)
-      if (ts && Date.now() - ts < 15000) {
+      const recoverMirror = window.sessionStorage.getItem('lazy-chunk-mirror-restore') === '1'
+      window.sessionStorage.removeItem('lazy-chunk-mirror-restore')
+      if (recoverMirror || (ts && Date.now() - ts < 15000)) {
         const panel = window.sessionStorage.getItem('nav-activePanel')
         let mirror = null
         try { mirror = JSON.parse(window.sessionStorage.getItem('nav-mirror') || 'null') } catch { /* ignore */ }
@@ -2756,7 +2758,10 @@ function AppContent() {
         {/* 镜鉴人物 */}
         {(activePanel === 'mirror' || activePanel === 'mirror-graph') && (
           <div className="page-overlay">
-            <Suspense fallback={null}>
+            <Suspense fallback={<div role="status" style={{ padding: 32, color: '#fff' }}>
+              <p>{i18nT('加载中…')}</p>
+              <button onClick={() => setActivePanel('sphere')}>{i18nT('返回')}</button>
+            </div>}>
               <MirrorPage
                 user={user}
                 token={getToken()}

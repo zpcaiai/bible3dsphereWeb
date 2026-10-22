@@ -8,6 +8,14 @@ import { lazy } from 'react'
 const KEY = 'lazy-chunk-reload'
 
 async function purgeAndReload() {
+  // A recovery reload must return to the mirror entry the user opened.
+  // App consumes this one-shot marker; ordinary reloads keep their behavior.
+  try {
+    const panel = sessionStorage.getItem('nav-activePanel')
+    if (panel === 'mirror' || panel === 'mirror-graph') {
+      sessionStorage.setItem('lazy-chunk-mirror-restore', '1')
+    }
+  } catch { /* storage may be unavailable */ }
   try {
     if ('caches' in window) {
       const keys = await caches.keys()
@@ -17,18 +25,24 @@ async function purgeAndReload() {
   window.location.reload()
 }
 
-export default function lazyWithRetry(importer) {
+export default function lazyWithRetry(importer, { retryKey = KEY, renderError } = {}) {
   return lazy(() =>
     importer().then((m) => {
-      try { sessionStorage.removeItem(KEY) } catch { /* ignore */ }
+      try { sessionStorage.removeItem(retryKey) } catch { /* ignore */ }
       return m
     }).catch((err) => {
       let reloaded = false
-      try { reloaded = sessionStorage.getItem(KEY) === '1'; sessionStorage.setItem(KEY, '1') } catch { /* ignore */ }
+      try { reloaded = sessionStorage.getItem(retryKey) === '1'; sessionStorage.setItem(retryKey, '1') } catch { /* ignore */ }
       if (!reloaded) {
         purgeAndReload()
         // 返回永不 resolve 的 promise，维持 Suspense fallback 直到刷新接管
         return new Promise(() => {})
+      }
+      if (renderError) {
+        return { default: (props) => renderError({ ...props, retry: () => {
+          try { sessionStorage.removeItem(retryKey) } catch { /* ignore */ }
+          purgeAndReload()
+        } }) }
       }
       throw err
     })
