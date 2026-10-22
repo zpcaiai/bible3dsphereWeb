@@ -6,6 +6,8 @@ import { LiveKitRealtimeSession, REALTIME_STATES } from './LiveKitRealtimeSessio
 import { MetaPersonLiveSpeakAdapter } from './MetaPersonLiveSpeakAdapter'
 import { SHARED_PREVIEW_PORTRAIT_URL, speakSharedPreviewDisclosure } from './previewAssets'
 import DigitalHumanOperationsPanel from './DigitalHumanOperationsPanel'
+import DigitalHumanStudyPanel from './DigitalHumanStudyPanel'
+import DigitalHumanReadinessPanel from './DigitalHumanReadinessPanel'
 import './digitalHuman.css'
 
 const UI_STATES = Object.freeze({
@@ -47,8 +49,18 @@ export default function DigitalHumanWorkspace({
   const [identityCandidates, setIdentityCandidates] = useState([])
   const [loading, setLoading] = useState(true)
   const [previewVoicePlaying, setPreviewVoicePlaying] = useState(false)
+  const [sessionRevision, setSessionRevision] = useState(0)
+  const [isTurnPending, setIsTurnPending] = useState(false)
+  const [avatarFailed, setAvatarFailed] = useState(false)
+  const [isMicPending, setIsMicPending] = useState(false)
+  const micTransition = useRef(false)
+  const micRequestRevision = useRef(0)
+  const identityLookupRevision = useRef(0)
   const sessionId = useRef(makeId('session'))
   const turnInFlight = useRef(false)
+  const conversationGeneration = useRef(0)
+  const turnRequest = useRef(null)
+  const topicContext = useRef([])
   const iframeRef = useRef(null)
   const avatarAdapter = useRef(null)
   const realtimeAdapter = useRef(null)
@@ -79,74 +91,133 @@ export default function DigitalHumanWorkspace({
     return () => { active = false }
   }, [])
 
-  useEffect(() => {
-    setSelectedId(initialCharacterId)
+  const resetConversation = useCallback((characterId) => {
+    conversationGeneration.current += 1
+    identityLookupRevision.current += 1
+    micRequestRevision.current += 1
+    turnRequest.current?.abort()
+    turnRequest.current = null
+    turnInFlight.current = false
+    topicContext.current = []
+    stopPreviewVoice.current?.()
+    stopPreviewVoice.current = null
+    setPreviewVoicePlaying(false)
+    setSelectedId(characterId)
     setMessages([])
+    setQuestion('')
+    setError('')
+    setUiState(UI_STATES.IDLE)
+    setIsTurnPending(false)
+    micTransition.current = false
+    setIsMicPending(false)
+    setAvatarFailed(false)
+    setIdentityCandidates([])
+    setAvatarState(DIGITAL_HUMAN_STATES.BOOTING)
+    setRealtimeState(REALTIME_STATES.DISCONNECTED)
     sessionId.current = makeId('session')
-  }, [initialCharacterId])
+    setSessionRevision((value) => value + 1)
+  }, [])
 
-  useEffect(() => () => stopPreviewVoice.current?.(), [])
+  useEffect(() => { resetConversation(initialCharacterId) }, [initialCharacterId, resetConversation])
+
+  useEffect(() => () => {
+    conversationGeneration.current += 1
+    turnRequest.current?.abort()
+    stopPreviewVoice.current?.()
+  }, [])
 
   const submitQuestion = useCallback(async (rawQuestion) => {
     const text = rawQuestion.trim()
     if (!text || !selected || turnInFlight.current) return
-    if (uiState === UI_STATES.SPEAKING) {
+    if (uiState === UI_STATES.SPEAKING || avatarAdapter.current?.getState() === DIGITAL_HUMAN_STATES.SPEAKING) {
       setError('当前采用半双工策略：请等待人物讲述结束后再提问。')
       return
     }
     turnInFlight.current = true
+    micRequestRevision.current += 1
+    micTransition.current = false
+    setIsMicPending(false)
+    setIsTurnPending(true)
+    const generation = conversationGeneration.current
+    const controller = new AbortController()
+    const voiceSession = realtimeAdapter.current
+    turnRequest.current = controller
     setError('')
     setUiState(UI_STATES.RETRIEVING)
-    setMessages((items) => [...items, { id: makeId('user'), role: 'user', text }])
+    setMessages((items) => [...items, { id: makeId('user'), role: 'user', text }].slice(-40))
     setQuestion('')
     try {
+      await voiceSession?.beginTurn()
+      if (generation !== conversationGeneration.current) return
       const envelope = await createDigitalHumanTurn({
         characterId: selected.id, question: text, sessionId: sessionId.current, turnId: makeId('turn'),
-      })
+        ...(topicContext.current.length ? { context: { characterId: selected.id, topicIds: topicContext.current } } : {}),
+      }, { signal: controller.signal })
+      if (generation !== conversationGeneration.current) return
       setUiState(UI_STATES.VERIFYING)
       const response = validateDigitalHumanResponse(envelope.response, selected.id)
-      setMessages((items) => [...items, { id: envelope.turnId, role: 'assistant', response, traceId: envelope.traceId }])
+      topicContext.current = (response.relatedEvents || []).filter((id) => /^[a-z0-9_-]{1,100}$/.test(id)).slice(-4)
+      setMessages((items) => [...items, { id: envelope.turnId, role: 'assistant', response, traceId: envelope.traceId }].slice(-40))
       if (envelope.state === 'READY_TO_SPEAK' && response.speechApproved && avatarAdapter.current?.getState() === DIGITAL_HUMAN_STATES.READY) {
         setUiState(UI_STATES.READY_TO_SPEAK)
         await realtimeAdapter.current?.setMicrophoneEnabled(false).catch(() => {})
+        if (generation !== conversationGeneration.current) return
         await avatarAdapter.current.speakApproved(response)
       } else {
         setUiState(UI_STATES.IDLE)
       }
     } catch (caught) {
+      if (generation !== conversationGeneration.current || caught.name === 'AbortError') return
       setError(caught.message)
       setUiState(UI_STATES.ERROR)
     } finally {
-      turnInFlight.current = false
+      voiceSession?.finishTurn()
+      if (generation === conversationGeneration.current) {
+        turnInFlight.current = false
+        turnRequest.current = null
+        setIsTurnPending(false)
+      }
     }
   }, [selected, uiState])
 
   submitRef.current = submitQuestion
 
   useEffect(() => {
+    let active = true
     const adapter = new LiveKitRealtimeSession({
       onStateChange: (next) => {
+        if (!active) return
         setRealtimeState(next)
         const mapped = { IDLE: 'READY', LISTENING: 'READY', PROCESSING: 'READY', ERROR: 'ERROR', DISCONNECTED: 'DISCONNECTED', RECOVERING: 'RECOVERING' }[next]
         if (mapped) reportProvider('livekit', mapped)
       },
       onFinalTranscript: (text) => {
+        if (!active) return undefined
         setUiState(UI_STATES.TRANSCRIBING)
         return submitRef.current?.(text)
       },
     })
     realtimeAdapter.current = adapter
-    return () => { adapter.disconnect().catch(() => {}) }
-  }, [reportProvider])
+    return () => { active = false; adapter.disconnect().catch(() => {}) }
+  }, [reportProvider, selectedId, sessionRevision])
 
   useEffect(() => {
+    let active = true
     avatarAdapter.current?.dispose()
     avatarAdapter.current = null
-    if (!iframeRef.current || !runtime?.liveSpeakEnabled || !selected?.runtimeReady) return undefined
+    if (avatarFailed || !iframeRef.current || !runtime?.liveSpeakEnabled || !selected?.runtimeReady) return undefined
     const adapter = new MetaPersonLiveSpeakAdapter({
       iframe: iframeRef.current,
       origin: runtime.liveSpeakOrigin,
+      onError: (caught) => {
+        if (!active) return
+        setAvatarFailed(true)
+        setError(caught.message)
+        setUiState(UI_STATES.ERROR)
+        reportProvider('livespeak', 'FALLBACK')
+      },
       onStateChange: (next) => {
+        if (!active) return
         setAvatarState(next)
         const speaking = next === DIGITAL_HUMAN_STATES.SPEAKING
         realtimeAdapter.current?.setAvatarSpeaking(speaking)
@@ -157,37 +228,55 @@ export default function DigitalHumanWorkspace({
       },
     })
     avatarAdapter.current = adapter
-    adapter.initialize().then(() => adapter.loadCharacter(selected)).catch((caught) => { reportProvider('livespeak', 'FALLBACK'); setError(caught.message) })
-    return () => adapter.dispose()
-  }, [runtime, selected, reportProvider])
+    adapter.initialize().then(() => { if (active) return adapter.loadCharacter(selected) }).catch((caught) => { if (active) { reportProvider('livespeak', 'FALLBACK'); setAvatarFailed(true); setError(caught.message); setUiState(UI_STATES.ERROR) } })
+    return () => { active = false; adapter.dispose() }
+  }, [runtime, selected, reportProvider, sessionRevision, avatarFailed, loading])
 
   const toggleMic = async () => {
-    if (!runtime?.liveKitEnabled || !selected) return
+    if (!runtime?.liveKitEnabled || !selected || micTransition.current || turnInFlight.current || avatarAdapter.current?.getState() === DIGITAL_HUMAN_STATES.SPEAKING) return
+    micTransition.current = true
+    setIsMicPending(true)
+    const generation = conversationGeneration.current
+    const micRevision = ++micRequestRevision.current
+    const adapter = realtimeAdapter.current
     setError('')
     try {
       if (realtimeState === REALTIME_STATES.DISCONNECTED || realtimeState === REALTIME_STATES.ERROR) {
         const access = await createDigitalHumanLiveKitToken({ characterId: selected.id, sessionId: sessionId.current })
-        await realtimeAdapter.current.connect(access.token, access.url)
+        if (generation !== conversationGeneration.current || micRevision !== micRequestRevision.current) return
+        await adapter.connect(access.token, access.url)
+        if (generation !== conversationGeneration.current) { await adapter.disconnect(); return }
       }
-      const enable = realtimeAdapter.current.getState() !== REALTIME_STATES.LISTENING
-      await realtimeAdapter.current.setMicrophoneEnabled(enable)
+      if (micRevision !== micRequestRevision.current || turnInFlight.current) return
+      const enable = adapter.getState() !== REALTIME_STATES.LISTENING
+      await adapter.setMicrophoneEnabled(enable)
+      if (generation !== conversationGeneration.current || micRevision !== micRequestRevision.current) return
       setUiState(enable ? UI_STATES.LISTENING : UI_STATES.IDLE)
     } catch (caught) {
+      if (generation !== conversationGeneration.current || micRevision !== micRequestRevision.current) return
       setError(caught.message)
       setUiState(UI_STATES.ERROR)
+    } finally {
+      if (generation === conversationGeneration.current && micRevision === micRequestRevision.current) {
+        micTransition.current = false
+        setIsMicPending(false)
+      }
     }
   }
 
   const resolveSearch = async () => {
     if (!search.trim()) return
     setError('')
+    const generation = conversationGeneration.current
+    const lookupRevision = ++identityLookupRevision.current
     try {
       // Catalog search is intentionally context-free. A bare ambiguous name must
       // always return candidates instead of inheriting the previously selected
       // character and silently binding the next session to the wrong identity.
       const result = await resolveDigitalHumanIdentity({ surface: search.trim() })
+      if (generation !== conversationGeneration.current || lookupRevision !== identityLookupRevision.current) return
       if (result.status === 'RESOLVED') {
-        setSelectedId(result.characterId)
+        resetConversation(result.characterId)
         setIdentityCandidates([])
       } else if (result.status === 'AMBIGUOUS') {
         setIdentityCandidates(result.candidates)
@@ -195,7 +284,7 @@ export default function DigitalHumanWorkspace({
         setIdentityCandidates([])
         setError('没有找到对应的 Core 100 人物。')
       }
-    } catch (caught) { setError(caught.message) }
+    } catch (caught) { if (generation === conversationGeneration.current && lookupRevision === identityLookupRevision.current) setError(caught.message) }
   }
 
   const togglePreviewVoice = () => {
@@ -230,20 +319,23 @@ export default function DigitalHumanWorkspace({
       </header>
 
       <div className="dh-status" role="status"><span>{STATE_LABELS[uiState]}</span><small>内容 {runtime?.contentReviewState || 'UNKNOWN'} · RAG {runtime?.retrievalMode || 'UNKNOWN'} · Avatar {avatarState} · Realtime {realtimeState}</small></div>
-      {error && <div className="dh-error" role="alert">{error}<button type="button" onClick={() => { setError(''); setUiState(UI_STATES.IDLE) }}>关闭</button></div>}
+      {error && <div className="dh-error" role="alert">{error}<button type="button" onClick={() => setError('')}>关闭</button></div>}
+      <DigitalHumanReadinessPanel readiness={runtime?.readiness} />
 
       <div className={`dh-layout ${lockCharacter ? 'dh-layout-locked' : ''}`}>
         {!lockCharacter && <aside className="dh-catalog">
           <div className="dh-search"><input aria-label="搜索圣经人物" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="姓名、英文名或 characterId" /><button type="button" onClick={resolveSearch}>识别</button></div>
-          {!!identityCandidates.length && <div className="dh-candidates" role="group" aria-label="请选择具体人物"><strong>这个名称对应多位人物，请明确选择：</strong>{identityCandidates.map((item) => <button type="button" key={item.characterId} onClick={() => { setSelectedId(item.characterId); setIdentityCandidates([]) }}>{item.stableLabel}</button>)}</div>}
-          <div className="dh-character-list">{filtered.map((item) => <button type="button" className={selectedId === item.id ? 'active' : ''} key={item.id} onClick={() => { setSelectedId(item.id); setMessages([]); sessionId.current = makeId('session') }}><span>{item.canonicalName}</span><small>{item.englishName} · {item.catalogTier}</small></button>)}</div>
+          {!!identityCandidates.length && <div className="dh-candidates" role="group" aria-label="请选择具体人物"><strong>这个名称对应多位人物，请明确选择：</strong>{identityCandidates.map((item) => <button type="button" key={item.characterId} onClick={() => resetConversation(item.characterId)}>{item.stableLabel}</button>)}</div>}
+          <div className="dh-character-list">{filtered.map((item) => <button type="button" className={selectedId === item.id ? 'active' : ''} key={item.id} onClick={() => resetConversation(item.id)}><span>{item.canonicalName}</span><small>{item.englishName} · {item.catalogTier}</small></button>)}</div>
         </aside>}
 
         <div className="dh-experience">
           <section className="dh-stage">
-            {runtime?.liveSpeakEnabled && selected?.runtimeReady ? <iframe ref={iframeRef} title={`${selected.canonicalName} LiveSpeak Avatar`} src={runtime.liveSpeakEmbedUrl} allow="microphone" sandbox="allow-scripts allow-same-origin" /> : <div className="dh-portrait-fallback"><img src={selected?.avatar?.portraitUrl || SHARED_PREVIEW_PORTRAIT_URL} alt={selected?.avatar?.portraitUrl ? `${selected.canonicalName}数字人艺术重建肖像` : `${selected?.canonicalName || '圣经人物'}共用3D艺术占位肖像`} /><strong>{selected?.canonicalName}</strong><small>{selected?.englishName} · 文本安全回退</small>{!selected?.avatar?.portraitUrl && <span className="dh-preview-label">共享3D艺术占位肖像 · 非历史真实肖像</span>}<p>{selected?.runtimeReady ? 'LiveSpeak 当前不可用。' : 'GLB、Voice 或内容尚未完成人工审批，因此不加载 Avatar。'}</p><button className="dh-preview-voice" type="button" onClick={togglePreviewVoice}>{previewVoicePlaying ? '停止默认预览音色' : '试听默认预览音色'}</button></div>}
+            {runtime?.liveSpeakEnabled && selected?.runtimeReady && !avatarFailed ? <iframe key={sessionRevision} ref={iframeRef} title={`${selected.canonicalName} LiveSpeak Avatar`} src={runtime.liveSpeakEmbedUrl} allow="microphone" sandbox="allow-scripts allow-same-origin" onError={() => { setAvatarFailed(true); setError('Avatar 页面加载失败，已保留文字回答。') }} /> : <div className="dh-portrait-fallback"><img src={selected?.avatar?.portraitUrl || SHARED_PREVIEW_PORTRAIT_URL} alt={selected?.avatar?.portraitUrl ? `${selected.canonicalName}数字人艺术重建肖像` : `${selected?.canonicalName || '圣经人物'}共用3D艺术占位肖像`} /><strong>{selected?.canonicalName}</strong><small>{selected?.englishName} · 文本安全回退</small>{!selected?.avatar?.portraitUrl && <span className="dh-preview-label">共享3D艺术占位肖像 · 非历史真实肖像</span>}<p>{selected?.runtimeReady ? 'LiveSpeak 当前不可用。' : 'GLB、Voice 或内容尚未完成人工审批，因此不加载 Avatar。'}</p><button className="dh-preview-voice" type="button" onClick={togglePreviewVoice}>{previewVoicePlaying ? '停止默认预览音色' : '试听默认预览音色'}</button>{avatarFailed && <button type="button" disabled={isTurnPending} onClick={() => { setError(''); setAvatarFailed(false); setAvatarState(DIGITAL_HUMAN_STATES.BOOTING); setSessionRevision((value) => value + 1) }}>重新连接数字人</button>}</div>}
             <p className="dh-disclosure">{selected?.disclosure}</p>
           </section>
+
+          {selected && <DigitalHumanStudyPanel key={selected.id} characterId={selected.id} onAsk={submitQuestion} onSelectCharacter={lockCharacter ? undefined : resetConversation} />}
 
           <section className="dh-conversation" aria-live="polite">
             {!messages.length && <div className="dh-empty"><strong>从已审核问题开始</strong><div>{(selected?.recommendedQuestions || []).slice(0, 4).map((item) => <button type="button" key={item} onClick={() => submitQuestion(item)}>{item}</button>)}</div></div>}
@@ -252,7 +344,7 @@ export default function DigitalHumanWorkspace({
 
           <form className="dh-composer" onSubmit={(event) => { event.preventDefault(); submitQuestion(question) }}>
             <textarea aria-label="向当前圣经人物提问" value={question} onChange={(event) => setQuestion(event.target.value)} maxLength={1200} placeholder={`向${selected?.canonicalName || '人物'}提问；未有足够证据时系统会拒绝断言。`} />
-            <div><button type="button" onClick={toggleMic} disabled={!runtime?.liveKitEnabled || uiState === UI_STATES.SPEAKING || realtimeState === REALTIME_STATES.PROCESSING}>{realtimeState === REALTIME_STATES.LISTENING ? '停止收音' : realtimeState === REALTIME_STATES.PROCESSING ? '正在处理语音' : '语音提问'}</button><button className="primary" type="submit" disabled={!question.trim() || turnInFlight.current || uiState === UI_STATES.SPEAKING}>发送并核验</button></div>
+            <div><button type="button" onClick={() => resetConversation(selectedId)}>清空本次会话</button><button type="button" onClick={toggleMic} disabled={!runtime?.liveKitEnabled || isMicPending || isTurnPending || uiState === UI_STATES.SPEAKING || realtimeState === REALTIME_STATES.PROCESSING}>{isMicPending ? '正在连接语音' : realtimeState === REALTIME_STATES.LISTENING ? '停止收音' : realtimeState === REALTIME_STATES.PROCESSING ? '正在处理语音' : '语音提问'}</button><button className="primary" type="submit" disabled={!question.trim() || isTurnPending || uiState === UI_STATES.SPEAKING}>发送并核验</button></div>
           </form>
           <p className="dh-privacy">默认不持久化原始麦克风音频或转录正文；审计仅保存人物、证据等级、引用、原因码、延迟与 Trace ID。</p>
         </div>
