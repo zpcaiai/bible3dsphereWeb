@@ -43,15 +43,15 @@ it('renders a successful module and clears the retry marker', async () => {
   expect(sessionStorage.getItem('lazy-chunk-reload')).toBeNull()
 })
 
-it('keeps a graph failure marker when another lazy module succeeds, then exposes local recovery', async () => {
-  sessionStorage.setItem('mirror-graph-chunk-reload', '1')
+it.each(['mirror-graph-chunk-reload', 'mirror-page-chunk-reload'])('keeps %s when another lazy module succeeds, then exposes local recovery', async (retryKey) => {
+  sessionStorage.setItem(retryKey, '1')
   const Other = lazyWithRetry(() => Promise.resolve({ default: () => <div>other ready</div> }))
   render(<Suspense fallback={null}><Other /></Suspense>)
   await screen.findByText('other ready')
-  expect(sessionStorage.getItem('mirror-graph-chunk-reload')).toBe('1')
+  expect(sessionStorage.getItem(retryKey)).toBe('1')
   const back = vi.fn()
   const Graph = lazyWithRetry(() => Promise.reject(new TypeError('failed chunk')), {
-    retryKey: 'mirror-graph-chunk-reload',
+    retryKey,
     renderError: ({ onBack }) => <button onClick={onBack}>Return to cards</button>,
   })
   render(<Suspense fallback={null}><Graph onBack={back} /></Suspense>)
