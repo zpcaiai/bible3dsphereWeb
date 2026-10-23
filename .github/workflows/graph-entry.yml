@@ -46,7 +46,7 @@ jobs:
       - name: Install Chinese glyphs for actual browser captures
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends fonts-noto-cjk
+          sudo apt-get -o Acquire::Retries=1 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 install -y --no-install-recommends fonts-noto-cjk
           mkdir -p "$RUNNER_TEMP/graph-entry-server"
           fc-match -f '%{family}\n' ':lang=zh-cn' | tee "$RUNNER_TEMP/graph-entry-server/cjk-font.txt"
           grep -q 'Noto Sans CJK' "$RUNNER_TEMP/graph-entry-server/cjk-font.txt"
@@ -170,7 +170,7 @@ jobs:
       - name: Install Chinese glyphs for actual person captures
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends fonts-noto-cjk
+          sudo apt-get -o Acquire::Retries=1 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 install -y --no-install-recommends fonts-noto-cjk
           fc-match -f '%{family}\n' ':lang=zh-cn' | tee "$RUNNER_TEMP/digital-human-all100/cjk-font.txt"
           grep -q 'Noto Sans CJK' "$RUNNER_TEMP/digital-human-all100/cjk-font.txt"
       - name: Pin canonical source immediately before the campaign
