@@ -27,6 +27,13 @@ canonical served bytes and backend RUNNING/database health, plus four deployed
 snapshot files against backendf8116ea1d268e5b92489cb9dac3b5f88e8558f01.
 The build emits a source commit and SHA256 manifest. Main verification compares
 the canonical HTML, startup and mirror module bytes to this exact-source manifest.
+The captured production HTML has one Cloudflare Web Analytics insertion. The
+verifier permits only that exact pinned beacon at the measured body-end location,
+then requires every original HTML byte to match the build hash. Raw HTML, the
+origin-equivalent bytes and both hashes remain in evidence. Unknown/changed or
+duplicate scripts and changed application bytes fail closed; four rejection and
+identity tests run inside the unchanged300-second holistic window. This reflects
+the [documented edge injection](https://developers.cloudflare.com/web-analytics/faq/).
 PR verification targets the currently deployed base as a verifier check only;
 the pre-manifest base is explicitly labelled sourceBound=false and cannot qualify
 the new source or the100-person campaign.

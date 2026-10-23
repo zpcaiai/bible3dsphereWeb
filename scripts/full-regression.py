@@ -87,6 +87,7 @@ try:
     (OUTPUT / 'source-before.json').write_text(json.dumps(before, indent=2))
     assert all(not value['trackedStatus'] for value in before.values()), 'Tracked sources must start clean'
     assert before['backend']['head'] == 'f8116ea1d268e5b92489cb9dac3b5f88e8558f01'
+    run('release-proof-unit', FRONTEND, [sys.executable, '-m', 'unittest', 'discover', '-s', 'scripts', '-p', 'test_release_html.py', '-v'])
     run('frontend-full', FRONTEND, ['node_modules/.bin/vitest', 'run', '--maxWorkers=1', '--minWorkers=1',
         '--reporter=default', '--reporter=json', '--outputFile=' + str(OUTPUT / 'vitest.json')])
     vitest = json.loads((OUTPUT / 'vitest.json').read_text())
