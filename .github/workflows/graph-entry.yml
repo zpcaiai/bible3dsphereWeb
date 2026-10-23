@@ -102,6 +102,7 @@ jobs:
             dist/assets/MirrorPage-*.js
             dist/assets/RelationshipGraphView-*.js
             dist/assets/index-*.js
+            dist/release-manifest.json
           if-no-files-found: warn
           retention-days: 14
 
@@ -115,6 +116,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           EXPECTED_FRONTEND_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.sha }}
+          ALLOW_LEGACY_BASE: ${{ github.event_name == 'pull_request' && '1' || '0' }}
           RELEASE_EVIDENCE_DIR: ${{ runner.temp }}/deployment-proof
         run: python3 scripts/verify-release.py
       - uses: actions/upload-artifact@v4
@@ -136,6 +138,10 @@ jobs:
       cancel-in-progress: false
     steps:
       - uses: actions/checkout@v4
+      - name: Initialize campaign evidence before fallible setup
+        run: |
+          mkdir "$RUNNER_TEMP/digital-human-all100"
+          sha256sum e2e/fixtures/digital-human-all100.json > "$RUNNER_TEMP/digital-human-all100/oracle.sha256"
       - name: Original admission before dependencies
         run: |
           python3 - <<'PY'
@@ -153,21 +159,26 @@ jobs:
           cache: npm
       - id: install
         run: npm ci
+      - name: Pin canonical source immediately before the campaign
+        id: source-before
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EXPECTED_FRONTEND_SHA: ${{ github.sha }}
+          RELEASE_EVIDENCE_DIR: ${{ runner.temp }}/digital-human-all100/source-before
+        run: python3 scripts/verify-release.py
       - name: Actual canonical graph and recovery
         env:
           GRAPH_ENTRY_PROFILE_BASE_URL: https://holiness.uk
         run: |
           google-chrome --version
           git rev-parse HEAD
-          mkdir "$RUNNER_TEMP/digital-human-all100"
-          sha256sum e2e/fixtures/digital-human-all100.json > "$RUNNER_TEMP/digital-human-all100/oracle.sha256"
           status=0
           for mode in none chunk-cache-hang catalogue-failure; do
             GRAPH_ENTRY_PROFILE_DIR="$RUNNER_TEMP/digital-human-all100/profile-$mode" GRAPH_ENTRY_PROFILE_FAULT="$mode" timeout 300s node scripts/graph-entry-profile.mjs || status=1
           done
           exit "$status"
       - name: All ten original groups, sequential real requests
-        if: always() && steps.install.outcome == 'success'
+        if: always() && steps.install.outcome == 'success' && steps.source-before.outcome == 'success'
         env:
           DIGITAL_HUMAN_REPAIR_BASE_URL: https://holiness.uk
         run: |
@@ -193,6 +204,13 @@ jobs:
           done
           sha256sum --check "$RUNNER_TEMP/digital-human-all100/oracle.sha256"
           exit "$status"
+      - name: Pin canonical source immediately after the campaign
+        if: always() && steps.install.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EXPECTED_FRONTEND_SHA: ${{ github.sha }}
+          RELEASE_EVIDENCE_DIR: ${{ runner.temp }}/digital-human-all100/source-after
+        run: python3 scripts/verify-release.py
       - name: Verify the complete new denominator
         if: always() && steps.install.outcome == 'success'
         run: |
@@ -203,22 +221,41 @@ jobs:
           people=[json.loads(p.read_text()) for p in root.glob('[0-9][0-9]/**/person-result.json')]
           turns=[json.loads(p.read_text()) for p in root.glob('[0-9][0-9]/**/turn-[0-2].json')]
           anchors=[json.loads(p.read_text()) for p in root.glob('[0-9][0-9]/**/anchor-*.json')]
-          summary={'sourceSHA':os.environ['GITHUB_SHA'],'people':len(people),'turns':len(turns),'anchors':len(anchors),'status':'FAILED_INCOMPLETE','external':{'providers':'NOT_RUN','media':'NOT_VERIFIED','humanReview':'NOT_APPROVED'}}
+          summary={'scope':'Current deployed-source graph recovery and all100 frozen-topic mobile regression','sourceSHA':os.environ['GITHUB_SHA'],'people':len(people),'turns':len(turns),'anchors':len(anchors),'status':'FAILED_INCOMPLETE','external':{'providers':'NOT_RUN','media':'NOT_VERIFIED','humanReview':'NOT_APPROVED'}}
           try:
+              before=json.loads((root/'source-before/deployment-receipt.json').read_text())
+              after=json.loads((root/'source-after/deployment-receipt.json').read_text())
+              assert before['status']==after['status']=='PASS' and before['sourceBound'] and after['sourceBound']
+              assert before['expectedFrontendSHA']==after['expectedFrontendSHA']==os.environ['GITHUB_SHA']
+              assert before['canonical']==after['canonical'] and before['backend']['spaceSHA']==after['backend']['spaceSHA'] and before['backend']['sourceFiles']==after['backend']['sourceFiles']
+              for mode in ['none','chunk-cache-hang','catalogue-failure']:
+                  profile=json.loads((root/f'profile-{mode}'/'profile-data.json').read_text())
+                  assert profile['status']=='ENTRY_PASSED_ROOT_UNRESOLVED' and len(profile['results'])==2
+                  assert all(r['originalFiveSecondAssertion']=='PASS' and r['graphDataStatus']=='PASS' for r in profile['results'])
               assert len(people)==100 and {p['characterId'] for p in people}=={p['characterId'] for p in oracle['characters']}
               assert all(p['completed'] and len(p['steps'])==3 and all(s['matched'] for s in p['steps']) for p in people)
               assert len(turns)==300 and len(anchors)==10
               all_turns=turns+anchors
               assert all(t['http']==200 and t['body']['state']=='TEXT_ONLY' and t['body']['response']['contentReviewState']=='THEOLOGY_REVIEW' and t['body']['response']['speechApproved'] is False for t in all_turns)
               assert len({t['body']['turnId'] for t in all_turns})==310
+              assert len({t['body']['traceId'] for t in all_turns})==310
+              assert all(t['characterId']==t['request']['characterId']==t['body']['response']['characterId'] and t['request']['sessionId']==t['body']['sessionId'] and (not t['request'].get('turnId') or t['request']['turnId']==t['body']['turnId']) for t in all_turns)
               processes=[json.loads(line) for line in (root/'processes.jsonl').read_text().splitlines()]
               assert len(processes)==10 and all(p['pid']>0 and p['exit_code']==0 for p in processes)
+              assert {p['group'] for p in processes}=={f'{g:02d}' for g in range(1,11)}
               for group in range(1,11):
                   stats=json.loads((root/f'{group:02d}'/'playwright-report.json').read_text())['stats']
                   assert stats['expected']==10 and stats['unexpected']==stats['skipped']==stats['flaky']==0
               assert len(list(root.glob('[0-9][0-9]/**/header-layout.json')))==100
+              for path in root.glob('[0-9][0-9]/**/header-layout.json'):
+                  layout=json.loads(path.read_text())
+                  assert layout['headingWidth']>=200 and layout['badgeLeft']>=layout['sectionLeft'] and layout['badgeRight']<=min(layout['sectionRight'],layout['viewportWidth'])
+                  assert all(layout[a]<=layout[b] for a,b in [('badgeScrollWidth','badgeClientWidth'),('headerScrollWidth','headerClientWidth'),('titleScrollWidth','titleClientWidth'),('documentWidth','viewportWidth')])
               assert len(list(root.glob('[0-9][0-9]/**/entry.png')))==len(list(root.glob('[0-9][0-9]/**/followups.png')))==100
               summary.update(status='PASS',matching=100,followups=200,switches=100,layouts=100,screenshots=200,acceptedTurnPOSTs=310)
+          except BaseException as error:
+              summary.update(errorType=type(error).__name__,error=str(error),uncompletedPeople=100-len([p for p in people if p['completed']]))
+              raise
           finally:
               (root/'summary.json').write_text(json.dumps(summary,indent=2))
               files={str(p.relative_to(root)):hashlib.sha256(p.read_bytes()).hexdigest() for p in root.rglob('*') if p.is_file() and p.name!='manifest.json'}
@@ -266,7 +303,7 @@ jobs:
           git -C "$RUNNER_TEMP/backend" remote add origin https://github.com/zpcaiai/bible3dsphere.git
           git -C "$RUNNER_TEMP/backend" fetch --depth 1 origin f8116ea1d268e5b92489cb9dac3b5f88e8558f01
           git -C "$RUNNER_TEMP/backend" checkout --detach FETCH_HEAD
-          python -m pip install 'pytest>=7.4,<9' 'pytest-asyncio>=0.21,<0.24' 'fastapi==0.115.6' 'pydantic>=2.10,<3' 'httpx>=0.27,<0.29' 'jsonschema>=4.20,<5' 'PyYAML>=6.0.2,<7' 'cryptography>=42,<46' 'PyJWT>=2.8,<3' 'slowapi>=0.1.9,<0.2' 'bcrypt>=4,<5' 'livekit-agents>=1.8.2,<1.9.0' numpy requests psycopg2-binary
+          python -m pip install 'pytest>=7.4,<9' 'pytest-asyncio>=0.21,<0.24' 'uvicorn[standard]==0.32.1' 'fastapi==0.115.6' 'pydantic>=2.10,<3' 'httpx>=0.27,<0.29' 'jsonschema>=4.20,<5' 'PyYAML>=6.0.2,<7' 'cryptography>=42,<46' 'PyJWT>=2.8,<3' 'slowapi>=0.1.9,<0.2' 'bcrypt>=4,<5' 'livekit-agents>=1.8.2,<1.9.0' numpy requests psycopg2-binary
           PYTHONPATH="$RUNNER_TEMP/backend/backend" python -m pytest --noconftest --collect-only -q "$RUNNER_TEMP/backend/backend/tests"/test_digital_human*.py
       - name: Actual full frontend, backend, lint and build
         env:

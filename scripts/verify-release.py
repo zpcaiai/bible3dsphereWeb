@@ -7,6 +7,7 @@ import re
 import subprocess
 import time
 from urllib.request import Request, urlopen
+from urllib.error import HTTPError
 
 expected = os.environ['EXPECTED_FRONTEND_SHA']
 backend = 'f8116ea1d268e5b92489cb9dac3b5f88e8558f01'
@@ -56,6 +57,26 @@ try:
     (output / 'canonical.html').write_bytes(html)
     (output / 'canonical-startup.js').write_bytes(startup_bytes)
     (output / 'canonical-mirror.js').write_bytes(mirror_bytes)
+    # The pre-manifest production base is observable on PRs only. Main and the
+    # actual campaign always require an exact source/hash binding.
+    legacy_base = os.environ.get('ALLOW_LEGACY_BASE') == '1' and os.environ.get('GITHUB_EVENT_NAME') == 'pull_request'
+    manifest = None
+    try:
+        manifest_bytes = fetch('https://holiness.uk/release-manifest.json')
+        (output / 'release-manifest.response').write_bytes(manifest_bytes)
+        manifest = json.loads(manifest_bytes)
+    except (HTTPError, json.JSONDecodeError) as error:
+        if not legacy_base or isinstance(error, HTTPError) and error.code != 404:
+            raise
+    receipt['sourceBound'] = manifest is not None
+    if manifest is not None:
+        assert manifest['schemaVersion'] == 1 and manifest['sourceCommit'] == expected, 'Canonical source differs from expected main'
+        for path, payload in [('index.html', html), (startup_path.lstrip('/'), startup_bytes), (mirror_path.lstrip('/'), mirror_bytes)]:
+            assert manifest['files'][path] == hashlib.sha256(payload).hexdigest(), path + ' manifest hash mismatch'
+        receipt['canonical']['manifestSHA256'] = hashlib.sha256(manifest_bytes).hexdigest()
+    else:
+        assert legacy_base, 'Source manifest is required'
+        receipt['scope'] += ' LEGACY BASE OBSERVATION ONLY; canonical source is not qualified.'
     space = json.loads(fetch('https://huggingface.co/api/spaces/StephenZao/biblesphere'))
     commits = json.loads(fetch('https://huggingface.co/api/spaces/StephenZao/biblesphere/commits/main'))
     health = json.loads(fetch('https://holiness.uk/api/health'))
