@@ -45,7 +45,7 @@ const DevotionJournalPage = lazyWithRetry(() => import('./DevotionJournalPage'))
 const RecycleBinPage = lazyWithRetry(() => import('./RecycleBinPage'))
 const DecisionSupportPage = lazyWithRetry(() => import('./DecisionSupportPage'))
 const CaregiverConsolePage = lazyWithRetry(() => import('./features/crisis-care/app/CaregiverConsolePage'))
-const MirrorPage = lazyWithRetry(() => import('./MirrorPage'))
+const MirrorPage = lazyWithRetry(() => import('./MirrorPage'), { retryKey: 'mirror-page-chunk-reload' })
 const DailySoulQuestionPage = lazyWithRetry(() => import('./DailySoulQuestionPage'))
 const GrowthMapPage = lazyWithRetry(() => import('./GrowthMapPage'))
 const SpiritualPartnerPage = lazyWithRetry(() => import('./SpiritualPartnerPage'))
@@ -170,6 +170,7 @@ function AppContent() {
     return null
   })
   const [activePanel, setActivePanel] = useState(navRestore?.panel || 'sphere')
+  const mirrorActive = activePanel === 'mirror' || activePanel === 'mirror-graph'
   useEffect(() => { try { window.sessionStorage.setItem('nav-activePanel', activePanel) } catch { /* ignore */ } }, [activePanel])
   const _mirrorRestore = (navRestore && (navRestore.panel === 'mirror' || navRestore.panel === 'mirror-graph')) ? navRestore.mirror : null
   const [pendingPanel, setPendingPanel] = useState(null)
@@ -240,6 +241,9 @@ function AppContent() {
   const [showQuickDevotion, setShowQuickDevotion] = useState(false)
 
   useEffect(() => {
+    // Restored mirror routes need their code/API connections first. These
+    // datasets belong to the covered home screen and resume when it returns.
+    if (mirrorActive) return
     fetchLayout()
       .then((data) => setLayoutItems(curateAnthropicEmotionLayout(data.items || [])))
       .catch((err) => {
@@ -247,7 +251,7 @@ function AppContent() {
         setError(String(err))
       })
     fetchHistory().then((data) => setHistoryItems(data.items || [])).catch((err) => { console.warn('[App.jsx] ignored async error', err) })
-  }, [setLayoutItems, setHistoryItems, setError])
+  }, [mirrorActive, setLayoutItems, setHistoryItems, setError])
 
   const loadDailySnapshot = useCallback(async () => {
     setDailySnapshotLoading(true)
@@ -266,21 +270,26 @@ function AppContent() {
 
   useEffect(() => {
     if (user) {
-      loadDailySnapshot()
-      fetchEmotionTrajectory(getToken()).then(setEmotionTrajectory).catch((err) => { console.warn('[App.jsx] ignored async error', err) })
-      fetchMyChurch(getToken()).then(data => setMyChurch(data.church || null)).catch(() => setMyChurch(null))
+      if (!mirrorActive) {
+        loadDailySnapshot()
+        fetchEmotionTrajectory(getToken()).then(setEmotionTrajectory).catch((err) => { console.warn('[App.jsx] ignored async error', err) })
+      }
     } else {
       setDailySnapshot(null)
       setDailySnapshotLoading(false)
       setDailySnapshotError(false)
       setEmotionTrajectory(null)
-      setMyChurch(undefined)
-      setChurchSkipped(false)
     }
-  }, [loadDailySnapshot, user])
+  }, [loadDailySnapshot, mirrorActive, user])
+
+  useEffect(() => {
+    if (user) fetchMyChurch(getToken()).then(data => setMyChurch(data.church || null)).catch(() => setMyChurch(null))
+    else { setMyChurch(undefined); setChurchSkipped(false) }
+  }, [user])
 
   // Community heatmap — fetch on mount and every 5 minutes (no auth required)
   useEffect(() => {
+    if (mirrorActive) return
     function loadHeatmap () {
       fetchCommunityHeatmap(24, 8).then(data => {
         if (data.emotions?.length) setCommunityHeatmap(data.emotions)
@@ -289,7 +298,7 @@ function AppContent() {
     loadHeatmap()
     const interval = setInterval(loadHeatmap, 5 * 60 * 1000)
     return () => clearInterval(interval)
-  }, [setCommunityHeatmap])
+  }, [mirrorActive, setCommunityHeatmap])
 
   useEffect(() => {
     let cancelled = false
@@ -1611,14 +1620,14 @@ function AppContent() {
           <section className="mobile-pane mobile-sphere-pane" style={{display: 'flex'}}>
             <div className="mobile-sphere-stage">
               <Suspense fallback={<div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#060b18', color: 'rgba(255,255,255,0.45)', fontSize: '13px' }}>{i18nT('加载中…')}</div>}>
-                <EmotionSphereScene
+                {activePanel === 'sphere' && <EmotionSphereScene
                   onVerseTrigger={handleVerseTrigger}
                   expandedVerseId={expandedVerseId}
                   versePrayers={versePrayers}
                   versePrayerLoading={versePrayerLoading}
                   handleVerseClick={handleVerseClick}
                   onSelectFeature={setSelectedFeature}
-                />
+                />}
               </Suspense>
             </div>
 

@@ -7,7 +7,7 @@ import { lazy } from 'react'
 
 const KEY = 'lazy-chunk-reload'
 
-async function purgeAndReload() {
+export async function purgeAndReload(reload = () => window.location.reload()) {
   // A recovery reload must return to the mirror entry the user opened.
   // App consumes this one-shot marker; ordinary reloads keep their behavior.
   try {
@@ -16,13 +16,22 @@ async function purgeAndReload() {
       sessionStorage.setItem('lazy-chunk-mirror-restore', '1')
     }
   } catch { /* storage may be unavailable */ }
+  // CacheStorage can hang (for example while the storage process is stalled).
+  // Optional cleanup must never prevent the navigation that repairs a chunk.
+  let timeout
   try {
-    if ('caches' in window) {
-      const keys = await caches.keys()
-      await Promise.all(keys.filter((k) => k !== 'offline-pack-v1').map((k) => caches.delete(k)))
-    }
-  } catch { /* ignore */ }
-  window.location.reload()
+    await Promise.race([
+      (async () => {
+        if ('caches' in window) {
+          const keys = await caches.keys()
+          await Promise.all(keys.filter((k) => k !== 'offline-pack-v1').map((k) => caches.delete(k)))
+        }
+      })(),
+      new Promise(resolve => { timeout = setTimeout(resolve, 1000) }),
+    ])
+  } catch { /* cleanup is best effort */ }
+  finally { clearTimeout(timeout) }
+  reload()
 }
 
 export default function lazyWithRetry(importer, { retryKey = KEY, renderError } = {}) {
@@ -34,9 +43,9 @@ export default function lazyWithRetry(importer, { retryKey = KEY, renderError } 
       let reloaded = false
       try { reloaded = sessionStorage.getItem(retryKey) === '1'; sessionStorage.setItem(retryKey, '1') } catch { /* ignore */ }
       if (!reloaded) {
-        purgeAndReload()
-        // 返回永不 resolve 的 promise，维持 Suspense fallback 直到刷新接管
-        return new Promise(() => {})
+        // Propagate a rejected navigation to the normal error boundary. Keep
+        // Suspense only after the reload has actually been requested.
+        return purgeAndReload().then(() => new Promise(() => {}))
       }
       if (renderError) {
         return { default: (props) => renderError({ ...props, retry: () => {

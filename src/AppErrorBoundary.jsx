@@ -3,26 +3,13 @@
 // 懒加载失败抛错导致页面残缺/空白。这里捕获后：清 SW 缓存 → 整页强刷一次（防循环）。
 import { Component } from 'react'
 import { t } from './i18n/runtime'
+import { purgeAndReload } from './lazyWithRetry'
 
 const RETRY_KEY = 'app-crash-reload'
 
 function isChunkError(err) {
   const msg = String(err?.message || err || '')
   return /Loading chunk|Failed to fetch dynamically imported module|Importing a module script failed|error loading dynamically imported/i.test(msg)
-}
-
-async function purgeCachesAndReload() {
-  try {
-    if ('caches' in window) {
-      const keys = await caches.keys()
-      await Promise.all(keys.filter((k) => k !== 'offline-pack-v1').map((k) => caches.delete(k)))
-    }
-  } catch { /* ignore */ }
-  try {
-    const regs = await navigator.serviceWorker?.getRegistrations?.()
-    if (regs) await Promise.all(regs.map((r) => r.update()))
-  } catch { /* ignore */ }
-  window.location.reload()
 }
 
 export default class AppErrorBoundary extends Component {
@@ -40,17 +27,15 @@ export default class AppErrorBoundary extends Component {
       try {
         if (sessionStorage.getItem(RETRY_KEY) !== '1') {
           sessionStorage.setItem(RETRY_KEY, '1')
-          purgeCachesAndReload()
+          purgeAndReload().catch(() => { /* keep the explicit recovery button available */ })
           return
         }
       } catch { /* ignore */ }
     }
   }
 
-  componentDidMount() {
-    // 正常挂载成功 → 清除防循环标记
-    try { sessionStorage.removeItem(RETRY_KEY) } catch { /* ignore */ }
-  }
+  // A document mounting does not prove its deferred chunks can load. Retain
+  // the automatic-reload cap across documents until the user explicitly retries.
 
   render() {
     if (this.state.error) {
@@ -66,7 +51,7 @@ export default class AppErrorBoundary extends Component {
             {t('通常是版本更新后的缓存不一致导致。点击下方按钮清理缓存并刷新即可恢复。')}
           </div>
           <button
-            onClick={() => { try { sessionStorage.removeItem(RETRY_KEY) } catch { /* ignore */ } purgeCachesAndReload() }}
+            onClick={() => { try { sessionStorage.removeItem(RETRY_KEY) } catch { /* ignore */ } purgeAndReload().catch(() => {}) }}
             style={{
               padding: '12px 28px', borderRadius: 12, border: 'none', cursor: 'pointer',
               background: '#e8b04b', color: '#2a1d05', fontSize: 15, fontWeight: 700, fontFamily: 'inherit',

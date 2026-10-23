@@ -24,19 +24,29 @@ async function admitTurn() {
   lastTurnAt = Date.now()
 }
 
-async function openMirror() {
+async function openMirror(info) {
   await page.addInitScript(() => localStorage.setItem('app-lang', 'zh'))
   await page.addLocatorHandler(page.getByRole('button', { name: '暂时跳过', exact: true }), button => button.click())
   await page.goto('/')
-  await page.getByRole('button', { name: '🔑 登录', exact: true }).click()
-  const account = await page.getByLabel('默认登录账号', { exact: true }).locator('code').allTextContents()
-  expect(account).toHaveLength(2)
-  await page.getByLabel('邮箱', { exact: true }).fill(account[0])
-  await page.getByLabel('密码', { exact: true }).fill(account[1])
-  const login = page.waitForResponse(response => response.url().endsWith('/api/auth/email/login'))
-  await page.getByRole('button', { name: '🔑 登录', exact: true }).click()
-  expect((await login).status()).toBe(200)
-  await expect(page.getByRole('button', { name: '退出登录', exact: true })).toBeVisible()
+  let loginHTTP = null
+  try {
+    await page.getByRole('button', { name: '🔑 登录', exact: true }).click()
+    const account = await page.getByLabel('默认登录账号', { exact: true }).locator('code').allTextContents()
+    expect(account).toHaveLength(2)
+    await page.getByLabel('邮箱', { exact: true }).fill(account[0])
+    await page.getByLabel('密码', { exact: true }).fill(account[1])
+    const login = page.waitForResponse(response => response.url().endsWith('/api/auth/email/login'))
+    login.catch(() => {})
+    await page.getByRole('button', { name: '🔑 登录', exact: true }).click()
+    loginHTTP = (await login).status()
+    expect(loginHTTP).toBe(200)
+    await expect(page.getByRole('button', { name: '退出登录', exact: true })).toBeVisible()
+    await expect(page.getByLabel('默认登录账号', { exact: true })).toHaveCount(0)
+  } catch (error) {
+    save(info, 'authentication-failure', { phase: 'login', http: loginHTTP, errorType: error.name, status: 'FAILED_INCOMPLETE' })
+    await page.close().catch(() => {})
+    throw new Error('Authentication stage failed; account values and raw locator errors are deliberately omitted')
+  }
   await page.getByRole('button', { name: '人物图谱', exact: false }).tap()
   await expect(page.getByRole('heading', { name: '关系图谱', exact: true })).toBeVisible()
   await page.getByRole('button', { name: '返回', exact: true }).tap()
@@ -134,7 +144,7 @@ test.beforeAll(async ({ browser, baseURL }, info) => {
   page = await context.newPage()
   page.setDefaultTimeout(30_000)
   page.setDefaultNavigationTimeout(30_000)
-  await openMirror()
+  await openMirror(info)
   // Even each group's first person must leave a real, populated other-person
   // conversation; this is10 extra real anchor turns, separate from100*3.
   const anchor = cases[(selected[0].index + 98) % 100]
