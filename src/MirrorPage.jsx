@@ -276,15 +276,15 @@ function DigitalHumanMirrorExperience({ char }) {
       border: '1px solid rgba(177,153,255,.32)',
       background: 'radial-gradient(circle at 90% 8%,rgba(138,112,240,.18),transparent 38%),rgba(255,255,255,.035)',
     }}>
-      <header style={{ display: 'flex', alignItems: 'start', justifyContent: 'space-between', gap: 12, marginBottom: 12 }}>
-        <div>
+      <header style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'start', justifyContent: 'space-between', gap: 12, marginBottom: 12 }}>
+        <div style={{ flex: '1 1 200px', minWidth: 0, overflowWrap: 'anywhere' }}>
           <span style={{ color: '#c8b7ff', fontSize: 10, letterSpacing: 1.2 }}>BIBLE DIGITAL HUMAN · CHARACTER {characterId}</span>
           <h3 style={{ margin: '4px 0', color: '#fff', fontSize: 19 }}>{char.name}的数字人镜鉴</h3>
           <p style={{ margin: 0, color: 'rgba(255,255,255,.62)', fontSize: 12, lineHeight: 1.6 }}>
             经文约束回答与镜鉴资料共享同一人物身份；形象和声音是教育性艺术重建，不代表真实历史肖像或原声。
           </p>
         </div>
-        <span style={{ flexShrink: 0, padding: '4px 9px', borderRadius: 20, background: 'rgba(83,203,142,.12)', color: '#9ee8bd', fontSize: 10 }}>characterId · {characterId}</span>
+        <span style={{ flexShrink: 0, maxWidth: '100%', boxSizing: 'border-box', overflowWrap: 'anywhere', padding: '4px 9px', borderRadius: 20, background: 'rgba(83,203,142,.12)', color: '#9ee8bd', fontSize: 10 }}>characterId · {characterId}</span>
       </header>
       <Suspense fallback={<div role="status" style={{ minHeight: 220, display: 'grid', placeContent: 'center', color: 'rgba(255,255,255,.6)' }}>正在加载{char.name}数字人…</div>}>
         <DigitalHumanWorkspace initialCharacterId={characterId} lockCharacter showOperations={false} variant="embedded" />
