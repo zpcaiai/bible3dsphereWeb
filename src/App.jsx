@@ -1611,14 +1611,14 @@ function AppContent() {
           <section className="mobile-pane mobile-sphere-pane" style={{display: 'flex'}}>
             <div className="mobile-sphere-stage">
               <Suspense fallback={<div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#060b18', color: 'rgba(255,255,255,0.45)', fontSize: '13px' }}>{i18nT('加载中…')}</div>}>
-                <EmotionSphereScene
+                {activePanel === 'sphere' && <EmotionSphereScene
                   onVerseTrigger={handleVerseTrigger}
                   expandedVerseId={expandedVerseId}
                   versePrayers={versePrayers}
                   versePrayerLoading={versePrayerLoading}
                   handleVerseClick={handleVerseClick}
                   onSelectFeature={setSelectedFeature}
-                />
+                />}
               </Suspense>
             </div>
 

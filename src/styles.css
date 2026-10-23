@@ -536,7 +536,7 @@ button, input, textarea {
   -webkit-overflow-scrolling: touch;
   touch-action: pan-y pinch-zoom;
   overscroll-behavior-y: contain;
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
 }
 
 .mobile-topbar {

@@ -57,6 +57,7 @@ try{
     r.loginHTTP=(await pending).status();expect(r.loginHTTP).toBe(200)
     await expect(page.getByRole('button',{name:'退出登录',exact:true})).toBeVisible({timeout:5000})
     r.phase='tap';r.beforeTapAt=Date.now();r.browserBeforeTap=await page.evaluate(()=>performance.now())
+    r.homeCanvasesBefore=await page.locator('.mobile-sphere-stage canvas').count()
     const graphReply=page.waitForResponse(response=>new URL(response.url()).pathname==='/api/characters/knowledge-graph'&&response.request().method()==='GET').catch(error=>({probeErrorName:error.name}))
     await page.getByRole('button',{name:'人物图谱',exact:false}).tap()
     r.graphTapCompleted=true
@@ -72,6 +73,8 @@ try{
     expect(graph.success).toBe(true);r.graphNodeCount=graph.data.nodes.length;expect(r.graphNodeCount).toBeGreaterThan(0)
     await expect.poll(()=>page.getByRole('heading',{name:'关系图谱',exact:true}).locator('../..').locator('svg circle').count(),{timeout:5000}).toBe(r.graphNodeCount)
     r.graphDataStatus='PASS'
+    await expect(page.locator('.mobile-sphere-stage canvas')).toHaveCount(0,{timeout:5000})
+    r.homeCanvasesAfter=await page.locator('.mobile-sphere-stage canvas').count()
    }catch(error){
     r.failureAt=Date.now();r.originalFiveSecondAssertion=r.originalFiveSecondAssertion==='PASS'?'PASS':(r.phase==='graph_assert'?'FAIL':'NOT_RUN');r.errorName=error.name
     if(r.phase==='graph_assert')r.assertEndAt=r.failureAt
