@@ -43,6 +43,14 @@ jobs:
           cache: npm
           cache-dependency-path: package-lock.json
 
+      - name: Install Chinese glyphs for actual browser captures
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends fonts-noto-cjk
+          mkdir -p "$RUNNER_TEMP/graph-entry-server"
+          fc-match -f '%{family}\n' ':lang=zh-cn' | tee "$RUNNER_TEMP/graph-entry-server/cjk-font.txt"
+          grep -q 'Noto Sans CJK' "$RUNNER_TEMP/graph-entry-server/cjk-font.txt"
+
       - run: npm ci
 
       - name: Build exact PR source
@@ -159,6 +167,12 @@ jobs:
           cache: npm
       - id: install
         run: npm ci
+      - name: Install Chinese glyphs for actual person captures
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends fonts-noto-cjk
+          fc-match -f '%{family}\n' ':lang=zh-cn' | tee "$RUNNER_TEMP/digital-human-all100/cjk-font.txt"
+          grep -q 'Noto Sans CJK' "$RUNNER_TEMP/digital-human-all100/cjk-font.txt"
       - name: Pin canonical source immediately before the campaign
         id: source-before
         env:

@@ -111,6 +111,8 @@ async function verifyMobileHeader(person, info) {
   const section = page.getByRole('region', { name: `${person.mirrorName}的数字人镜鉴`, exact: true })
   const heading = section.getByRole('heading', { name: `${person.mirrorName}的数字人镜鉴`, exact: true })
   const badge = section.getByText(`characterId · ${person.characterId}`, { exact: true })
+  await heading.scrollIntoViewIfNeeded()
+  await expect(heading).toBeInViewport()
   const layout = await section.evaluate((node) => {
     const box = node.getBoundingClientRect()
     const header = node.querySelector('header')
@@ -119,13 +121,19 @@ async function verifyMobileHeader(person, info) {
       headerClientWidth: header.clientWidth, headerScrollWidth: header.scrollWidth,
       titleClientWidth: title.clientWidth, titleScrollWidth: title.scrollWidth }
   })
-  layout.headingWidth = (await heading.boundingBox()).width
+  const headingBox = await heading.boundingBox()
+  layout.headingWidth = headingBox.width
+  layout.headingTop = headingBox.y
+  layout.headingBottom = headingBox.y + headingBox.height
+  layout.viewportHeight = page.viewportSize().height
   Object.assign(layout, await badge.evaluate(node => {
     const box = node.getBoundingClientRect()
     return { badgeLeft: box.left, badgeRight: box.right, badgeClientWidth: node.clientWidth, badgeScrollWidth: node.scrollWidth }
   }))
   save(info, 'header-layout', layout)
   expect(layout.headingWidth, 'Mobile title/disclosure must not be squeezed into a narrow ID column').toBeGreaterThanOrEqual(200)
+  expect(layout.headingTop).toBeGreaterThanOrEqual(0)
+  expect(layout.headingBottom).toBeLessThanOrEqual(layout.viewportHeight)
   expect(layout.badgeLeft).toBeGreaterThanOrEqual(layout.sectionLeft)
   expect(layout.badgeRight).toBeLessThanOrEqual(layout.sectionRight)
   expect(layout.badgeRight).toBeLessThanOrEqual(layout.viewportWidth)
@@ -160,8 +168,8 @@ for (const person of cases) {
     const result = { characterId: person.characterId, mirrorId: person.mirrorId, canonicalName: person.canonicalName, viewport: page.viewportSize(), steps: [], completed: false }
     try {
       const workspace = await choose(person)
-      await page.screenshot({ path: info.outputPath('entry.png') })
       await verifyMobileHeader(person, info)
+      await page.screenshot({ path: info.outputPath('entry.png') })
       let last
       for (const [step, question] of [person.question, ...person.followups].entries()) {
         last = await ask(workspace, person, question, step, info, last, `turn-${step}`)
