@@ -29,7 +29,7 @@ try{
   browser=await chromium.launch({channel:'chrome',headless:true})
   out.browserVersion=browser.version()
   for(const width of [390,320]){
-   const context=await browser.newContext({baseURL,viewport:{width,height:844},isMobile:true,hasTouch:true})
+   const context=await browser.newContext({baseURL,viewport:{width,height:844},isMobile:true,hasTouch:true,serviceWorkers:fault==='none'?'allow':'block'})
    const page=await context.newPage();page.setDefaultTimeout(30000);page.setDefaultNavigationTimeout(30000)
    const r={width,started:Date.now(),phase:'setup',originalAssertionMs:5000,assetEvents:[],parentSamples:[],observedTurnPOSTs:0}
    let last=performance.now()
