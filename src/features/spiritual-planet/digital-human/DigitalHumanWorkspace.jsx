@@ -48,6 +48,8 @@ export default function DigitalHumanWorkspace({
   const [error, setError] = useState('')
   const [identityCandidates, setIdentityCandidates] = useState([])
   const [loading, setLoading] = useState(true)
+  const [loadAttempt, setLoadAttempt] = useState(0)
+  const [loadError, setLoadError] = useState('')
   const [previewVoicePlaying, setPreviewVoicePlaying] = useState(false)
   const [sessionRevision, setSessionRevision] = useState(0)
   const [isTurnPending, setIsTurnPending] = useState(false)
@@ -79,17 +81,26 @@ export default function DigitalHumanWorkspace({
 
   useEffect(() => {
     let active = true
-    Promise.all([getDigitalHumanCatalog(), getDigitalHumanRuntime()])
+    const controller = new AbortController()
+    setLoading(true)
+    setLoadError('')
+    Promise.all([getDigitalHumanCatalog({ signal: controller.signal }), getDigitalHumanRuntime({ signal: controller.signal })])
       .then(([catalogData, runtimeData]) => {
         if (!active) return
-        setCatalog((catalogData.characters || []).map(validateCharacterProfile))
+        if (!Array.isArray(catalogData?.characters) || !catalogData.characters.length || !runtimeData) {
+          throw new Error('人物资料暂不可用，请重新加载。')
+        }
+        setCatalog(catalogData.characters.map(validateCharacterProfile))
         setCatalogMeta(catalogData)
         setRuntime(runtimeData)
       })
-      .catch((caught) => active && setError(caught.message))
+      .catch((caught) => {
+        if (active && caught.name !== 'AbortError') setLoadError(caught.message)
+        controller.abort()
+      })
       .finally(() => active && setLoading(false))
-    return () => { active = false }
-  }, [])
+    return () => { active = false; controller.abort() }
+  }, [loadAttempt])
 
   const resetConversation = useCallback((characterId) => {
     conversationGeneration.current += 1
@@ -310,6 +321,10 @@ export default function DigitalHumanWorkspace({
   }
 
   if (loading) return <section className={`dh-shell ${variant === 'embedded' ? 'dh-embedded' : ''}`}><p role="status">正在加载 100 人经文约束目录…</p></section>
+  if (loadError) return <section className={`dh-shell ${variant === 'embedded' ? 'dh-embedded' : ''}`} aria-label="数字人加载失败">
+    <div className="dh-error" role="alert"><span>人物资料暂不可用：{loadError}</span></div>
+    <button className="dh-preview-voice" type="button" onClick={() => setLoadAttempt(value => value + 1)}>重新加载人物资料</button>
+  </section>
 
   return (
     <section className={`dh-shell ${variant === 'embedded' ? 'dh-embedded' : ''}`} aria-label={`${selected?.canonicalName || '圣经人物'}数字人`}>

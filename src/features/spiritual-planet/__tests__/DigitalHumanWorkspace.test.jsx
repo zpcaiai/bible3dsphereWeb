@@ -80,6 +80,30 @@ describe('DigitalHumanWorkspace embedded character mode', () => {
     expect(document.body.textContent).not.toContain('运行监控')
   })
 
+  it('keeps a failed initialization out of the conversation UI and reloads both real request paths on retry', async () => {
+    getDigitalHumanCatalog.mockRejectedValueOnce(new Error('Failed to fetch'))
+    render(<DigitalHumanWorkspace showOperations={false} />)
+    expect(await screen.findByRole('alert')).toBeTruthy()
+    expect(screen.queryByRole('textbox', { name: '向当前圣经人物提问' })).toBeNull()
+    fireEvent.click(screen.getByRole('button', { name: '重新加载人物资料' }))
+    await screen.findByRole('region', { name: '大卫数字人' })
+    expect(getDigitalHumanCatalog).toHaveBeenCalledTimes(2)
+    expect(getDigitalHumanRuntime).toHaveBeenCalledTimes(2)
+    expect(screen.queryByRole('alert')).toBeNull()
+  })
+
+  it('cancels both initialization requests when the workspace unmounts', async () => {
+    getDigitalHumanCatalog.mockImplementationOnce(() => new Promise(() => {}))
+    getDigitalHumanRuntime.mockImplementationOnce(() => new Promise(() => {}))
+    const { unmount } = render(<DigitalHumanWorkspace showOperations={false} />)
+    const catalogSignal = getDigitalHumanCatalog.mock.calls[0][0]?.signal
+    const runtimeSignal = getDigitalHumanRuntime.mock.calls[0][0]?.signal
+    expect(catalogSignal).toBeInstanceOf(AbortSignal)
+    expect(runtimeSignal).toBe(catalogSignal)
+    unmount()
+    expect(catalogSignal.aborted).toBe(true)
+  })
+
   it('uses the shared preview portrait and speaks only the fixed voice disclosure', async () => {
     getDigitalHumanCatalog.mockResolvedValue({
       characters: [{ ...DAVID, avatar: { ...DAVID.avatar, portraitUrl: null, reviewState: 'THEOLOGY_REVIEW' } }],

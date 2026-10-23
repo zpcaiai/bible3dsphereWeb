@@ -5,7 +5,11 @@ const TOKEN_KEY = 'bible-sphere-token'
 const USER_KEY = 'bible-sphere-user'
 const BACKEND_DOWN_MSG = '后端服务不可用，请稍后重试'
 
-const authUrl = (path) => `${API_BASE}/auth${path}`
+export function authApiBase(hostname = globalThis.window?.location?.hostname || '') {
+  return ['holiness.uk', 'www.holiness.uk'].includes(hostname.toLowerCase()) ? '/api' : API_BASE
+}
+
+const authUrl = (path) => `${authApiBase()}/auth${path}`
 
 // Bearer credentials deliberately live only in this JavaScript realm. A reload
 // requires re-authentication; that is preferable to leaving a long-lived account

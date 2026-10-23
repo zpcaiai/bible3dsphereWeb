@@ -1,6 +1,10 @@
 import { API_BASE } from '../../../api'
+import { getToken, COOKIE_SESSION_SENTINEL } from '../../../auth'
 
-const ROOT = `${API_BASE}/v1/digital-human`
+export function digitalHumanApiRoot(hostname = globalThis.window?.location?.hostname || '') {
+  const base = ['holiness.uk', 'www.holiness.uk'].includes(hostname.toLowerCase()) ? '/api' : API_BASE
+  return `${base}/v1/digital-human`
+}
 
 async function request(path, options = {}) {
   const { signal, timeoutMs = 30_000, ...fetchOptions } = options
@@ -10,10 +14,14 @@ async function request(path, options = {}) {
   else signal?.addEventListener('abort', cancel, { once: true })
   let timedOut = false
   const timer = setTimeout(() => { timedOut = true; controller.abort() }, timeoutMs)
+  const token = getToken()
   try {
-    const response = await fetch(`${ROOT}${path}`, {
+    const response = await fetch(`${digitalHumanApiRoot()}${path}`, {
       credentials: 'same-origin', ...fetchOptions, signal: controller.signal,
-      headers: { ...(options.body ? { 'Content-Type': 'application/json' } : {}), ...options.headers },
+      headers: {
+        ...(token && token !== COOKIE_SESSION_SENTINEL ? { Authorization: `Bearer ${token}` } : {}),
+        ...(options.body ? { 'Content-Type': 'application/json' } : {}), ...options.headers,
+      },
     })
     const data = await response.json().catch(() => ({}))
     if (!response.ok) throw new Error(typeof data.detail === 'string' ? data.detail : `请求失败（${response.status}）`)
@@ -27,8 +35,8 @@ async function request(path, options = {}) {
   }
 }
 
-export const getDigitalHumanCatalog = () => request('/catalog')
-export const getDigitalHumanRuntime = () => request('/runtime')
+export const getDigitalHumanCatalog = (options = {}) => request('/catalog', options)
+export const getDigitalHumanRuntime = (options = {}) => request('/runtime', options)
 export const createDigitalHumanTurn = (payload, options = {}) => request('/turns', { ...options, method: 'POST', body: JSON.stringify(payload) })
 export const getDigitalHumanStudy = (characterId, options = {}) => request(`/characters/${encodeURIComponent(characterId)}/study`, options)
 export const createDigitalHumanLiveKitToken = (payload) => request('/livekit/token', { method: 'POST', body: JSON.stringify(payload) })

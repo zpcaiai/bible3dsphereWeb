@@ -97,6 +97,7 @@ export default function RelationshipGraphView({ token, onBack, initialFocus = ''
   // ---- fetch ----
   useEffect(() => {
     let alive = true
+    const controller = new AbortController()
     setLoading(true); setError('')
     const params = new URLSearchParams()
     if (focus) { params.set('focus', focus); params.set('depth', String(depth)) }
@@ -104,6 +105,7 @@ export default function RelationshipGraphView({ token, onBack, initialFocus = ''
     params.set('limit', focus ? '260' : '180')
     fetch(`${graphApiBase(API_BASE, window.location.hostname)}/characters/knowledge-graph?${params.toString()}`, {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
+      signal: controller.signal,
     })
       .then((r) => r.ok ? r.json() : Promise.reject(new Error('HTTP ' + r.status)))
       .then((j) => {
@@ -115,7 +117,7 @@ export default function RelationshipGraphView({ token, onBack, initialFocus = ''
         setLoading(false)
       })
       .catch((e) => { if (alive) { setError(String(e.message || e)); setLoading(false) } })
-    return () => { alive = false }
+    return () => { alive = false; controller.abort() }
   }, [focus, depth, token, requestVersion])
 
   // ---- container size ----
@@ -298,7 +300,7 @@ export default function RelationshipGraphView({ token, onBack, initialFocus = ''
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
         </button>
         <h2 style={{ margin: 0, fontSize: 19, color: '#fff' }}>{en ? 'Relationship Graph' : '关系图谱'}</h2>
-        <form onSubmit={(e) => { e.preventDefault(); submitFocus(focusInput) }} style={{ display: 'flex', gap: 6, flex: 1, minWidth: 180 }}>
+        <form onSubmit={(e) => { e.preventDefault(); submitFocus(focusInput) }} style={{ display: 'flex', flexWrap: 'wrap', gap: 6, flex: 1, minWidth: 180 }}>
           <input value={focusInput} onChange={(e) => setFocusInput(e.target.value)} placeholder={en ? 'Focus on a person (e.g. David)' : '聚焦某人物（如 大卫）'}
             style={{ flex: 1, minWidth: 120, padding: '7px 11px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(255,255,255,0.08)', color: '#fff', fontSize: 13, outline: 'none' }}  aria-label={en ? 'Focus on a person (e.g. David)' : '聚焦某人物（如 大卫）'}/>
           <button type="submit" style={{ padding: '7px 12px', borderRadius: 8, border: 'none', background: '#007aff', color: '#fff', fontSize: 13, cursor: 'pointer', fontWeight: 600 }}>{en ? 'Focus' : '聚焦'}</button>
