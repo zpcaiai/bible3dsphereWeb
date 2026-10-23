@@ -1,9 +1,27 @@
 import { Suspense } from 'react'
 import { cleanup, render, screen, waitFor } from '@testing-library/react'
 import { afterEach, expect, it, vi } from 'vitest'
-import lazyWithRetry from '../lazyWithRetry'
+import lazyWithRetry, { purgeAndReload } from '../lazyWithRetry'
 
-afterEach(() => { cleanup(); sessionStorage.clear(); vi.restoreAllMocks() })
+afterEach(() => { cleanup(); sessionStorage.clear(); vi.restoreAllMocks(); vi.unstubAllGlobals(); vi.useRealTimers() })
+
+it.each(['keys', 'delete'])('reloads within one second even when CacheStorage.%s never settles', async (stage) => {
+  vi.useFakeTimers()
+  vi.stubGlobal('caches', {
+    keys: stage === 'keys' ? () => new Promise(() => {}) : async () => ['offline-pack-v1', 'stale-app'],
+    delete: vi.fn(() => new Promise(() => {})),
+  })
+  sessionStorage.setItem('nav-activePanel', 'mirror-graph')
+  const reload = vi.fn()
+  const recovery = purgeAndReload(reload)
+  await vi.advanceTimersByTimeAsync(999)
+  expect(reload).not.toHaveBeenCalled()
+  await vi.advanceTimersByTimeAsync(1)
+  expect(reload).toHaveBeenCalledOnce()
+  await recovery
+  expect(sessionStorage.getItem('lazy-chunk-mirror-restore')).toBe('1')
+  expect(caches.delete).not.toHaveBeenCalledWith('offline-pack-v1')
+})
 
 it('preserves the mirror entry before a failed chunk triggers recovery', async () => {
   sessionStorage.setItem('nav-activePanel', 'mirror-graph')

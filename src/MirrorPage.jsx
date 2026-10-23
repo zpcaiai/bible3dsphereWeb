@@ -652,7 +652,7 @@ function CharacterDetail({ char: _rawChar, onBack, user, token }) {
       )}
       {showMap && journey && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 200, background: '#0b1026' }}>
-          <Suspense fallback={<div role="status">{i18nT('加载中…')}</div>}>
+          <Suspense fallback={<div role="status">{i18nT('加载中…')} <button onClick={() => setShowMap(false)}>{i18nT('返回')}</button></div>}>
             <BibleMap config={buildCharacterMapConfig(char, journey)} onBack={() => setShowMap(false)} />
           </Suspense>
         </div>

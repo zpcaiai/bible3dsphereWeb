@@ -7,7 +7,7 @@ import { lazy } from 'react'
 
 const KEY = 'lazy-chunk-reload'
 
-async function purgeAndReload() {
+export async function purgeAndReload(reload = () => window.location.reload()) {
   // A recovery reload must return to the mirror entry the user opened.
   // App consumes this one-shot marker; ordinary reloads keep their behavior.
   try {
@@ -22,7 +22,7 @@ async function purgeAndReload() {
       await Promise.all(keys.filter((k) => k !== 'offline-pack-v1').map((k) => caches.delete(k)))
     }
   } catch { /* ignore */ }
-  window.location.reload()
+  reload()
 }
 
 export default function lazyWithRetry(importer, { retryKey = KEY, renderError } = {}) {
