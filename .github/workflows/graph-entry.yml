@@ -1,0 +1,90 @@
+name: Graph entry regression
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  cold-entry:
+    name: Real Chrome graph entry
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Original resource admission before install/build
+        run: |
+          python3 - <<'PY'
+          import json,os,shutil,time
+          for index in range(2):
+              if index: time.sleep(10)
+              start=time.monotonic()
+              time.sleep(2)
+              row={"load":os.getloadavg(),"cpus":os.cpu_count(),"freeBytes":shutil.disk_usage(".").free,"twoSecondSampleActualSeconds":time.monotonic()-start}
+              row["loadLimit"]=min(32,4*row["cpus"])
+              print(json.dumps(row),flush=True)
+              assert row["load"][0]<=row["loadLimit"] and row["freeBytes"]>=2*1024**3 and row["twoSecondSampleActualSeconds"]<=3
+          PY
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - run: npm ci
+
+      - name: Build exact PR source
+        run: |
+          npm run i18n:audit
+          timeout 300s npm run build
+
+      - name: Actual browser and source identity
+        run: |
+          google-chrome --version
+          node --version
+          git rev-parse HEAD
+          git diff --exit-code
+          sha256sum scripts/graph-entry-profile.mjs
+          mkdir -p "$RUNNER_TEMP/graph-entry-server"
+          python3 - <<'PY'
+          import hashlib,json,os,pathlib,subprocess
+          def git(*args): return subprocess.check_output(['git',*args],text=True).strip()
+          event=json.loads(pathlib.Path(os.environ['GITHUB_EVENT_PATH']).read_text())
+          files=['src/App.jsx','src/MirrorPage.jsx','src/RelationshipGraphView.jsx','src/lazyWithRetry.js','scripts/graph-entry-profile.mjs']
+          files+=sorted(str(p) for p in pathlib.Path('dist').rglob('*') if p.is_file())
+          receipt={'checkoutSHA':git('rev-parse','HEAD'),'checkoutTree':git('rev-parse','HEAD^{tree}'),'prHeadSHA':event.get('pull_request',{}).get('head',{}).get('sha'),'files':{p:hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest() for p in files}}
+          pathlib.Path(os.environ['RUNNER_TEMP'],'graph-entry-server','source-identity.json').write_text(json.dumps(receipt,indent=2))
+          PY
+
+      - name: Real built frontend with production API
+        env:
+          VITE_LOCAL_API_TARGET: https://holiness.uk
+          GRAPH_ENTRY_PROFILE_BASE_URL: http://127.0.0.1:4173
+          GRAPH_ENTRY_PROFILE_DIR: ${{ runner.temp }}/graph-entry
+        run: |
+          mkdir -p "$RUNNER_TEMP/graph-entry-server"
+          setsid npm run preview -- --host 127.0.0.1 --port 4173 > "$RUNNER_TEMP/graph-entry-server/preview.log" 2>&1 &
+          preview_pid=$!
+          trap 'kill -- -"$preview_pid" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent --max-time 2 http://127.0.0.1:4173/ > /dev/null; then break; fi
+            sleep 1
+          done
+          curl --fail --silent --max-time 25 http://127.0.0.1:4173/ > /dev/null
+          timeout 300s node scripts/graph-entry-profile.mjs
+
+      - name: Preserve actual successful or failed evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: graph-entry-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/graph-entry/
+            ${{ runner.temp }}/graph-entry-server/
+          if-no-files-found: warn
+          retention-days: 14
