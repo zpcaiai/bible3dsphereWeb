@@ -353,7 +353,7 @@ export default function DigitalHumanWorkspace({
           {selected && <DigitalHumanStudyPanel key={selected.id} characterId={selected.id} onAsk={submitQuestion} onSelectCharacter={lockCharacter ? undefined : resetConversation} />}
 
           <section className="dh-conversation" aria-live="polite">
-            {!messages.length && <div className="dh-empty"><strong>从已审核问题开始</strong><div>{(selected?.recommendedQuestions || []).slice(0, 4).map((item) => <button type="button" key={item} onClick={() => submitQuestion(item)}>{item}</button>)}</div></div>}
+            {!messages.length && <div className="dh-empty"><strong>从示例问题开始</strong><div>{(selected?.recommendedQuestions || []).slice(0, 4).map((item) => <button type="button" key={item} onClick={() => submitQuestion(item)}>{item}</button>)}</div></div>}
             {messages.map((item) => item.role === 'user' ? <article className="dh-message user" key={item.id}><span>你</span><p>{item.text}</p></article> : <article className="dh-message assistant" key={item.id}><header><strong>{selected?.canonicalName}</strong><EvidenceBadge level={item.response.groundingLevel} /></header><p>{item.response.displayText}</p>{!!item.response.references.length && <ul>{item.response.references.map((ref) => <li key={`${ref.sourceType}-${ref.locator}`}>{ref.locator} · {ref.claimSupport}</li>)}</ul>}{!!item.response.relatedCharacters.length && <p className="dh-related">人物图：{item.response.relatedCharacters.map((id) => catalog.find((character) => character.id === id)?.canonicalName || id).join(' · ')}</p>}<footer>{item.response.speechApproved ? '已通过发声门' : '仅文字显示 · 内容或资产仍需人工审核'} · Trace {item.traceId.slice(0, 10)}</footer></article>)}
           </section>
 
