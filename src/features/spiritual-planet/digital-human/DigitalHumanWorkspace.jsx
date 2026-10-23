@@ -46,6 +46,7 @@ export default function DigitalHumanWorkspace({
   const [avatarState, setAvatarState] = useState(DIGITAL_HUMAN_STATES.BOOTING)
   const [realtimeState, setRealtimeState] = useState(REALTIME_STATES.DISCONNECTED)
   const [error, setError] = useState('')
+  const [failedTurn, setFailedTurn] = useState(null)
   const [identityCandidates, setIdentityCandidates] = useState([])
   const [loading, setLoading] = useState(true)
   const [loadAttempt, setLoadAttempt] = useState(0)
@@ -117,6 +118,7 @@ export default function DigitalHumanWorkspace({
     setMessages([])
     setQuestion('')
     setError('')
+    setFailedTurn(null)
     setUiState(UI_STATES.IDLE)
     setIsTurnPending(false)
     micTransition.current = false
@@ -137,9 +139,13 @@ export default function DigitalHumanWorkspace({
     stopPreviewVoice.current?.()
   }, [])
 
-  const submitQuestion = useCallback(async (rawQuestion) => {
+  const submitQuestion = useCallback(async (rawQuestion, retryOf = null) => {
     const text = rawQuestion.trim()
     if (!text || !selected || turnInFlight.current) return
+    const previous = retryOf || (failedTurn?.text === text ? failedTurn : null)
+    const isRetry = previous?.characterId === selected.id
+      && previous.generation === conversationGeneration.current && previous.sessionId === sessionId.current
+    if (retryOf && !isRetry) return
     if (uiState === UI_STATES.SPEAKING || avatarAdapter.current?.getState() === DIGITAL_HUMAN_STATES.SPEAKING) {
       setError('当前采用半双工策略：请等待人物讲述结束后再提问。')
       return
@@ -150,18 +156,22 @@ export default function DigitalHumanWorkspace({
     setIsMicPending(false)
     setIsTurnPending(true)
     const generation = conversationGeneration.current
+    const requestSession = sessionId.current
+    const userMessageId = isRetry ? previous.userMessageId : makeId('user')
     const controller = new AbortController()
     const voiceSession = realtimeAdapter.current
     turnRequest.current = controller
     setError('')
+    setFailedTurn(null)
     setUiState(UI_STATES.RETRIEVING)
-    setMessages((items) => [...items, { id: makeId('user'), role: 'user', text }].slice(-40))
-    setQuestion('')
+    if (!isRetry) setMessages((items) => [...items, { id: userMessageId, role: 'user', text }].slice(-40))
+    setQuestion(current => isRetry && current.trim() !== text ? current : '')
+    let responseCommitted = false
     try {
       await voiceSession?.beginTurn()
       if (generation !== conversationGeneration.current) return
       const envelope = await createDigitalHumanTurn({
-        characterId: selected.id, question: text, sessionId: sessionId.current, turnId: makeId('turn'),
+        characterId: selected.id, question: text, sessionId: requestSession, turnId: makeId('turn'),
         ...(topicContext.current.length ? { context: { characterId: selected.id, topicIds: topicContext.current } } : {}),
       }, { signal: controller.signal })
       if (generation !== conversationGeneration.current) return
@@ -169,6 +179,7 @@ export default function DigitalHumanWorkspace({
       const response = validateDigitalHumanResponse(envelope.response, selected.id)
       topicContext.current = (response.relatedEvents || []).filter((id) => /^[a-z0-9_-]{1,100}$/.test(id)).slice(-4)
       setMessages((items) => [...items, { id: envelope.turnId, role: 'assistant', response, traceId: envelope.traceId }].slice(-40))
+      responseCommitted = true
       if (envelope.state === 'READY_TO_SPEAK' && response.speechApproved && avatarAdapter.current?.getState() === DIGITAL_HUMAN_STATES.READY) {
         setUiState(UI_STATES.READY_TO_SPEAK)
         await realtimeAdapter.current?.setMicrophoneEnabled(false).catch(() => {})
@@ -178,8 +189,12 @@ export default function DigitalHumanWorkspace({
         setUiState(UI_STATES.IDLE)
       }
     } catch (caught) {
-      if (generation !== conversationGeneration.current || caught.name === 'AbortError') return
-      setError(caught.message)
+      if (generation !== conversationGeneration.current || controller.signal.aborted) return
+      setError(caught.message || '请求未完成，请重试。')
+      if (!responseCommitted) {
+        setFailedTurn({ text, characterId: selected.id, sessionId: requestSession, generation, userMessageId })
+        setQuestion(current => current || text)
+      }
       setUiState(UI_STATES.ERROR)
     } finally {
       voiceSession?.finishTurn()
@@ -189,7 +204,7 @@ export default function DigitalHumanWorkspace({
         setIsTurnPending(false)
       }
     }
-  }, [selected, uiState])
+  }, [selected, uiState, failedTurn])
 
   submitRef.current = submitQuestion
 
@@ -334,7 +349,7 @@ export default function DigitalHumanWorkspace({
       </header>
 
       <div className="dh-status" role="status"><span>{STATE_LABELS[uiState]}</span><small>内容 {runtime?.contentReviewState || 'UNKNOWN'} · RAG {runtime?.retrievalMode || 'UNKNOWN'} · Avatar {avatarState} · Realtime {realtimeState}</small></div>
-      {error && <div className="dh-error" role="alert">{error}<button type="button" onClick={() => setError('')}>关闭</button></div>}
+      {error && <div className="dh-error" role="alert"><span>{error}</span>{failedTurn && <button type="button" disabled={isTurnPending || uiState === UI_STATES.SPEAKING} onClick={() => submitQuestion(failedTurn.text, failedTurn)}>重试上次提问</button>}<button type="button" onClick={() => setError('')}>关闭</button></div>}
       <DigitalHumanReadinessPanel readiness={runtime?.readiness} />
 
       <div className={`dh-layout ${lockCharacter ? 'dh-layout-locked' : ''}`}>
