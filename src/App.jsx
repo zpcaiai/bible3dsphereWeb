@@ -170,6 +170,7 @@ function AppContent() {
     return null
   })
   const [activePanel, setActivePanel] = useState(navRestore?.panel || 'sphere')
+  const mirrorActive = activePanel === 'mirror' || activePanel === 'mirror-graph'
   useEffect(() => { try { window.sessionStorage.setItem('nav-activePanel', activePanel) } catch { /* ignore */ } }, [activePanel])
   const _mirrorRestore = (navRestore && (navRestore.panel === 'mirror' || navRestore.panel === 'mirror-graph')) ? navRestore.mirror : null
   const [pendingPanel, setPendingPanel] = useState(null)
@@ -240,6 +241,9 @@ function AppContent() {
   const [showQuickDevotion, setShowQuickDevotion] = useState(false)
 
   useEffect(() => {
+    // Restored mirror routes need their code/API connections first. These
+    // datasets belong to the covered home screen and resume when it returns.
+    if (mirrorActive) return
     fetchLayout()
       .then((data) => setLayoutItems(curateAnthropicEmotionLayout(data.items || [])))
       .catch((err) => {
@@ -247,7 +251,7 @@ function AppContent() {
         setError(String(err))
       })
     fetchHistory().then((data) => setHistoryItems(data.items || [])).catch((err) => { console.warn('[App.jsx] ignored async error', err) })
-  }, [setLayoutItems, setHistoryItems, setError])
+  }, [mirrorActive, setLayoutItems, setHistoryItems, setError])
 
   const loadDailySnapshot = useCallback(async () => {
     setDailySnapshotLoading(true)
@@ -266,21 +270,26 @@ function AppContent() {
 
   useEffect(() => {
     if (user) {
-      loadDailySnapshot()
-      fetchEmotionTrajectory(getToken()).then(setEmotionTrajectory).catch((err) => { console.warn('[App.jsx] ignored async error', err) })
-      fetchMyChurch(getToken()).then(data => setMyChurch(data.church || null)).catch(() => setMyChurch(null))
+      if (!mirrorActive) {
+        loadDailySnapshot()
+        fetchEmotionTrajectory(getToken()).then(setEmotionTrajectory).catch((err) => { console.warn('[App.jsx] ignored async error', err) })
+      }
     } else {
       setDailySnapshot(null)
       setDailySnapshotLoading(false)
       setDailySnapshotError(false)
       setEmotionTrajectory(null)
-      setMyChurch(undefined)
-      setChurchSkipped(false)
     }
-  }, [loadDailySnapshot, user])
+  }, [loadDailySnapshot, mirrorActive, user])
+
+  useEffect(() => {
+    if (user) fetchMyChurch(getToken()).then(data => setMyChurch(data.church || null)).catch(() => setMyChurch(null))
+    else { setMyChurch(undefined); setChurchSkipped(false) }
+  }, [user])
 
   // Community heatmap — fetch on mount and every 5 minutes (no auth required)
   useEffect(() => {
+    if (mirrorActive) return
     function loadHeatmap () {
       fetchCommunityHeatmap(24, 8).then(data => {
         if (data.emotions?.length) setCommunityHeatmap(data.emotions)
@@ -289,7 +298,7 @@ function AppContent() {
     loadHeatmap()
     const interval = setInterval(loadHeatmap, 5 * 60 * 1000)
     return () => clearInterval(interval)
-  }, [setCommunityHeatmap])
+  }, [mirrorActive, setCommunityHeatmap])
 
   useEffect(() => {
     let cancelled = false

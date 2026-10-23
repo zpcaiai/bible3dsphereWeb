@@ -130,7 +130,7 @@ jobs:
           git -C "$RUNNER_TEMP/backend" remote add origin https://github.com/zpcaiai/bible3dsphere.git
           git -C "$RUNNER_TEMP/backend" fetch --depth 1 origin f8116ea1d268e5b92489cb9dac3b5f88e8558f01
           git -C "$RUNNER_TEMP/backend" checkout --detach FETCH_HEAD
-          python -m pip install 'pytest>=7.4,<9' 'fastapi==0.115.6' 'pydantic>=2.10,<3' 'httpx>=0.27,<0.29' 'jsonschema>=4.20,<5' 'PyYAML>=6.0.2,<7' 'cryptography>=42,<46' 'PyJWT>=2.8,<3' 'slowapi>=0.1.9,<0.2' 'bcrypt>=4,<5' numpy requests psycopg2-binary
+          python -m pip install 'pytest>=7.4,<9' 'fastapi==0.115.6' 'pydantic>=2.10,<3' 'httpx>=0.27,<0.29' 'jsonschema>=4.20,<5' 'PyYAML>=6.0.2,<7' 'cryptography>=42,<46' 'PyJWT>=2.8,<3' 'slowapi>=0.1.9,<0.2' 'bcrypt>=4,<5' 'livekit-agents>=1.8.2,<1.9.0' numpy requests psycopg2-binary
       - name: Actual full frontend, backend, lint and build
         env:
           REGRESSION_BACKEND_DIR: ${{ runner.temp }}/backend
