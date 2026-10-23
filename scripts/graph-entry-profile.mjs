@@ -32,6 +32,14 @@ try{
    const context=await browser.newContext({baseURL,viewport:{width,height:844},isMobile:true,hasTouch:true,serviceWorkers:fault==='none'?'allow':'block'})
    const page=await context.newPage();page.setDefaultTimeout(30000);page.setDefaultNavigationTimeout(30000)
    const r={width,started:Date.now(),phase:'setup',originalAssertionMs:5000,assetEvents:[],parentSamples:[],observedTurnPOSTs:0}
+   const pendingAssets=new Map()
+   page.on('request',request=>{
+    const path=new URL(request.url()).pathname
+    if(path.startsWith('/assets/')){pendingAssets.set(request,{path,at:Date.now()});r.assetEvents.push({path,at:Date.now(),event:'request'})}
+   })
+   page.on('response',response=>{const path=new URL(response.url()).pathname;if(path.startsWith('/assets/'))r.assetEvents.push({path,at:Date.now(),event:'response',status:response.status()})})
+   page.on('requestfinished',request=>pendingAssets.delete(request))
+   page.on('requestfailed',request=>pendingAssets.delete(request))
    let last=performance.now()
    const timer=setInterval(()=>{const now=performance.now();r.parentSamples.push({at:Date.now(),actualGapMs:now-last,load:os.loadavg()});last=now},2000)
    timer.unref()
@@ -59,11 +67,12 @@ try{
     r.loginHTTP=(await pending).status();expect(r.loginHTTP).toBe(200)
     await expect(page.getByRole('button',{name:'退出登录',exact:true})).toBeVisible({timeout:5000})
     if(fault!=='none'){
-     r.injectedFailures=0;r.recoveryNavigations=0;r.cacheKeysCalls=0
+     r.injectedFailures=0;r.recoveryNavigations=0;r.cacheKeysCalls=0;r.routeEvents=[]
      page.on('framenavigated',frame=>{if(frame===page.mainFrame())r.recoveryNavigations++})
      await page.route(fault==='chunk-cache-hang'?'**/assets/MirrorPage-*.js':'**/assets/mirrorData-*.js',async route=>{
-      if(!r.injectedFailures){r.injectedFailures++;await route.abort('failed')}
-      else await route.continue()
+      r.routeEvents.push({stage:'entered',at:Date.now(),path:new URL(route.request().url()).pathname})
+      if(!r.injectedFailures){r.injectedFailures++;await route.abort('failed');r.routeEvents.push({stage:'aborted',at:Date.now()})}
+      else {await route.continue();r.routeEvents.push({stage:'continued',at:Date.now()})}
      })
      if(fault==='chunk-cache-hang'){
       await page.exposeFunction('__graphCacheAttempt',()=>{r.cacheKeysCalls++})
@@ -118,11 +127,19 @@ try{
      r.browserSnapshot=await page.evaluate(()=>{
       const box=e=>{const r=e.getBoundingClientRect();return {tag:e.tagName,role:e.getAttribute('role'),x:r.x,y:r.y,width:r.width,height:r.height}}
       const loads=[...document.querySelectorAll('span,p,div')].filter(e=>e.childElementCount===0&&e.textContent.trim()==='加载中…').slice(0,8).map(e=>({self:box(e),parent:e.parentElement?box(e.parentElement):null,grandparent:e.parentElement?.parentElement?box(e.parentElement.parentElement):null}))
-      return {capturedAt:performance.now(),probe:window.__graphEntryProfile,loadingNodes:loads,circleCounts:[...document.querySelectorAll('svg')].map(e=>e.querySelectorAll('circle').length),statuses:[...document.querySelectorAll('[role="status"]')].map(box),resources:performance.getEntriesByType('resource').filter(x=>new URL(x.name).pathname.startsWith('/assets/')).map(x=>({path:new URL(x.name).pathname,start:x.startTime,responseStart:x.responseStart,responseEnd:x.responseEnd,duration:x.duration,transferSize:x.transferSize}))}
+      return {capturedAt:performance.now(),timeOrigin:performance.timeOrigin,readyState:document.readyState,nav:{panel:sessionStorage.getItem('nav-activePanel'),mirror:sessionStorage.getItem('nav-mirror'),restore:sessionStorage.getItem('lazy-chunk-mirror-restore')},probe:window.__graphEntryProfile,loadingNodes:loads,circleCounts:[...document.querySelectorAll('svg')].map(e=>e.querySelectorAll('circle').length),statuses:[...document.querySelectorAll('[role="status"]')].map(box),resources:performance.getEntriesByType('resource').filter(x=>new URL(x.name).pathname.startsWith('/assets/')).map(x=>({path:new URL(x.name).pathname,start:x.startTime,responseStart:x.responseStart,responseEnd:x.responseEnd,duration:x.duration,transferSize:x.transferSize}))}
      })
      await page.screenshot({path:root+'entry-'+width+'-'+r.originalFiveSecondAssertion+'.png'})
     }catch(error){r.captureErrorName=error.name;process.exitCode=1}
     else r.captureSkipped='Before completed authenticated graph tap; no DOM or PNG captured to avoid auth values'
+    r.pendingAssetsAtCapture=[...pendingAssets.values()]
+    if(fault!=='none'&&r.originalFiveSecondAssertion==='FAIL'){
+     r.afterFailureObservations=[]
+     for(let i=0;i<3;i++){
+      await pause(2000)
+      r.afterFailureObservations.push({at:Date.now(),headingVisible:await page.getByRole('heading',{name:'关系图谱',exact:true}).isVisible().catch(()=>false),pendingAssets:[...pendingAssets.values()]})
+     }
+    }
     r.captureEndAt=Date.now();clearInterval(timer);clearTimeout(caseDeadline);out.results.push(r);await context.close()
    }
   }

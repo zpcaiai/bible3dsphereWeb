@@ -76,9 +76,11 @@ jobs:
             sleep 1
           done
           curl --fail --silent --max-time 25 http://127.0.0.1:4173/ > /dev/null
-          timeout 300s node scripts/graph-entry-profile.mjs
-          GRAPH_ENTRY_PROFILE_DIR="$RUNNER_TEMP/graph-entry-cache-fault" GRAPH_ENTRY_PROFILE_FAULT=chunk-cache-hang timeout 300s node scripts/graph-entry-profile.mjs
-          GRAPH_ENTRY_PROFILE_DIR="$RUNNER_TEMP/graph-entry-catalogue-fault" GRAPH_ENTRY_PROFILE_FAULT=catalogue-failure timeout 300s node scripts/graph-entry-profile.mjs
+          status=0
+          timeout 300s node scripts/graph-entry-profile.mjs || status=1
+          GRAPH_ENTRY_PROFILE_DIR="$RUNNER_TEMP/graph-entry-cache-fault" GRAPH_ENTRY_PROFILE_FAULT=chunk-cache-hang timeout 300s node scripts/graph-entry-profile.mjs || status=1
+          GRAPH_ENTRY_PROFILE_DIR="$RUNNER_TEMP/graph-entry-catalogue-fault" GRAPH_ENTRY_PROFILE_FAULT=catalogue-failure timeout 300s node scripts/graph-entry-profile.mjs || status=1
+          exit "$status"
 
       - name: Preserve actual successful or failed evidence
         if: always()
@@ -90,6 +92,9 @@ jobs:
             ${{ runner.temp }}/graph-entry-cache-fault/
             ${{ runner.temp }}/graph-entry-catalogue-fault/
             ${{ runner.temp }}/graph-entry-server/
+            dist/assets/MirrorPage-*.js
+            dist/assets/RelationshipGraphView-*.js
+            dist/assets/index-*.js
           if-no-files-found: warn
           retention-days: 14
 
