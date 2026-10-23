@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { API_BASE } from './api'
 import { getRuntimeLang } from './i18n/runtime'
-import { MIRROR_CHARACTERS } from './mirrorData'
 import { AutoText } from './autoTranslate'
 import { a11yClickProps } from './lib/a11yClick';
 
@@ -63,20 +62,24 @@ function chronoKey(node) {
   return eraIndex(node.era) * 1e6 + bookChapter(node.firstAppearance)
 }
 
-const CARD_BY_NAME = new Map()
-for (const c of MIRROR_CHARACTERS) { if (!CARD_BY_NAME.has(c.name)) CARD_BY_NAME.set(c.name, c) }
+const EMPTY_CHARACTERS = []
 const stripParen = (x) => String(x || '').replace(/[（(][^)）]*[)）]/g, '').trim()
-function resolveCard(node) {
+function cardResolver(characters) {
+ const byName = new Map()
+ for (const c of characters) if (!byName.has(c.name)) byName.set(c.name, c)
+ return function resolveCard(node) {
   if (!node || (node.type && node.type !== 'character')) return null
   const cands = [node.chineseName, node.name, ...(node.aliases || [])].filter(Boolean)
-  for (const nm of cands) { if (CARD_BY_NAME.has(nm)) return CARD_BY_NAME.get(nm) }
+  for (const nm of cands) { if (byName.has(nm)) return byName.get(nm) }
   const bases = cands.map(stripParen).filter(Boolean)
-  for (const c of MIRROR_CHARACTERS) { if (bases.includes(stripParen(c.name))) return c }
+  for (const c of characters) { if (bases.includes(stripParen(c.name))) return c }
   return null
+ }
 }
 
-export default function RelationshipGraphView({ token, onBack, initialFocus = '', onOpenChar, onFocusChange }) {
+export default function RelationshipGraphView({ token, onBack, initialFocus = '', onOpenChar, onFocusChange, characters = EMPTY_CHARACTERS }) {
   const en = getRuntimeLang() === 'en'
+  const resolveCard = useMemo(() => cardResolver(characters), [characters])
   const [raw, setRaw] = useState({ nodes: [], edges: [] })
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')

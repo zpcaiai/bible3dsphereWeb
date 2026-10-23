@@ -18,7 +18,7 @@ function loadMirrorData() {
   return mirrorDataPromise
 }
 import { saveJournal } from './api'
-import BibleMap from './BibleMap'
+const BibleMap = lazyWithRetry(() => import('./BibleMap'), { retryKey: 'mirror-map-chunk-reload' })
 import { CHARACTER_JOURNEYS, buildCharacterMapConfig } from './data/characterJourneys'
 import { getRuntimeLang } from './i18n/runtime'
 import { useAutoTranslate, AutoText } from './autoTranslate'
@@ -652,8 +652,9 @@ function CharacterDetail({ char: _rawChar, onBack, user, token }) {
       )}
       {showMap && journey && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 200, background: '#0b1026' }}>
-          <BibleMap config={buildCharacterMapConfig(char, journey)}
-            onBack={() => setShowMap(false)} />
+          <Suspense fallback={<div role="status">{i18nT('加载中…')}</div>}>
+            <BibleMap config={buildCharacterMapConfig(char, journey)} onBack={() => setShowMap(false)} />
+          </Suspense>
         </div>
       )}
 
@@ -971,7 +972,7 @@ function MirrorPageImpl({ user, token, guidance, onBack, initialView, initialCha
   if (view === 'graph') {
     return (
       <Suspense fallback={<div style={{ padding: 40, textAlign: 'center', color: 'rgba(255,255,255,0.6)' }}><AutoText>{i18nT('加载中…')}</AutoText></div>}>
-        <RelationshipGraphView token={token} onBack={() => setView('list')} onOpenChar={openChar} initialFocus={graphFocus} onFocusChange={setGraphFocus} />
+        <RelationshipGraphView token={token} onBack={() => setView('list')} onOpenChar={openChar} initialFocus={graphFocus} onFocusChange={setGraphFocus} characters={MIRROR_CHARACTERS} />
       </Suspense>
     )
   }
@@ -1101,6 +1102,13 @@ function FilterGroup({ label, value, options, onChange }) {
 // （MirrorPageImpl 的 useState 初始化器同步读取 MIRROR_CHARACTERS/MIRROR_THEMES）
 export default function MirrorPage(props) {
   const [dataState, setDataState] = useState(() => (MIRROR_CHARACTERS.length ? 'ready' : 'loading'))
+  const [entry, setEntry] = useState(() => ({ view: props.initialView, charId: props.initialCharId, focus: props.initialGraphFocus || '', returnView: props.initialReturnView }))
+  useEffect(() => {
+    if (entry.view !== 'graph') return
+    try {
+      sessionStorage.setItem('nav-mirror', JSON.stringify({ view: 'graph', charId: null, themeId: null, graphFocus: entry.focus, returnView: 'list' }))
+    } catch { /* storage may be unavailable */ }
+  }, [entry])
   useEffect(() => {
     if (dataState !== 'loading') return
     let alive = true
@@ -1113,7 +1121,22 @@ export default function MirrorPage(props) {
       })
     return () => { alive = false }
   }, [dataState])
-  if (dataState === 'ready') return <MirrorPageImpl {...props} />
+  // Graph requests do not depend on the optional card catalogue. Keep this
+  // instance mounted when metadata arrives so focus and selection survive.
+  if (entry.view === 'graph') return <>
+    {dataState === 'error' && <div role="alert">
+      <AutoText>{i18nT('数据加载失败，请检查网络后重试')}</AutoText>
+      <button onClick={() => setDataState('loading')}>{i18nT('重试')}</button>
+    </div>}
+    <Suspense fallback={<div role="status">{i18nT('加载中…')}</div>}>
+      <RelationshipGraphView token={props.token} initialFocus={entry.focus}
+        characters={MIRROR_CHARACTERS}
+        onFocusChange={focus => setEntry(current => ({ ...current, focus }))}
+        onBack={() => setEntry(current => ({ ...current, view: 'list' }))}
+        onOpenChar={char => setEntry(current => ({ ...current, view: 'character', charId: char.id, returnView: 'graph' }))} />
+    </Suspense>
+  </>
+  if (dataState === 'ready') return <MirrorPageImpl {...props} initialView={entry.view} initialCharId={entry.charId} initialGraphFocus={entry.focus} initialReturnView={entry.returnView} />
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 240, gap: 12, color: 'rgba(255,255,255,0.6)' }}>
       {dataState === 'error' ? (
