@@ -4,8 +4,10 @@ import { chromium, expect } from '@playwright/test'
 import crypto from 'node:crypto'
 const root=(process.env.GRAPH_ENTRY_PROFILE_DIR || os.tmpdir()+'/graph-entry-profile-'+process.pid+'-'+Date.now()).replace(/\/$/, '')+'/'
 const baseURL=process.env.GRAPH_ENTRY_PROFILE_BASE_URL || 'https://holiness.uk'
+const fault=process.env.GRAPH_ENTRY_PROFILE_FAULT || 'none'
+if(!['none','chunk-cache-hang','catalogue-failure'].includes(fault))throw Error('Unsupported controlled fault')
 fs.mkdirSync(root,{recursive:false})
-const out={scope:'Actual cold mobile graph entry only; original5s assertion; no turn requests deliberately invoked; does not reconstruct prior failures or certify root cause.',sourceSHA:process.env.GITHUB_SHA||null,baseURL,gate:[],results:[],product:'NOT_CERTIFIED'}
+const out={scope:'Actual mobile graph entry with original5s assertion and real backend; optional explicitly labelled network/cache fault injection, never fabricated API responses. No turn requests deliberately invoked; no reconstruction of historical failures.',fault,sourceSHA:process.env.GITHUB_SHA||null,baseURL,gate:[],results:[],product:'NOT_CERTIFIED'}
 const pause=ms=>new Promise(resolve=>setTimeout(resolve,ms))
 function free(){const s=fs.statfsSync(process.cwd());return s.bavail*s.bsize}
 async function admission(){
@@ -56,6 +58,20 @@ try{
     await page.getByRole('button',{name:'🔑 登录',exact:true}).click()
     r.loginHTTP=(await pending).status();expect(r.loginHTTP).toBe(200)
     await expect(page.getByRole('button',{name:'退出登录',exact:true})).toBeVisible({timeout:5000})
+    if(fault!=='none'){
+     r.injectedFailures=0;r.recoveryNavigations=0;r.cacheKeysCalls=0
+     page.on('framenavigated',frame=>{if(frame===page.mainFrame())r.recoveryNavigations++})
+     await page.route(fault==='chunk-cache-hang'?'**/assets/MirrorPage-*.js':'**/assets/mirrorData-*.js',async route=>{
+      if(!r.injectedFailures){r.injectedFailures++;await route.abort('failed')}
+      else await route.continue()
+     })
+     if(fault==='chunk-cache-hang'){
+      await page.exposeFunction('__graphCacheAttempt',()=>{r.cacheKeysCalls++})
+      await page.evaluate(()=>Object.defineProperty(window,'caches',{configurable:true,value:{keys:()=>{
+       window.__graphCacheAttempt();return new Promise(()=>{})
+      }}}))
+     }
+    }
     r.phase='tap';r.beforeTapAt=Date.now();r.browserBeforeTap=await page.evaluate(()=>performance.now())
     r.homeCanvasesBefore=await page.locator('.mobile-sphere-stage canvas').count()
     const graphReply=page.waitForResponse(response=>new URL(response.url()).pathname==='/api/characters/knowledge-graph'&&response.request().method()==='GET').catch(error=>({probeErrorName:error.name}))
@@ -75,6 +91,20 @@ try{
     r.graphDataStatus='PASS'
     await expect(page.locator('.mobile-sphere-stage canvas')).toHaveCount(0,{timeout:5000})
     r.homeCanvasesAfter=await page.locator('.mobile-sphere-stage canvas').count()
+    if(fault!=='none')expect(r.injectedFailures).toBe(1)
+    if(fault==='chunk-cache-hang'){
+     expect(r.cacheKeysCalls).toBeGreaterThan(0);expect(r.recoveryNavigations).toBe(1)
+    }
+    if(fault==='catalogue-failure'){
+     r.phase='catalogue_retry'
+     await expect(page.getByRole('alert')).toBeVisible({timeout:5000})
+     await page.getByRole('button',{name:'重试',exact:true}).tap()
+     await expect(page.getByRole('alert')).toHaveCount(0,{timeout:5000})
+     await expect(page.getByRole('heading',{name:'关系图谱',exact:true})).toBeVisible({timeout:5000})
+     await page.getByRole('button',{name:'返回',exact:true}).tap()
+     await expect(page.getByRole('textbox',{name:'搜索人物',exact:true})).toBeVisible({timeout:5000})
+     r.catalogueRetry='PASS'
+    }
    }catch(error){
     r.failureAt=Date.now();r.originalFiveSecondAssertion=r.originalFiveSecondAssertion==='PASS'?'PASS':(r.phase==='graph_assert'?'FAIL':'NOT_RUN');r.errorName=error.name
     if(r.phase==='graph_assert')r.assertEndAt=r.failureAt

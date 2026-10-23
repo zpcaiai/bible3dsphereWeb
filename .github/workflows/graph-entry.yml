@@ -77,6 +77,8 @@ jobs:
           done
           curl --fail --silent --max-time 25 http://127.0.0.1:4173/ > /dev/null
           timeout 300s node scripts/graph-entry-profile.mjs
+          GRAPH_ENTRY_PROFILE_DIR="$RUNNER_TEMP/graph-entry-cache-fault" GRAPH_ENTRY_PROFILE_FAULT=chunk-cache-hang timeout 300s node scripts/graph-entry-profile.mjs
+          GRAPH_ENTRY_PROFILE_DIR="$RUNNER_TEMP/graph-entry-catalogue-fault" GRAPH_ENTRY_PROFILE_FAULT=catalogue-failure timeout 300s node scripts/graph-entry-profile.mjs
 
       - name: Preserve actual successful or failed evidence
         if: always()
@@ -85,6 +87,8 @@ jobs:
           name: graph-entry-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
             ${{ runner.temp }}/graph-entry/
+            ${{ runner.temp }}/graph-entry-cache-fault/
+            ${{ runner.temp }}/graph-entry-catalogue-fault/
             ${{ runner.temp }}/graph-entry-server/
           if-no-files-found: warn
           retention-days: 14
