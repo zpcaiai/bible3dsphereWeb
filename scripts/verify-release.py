@@ -8,6 +8,7 @@ import subprocess
 import time
 from urllib.request import Request, urlopen
 from urllib.error import HTTPError
+from release_html import verify_html
 
 expected = os.environ['EXPECTED_FRONTEND_SHA']
 backend = 'f8116ea1d268e5b92489cb9dac3b5f88e8558f01'
@@ -71,7 +72,10 @@ try:
     receipt['sourceBound'] = manifest is not None
     if manifest is not None:
         assert manifest['schemaVersion'] == 1 and manifest['sourceCommit'] == expected, 'Canonical source differs from expected main'
-        for path, payload in [('index.html', html), (startup_path.lstrip('/'), startup_bytes), (mirror_path.lstrip('/'), mirror_bytes)]:
+        original_html, html_proof = verify_html(html, manifest['files']['index.html'])
+        (output / 'canonical-origin-equivalent.html').write_bytes(original_html)
+        receipt['canonical']['htmlSourceProof'] = html_proof
+        for path, payload in [(startup_path.lstrip('/'), startup_bytes), (mirror_path.lstrip('/'), mirror_bytes)]:
             assert manifest['files'][path] == hashlib.sha256(payload).hexdigest(), path + ' manifest hash mismatch'
         receipt['canonical']['manifestSHA256'] = hashlib.sha256(manifest_bytes).hexdigest()
     else:
