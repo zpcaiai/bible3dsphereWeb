@@ -70,22 +70,22 @@ try{
     const bytes=await response.body(),graph=JSON.parse(bytes.toString('utf8'))
     r.graphDataSHA256=crypto.createHash('sha256').update(bytes).digest('hex')
     expect(graph.success).toBe(true);r.graphNodeCount=graph.data.nodes.length;expect(r.graphNodeCount).toBeGreaterThan(0)
-    await expect.poll(()=>page.locator('svg').filter({has:page.locator('circle')}).last().locator('circle').count(),{timeout:5000}).toBeGreaterThanOrEqual(r.graphNodeCount)
+    await expect.poll(()=>page.getByRole('heading',{name:'关系图谱',exact:true}).locator('../..').locator('svg circle').count(),{timeout:5000}).toBe(r.graphNodeCount)
     r.graphDataStatus='PASS'
    }catch(error){
     r.failureAt=Date.now();r.originalFiveSecondAssertion=r.originalFiveSecondAssertion==='PASS'?'PASS':(r.phase==='graph_assert'?'FAIL':'NOT_RUN');r.errorName=error.name
     if(r.phase==='graph_assert')r.assertEndAt=r.failureAt
-    r.error=r.phase==='graph_assert'?error.message:'Non-heading stage failed; auth inputs intentionally not logged'
+    r.error=r.phase==='login'?'Login stage failed; auth inputs intentionally not logged':error.message
     if(r.phase==='graph_data')r.graphDataStatus='FAIL'
     process.exitCode=1
    }finally{
     r.captureStartAt=Date.now()
     const authPanelVisible=await page.getByLabel('默认登录账号',{exact:true}).isVisible().catch(()=>true)
-    if(r.graphTapCompleted&&!authPanelVisible)try{
+    if(r.loginHTTP===200&&!authPanelVisible)try{
      r.browserSnapshot=await page.evaluate(()=>{
       const box=e=>{const r=e.getBoundingClientRect();return {tag:e.tagName,role:e.getAttribute('role'),x:r.x,y:r.y,width:r.width,height:r.height}}
       const loads=[...document.querySelectorAll('span,p,div')].filter(e=>e.childElementCount===0&&e.textContent.trim()==='加载中…').slice(0,8).map(e=>({self:box(e),parent:e.parentElement?box(e.parentElement):null,grandparent:e.parentElement?.parentElement?box(e.parentElement.parentElement):null}))
-      return {capturedAt:performance.now(),probe:window.__graphEntryProfile,loadingNodes:loads,statuses:[...document.querySelectorAll('[role="status"]')].map(box),resources:performance.getEntriesByType('resource').filter(x=>new URL(x.name).pathname.startsWith('/assets/')).map(x=>({path:new URL(x.name).pathname,start:x.startTime,responseStart:x.responseStart,responseEnd:x.responseEnd,duration:x.duration,transferSize:x.transferSize}))}
+      return {capturedAt:performance.now(),probe:window.__graphEntryProfile,loadingNodes:loads,circleCounts:[...document.querySelectorAll('svg')].map(e=>e.querySelectorAll('circle').length),statuses:[...document.querySelectorAll('[role="status"]')].map(box),resources:performance.getEntriesByType('resource').filter(x=>new URL(x.name).pathname.startsWith('/assets/')).map(x=>({path:new URL(x.name).pathname,start:x.startTime,responseStart:x.responseStart,responseEnd:x.responseEnd,duration:x.duration,transferSize:x.transferSize}))}
      })
      await page.screenshot({path:root+'entry-'+width+'-'+r.originalFiveSecondAssertion+'.png'})
     }catch(error){r.captureErrorName=error.name;process.exitCode=1}
