@@ -23,17 +23,12 @@ import { CHARACTER_JOURNEYS, buildCharacterMapConfig } from './data/characterJou
 import { getRuntimeLang } from './i18n/runtime'
 import { useAutoTranslate, AutoText } from './autoTranslate'
 import { getMirrorDigitalHumanId } from './features/spiritual-planet/digital-human/mirrorCharacterMap'
-const RelationshipGraphView = lazyWithRetry(() => import('./RelationshipGraphView'), {
-  retryKey: 'mirror-graph-chunk-reload',
-  renderError: ({ retry, onBack }) => <div role="alert" style={{ padding: 32, color: '#fff' }}>
-    <p>{i18nT('数据加载失败，请检查网络后重试')}</p>
-    <button onClick={retry}>{i18nT('重试')}</button>
-    <button onClick={onBack}>{i18nT('返回')}</button>
-  </div>,
-})
+// Keep the lightweight graph in this already-lazy entry chunk. A second
+// late chunk competes with startup API/SSE connections during recovery.
+import RelationshipGraphView from './RelationshipGraphView'
 const DigitalHumanWorkspace = lazy(() => import('./features/spiritual-planet/digital-human/DigitalHumanWorkspace'))
 import { a11yClickProps } from './lib/a11yClick';
-import lazyWithRetry from './lazyWithRetry'
+import lazyWithRetry, { purgeAndReload } from './lazyWithRetry'
 
 const ERAS = ['全部', '族长时代', '出埃及时代', '士师时代', '进入迦南时代', '王国时代', '被掳归回时代', '新约时代', '教会时代']
 const ROLES = ['全部', '主&救主', '族长', '君王', '先知', '祭司', '女性', '使徒', '其他']
@@ -1103,6 +1098,11 @@ function FilterGroup({ label, value, options, onChange }) {
 export default function MirrorPage(props) {
   const [dataState, setDataState] = useState(() => (MIRROR_CHARACTERS.length ? 'ready' : 'loading'))
   const [entry, setEntry] = useState(() => ({ view: props.initialView, charId: props.initialCharId, focus: props.initialGraphFocus || '', returnView: props.initialReturnView }))
+  const retryCatalogue = () => {
+    // A failed native module import is cached for the document. Reset that
+    // module map by reloading, retaining the mirror navigation marker.
+    purgeAndReload().catch(() => setDataState('error'))
+  }
   useEffect(() => {
     if (entry.view !== 'graph') return
     try {
@@ -1126,7 +1126,7 @@ export default function MirrorPage(props) {
   if (entry.view === 'graph') return <>
     {dataState === 'error' && <div role="alert">
       <AutoText>{i18nT('数据加载失败，请检查网络后重试')}</AutoText>
-      <button onClick={() => setDataState('loading')}>{i18nT('重试')}</button>
+      <button onClick={retryCatalogue}>{i18nT('重试')}</button>
     </div>}
     <Suspense fallback={<div role="status">{i18nT('加载中…')}</div>}>
       <RelationshipGraphView token={props.token} initialFocus={entry.focus}
@@ -1142,7 +1142,7 @@ export default function MirrorPage(props) {
       {dataState === 'error' ? (
         <>
           <span><AutoText>{i18nT('数据加载失败，请检查网络后重试')}</AutoText></span>
-          <button onClick={() => setDataState('loading')} style={{ padding: '6px 16px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.1)', color: '#fff', cursor: 'pointer' }}>
+          <button onClick={retryCatalogue} style={{ padding: '6px 16px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.1)', color: '#fff', cursor: 'pointer' }}>
             <AutoText>{i18nT('重试')}</AutoText>
           </button>
         </>
