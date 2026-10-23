@@ -98,6 +98,7 @@ try{
     expect(graph.success).toBe(true);r.graphNodeCount=graph.data.nodes.length;expect(r.graphNodeCount).toBeGreaterThan(0)
     await expect.poll(()=>page.getByRole('heading',{name:'关系图谱',exact:true}).locator('../..').locator('svg circle').count(),{timeout:5000}).toBe(r.graphNodeCount)
     r.graphDataStatus='PASS'
+    await page.screenshot({path:root+'graph-rendered-'+width+'.png'})
     await expect(page.locator('.mobile-sphere-stage canvas')).toHaveCount(0,{timeout:5000})
     r.homeCanvasesAfter=await page.locator('.mobile-sphere-stage canvas').count()
     if(fault!=='none')expect(r.injectedFailures).toBe(1)
@@ -113,6 +114,16 @@ try{
      await page.getByRole('button',{name:'返回',exact:true}).tap()
      await expect(page.getByRole('textbox',{name:'搜索人物',exact:true})).toBeVisible({timeout:5000})
      r.catalogueRetry='PASS'
+    }
+    if(fault==='none'){
+     r.phase='home_return'
+     const layoutRequest=page.waitForResponse(response=>new URL(response.url()).pathname==='/api/layout')
+     layoutRequest.catch(()=>{})
+     await page.getByRole('navigation',{name:'主要导航',exact:true}).getByRole('button',{name:'星球',exact:true}).tap()
+     const layoutResponse=await layoutRequest
+     r.homeLayoutHTTP=layoutResponse.status();expect(r.homeLayoutHTTP).toBe(200)
+     await expect(page.locator('.mobile-sphere-stage canvas')).toHaveCount(1,{timeout:5000})
+     r.homeRequestsResumed='PASS'
     }
    }catch(error){
     r.failureAt=Date.now();r.originalFiveSecondAssertion=r.originalFiveSecondAssertion==='PASS'?'PASS':(r.phase==='graph_assert'?'FAIL':'NOT_RUN');r.errorName=error.name
