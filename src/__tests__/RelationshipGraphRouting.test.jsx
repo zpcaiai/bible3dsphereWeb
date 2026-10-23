@@ -32,3 +32,18 @@ it('shows API envelope failures and retries the request instead of presenting an
   expect(fetcher).toHaveBeenCalledTimes(2)
   expect(fetcher.mock.calls[1][1].headers.Authorization).toBe('Bearer unit-token')
 })
+
+it('cancels superseded graph requests and the remaining request on unmount', () => {
+  vi.stubGlobal('ResizeObserver', class { observe() {} disconnect() {} })
+  const fetcher = vi.fn(() => new Promise(() => {}))
+  vi.stubGlobal('fetch', fetcher)
+  const { rerender, unmount } = render(<RelationshipGraphView token="first" />)
+  const first = fetcher.mock.calls[0][1].signal
+  expect(first.aborted).toBe(false)
+  rerender(<RelationshipGraphView token="second" />)
+  const second = fetcher.mock.calls[1][1].signal
+  expect(first.aborted).toBe(true)
+  expect(second.aborted).toBe(false)
+  unmount()
+  expect(second.aborted).toBe(true)
+})
