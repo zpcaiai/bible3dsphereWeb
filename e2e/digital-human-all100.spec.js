@@ -50,6 +50,11 @@ async function openMirror(info) {
   await page.getByRole('button', { name: '人物图谱', exact: false }).tap()
   await expect(page.getByRole('heading', { name: '关系图谱', exact: true })).toBeVisible()
   await page.getByRole('button', { name: '返回', exact: true }).tap()
+  const returnedAt = Date.now()
+  // A tap finishing does not imply React has committed the list. Otherwise
+  // choose() can sample the old graph and dispatch a second Back into home.
+  await expect(page.getByRole('textbox', { name: '搜索人物', exact: true })).toBeVisible()
+  save(info, 'graph-return', { assertionMs: 5000, returnedAt, listVisibleAt: Date.now(), status: 'PASS' })
 }
 
 async function choose(person) {
