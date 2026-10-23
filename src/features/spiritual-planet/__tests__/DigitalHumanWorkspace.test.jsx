@@ -135,6 +135,68 @@ describe('DigitalHumanWorkspace embedded character mode', () => {
     },
   })
 
+  it('retains a failed question and explicitly retries without duplicating the user message', async () => {
+    createDigitalHumanTurn.mockRejectedValueOnce(new Error('Failed to fetch')).mockResolvedValueOnce(envelope('重试后的证据'))
+    render(<DigitalHumanWorkspace initialCharacterId="david" lockCharacter showOperations={false} />)
+    const input = await screen.findByRole('textbox', { name: '向当前圣经人物提问' })
+    fireEvent.change(input, { target: { value: '你为什么没有杀扫罗？' } })
+    fireEvent.click(screen.getByRole('button', { name: '发送并核验' }))
+    await screen.findByRole('alert')
+    expect(input.value).toBe('你为什么没有杀扫罗？')
+    fireEvent.click(screen.getByRole('button', { name: '重试上次提问' }))
+    await screen.findByText('重试后的证据')
+    expect(createDigitalHumanTurn).toHaveBeenCalledTimes(2)
+    const [first, retry] = createDigitalHumanTurn.mock.calls.map(([payload]) => payload)
+    expect(retry.question).toBe(first.question)
+    expect(retry.sessionId).toBe(first.sessionId)
+    expect(retry.turnId).not.toBe(first.turnId)
+    expect(document.querySelectorAll('.dh-message.user')).toHaveLength(1)
+    expect(screen.queryByRole('alert')).toBeNull()
+    expect(screen.queryByRole('button', { name: '重试上次提问' })).toBeNull()
+  })
+
+  it('preserves a newer draft during failure and retry and prevents double retry submissions', async () => {
+    let fail, finish
+    createDigitalHumanTurn.mockImplementationOnce(() => new Promise((resolve, reject) => { fail = reject }))
+      .mockImplementationOnce(() => new Promise(resolve => { finish = resolve }))
+    render(<DigitalHumanWorkspace initialCharacterId="david" lockCharacter showOperations={false} />)
+    const input = await screen.findByRole('textbox', { name: '向当前圣经人物提问' })
+    fireEvent.change(input, { target: { value: '第一个问题' } })
+    fireEvent.click(screen.getByRole('button', { name: '发送并核验' }))
+    await waitFor(() => expect(createDigitalHumanTurn).toHaveBeenCalledTimes(1))
+    fireEvent.change(input, { target: { value: '正在编写的下一题' } })
+    await act(async () => fail(new Error('network failure')))
+    const retry = await screen.findByRole('button', { name: '重试上次提问' })
+    expect(input.value).toBe('正在编写的下一题')
+    fireEvent.click(retry)
+    fireEvent.click(retry)
+    await waitFor(() => expect(createDigitalHumanTurn).toHaveBeenCalledTimes(2))
+    expect(createDigitalHumanTurn.mock.calls[1][0].question).toBe('第一个问题')
+    expect(input.value).toBe('正在编写的下一题')
+    await act(async () => finish(envelope('第一个问题的真实结构回答')))
+    expect(input.value).toBe('正在编写的下一题')
+    expect(document.querySelectorAll('.dh-message.user')).toHaveLength(1)
+  })
+
+  it('drops failed retry state and draft on explicit clear or character switch', async () => {
+    createDigitalHumanTurn.mockRejectedValue(new Error('Failed to fetch'))
+    const paul = { ...DAVID, id: 'paul', canonicalName: '保罗', englishName: 'Paul' }
+    getDigitalHumanCatalog.mockResolvedValue({ characters: [DAVID, paul], contentVersion: '1.3.0' })
+    const { rerender } = render(<DigitalHumanWorkspace initialCharacterId="david" lockCharacter showOperations={false} />)
+    const input = await screen.findByRole('textbox', { name: '向当前圣经人物提问' })
+    for (const question of ['清空前的问题', '切换前的问题']) {
+      fireEvent.change(input, { target: { value: question } })
+      fireEvent.click(screen.getByRole('button', { name: '发送并核验' }))
+      await screen.findByRole('button', { name: '重试上次提问' })
+      if (question === '清空前的问题') fireEvent.click(screen.getByRole('button', { name: '清空本次会话' }))
+    }
+    rerender(<DigitalHumanWorkspace initialCharacterId="paul" lockCharacter showOperations={false} />)
+    await screen.findByRole('region', { name: '保罗数字人' })
+    expect(input.value).toBe('')
+    expect(screen.queryByRole('button', { name: '重试上次提问' })).toBeNull()
+    expect(document.querySelectorAll('.dh-message')).toHaveLength(0)
+  })
+
   it('carries only bounded topic ids into a followup and clears them on reset', async () => {
     let sequence = 0
     createDigitalHumanTurn.mockImplementation(async () => ({ ...envelope('已有证据'), turnId: `turn_${++sequence}` }))
