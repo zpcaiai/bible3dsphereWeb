@@ -1,0 +1,5986 @@
+{
+  "schema": "digital-human-all100-oracle/v1",
+  "oracleOrigin": "Pinned source truthCases for100; fixed registry preparedSeed only for Paul initial turn; canonical physical verse coordinates compare equal representations. Not derived from actual response, not human approval.",
+  "sourceCatalogSha256": "1fdca22610f652fdf30eaf0edd77fc7137a2b2995aa761a879d123d6aa9315a9",
+  "sourceBackend": "f8116ea1d268e5b92489cb9dac3b5f88e8558f01",
+  "characters": [
+    {
+      "index": 1,
+      "group": "01",
+      "characterId": "moses",
+      "canonicalName": "摩西",
+      "mirrorId": 12,
+      "mirrorName": "摩西",
+      "topicId": "moses-flee-egypt",
+      "question": "你为什么离开埃及？",
+      "expectedReferences": [
+        "Exodus 2:11-15"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Exodus 2:11-15"
+      ],
+      "expectedCoordinates": [
+        "exodus:2:11",
+        "exodus:2:12",
+        "exodus:2:13",
+        "exodus:2:14",
+        "exodus:2:15"
+      ]
+    },
+    {
+      "index": 2,
+      "group": "01",
+      "characterId": "david",
+      "canonicalName": "大卫",
+      "mirrorId": 25,
+      "mirrorName": "大卫",
+      "topicId": "david-spare-saul",
+      "question": "你为什么没有杀扫罗？",
+      "expectedReferences": [
+        "1 Samuel 24",
+        "1 Samuel 26"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "1 Samuel 24",
+        "1 Samuel 26"
+      ],
+      "expectedCoordinates": [
+        "1 samuel:24:1",
+        "1 samuel:24:10",
+        "1 samuel:24:11",
+        "1 samuel:24:12",
+        "1 samuel:24:13",
+        "1 samuel:24:14",
+        "1 samuel:24:15",
+        "1 samuel:24:16",
+        "1 samuel:24:17",
+        "1 samuel:24:18",
+        "1 samuel:24:19",
+        "1 samuel:24:2",
+        "1 samuel:24:20",
+        "1 samuel:24:21",
+        "1 samuel:24:22",
+        "1 samuel:24:3",
+        "1 samuel:24:4",
+        "1 samuel:24:5",
+        "1 samuel:24:6",
+        "1 samuel:24:7",
+        "1 samuel:24:8",
+        "1 samuel:24:9",
+        "1 samuel:26:1",
+        "1 samuel:26:10",
+        "1 samuel:26:11",
+        "1 samuel:26:12",
+        "1 samuel:26:13",
+        "1 samuel:26:14",
+        "1 samuel:26:15",
+        "1 samuel:26:16",
+        "1 samuel:26:17",
+        "1 samuel:26:18",
+        "1 samuel:26:19",
+        "1 samuel:26:2",
+        "1 samuel:26:20",
+        "1 samuel:26:21",
+        "1 samuel:26:22",
+        "1 samuel:26:23",
+        "1 samuel:26:24",
+        "1 samuel:26:25",
+        "1 samuel:26:3",
+        "1 samuel:26:4",
+        "1 samuel:26:5",
+        "1 samuel:26:6",
+        "1 samuel:26:7",
+        "1 samuel:26:8",
+        "1 samuel:26:9"
+      ]
+    },
+    {
+      "index": 3,
+      "group": "01",
+      "characterId": "peter",
+      "canonicalName": "彼得",
+      "mirrorId": 49,
+      "mirrorName": "彼得",
+      "topicId": "peter-call",
+      "question": "耶稣怎样呼召你？",
+      "expectedReferences": [
+        "Matthew 4:18-20",
+        "Luke 5:1-11",
+        "John 1:40-42"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Matthew 4:18-20",
+        "Luke 5:1-11",
+        "John 1:40-42"
+      ],
+      "expectedCoordinates": [
+        "john:1:40",
+        "john:1:41",
+        "john:1:42",
+        "luke:5:1",
+        "luke:5:10",
+        "luke:5:11",
+        "luke:5:2",
+        "luke:5:3",
+        "luke:5:4",
+        "luke:5:5",
+        "luke:5:6",
+        "luke:5:7",
+        "luke:5:8",
+        "luke:5:9",
+        "matthew:4:18",
+        "matthew:4:19",
+        "matthew:4:20"
+      ]
+    },
+    {
+      "index": 4,
+      "group": "01",
+      "characterId": "paul",
+      "canonicalName": "保罗",
+      "mirrorId": 51,
+      "mirrorName": "保罗",
+      "topicId": "paul-conversion",
+      "question": "你为什么从逼迫教会变成传福音的人？",
+      "expectedReferences": [
+        "Acts 9:1-22",
+        "Acts 22:3-21",
+        "Acts 26:9-20"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Acts 9:1-22",
+        "Acts 22:3-21",
+        "Acts 26:9-20"
+      ],
+      "expectedCoordinates": [
+        "acts:22:10",
+        "acts:22:11",
+        "acts:22:12",
+        "acts:22:13",
+        "acts:22:14",
+        "acts:22:15",
+        "acts:22:16",
+        "acts:22:17",
+        "acts:22:18",
+        "acts:22:19",
+        "acts:22:20",
+        "acts:22:21",
+        "acts:22:3",
+        "acts:22:4",
+        "acts:22:5",
+        "acts:22:6",
+        "acts:22:7",
+        "acts:22:8",
+        "acts:22:9",
+        "acts:26:10",
+        "acts:26:11",
+        "acts:26:12",
+        "acts:26:13",
+        "acts:26:14",
+        "acts:26:15",
+        "acts:26:16",
+        "acts:26:17",
+        "acts:26:18",
+        "acts:26:19",
+        "acts:26:20",
+        "acts:26:9",
+        "acts:9:1",
+        "acts:9:10",
+        "acts:9:11",
+        "acts:9:12",
+        "acts:9:13",
+        "acts:9:14",
+        "acts:9:15",
+        "acts:9:16",
+        "acts:9:17",
+        "acts:9:18",
+        "acts:9:19",
+        "acts:9:2",
+        "acts:9:20",
+        "acts:9:21",
+        "acts:9:22",
+        "acts:9:3",
+        "acts:9:4",
+        "acts:9:5",
+        "acts:9:6",
+        "acts:9:7",
+        "acts:9:8",
+        "acts:9:9"
+      ],
+      "preparedSeed": {
+        "id": "paul-conversion",
+        "answerType": "EVENT",
+        "expectedReferences": [
+          "Acts 9:1-22"
+        ],
+        "expectedCoordinates": [
+          "acts:9:1",
+          "acts:9:10",
+          "acts:9:11",
+          "acts:9:12",
+          "acts:9:13",
+          "acts:9:14",
+          "acts:9:15",
+          "acts:9:16",
+          "acts:9:17",
+          "acts:9:18",
+          "acts:9:19",
+          "acts:9:2",
+          "acts:9:20",
+          "acts:9:21",
+          "acts:9:22",
+          "acts:9:3",
+          "acts:9:4",
+          "acts:9:5",
+          "acts:9:6",
+          "acts:9:7",
+          "acts:9:8",
+          "acts:9:9"
+        ],
+        "expectedTopicIds": [
+          "paul-conversion"
+        ]
+      }
+    },
+    {
+      "index": 5,
+      "group": "01",
+      "characterId": "adam",
+      "canonicalName": "亚当",
+      "mirrorId": 1,
+      "mirrorName": "亚当",
+      "topicId": "adam-01-case",
+      "question": "你是怎样被造的？",
+      "expectedReferences": [
+        "Genesis 1",
+        "Genesis 2"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Genesis 1",
+        "Genesis 2"
+      ],
+      "expectedCoordinates": [
+        "genesis:1:1",
+        "genesis:1:10",
+        "genesis:1:11",
+        "genesis:1:12",
+        "genesis:1:13",
+        "genesis:1:14",
+        "genesis:1:15",
+        "genesis:1:16",
+        "genesis:1:17",
+        "genesis:1:18",
+        "genesis:1:19",
+        "genesis:1:2",
+        "genesis:1:20",
+        "genesis:1:21",
+        "genesis:1:22",
+        "genesis:1:23",
+        "genesis:1:24",
+        "genesis:1:25",
+        "genesis:1:26",
+        "genesis:1:27",
+        "genesis:1:28",
+        "genesis:1:29",
+        "genesis:1:3",
+        "genesis:1:30",
+        "genesis:1:31",
+        "genesis:1:4",
+        "genesis:1:5",
+        "genesis:1:6",
+        "genesis:1:7",
+        "genesis:1:8",
+        "genesis:1:9",
+        "genesis:2:1",
+        "genesis:2:10",
+        "genesis:2:11",
+        "genesis:2:12",
+        "genesis:2:13",
+        "genesis:2:14",
+        "genesis:2:15",
+        "genesis:2:16",
+        "genesis:2:17",
+        "genesis:2:18",
+        "genesis:2:19",
+        "genesis:2:2",
+        "genesis:2:20",
+        "genesis:2:21",
+        "genesis:2:22",
+        "genesis:2:23",
+        "genesis:2:24",
+        "genesis:2:25",
+        "genesis:2:3",
+        "genesis:2:4",
+        "genesis:2:5",
+        "genesis:2:6",
+        "genesis:2:7",
+        "genesis:2:8",
+        "genesis:2:9"
+      ]
+    },
+    {
+      "index": 6,
+      "group": "01",
+      "characterId": "noah",
+      "canonicalName": "挪亚",
+      "mirrorId": 6,
+      "mirrorName": "挪亚",
+      "topicId": "noah-01-case",
+      "question": "洪水故事中发生了什么？",
+      "expectedReferences": [
+        "Genesis 6",
+        "Genesis 7",
+        "Genesis 8"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Genesis 6",
+        "Genesis 7",
+        "Genesis 8"
+      ],
+      "expectedCoordinates": [
+        "genesis:6:1",
+        "genesis:6:10",
+        "genesis:6:11",
+        "genesis:6:12",
+        "genesis:6:13",
+        "genesis:6:14",
+        "genesis:6:15",
+        "genesis:6:16",
+        "genesis:6:17",
+        "genesis:6:18",
+        "genesis:6:19",
+        "genesis:6:2",
+        "genesis:6:20",
+        "genesis:6:21",
+        "genesis:6:22",
+        "genesis:6:3",
+        "genesis:6:4",
+        "genesis:6:5",
+        "genesis:6:6",
+        "genesis:6:7",
+        "genesis:6:8",
+        "genesis:6:9",
+        "genesis:7:1",
+        "genesis:7:10",
+        "genesis:7:11",
+        "genesis:7:12",
+        "genesis:7:13",
+        "genesis:7:14",
+        "genesis:7:15",
+        "genesis:7:16",
+        "genesis:7:17",
+        "genesis:7:18",
+        "genesis:7:19",
+        "genesis:7:2",
+        "genesis:7:20",
+        "genesis:7:21",
+        "genesis:7:22",
+        "genesis:7:23",
+        "genesis:7:24",
+        "genesis:7:3",
+        "genesis:7:4",
+        "genesis:7:5",
+        "genesis:7:6",
+        "genesis:7:7",
+        "genesis:7:8",
+        "genesis:7:9",
+        "genesis:8:1",
+        "genesis:8:10",
+        "genesis:8:11",
+        "genesis:8:12",
+        "genesis:8:13",
+        "genesis:8:14",
+        "genesis:8:15",
+        "genesis:8:16",
+        "genesis:8:17",
+        "genesis:8:18",
+        "genesis:8:19",
+        "genesis:8:2",
+        "genesis:8:20",
+        "genesis:8:21",
+        "genesis:8:22",
+        "genesis:8:3",
+        "genesis:8:4",
+        "genesis:8:5",
+        "genesis:8:6",
+        "genesis:8:7",
+        "genesis:8:8",
+        "genesis:8:9"
+      ]
+    },
+    {
+      "index": 7,
+      "group": "01",
+      "characterId": "abraham",
+      "canonicalName": "亚伯拉罕",
+      "mirrorId": 7,
+      "mirrorName": "亚伯拉罕",
+      "topicId": "abraham-01-case",
+      "question": "你为什么离开本地本族父家？",
+      "expectedReferences": [
+        "Genesis 12:1-9"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Genesis 12:1-9"
+      ],
+      "expectedCoordinates": [
+        "genesis:12:1",
+        "genesis:12:2",
+        "genesis:12:3",
+        "genesis:12:4",
+        "genesis:12:5",
+        "genesis:12:6",
+        "genesis:12:7",
+        "genesis:12:8",
+        "genesis:12:9"
+      ]
+    },
+    {
+      "index": 8,
+      "group": "01",
+      "characterId": "sarah",
+      "canonicalName": "撒拉",
+      "mirrorId": 8,
+      "mirrorName": "撒拉",
+      "topicId": "sarah-01-case",
+      "question": "你为什么从撒莱改名为撒拉？",
+      "expectedReferences": [
+        "Genesis 17:15-16"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Genesis 17:15-16"
+      ],
+      "expectedCoordinates": [
+        "genesis:17:15",
+        "genesis:17:16"
+      ]
+    },
+    {
+      "index": 9,
+      "group": "01",
+      "characterId": "isaac",
+      "canonicalName": "以撒",
+      "mirrorId": 9,
+      "mirrorName": "以撒",
+      "topicId": "isaac-01-case",
+      "question": "你的出生为什么特殊？",
+      "expectedReferences": [
+        "Genesis 17",
+        "Genesis 21:1-7"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Genesis 17",
+        "Genesis 21:1-7"
+      ],
+      "expectedCoordinates": [
+        "genesis:17:1",
+        "genesis:17:10",
+        "genesis:17:11",
+        "genesis:17:12",
+        "genesis:17:13",
+        "genesis:17:14",
+        "genesis:17:15",
+        "genesis:17:16",
+        "genesis:17:17",
+        "genesis:17:18",
+        "genesis:17:19",
+        "genesis:17:2",
+        "genesis:17:20",
+        "genesis:17:21",
+        "genesis:17:22",
+        "genesis:17:23",
+        "genesis:17:24",
+        "genesis:17:25",
+        "genesis:17:26",
+        "genesis:17:27",
+        "genesis:17:3",
+        "genesis:17:4",
+        "genesis:17:5",
+        "genesis:17:6",
+        "genesis:17:7",
+        "genesis:17:8",
+        "genesis:17:9",
+        "genesis:21:1",
+        "genesis:21:2",
+        "genesis:21:3",
+        "genesis:21:4",
+        "genesis:21:5",
+        "genesis:21:6",
+        "genesis:21:7"
+      ]
+    },
+    {
+      "index": 10,
+      "group": "01",
+      "characterId": "jacob",
+      "canonicalName": "雅各",
+      "mirrorId": 10,
+      "mirrorName": "雅各",
+      "topicId": "jacob-01-case",
+      "question": "你和以扫的长子名分发生了什么？",
+      "expectedReferences": [
+        "Genesis 25:29-34"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Genesis 25:29-34"
+      ],
+      "expectedCoordinates": [
+        "genesis:25:29",
+        "genesis:25:30",
+        "genesis:25:31",
+        "genesis:25:32",
+        "genesis:25:33",
+        "genesis:25:34"
+      ]
+    },
+    {
+      "index": 11,
+      "group": "02",
+      "characterId": "joseph",
+      "canonicalName": "约瑟",
+      "mirrorId": 11,
+      "mirrorName": "约瑟",
+      "topicId": "joseph-01-case",
+      "question": "你年轻时做了什么梦？",
+      "expectedReferences": [
+        "Genesis 37:5-11"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Genesis 37:5-11"
+      ],
+      "expectedCoordinates": [
+        "genesis:37:10",
+        "genesis:37:11",
+        "genesis:37:5",
+        "genesis:37:6",
+        "genesis:37:7",
+        "genesis:37:8",
+        "genesis:37:9"
+      ]
+    },
+    {
+      "index": 12,
+      "group": "02",
+      "characterId": "joshua",
+      "canonicalName": "约书亚",
+      "mirrorId": 200,
+      "mirrorName": "约书亚",
+      "topicId": "joshua-01-case",
+      "question": "你作为十二探子之一做了什么？",
+      "expectedReferences": [
+        "Numbers 13",
+        "Numbers 14"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Numbers 13",
+        "Numbers 14"
+      ],
+      "expectedCoordinates": [
+        "numbers:13:1",
+        "numbers:13:10",
+        "numbers:13:11",
+        "numbers:13:12",
+        "numbers:13:13",
+        "numbers:13:14",
+        "numbers:13:15",
+        "numbers:13:16",
+        "numbers:13:17",
+        "numbers:13:18",
+        "numbers:13:19",
+        "numbers:13:2",
+        "numbers:13:20",
+        "numbers:13:21",
+        "numbers:13:22",
+        "numbers:13:23",
+        "numbers:13:24",
+        "numbers:13:25",
+        "numbers:13:26",
+        "numbers:13:27",
+        "numbers:13:28",
+        "numbers:13:29",
+        "numbers:13:3",
+        "numbers:13:30",
+        "numbers:13:31",
+        "numbers:13:32",
+        "numbers:13:33",
+        "numbers:13:4",
+        "numbers:13:5",
+        "numbers:13:6",
+        "numbers:13:7",
+        "numbers:13:8",
+        "numbers:13:9",
+        "numbers:14:1",
+        "numbers:14:10",
+        "numbers:14:11",
+        "numbers:14:12",
+        "numbers:14:13",
+        "numbers:14:14",
+        "numbers:14:15",
+        "numbers:14:16",
+        "numbers:14:17",
+        "numbers:14:18",
+        "numbers:14:19",
+        "numbers:14:2",
+        "numbers:14:20",
+        "numbers:14:21",
+        "numbers:14:22",
+        "numbers:14:23",
+        "numbers:14:24",
+        "numbers:14:25",
+        "numbers:14:26",
+        "numbers:14:27",
+        "numbers:14:28",
+        "numbers:14:29",
+        "numbers:14:3",
+        "numbers:14:30",
+        "numbers:14:31",
+        "numbers:14:32",
+        "numbers:14:33",
+        "numbers:14:34",
+        "numbers:14:35",
+        "numbers:14:36",
+        "numbers:14:37",
+        "numbers:14:38",
+        "numbers:14:39",
+        "numbers:14:4",
+        "numbers:14:40",
+        "numbers:14:41",
+        "numbers:14:42",
+        "numbers:14:43",
+        "numbers:14:44",
+        "numbers:14:45",
+        "numbers:14:5",
+        "numbers:14:6",
+        "numbers:14:7",
+        "numbers:14:8",
+        "numbers:14:9"
+      ]
+    },
+    {
+      "index": 13,
+      "group": "02",
+      "characterId": "samuel",
+      "canonicalName": "撒母耳",
+      "mirrorId": 205,
+      "mirrorName": "撒母耳",
+      "topicId": "samuel-01-case",
+      "question": "哈拿怎样为你祷告并把你带到会幕？",
+      "expectedReferences": [
+        "1 Samuel 1"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "1 Samuel 1"
+      ],
+      "expectedCoordinates": [
+        "1 samuel:1:1",
+        "1 samuel:1:10",
+        "1 samuel:1:11",
+        "1 samuel:1:12",
+        "1 samuel:1:13",
+        "1 samuel:1:14",
+        "1 samuel:1:15",
+        "1 samuel:1:16",
+        "1 samuel:1:17",
+        "1 samuel:1:18",
+        "1 samuel:1:19",
+        "1 samuel:1:2",
+        "1 samuel:1:20",
+        "1 samuel:1:21",
+        "1 samuel:1:22",
+        "1 samuel:1:23",
+        "1 samuel:1:24",
+        "1 samuel:1:25",
+        "1 samuel:1:26",
+        "1 samuel:1:27",
+        "1 samuel:1:28",
+        "1 samuel:1:3",
+        "1 samuel:1:4",
+        "1 samuel:1:5",
+        "1 samuel:1:6",
+        "1 samuel:1:7",
+        "1 samuel:1:8",
+        "1 samuel:1:9"
+      ]
+    },
+    {
+      "index": 14,
+      "group": "02",
+      "characterId": "saul",
+      "canonicalName": "扫罗",
+      "mirrorId": 24,
+      "mirrorName": "扫罗",
+      "topicId": "saul-01-case",
+      "question": "你怎样成为以色列第一位王？",
+      "expectedReferences": [
+        "1 Samuel 9",
+        "1 Samuel 10"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "1 Samuel 9",
+        "1 Samuel 10"
+      ],
+      "expectedCoordinates": [
+        "1 samuel:10:1",
+        "1 samuel:10:10",
+        "1 samuel:10:11",
+        "1 samuel:10:12",
+        "1 samuel:10:13",
+        "1 samuel:10:14",
+        "1 samuel:10:15",
+        "1 samuel:10:16",
+        "1 samuel:10:17",
+        "1 samuel:10:18",
+        "1 samuel:10:19",
+        "1 samuel:10:2",
+        "1 samuel:10:20",
+        "1 samuel:10:21",
+        "1 samuel:10:22",
+        "1 samuel:10:23",
+        "1 samuel:10:24",
+        "1 samuel:10:25",
+        "1 samuel:10:26",
+        "1 samuel:10:27",
+        "1 samuel:10:3",
+        "1 samuel:10:4",
+        "1 samuel:10:5",
+        "1 samuel:10:6",
+        "1 samuel:10:7",
+        "1 samuel:10:8",
+        "1 samuel:10:9",
+        "1 samuel:9:1",
+        "1 samuel:9:10",
+        "1 samuel:9:11",
+        "1 samuel:9:12",
+        "1 samuel:9:13",
+        "1 samuel:9:14",
+        "1 samuel:9:15",
+        "1 samuel:9:16",
+        "1 samuel:9:17",
+        "1 samuel:9:18",
+        "1 samuel:9:19",
+        "1 samuel:9:2",
+        "1 samuel:9:20",
+        "1 samuel:9:21",
+        "1 samuel:9:22",
+        "1 samuel:9:23",
+        "1 samuel:9:24",
+        "1 samuel:9:25",
+        "1 samuel:9:26",
+        "1 samuel:9:27",
+        "1 samuel:9:3",
+        "1 samuel:9:4",
+        "1 samuel:9:5",
+        "1 samuel:9:6",
+        "1 samuel:9:7",
+        "1 samuel:9:8",
+        "1 samuel:9:9"
+      ]
+    },
+    {
+      "index": 15,
+      "group": "02",
+      "characterId": "solomon",
+      "canonicalName": "所罗门",
+      "mirrorId": 29,
+      "mirrorName": "所罗门",
+      "topicId": "solomon-01-case",
+      "question": "你怎样继承大卫王位？",
+      "expectedReferences": [
+        "1 Kings 1",
+        "1 Kings 2"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "1 Kings 1",
+        "1 Kings 2"
+      ],
+      "expectedCoordinates": [
+        "1 kings:1:1",
+        "1 kings:1:10",
+        "1 kings:1:11",
+        "1 kings:1:12",
+        "1 kings:1:13",
+        "1 kings:1:14",
+        "1 kings:1:15",
+        "1 kings:1:16",
+        "1 kings:1:17",
+        "1 kings:1:18",
+        "1 kings:1:19",
+        "1 kings:1:2",
+        "1 kings:1:20",
+        "1 kings:1:21",
+        "1 kings:1:22",
+        "1 kings:1:23",
+        "1 kings:1:24",
+        "1 kings:1:25",
+        "1 kings:1:26",
+        "1 kings:1:27",
+        "1 kings:1:28",
+        "1 kings:1:29",
+        "1 kings:1:3",
+        "1 kings:1:30",
+        "1 kings:1:31",
+        "1 kings:1:32",
+        "1 kings:1:33",
+        "1 kings:1:34",
+        "1 kings:1:35",
+        "1 kings:1:36",
+        "1 kings:1:37",
+        "1 kings:1:38",
+        "1 kings:1:39",
+        "1 kings:1:4",
+        "1 kings:1:40",
+        "1 kings:1:41",
+        "1 kings:1:42",
+        "1 kings:1:43",
+        "1 kings:1:44",
+        "1 kings:1:45",
+        "1 kings:1:46",
+        "1 kings:1:47",
+        "1 kings:1:48",
+        "1 kings:1:49",
+        "1 kings:1:5",
+        "1 kings:1:50",
+        "1 kings:1:51",
+        "1 kings:1:52",
+        "1 kings:1:53",
+        "1 kings:1:6",
+        "1 kings:1:7",
+        "1 kings:1:8",
+        "1 kings:1:9",
+        "1 kings:2:1",
+        "1 kings:2:10",
+        "1 kings:2:11",
+        "1 kings:2:12",
+        "1 kings:2:13",
+        "1 kings:2:14",
+        "1 kings:2:15",
+        "1 kings:2:16",
+        "1 kings:2:17",
+        "1 kings:2:18",
+        "1 kings:2:19",
+        "1 kings:2:2",
+        "1 kings:2:20",
+        "1 kings:2:21",
+        "1 kings:2:22",
+        "1 kings:2:23",
+        "1 kings:2:24",
+        "1 kings:2:25",
+        "1 kings:2:26",
+        "1 kings:2:27",
+        "1 kings:2:28",
+        "1 kings:2:29",
+        "1 kings:2:3",
+        "1 kings:2:30",
+        "1 kings:2:31",
+        "1 kings:2:32",
+        "1 kings:2:33",
+        "1 kings:2:34",
+        "1 kings:2:35",
+        "1 kings:2:36",
+        "1 kings:2:37",
+        "1 kings:2:38",
+        "1 kings:2:39",
+        "1 kings:2:4",
+        "1 kings:2:40",
+        "1 kings:2:41",
+        "1 kings:2:42",
+        "1 kings:2:43",
+        "1 kings:2:44",
+        "1 kings:2:45",
+        "1 kings:2:46",
+        "1 kings:2:5",
+        "1 kings:2:6",
+        "1 kings:2:7",
+        "1 kings:2:8",
+        "1 kings:2:9"
+      ]
+    },
+    {
+      "index": 16,
+      "group": "02",
+      "characterId": "elijah",
+      "canonicalName": "以利亚",
+      "mirrorId": 32,
+      "mirrorName": "以利亚",
+      "topicId": "elijah-01-case",
+      "question": "你宣布干旱以及被供养的经历是什么？",
+      "expectedReferences": [
+        "1 Kings 17"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "1 Kings 17"
+      ],
+      "expectedCoordinates": [
+        "1 kings:17:1",
+        "1 kings:17:10",
+        "1 kings:17:11",
+        "1 kings:17:12",
+        "1 kings:17:13",
+        "1 kings:17:14",
+        "1 kings:17:15",
+        "1 kings:17:16",
+        "1 kings:17:17",
+        "1 kings:17:18",
+        "1 kings:17:19",
+        "1 kings:17:2",
+        "1 kings:17:20",
+        "1 kings:17:21",
+        "1 kings:17:22",
+        "1 kings:17:23",
+        "1 kings:17:24",
+        "1 kings:17:3",
+        "1 kings:17:4",
+        "1 kings:17:5",
+        "1 kings:17:6",
+        "1 kings:17:7",
+        "1 kings:17:8",
+        "1 kings:17:9"
+      ]
+    },
+    {
+      "index": 17,
+      "group": "02",
+      "characterId": "isaiah",
+      "canonicalName": "以赛亚",
+      "mirrorId": 36,
+      "mirrorName": "以赛亚",
+      "topicId": "isaiah-01-case",
+      "question": "你在圣殿异象中的呼召是什么？",
+      "expectedReferences": [
+        "Isaiah 6"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Isaiah 6"
+      ],
+      "expectedCoordinates": [
+        "isaiah:6:1",
+        "isaiah:6:10",
+        "isaiah:6:11",
+        "isaiah:6:12",
+        "isaiah:6:13",
+        "isaiah:6:2",
+        "isaiah:6:3",
+        "isaiah:6:4",
+        "isaiah:6:5",
+        "isaiah:6:6",
+        "isaiah:6:7",
+        "isaiah:6:8",
+        "isaiah:6:9"
+      ]
+    },
+    {
+      "index": 18,
+      "group": "02",
+      "characterId": "jeremiah",
+      "canonicalName": "耶利米",
+      "mirrorId": 37,
+      "mirrorName": "耶利米",
+      "topicId": "jeremiah-01-case",
+      "question": "你蒙召时为什么说自己年幼？",
+      "expectedReferences": [
+        "Jeremiah 1:4-10"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Jeremiah 1:4-10"
+      ],
+      "expectedCoordinates": [
+        "jeremiah:1:10",
+        "jeremiah:1:4",
+        "jeremiah:1:5",
+        "jeremiah:1:6",
+        "jeremiah:1:7",
+        "jeremiah:1:8",
+        "jeremiah:1:9"
+      ]
+    },
+    {
+      "index": 19,
+      "group": "02",
+      "characterId": "daniel",
+      "canonicalName": "但以理",
+      "mirrorId": 39,
+      "mirrorName": "但以理",
+      "topicId": "daniel-01-case",
+      "question": "你和朋友为什么拒绝王膳？",
+      "expectedReferences": [
+        "Daniel 1"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Daniel 1"
+      ],
+      "expectedCoordinates": [
+        "daniel:1:1",
+        "daniel:1:10",
+        "daniel:1:11",
+        "daniel:1:12",
+        "daniel:1:13",
+        "daniel:1:14",
+        "daniel:1:15",
+        "daniel:1:16",
+        "daniel:1:17",
+        "daniel:1:18",
+        "daniel:1:19",
+        "daniel:1:2",
+        "daniel:1:20",
+        "daniel:1:21",
+        "daniel:1:3",
+        "daniel:1:4",
+        "daniel:1:5",
+        "daniel:1:6",
+        "daniel:1:7",
+        "daniel:1:8",
+        "daniel:1:9"
+      ]
+    },
+    {
+      "index": 20,
+      "group": "02",
+      "characterId": "ruth",
+      "canonicalName": "路得",
+      "mirrorId": 20,
+      "mirrorName": "路得",
+      "topicId": "ruth-01-case",
+      "question": "你为什么坚持跟随拿俄米？",
+      "expectedReferences": [
+        "Ruth 1:6-18"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Ruth 1:6-18"
+      ],
+      "expectedCoordinates": [
+        "ruth:1:10",
+        "ruth:1:11",
+        "ruth:1:12",
+        "ruth:1:13",
+        "ruth:1:14",
+        "ruth:1:15",
+        "ruth:1:16",
+        "ruth:1:17",
+        "ruth:1:18",
+        "ruth:1:6",
+        "ruth:1:7",
+        "ruth:1:8",
+        "ruth:1:9"
+      ]
+    },
+    {
+      "index": 21,
+      "group": "03",
+      "characterId": "esther",
+      "canonicalName": "以斯帖",
+      "mirrorId": 42,
+      "mirrorName": "以斯帖",
+      "topicId": "esther-01-case",
+      "question": "你怎样成为王后？",
+      "expectedReferences": [
+        "Esther 2"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Esther 2"
+      ],
+      "expectedCoordinates": [
+        "esther:2:1",
+        "esther:2:10",
+        "esther:2:11",
+        "esther:2:12",
+        "esther:2:13",
+        "esther:2:14",
+        "esther:2:15",
+        "esther:2:16",
+        "esther:2:17",
+        "esther:2:18",
+        "esther:2:19",
+        "esther:2:2",
+        "esther:2:20",
+        "esther:2:21",
+        "esther:2:22",
+        "esther:2:23",
+        "esther:2:3",
+        "esther:2:4",
+        "esther:2:5",
+        "esther:2:6",
+        "esther:2:7",
+        "esther:2:8",
+        "esther:2:9"
+      ]
+    },
+    {
+      "index": 22,
+      "group": "03",
+      "characterId": "mary",
+      "canonicalName": "马利亚（耶稣的母亲）",
+      "mirrorId": 48,
+      "mirrorName": "马利亚",
+      "topicId": "mary-01-case",
+      "question": "天使报喜时发生了什么？",
+      "expectedReferences": [
+        "Luke 1:26-38"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Luke 1:26-38"
+      ],
+      "expectedCoordinates": [
+        "luke:1:26",
+        "luke:1:27",
+        "luke:1:28",
+        "luke:1:29",
+        "luke:1:30",
+        "luke:1:31",
+        "luke:1:32",
+        "luke:1:33",
+        "luke:1:34",
+        "luke:1:35",
+        "luke:1:36",
+        "luke:1:37",
+        "luke:1:38"
+      ]
+    },
+    {
+      "index": 23,
+      "group": "03",
+      "characterId": "john",
+      "canonicalName": "约翰",
+      "mirrorId": 50,
+      "mirrorName": "约翰",
+      "topicId": "john-01-case",
+      "question": "你怎样被耶稣呼召？",
+      "expectedReferences": [
+        "Mark 1:19-20"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Mark 1:19-20"
+      ],
+      "expectedCoordinates": [
+        "mark:1:19",
+        "mark:1:20"
+      ]
+    },
+    {
+      "index": 24,
+      "group": "03",
+      "characterId": "barnabas",
+      "canonicalName": "巴拿巴",
+      "mirrorId": 161,
+      "mirrorName": "巴拿巴",
+      "topicId": "barnabas-01-case",
+      "question": "为什么使徒称你为巴拿巴？",
+      "expectedReferences": [
+        "Acts 4:36-37"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Acts 4:36-37"
+      ],
+      "expectedCoordinates": [
+        "acts:4:36",
+        "acts:4:37"
+      ]
+    },
+    {
+      "index": 25,
+      "group": "03",
+      "characterId": "eve",
+      "canonicalName": "夏娃",
+      "mirrorId": 2,
+      "mirrorName": "夏娃",
+      "topicId": "eve-01-case",
+      "question": "你是如何被造并与亚当成为夫妻的？",
+      "expectedReferences": [
+        "Genesis 2:18-25"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Genesis 2:18-25"
+      ],
+      "expectedCoordinates": [
+        "genesis:2:18",
+        "genesis:2:19",
+        "genesis:2:20",
+        "genesis:2:21",
+        "genesis:2:22",
+        "genesis:2:23",
+        "genesis:2:24",
+        "genesis:2:25"
+      ]
+    },
+    {
+      "index": 26,
+      "group": "03",
+      "characterId": "cain",
+      "canonicalName": "该隐",
+      "mirrorId": 3,
+      "mirrorName": "该隐",
+      "topicId": "cain-01-case",
+      "question": "你为什么向亚伯发怒？",
+      "expectedReferences": [
+        "Genesis 4:3-7"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Genesis 4:3-7"
+      ],
+      "expectedCoordinates": [
+        "genesis:4:3",
+        "genesis:4:4",
+        "genesis:4:5",
+        "genesis:4:6",
+        "genesis:4:7"
+      ]
+    },
+    {
+      "index": 27,
+      "group": "03",
+      "characterId": "abel",
+      "canonicalName": "亚伯",
+      "mirrorId": 4,
+      "mirrorName": "亚伯",
+      "topicId": "abel-01-case",
+      "question": "你的职业是什么？",
+      "expectedReferences": [
+        "Genesis 4:2"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Genesis 4:2"
+      ],
+      "expectedCoordinates": [
+        "genesis:4:2"
+      ]
+    },
+    {
+      "index": 28,
+      "group": "03",
+      "characterId": "enoch",
+      "canonicalName": "以诺",
+      "mirrorId": 403,
+      "mirrorName": "以诺",
+      "topicId": "enoch-01-case",
+      "question": "创世记怎样描述你与神同行？",
+      "expectedReferences": [
+        "Genesis 5:21-24"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Genesis 5:21-24"
+      ],
+      "expectedCoordinates": [
+        "genesis:5:21",
+        "genesis:5:22",
+        "genesis:5:23",
+        "genesis:5:24"
+      ]
+    },
+    {
+      "index": 29,
+      "group": "03",
+      "characterId": "job",
+      "canonicalName": "约伯",
+      "mirrorId": 46,
+      "mirrorName": "约伯",
+      "topicId": "job-01-case",
+      "question": "你的苦难是怎样开始的？",
+      "expectedReferences": [
+        "Job 1-2"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Job 1-2"
+      ],
+      "expectedCoordinates": [
+        "job:1:1",
+        "job:1:10",
+        "job:1:11",
+        "job:1:12",
+        "job:1:13",
+        "job:1:14",
+        "job:1:15",
+        "job:1:16",
+        "job:1:17",
+        "job:1:18",
+        "job:1:19",
+        "job:1:2",
+        "job:1:20",
+        "job:1:21",
+        "job:1:22",
+        "job:1:3",
+        "job:1:4",
+        "job:1:5",
+        "job:1:6",
+        "job:1:7",
+        "job:1:8",
+        "job:1:9",
+        "job:2:1",
+        "job:2:10",
+        "job:2:11",
+        "job:2:12",
+        "job:2:13",
+        "job:2:2",
+        "job:2:3",
+        "job:2:4",
+        "job:2:5",
+        "job:2:6",
+        "job:2:7",
+        "job:2:8",
+        "job:2:9"
+      ]
+    },
+    {
+      "index": 30,
+      "group": "03",
+      "characterId": "melchizedek",
+      "canonicalName": "麦基洗德",
+      "mirrorId": 406,
+      "mirrorName": "麦基洗德",
+      "topicId": "melchizedek-01-case",
+      "question": "创世记如何介绍你的身份？",
+      "expectedReferences": [
+        "Genesis 14:18-20"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Genesis 14:18-20"
+      ],
+      "expectedCoordinates": [
+        "genesis:14:18",
+        "genesis:14:19",
+        "genesis:14:20"
+      ]
+    },
+    {
+      "index": 31,
+      "group": "04",
+      "characterId": "ishmael",
+      "canonicalName": "以实玛利",
+      "mirrorId": 449,
+      "mirrorName": "以实玛利",
+      "topicId": "ishmael-01-case",
+      "question": "你的母亲是谁，你是怎样出生的？",
+      "expectedReferences": [
+        "Genesis 16:1-16"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Genesis 16:1-16"
+      ],
+      "expectedCoordinates": [
+        "genesis:16:1",
+        "genesis:16:10",
+        "genesis:16:11",
+        "genesis:16:12",
+        "genesis:16:13",
+        "genesis:16:14",
+        "genesis:16:15",
+        "genesis:16:16",
+        "genesis:16:2",
+        "genesis:16:3",
+        "genesis:16:4",
+        "genesis:16:5",
+        "genesis:16:6",
+        "genesis:16:7",
+        "genesis:16:8",
+        "genesis:16:9"
+      ]
+    },
+    {
+      "index": 32,
+      "group": "04",
+      "characterId": "rebecca",
+      "canonicalName": "利百加",
+      "mirrorId": 74,
+      "mirrorName": "利百加",
+      "topicId": "rebecca-01-case",
+      "question": "亚伯拉罕的仆人怎样找到你？",
+      "expectedReferences": [
+        "Genesis 24"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Genesis 24"
+      ],
+      "expectedCoordinates": [
+        "genesis:24:1",
+        "genesis:24:10",
+        "genesis:24:11",
+        "genesis:24:12",
+        "genesis:24:13",
+        "genesis:24:14",
+        "genesis:24:15",
+        "genesis:24:16",
+        "genesis:24:17",
+        "genesis:24:18",
+        "genesis:24:19",
+        "genesis:24:2",
+        "genesis:24:20",
+        "genesis:24:21",
+        "genesis:24:22",
+        "genesis:24:23",
+        "genesis:24:24",
+        "genesis:24:25",
+        "genesis:24:26",
+        "genesis:24:27",
+        "genesis:24:28",
+        "genesis:24:29",
+        "genesis:24:3",
+        "genesis:24:30",
+        "genesis:24:31",
+        "genesis:24:32",
+        "genesis:24:33",
+        "genesis:24:34",
+        "genesis:24:35",
+        "genesis:24:36",
+        "genesis:24:37",
+        "genesis:24:38",
+        "genesis:24:39",
+        "genesis:24:4",
+        "genesis:24:40",
+        "genesis:24:41",
+        "genesis:24:42",
+        "genesis:24:43",
+        "genesis:24:44",
+        "genesis:24:45",
+        "genesis:24:46",
+        "genesis:24:47",
+        "genesis:24:48",
+        "genesis:24:49",
+        "genesis:24:5",
+        "genesis:24:50",
+        "genesis:24:51",
+        "genesis:24:52",
+        "genesis:24:53",
+        "genesis:24:54",
+        "genesis:24:55",
+        "genesis:24:56",
+        "genesis:24:57",
+        "genesis:24:58",
+        "genesis:24:59",
+        "genesis:24:6",
+        "genesis:24:60",
+        "genesis:24:61",
+        "genesis:24:62",
+        "genesis:24:63",
+        "genesis:24:64",
+        "genesis:24:65",
+        "genesis:24:66",
+        "genesis:24:67",
+        "genesis:24:7",
+        "genesis:24:8",
+        "genesis:24:9"
+      ]
+    },
+    {
+      "index": 33,
+      "group": "04",
+      "characterId": "esau",
+      "canonicalName": "以扫",
+      "mirrorId": 73,
+      "mirrorName": "以扫",
+      "topicId": "esau-01-case",
+      "question": "你为什么把长子名分卖给雅各？",
+      "expectedReferences": [
+        "Genesis 25:29-34"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Genesis 25:29-34"
+      ],
+      "expectedCoordinates": [
+        "genesis:25:29",
+        "genesis:25:30",
+        "genesis:25:31",
+        "genesis:25:32",
+        "genesis:25:33",
+        "genesis:25:34"
+      ]
+    },
+    {
+      "index": 34,
+      "group": "04",
+      "characterId": "leah",
+      "canonicalName": "利亚",
+      "mirrorId": 206,
+      "mirrorName": "利亚",
+      "topicId": "leah-01-case",
+      "question": "你怎样成为雅各的妻子？",
+      "expectedReferences": [
+        "Genesis 29:21-26"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Genesis 29:21-26"
+      ],
+      "expectedCoordinates": [
+        "genesis:29:21",
+        "genesis:29:22",
+        "genesis:29:23",
+        "genesis:29:24",
+        "genesis:29:25",
+        "genesis:29:26"
+      ]
+    },
+    {
+      "index": 35,
+      "group": "04",
+      "characterId": "rachel",
+      "canonicalName": "拉结",
+      "mirrorId": 207,
+      "mirrorName": "拉结",
+      "topicId": "rachel-01-case",
+      "question": "雅各为什么为你服事多年？",
+      "expectedReferences": [
+        "Genesis 29:15-30"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Genesis 29:15-30"
+      ],
+      "expectedCoordinates": [
+        "genesis:29:15",
+        "genesis:29:16",
+        "genesis:29:17",
+        "genesis:29:18",
+        "genesis:29:19",
+        "genesis:29:20",
+        "genesis:29:21",
+        "genesis:29:22",
+        "genesis:29:23",
+        "genesis:29:24",
+        "genesis:29:25",
+        "genesis:29:26",
+        "genesis:29:27",
+        "genesis:29:28",
+        "genesis:29:29",
+        "genesis:29:30"
+      ]
+    },
+    {
+      "index": 36,
+      "group": "04",
+      "characterId": "aaron",
+      "canonicalName": "亚伦",
+      "mirrorId": 13,
+      "mirrorName": "亚伦",
+      "topicId": "aaron-01-case",
+      "question": "你如何成为摩西的同工和发言者？",
+      "expectedReferences": [
+        "Exodus 4:14-16",
+        "Exodus 4:27-31"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Exodus 4:14-16,27-31"
+      ],
+      "expectedCoordinates": [
+        "exodus:4:14",
+        "exodus:4:15",
+        "exodus:4:16",
+        "exodus:4:27",
+        "exodus:4:28",
+        "exodus:4:29",
+        "exodus:4:30",
+        "exodus:4:31"
+      ]
+    },
+    {
+      "index": 37,
+      "group": "04",
+      "characterId": "miriam",
+      "canonicalName": "米利暗",
+      "mirrorId": 14,
+      "mirrorName": "米利暗",
+      "topicId": "miriam-01-case",
+      "question": "过红海后你带领妇女做了什么？",
+      "expectedReferences": [
+        "Exodus 15:20-21"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Exodus 15:20-21"
+      ],
+      "expectedCoordinates": [
+        "exodus:15:20",
+        "exodus:15:21"
+      ]
+    },
+    {
+      "index": 38,
+      "group": "04",
+      "characterId": "caleb",
+      "canonicalName": "迦勒",
+      "mirrorId": 160,
+      "mirrorName": "迦勒",
+      "topicId": "caleb-01-case",
+      "question": "十二探子回来后你怎样回应？",
+      "expectedReferences": [
+        "Numbers 13:30",
+        "Numbers 14:6-9"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Numbers 13:30",
+        "Numbers 14:6-9"
+      ],
+      "expectedCoordinates": [
+        "numbers:13:30",
+        "numbers:14:6",
+        "numbers:14:7",
+        "numbers:14:8",
+        "numbers:14:9"
+      ]
+    },
+    {
+      "index": 39,
+      "group": "04",
+      "characterId": "rahab",
+      "canonicalName": "喇合",
+      "mirrorId": 194,
+      "mirrorName": "喇合",
+      "topicId": "rahab-01-case",
+      "question": "你为什么隐藏以色列探子？",
+      "expectedReferences": [
+        "Joshua 2"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Joshua 2"
+      ],
+      "expectedCoordinates": [
+        "joshua:2:1",
+        "joshua:2:10",
+        "joshua:2:11",
+        "joshua:2:12",
+        "joshua:2:13",
+        "joshua:2:14",
+        "joshua:2:15",
+        "joshua:2:16",
+        "joshua:2:17",
+        "joshua:2:18",
+        "joshua:2:19",
+        "joshua:2:2",
+        "joshua:2:20",
+        "joshua:2:21",
+        "joshua:2:22",
+        "joshua:2:23",
+        "joshua:2:24",
+        "joshua:2:3",
+        "joshua:2:4",
+        "joshua:2:5",
+        "joshua:2:6",
+        "joshua:2:7",
+        "joshua:2:8",
+        "joshua:2:9"
+      ]
+    },
+    {
+      "index": 40,
+      "group": "04",
+      "characterId": "deborah",
+      "canonicalName": "底波拉",
+      "mirrorId": 17,
+      "mirrorName": "底波拉",
+      "topicId": "deborah-01-case",
+      "question": "你在以色列中担任什么角色？",
+      "expectedReferences": [
+        "Judges 4:4-5"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Judges 4:4-5"
+      ],
+      "expectedCoordinates": [
+        "judges:4:4",
+        "judges:4:5"
+      ]
+    },
+    {
+      "index": 41,
+      "group": "05",
+      "characterId": "gideon",
+      "canonicalName": "基甸",
+      "mirrorId": 18,
+      "mirrorName": "基甸",
+      "topicId": "gideon-01-case",
+      "question": "神怎样呼召你？",
+      "expectedReferences": [
+        "Judges 6:11-24"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Judges 6:11-24"
+      ],
+      "expectedCoordinates": [
+        "judges:6:11",
+        "judges:6:12",
+        "judges:6:13",
+        "judges:6:14",
+        "judges:6:15",
+        "judges:6:16",
+        "judges:6:17",
+        "judges:6:18",
+        "judges:6:19",
+        "judges:6:20",
+        "judges:6:21",
+        "judges:6:22",
+        "judges:6:23",
+        "judges:6:24"
+      ]
+    },
+    {
+      "index": 42,
+      "group": "05",
+      "characterId": "samson",
+      "canonicalName": "参孙",
+      "mirrorId": 19,
+      "mirrorName": "参孙",
+      "topicId": "samson-01-case",
+      "question": "你的出生有什么特别之处？",
+      "expectedReferences": [
+        "Judges 13"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Judges 13"
+      ],
+      "expectedCoordinates": [
+        "judges:13:1",
+        "judges:13:10",
+        "judges:13:11",
+        "judges:13:12",
+        "judges:13:13",
+        "judges:13:14",
+        "judges:13:15",
+        "judges:13:16",
+        "judges:13:17",
+        "judges:13:18",
+        "judges:13:19",
+        "judges:13:2",
+        "judges:13:20",
+        "judges:13:21",
+        "judges:13:22",
+        "judges:13:23",
+        "judges:13:24",
+        "judges:13:25",
+        "judges:13:3",
+        "judges:13:4",
+        "judges:13:5",
+        "judges:13:6",
+        "judges:13:7",
+        "judges:13:8",
+        "judges:13:9"
+      ]
+    },
+    {
+      "index": 43,
+      "group": "05",
+      "characterId": "hannah",
+      "canonicalName": "哈拿",
+      "mirrorId": 22,
+      "mirrorName": "哈拿",
+      "topicId": "hannah-01-case",
+      "question": "你为什么在示罗痛哭祷告？",
+      "expectedReferences": [
+        "1 Samuel 1:9-18"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "1 Samuel 1:9-18"
+      ],
+      "expectedCoordinates": [
+        "1 samuel:1:10",
+        "1 samuel:1:11",
+        "1 samuel:1:12",
+        "1 samuel:1:13",
+        "1 samuel:1:14",
+        "1 samuel:1:15",
+        "1 samuel:1:16",
+        "1 samuel:1:17",
+        "1 samuel:1:18",
+        "1 samuel:1:9"
+      ]
+    },
+    {
+      "index": 44,
+      "group": "05",
+      "characterId": "eli",
+      "canonicalName": "以利",
+      "mirrorId": 237,
+      "mirrorName": "以利",
+      "topicId": "eli-01-case",
+      "question": "你第一次怎样误解哈拿的祷告？",
+      "expectedReferences": [
+        "1 Samuel 1:12-17"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "1 Samuel 1:12-17"
+      ],
+      "expectedCoordinates": [
+        "1 samuel:1:12",
+        "1 samuel:1:13",
+        "1 samuel:1:14",
+        "1 samuel:1:15",
+        "1 samuel:1:16",
+        "1 samuel:1:17"
+      ]
+    },
+    {
+      "index": 45,
+      "group": "05",
+      "characterId": "jonathan",
+      "canonicalName": "约拿单",
+      "mirrorId": 147,
+      "mirrorName": "约拿单",
+      "topicId": "jonathan-01-case",
+      "question": "你和大卫为什么成为亲密朋友？",
+      "expectedReferences": [
+        "1 Samuel 18:1-4"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "1 Samuel 18:1-4"
+      ],
+      "expectedCoordinates": [
+        "1 samuel:18:1",
+        "1 samuel:18:2",
+        "1 samuel:18:3",
+        "1 samuel:18:4"
+      ]
+    },
+    {
+      "index": 46,
+      "group": "05",
+      "characterId": "michal",
+      "canonicalName": "米甲",
+      "mirrorId": 455,
+      "mirrorName": "米甲",
+      "topicId": "michal-01-case",
+      "question": "你怎样成为大卫的妻子？",
+      "expectedReferences": [
+        "1 Samuel 18:20-29"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "1 Samuel 18:20-29"
+      ],
+      "expectedCoordinates": [
+        "1 samuel:18:20",
+        "1 samuel:18:21",
+        "1 samuel:18:22",
+        "1 samuel:18:23",
+        "1 samuel:18:24",
+        "1 samuel:18:25",
+        "1 samuel:18:26",
+        "1 samuel:18:27",
+        "1 samuel:18:28",
+        "1 samuel:18:29"
+      ]
+    },
+    {
+      "index": 47,
+      "group": "05",
+      "characterId": "abigail",
+      "canonicalName": "亚比该",
+      "mirrorId": 143,
+      "mirrorName": "亚比该",
+      "topicId": "abigail-01-case",
+      "question": "拿八拒绝大卫后你做了什么？",
+      "expectedReferences": [
+        "1 Samuel 25:14-35"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "1 Samuel 25:14-35"
+      ],
+      "expectedCoordinates": [
+        "1 samuel:25:14",
+        "1 samuel:25:15",
+        "1 samuel:25:16",
+        "1 samuel:25:17",
+        "1 samuel:25:18",
+        "1 samuel:25:19",
+        "1 samuel:25:20",
+        "1 samuel:25:21",
+        "1 samuel:25:22",
+        "1 samuel:25:23",
+        "1 samuel:25:24",
+        "1 samuel:25:25",
+        "1 samuel:25:26",
+        "1 samuel:25:27",
+        "1 samuel:25:28",
+        "1 samuel:25:29",
+        "1 samuel:25:30",
+        "1 samuel:25:31",
+        "1 samuel:25:32",
+        "1 samuel:25:33",
+        "1 samuel:25:34",
+        "1 samuel:25:35"
+      ]
+    },
+    {
+      "index": 48,
+      "group": "05",
+      "characterId": "nathan",
+      "canonicalName": "拿单",
+      "mirrorId": 422,
+      "mirrorName": "拿单",
+      "topicId": "nathan-01-case",
+      "question": "你怎样回应大卫想建圣殿的愿望？",
+      "expectedReferences": [
+        "2 Samuel 7:1-17"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "2 Samuel 7:1-17"
+      ],
+      "expectedCoordinates": [
+        "2 samuel:7:1",
+        "2 samuel:7:10",
+        "2 samuel:7:11",
+        "2 samuel:7:12",
+        "2 samuel:7:13",
+        "2 samuel:7:14",
+        "2 samuel:7:15",
+        "2 samuel:7:16",
+        "2 samuel:7:17",
+        "2 samuel:7:2",
+        "2 samuel:7:3",
+        "2 samuel:7:4",
+        "2 samuel:7:5",
+        "2 samuel:7:6",
+        "2 samuel:7:7",
+        "2 samuel:7:8",
+        "2 samuel:7:9"
+      ]
+    },
+    {
+      "index": 49,
+      "group": "05",
+      "characterId": "absalom",
+      "canonicalName": "押沙龙",
+      "mirrorId": 189,
+      "mirrorName": "押沙龙",
+      "topicId": "absalom-01-case",
+      "question": "暗嫩伤害他玛后你做了什么？",
+      "expectedReferences": [
+        "2 Samuel 13:20-39"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "2 Samuel 13:20-39"
+      ],
+      "expectedCoordinates": [
+        "2 samuel:13:20",
+        "2 samuel:13:21",
+        "2 samuel:13:22",
+        "2 samuel:13:23",
+        "2 samuel:13:24",
+        "2 samuel:13:25",
+        "2 samuel:13:26",
+        "2 samuel:13:27",
+        "2 samuel:13:28",
+        "2 samuel:13:29",
+        "2 samuel:13:30",
+        "2 samuel:13:31",
+        "2 samuel:13:32",
+        "2 samuel:13:33",
+        "2 samuel:13:34",
+        "2 samuel:13:35",
+        "2 samuel:13:36",
+        "2 samuel:13:37",
+        "2 samuel:13:38",
+        "2 samuel:13:39"
+      ]
+    },
+    {
+      "index": 50,
+      "group": "05",
+      "characterId": "bathsheba",
+      "canonicalName": "拔示巴",
+      "mirrorId": 209,
+      "mirrorName": "拔示巴",
+      "topicId": "bathsheba-01-case",
+      "question": "大卫与你和乌利亚的事件怎样发生？",
+      "expectedReferences": [
+        "2 Samuel 11"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "2 Samuel 11"
+      ],
+      "expectedCoordinates": [
+        "2 samuel:11:1",
+        "2 samuel:11:10",
+        "2 samuel:11:11",
+        "2 samuel:11:12",
+        "2 samuel:11:13",
+        "2 samuel:11:14",
+        "2 samuel:11:15",
+        "2 samuel:11:16",
+        "2 samuel:11:17",
+        "2 samuel:11:18",
+        "2 samuel:11:19",
+        "2 samuel:11:2",
+        "2 samuel:11:20",
+        "2 samuel:11:21",
+        "2 samuel:11:22",
+        "2 samuel:11:23",
+        "2 samuel:11:24",
+        "2 samuel:11:25",
+        "2 samuel:11:26",
+        "2 samuel:11:27",
+        "2 samuel:11:3",
+        "2 samuel:11:4",
+        "2 samuel:11:5",
+        "2 samuel:11:6",
+        "2 samuel:11:7",
+        "2 samuel:11:8",
+        "2 samuel:11:9"
+      ]
+    },
+    {
+      "index": 51,
+      "group": "06",
+      "characterId": "rehoboam",
+      "canonicalName": "罗波安",
+      "mirrorId": 82,
+      "mirrorName": "罗波安",
+      "topicId": "rehoboam-01-case",
+      "question": "你为什么拒绝长老减轻百姓负担的建议？",
+      "expectedReferences": [
+        "1 Kings 12:1-15"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "1 Kings 12:1-15"
+      ],
+      "expectedCoordinates": [
+        "1 kings:12:1",
+        "1 kings:12:10",
+        "1 kings:12:11",
+        "1 kings:12:12",
+        "1 kings:12:13",
+        "1 kings:12:14",
+        "1 kings:12:15",
+        "1 kings:12:2",
+        "1 kings:12:3",
+        "1 kings:12:4",
+        "1 kings:12:5",
+        "1 kings:12:6",
+        "1 kings:12:7",
+        "1 kings:12:8",
+        "1 kings:12:9"
+      ]
+    },
+    {
+      "index": 52,
+      "group": "06",
+      "characterId": "jeroboam",
+      "canonicalName": "耶罗波安",
+      "mirrorId": 195,
+      "mirrorName": "耶罗波安",
+      "topicId": "jeroboam-01-case",
+      "question": "先知亚希雅怎样预告你将得十个支派？",
+      "expectedReferences": [
+        "1 Kings 11:29-39"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "1 Kings 11:29-39"
+      ],
+      "expectedCoordinates": [
+        "1 kings:11:29",
+        "1 kings:11:30",
+        "1 kings:11:31",
+        "1 kings:11:32",
+        "1 kings:11:33",
+        "1 kings:11:34",
+        "1 kings:11:35",
+        "1 kings:11:36",
+        "1 kings:11:37",
+        "1 kings:11:38",
+        "1 kings:11:39"
+      ]
+    },
+    {
+      "index": 53,
+      "group": "06",
+      "characterId": "ahab",
+      "canonicalName": "亚哈",
+      "mirrorId": 30,
+      "mirrorName": "亚哈",
+      "topicId": "ahab-01-case",
+      "question": "你与以利亚在迦密山事件中扮演什么角色？",
+      "expectedReferences": [
+        "1 Kings 18"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "1 Kings 18"
+      ],
+      "expectedCoordinates": [
+        "1 kings:18:1",
+        "1 kings:18:10",
+        "1 kings:18:11",
+        "1 kings:18:12",
+        "1 kings:18:13",
+        "1 kings:18:14",
+        "1 kings:18:15",
+        "1 kings:18:16",
+        "1 kings:18:17",
+        "1 kings:18:18",
+        "1 kings:18:19",
+        "1 kings:18:2",
+        "1 kings:18:20",
+        "1 kings:18:21",
+        "1 kings:18:22",
+        "1 kings:18:23",
+        "1 kings:18:24",
+        "1 kings:18:25",
+        "1 kings:18:26",
+        "1 kings:18:27",
+        "1 kings:18:28",
+        "1 kings:18:29",
+        "1 kings:18:3",
+        "1 kings:18:30",
+        "1 kings:18:31",
+        "1 kings:18:32",
+        "1 kings:18:33",
+        "1 kings:18:34",
+        "1 kings:18:35",
+        "1 kings:18:36",
+        "1 kings:18:37",
+        "1 kings:18:38",
+        "1 kings:18:39",
+        "1 kings:18:4",
+        "1 kings:18:40",
+        "1 kings:18:41",
+        "1 kings:18:42",
+        "1 kings:18:43",
+        "1 kings:18:44",
+        "1 kings:18:45",
+        "1 kings:18:46",
+        "1 kings:18:5",
+        "1 kings:18:6",
+        "1 kings:18:7",
+        "1 kings:18:8",
+        "1 kings:18:9"
+      ]
+    },
+    {
+      "index": 54,
+      "group": "06",
+      "characterId": "jezebel",
+      "canonicalName": "耶洗别",
+      "mirrorId": 159,
+      "mirrorName": "耶洗别",
+      "topicId": "jezebel-01-case",
+      "question": "你为什么威胁以利亚？",
+      "expectedReferences": [
+        "1 Kings 19:1-2"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "1 Kings 19:1-2"
+      ],
+      "expectedCoordinates": [
+        "1 kings:19:1",
+        "1 kings:19:2"
+      ]
+    },
+    {
+      "index": 55,
+      "group": "06",
+      "characterId": "elisha",
+      "canonicalName": "以利沙",
+      "mirrorId": 156,
+      "mirrorName": "以利沙",
+      "topicId": "elisha-01-case",
+      "question": "你怎样跟随并接续以利亚？",
+      "expectedReferences": [
+        "1 Kings 19:19-21",
+        "2 Kings 2"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "1 Kings 19:19-21",
+        "2 Kings 2"
+      ],
+      "expectedCoordinates": [
+        "1 kings:19:19",
+        "1 kings:19:20",
+        "1 kings:19:21",
+        "2 kings:2:1",
+        "2 kings:2:10",
+        "2 kings:2:11",
+        "2 kings:2:12",
+        "2 kings:2:13",
+        "2 kings:2:14",
+        "2 kings:2:15",
+        "2 kings:2:16",
+        "2 kings:2:17",
+        "2 kings:2:18",
+        "2 kings:2:19",
+        "2 kings:2:2",
+        "2 kings:2:20",
+        "2 kings:2:21",
+        "2 kings:2:22",
+        "2 kings:2:23",
+        "2 kings:2:24",
+        "2 kings:2:25",
+        "2 kings:2:3",
+        "2 kings:2:4",
+        "2 kings:2:5",
+        "2 kings:2:6",
+        "2 kings:2:7",
+        "2 kings:2:8",
+        "2 kings:2:9"
+      ]
+    },
+    {
+      "index": 56,
+      "group": "06",
+      "characterId": "hezekiah",
+      "canonicalName": "希西家",
+      "mirrorId": 34,
+      "mirrorName": "希西家",
+      "topicId": "hezekiah-01-case",
+      "question": "亚述围困耶路撒冷时你怎样回应？",
+      "expectedReferences": [
+        "2 Kings 18-19",
+        "Isaiah 36-37"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "2 Kings 18-19",
+        "Isaiah 36-37"
+      ],
+      "expectedCoordinates": [
+        "2 kings:18:1",
+        "2 kings:18:10",
+        "2 kings:18:11",
+        "2 kings:18:12",
+        "2 kings:18:13",
+        "2 kings:18:14",
+        "2 kings:18:15",
+        "2 kings:18:16",
+        "2 kings:18:17",
+        "2 kings:18:18",
+        "2 kings:18:19",
+        "2 kings:18:2",
+        "2 kings:18:20",
+        "2 kings:18:21",
+        "2 kings:18:22",
+        "2 kings:18:23",
+        "2 kings:18:24",
+        "2 kings:18:25",
+        "2 kings:18:26",
+        "2 kings:18:27",
+        "2 kings:18:28",
+        "2 kings:18:29",
+        "2 kings:18:3",
+        "2 kings:18:30",
+        "2 kings:18:31",
+        "2 kings:18:32",
+        "2 kings:18:33",
+        "2 kings:18:34",
+        "2 kings:18:35",
+        "2 kings:18:36",
+        "2 kings:18:37",
+        "2 kings:18:4",
+        "2 kings:18:5",
+        "2 kings:18:6",
+        "2 kings:18:7",
+        "2 kings:18:8",
+        "2 kings:18:9",
+        "2 kings:19:1",
+        "2 kings:19:10",
+        "2 kings:19:11",
+        "2 kings:19:12",
+        "2 kings:19:13",
+        "2 kings:19:14",
+        "2 kings:19:15",
+        "2 kings:19:16",
+        "2 kings:19:17",
+        "2 kings:19:18",
+        "2 kings:19:19",
+        "2 kings:19:2",
+        "2 kings:19:20",
+        "2 kings:19:21",
+        "2 kings:19:22",
+        "2 kings:19:23",
+        "2 kings:19:24",
+        "2 kings:19:25",
+        "2 kings:19:26",
+        "2 kings:19:27",
+        "2 kings:19:28",
+        "2 kings:19:29",
+        "2 kings:19:3",
+        "2 kings:19:30",
+        "2 kings:19:31",
+        "2 kings:19:32",
+        "2 kings:19:33",
+        "2 kings:19:34",
+        "2 kings:19:35",
+        "2 kings:19:36",
+        "2 kings:19:37",
+        "2 kings:19:4",
+        "2 kings:19:5",
+        "2 kings:19:6",
+        "2 kings:19:7",
+        "2 kings:19:8",
+        "2 kings:19:9",
+        "isaiah:36:1",
+        "isaiah:36:10",
+        "isaiah:36:11",
+        "isaiah:36:12",
+        "isaiah:36:13",
+        "isaiah:36:14",
+        "isaiah:36:15",
+        "isaiah:36:16",
+        "isaiah:36:17",
+        "isaiah:36:18",
+        "isaiah:36:19",
+        "isaiah:36:2",
+        "isaiah:36:20",
+        "isaiah:36:21",
+        "isaiah:36:22",
+        "isaiah:36:3",
+        "isaiah:36:4",
+        "isaiah:36:5",
+        "isaiah:36:6",
+        "isaiah:36:7",
+        "isaiah:36:8",
+        "isaiah:36:9",
+        "isaiah:37:1",
+        "isaiah:37:10",
+        "isaiah:37:11",
+        "isaiah:37:12",
+        "isaiah:37:13",
+        "isaiah:37:14",
+        "isaiah:37:15",
+        "isaiah:37:16",
+        "isaiah:37:17",
+        "isaiah:37:18",
+        "isaiah:37:19",
+        "isaiah:37:2",
+        "isaiah:37:20",
+        "isaiah:37:21",
+        "isaiah:37:22",
+        "isaiah:37:23",
+        "isaiah:37:24",
+        "isaiah:37:25",
+        "isaiah:37:26",
+        "isaiah:37:27",
+        "isaiah:37:28",
+        "isaiah:37:29",
+        "isaiah:37:3",
+        "isaiah:37:30",
+        "isaiah:37:31",
+        "isaiah:37:32",
+        "isaiah:37:33",
+        "isaiah:37:34",
+        "isaiah:37:35",
+        "isaiah:37:36",
+        "isaiah:37:37",
+        "isaiah:37:38",
+        "isaiah:37:4",
+        "isaiah:37:5",
+        "isaiah:37:6",
+        "isaiah:37:7",
+        "isaiah:37:8",
+        "isaiah:37:9"
+      ]
+    },
+    {
+      "index": 57,
+      "group": "06",
+      "characterId": "josiah",
+      "canonicalName": "约西亚",
+      "mirrorId": 188,
+      "mirrorName": "约西亚",
+      "topicId": "josiah-01-case",
+      "question": "律法书被发现后你怎样回应？",
+      "expectedReferences": [
+        "2 Kings 22"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "2 Kings 22"
+      ],
+      "expectedCoordinates": [
+        "2 kings:22:1",
+        "2 kings:22:10",
+        "2 kings:22:11",
+        "2 kings:22:12",
+        "2 kings:22:13",
+        "2 kings:22:14",
+        "2 kings:22:15",
+        "2 kings:22:16",
+        "2 kings:22:17",
+        "2 kings:22:18",
+        "2 kings:22:19",
+        "2 kings:22:2",
+        "2 kings:22:20",
+        "2 kings:22:3",
+        "2 kings:22:4",
+        "2 kings:22:5",
+        "2 kings:22:6",
+        "2 kings:22:7",
+        "2 kings:22:8",
+        "2 kings:22:9"
+      ]
+    },
+    {
+      "index": 58,
+      "group": "06",
+      "characterId": "ezekiel",
+      "canonicalName": "以西结",
+      "mirrorId": 170,
+      "mirrorName": "以西结",
+      "topicId": "ezekiel-01-case",
+      "question": "你在迦巴鲁河边看见了什么异象？",
+      "expectedReferences": [
+        "Ezekiel 1"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Ezekiel 1"
+      ],
+      "expectedCoordinates": [
+        "ezekiel:1:1",
+        "ezekiel:1:10",
+        "ezekiel:1:11",
+        "ezekiel:1:12",
+        "ezekiel:1:13",
+        "ezekiel:1:14",
+        "ezekiel:1:15",
+        "ezekiel:1:16",
+        "ezekiel:1:17",
+        "ezekiel:1:18",
+        "ezekiel:1:19",
+        "ezekiel:1:2",
+        "ezekiel:1:20",
+        "ezekiel:1:21",
+        "ezekiel:1:22",
+        "ezekiel:1:23",
+        "ezekiel:1:24",
+        "ezekiel:1:25",
+        "ezekiel:1:26",
+        "ezekiel:1:27",
+        "ezekiel:1:28",
+        "ezekiel:1:3",
+        "ezekiel:1:4",
+        "ezekiel:1:5",
+        "ezekiel:1:6",
+        "ezekiel:1:7",
+        "ezekiel:1:8",
+        "ezekiel:1:9"
+      ]
+    },
+    {
+      "index": 59,
+      "group": "06",
+      "characterId": "hosea",
+      "canonicalName": "何西阿",
+      "mirrorId": 40,
+      "mirrorName": "何西阿",
+      "topicId": "hosea-01-case",
+      "question": "你的婚姻为什么成为先知性记号？",
+      "expectedReferences": [
+        "Hosea 1-3"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Hosea 1-3"
+      ],
+      "expectedCoordinates": [
+        "hosea:1:1",
+        "hosea:1:10",
+        "hosea:1:11",
+        "hosea:1:2",
+        "hosea:1:3",
+        "hosea:1:4",
+        "hosea:1:5",
+        "hosea:1:6",
+        "hosea:1:7",
+        "hosea:1:8",
+        "hosea:1:9",
+        "hosea:2:1",
+        "hosea:2:10",
+        "hosea:2:11",
+        "hosea:2:12",
+        "hosea:2:13",
+        "hosea:2:14",
+        "hosea:2:15",
+        "hosea:2:16",
+        "hosea:2:17",
+        "hosea:2:18",
+        "hosea:2:19",
+        "hosea:2:2",
+        "hosea:2:20",
+        "hosea:2:21",
+        "hosea:2:22",
+        "hosea:2:23",
+        "hosea:2:3",
+        "hosea:2:4",
+        "hosea:2:5",
+        "hosea:2:6",
+        "hosea:2:7",
+        "hosea:2:8",
+        "hosea:2:9",
+        "hosea:3:1",
+        "hosea:3:2",
+        "hosea:3:3",
+        "hosea:3:4",
+        "hosea:3:5"
+      ]
+    },
+    {
+      "index": 60,
+      "group": "06",
+      "characterId": "jonah",
+      "canonicalName": "约拿",
+      "mirrorId": 437,
+      "mirrorName": "约拿",
+      "topicId": "jonah-01-case",
+      "question": "你为什么逃往他施？",
+      "expectedReferences": [
+        "Jonah 1"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Jonah 1"
+      ],
+      "expectedCoordinates": [
+        "jonah:1:1",
+        "jonah:1:10",
+        "jonah:1:11",
+        "jonah:1:12",
+        "jonah:1:13",
+        "jonah:1:14",
+        "jonah:1:15",
+        "jonah:1:16",
+        "jonah:1:17",
+        "jonah:1:2",
+        "jonah:1:3",
+        "jonah:1:4",
+        "jonah:1:5",
+        "jonah:1:6",
+        "jonah:1:7",
+        "jonah:1:8",
+        "jonah:1:9"
+      ]
+    },
+    {
+      "index": 61,
+      "group": "07",
+      "characterId": "micah",
+      "canonicalName": "弥迦",
+      "mirrorId": 134,
+      "mirrorName": "弥迦",
+      "topicId": "micah-01-case",
+      "question": "你主要向哪些地区宣告审判？",
+      "expectedReferences": [
+        "Micah 1"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Micah 1"
+      ],
+      "expectedCoordinates": [
+        "micah:1:1",
+        "micah:1:10",
+        "micah:1:11",
+        "micah:1:12",
+        "micah:1:13",
+        "micah:1:14",
+        "micah:1:15",
+        "micah:1:16",
+        "micah:1:2",
+        "micah:1:3",
+        "micah:1:4",
+        "micah:1:5",
+        "micah:1:6",
+        "micah:1:7",
+        "micah:1:8",
+        "micah:1:9"
+      ]
+    },
+    {
+      "index": 62,
+      "group": "07",
+      "characterId": "habakkuk",
+      "canonicalName": "哈巴谷",
+      "mirrorId": 136,
+      "mirrorName": "哈巴谷",
+      "topicId": "habakkuk-01-case",
+      "question": "你为什么向神询问暴力和不公？",
+      "expectedReferences": [
+        "Habakkuk 1:1-4"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Habakkuk 1:1-4"
+      ],
+      "expectedCoordinates": [
+        "habakkuk:1:1",
+        "habakkuk:1:2",
+        "habakkuk:1:3",
+        "habakkuk:1:4"
+      ]
+    },
+    {
+      "index": 63,
+      "group": "07",
+      "characterId": "haggai",
+      "canonicalName": "哈该",
+      "mirrorId": 138,
+      "mirrorName": "哈该",
+      "topicId": "haggai-01-case",
+      "question": "你为什么责备百姓只顾自己的房屋？",
+      "expectedReferences": [
+        "Haggai 1"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Haggai 1"
+      ],
+      "expectedCoordinates": [
+        "haggai:1:1",
+        "haggai:1:10",
+        "haggai:1:11",
+        "haggai:1:12",
+        "haggai:1:13",
+        "haggai:1:14",
+        "haggai:1:15",
+        "haggai:1:2",
+        "haggai:1:3",
+        "haggai:1:4",
+        "haggai:1:5",
+        "haggai:1:6",
+        "haggai:1:7",
+        "haggai:1:8",
+        "haggai:1:9"
+      ]
+    },
+    {
+      "index": 64,
+      "group": "07",
+      "characterId": "zechariah_prophet",
+      "canonicalName": "撒迦利亚",
+      "mirrorId": 139,
+      "mirrorName": "撒迦利亚",
+      "topicId": "zechariah_prophet-01-case",
+      "question": "你最初呼召百姓做什么？",
+      "expectedReferences": [
+        "Zechariah 1:1-6"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Zechariah 1:1-6"
+      ],
+      "expectedCoordinates": [
+        "zechariah:1:1",
+        "zechariah:1:2",
+        "zechariah:1:3",
+        "zechariah:1:4",
+        "zechariah:1:5",
+        "zechariah:1:6"
+      ]
+    },
+    {
+      "index": 65,
+      "group": "07",
+      "characterId": "ezra",
+      "canonicalName": "以斯拉",
+      "mirrorId": 171,
+      "mirrorName": "以斯拉",
+      "topicId": "ezra-01-case",
+      "question": "你为什么从巴比伦上耶路撒冷？",
+      "expectedReferences": [
+        "Ezra 7"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Ezra 7"
+      ],
+      "expectedCoordinates": [
+        "ezra:7:1",
+        "ezra:7:10",
+        "ezra:7:11",
+        "ezra:7:12",
+        "ezra:7:13",
+        "ezra:7:14",
+        "ezra:7:15",
+        "ezra:7:16",
+        "ezra:7:17",
+        "ezra:7:18",
+        "ezra:7:19",
+        "ezra:7:2",
+        "ezra:7:20",
+        "ezra:7:21",
+        "ezra:7:22",
+        "ezra:7:23",
+        "ezra:7:24",
+        "ezra:7:25",
+        "ezra:7:26",
+        "ezra:7:27",
+        "ezra:7:28",
+        "ezra:7:3",
+        "ezra:7:4",
+        "ezra:7:5",
+        "ezra:7:6",
+        "ezra:7:7",
+        "ezra:7:8",
+        "ezra:7:9"
+      ]
+    },
+    {
+      "index": 66,
+      "group": "07",
+      "characterId": "nehemiah",
+      "canonicalName": "尼希米",
+      "mirrorId": 44,
+      "mirrorName": "尼希米",
+      "topicId": "nehemiah-01-case",
+      "question": "你听到耶路撒冷城墙破坏后怎样回应？",
+      "expectedReferences": [
+        "Nehemiah 1"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Nehemiah 1"
+      ],
+      "expectedCoordinates": [
+        "nehemiah:1:1",
+        "nehemiah:1:10",
+        "nehemiah:1:11",
+        "nehemiah:1:2",
+        "nehemiah:1:3",
+        "nehemiah:1:4",
+        "nehemiah:1:5",
+        "nehemiah:1:6",
+        "nehemiah:1:7",
+        "nehemiah:1:8",
+        "nehemiah:1:9"
+      ]
+    },
+    {
+      "index": 67,
+      "group": "07",
+      "characterId": "mordecai",
+      "canonicalName": "末底改",
+      "mirrorId": 43,
+      "mirrorName": "末底改",
+      "topicId": "mordecai-01-case",
+      "question": "你与以斯帖是什么关系？",
+      "expectedReferences": [
+        "Esther 2:5-7"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Esther 2:5-7"
+      ],
+      "expectedCoordinates": [
+        "esther:2:5",
+        "esther:2:6",
+        "esther:2:7"
+      ]
+    },
+    {
+      "index": 68,
+      "group": "07",
+      "characterId": "boaz",
+      "canonicalName": "波阿斯",
+      "mirrorId": 21,
+      "mirrorName": "波阿斯",
+      "topicId": "boaz-01-case",
+      "question": "你第一次怎样对待在田间拾穗的路得？",
+      "expectedReferences": [
+        "Ruth 2"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Ruth 2"
+      ],
+      "expectedCoordinates": [
+        "ruth:2:1",
+        "ruth:2:10",
+        "ruth:2:11",
+        "ruth:2:12",
+        "ruth:2:13",
+        "ruth:2:14",
+        "ruth:2:15",
+        "ruth:2:16",
+        "ruth:2:17",
+        "ruth:2:18",
+        "ruth:2:19",
+        "ruth:2:2",
+        "ruth:2:20",
+        "ruth:2:21",
+        "ruth:2:22",
+        "ruth:2:23",
+        "ruth:2:3",
+        "ruth:2:4",
+        "ruth:2:5",
+        "ruth:2:6",
+        "ruth:2:7",
+        "ruth:2:8",
+        "ruth:2:9"
+      ]
+    },
+    {
+      "index": 69,
+      "group": "07",
+      "characterId": "naomi",
+      "canonicalName": "拿俄米",
+      "mirrorId": 172,
+      "mirrorName": "拿俄米",
+      "topicId": "naomi-01-case",
+      "question": "你为什么从摩押返回伯利恒？",
+      "expectedReferences": [
+        "Ruth 1"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Ruth 1"
+      ],
+      "expectedCoordinates": [
+        "ruth:1:1",
+        "ruth:1:10",
+        "ruth:1:11",
+        "ruth:1:12",
+        "ruth:1:13",
+        "ruth:1:14",
+        "ruth:1:15",
+        "ruth:1:16",
+        "ruth:1:17",
+        "ruth:1:18",
+        "ruth:1:19",
+        "ruth:1:2",
+        "ruth:1:20",
+        "ruth:1:21",
+        "ruth:1:22",
+        "ruth:1:3",
+        "ruth:1:4",
+        "ruth:1:5",
+        "ruth:1:6",
+        "ruth:1:7",
+        "ruth:1:8",
+        "ruth:1:9"
+      ]
+    },
+    {
+      "index": 70,
+      "group": "07",
+      "characterId": "zechariah_priest",
+      "canonicalName": "撒迦利亚（施洗约翰之父）",
+      "mirrorId": 100,
+      "mirrorName": "撒迦利亚（约翰父亲）",
+      "topicId": "zechariah_priest-01-case",
+      "question": "天使在圣殿里告诉你什么？",
+      "expectedReferences": [
+        "Luke 1:5-23"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Luke 1:5-23"
+      ],
+      "expectedCoordinates": [
+        "luke:1:10",
+        "luke:1:11",
+        "luke:1:12",
+        "luke:1:13",
+        "luke:1:14",
+        "luke:1:15",
+        "luke:1:16",
+        "luke:1:17",
+        "luke:1:18",
+        "luke:1:19",
+        "luke:1:20",
+        "luke:1:21",
+        "luke:1:22",
+        "luke:1:23",
+        "luke:1:5",
+        "luke:1:6",
+        "luke:1:7",
+        "luke:1:8",
+        "luke:1:9"
+      ]
+    },
+    {
+      "index": 71,
+      "group": "08",
+      "characterId": "elizabeth",
+      "canonicalName": "伊利莎白",
+      "mirrorId": 211,
+      "mirrorName": "以利沙伯",
+      "topicId": "elizabeth-01-case",
+      "question": "你怀孕的经过是什么？",
+      "expectedReferences": [
+        "Luke 1:5-25"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Luke 1:5-25"
+      ],
+      "expectedCoordinates": [
+        "luke:1:10",
+        "luke:1:11",
+        "luke:1:12",
+        "luke:1:13",
+        "luke:1:14",
+        "luke:1:15",
+        "luke:1:16",
+        "luke:1:17",
+        "luke:1:18",
+        "luke:1:19",
+        "luke:1:20",
+        "luke:1:21",
+        "luke:1:22",
+        "luke:1:23",
+        "luke:1:24",
+        "luke:1:25",
+        "luke:1:5",
+        "luke:1:6",
+        "luke:1:7",
+        "luke:1:8",
+        "luke:1:9"
+      ]
+    },
+    {
+      "index": 72,
+      "group": "08",
+      "characterId": "joseph_of_nazareth",
+      "canonicalName": "约瑟（拿撒勒）",
+      "mirrorId": 99,
+      "mirrorName": "约瑟（耶稣父亲）",
+      "topicId": "joseph_of_nazareth-01-case",
+      "question": "你得知马利亚怀孕后原本打算怎样做？",
+      "expectedReferences": [
+        "Matthew 1:18-25"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Matthew 1:18-25"
+      ],
+      "expectedCoordinates": [
+        "matthew:1:18",
+        "matthew:1:19",
+        "matthew:1:20",
+        "matthew:1:21",
+        "matthew:1:22",
+        "matthew:1:23",
+        "matthew:1:24",
+        "matthew:1:25"
+      ]
+    },
+    {
+      "index": 73,
+      "group": "08",
+      "characterId": "john_baptist",
+      "canonicalName": "施洗约翰",
+      "mirrorId": 173,
+      "mirrorName": "施洗约翰",
+      "topicId": "john_baptist-01-case",
+      "question": "你的使命怎样被福音书介绍？",
+      "expectedReferences": [
+        "Matthew 3:1-12",
+        "Luke 3:1-18"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Matthew 3:1-12",
+        "Luke 3:1-18"
+      ],
+      "expectedCoordinates": [
+        "luke:3:1",
+        "luke:3:10",
+        "luke:3:11",
+        "luke:3:12",
+        "luke:3:13",
+        "luke:3:14",
+        "luke:3:15",
+        "luke:3:16",
+        "luke:3:17",
+        "luke:3:18",
+        "luke:3:2",
+        "luke:3:3",
+        "luke:3:4",
+        "luke:3:5",
+        "luke:3:6",
+        "luke:3:7",
+        "luke:3:8",
+        "luke:3:9",
+        "matthew:3:1",
+        "matthew:3:10",
+        "matthew:3:11",
+        "matthew:3:12",
+        "matthew:3:2",
+        "matthew:3:3",
+        "matthew:3:4",
+        "matthew:3:5",
+        "matthew:3:6",
+        "matthew:3:7",
+        "matthew:3:8",
+        "matthew:3:9"
+      ]
+    },
+    {
+      "index": 74,
+      "group": "08",
+      "characterId": "mary_magdalene",
+      "canonicalName": "抹大拉的马利亚",
+      "mirrorId": 163,
+      "mirrorName": "抹大拉的马利亚",
+      "topicId": "mary_magdalene-01-case",
+      "question": "福音书怎样介绍你跟随耶稣？",
+      "expectedReferences": [
+        "Luke 8:1-3"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Luke 8:1-3"
+      ],
+      "expectedCoordinates": [
+        "luke:8:1",
+        "luke:8:2",
+        "luke:8:3"
+      ]
+    },
+    {
+      "index": 75,
+      "group": "08",
+      "characterId": "martha",
+      "canonicalName": "马大",
+      "mirrorId": 101,
+      "mirrorName": "马大",
+      "topicId": "martha-01-case",
+      "question": "耶稣到你家时你为什么忙碌烦乱？",
+      "expectedReferences": [
+        "Luke 10:38-42"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Luke 10:38-42"
+      ],
+      "expectedCoordinates": [
+        "luke:10:38",
+        "luke:10:39",
+        "luke:10:40",
+        "luke:10:41",
+        "luke:10:42"
+      ]
+    },
+    {
+      "index": 76,
+      "group": "08",
+      "characterId": "mary_of_bethany",
+      "canonicalName": "伯大尼的马利亚",
+      "mirrorId": 102,
+      "mirrorName": "马利亚（伯大尼）",
+      "topicId": "mary_of_bethany-01-case",
+      "question": "你坐在耶稣脚前听道时发生了什么？",
+      "expectedReferences": [
+        "Luke 10:38-42"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Luke 10:38-42"
+      ],
+      "expectedCoordinates": [
+        "luke:10:38",
+        "luke:10:39",
+        "luke:10:40",
+        "luke:10:41",
+        "luke:10:42"
+      ]
+    },
+    {
+      "index": 77,
+      "group": "08",
+      "characterId": "lazarus",
+      "canonicalName": "拉撒路",
+      "mirrorId": 103,
+      "mirrorName": "拉撒路",
+      "topicId": "lazarus-01-case",
+      "question": "你的疾病和死亡怎样被约翰福音记载？",
+      "expectedReferences": [
+        "John 11:1-16"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "John 11:1-16"
+      ],
+      "expectedCoordinates": [
+        "john:11:1",
+        "john:11:10",
+        "john:11:11",
+        "john:11:12",
+        "john:11:13",
+        "john:11:14",
+        "john:11:15",
+        "john:11:16",
+        "john:11:2",
+        "john:11:3",
+        "john:11:4",
+        "john:11:5",
+        "john:11:6",
+        "john:11:7",
+        "john:11:8",
+        "john:11:9"
+      ]
+    },
+    {
+      "index": 78,
+      "group": "08",
+      "characterId": "nicodemus",
+      "canonicalName": "尼哥底母",
+      "mirrorId": 64,
+      "mirrorName": "尼哥底母",
+      "topicId": "nicodemus-01-case",
+      "question": "你夜里来见耶稣时谈了什么？",
+      "expectedReferences": [
+        "John 3:1-21"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "John 3:1-21"
+      ],
+      "expectedCoordinates": [
+        "john:3:1",
+        "john:3:10",
+        "john:3:11",
+        "john:3:12",
+        "john:3:13",
+        "john:3:14",
+        "john:3:15",
+        "john:3:16",
+        "john:3:17",
+        "john:3:18",
+        "john:3:19",
+        "john:3:2",
+        "john:3:20",
+        "john:3:21",
+        "john:3:3",
+        "john:3:4",
+        "john:3:5",
+        "john:3:6",
+        "john:3:7",
+        "john:3:8",
+        "john:3:9"
+      ]
+    },
+    {
+      "index": 79,
+      "group": "08",
+      "characterId": "joseph_arimathea",
+      "canonicalName": "亚利马太的约瑟",
+      "mirrorId": 466,
+      "mirrorName": "亚利马太的约瑟",
+      "topicId": "joseph_arimathea-01-case",
+      "question": "福音书怎样描述你的身份？",
+      "expectedReferences": [
+        "Matthew 27:57",
+        "Mark 15:43",
+        "Luke 23:50-51"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Matthew 27:57",
+        "Mark 15:43",
+        "Luke 23:50-51"
+      ],
+      "expectedCoordinates": [
+        "luke:23:50",
+        "luke:23:51",
+        "mark:15:43",
+        "matthew:27:57"
+      ]
+    },
+    {
+      "index": 80,
+      "group": "08",
+      "characterId": "matthew",
+      "canonicalName": "马太",
+      "mirrorId": 215,
+      "mirrorName": "马太",
+      "topicId": "matthew-01-case",
+      "question": "耶稣怎样呼召你？",
+      "expectedReferences": [
+        "Matthew 9:9-13"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Matthew 9:9-13"
+      ],
+      "expectedCoordinates": [
+        "matthew:9:10",
+        "matthew:9:11",
+        "matthew:9:12",
+        "matthew:9:13",
+        "matthew:9:9"
+      ]
+    },
+    {
+      "index": 81,
+      "group": "09",
+      "characterId": "mark",
+      "canonicalName": "马可",
+      "mirrorId": 65,
+      "mirrorName": "马可",
+      "topicId": "mark-01-case",
+      "question": "使徒行传怎样介绍你母亲马利亚的家？",
+      "expectedReferences": [
+        "Acts 12:12"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Acts 12:12"
+      ],
+      "expectedCoordinates": [
+        "acts:12:12"
+      ]
+    },
+    {
+      "index": 82,
+      "group": "09",
+      "characterId": "luke",
+      "canonicalName": "路加",
+      "mirrorId": 107,
+      "mirrorName": "路加",
+      "topicId": "luke-01-case",
+      "question": "保罗怎样称呼你？",
+      "expectedReferences": [
+        "Colossians 4:14"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Colossians 4:14"
+      ],
+      "expectedCoordinates": [
+        "colossians:4:14"
+      ]
+    },
+    {
+      "index": 83,
+      "group": "09",
+      "characterId": "andrew",
+      "canonicalName": "安得烈",
+      "mirrorId": 175,
+      "mirrorName": "安得烈",
+      "topicId": "andrew-01-case",
+      "question": "你最初怎样跟随耶稣并找到彼得？",
+      "expectedReferences": [
+        "John 1:35-42"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "John 1:35-42"
+      ],
+      "expectedCoordinates": [
+        "john:1:35",
+        "john:1:36",
+        "john:1:37",
+        "john:1:38",
+        "john:1:39",
+        "john:1:40",
+        "john:1:41",
+        "john:1:42"
+      ]
+    },
+    {
+      "index": 84,
+      "group": "09",
+      "characterId": "philip_apostle",
+      "canonicalName": "腓力（使徒）",
+      "mirrorId": 213,
+      "mirrorName": "腓力",
+      "topicId": "philip_apostle-01-case",
+      "question": "耶稣怎样呼召你，你又找了谁？",
+      "expectedReferences": [
+        "John 1:43-46"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "John 1:43-46"
+      ],
+      "expectedCoordinates": [
+        "john:1:43",
+        "john:1:44",
+        "john:1:45",
+        "john:1:46"
+      ]
+    },
+    {
+      "index": 85,
+      "group": "09",
+      "characterId": "thomas",
+      "canonicalName": "多马",
+      "mirrorId": 177,
+      "mirrorName": "多马",
+      "topicId": "thomas-01-case",
+      "question": "拉撒路事件中你对其他门徒说了什么？",
+      "expectedReferences": [
+        "John 11:16"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "John 11:16"
+      ],
+      "expectedCoordinates": [
+        "john:11:16"
+      ]
+    },
+    {
+      "index": 86,
+      "group": "09",
+      "characterId": "james_zebedee",
+      "canonicalName": "雅各（西庇太之子）",
+      "mirrorId": 212,
+      "mirrorName": "西庇太的雅各",
+      "topicId": "james_zebedee-01-case",
+      "question": "你和约翰怎样被耶稣呼召？",
+      "expectedReferences": [
+        "Matthew 4:21-22"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Matthew 4:21-22"
+      ],
+      "expectedCoordinates": [
+        "matthew:4:21",
+        "matthew:4:22"
+      ]
+    },
+    {
+      "index": 87,
+      "group": "09",
+      "characterId": "james_brother_jesus",
+      "canonicalName": "雅各（主的兄弟）",
+      "mirrorId": 183,
+      "mirrorName": "雅各（耶稣兄弟）",
+      "topicId": "james_brother_jesus-01-case",
+      "question": "福音书怎样提到你与耶稣的家庭关系？",
+      "expectedReferences": [
+        "Matthew 13:55",
+        "Mark 6:3"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Matthew 13:55",
+        "Mark 6:3"
+      ],
+      "expectedCoordinates": [
+        "mark:6:3",
+        "matthew:13:55"
+      ]
+    },
+    {
+      "index": 88,
+      "group": "09",
+      "characterId": "stephen",
+      "canonicalName": "司提反",
+      "mirrorId": 164,
+      "mirrorName": "司提反",
+      "topicId": "stephen-01-case",
+      "question": "你为什么被选为七位服事者之一？",
+      "expectedReferences": [
+        "Acts 6:1-6"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Acts 6:1-6"
+      ],
+      "expectedCoordinates": [
+        "acts:6:1",
+        "acts:6:2",
+        "acts:6:3",
+        "acts:6:4",
+        "acts:6:5",
+        "acts:6:6"
+      ]
+    },
+    {
+      "index": 89,
+      "group": "09",
+      "characterId": "philip_evangelist",
+      "canonicalName": "腓利（传福音者）",
+      "mirrorId": 796,
+      "mirrorName": "腓利（传福音者）",
+      "topicId": "philip_evangelist-01-case",
+      "question": "你为什么被选为七位服事者之一？",
+      "expectedReferences": [
+        "Acts 6:1-6"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Acts 6:1-6"
+      ],
+      "expectedCoordinates": [
+        "acts:6:1",
+        "acts:6:2",
+        "acts:6:3",
+        "acts:6:4",
+        "acts:6:5",
+        "acts:6:6"
+      ]
+    },
+    {
+      "index": 90,
+      "group": "09",
+      "characterId": "timothy",
+      "canonicalName": "提摩太",
+      "mirrorId": 198,
+      "mirrorName": "提摩太",
+      "topicId": "timothy-01-case",
+      "question": "保罗在哪里遇见你，你的家庭背景是什么？",
+      "expectedReferences": [
+        "Acts 16:1-3"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Acts 16:1-3"
+      ],
+      "expectedCoordinates": [
+        "acts:16:1",
+        "acts:16:2",
+        "acts:16:3"
+      ]
+    },
+    {
+      "index": 91,
+      "group": "10",
+      "characterId": "titus",
+      "canonicalName": "提多",
+      "mirrorId": 109,
+      "mirrorName": "提多",
+      "topicId": "titus-01-case",
+      "question": "保罗为什么带你上耶路撒冷？",
+      "expectedReferences": [
+        "Galatians 2:1-5"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Galatians 2:1-5"
+      ],
+      "expectedCoordinates": [
+        "galatians:2:1",
+        "galatians:2:2",
+        "galatians:2:3",
+        "galatians:2:4",
+        "galatians:2:5"
+      ]
+    },
+    {
+      "index": 92,
+      "group": "10",
+      "characterId": "silas",
+      "canonicalName": "西拉",
+      "mirrorId": 108,
+      "mirrorName": "西拉",
+      "topicId": "silas-01-case",
+      "question": "耶路撒冷会议后你承担了什么任务？",
+      "expectedReferences": [
+        "Acts 15:22-33"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Acts 15:22-33"
+      ],
+      "expectedCoordinates": [
+        "acts:15:22",
+        "acts:15:23",
+        "acts:15:24",
+        "acts:15:25",
+        "acts:15:26",
+        "acts:15:27",
+        "acts:15:28",
+        "acts:15:29",
+        "acts:15:30",
+        "acts:15:31",
+        "acts:15:32",
+        "acts:15:33"
+      ]
+    },
+    {
+      "index": 93,
+      "group": "10",
+      "characterId": "priscilla",
+      "canonicalName": "百基拉",
+      "mirrorId": 469,
+      "mirrorName": "百基拉",
+      "topicId": "priscilla-01-case",
+      "question": "你和亚居拉为什么与保罗相遇？",
+      "expectedReferences": [
+        "Acts 18:1-3"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Acts 18:1-3"
+      ],
+      "expectedCoordinates": [
+        "acts:18:1",
+        "acts:18:2",
+        "acts:18:3"
+      ]
+    },
+    {
+      "index": 94,
+      "group": "10",
+      "characterId": "aquila",
+      "canonicalName": "亚居拉",
+      "mirrorId": 468,
+      "mirrorName": "亚居拉",
+      "topicId": "aquila-01-case",
+      "question": "你为什么从罗马来到哥林多？",
+      "expectedReferences": [
+        "Acts 18:1-3"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Acts 18:1-3"
+      ],
+      "expectedCoordinates": [
+        "acts:18:1",
+        "acts:18:2",
+        "acts:18:3"
+      ]
+    },
+    {
+      "index": 95,
+      "group": "10",
+      "characterId": "lydia",
+      "canonicalName": "吕底亚",
+      "mirrorId": 57,
+      "mirrorName": "吕底亚",
+      "topicId": "lydia-01-case",
+      "question": "你在腓立比从事什么行业？",
+      "expectedReferences": [
+        "Acts 16:14"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Acts 16:14"
+      ],
+      "expectedCoordinates": [
+        "acts:16:14"
+      ]
+    },
+    {
+      "index": 96,
+      "group": "10",
+      "characterId": "apollos",
+      "canonicalName": "亚波罗",
+      "mirrorId": 196,
+      "mirrorName": "亚波罗",
+      "topicId": "apollos-01-case",
+      "question": "使徒行传怎样描述你的学识和口才？",
+      "expectedReferences": [
+        "Acts 18:24-25"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Acts 18:24-25"
+      ],
+      "expectedCoordinates": [
+        "acts:18:24",
+        "acts:18:25"
+      ]
+    },
+    {
+      "index": 97,
+      "group": "10",
+      "characterId": "phoebe",
+      "canonicalName": "非比",
+      "mirrorId": 470,
+      "mirrorName": "非比",
+      "topicId": "phoebe-01-case",
+      "question": "保罗怎样向罗马教会介绍你？",
+      "expectedReferences": [
+        "Romans 16:1-2"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Romans 16:1-2"
+      ],
+      "expectedCoordinates": [
+        "romans:16:1",
+        "romans:16:2"
+      ]
+    },
+    {
+      "index": 98,
+      "group": "10",
+      "characterId": "onesimus",
+      "canonicalName": "阿尼西母",
+      "mirrorId": 197,
+      "mirrorName": "阿尼西母",
+      "topicId": "onesimus-01-case",
+      "question": "腓利门书怎样描述你与保罗的关系变化？",
+      "expectedReferences": [
+        "Philemon 1:10-16"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Philemon 10-16"
+      ],
+      "expectedCoordinates": [
+        "philemon:1:10",
+        "philemon:1:11",
+        "philemon:1:12",
+        "philemon:1:13",
+        "philemon:1:14",
+        "philemon:1:15",
+        "philemon:1:16"
+      ]
+    },
+    {
+      "index": 99,
+      "group": "10",
+      "characterId": "philemon",
+      "canonicalName": "腓利门",
+      "mirrorId": 181,
+      "mirrorName": "腓利门",
+      "topicId": "philemon-01-case",
+      "question": "保罗怎样称呼你？",
+      "expectedReferences": [
+        "Philemon 1:1-7"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Philemon 1-7"
+      ],
+      "expectedCoordinates": [
+        "philemon:1:1",
+        "philemon:1:2",
+        "philemon:1:3",
+        "philemon:1:4",
+        "philemon:1:5",
+        "philemon:1:6",
+        "philemon:1:7"
+      ]
+    },
+    {
+      "index": 100,
+      "group": "10",
+      "characterId": "cornelius",
+      "canonicalName": "哥尼流",
+      "mirrorId": 63,
+      "mirrorName": "哥尼流",
+      "topicId": "cornelius-01-case",
+      "question": "使徒行传怎样介绍你的身份和敬虔生活？",
+      "expectedReferences": [
+        "Acts 10:1-4"
+      ],
+      "followups": [
+        "这些经文的出处呢？",
+        "请再详细解释一下吗？"
+      ],
+      "sourceReferences": [
+        "Acts 10:1-4"
+      ],
+      "expectedCoordinates": [
+        "acts:10:1",
+        "acts:10:2",
+        "acts:10:3",
+        "acts:10:4"
+      ]
+    }
+  ],
+  "initialOracleSha256": "8df00451614f6a03998ff83d33f6d30bc0402793217a02ad753560372f15bca5",
+  "preparedSource": {
+    "path": "backend/digital_human/registry.py",
+    "sha256": "9d07cc6cf4edcab3a59e8e4664b7190bdfd621146ad47225be95c28d88deaa15"
+  },
+  "referenceCoordinates": {
+    "Exodus 2:11-15": [
+      "exodus:2:11",
+      "exodus:2:12",
+      "exodus:2:13",
+      "exodus:2:14",
+      "exodus:2:15"
+    ],
+    "1 Samuel 24": [
+      "1 samuel:24:1",
+      "1 samuel:24:10",
+      "1 samuel:24:11",
+      "1 samuel:24:12",
+      "1 samuel:24:13",
+      "1 samuel:24:14",
+      "1 samuel:24:15",
+      "1 samuel:24:16",
+      "1 samuel:24:17",
+      "1 samuel:24:18",
+      "1 samuel:24:19",
+      "1 samuel:24:2",
+      "1 samuel:24:20",
+      "1 samuel:24:21",
+      "1 samuel:24:22",
+      "1 samuel:24:3",
+      "1 samuel:24:4",
+      "1 samuel:24:5",
+      "1 samuel:24:6",
+      "1 samuel:24:7",
+      "1 samuel:24:8",
+      "1 samuel:24:9"
+    ],
+    "1 Samuel 26": [
+      "1 samuel:26:1",
+      "1 samuel:26:10",
+      "1 samuel:26:11",
+      "1 samuel:26:12",
+      "1 samuel:26:13",
+      "1 samuel:26:14",
+      "1 samuel:26:15",
+      "1 samuel:26:16",
+      "1 samuel:26:17",
+      "1 samuel:26:18",
+      "1 samuel:26:19",
+      "1 samuel:26:2",
+      "1 samuel:26:20",
+      "1 samuel:26:21",
+      "1 samuel:26:22",
+      "1 samuel:26:23",
+      "1 samuel:26:24",
+      "1 samuel:26:25",
+      "1 samuel:26:3",
+      "1 samuel:26:4",
+      "1 samuel:26:5",
+      "1 samuel:26:6",
+      "1 samuel:26:7",
+      "1 samuel:26:8",
+      "1 samuel:26:9"
+    ],
+    "Matthew 4:18-20": [
+      "matthew:4:18",
+      "matthew:4:19",
+      "matthew:4:20"
+    ],
+    "Luke 5:1-11": [
+      "luke:5:1",
+      "luke:5:10",
+      "luke:5:11",
+      "luke:5:2",
+      "luke:5:3",
+      "luke:5:4",
+      "luke:5:5",
+      "luke:5:6",
+      "luke:5:7",
+      "luke:5:8",
+      "luke:5:9"
+    ],
+    "John 1:40-42": [
+      "john:1:40",
+      "john:1:41",
+      "john:1:42"
+    ],
+    "Acts 9:1-22": [
+      "acts:9:1",
+      "acts:9:10",
+      "acts:9:11",
+      "acts:9:12",
+      "acts:9:13",
+      "acts:9:14",
+      "acts:9:15",
+      "acts:9:16",
+      "acts:9:17",
+      "acts:9:18",
+      "acts:9:19",
+      "acts:9:2",
+      "acts:9:20",
+      "acts:9:21",
+      "acts:9:22",
+      "acts:9:3",
+      "acts:9:4",
+      "acts:9:5",
+      "acts:9:6",
+      "acts:9:7",
+      "acts:9:8",
+      "acts:9:9"
+    ],
+    "Acts 22:3-21": [
+      "acts:22:10",
+      "acts:22:11",
+      "acts:22:12",
+      "acts:22:13",
+      "acts:22:14",
+      "acts:22:15",
+      "acts:22:16",
+      "acts:22:17",
+      "acts:22:18",
+      "acts:22:19",
+      "acts:22:20",
+      "acts:22:21",
+      "acts:22:3",
+      "acts:22:4",
+      "acts:22:5",
+      "acts:22:6",
+      "acts:22:7",
+      "acts:22:8",
+      "acts:22:9"
+    ],
+    "Acts 26:9-20": [
+      "acts:26:10",
+      "acts:26:11",
+      "acts:26:12",
+      "acts:26:13",
+      "acts:26:14",
+      "acts:26:15",
+      "acts:26:16",
+      "acts:26:17",
+      "acts:26:18",
+      "acts:26:19",
+      "acts:26:20",
+      "acts:26:9"
+    ],
+    "Genesis 1": [
+      "genesis:1:1",
+      "genesis:1:10",
+      "genesis:1:11",
+      "genesis:1:12",
+      "genesis:1:13",
+      "genesis:1:14",
+      "genesis:1:15",
+      "genesis:1:16",
+      "genesis:1:17",
+      "genesis:1:18",
+      "genesis:1:19",
+      "genesis:1:2",
+      "genesis:1:20",
+      "genesis:1:21",
+      "genesis:1:22",
+      "genesis:1:23",
+      "genesis:1:24",
+      "genesis:1:25",
+      "genesis:1:26",
+      "genesis:1:27",
+      "genesis:1:28",
+      "genesis:1:29",
+      "genesis:1:3",
+      "genesis:1:30",
+      "genesis:1:31",
+      "genesis:1:4",
+      "genesis:1:5",
+      "genesis:1:6",
+      "genesis:1:7",
+      "genesis:1:8",
+      "genesis:1:9"
+    ],
+    "Genesis 2": [
+      "genesis:2:1",
+      "genesis:2:10",
+      "genesis:2:11",
+      "genesis:2:12",
+      "genesis:2:13",
+      "genesis:2:14",
+      "genesis:2:15",
+      "genesis:2:16",
+      "genesis:2:17",
+      "genesis:2:18",
+      "genesis:2:19",
+      "genesis:2:2",
+      "genesis:2:20",
+      "genesis:2:21",
+      "genesis:2:22",
+      "genesis:2:23",
+      "genesis:2:24",
+      "genesis:2:25",
+      "genesis:2:3",
+      "genesis:2:4",
+      "genesis:2:5",
+      "genesis:2:6",
+      "genesis:2:7",
+      "genesis:2:8",
+      "genesis:2:9"
+    ],
+    "Genesis 6": [
+      "genesis:6:1",
+      "genesis:6:10",
+      "genesis:6:11",
+      "genesis:6:12",
+      "genesis:6:13",
+      "genesis:6:14",
+      "genesis:6:15",
+      "genesis:6:16",
+      "genesis:6:17",
+      "genesis:6:18",
+      "genesis:6:19",
+      "genesis:6:2",
+      "genesis:6:20",
+      "genesis:6:21",
+      "genesis:6:22",
+      "genesis:6:3",
+      "genesis:6:4",
+      "genesis:6:5",
+      "genesis:6:6",
+      "genesis:6:7",
+      "genesis:6:8",
+      "genesis:6:9"
+    ],
+    "Genesis 7": [
+      "genesis:7:1",
+      "genesis:7:10",
+      "genesis:7:11",
+      "genesis:7:12",
+      "genesis:7:13",
+      "genesis:7:14",
+      "genesis:7:15",
+      "genesis:7:16",
+      "genesis:7:17",
+      "genesis:7:18",
+      "genesis:7:19",
+      "genesis:7:2",
+      "genesis:7:20",
+      "genesis:7:21",
+      "genesis:7:22",
+      "genesis:7:23",
+      "genesis:7:24",
+      "genesis:7:3",
+      "genesis:7:4",
+      "genesis:7:5",
+      "genesis:7:6",
+      "genesis:7:7",
+      "genesis:7:8",
+      "genesis:7:9"
+    ],
+    "Genesis 8": [
+      "genesis:8:1",
+      "genesis:8:10",
+      "genesis:8:11",
+      "genesis:8:12",
+      "genesis:8:13",
+      "genesis:8:14",
+      "genesis:8:15",
+      "genesis:8:16",
+      "genesis:8:17",
+      "genesis:8:18",
+      "genesis:8:19",
+      "genesis:8:2",
+      "genesis:8:20",
+      "genesis:8:21",
+      "genesis:8:22",
+      "genesis:8:3",
+      "genesis:8:4",
+      "genesis:8:5",
+      "genesis:8:6",
+      "genesis:8:7",
+      "genesis:8:8",
+      "genesis:8:9"
+    ],
+    "Genesis 12:1-9": [
+      "genesis:12:1",
+      "genesis:12:2",
+      "genesis:12:3",
+      "genesis:12:4",
+      "genesis:12:5",
+      "genesis:12:6",
+      "genesis:12:7",
+      "genesis:12:8",
+      "genesis:12:9"
+    ],
+    "Genesis 17:15-16": [
+      "genesis:17:15",
+      "genesis:17:16"
+    ],
+    "Genesis 17": [
+      "genesis:17:1",
+      "genesis:17:10",
+      "genesis:17:11",
+      "genesis:17:12",
+      "genesis:17:13",
+      "genesis:17:14",
+      "genesis:17:15",
+      "genesis:17:16",
+      "genesis:17:17",
+      "genesis:17:18",
+      "genesis:17:19",
+      "genesis:17:2",
+      "genesis:17:20",
+      "genesis:17:21",
+      "genesis:17:22",
+      "genesis:17:23",
+      "genesis:17:24",
+      "genesis:17:25",
+      "genesis:17:26",
+      "genesis:17:27",
+      "genesis:17:3",
+      "genesis:17:4",
+      "genesis:17:5",
+      "genesis:17:6",
+      "genesis:17:7",
+      "genesis:17:8",
+      "genesis:17:9"
+    ],
+    "Genesis 21:1-7": [
+      "genesis:21:1",
+      "genesis:21:2",
+      "genesis:21:3",
+      "genesis:21:4",
+      "genesis:21:5",
+      "genesis:21:6",
+      "genesis:21:7"
+    ],
+    "Genesis 25:29-34": [
+      "genesis:25:29",
+      "genesis:25:30",
+      "genesis:25:31",
+      "genesis:25:32",
+      "genesis:25:33",
+      "genesis:25:34"
+    ],
+    "Genesis 37:5-11": [
+      "genesis:37:10",
+      "genesis:37:11",
+      "genesis:37:5",
+      "genesis:37:6",
+      "genesis:37:7",
+      "genesis:37:8",
+      "genesis:37:9"
+    ],
+    "Numbers 13": [
+      "numbers:13:1",
+      "numbers:13:10",
+      "numbers:13:11",
+      "numbers:13:12",
+      "numbers:13:13",
+      "numbers:13:14",
+      "numbers:13:15",
+      "numbers:13:16",
+      "numbers:13:17",
+      "numbers:13:18",
+      "numbers:13:19",
+      "numbers:13:2",
+      "numbers:13:20",
+      "numbers:13:21",
+      "numbers:13:22",
+      "numbers:13:23",
+      "numbers:13:24",
+      "numbers:13:25",
+      "numbers:13:26",
+      "numbers:13:27",
+      "numbers:13:28",
+      "numbers:13:29",
+      "numbers:13:3",
+      "numbers:13:30",
+      "numbers:13:31",
+      "numbers:13:32",
+      "numbers:13:33",
+      "numbers:13:4",
+      "numbers:13:5",
+      "numbers:13:6",
+      "numbers:13:7",
+      "numbers:13:8",
+      "numbers:13:9"
+    ],
+    "Numbers 14": [
+      "numbers:14:1",
+      "numbers:14:10",
+      "numbers:14:11",
+      "numbers:14:12",
+      "numbers:14:13",
+      "numbers:14:14",
+      "numbers:14:15",
+      "numbers:14:16",
+      "numbers:14:17",
+      "numbers:14:18",
+      "numbers:14:19",
+      "numbers:14:2",
+      "numbers:14:20",
+      "numbers:14:21",
+      "numbers:14:22",
+      "numbers:14:23",
+      "numbers:14:24",
+      "numbers:14:25",
+      "numbers:14:26",
+      "numbers:14:27",
+      "numbers:14:28",
+      "numbers:14:29",
+      "numbers:14:3",
+      "numbers:14:30",
+      "numbers:14:31",
+      "numbers:14:32",
+      "numbers:14:33",
+      "numbers:14:34",
+      "numbers:14:35",
+      "numbers:14:36",
+      "numbers:14:37",
+      "numbers:14:38",
+      "numbers:14:39",
+      "numbers:14:4",
+      "numbers:14:40",
+      "numbers:14:41",
+      "numbers:14:42",
+      "numbers:14:43",
+      "numbers:14:44",
+      "numbers:14:45",
+      "numbers:14:5",
+      "numbers:14:6",
+      "numbers:14:7",
+      "numbers:14:8",
+      "numbers:14:9"
+    ],
+    "1 Samuel 1": [
+      "1 samuel:1:1",
+      "1 samuel:1:10",
+      "1 samuel:1:11",
+      "1 samuel:1:12",
+      "1 samuel:1:13",
+      "1 samuel:1:14",
+      "1 samuel:1:15",
+      "1 samuel:1:16",
+      "1 samuel:1:17",
+      "1 samuel:1:18",
+      "1 samuel:1:19",
+      "1 samuel:1:2",
+      "1 samuel:1:20",
+      "1 samuel:1:21",
+      "1 samuel:1:22",
+      "1 samuel:1:23",
+      "1 samuel:1:24",
+      "1 samuel:1:25",
+      "1 samuel:1:26",
+      "1 samuel:1:27",
+      "1 samuel:1:28",
+      "1 samuel:1:3",
+      "1 samuel:1:4",
+      "1 samuel:1:5",
+      "1 samuel:1:6",
+      "1 samuel:1:7",
+      "1 samuel:1:8",
+      "1 samuel:1:9"
+    ],
+    "1 Samuel 9": [
+      "1 samuel:9:1",
+      "1 samuel:9:10",
+      "1 samuel:9:11",
+      "1 samuel:9:12",
+      "1 samuel:9:13",
+      "1 samuel:9:14",
+      "1 samuel:9:15",
+      "1 samuel:9:16",
+      "1 samuel:9:17",
+      "1 samuel:9:18",
+      "1 samuel:9:19",
+      "1 samuel:9:2",
+      "1 samuel:9:20",
+      "1 samuel:9:21",
+      "1 samuel:9:22",
+      "1 samuel:9:23",
+      "1 samuel:9:24",
+      "1 samuel:9:25",
+      "1 samuel:9:26",
+      "1 samuel:9:27",
+      "1 samuel:9:3",
+      "1 samuel:9:4",
+      "1 samuel:9:5",
+      "1 samuel:9:6",
+      "1 samuel:9:7",
+      "1 samuel:9:8",
+      "1 samuel:9:9"
+    ],
+    "1 Samuel 10": [
+      "1 samuel:10:1",
+      "1 samuel:10:10",
+      "1 samuel:10:11",
+      "1 samuel:10:12",
+      "1 samuel:10:13",
+      "1 samuel:10:14",
+      "1 samuel:10:15",
+      "1 samuel:10:16",
+      "1 samuel:10:17",
+      "1 samuel:10:18",
+      "1 samuel:10:19",
+      "1 samuel:10:2",
+      "1 samuel:10:20",
+      "1 samuel:10:21",
+      "1 samuel:10:22",
+      "1 samuel:10:23",
+      "1 samuel:10:24",
+      "1 samuel:10:25",
+      "1 samuel:10:26",
+      "1 samuel:10:27",
+      "1 samuel:10:3",
+      "1 samuel:10:4",
+      "1 samuel:10:5",
+      "1 samuel:10:6",
+      "1 samuel:10:7",
+      "1 samuel:10:8",
+      "1 samuel:10:9"
+    ],
+    "1 Kings 1": [
+      "1 kings:1:1",
+      "1 kings:1:10",
+      "1 kings:1:11",
+      "1 kings:1:12",
+      "1 kings:1:13",
+      "1 kings:1:14",
+      "1 kings:1:15",
+      "1 kings:1:16",
+      "1 kings:1:17",
+      "1 kings:1:18",
+      "1 kings:1:19",
+      "1 kings:1:2",
+      "1 kings:1:20",
+      "1 kings:1:21",
+      "1 kings:1:22",
+      "1 kings:1:23",
+      "1 kings:1:24",
+      "1 kings:1:25",
+      "1 kings:1:26",
+      "1 kings:1:27",
+      "1 kings:1:28",
+      "1 kings:1:29",
+      "1 kings:1:3",
+      "1 kings:1:30",
+      "1 kings:1:31",
+      "1 kings:1:32",
+      "1 kings:1:33",
+      "1 kings:1:34",
+      "1 kings:1:35",
+      "1 kings:1:36",
+      "1 kings:1:37",
+      "1 kings:1:38",
+      "1 kings:1:39",
+      "1 kings:1:4",
+      "1 kings:1:40",
+      "1 kings:1:41",
+      "1 kings:1:42",
+      "1 kings:1:43",
+      "1 kings:1:44",
+      "1 kings:1:45",
+      "1 kings:1:46",
+      "1 kings:1:47",
+      "1 kings:1:48",
+      "1 kings:1:49",
+      "1 kings:1:5",
+      "1 kings:1:50",
+      "1 kings:1:51",
+      "1 kings:1:52",
+      "1 kings:1:53",
+      "1 kings:1:6",
+      "1 kings:1:7",
+      "1 kings:1:8",
+      "1 kings:1:9"
+    ],
+    "1 Kings 2": [
+      "1 kings:2:1",
+      "1 kings:2:10",
+      "1 kings:2:11",
+      "1 kings:2:12",
+      "1 kings:2:13",
+      "1 kings:2:14",
+      "1 kings:2:15",
+      "1 kings:2:16",
+      "1 kings:2:17",
+      "1 kings:2:18",
+      "1 kings:2:19",
+      "1 kings:2:2",
+      "1 kings:2:20",
+      "1 kings:2:21",
+      "1 kings:2:22",
+      "1 kings:2:23",
+      "1 kings:2:24",
+      "1 kings:2:25",
+      "1 kings:2:26",
+      "1 kings:2:27",
+      "1 kings:2:28",
+      "1 kings:2:29",
+      "1 kings:2:3",
+      "1 kings:2:30",
+      "1 kings:2:31",
+      "1 kings:2:32",
+      "1 kings:2:33",
+      "1 kings:2:34",
+      "1 kings:2:35",
+      "1 kings:2:36",
+      "1 kings:2:37",
+      "1 kings:2:38",
+      "1 kings:2:39",
+      "1 kings:2:4",
+      "1 kings:2:40",
+      "1 kings:2:41",
+      "1 kings:2:42",
+      "1 kings:2:43",
+      "1 kings:2:44",
+      "1 kings:2:45",
+      "1 kings:2:46",
+      "1 kings:2:5",
+      "1 kings:2:6",
+      "1 kings:2:7",
+      "1 kings:2:8",
+      "1 kings:2:9"
+    ],
+    "1 Kings 17": [
+      "1 kings:17:1",
+      "1 kings:17:10",
+      "1 kings:17:11",
+      "1 kings:17:12",
+      "1 kings:17:13",
+      "1 kings:17:14",
+      "1 kings:17:15",
+      "1 kings:17:16",
+      "1 kings:17:17",
+      "1 kings:17:18",
+      "1 kings:17:19",
+      "1 kings:17:2",
+      "1 kings:17:20",
+      "1 kings:17:21",
+      "1 kings:17:22",
+      "1 kings:17:23",
+      "1 kings:17:24",
+      "1 kings:17:3",
+      "1 kings:17:4",
+      "1 kings:17:5",
+      "1 kings:17:6",
+      "1 kings:17:7",
+      "1 kings:17:8",
+      "1 kings:17:9"
+    ],
+    "Isaiah 6": [
+      "isaiah:6:1",
+      "isaiah:6:10",
+      "isaiah:6:11",
+      "isaiah:6:12",
+      "isaiah:6:13",
+      "isaiah:6:2",
+      "isaiah:6:3",
+      "isaiah:6:4",
+      "isaiah:6:5",
+      "isaiah:6:6",
+      "isaiah:6:7",
+      "isaiah:6:8",
+      "isaiah:6:9"
+    ],
+    "Jeremiah 1:4-10": [
+      "jeremiah:1:10",
+      "jeremiah:1:4",
+      "jeremiah:1:5",
+      "jeremiah:1:6",
+      "jeremiah:1:7",
+      "jeremiah:1:8",
+      "jeremiah:1:9"
+    ],
+    "Daniel 1": [
+      "daniel:1:1",
+      "daniel:1:10",
+      "daniel:1:11",
+      "daniel:1:12",
+      "daniel:1:13",
+      "daniel:1:14",
+      "daniel:1:15",
+      "daniel:1:16",
+      "daniel:1:17",
+      "daniel:1:18",
+      "daniel:1:19",
+      "daniel:1:2",
+      "daniel:1:20",
+      "daniel:1:21",
+      "daniel:1:3",
+      "daniel:1:4",
+      "daniel:1:5",
+      "daniel:1:6",
+      "daniel:1:7",
+      "daniel:1:8",
+      "daniel:1:9"
+    ],
+    "Ruth 1:6-18": [
+      "ruth:1:10",
+      "ruth:1:11",
+      "ruth:1:12",
+      "ruth:1:13",
+      "ruth:1:14",
+      "ruth:1:15",
+      "ruth:1:16",
+      "ruth:1:17",
+      "ruth:1:18",
+      "ruth:1:6",
+      "ruth:1:7",
+      "ruth:1:8",
+      "ruth:1:9"
+    ],
+    "Esther 2": [
+      "esther:2:1",
+      "esther:2:10",
+      "esther:2:11",
+      "esther:2:12",
+      "esther:2:13",
+      "esther:2:14",
+      "esther:2:15",
+      "esther:2:16",
+      "esther:2:17",
+      "esther:2:18",
+      "esther:2:19",
+      "esther:2:2",
+      "esther:2:20",
+      "esther:2:21",
+      "esther:2:22",
+      "esther:2:23",
+      "esther:2:3",
+      "esther:2:4",
+      "esther:2:5",
+      "esther:2:6",
+      "esther:2:7",
+      "esther:2:8",
+      "esther:2:9"
+    ],
+    "Luke 1:26-38": [
+      "luke:1:26",
+      "luke:1:27",
+      "luke:1:28",
+      "luke:1:29",
+      "luke:1:30",
+      "luke:1:31",
+      "luke:1:32",
+      "luke:1:33",
+      "luke:1:34",
+      "luke:1:35",
+      "luke:1:36",
+      "luke:1:37",
+      "luke:1:38"
+    ],
+    "Mark 1:19-20": [
+      "mark:1:19",
+      "mark:1:20"
+    ],
+    "Acts 4:36-37": [
+      "acts:4:36",
+      "acts:4:37"
+    ],
+    "Genesis 2:18-25": [
+      "genesis:2:18",
+      "genesis:2:19",
+      "genesis:2:20",
+      "genesis:2:21",
+      "genesis:2:22",
+      "genesis:2:23",
+      "genesis:2:24",
+      "genesis:2:25"
+    ],
+    "Genesis 4:3-7": [
+      "genesis:4:3",
+      "genesis:4:4",
+      "genesis:4:5",
+      "genesis:4:6",
+      "genesis:4:7"
+    ],
+    "Genesis 4:2": [
+      "genesis:4:2"
+    ],
+    "Genesis 5:21-24": [
+      "genesis:5:21",
+      "genesis:5:22",
+      "genesis:5:23",
+      "genesis:5:24"
+    ],
+    "Job 1-2": [
+      "job:1:1",
+      "job:1:10",
+      "job:1:11",
+      "job:1:12",
+      "job:1:13",
+      "job:1:14",
+      "job:1:15",
+      "job:1:16",
+      "job:1:17",
+      "job:1:18",
+      "job:1:19",
+      "job:1:2",
+      "job:1:20",
+      "job:1:21",
+      "job:1:22",
+      "job:1:3",
+      "job:1:4",
+      "job:1:5",
+      "job:1:6",
+      "job:1:7",
+      "job:1:8",
+      "job:1:9",
+      "job:2:1",
+      "job:2:10",
+      "job:2:11",
+      "job:2:12",
+      "job:2:13",
+      "job:2:2",
+      "job:2:3",
+      "job:2:4",
+      "job:2:5",
+      "job:2:6",
+      "job:2:7",
+      "job:2:8",
+      "job:2:9"
+    ],
+    "Genesis 14:18-20": [
+      "genesis:14:18",
+      "genesis:14:19",
+      "genesis:14:20"
+    ],
+    "Genesis 16:1-16": [
+      "genesis:16:1",
+      "genesis:16:10",
+      "genesis:16:11",
+      "genesis:16:12",
+      "genesis:16:13",
+      "genesis:16:14",
+      "genesis:16:15",
+      "genesis:16:16",
+      "genesis:16:2",
+      "genesis:16:3",
+      "genesis:16:4",
+      "genesis:16:5",
+      "genesis:16:6",
+      "genesis:16:7",
+      "genesis:16:8",
+      "genesis:16:9"
+    ],
+    "Genesis 24": [
+      "genesis:24:1",
+      "genesis:24:10",
+      "genesis:24:11",
+      "genesis:24:12",
+      "genesis:24:13",
+      "genesis:24:14",
+      "genesis:24:15",
+      "genesis:24:16",
+      "genesis:24:17",
+      "genesis:24:18",
+      "genesis:24:19",
+      "genesis:24:2",
+      "genesis:24:20",
+      "genesis:24:21",
+      "genesis:24:22",
+      "genesis:24:23",
+      "genesis:24:24",
+      "genesis:24:25",
+      "genesis:24:26",
+      "genesis:24:27",
+      "genesis:24:28",
+      "genesis:24:29",
+      "genesis:24:3",
+      "genesis:24:30",
+      "genesis:24:31",
+      "genesis:24:32",
+      "genesis:24:33",
+      "genesis:24:34",
+      "genesis:24:35",
+      "genesis:24:36",
+      "genesis:24:37",
+      "genesis:24:38",
+      "genesis:24:39",
+      "genesis:24:4",
+      "genesis:24:40",
+      "genesis:24:41",
+      "genesis:24:42",
+      "genesis:24:43",
+      "genesis:24:44",
+      "genesis:24:45",
+      "genesis:24:46",
+      "genesis:24:47",
+      "genesis:24:48",
+      "genesis:24:49",
+      "genesis:24:5",
+      "genesis:24:50",
+      "genesis:24:51",
+      "genesis:24:52",
+      "genesis:24:53",
+      "genesis:24:54",
+      "genesis:24:55",
+      "genesis:24:56",
+      "genesis:24:57",
+      "genesis:24:58",
+      "genesis:24:59",
+      "genesis:24:6",
+      "genesis:24:60",
+      "genesis:24:61",
+      "genesis:24:62",
+      "genesis:24:63",
+      "genesis:24:64",
+      "genesis:24:65",
+      "genesis:24:66",
+      "genesis:24:67",
+      "genesis:24:7",
+      "genesis:24:8",
+      "genesis:24:9"
+    ],
+    "Genesis 29:21-26": [
+      "genesis:29:21",
+      "genesis:29:22",
+      "genesis:29:23",
+      "genesis:29:24",
+      "genesis:29:25",
+      "genesis:29:26"
+    ],
+    "Genesis 29:15-30": [
+      "genesis:29:15",
+      "genesis:29:16",
+      "genesis:29:17",
+      "genesis:29:18",
+      "genesis:29:19",
+      "genesis:29:20",
+      "genesis:29:21",
+      "genesis:29:22",
+      "genesis:29:23",
+      "genesis:29:24",
+      "genesis:29:25",
+      "genesis:29:26",
+      "genesis:29:27",
+      "genesis:29:28",
+      "genesis:29:29",
+      "genesis:29:30"
+    ],
+    "Exodus 4:14-16,27-31": [
+      "exodus:4:14",
+      "exodus:4:15",
+      "exodus:4:16",
+      "exodus:4:27",
+      "exodus:4:28",
+      "exodus:4:29",
+      "exodus:4:30",
+      "exodus:4:31"
+    ],
+    "Exodus 4:14-16": [
+      "exodus:4:14",
+      "exodus:4:15",
+      "exodus:4:16"
+    ],
+    "Exodus 4:27-31": [
+      "exodus:4:27",
+      "exodus:4:28",
+      "exodus:4:29",
+      "exodus:4:30",
+      "exodus:4:31"
+    ],
+    "Exodus 15:20-21": [
+      "exodus:15:20",
+      "exodus:15:21"
+    ],
+    "Numbers 13:30": [
+      "numbers:13:30"
+    ],
+    "Numbers 14:6-9": [
+      "numbers:14:6",
+      "numbers:14:7",
+      "numbers:14:8",
+      "numbers:14:9"
+    ],
+    "Joshua 2": [
+      "joshua:2:1",
+      "joshua:2:10",
+      "joshua:2:11",
+      "joshua:2:12",
+      "joshua:2:13",
+      "joshua:2:14",
+      "joshua:2:15",
+      "joshua:2:16",
+      "joshua:2:17",
+      "joshua:2:18",
+      "joshua:2:19",
+      "joshua:2:2",
+      "joshua:2:20",
+      "joshua:2:21",
+      "joshua:2:22",
+      "joshua:2:23",
+      "joshua:2:24",
+      "joshua:2:3",
+      "joshua:2:4",
+      "joshua:2:5",
+      "joshua:2:6",
+      "joshua:2:7",
+      "joshua:2:8",
+      "joshua:2:9"
+    ],
+    "Judges 4:4-5": [
+      "judges:4:4",
+      "judges:4:5"
+    ],
+    "Judges 6:11-24": [
+      "judges:6:11",
+      "judges:6:12",
+      "judges:6:13",
+      "judges:6:14",
+      "judges:6:15",
+      "judges:6:16",
+      "judges:6:17",
+      "judges:6:18",
+      "judges:6:19",
+      "judges:6:20",
+      "judges:6:21",
+      "judges:6:22",
+      "judges:6:23",
+      "judges:6:24"
+    ],
+    "Judges 13": [
+      "judges:13:1",
+      "judges:13:10",
+      "judges:13:11",
+      "judges:13:12",
+      "judges:13:13",
+      "judges:13:14",
+      "judges:13:15",
+      "judges:13:16",
+      "judges:13:17",
+      "judges:13:18",
+      "judges:13:19",
+      "judges:13:2",
+      "judges:13:20",
+      "judges:13:21",
+      "judges:13:22",
+      "judges:13:23",
+      "judges:13:24",
+      "judges:13:25",
+      "judges:13:3",
+      "judges:13:4",
+      "judges:13:5",
+      "judges:13:6",
+      "judges:13:7",
+      "judges:13:8",
+      "judges:13:9"
+    ],
+    "1 Samuel 1:9-18": [
+      "1 samuel:1:10",
+      "1 samuel:1:11",
+      "1 samuel:1:12",
+      "1 samuel:1:13",
+      "1 samuel:1:14",
+      "1 samuel:1:15",
+      "1 samuel:1:16",
+      "1 samuel:1:17",
+      "1 samuel:1:18",
+      "1 samuel:1:9"
+    ],
+    "1 Samuel 1:12-17": [
+      "1 samuel:1:12",
+      "1 samuel:1:13",
+      "1 samuel:1:14",
+      "1 samuel:1:15",
+      "1 samuel:1:16",
+      "1 samuel:1:17"
+    ],
+    "1 Samuel 18:1-4": [
+      "1 samuel:18:1",
+      "1 samuel:18:2",
+      "1 samuel:18:3",
+      "1 samuel:18:4"
+    ],
+    "1 Samuel 18:20-29": [
+      "1 samuel:18:20",
+      "1 samuel:18:21",
+      "1 samuel:18:22",
+      "1 samuel:18:23",
+      "1 samuel:18:24",
+      "1 samuel:18:25",
+      "1 samuel:18:26",
+      "1 samuel:18:27",
+      "1 samuel:18:28",
+      "1 samuel:18:29"
+    ],
+    "1 Samuel 25:14-35": [
+      "1 samuel:25:14",
+      "1 samuel:25:15",
+      "1 samuel:25:16",
+      "1 samuel:25:17",
+      "1 samuel:25:18",
+      "1 samuel:25:19",
+      "1 samuel:25:20",
+      "1 samuel:25:21",
+      "1 samuel:25:22",
+      "1 samuel:25:23",
+      "1 samuel:25:24",
+      "1 samuel:25:25",
+      "1 samuel:25:26",
+      "1 samuel:25:27",
+      "1 samuel:25:28",
+      "1 samuel:25:29",
+      "1 samuel:25:30",
+      "1 samuel:25:31",
+      "1 samuel:25:32",
+      "1 samuel:25:33",
+      "1 samuel:25:34",
+      "1 samuel:25:35"
+    ],
+    "2 Samuel 7:1-17": [
+      "2 samuel:7:1",
+      "2 samuel:7:10",
+      "2 samuel:7:11",
+      "2 samuel:7:12",
+      "2 samuel:7:13",
+      "2 samuel:7:14",
+      "2 samuel:7:15",
+      "2 samuel:7:16",
+      "2 samuel:7:17",
+      "2 samuel:7:2",
+      "2 samuel:7:3",
+      "2 samuel:7:4",
+      "2 samuel:7:5",
+      "2 samuel:7:6",
+      "2 samuel:7:7",
+      "2 samuel:7:8",
+      "2 samuel:7:9"
+    ],
+    "2 Samuel 13:20-39": [
+      "2 samuel:13:20",
+      "2 samuel:13:21",
+      "2 samuel:13:22",
+      "2 samuel:13:23",
+      "2 samuel:13:24",
+      "2 samuel:13:25",
+      "2 samuel:13:26",
+      "2 samuel:13:27",
+      "2 samuel:13:28",
+      "2 samuel:13:29",
+      "2 samuel:13:30",
+      "2 samuel:13:31",
+      "2 samuel:13:32",
+      "2 samuel:13:33",
+      "2 samuel:13:34",
+      "2 samuel:13:35",
+      "2 samuel:13:36",
+      "2 samuel:13:37",
+      "2 samuel:13:38",
+      "2 samuel:13:39"
+    ],
+    "2 Samuel 11": [
+      "2 samuel:11:1",
+      "2 samuel:11:10",
+      "2 samuel:11:11",
+      "2 samuel:11:12",
+      "2 samuel:11:13",
+      "2 samuel:11:14",
+      "2 samuel:11:15",
+      "2 samuel:11:16",
+      "2 samuel:11:17",
+      "2 samuel:11:18",
+      "2 samuel:11:19",
+      "2 samuel:11:2",
+      "2 samuel:11:20",
+      "2 samuel:11:21",
+      "2 samuel:11:22",
+      "2 samuel:11:23",
+      "2 samuel:11:24",
+      "2 samuel:11:25",
+      "2 samuel:11:26",
+      "2 samuel:11:27",
+      "2 samuel:11:3",
+      "2 samuel:11:4",
+      "2 samuel:11:5",
+      "2 samuel:11:6",
+      "2 samuel:11:7",
+      "2 samuel:11:8",
+      "2 samuel:11:9"
+    ],
+    "1 Kings 12:1-15": [
+      "1 kings:12:1",
+      "1 kings:12:10",
+      "1 kings:12:11",
+      "1 kings:12:12",
+      "1 kings:12:13",
+      "1 kings:12:14",
+      "1 kings:12:15",
+      "1 kings:12:2",
+      "1 kings:12:3",
+      "1 kings:12:4",
+      "1 kings:12:5",
+      "1 kings:12:6",
+      "1 kings:12:7",
+      "1 kings:12:8",
+      "1 kings:12:9"
+    ],
+    "1 Kings 11:29-39": [
+      "1 kings:11:29",
+      "1 kings:11:30",
+      "1 kings:11:31",
+      "1 kings:11:32",
+      "1 kings:11:33",
+      "1 kings:11:34",
+      "1 kings:11:35",
+      "1 kings:11:36",
+      "1 kings:11:37",
+      "1 kings:11:38",
+      "1 kings:11:39"
+    ],
+    "1 Kings 18": [
+      "1 kings:18:1",
+      "1 kings:18:10",
+      "1 kings:18:11",
+      "1 kings:18:12",
+      "1 kings:18:13",
+      "1 kings:18:14",
+      "1 kings:18:15",
+      "1 kings:18:16",
+      "1 kings:18:17",
+      "1 kings:18:18",
+      "1 kings:18:19",
+      "1 kings:18:2",
+      "1 kings:18:20",
+      "1 kings:18:21",
+      "1 kings:18:22",
+      "1 kings:18:23",
+      "1 kings:18:24",
+      "1 kings:18:25",
+      "1 kings:18:26",
+      "1 kings:18:27",
+      "1 kings:18:28",
+      "1 kings:18:29",
+      "1 kings:18:3",
+      "1 kings:18:30",
+      "1 kings:18:31",
+      "1 kings:18:32",
+      "1 kings:18:33",
+      "1 kings:18:34",
+      "1 kings:18:35",
+      "1 kings:18:36",
+      "1 kings:18:37",
+      "1 kings:18:38",
+      "1 kings:18:39",
+      "1 kings:18:4",
+      "1 kings:18:40",
+      "1 kings:18:41",
+      "1 kings:18:42",
+      "1 kings:18:43",
+      "1 kings:18:44",
+      "1 kings:18:45",
+      "1 kings:18:46",
+      "1 kings:18:5",
+      "1 kings:18:6",
+      "1 kings:18:7",
+      "1 kings:18:8",
+      "1 kings:18:9"
+    ],
+    "1 Kings 19:1-2": [
+      "1 kings:19:1",
+      "1 kings:19:2"
+    ],
+    "1 Kings 19:19-21": [
+      "1 kings:19:19",
+      "1 kings:19:20",
+      "1 kings:19:21"
+    ],
+    "2 Kings 2": [
+      "2 kings:2:1",
+      "2 kings:2:10",
+      "2 kings:2:11",
+      "2 kings:2:12",
+      "2 kings:2:13",
+      "2 kings:2:14",
+      "2 kings:2:15",
+      "2 kings:2:16",
+      "2 kings:2:17",
+      "2 kings:2:18",
+      "2 kings:2:19",
+      "2 kings:2:2",
+      "2 kings:2:20",
+      "2 kings:2:21",
+      "2 kings:2:22",
+      "2 kings:2:23",
+      "2 kings:2:24",
+      "2 kings:2:25",
+      "2 kings:2:3",
+      "2 kings:2:4",
+      "2 kings:2:5",
+      "2 kings:2:6",
+      "2 kings:2:7",
+      "2 kings:2:8",
+      "2 kings:2:9"
+    ],
+    "2 Kings 18-19": [
+      "2 kings:18:1",
+      "2 kings:18:10",
+      "2 kings:18:11",
+      "2 kings:18:12",
+      "2 kings:18:13",
+      "2 kings:18:14",
+      "2 kings:18:15",
+      "2 kings:18:16",
+      "2 kings:18:17",
+      "2 kings:18:18",
+      "2 kings:18:19",
+      "2 kings:18:2",
+      "2 kings:18:20",
+      "2 kings:18:21",
+      "2 kings:18:22",
+      "2 kings:18:23",
+      "2 kings:18:24",
+      "2 kings:18:25",
+      "2 kings:18:26",
+      "2 kings:18:27",
+      "2 kings:18:28",
+      "2 kings:18:29",
+      "2 kings:18:3",
+      "2 kings:18:30",
+      "2 kings:18:31",
+      "2 kings:18:32",
+      "2 kings:18:33",
+      "2 kings:18:34",
+      "2 kings:18:35",
+      "2 kings:18:36",
+      "2 kings:18:37",
+      "2 kings:18:4",
+      "2 kings:18:5",
+      "2 kings:18:6",
+      "2 kings:18:7",
+      "2 kings:18:8",
+      "2 kings:18:9",
+      "2 kings:19:1",
+      "2 kings:19:10",
+      "2 kings:19:11",
+      "2 kings:19:12",
+      "2 kings:19:13",
+      "2 kings:19:14",
+      "2 kings:19:15",
+      "2 kings:19:16",
+      "2 kings:19:17",
+      "2 kings:19:18",
+      "2 kings:19:19",
+      "2 kings:19:2",
+      "2 kings:19:20",
+      "2 kings:19:21",
+      "2 kings:19:22",
+      "2 kings:19:23",
+      "2 kings:19:24",
+      "2 kings:19:25",
+      "2 kings:19:26",
+      "2 kings:19:27",
+      "2 kings:19:28",
+      "2 kings:19:29",
+      "2 kings:19:3",
+      "2 kings:19:30",
+      "2 kings:19:31",
+      "2 kings:19:32",
+      "2 kings:19:33",
+      "2 kings:19:34",
+      "2 kings:19:35",
+      "2 kings:19:36",
+      "2 kings:19:37",
+      "2 kings:19:4",
+      "2 kings:19:5",
+      "2 kings:19:6",
+      "2 kings:19:7",
+      "2 kings:19:8",
+      "2 kings:19:9"
+    ],
+    "Isaiah 36-37": [
+      "isaiah:36:1",
+      "isaiah:36:10",
+      "isaiah:36:11",
+      "isaiah:36:12",
+      "isaiah:36:13",
+      "isaiah:36:14",
+      "isaiah:36:15",
+      "isaiah:36:16",
+      "isaiah:36:17",
+      "isaiah:36:18",
+      "isaiah:36:19",
+      "isaiah:36:2",
+      "isaiah:36:20",
+      "isaiah:36:21",
+      "isaiah:36:22",
+      "isaiah:36:3",
+      "isaiah:36:4",
+      "isaiah:36:5",
+      "isaiah:36:6",
+      "isaiah:36:7",
+      "isaiah:36:8",
+      "isaiah:36:9",
+      "isaiah:37:1",
+      "isaiah:37:10",
+      "isaiah:37:11",
+      "isaiah:37:12",
+      "isaiah:37:13",
+      "isaiah:37:14",
+      "isaiah:37:15",
+      "isaiah:37:16",
+      "isaiah:37:17",
+      "isaiah:37:18",
+      "isaiah:37:19",
+      "isaiah:37:2",
+      "isaiah:37:20",
+      "isaiah:37:21",
+      "isaiah:37:22",
+      "isaiah:37:23",
+      "isaiah:37:24",
+      "isaiah:37:25",
+      "isaiah:37:26",
+      "isaiah:37:27",
+      "isaiah:37:28",
+      "isaiah:37:29",
+      "isaiah:37:3",
+      "isaiah:37:30",
+      "isaiah:37:31",
+      "isaiah:37:32",
+      "isaiah:37:33",
+      "isaiah:37:34",
+      "isaiah:37:35",
+      "isaiah:37:36",
+      "isaiah:37:37",
+      "isaiah:37:38",
+      "isaiah:37:4",
+      "isaiah:37:5",
+      "isaiah:37:6",
+      "isaiah:37:7",
+      "isaiah:37:8",
+      "isaiah:37:9"
+    ],
+    "2 Kings 22": [
+      "2 kings:22:1",
+      "2 kings:22:10",
+      "2 kings:22:11",
+      "2 kings:22:12",
+      "2 kings:22:13",
+      "2 kings:22:14",
+      "2 kings:22:15",
+      "2 kings:22:16",
+      "2 kings:22:17",
+      "2 kings:22:18",
+      "2 kings:22:19",
+      "2 kings:22:2",
+      "2 kings:22:20",
+      "2 kings:22:3",
+      "2 kings:22:4",
+      "2 kings:22:5",
+      "2 kings:22:6",
+      "2 kings:22:7",
+      "2 kings:22:8",
+      "2 kings:22:9"
+    ],
+    "Ezekiel 1": [
+      "ezekiel:1:1",
+      "ezekiel:1:10",
+      "ezekiel:1:11",
+      "ezekiel:1:12",
+      "ezekiel:1:13",
+      "ezekiel:1:14",
+      "ezekiel:1:15",
+      "ezekiel:1:16",
+      "ezekiel:1:17",
+      "ezekiel:1:18",
+      "ezekiel:1:19",
+      "ezekiel:1:2",
+      "ezekiel:1:20",
+      "ezekiel:1:21",
+      "ezekiel:1:22",
+      "ezekiel:1:23",
+      "ezekiel:1:24",
+      "ezekiel:1:25",
+      "ezekiel:1:26",
+      "ezekiel:1:27",
+      "ezekiel:1:28",
+      "ezekiel:1:3",
+      "ezekiel:1:4",
+      "ezekiel:1:5",
+      "ezekiel:1:6",
+      "ezekiel:1:7",
+      "ezekiel:1:8",
+      "ezekiel:1:9"
+    ],
+    "Hosea 1-3": [
+      "hosea:1:1",
+      "hosea:1:10",
+      "hosea:1:11",
+      "hosea:1:2",
+      "hosea:1:3",
+      "hosea:1:4",
+      "hosea:1:5",
+      "hosea:1:6",
+      "hosea:1:7",
+      "hosea:1:8",
+      "hosea:1:9",
+      "hosea:2:1",
+      "hosea:2:10",
+      "hosea:2:11",
+      "hosea:2:12",
+      "hosea:2:13",
+      "hosea:2:14",
+      "hosea:2:15",
+      "hosea:2:16",
+      "hosea:2:17",
+      "hosea:2:18",
+      "hosea:2:19",
+      "hosea:2:2",
+      "hosea:2:20",
+      "hosea:2:21",
+      "hosea:2:22",
+      "hosea:2:23",
+      "hosea:2:3",
+      "hosea:2:4",
+      "hosea:2:5",
+      "hosea:2:6",
+      "hosea:2:7",
+      "hosea:2:8",
+      "hosea:2:9",
+      "hosea:3:1",
+      "hosea:3:2",
+      "hosea:3:3",
+      "hosea:3:4",
+      "hosea:3:5"
+    ],
+    "Jonah 1": [
+      "jonah:1:1",
+      "jonah:1:10",
+      "jonah:1:11",
+      "jonah:1:12",
+      "jonah:1:13",
+      "jonah:1:14",
+      "jonah:1:15",
+      "jonah:1:16",
+      "jonah:1:17",
+      "jonah:1:2",
+      "jonah:1:3",
+      "jonah:1:4",
+      "jonah:1:5",
+      "jonah:1:6",
+      "jonah:1:7",
+      "jonah:1:8",
+      "jonah:1:9"
+    ],
+    "Micah 1": [
+      "micah:1:1",
+      "micah:1:10",
+      "micah:1:11",
+      "micah:1:12",
+      "micah:1:13",
+      "micah:1:14",
+      "micah:1:15",
+      "micah:1:16",
+      "micah:1:2",
+      "micah:1:3",
+      "micah:1:4",
+      "micah:1:5",
+      "micah:1:6",
+      "micah:1:7",
+      "micah:1:8",
+      "micah:1:9"
+    ],
+    "Habakkuk 1:1-4": [
+      "habakkuk:1:1",
+      "habakkuk:1:2",
+      "habakkuk:1:3",
+      "habakkuk:1:4"
+    ],
+    "Haggai 1": [
+      "haggai:1:1",
+      "haggai:1:10",
+      "haggai:1:11",
+      "haggai:1:12",
+      "haggai:1:13",
+      "haggai:1:14",
+      "haggai:1:15",
+      "haggai:1:2",
+      "haggai:1:3",
+      "haggai:1:4",
+      "haggai:1:5",
+      "haggai:1:6",
+      "haggai:1:7",
+      "haggai:1:8",
+      "haggai:1:9"
+    ],
+    "Zechariah 1:1-6": [
+      "zechariah:1:1",
+      "zechariah:1:2",
+      "zechariah:1:3",
+      "zechariah:1:4",
+      "zechariah:1:5",
+      "zechariah:1:6"
+    ],
+    "Ezra 7": [
+      "ezra:7:1",
+      "ezra:7:10",
+      "ezra:7:11",
+      "ezra:7:12",
+      "ezra:7:13",
+      "ezra:7:14",
+      "ezra:7:15",
+      "ezra:7:16",
+      "ezra:7:17",
+      "ezra:7:18",
+      "ezra:7:19",
+      "ezra:7:2",
+      "ezra:7:20",
+      "ezra:7:21",
+      "ezra:7:22",
+      "ezra:7:23",
+      "ezra:7:24",
+      "ezra:7:25",
+      "ezra:7:26",
+      "ezra:7:27",
+      "ezra:7:28",
+      "ezra:7:3",
+      "ezra:7:4",
+      "ezra:7:5",
+      "ezra:7:6",
+      "ezra:7:7",
+      "ezra:7:8",
+      "ezra:7:9"
+    ],
+    "Nehemiah 1": [
+      "nehemiah:1:1",
+      "nehemiah:1:10",
+      "nehemiah:1:11",
+      "nehemiah:1:2",
+      "nehemiah:1:3",
+      "nehemiah:1:4",
+      "nehemiah:1:5",
+      "nehemiah:1:6",
+      "nehemiah:1:7",
+      "nehemiah:1:8",
+      "nehemiah:1:9"
+    ],
+    "Esther 2:5-7": [
+      "esther:2:5",
+      "esther:2:6",
+      "esther:2:7"
+    ],
+    "Ruth 2": [
+      "ruth:2:1",
+      "ruth:2:10",
+      "ruth:2:11",
+      "ruth:2:12",
+      "ruth:2:13",
+      "ruth:2:14",
+      "ruth:2:15",
+      "ruth:2:16",
+      "ruth:2:17",
+      "ruth:2:18",
+      "ruth:2:19",
+      "ruth:2:2",
+      "ruth:2:20",
+      "ruth:2:21",
+      "ruth:2:22",
+      "ruth:2:23",
+      "ruth:2:3",
+      "ruth:2:4",
+      "ruth:2:5",
+      "ruth:2:6",
+      "ruth:2:7",
+      "ruth:2:8",
+      "ruth:2:9"
+    ],
+    "Ruth 1": [
+      "ruth:1:1",
+      "ruth:1:10",
+      "ruth:1:11",
+      "ruth:1:12",
+      "ruth:1:13",
+      "ruth:1:14",
+      "ruth:1:15",
+      "ruth:1:16",
+      "ruth:1:17",
+      "ruth:1:18",
+      "ruth:1:19",
+      "ruth:1:2",
+      "ruth:1:20",
+      "ruth:1:21",
+      "ruth:1:22",
+      "ruth:1:3",
+      "ruth:1:4",
+      "ruth:1:5",
+      "ruth:1:6",
+      "ruth:1:7",
+      "ruth:1:8",
+      "ruth:1:9"
+    ],
+    "Luke 1:5-23": [
+      "luke:1:10",
+      "luke:1:11",
+      "luke:1:12",
+      "luke:1:13",
+      "luke:1:14",
+      "luke:1:15",
+      "luke:1:16",
+      "luke:1:17",
+      "luke:1:18",
+      "luke:1:19",
+      "luke:1:20",
+      "luke:1:21",
+      "luke:1:22",
+      "luke:1:23",
+      "luke:1:5",
+      "luke:1:6",
+      "luke:1:7",
+      "luke:1:8",
+      "luke:1:9"
+    ],
+    "Luke 1:5-25": [
+      "luke:1:10",
+      "luke:1:11",
+      "luke:1:12",
+      "luke:1:13",
+      "luke:1:14",
+      "luke:1:15",
+      "luke:1:16",
+      "luke:1:17",
+      "luke:1:18",
+      "luke:1:19",
+      "luke:1:20",
+      "luke:1:21",
+      "luke:1:22",
+      "luke:1:23",
+      "luke:1:24",
+      "luke:1:25",
+      "luke:1:5",
+      "luke:1:6",
+      "luke:1:7",
+      "luke:1:8",
+      "luke:1:9"
+    ],
+    "Matthew 1:18-25": [
+      "matthew:1:18",
+      "matthew:1:19",
+      "matthew:1:20",
+      "matthew:1:21",
+      "matthew:1:22",
+      "matthew:1:23",
+      "matthew:1:24",
+      "matthew:1:25"
+    ],
+    "Matthew 3:1-12": [
+      "matthew:3:1",
+      "matthew:3:10",
+      "matthew:3:11",
+      "matthew:3:12",
+      "matthew:3:2",
+      "matthew:3:3",
+      "matthew:3:4",
+      "matthew:3:5",
+      "matthew:3:6",
+      "matthew:3:7",
+      "matthew:3:8",
+      "matthew:3:9"
+    ],
+    "Luke 3:1-18": [
+      "luke:3:1",
+      "luke:3:10",
+      "luke:3:11",
+      "luke:3:12",
+      "luke:3:13",
+      "luke:3:14",
+      "luke:3:15",
+      "luke:3:16",
+      "luke:3:17",
+      "luke:3:18",
+      "luke:3:2",
+      "luke:3:3",
+      "luke:3:4",
+      "luke:3:5",
+      "luke:3:6",
+      "luke:3:7",
+      "luke:3:8",
+      "luke:3:9"
+    ],
+    "Luke 8:1-3": [
+      "luke:8:1",
+      "luke:8:2",
+      "luke:8:3"
+    ],
+    "Luke 10:38-42": [
+      "luke:10:38",
+      "luke:10:39",
+      "luke:10:40",
+      "luke:10:41",
+      "luke:10:42"
+    ],
+    "John 11:1-16": [
+      "john:11:1",
+      "john:11:10",
+      "john:11:11",
+      "john:11:12",
+      "john:11:13",
+      "john:11:14",
+      "john:11:15",
+      "john:11:16",
+      "john:11:2",
+      "john:11:3",
+      "john:11:4",
+      "john:11:5",
+      "john:11:6",
+      "john:11:7",
+      "john:11:8",
+      "john:11:9"
+    ],
+    "John 3:1-21": [
+      "john:3:1",
+      "john:3:10",
+      "john:3:11",
+      "john:3:12",
+      "john:3:13",
+      "john:3:14",
+      "john:3:15",
+      "john:3:16",
+      "john:3:17",
+      "john:3:18",
+      "john:3:19",
+      "john:3:2",
+      "john:3:20",
+      "john:3:21",
+      "john:3:3",
+      "john:3:4",
+      "john:3:5",
+      "john:3:6",
+      "john:3:7",
+      "john:3:8",
+      "john:3:9"
+    ],
+    "Matthew 27:57": [
+      "matthew:27:57"
+    ],
+    "Mark 15:43": [
+      "mark:15:43"
+    ],
+    "Luke 23:50-51": [
+      "luke:23:50",
+      "luke:23:51"
+    ],
+    "Matthew 9:9-13": [
+      "matthew:9:10",
+      "matthew:9:11",
+      "matthew:9:12",
+      "matthew:9:13",
+      "matthew:9:9"
+    ],
+    "Acts 12:12": [
+      "acts:12:12"
+    ],
+    "Colossians 4:14": [
+      "colossians:4:14"
+    ],
+    "John 1:35-42": [
+      "john:1:35",
+      "john:1:36",
+      "john:1:37",
+      "john:1:38",
+      "john:1:39",
+      "john:1:40",
+      "john:1:41",
+      "john:1:42"
+    ],
+    "John 1:43-46": [
+      "john:1:43",
+      "john:1:44",
+      "john:1:45",
+      "john:1:46"
+    ],
+    "John 11:16": [
+      "john:11:16"
+    ],
+    "Matthew 4:21-22": [
+      "matthew:4:21",
+      "matthew:4:22"
+    ],
+    "Matthew 13:55": [
+      "matthew:13:55"
+    ],
+    "Mark 6:3": [
+      "mark:6:3"
+    ],
+    "Acts 6:1-6": [
+      "acts:6:1",
+      "acts:6:2",
+      "acts:6:3",
+      "acts:6:4",
+      "acts:6:5",
+      "acts:6:6"
+    ],
+    "Acts 16:1-3": [
+      "acts:16:1",
+      "acts:16:2",
+      "acts:16:3"
+    ],
+    "Galatians 2:1-5": [
+      "galatians:2:1",
+      "galatians:2:2",
+      "galatians:2:3",
+      "galatians:2:4",
+      "galatians:2:5"
+    ],
+    "Acts 15:22-33": [
+      "acts:15:22",
+      "acts:15:23",
+      "acts:15:24",
+      "acts:15:25",
+      "acts:15:26",
+      "acts:15:27",
+      "acts:15:28",
+      "acts:15:29",
+      "acts:15:30",
+      "acts:15:31",
+      "acts:15:32",
+      "acts:15:33"
+    ],
+    "Acts 18:1-3": [
+      "acts:18:1",
+      "acts:18:2",
+      "acts:18:3"
+    ],
+    "Acts 16:14": [
+      "acts:16:14"
+    ],
+    "Acts 18:24-25": [
+      "acts:18:24",
+      "acts:18:25"
+    ],
+    "Romans 16:1-2": [
+      "romans:16:1",
+      "romans:16:2"
+    ],
+    "Philemon 10-16": [
+      "philemon:1:10",
+      "philemon:1:11",
+      "philemon:1:12",
+      "philemon:1:13",
+      "philemon:1:14",
+      "philemon:1:15",
+      "philemon:1:16"
+    ],
+    "Philemon 1:10-16": [
+      "philemon:1:10",
+      "philemon:1:11",
+      "philemon:1:12",
+      "philemon:1:13",
+      "philemon:1:14",
+      "philemon:1:15",
+      "philemon:1:16"
+    ],
+    "Philemon 1-7": [
+      "philemon:1:1",
+      "philemon:1:2",
+      "philemon:1:3",
+      "philemon:1:4",
+      "philemon:1:5",
+      "philemon:1:6",
+      "philemon:1:7"
+    ],
+    "Philemon 1:1-7": [
+      "philemon:1:1",
+      "philemon:1:2",
+      "philemon:1:3",
+      "philemon:1:4",
+      "philemon:1:5",
+      "philemon:1:6",
+      "philemon:1:7"
+    ],
+    "Acts 10:1-4": [
+      "acts:10:1",
+      "acts:10:2",
+      "acts:10:3",
+      "acts:10:4"
+    ]
+  }
+}
