@@ -135,6 +135,46 @@ describe('DigitalHumanWorkspace embedded character mode', () => {
     },
   })
 
+  it('allows validated text turns while runtime metadata remains pending, with provider controls closed', async () => {
+    let finishRuntime
+    getDigitalHumanRuntime.mockImplementationOnce(() => new Promise(resolve => { finishRuntime = resolve }))
+    createDigitalHumanTurn.mockResolvedValueOnce(envelope('目录就绪后的文字证据'))
+    render(<DigitalHumanWorkspace initialCharacterId="david" lockCharacter showOperations={false} />)
+    const input = await screen.findByRole('textbox', { name: '向当前圣经人物提问' })
+    expect(screen.getByLabelText('数字人运行状态核对')).toBeTruthy()
+    expect(screen.getByRole('button', { name: '语音提问' }).disabled).toBe(true)
+    expect(document.querySelector('iframe')).toBeNull()
+    fireEvent.change(input, { target: { value: '你如何面对歌利亚？' } })
+    fireEvent.click(screen.getByRole('button', { name: '发送并核验' }))
+    await screen.findByText('目录就绪后的文字证据')
+    expect(createDigitalHumanLiveKitToken).not.toHaveBeenCalled()
+    await act(async () => finishRuntime({ liveKitEnabled: false, liveSpeakEnabled: false, contentReviewState: 'THEOLOGY_REVIEW' }))
+    await waitFor(() => expect(screen.queryByLabelText('数字人运行状态核对')).toBeNull())
+  })
+
+  it('keeps text available after runtime failure and permits an explicit metadata retry', async () => {
+    let finishRetry
+    getDigitalHumanRuntime.mockRejectedValueOnce(new Error('runtime network unavailable'))
+      .mockImplementationOnce(() => new Promise(resolve => { finishRetry = resolve }))
+    getDigitalHumanCatalog.mockImplementation(() => getDigitalHumanCatalog.mock.calls.length === 1
+      ? Promise.resolve({ characters: [DAVID] })
+      : Promise.reject(new Error('catalog must not be requested again')))
+    render(<DigitalHumanWorkspace initialCharacterId="david" lockCharacter showOperations={false} />)
+    const input = await screen.findByRole('textbox', { name: '向当前圣经人物提问' })
+    expect(screen.getByRole('button', { name: '语音提问' }).disabled).toBe(true)
+    expect(screen.getByText(/runtime network unavailable/)).toBeTruthy()
+    fireEvent.change(input, { target: { value: '保留尚未发送的问题' } })
+    fireEvent.click(screen.getByRole('button', { name: '重新核对运行状态' }))
+    expect(screen.getByRole('textbox', { name: '向当前圣经人物提问' })).toBe(input)
+    expect(input.value).toBe('保留尚未发送的问题')
+    expect(getDigitalHumanCatalog).toHaveBeenCalledTimes(1)
+    expect(getDigitalHumanRuntime).toHaveBeenCalledTimes(2)
+    expect(screen.getByRole('button', { name: '语音提问' }).disabled).toBe(true)
+    await act(async () => finishRetry({ liveKitEnabled: false, liveSpeakEnabled: false }))
+    await waitFor(() => expect(screen.queryByLabelText('数字人运行状态核对')).toBeNull())
+    expect(screen.getByRole('textbox', { name: '向当前圣经人物提问' })).toBe(input)
+  })
+
   it('retains a failed question and explicitly retries without duplicating the user message', async () => {
     createDigitalHumanTurn.mockRejectedValueOnce(new Error('Failed to fetch')).mockResolvedValueOnce(envelope('重试后的证据'))
     render(<DigitalHumanWorkspace initialCharacterId="david" lockCharacter showOperations={false} />)

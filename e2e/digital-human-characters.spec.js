@@ -155,3 +155,48 @@ test('mobile 390: a delayed actual old-person response cannot enter the new conv
     expect(fresh.body.response.warnings).toContain('context-required')
   } finally { release() }
 })
+
+test('mobile 390: pending runtime diagnostics keep providers closed while real text works', async ({ page }, info) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await openMirror(page)
+  let release, readyResolve, readyReject, doneResolve
+  const held = new Promise(resolve => { release = resolve })
+  const ready = new Promise((resolve, reject) => { readyResolve = resolve; readyReject = reject })
+  const done = new Promise(resolve => { doneResolve = resolve })
+  ready.catch(() => {})
+  let actualRuntime, catalog, turn
+  page.on('response', response => {
+    if (response.url().endsWith('/api/v1/digital-human/catalog')) catalog = { http: response.status(), at: Date.now() }
+  })
+  await page.route('**/api/v1/digital-human/runtime', async route => {
+    try {
+      const response = await route.fetch()
+      actualRuntime = { http: response.status(), body: await response.json(), receivedAt: Date.now() }
+      readyResolve()
+      await held
+      await route.fulfill({ response })
+    } catch (error) { readyReject(error) }
+    finally { doneResolve() }
+  }, { times: 1 })
+  try {
+    const workspace = await choose(page, '摩西') // Unchanged real readiness assertion: 5s.
+    await ready
+    expect(catalog.http).toBe(200)
+    expect(actualRuntime.http).toBe(200)
+    await expect(workspace.getByLabel('数字人运行状态核对', { exact: true })).toBeVisible()
+    await expect(workspace.getByRole('button', { name: '语音提问', exact: true })).toBeDisabled()
+    await expect(workspace.locator('iframe')).toHaveCount(0)
+    turn = await ask(page, workspace, info, 'actual-text-before-runtime', 'moses', '你们如何过红海？', ['Exodus 14'])
+    await expect(workspace.getByLabel('数字人运行状态核对', { exact: true })).toBeVisible()
+    release()
+    await done
+    await expect(workspace.getByLabel('数字人运行状态核对', { exact: true })).toHaveCount(0)
+    expect(turn.body.response.speechApproved).toBe(false)
+  } finally {
+    release()
+    await save(info, 'runtime-held-evidence', {
+      fault: 'ACTUAL_RUNTIME_RESPONSE_HELD_NO_FABRICATED_DATA', catalog, actualRuntime,
+      textCompletedBeforeRelease: Boolean(turn),
+    })
+  }
+})

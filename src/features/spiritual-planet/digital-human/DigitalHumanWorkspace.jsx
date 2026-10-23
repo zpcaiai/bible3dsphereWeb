@@ -51,6 +51,7 @@ export default function DigitalHumanWorkspace({
   const [loading, setLoading] = useState(true)
   const [loadAttempt, setLoadAttempt] = useState(0)
   const [loadError, setLoadError] = useState('')
+  const [runtimeLoadError, setRuntimeLoadError] = useState('')
   const [previewVoicePlaying, setPreviewVoicePlaying] = useState(false)
   const [sessionRevision, setSessionRevision] = useState(0)
   const [isTurnPending, setIsTurnPending] = useState(false)
@@ -69,6 +70,8 @@ export default function DigitalHumanWorkspace({
   const realtimeAdapter = useRef(null)
   const stopPreviewVoice = useRef(null)
   const submitRef = useRef(null)
+  const runtimeRequestRevision = useRef(0)
+  const runtimeRetryRequest = useRef(null)
   const reportProvider = useCallback((provider, state, latencyMs = 0) => {
     recordDigitalHumanProviderTelemetry({ provider, state, latencyMs }).catch(() => {})
   }, [])
@@ -80,28 +83,60 @@ export default function DigitalHumanWorkspace({
     return catalog.filter((item) => `${item.canonicalName} ${item.englishName} ${item.id}`.toLowerCase().includes(needle))
   }, [catalog, search])
 
+  const loadRuntime = useCallback((signal) => {
+    const revision = ++runtimeRequestRevision.current
+    setRuntime(null)
+    setRuntimeLoadError('')
+    return getDigitalHumanRuntime({ signal })
+      .then((runtimeData) => {
+        if (signal.aborted || revision !== runtimeRequestRevision.current) return
+        if (!runtimeData || typeof runtimeData !== 'object') throw new Error('运行状态资料暂不可用，请重新核对。')
+        setRuntime(runtimeData)
+      })
+      .catch((caught) => {
+        if (!signal.aborted && revision === runtimeRequestRevision.current && caught.name !== 'AbortError') setRuntimeLoadError(caught.message)
+      })
+  }, [])
+
+  const retryRuntime = useCallback(() => {
+    runtimeRetryRequest.current?.abort()
+    const controller = new AbortController()
+    runtimeRetryRequest.current = controller
+    void loadRuntime(controller.signal)
+  }, [loadRuntime])
+
   useEffect(() => {
     let active = true
     const controller = new AbortController()
     setLoading(true)
     setLoadError('')
-    Promise.all([getDigitalHumanCatalog({ signal: controller.signal }), getDigitalHumanRuntime({ signal: controller.signal })])
-      .then(([catalogData, runtimeData]) => {
+    runtimeRetryRequest.current?.abort()
+    runtimeRetryRequest.current = null
+    getDigitalHumanCatalog({ signal: controller.signal })
+      .then((catalogData) => {
         if (!active) return
-        if (!Array.isArray(catalogData?.characters) || !catalogData.characters.length || !runtimeData) {
+        if (!Array.isArray(catalogData?.characters) || !catalogData.characters.length) {
           throw new Error('人物资料暂不可用，请重新加载。')
         }
         setCatalog(catalogData.characters.map(validateCharacterProfile))
         setCatalogMeta(catalogData)
-        setRuntime(runtimeData)
       })
       .catch((caught) => {
         if (active && caught.name !== 'AbortError') setLoadError(caught.message)
         controller.abort()
       })
       .finally(() => active && setLoading(false))
-    return () => { active = false; controller.abort() }
-  }, [loadAttempt])
+    // Text turns use the actual validated catalog and server-side response
+    // gates. Slow capability/admin diagnostics must not block that path.
+    // Keep runtime null until its real response arrives: providers stay closed.
+    void loadRuntime(controller.signal)
+    return () => {
+      active = false
+      controller.abort()
+      runtimeRetryRequest.current?.abort()
+      runtimeRequestRevision.current += 1
+    }
+  }, [loadAttempt, loadRuntime])
 
   const resetConversation = useCallback((characterId) => {
     conversationGeneration.current += 1
@@ -348,7 +383,11 @@ export default function DigitalHumanWorkspace({
         <div className="dh-assurance"><strong>{lockCharacter ? (selected?.canonicalName || '—') : (catalogMeta?.characterCount || catalog.length)}</strong><small>{lockCharacter ? `${selected?.englishName || selectedId} · characterId ${selectedId}` : `人物 · ${catalogMeta?.truthCaseCount || 0} Truth Cases`}</small></div>
       </header>
 
-      <div className="dh-status" role="status"><span>{STATE_LABELS[uiState]}</span><small>内容 {runtime?.contentReviewState || 'UNKNOWN'} · RAG {runtime?.retrievalMode || 'UNKNOWN'} · Avatar {avatarState} · Realtime {realtimeState}</small></div>
+      <div className="dh-status" role="status"><span>{STATE_LABELS[uiState]}</span><small>内容 {runtime?.contentReviewState || catalogMeta?.contentReviewState || 'UNKNOWN'} · RAG {runtime?.retrievalMode || 'UNKNOWN'} · Avatar {avatarState} · Realtime {realtimeState}</small></div>
+      {!runtime && <div className="dh-study" role={runtimeLoadError ? 'alert' : 'status'} aria-label="数字人运行状态核对">
+        <p>{runtimeLoadError ? `运行状态暂不可用：${runtimeLoadError}` : '语音、Avatar 和运行配置仍在核对；可先使用经文约束文字提问。'}</p>
+        {runtimeLoadError && <button type="button" onClick={retryRuntime}>重新核对运行状态</button>}
+      </div>}
       {error && <div className="dh-error" role="alert"><span>{error}</span>{failedTurn && <button type="button" disabled={isTurnPending || uiState === UI_STATES.SPEAKING} onClick={() => submitQuestion(failedTurn.text, failedTurn)}>重试上次提问</button>}<button type="button" onClick={() => setError('')}>关闭</button></div>}
       <DigitalHumanReadinessPanel readiness={runtime?.readiness} />
 
