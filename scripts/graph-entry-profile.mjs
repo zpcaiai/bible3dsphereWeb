@@ -2,6 +2,7 @@ import fs from 'node:fs'
 import os from 'node:os'
 import { chromium, expect } from '@playwright/test'
 import crypto from 'node:crypto'
+import { startCausalWitness } from './graph-entry-witness.mjs'
 const root=(process.env.GRAPH_ENTRY_PROFILE_DIR || os.tmpdir()+'/graph-entry-profile-'+process.pid+'-'+Date.now()).replace(/\/$/, '')+'/'
 const baseURL=process.env.GRAPH_ENTRY_PROFILE_BASE_URL || 'https://holiness.uk'
 const fault=process.env.GRAPH_ENTRY_PROFILE_FAULT || 'none'
@@ -32,7 +33,8 @@ try{
   for(const width of [390,320]){
    const context=await browser.newContext({baseURL,viewport:{width,height:844},isMobile:true,hasTouch:true,serviceWorkers:fault==='none'?'allow':'block'})
    const page=await context.newPage();page.setDefaultTimeout(30000);page.setDefaultNavigationTimeout(30000)
-   const r={width,started:Date.now(),phase:'setup',originalAssertionMs:5000,assetEvents:[],parentSamples:[],observedTurnPOSTs:0}
+   const r={width,started:Date.now(),phase:'setup',originalAssertionMs:5000,assetEvents:[],parentSamples:[],onboardingEvents:[],observedTurnPOSTs:0}
+   let causalWitness
    const pendingAssets=new Map()
    const imageResponses=new Map()
    page.on('response',response=>{
@@ -52,6 +54,7 @@ try{
    let last=performance.now()
    const timer=setInterval(()=>{const now=performance.now();r.parentSamples.push({at:Date.now(),actualGapMs:now-last,load:os.loadavg()});last=now},2000)
    timer.unref()
+   const caseDeadlineAt=Date.now()+120000
    const caseDeadline=setTimeout(()=>{r.caseTimedOutAt=Date.now();context.close().catch(()=>{})},120000)
    caseDeadline.unref()
    page.on('request',request=>{if(request.method()==='POST'&&new URL(request.url()).pathname==='/api/v1/digital-human/turns')r.observedTurnPOSTs++})
@@ -66,7 +69,11 @@ try{
     catch{p.longTaskObserver='UNAVAILABLE'}
    })
    try{
-    await page.addLocatorHandler(page.getByRole('button',{name:'暂时跳过',exact:true}),button=>button.click())
+    await page.addLocatorHandler(page.getByRole('button',{name:'暂时跳过',exact:true}),async button=>{
+     r.onboardingEvents.push({stage:'start',at:Date.now()})
+     await button.click()
+     r.onboardingEvents.push({stage:'end',at:Date.now()})
+    })
     r.phase='login';await page.goto('/')
     await page.getByRole('button',{name:'🔑 登录',exact:true}).click()
     const account=await page.getByLabel('默认登录账号',{exact:true}).locator('code').allTextContents();expect(account).toHaveLength(2)
@@ -75,6 +82,7 @@ try{
     await page.getByRole('button',{name:'🔑 登录',exact:true}).click()
     r.loginHTTP=(await pending).status();expect(r.loginHTTP).toBe(200)
     await expect(page.getByRole('button',{name:'退出登录',exact:true})).toBeVisible({timeout:5000})
+    r.phase='witness_start';causalWitness=await startCausalWitness(page,{deadlineAt:caseDeadlineAt})
     if(fault!=='none'){
      r.injectedFailures=0;r.recoveryNavigations=0;r.cacheKeysCalls=0;r.routeEvents=[]
      page.on('framenavigated',frame=>{if(frame===page.mainFrame())r.recoveryNavigations++})
@@ -92,13 +100,17 @@ try{
      }
     }
     r.phase='tap';r.beforeTapAt=Date.now();r.browserBeforeTap=await page.evaluate(()=>performance.now())
+    causalWitness.mark('before-tap')
     r.homeCanvasesBefore=await page.locator('.mobile-sphere-stage canvas').count()
     const graphReply=page.waitForResponse(response=>new URL(response.url()).pathname==='/api/characters/knowledge-graph'&&response.request().method()==='GET').catch(error=>({probeErrorName:error.name}))
     await page.getByRole('button',{name:'人物图谱',exact:false}).tap()
     r.graphTapCompleted=true
+    causalWitness.mark('tap-complete')
     r.phase='graph_assert';r.predicate='graph-heading-visible';r.assertStartAt=Date.now()
+    causalWitness.mark('heading-expect-start')
     await expect(page.getByRole('heading',{name:'关系图谱',exact:true})).toBeVisible({timeout:5000})
     r.assertEndAt=Date.now();r.originalFiveSecondAssertion='PASS'
+    causalWitness.mark('heading-expect-pass')
     r.phase='graph_data'
     const response=await graphReply
     if(response.probeErrorName)throw Error('Graph API response unavailable: '+response.probeErrorName)
@@ -174,6 +186,7 @@ try{
    }catch(error){
     r.failureAt=Date.now();r.originalFiveSecondAssertion=r.originalFiveSecondAssertion==='PASS'?'PASS':(r.phase==='graph_assert'?'FAIL':'NOT_RUN');r.errorName=error.name
     if(r.phase==='graph_assert')r.assertEndAt=r.failureAt
+    if(r.phase==='graph_assert')causalWitness?.mark('heading-expect-fail')
     r.error=r.phase==='login'?'Login stage failed; auth inputs intentionally not logged':error.message
     if(r.phase==='graph_data')r.graphDataStatus='FAIL'
     process.exitCode=1
@@ -190,6 +203,15 @@ try{
     }catch(error){r.captureErrorName=error.name;process.exitCode=1}
     else r.captureSkipped='Before completed authenticated graph tap; no DOM or PNG captured to avoid auth values'
     r.pendingAssetsAtCapture=[...pendingAssets.values()]
+    if(causalWitness){
+     try{
+      const value=await causalWitness.finish({name:'graph-heading-visible',assertionMs:5000,startAt:r.assertStartAt??null,endAt:r.assertEndAt??null,outcome:r.originalFiveSecondAssertion})
+      const file='causal-witness-'+width+'.json',bytes=Buffer.from(JSON.stringify(value,null,2))
+      fs.writeFileSync(root+file,bytes)
+      r.causalWitness={file,sha256:crypto.createHash('sha256').update(bytes).digest('hex'),status:value.status}
+      expect(value.status).toBe('CAPTURED_BOUNDED')
+     }catch(error){r.witnessErrorName=error.name;process.exitCode=1}
+    }else r.causalWitness={status:'NOT_RUN',reason:'Authenticated witness startup was not completed'}
     if(fault!=='none'&&r.originalFiveSecondAssertion==='FAIL'){
      r.afterFailureObservations=[]
      for(let i=0;i<3;i++){
