@@ -1,5 +1,5 @@
 import { afterEach, expect, it, vi } from 'vitest'
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import RelationshipGraphView, { graphApiBase } from '../RelationshipGraphView'
 import { setRuntimeLang } from '../i18n/runtime'
 import oracle from '../../e2e/fixtures/digital-human-all100.json'
@@ -73,7 +73,7 @@ it('maps all100 numeric identities to different artistic images and retains grap
   expect(container.querySelectorAll('svg image[data-portrait-character-id]').length).toBe(99)
   expect(container.querySelectorAll('svg circle').length).toBe(100)
   expect(screen.getByRole('status', { name: '图谱艺术头像状态' })).toBeTruthy()
-  fireEvent.click(screen.getByRole('button', { name: '重试头像', exact: true }))
+  fireEvent.click(within(screen.getByRole('status', { name: '图谱艺术头像状态' })).getByRole('button', { name: '重试头像', exact: true }))
   expect(container.querySelectorAll('svg image[data-portrait-character-id]').length).toBe(100)
   expect(container.querySelector('img[data-portrait-context="graph-selected"]')?.getAttribute('src')).toBe(images[0].getAttribute('href'))
   expect(screen.queryByRole('status', { name: '图谱艺术头像状态' })).toBeNull()
