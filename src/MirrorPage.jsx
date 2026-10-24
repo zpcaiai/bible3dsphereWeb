@@ -23,6 +23,7 @@ import { CHARACTER_JOURNEYS, buildCharacterMapConfig } from './data/characterJou
 import { getRuntimeLang } from './i18n/runtime'
 import { useAutoTranslate, AutoText } from './autoTranslate'
 import { getMirrorDigitalHumanId } from './features/spiritual-planet/digital-human/mirrorCharacterMap'
+import CharacterPortrait from './features/spiritual-planet/digital-human/CharacterPortrait'
 // Keep the lightweight graph in this already-lazy entry chunk. A second
 // late chunk competes with startup API/SSE connections during recovery.
 import RelationshipGraphView from './RelationshipGraphView'
@@ -140,7 +141,8 @@ async function fetchVerseText(ref) {
   } catch { return null }
 }
 
-function CharacterAvatar({ name, en, size = 56 }) {
+function CharacterAvatar({ name, en, characterId, size = 56 }) {
+  if (characterId) return <CharacterPortrait characterId={characterId} name={name} size={size} context="mirror" />
   const initials = name.charAt(0)
   const hue = (name.charCodeAt(0) * 37 + (en.charCodeAt(0) || 0) * 13) % 360
   return (
@@ -208,7 +210,7 @@ function CharacterCard({ char: _rawChar, onClick }) {
       onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.06)'}
      {...a11yClickProps(() => onClick(char))}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-        <CharacterAvatar name={char.name} en={char.en} />
+        <CharacterAvatar name={char.name} en={char.en} characterId={digitalHumanId} />
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ fontWeight: 700, fontSize: 16, color: '#fff' }}>{dispName(char)}</div>
           <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)', marginTop: 2 }}>{dispSub(char)}</div>
@@ -464,7 +466,7 @@ function CharacterDetail({ char: _rawChar, onBack, user, token }) {
 
       {/* Header */}
       <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap', marginBottom: 28, alignItems: 'center' }}>
-        <CharacterAvatar name={char.name} en={char.en} size={80} />
+        <CharacterAvatar name={char.name} en={char.en} characterId={getMirrorDigitalHumanId(char)} size={80} />
         <div>
           <h2 style={{ margin: 0, fontSize: 26, color: '#fff' }}>{dispName(char)}</h2>
           <div style={{ color: 'rgba(255,255,255,0.45)', fontSize: 14, marginTop: 2 }}>{dispSub(char)}</div>

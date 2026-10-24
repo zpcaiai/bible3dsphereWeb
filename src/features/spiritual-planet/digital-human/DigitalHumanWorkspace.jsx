@@ -4,7 +4,8 @@ import { validateCharacterProfile, validateDigitalHumanResponse } from './contra
 import { DIGITAL_HUMAN_STATES } from './DigitalHumanAdapter'
 import { LiveKitRealtimeSession, REALTIME_STATES } from './LiveKitRealtimeSession'
 import { MetaPersonLiveSpeakAdapter } from './MetaPersonLiveSpeakAdapter'
-import { SHARED_PREVIEW_PORTRAIT_URL, speakSharedPreviewDisclosure } from './previewAssets'
+import { speakSharedPreviewDisclosure } from './previewAssets'
+import CharacterPortrait from './CharacterPortrait'
 import DigitalHumanOperationsPanel from './DigitalHumanOperationsPanel'
 import DigitalHumanStudyPanel from './DigitalHumanStudyPanel'
 import DigitalHumanReadinessPanel from './DigitalHumanReadinessPanel'
@@ -395,12 +396,12 @@ export default function DigitalHumanWorkspace({
         {!lockCharacter && <aside className="dh-catalog">
           <div className="dh-search"><input aria-label="搜索圣经人物" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="姓名、英文名或 characterId" /><button type="button" onClick={resolveSearch}>识别</button></div>
           {!!identityCandidates.length && <div className="dh-candidates" role="group" aria-label="请选择具体人物"><strong>这个名称对应多位人物，请明确选择：</strong>{identityCandidates.map((item) => <button type="button" key={item.characterId} onClick={() => resetConversation(item.characterId)}>{item.stableLabel}</button>)}</div>}
-          <div className="dh-character-list">{filtered.map((item) => <button type="button" className={selectedId === item.id ? 'active' : ''} key={item.id} onClick={() => resetConversation(item.id)}><span>{item.canonicalName}</span><small>{item.englishName} · {item.catalogTier}</small></button>)}</div>
+          <div className="dh-character-list">{filtered.map((item) => <button type="button" className={selectedId === item.id ? 'active' : ''} key={item.id} onClick={() => resetConversation(item.id)}><CharacterPortrait characterId={item.id} name={item.canonicalName} avatar={item.avatar} size={40} context="catalog" /><span>{item.canonicalName}</span><small>{item.englishName} · {item.catalogTier}</small></button>)}</div>
         </aside>}
 
         <div className="dh-experience">
           <section className="dh-stage">
-            {runtime?.liveSpeakEnabled && selected?.runtimeReady && !avatarFailed ? <iframe key={sessionRevision} ref={iframeRef} title={`${selected.canonicalName} LiveSpeak Avatar`} src={runtime.liveSpeakEmbedUrl} allow="microphone" sandbox="allow-scripts allow-same-origin" onError={() => { setAvatarFailed(true); setError('Avatar 页面加载失败，已保留文字回答。') }} /> : <div className="dh-portrait-fallback"><img src={selected?.avatar?.portraitUrl || SHARED_PREVIEW_PORTRAIT_URL} alt={selected?.avatar?.portraitUrl ? `${selected.canonicalName}数字人艺术重建肖像` : `${selected?.canonicalName || '圣经人物'}共用3D艺术占位肖像`} /><strong>{selected?.canonicalName}</strong><small>{selected?.englishName} · 文本安全回退</small>{!selected?.avatar?.portraitUrl && <span className="dh-preview-label">共享3D艺术占位肖像 · 非历史真实肖像</span>}<p>{selected?.runtimeReady ? 'LiveSpeak 当前不可用。' : 'GLB、Voice 或内容尚未完成人工审批，因此不加载 Avatar。'}</p><button className="dh-preview-voice" type="button" onClick={togglePreviewVoice}>{previewVoicePlaying ? '停止默认预览音色' : '试听默认预览音色'}</button>{avatarFailed && <button type="button" disabled={isTurnPending} onClick={() => { setError(''); setAvatarFailed(false); setAvatarState(DIGITAL_HUMAN_STATES.BOOTING); setSessionRevision((value) => value + 1) }}>重新连接数字人</button>}</div>}
+            {runtime?.liveSpeakEnabled && selected?.runtimeReady && !avatarFailed ? <iframe key={sessionRevision} ref={iframeRef} title={`${selected.canonicalName} LiveSpeak Avatar`} src={runtime.liveSpeakEmbedUrl} allow="microphone" sandbox="allow-scripts allow-same-origin" onError={() => { setAvatarFailed(true); setError('Avatar 页面加载失败，已保留文字回答。') }} /> : <div className="dh-portrait-fallback" style={{ gridTemplateColumns: 'minmax(0,1fr)', justifyItems: 'center' }}><CharacterPortrait characterId={selected?.id || selectedId} name={selected?.canonicalName} avatar={selected?.avatar} size={256} compact={false} context="workspace" /><strong>{selected?.canonicalName}</strong><small>{selected?.englishName} · 文本安全回退</small><p>{selected?.runtimeReady ? 'LiveSpeak 当前不可用。' : 'GLB、Voice 或内容尚未完成人工审批，因此不加载 Avatar。'}</p><button className="dh-preview-voice" type="button" onClick={togglePreviewVoice}>{previewVoicePlaying ? '停止默认预览音色' : '试听默认预览音色'}</button>{avatarFailed && <button type="button" disabled={isTurnPending} onClick={() => { setError(''); setAvatarFailed(false); setAvatarState(DIGITAL_HUMAN_STATES.BOOTING); setSessionRevision((value) => value + 1) }}>重新连接数字人</button>}</div>}
             <p className="dh-disclosure">{selected?.disclosure}</p>
           </section>
 
