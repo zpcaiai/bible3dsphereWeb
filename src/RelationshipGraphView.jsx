@@ -66,6 +66,8 @@ function chronoKey(node) {
 }
 
 const EMPTY_CHARACTERS = []
+const validCharacterId = id => typeof id === 'number' && Number.isSafeInteger(id) && id > 0
+const graphPortraitId = node => node?.type === 'character' && validCharacterId(node.characterId) ? getMirrorDigitalHumanId({ id: node.characterId }) : null
 const stripParen = (x) => String(x || '').replace(/[（(][^)）]*[)）]/g, '').trim()
 function cardResolver(characters) {
  const byId = new Map(characters.map(c => [Number(c.id), c]))
@@ -74,7 +76,7 @@ function cardResolver(characters) {
  return function resolveCard(node) {
   if (!node || (node.type && node.type !== 'character')) return null
   // An explicit DTO identity must never fall through to an ambiguous name.
-  if (Object.hasOwn(node, 'characterId') && node.characterId !== undefined) return byId.get(Number(node.characterId)) || null
+  if (Object.hasOwn(node, 'characterId') && node.characterId !== undefined) return validCharacterId(node.characterId) ? byId.get(node.characterId) || null : null
   const cands = [node.chineseName, node.name, ...(node.aliases || [])].filter(Boolean)
   for (const nm of cands) { if (byName.has(nm)) return byName.get(nm) }
   const bases = cands.map(stripParen).filter(Boolean)
@@ -96,6 +98,7 @@ export default function RelationshipGraphView({ token, onBack, initialFocus = ''
   const [typeFilter, setTypeFilter] = useState('all')
   const [selected, setSelected] = useState(null)
   const [failedPortraits, setFailedPortraits] = useState(() => new Set())
+  const [portraitRetryRevision, setPortraitRetryRevision] = useState(0)
 
   const wrapRef = useRef(null)
   const [size, setSize] = useState({ w: 900, h: 620 })
@@ -295,7 +298,7 @@ export default function RelationshipGraphView({ token, onBack, initialFocus = ''
   }, [selId, raw.edges, raw.nodes, en])
 
   const selCard = selected ? resolveCard(selected) : null
-  const selectedPortraitId = selected?.type === 'character' ? getMirrorDigitalHumanId({ id: selected.characterId }) : null
+  const selectedPortraitId = graphPortraitId(selected)
   const v = viewRef.current
   const labelCut = nodes.length > 120 ? 4 : 2
   const nm = (node) => { if (!en) return node.chineseName || node.name; const cc = resolveCard(node); return (cc && cc.en) || node.englishName || node.nameEn || node.name }
@@ -348,7 +351,7 @@ export default function RelationshipGraphView({ token, onBack, initialFocus = ''
       </div>
       {failedPortraits.size > 0 && <div role="status" aria-label={en ? 'Graph artistic portrait status' : '图谱艺术头像状态'} style={{ fontSize: 12, color: '#ffd60a', marginBottom: 8 }}>
         {en ? 'Some artistic portraits are unavailable. Graph data remains visible.' : '部分艺术头像加载失败，图谱数据仍可查看。'}
-        <button onClick={() => setFailedPortraits(new Set())}>{en ? 'Retry portraits' : '重试头像'}</button>
+        <button onClick={() => { setFailedPortraits(new Set()); setPortraitRetryRevision(n => n + 1) }}>{en ? 'Retry portraits' : '重试头像'}</button>
       </div>}
       {/* Canvas */}
       <div ref={wrapRef} style={{ position: 'relative', flex: 1, minHeight: 420, borderRadius: 14, overflow: 'hidden', background: 'radial-gradient(circle at 50% 40%, rgba(40,40,60,0.45), rgba(10,10,18,0.6))', border: '1px solid rgba(255,255,255,0.08)', touchAction: 'none' }}>
@@ -375,7 +378,7 @@ export default function RelationshipGraphView({ token, onBack, initialFocus = ''
                 stroke={hot ? 'rgba(0,180,255,0.75)' : 'rgba(255,255,255,0.10)'} strokeWidth={hot ? 1.6 : 0.8} />
             })}
             {nodes.map((node) => {
-              const portraitId = node.type === 'character' ? getMirrorDigitalHumanId({ id: node.characterId }) : null
+              const portraitId = graphPortraitId(node)
               const portrait = getArtisticPortrait(portraitId)
               const isSel = node.id === selId
               const typeMiss = typeFilter !== 'all' && node.type !== typeFilter
@@ -412,7 +415,7 @@ export default function RelationshipGraphView({ token, onBack, initialFocus = ''
             background: 'rgba(20,20,30,0.92)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 12, padding: '12px 14px', backdropFilter: 'blur(8px)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
               <div>
-                {selectedPortraitId && <CharacterPortrait characterId={selectedPortraitId} name={nm(selected)} context="graph-selected" size={64} compact />}
+                {selectedPortraitId && <CharacterPortrait key={`${selectedPortraitId}:${portraitRetryRevision}`} characterId={selectedPortraitId} name={nm(selected)} context="graph-selected" size={64} compact={false} />}
                 {selCard && onOpenChar ? (
                   <div onClick={() => onOpenChar(selCard)} title={en ? 'Open mirror card' : '查看镜鉴卡片'}
                     style={{ fontSize: 16, fontWeight: 700, color: '#9ecbff', cursor: 'pointer', textDecoration: 'underline', textUnderlineOffset: 3 }} {...a11yClickProps(() => onOpenChar(selCard))}>{nm(selected)}</div>
