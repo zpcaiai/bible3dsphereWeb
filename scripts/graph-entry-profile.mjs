@@ -5,7 +5,8 @@ import crypto from 'node:crypto'
 const root=(process.env.GRAPH_ENTRY_PROFILE_DIR || os.tmpdir()+'/graph-entry-profile-'+process.pid+'-'+Date.now()).replace(/\/$/, '')+'/'
 const baseURL=process.env.GRAPH_ENTRY_PROFILE_BASE_URL || 'https://holiness.uk'
 const fault=process.env.GRAPH_ENTRY_PROFILE_FAULT || 'none'
-if(!['none','chunk-cache-hang','catalogue-failure'].includes(fault))throw Error('Unsupported controlled fault')
+if(!['none','chunk-cache-hang','catalogue-failure','portrait-failure'].includes(fault))throw Error('Unsupported controlled fault')
+const portraits=JSON.parse(fs.readFileSync(new URL('../src/features/spiritual-planet/digital-human/portraitCatalog.json',import.meta.url),'utf8')).portraits
 fs.mkdirSync(root,{recursive:false})
 const out={scope:'Actual mobile graph entry with original5s assertion and real backend; optional explicitly labelled network/cache fault injection, never fabricated API responses. No turn requests deliberately invoked; no reconstruction of historical failures.',fault,sourceSHA:process.env.GITHUB_SHA||null,baseURL,gate:[],results:[],product:'NOT_CERTIFIED'}
 const pause=ms=>new Promise(resolve=>setTimeout(resolve,ms))
@@ -33,6 +34,14 @@ try{
    const page=await context.newPage();page.setDefaultTimeout(30000);page.setDefaultNavigationTimeout(30000)
    const r={width,started:Date.now(),phase:'setup',originalAssertionMs:5000,assetEvents:[],parentSamples:[],observedTurnPOSTs:0}
    const pendingAssets=new Map()
+   const imageResponses=new Map()
+   page.on('response',response=>{
+    const path=new URL(response.url()).pathname
+    if(path.startsWith('/assets/digital-human/portraits-v1/')&&path.endsWith('.webp')&&response.request().resourceType()==='image')imageResponses.set(path,(async()=>{
+     try{const bytes=await response.body();return {path,status:response.status(),contentType:response.headers()['content-type'],bytes:bytes.length,sha256:crypto.createHash('sha256').update(bytes).digest('hex')}}
+     catch(error){return {path,errorType:error.name}}
+    })())
+   })
    page.on('request',request=>{
     const path=new URL(request.url()).pathname
     if(path.startsWith('/assets/')){pendingAssets.set(request,{path,at:Date.now()});r.assetEvents.push({path,at:Date.now(),event:'request'})}
@@ -69,9 +78,10 @@ try{
     if(fault!=='none'){
      r.injectedFailures=0;r.recoveryNavigations=0;r.cacheKeysCalls=0;r.routeEvents=[]
      page.on('framenavigated',frame=>{if(frame===page.mainFrame())r.recoveryNavigations++})
-     await page.route(fault==='chunk-cache-hang'?'**/assets/MirrorPage-*.js':'**/assets/mirrorData-*.js',async route=>{
+     const pattern=fault==='portrait-failure'?'**/assets/digital-human/portraits-v1/*.webp':fault==='chunk-cache-hang'?'**/assets/MirrorPage-*.js':'**/assets/mirrorData-*.js'
+     await page.route(pattern,async route=>{
       r.routeEvents.push({stage:'entered',at:Date.now(),path:new URL(route.request().url()).pathname})
-      if(!r.injectedFailures){r.injectedFailures++;await route.abort('failed');r.routeEvents.push({stage:'aborted',at:Date.now()})}
+      if(!r.injectedFailures){r.injectedFailures++;r.failedAssetPath=new URL(route.request().url()).pathname;await route.abort('failed');r.routeEvents.push({stage:'aborted',at:Date.now()})}
       else {await route.continue();r.routeEvents.push({stage:'continued',at:Date.now()})}
      })
      if(fault==='chunk-cache-hang'){
@@ -86,7 +96,7 @@ try{
     const graphReply=page.waitForResponse(response=>new URL(response.url()).pathname==='/api/characters/knowledge-graph'&&response.request().method()==='GET').catch(error=>({probeErrorName:error.name}))
     await page.getByRole('button',{name:'人物图谱',exact:false}).tap()
     r.graphTapCompleted=true
-    r.phase='graph_assert';r.assertStartAt=Date.now()
+    r.phase='graph_assert';r.predicate='graph-heading-visible';r.assertStartAt=Date.now()
     await expect(page.getByRole('heading',{name:'关系图谱',exact:true})).toBeVisible({timeout:5000})
     r.assertEndAt=Date.now();r.originalFiveSecondAssertion='PASS'
     r.phase='graph_data'
@@ -96,8 +106,36 @@ try{
     const bytes=await response.body(),graph=JSON.parse(bytes.toString('utf8'))
     r.graphDataSHA256=crypto.createHash('sha256').update(bytes).digest('hex')
     expect(graph.success).toBe(true);r.graphNodeCount=graph.data.nodes.length;expect(r.graphNodeCount).toBeGreaterThan(0)
-    await expect.poll(()=>page.getByRole('heading',{name:'关系图谱',exact:true}).locator('../..').locator('svg circle').count(),{timeout:5000}).toBe(r.graphNodeCount)
+    r.predicate='graph-circle-count-equals-api-nodes';r.renderAssertStartAt=Date.now()
+    const graphView=page.getByRole('heading',{name:'关系图谱',exact:true}).locator('../..')
+    await expect.poll(()=>graphView.locator('svg circle').count(),{timeout:5000}).toBe(r.graphNodeCount)
+    r.renderAssertEndAt=Date.now()
     r.graphDataStatus='PASS'
+    r.phase='portrait_assert';r.predicate='graph-artistic-portrait-actual-image'
+    if(fault==='portrait-failure'){
+     const status=page.getByRole('status',{name:'图谱艺术头像状态',exact:true})
+     await expect(status).toBeVisible({timeout:5000})
+     expect(r.failedAssetPath).toMatch(/\/portraits-v1\/.*\.webp$/)
+     await expect(graphView.locator(`svg image[href="${r.failedAssetPath}"]`)).toHaveCount(0,{timeout:5000})
+     await expect(graphView.locator('svg circle')).toHaveCount(r.graphNodeCount,{timeout:5000})
+     await page.screenshot({path:root+'portrait-failure-'+width+'.png'})
+     r.portraitRetryAt=Date.now()
+     await status.getByRole('button',{name:'重试头像',exact:true}).tap()
+     await expect(status).toHaveCount(0,{timeout:5000})
+     await expect(graphView.locator(`svg image[href="${r.failedAssetPath}"]`)).toHaveCount(1,{timeout:5000})
+    }
+    await expect.poll(()=>graphView.locator('svg image[data-portrait-character-id]').count(),{timeout:5000}).toBeGreaterThan(0)
+    const image=fault==='portrait-failure'?graphView.locator(`svg image[href="${r.failedAssetPath}"]`):graphView.locator('svg image[data-portrait-character-id]').first()
+    const identity=await image.evaluate(node=>({characterId:node.dataset.portraitCharacterId,path:node.getAttribute('href'),reviewState:node.dataset.reviewState}))
+    const expected=portraits[identity.characterId];expect(expected).toBeTruthy();expect(identity.path).toBe(expected.url);expect(identity.reviewState).toBe('PREVIEW_ONLY')
+    await expect.poll(()=>imageResponses.has(identity.path),{timeout:5000}).toBe(true)
+    const http=await imageResponses.get(identity.path)
+    r.portrait={...identity,http}
+    expect(http.errorType).toBeUndefined();expect(http.status).toBe(200);expect(http.contentType).toContain('image/webp');expect(http.sha256).toBe(expected.sha256);expect(http.bytes).toBe(expected.bytes)
+    r.portrait.decode=await page.evaluate(async path=>{const img=new Image();img.src=path;await img.decode();return {width:img.naturalWidth,height:img.naturalHeight,complete:img.complete}},identity.path)
+    expect(r.portrait.decode).toEqual({width:384,height:384,complete:true})
+    r.portrait.status='PASS'
+    if(fault==='portrait-failure')r.portraitRetry='PASS'
     await page.screenshot({path:root+'graph-rendered-'+width+'.png'})
     await expect(page.locator('.mobile-sphere-stage canvas')).toHaveCount(0,{timeout:5000})
     r.homeCanvasesAfter=await page.locator('.mobile-sphere-stage canvas').count()
@@ -106,7 +144,7 @@ try{
      expect(r.cacheKeysCalls).toBeGreaterThan(0);expect(r.recoveryNavigations).toBe(1)
     }
     if(fault==='catalogue-failure'){
-     r.phase='catalogue_retry'
+     r.phase='catalogue_retry';r.predicate='catalogue-retry-alert-and-return'
      await expect(page.getByRole('alert')).toBeVisible({timeout:5000})
      await page.getByRole('button',{name:'重试',exact:true}).tap()
      await expect(page.getByRole('alert')).toHaveCount(0,{timeout:5000})

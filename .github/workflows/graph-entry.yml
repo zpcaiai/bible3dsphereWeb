@@ -120,6 +120,7 @@ jobs:
           timeout 300s node scripts/graph-entry-profile.mjs || status=1
           GRAPH_ENTRY_PROFILE_DIR="$RUNNER_TEMP/graph-entry-cache-fault" GRAPH_ENTRY_PROFILE_FAULT=chunk-cache-hang timeout 300s node scripts/graph-entry-profile.mjs || status=1
           GRAPH_ENTRY_PROFILE_DIR="$RUNNER_TEMP/graph-entry-catalogue-fault" GRAPH_ENTRY_PROFILE_FAULT=catalogue-failure timeout 300s node scripts/graph-entry-profile.mjs || status=1
+          GRAPH_ENTRY_PROFILE_DIR="$RUNNER_TEMP/graph-entry-portrait-fault" GRAPH_ENTRY_PROFILE_FAULT=portrait-failure timeout 300s node scripts/graph-entry-profile.mjs || status=1
           exit "$status"
 
       - name: Preserve actual successful or failed evidence
@@ -131,6 +132,7 @@ jobs:
             ${{ runner.temp }}/graph-entry/
             ${{ runner.temp }}/graph-entry-cache-fault/
             ${{ runner.temp }}/graph-entry-catalogue-fault/
+            ${{ runner.temp }}/graph-entry-portrait-fault/
             ${{ runner.temp }}/graph-entry-server/
             dist/assets/MirrorPage-*.js
             dist/assets/RelationshipGraphView-*.js
@@ -240,7 +242,7 @@ jobs:
           google-chrome --version
           git rev-parse HEAD
           status=0
-          for mode in none chunk-cache-hang catalogue-failure; do
+          for mode in none chunk-cache-hang catalogue-failure portrait-failure; do
             GRAPH_ENTRY_PROFILE_DIR="$RUNNER_TEMP/digital-human-all100/profile-$mode" GRAPH_ENTRY_PROFILE_FAULT="$mode" timeout 300s node scripts/graph-entry-profile.mjs || status=1
           done
           exit "$status"
@@ -295,10 +297,12 @@ jobs:
               assert before['status']==after['status']=='PASS' and before['sourceBound'] and after['sourceBound']
               assert before['expectedFrontendSHA']==after['expectedFrontendSHA']==os.environ['GITHUB_SHA']
               assert before['canonical']==after['canonical'] and before['backend']['spaceSHA']==after['backend']['spaceSHA'] and before['backend']['sourceFiles']==after['backend']['sourceFiles']
-              for mode in ['none','chunk-cache-hang','catalogue-failure']:
+              for mode in ['none','chunk-cache-hang','catalogue-failure','portrait-failure']:
                   profile=json.loads((root/f'profile-{mode}'/'profile-data.json').read_text())
                   assert profile['status']=='ENTRY_PASSED_ROOT_UNRESOLVED' and len(profile['results'])==2
                   assert all(r['originalFiveSecondAssertion']=='PASS' and r['graphDataStatus']=='PASS' for r in profile['results'])
+                  assert all(r['portrait']['status']=='PASS' and r['portrait']['http']['status']==200 for r in profile['results'])
+                  if mode=='portrait-failure': assert all(r['portraitRetry']=='PASS' and r['injectedFailures']==1 for r in profile['results'])
               assert len(people)==100 and {p['characterId'] for p in people}=={p['characterId'] for p in oracle['characters']}
               assert all(p['completed'] and len(p['steps'])==3 and all(s['matched'] for s in p['steps']) for p in people)
               assert len(turns)==300 and len(anchors)==10
@@ -314,12 +318,17 @@ jobs:
                   stats=json.loads((root/f'{group:02d}'/'playwright-report.json').read_text())['stats']
                   assert stats['expected']==10 and stats['unexpected']==stats['skipped']==stats['flaky']==0
               assert len(list(root.glob('[0-9][0-9]/**/header-layout.json')))==100
+              portraits=[json.loads(p.read_text()) for p in root.glob('[0-9][0-9]/**/portraits.json')]
+              assert len(portraits)==100 and len({p['characterId'] for p in portraits})==100
+              assert len({p['http']['sha256'] for p in portraits})==100
+              assert all(p['status']=='PASS' and p['http']['status']==200 and p['http']['sha256']==p['expected']['sha256'] and len(p['surfaces'])==2 and all(s['decoded'] and s['characterId']==p['characterId'] for s in p['surfaces']) for p in portraits)
+              assert len(list(root.glob('[0-9][0-9]/**/portrait-list.json')))==100
               for path in root.glob('[0-9][0-9]/**/header-layout.json'):
                   layout=json.loads(path.read_text())
                   assert layout['headingWidth']>=200 and layout['badgeLeft']>=layout['sectionLeft'] and layout['badgeRight']<=min(layout['sectionRight'],layout['viewportWidth'])
                   assert all(layout[a]<=layout[b] for a,b in [('badgeScrollWidth','badgeClientWidth'),('headerScrollWidth','headerClientWidth'),('titleScrollWidth','titleClientWidth'),('documentWidth','viewportWidth')])
               assert len(list(root.glob('[0-9][0-9]/**/entry.png')))==len(list(root.glob('[0-9][0-9]/**/followups.png')))==100
-              summary.update(status='PASS',matching=100,followups=200,switches=100,layouts=100,screenshots=200,acceptedTurnPOSTs=310)
+              summary.update(status='PASS',matching=100,followups=200,switches=100,layouts=100,uniqueArtisticPortraits=100,screenshots=200,acceptedTurnPOSTs=310)
           except BaseException as error:
               summary.update(errorType=type(error).__name__,error=str(error),uncompletedPeople=100-len([p for p in people if p['completed']]))
               raise

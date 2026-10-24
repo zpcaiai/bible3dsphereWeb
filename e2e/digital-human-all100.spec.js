@@ -1,8 +1,11 @@
 import { expect, test } from '@playwright/test'
 import fs from 'node:fs'
+import crypto from 'node:crypto'
 
 const oracle = JSON.parse(fs.readFileSync(new URL('./fixtures/digital-human-all100.json', import.meta.url), 'utf8'))
 const cases = oracle.characters
+const portraits = JSON.parse(fs.readFileSync(new URL('../src/features/spiritual-planet/digital-human/portraitCatalog.json', import.meta.url), 'utf8')).portraits
+const portraitResponses = new Map()
 const group = process.env.DIGITAL_HUMAN_ALL100_GROUP
 let page, context, lastTurnAt = 0, previous
 
@@ -57,12 +60,16 @@ async function openMirror(info) {
   save(info, 'graph-return', { assertionMs: 5000, returnedAt, listVisibleAt: Date.now(), status: 'PASS' })
 }
 
-async function choose(person) {
+async function choose(person, info) {
   const search = page.getByRole('textbox', { name: '搜索人物', exact: true })
   if (!await search.isVisible()) await page.getByRole('button', { name: '返回', exact: true }).tap()
   await search.fill(person.mirrorName)
   const card = page.getByRole('button').filter({ has: page.getByTestId(`digital-human-badge-${person.characterId}`) })
   await expect(card).toHaveCount(1)
+  // Attributes only: do not warm or await the image before the original5s.
+  const listPortrait = await card.locator('img[data-portrait-character-id]').evaluate(img => ({ characterId: img.dataset.portraitCharacterId, src: img.getAttribute('src'), reviewState: img.dataset.reviewState }))
+  if (info) save(info, 'portrait-list', listPortrait)
+  expect(listPortrait).toEqual({ characterId: person.characterId, src: portraits[person.characterId].url, reviewState: 'PREVIEW_ONLY' })
   await card.tap()
   const workspace = page.getByRole('region', { name: `${person.canonicalName}数字人`, exact: true })
   await expect(workspace).toBeVisible() // Original5s; no pre-wait for API or load.
@@ -70,6 +77,43 @@ async function choose(person) {
   await expect(workspace.getByRole('textbox', { name: '向当前圣经人物提问', exact: true })).toHaveValue('')
   await expect(workspace.getByRole('button', { name: '重试上次提问', exact: true })).toHaveCount(0)
   return workspace
+}
+
+async function verifyPortraits(workspace, person, info) {
+  const expected = portraits[person.characterId]
+  const proof = { characterId: person.characterId, expected, status: 'FAILED_INCOMPLETE', surfaces: [] }
+  try {
+    for (const [name, image] of [
+      ['mirror-detail', page.locator('img[data-portrait-context="mirror"]')],
+      ['workspace', workspace.locator('img[data-portrait-context="workspace"]')],
+    ]) {
+      await expect(image).toHaveCount(1)
+      await image.scrollIntoViewIfNeeded()
+      await expect.poll(() => image.evaluate(img => img.complete && img.naturalWidth === 384 && img.naturalHeight === 384)).toBe(true)
+      const state = await image.evaluate(async img => {
+        await img.decode()
+        const box = img.getBoundingClientRect()
+        return { characterId: img.dataset.portraitCharacterId, currentPath: new URL(img.currentSrc).pathname, reviewState: img.dataset.reviewState,
+          complete: img.complete, width: img.naturalWidth, height: img.naturalHeight, decoded: true,
+          left: box.left, right: box.right, renderedWidth: box.width, viewportWidth: innerWidth }
+      })
+      proof.surfaces.push({ name, ...state })
+      expect(state.characterId).toBe(person.characterId)
+      expect(state.currentPath).toBe(expected.url)
+      expect(state.reviewState).toBe('PREVIEW_ONLY')
+      expect(state.left).toBeGreaterThanOrEqual(0)
+      expect(state.right).toBeLessThanOrEqual(state.viewportWidth)
+      expect(state.renderedWidth).toBeGreaterThan(0)
+    }
+    await expect.poll(() => portraitResponses.has(expected.url)).toBe(true)
+    proof.http = await portraitResponses.get(expected.url)
+    expect(proof.http.errorType).toBeUndefined()
+    expect(proof.http.status).toBe(200)
+    expect(proof.http.contentType).toContain('image/webp')
+    expect(proof.http.sha256).toBe(expected.sha256)
+    expect(proof.http.bytes).toBe(expected.bytes)
+    proof.status = 'PASS'
+  } finally { save(info, 'portraits', proof) }
 }
 
 async function ask(workspace, person, question, step, info, prior, name) {
@@ -155,6 +199,18 @@ test.beforeAll(async ({ browser, baseURL }, info) => {
   expect(selected).toHaveLength(10)
   context = await browser.newContext({ baseURL, viewport: { width: Number(group) % 2 ? 320 : 390, height: 844 }, isMobile: true, hasTouch: true })
   page = await context.newPage()
+  page.on('response', response => {
+    const path = new URL(response.url()).pathname
+    if (path.startsWith('/assets/digital-human/portraits-v1/') && path.endsWith('.webp') && response.request().resourceType() === 'image') {
+      portraitResponses.set(path, (async () => {
+        try {
+          const bytes = await response.body()
+          return { path, status: response.status(), contentType: response.headers()['content-type'], bytes: bytes.length,
+            sha256: crypto.createHash('sha256').update(bytes).digest('hex'), resourceType: 'image' }
+        } catch (error) { return { path, status: response.status(), errorType: error.name } }
+      })())
+    }
+  })
   page.setDefaultTimeout(30_000)
   page.setDefaultNavigationTimeout(30_000)
   await openMirror(info)
@@ -172,7 +228,8 @@ for (const person of cases) {
     expect(browser.isConnected()).toBe(true)
     const result = { characterId: person.characterId, mirrorId: person.mirrorId, canonicalName: person.canonicalName, viewport: page.viewportSize(), steps: [], completed: false }
     try {
-      const workspace = await choose(person)
+      const workspace = await choose(person, info)
+      await verifyPortraits(workspace, person, info)
       await verifyMobileHeader(person, info)
       await page.screenshot({ path: info.outputPath('entry.png') })
       let last
