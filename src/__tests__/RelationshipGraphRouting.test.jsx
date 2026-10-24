@@ -64,13 +64,32 @@ it('maps all100 numeric identities to different artistic images and retains grap
     expect(image.dataset.reviewState).toBe('PREVIEW_ONLY')
   }
   expect(container.querySelectorAll('svg circle').length).toBe(100)
+  fireEvent.pointerDown(images[0].parentElement, { clientX: 100, clientY: 100, pointerId: 1 })
+  const selectedPortrait = container.querySelector('img[data-portrait-context="graph-selected"]')
+  expect(selectedPortrait).toBeTruthy()
+  fireEvent.error(selectedPortrait)
+  expect(container.querySelector('img[data-portrait-context="graph-selected"]')).toBeNull()
   fireEvent.error(images[0])
   expect(container.querySelectorAll('svg image[data-portrait-character-id]').length).toBe(99)
   expect(container.querySelectorAll('svg circle').length).toBe(100)
   expect(screen.getByRole('status', { name: '图谱艺术头像状态' })).toBeTruthy()
   fireEvent.click(screen.getByRole('button', { name: '重试头像', exact: true }))
   expect(container.querySelectorAll('svg image[data-portrait-character-id]').length).toBe(100)
+  expect(container.querySelector('img[data-portrait-context="graph-selected"]')?.getAttribute('src')).toBe(images[0].getAttribute('href'))
   expect(screen.queryByRole('status', { name: '图谱艺术头像状态' })).toBeNull()
+})
+
+it.each([true, null, 1.5])('rejects malformed authoritative graph identity %s without numeric coercion', async (characterId) => {
+  setRuntimeLang('zh')
+  vi.stubGlobal('ResizeObserver', class { observe() {} disconnect() {} })
+  const node = { id: 'malformed', characterId, name: '亚当', type: 'character', degree: 1 }
+  vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true, json: async () => ({ success: true, data: { nodes: [node], edges: [] } }) }))
+  const { container } = render(<RelationshipGraphView characters={[{ id: 1, name: '亚当', en: 'Adam' }]} onOpenChar={vi.fn()} />)
+  await waitFor(() => expect(container.querySelectorAll('svg circle').length).toBe(1))
+  fireEvent.pointerDown(container.querySelector('svg circle').parentElement, { clientX: 100, clientY: 100, pointerId: 1 })
+  expect(screen.queryByRole('button', { name: '亚当', exact: true })).toBeNull()
+  expect(container.querySelector('svg image')).toBeNull()
+  expect(container.querySelector('img[data-portrait-context="graph-selected"]')).toBeNull()
 })
 
 it('opens the exact numeric card when a real graph name differs from the Mirror name', async () => {
