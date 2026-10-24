@@ -20,6 +20,8 @@ jobs:
     name: Real Chrome graph entry
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    outputs:
+      cjk-font-artifact-id: ${{ steps.font-upload.outputs.artifact-id }}
     steps:
       - uses: actions/checkout@v4
 
@@ -43,13 +45,35 @@ jobs:
           cache: npm
           cache-dependency-path: package-lock.json
 
-      - name: Install Chinese glyphs for actual browser captures
+      - name: Install verified upstream Chinese glyphs
         run: |
-          sudo apt-get update
-          sudo apt-get -o Acquire::Retries=1 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 install -y --no-install-recommends fonts-noto-cjk
           mkdir -p "$RUNNER_TEMP/graph-entry-server"
+          mkdir "$RUNNER_TEMP/cjk-font"
+          font_upstream=https://raw.githubusercontent.com/notofonts/noto-cjk/523d033d6cb47f4a80c58a35753646f5c3608a78
+          curl --fail --location --connect-timeout 10 --max-time 60 --retry 1 --retry-delay 1 "$font_upstream/Sans/OTC/NotoSansCJK-Regular.ttc" --output "$RUNNER_TEMP/cjk-font/NotoSansCJK-Regular.ttc"
+          curl --fail --location --connect-timeout 10 --max-time 60 --retry 1 --retry-delay 1 "$font_upstream/LICENSE" --output "$RUNNER_TEMP/cjk-font/copyright"
+          printf '%s  %s\n' b76b0433203017ca80401b2ee0dd69350349871c4b19d504c34dbdd80541690a "$RUNNER_TEMP/cjk-font/NotoSansCJK-Regular.ttc" 6a73f9541c2de74158c0e7cf6b0a58ef774f5a780bf191f2d7ec9cc53efe2bf2 "$RUNNER_TEMP/cjk-font/copyright" | sha256sum --check
+          install -Dm644 "$RUNNER_TEMP/cjk-font/NotoSansCJK-Regular.ttc" "$HOME/.local/share/fonts/NotoSansCJK-Regular.ttc"
+          fc-cache -f "$HOME/.local/share/fonts"
           fc-match -f '%{family}\n' ':lang=zh-cn' | tee "$RUNNER_TEMP/graph-entry-server/cjk-font.txt"
           grep -q 'Noto Sans CJK' "$RUNNER_TEMP/graph-entry-server/cjk-font.txt"
+          python3 - <<'PYFONT'
+          import hashlib,json,os,pathlib,subprocess
+          root=pathlib.Path(os.environ['RUNNER_TEMP'],'cjk-font')
+          selected=pathlib.Path(subprocess.check_output(['fc-match','-f','%{file}',':lang=zh-cn'],text=True))
+          receipt={'sourceSHA':os.environ['GITHUB_SHA'],'runId':os.environ['GITHUB_RUN_ID'],'producerAttempt':int(os.environ['GITHUB_RUN_ATTEMPT']),'upstreamCommit':'523d033d6cb47f4a80c58a35753646f5c3608a78','upstreamTag':'Sans2.004','producerSelectedFontSHA256':hashlib.sha256(selected.read_bytes()).hexdigest(),'files':{p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in root.iterdir()}}
+          assert receipt['producerSelectedFontSHA256']==receipt['files']['NotoSansCJK-Regular.ttc']
+          (root/'font-source.json').write_text(json.dumps(receipt,indent=2))
+          PYFONT
+
+      - name: Preserve the actual installed font for this run
+        id: font-upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: cjk-font-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/cjk-font/
+          if-no-files-found: error
+          retention-days: 14
 
       - run: npm ci
 
@@ -87,6 +111,7 @@ jobs:
           preview_pid=$!
           trap 'kill -- -"$preview_pid" 2>/dev/null || true' EXIT
           for attempt in $(seq 1 30); do
+            printf 'Preview readiness probe %s/30\n' "$attempt"
             if curl --fail --silent --max-time 2 http://127.0.0.1:4173/ > /dev/null; then break; fi
             sleep 1
           done
@@ -167,12 +192,40 @@ jobs:
           cache: npm
       - id: install
         run: npm ci
-      - name: Install Chinese glyphs for actual person captures
+      - name: Require this run's exact font artifact
+        env:
+          CJK_FONT_ARTIFACT_ID: ${{ needs.cold-entry.outputs.cjk-font-artifact-id }}
+        run: '[[ "$CJK_FONT_ARTIFACT_ID" =~ ^[0-9]+$ ]]'
+      - name: Download this run's actual Chinese font
+        uses: actions/download-artifact@v4
+        with:
+          artifact-ids: ${{ needs.cold-entry.outputs.cjk-font-artifact-id }}
+          merge-multiple: true
+          path: ${{ runner.temp }}/cjk-font
+      - name: Verify and install the same font for person captures
         run: |
-          sudo apt-get update
-          sudo apt-get -o Acquire::Retries=1 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 install -y --no-install-recommends fonts-noto-cjk
+          python3 - <<'PYFONT'
+          import hashlib,json,os,pathlib
+          root=pathlib.Path(os.environ['RUNNER_TEMP'],'cjk-font')
+          receipt=json.loads((root/'font-source.json').read_text())
+          assert receipt['sourceSHA']==os.environ['GITHUB_SHA'] and receipt['runId']==os.environ['GITHUB_RUN_ID']
+          assert 0<receipt['producerAttempt']<=int(os.environ['GITHUB_RUN_ATTEMPT'])
+          assert set(receipt['files'])=={'NotoSansCJK-Regular.ttc','copyright'}
+          for name,sha in receipt['files'].items(): assert hashlib.sha256((root/name).read_bytes()).hexdigest()==sha
+          PYFONT
+          install -Dm644 "$RUNNER_TEMP/cjk-font/NotoSansCJK-Regular.ttc" "$HOME/.local/share/fonts/NotoSansCJK-Regular.ttc"
+          fc-cache -f "$HOME/.local/share/fonts"
           fc-match -f '%{family}\n' ':lang=zh-cn' | tee "$RUNNER_TEMP/digital-human-all100/cjk-font.txt"
           grep -q 'Noto Sans CJK' "$RUNNER_TEMP/digital-human-all100/cjk-font.txt"
+          python3 - <<'PYFONT'
+          import hashlib,json,os,pathlib,subprocess
+          root=pathlib.Path(os.environ['RUNNER_TEMP'],'cjk-font')
+          receipt=json.loads((root/'font-source.json').read_text())
+          selected=pathlib.Path(subprocess.check_output(['fc-match','-f','%{file}',':lang=zh-cn'],text=True))
+          assert hashlib.sha256(selected.read_bytes()).hexdigest()==receipt['files']['NotoSansCJK-Regular.ttc']
+          receipt['selectedFontSHA256']=hashlib.sha256(selected.read_bytes()).hexdigest()
+          pathlib.Path(os.environ['RUNNER_TEMP'],'digital-human-all100','cjk-font-source.json').write_text(json.dumps(receipt,indent=2))
+          PYFONT
       - name: Pin canonical source immediately before the campaign
         id: source-before
         env:
