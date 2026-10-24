@@ -45,20 +45,24 @@ jobs:
           cache: npm
           cache-dependency-path: package-lock.json
 
-      - name: Install Chinese glyphs for actual browser captures
+      - name: Install verified upstream Chinese glyphs
         run: |
-          sudo apt-get update
-          sudo apt-get -o Acquire::Retries=1 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 install -y --no-install-recommends fonts-noto-cjk
           mkdir -p "$RUNNER_TEMP/graph-entry-server"
+          mkdir "$RUNNER_TEMP/cjk-font"
+          font_upstream=https://raw.githubusercontent.com/notofonts/noto-cjk/523d033d6cb47f4a80c58a35753646f5c3608a78
+          curl --fail --location --connect-timeout 10 --max-time 60 --retry 1 --retry-delay 1 "$font_upstream/Sans/OTC/NotoSansCJK-Regular.ttc" --output "$RUNNER_TEMP/cjk-font/NotoSansCJK-Regular.ttc"
+          curl --fail --location --connect-timeout 10 --max-time 60 --retry 1 --retry-delay 1 "$font_upstream/LICENSE" --output "$RUNNER_TEMP/cjk-font/copyright"
+          printf '%s  %s\n' b76b0433203017ca80401b2ee0dd69350349871c4b19d504c34dbdd80541690a "$RUNNER_TEMP/cjk-font/NotoSansCJK-Regular.ttc" 6a73f9541c2de74158c0e7cf6b0a58ef774f5a780bf191f2d7ec9cc53efe2bf2 "$RUNNER_TEMP/cjk-font/copyright" | sha256sum --check
+          install -Dm644 "$RUNNER_TEMP/cjk-font/NotoSansCJK-Regular.ttc" "$HOME/.local/share/fonts/NotoSansCJK-Regular.ttc"
+          fc-cache -f "$HOME/.local/share/fonts"
           fc-match -f '%{family}\n' ':lang=zh-cn' | tee "$RUNNER_TEMP/graph-entry-server/cjk-font.txt"
           grep -q 'Noto Sans CJK' "$RUNNER_TEMP/graph-entry-server/cjk-font.txt"
-          mkdir "$RUNNER_TEMP/cjk-font"
-          cp /usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc "$RUNNER_TEMP/cjk-font/"
-          cp /usr/share/doc/fonts-noto-cjk/copyright "$RUNNER_TEMP/cjk-font/"
           python3 - <<'PYFONT'
           import hashlib,json,os,pathlib,subprocess
           root=pathlib.Path(os.environ['RUNNER_TEMP'],'cjk-font')
-          receipt={'sourceSHA':os.environ['GITHUB_SHA'],'runId':os.environ['GITHUB_RUN_ID'],'producerAttempt':int(os.environ['GITHUB_RUN_ATTEMPT']),'packageVersion':subprocess.check_output(['dpkg-query','-W','-f=${Version}','fonts-noto-cjk'],text=True),'files':{p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in root.iterdir()}}
+          selected=pathlib.Path(subprocess.check_output(['fc-match','-f','%{file}',':lang=zh-cn'],text=True))
+          receipt={'sourceSHA':os.environ['GITHUB_SHA'],'runId':os.environ['GITHUB_RUN_ID'],'producerAttempt':int(os.environ['GITHUB_RUN_ATTEMPT']),'upstreamCommit':'523d033d6cb47f4a80c58a35753646f5c3608a78','upstreamTag':'Sans2.004','producerSelectedFontSHA256':hashlib.sha256(selected.read_bytes()).hexdigest(),'files':{p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in root.iterdir()}}
+          assert receipt['producerSelectedFontSHA256']==receipt['files']['NotoSansCJK-Regular.ttc']
           (root/'font-source.json').write_text(json.dumps(receipt,indent=2))
           PYFONT
 
