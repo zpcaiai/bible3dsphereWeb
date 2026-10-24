@@ -38,8 +38,8 @@ try{
    page.on('response',response=>{
     const path=new URL(response.url()).pathname
     if(path.startsWith('/assets/digital-human/portraits-v1/')&&path.endsWith('.webp')&&response.request().resourceType()==='image')imageResponses.set(path,(async()=>{
-     try{const bytes=await response.body();return {path,status:response.status(),contentType:response.headers()['content-type'],bytes:bytes.length,sha256:crypto.createHash('sha256').update(bytes).digest('hex')}}
-     catch(error){return {path,errorType:error.name}}
+     try{const bytes=await response.body();return {body:bytes,receipt:{path,status:response.status(),contentType:response.headers()['content-type'],bytes:bytes.length,sha256:crypto.createHash('sha256').update(bytes).digest('hex'),receivedAt:Date.now()}}}
+     catch(error){return {receipt:{path,errorType:error.name}}}
     })())
    })
    page.on('request',request=>{
@@ -129,7 +129,8 @@ try{
     const identity=await image.evaluate(node=>({characterId:node.dataset.portraitCharacterId,path:node.getAttribute('href'),reviewState:node.dataset.reviewState}))
     const expected=portraits[identity.characterId];expect(expected).toBeTruthy();expect(identity.path).toBe(expected.url);expect(identity.reviewState).toBe('PREVIEW_ONLY')
     await expect.poll(()=>imageResponses.has(identity.path),{timeout:5000}).toBe(true)
-    const http=await imageResponses.get(identity.path)
+    const loaded=await imageResponses.get(identity.path),http=loaded.receipt
+    if(loaded.body)fs.writeFileSync(root+'portrait-loaded-'+width+'.webp',loaded.body)
     r.portrait={...identity,http}
     expect(http.errorType).toBeUndefined();expect(http.status).toBe(200);expect(http.contentType).toContain('image/webp');expect(http.sha256).toBe(expected.sha256);expect(http.bytes).toBe(expected.bytes)
     r.portrait.decode=await page.evaluate(async path=>{const img=new Image();img.src=path;await img.decode();return {width:img.naturalWidth,height:img.naturalHeight,complete:img.complete}},identity.path)

@@ -106,7 +106,9 @@ async function verifyPortraits(workspace, person, info) {
       expect(state.renderedWidth).toBeGreaterThan(0)
     }
     await expect.poll(() => portraitResponses.has(expected.url)).toBe(true)
-    proof.http = await portraitResponses.get(expected.url)
+    const loaded = await portraitResponses.get(expected.url)
+    proof.http = loaded.receipt
+    if (loaded.body) fs.writeFileSync(info.outputPath('portrait-loaded.webp'), loaded.body)
     expect(proof.http.errorType).toBeUndefined()
     expect(proof.http.status).toBe(200)
     expect(proof.http.contentType).toContain('image/webp')
@@ -205,9 +207,9 @@ test.beforeAll(async ({ browser, baseURL }, info) => {
       portraitResponses.set(path, (async () => {
         try {
           const bytes = await response.body()
-          return { path, status: response.status(), contentType: response.headers()['content-type'], bytes: bytes.length,
-            sha256: crypto.createHash('sha256').update(bytes).digest('hex'), resourceType: 'image' }
-        } catch (error) { return { path, status: response.status(), errorType: error.name } }
+          return { body: bytes, receipt: { path, status: response.status(), contentType: response.headers()['content-type'], bytes: bytes.length,
+            sha256: crypto.createHash('sha256').update(bytes).digest('hex'), resourceType: 'image', receivedAt: Date.now() } }
+        } catch (error) { return { receipt: { path, status: response.status(), errorType: error.name } } }
       })())
     }
   })
