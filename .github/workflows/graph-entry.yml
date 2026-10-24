@@ -124,19 +124,21 @@ jobs:
           python3 - <<'PY'
           import json,os,pathlib,shutil,time
           rows=[]
-          for index in range(2):
-              if index: time.sleep(10)
-              start=time.monotonic()
-              time.sleep(2)
-              row={"load":os.getloadavg(),"cpus":os.cpu_count(),"freeBytes":shutil.disk_usage(".").free,"sampleSeconds":time.monotonic()-start}
-              row["loadLimit"]=min(32,4*row["cpus"])
-              print(json.dumps(row),flush=True)
-              assert row["load"][0]<=row["loadLimit"] and row["freeBytes"]>=2*1024**3 and row["sampleSeconds"]<=3
-              rows.append(row)
-          pathlib.Path(os.environ['RUNNER_TEMP'],'conversation-layout-admission.json').write_text(json.dumps(rows))
+          try:
+              for index in range(2):
+                  if index: time.sleep(10)
+                  start=time.monotonic()
+                  time.sleep(2)
+                  row={"load":os.getloadavg(),"cpus":os.cpu_count(),"freeBytes":shutil.disk_usage(".").free,"sampleSeconds":time.monotonic()-start}
+                  row["loadLimit"]=min(32,4*row["cpus"])
+                  rows.append(row)
+                  print(json.dumps(row),flush=True)
+                  assert row["load"][0]<=row["loadLimit"] and row["freeBytes"]>=2*1024**3 and row["sampleSeconds"]<=3
+          finally:
+              pathlib.Path(os.environ['RUNNER_TEMP'],'graph-entry-server','conversation-layout-admission.json').write_text(json.dumps(rows))
           PY
           mkdir "$RUNNER_TEMP/conversation-layout"
-          DIGITAL_HUMAN_REPAIR_BASE_URL=http://127.0.0.1:4173 DIGITAL_HUMAN_REPAIR_EVIDENCE_DIR="$RUNNER_TEMP/conversation-layout" PLAYWRIGHT_JSON_OUTPUT_FILE="$RUNNER_TEMP/conversation-layout/playwright-report.json" PLAYWRIGHT_NO_COPY_PROMPT=1 timeout --kill-after=5s 300s node_modules/.bin/playwright test --config=playwright.digital-human-repairs.config.js --grep 'conversation header layout' --reporter=line,json > "$RUNNER_TEMP/conversation-layout-browser.log" 2>&1 &
+          DIGITAL_HUMAN_BUBBLE_LAYOUT_ONLY=1 DIGITAL_HUMAN_REPAIR_BASE_URL=http://127.0.0.1:4173 DIGITAL_HUMAN_REPAIR_EVIDENCE_DIR="$RUNNER_TEMP/conversation-layout" PLAYWRIGHT_JSON_OUTPUT_FILE="$RUNNER_TEMP/conversation-layout/playwright-report.json" PLAYWRIGHT_NO_COPY_PROMPT=1 timeout --kill-after=5s 300s node_modules/.bin/playwright test --config=playwright.digital-human-repairs.config.js --grep 'conversation header layout' --reporter=line,json > "$RUNNER_TEMP/conversation-layout-browser.log" 2>&1 &
           layout_pid=$!
           layout_exit=0
           wait "$layout_pid" || layout_exit=$?
@@ -146,7 +148,7 @@ jobs:
           import hashlib,json,os,pathlib,subprocess
           root=pathlib.Path(os.environ['RUNNER_TEMP'],'conversation-layout')
           receipt={'executed':True,'pid':int(os.environ['LAYOUT_PID']),'exit_code':int(os.environ['LAYOUT_EXIT']),'sourceSHA':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),'command':['timeout','--kill-after=5s','300s','node_modules/.bin/playwright','test','--config=playwright.digital-human-repairs.config.js','--grep','conversation header layout','--reporter=line,json'],'baseURL':'http://127.0.0.1:4173','log':'browser.log','sha256':hashlib.sha256((root/'browser.log').read_bytes()).hexdigest()}
-          receipt['gate']=json.loads((root.parent/'conversation-layout-admission.json').read_text())
+          receipt['gate']=json.loads((root.parent/'graph-entry-server'/'conversation-layout-admission.json').read_text())
           (root/'process-receipt.json').write_text(json.dumps(receipt,indent=2))
           print(json.dumps(receipt))
           PY
@@ -168,6 +170,7 @@ jobs:
             dist/assets/MirrorPage-*.js
             dist/assets/RelationshipGraphView-*.js
             dist/assets/index-*.js
+            dist/assets/*.css
             dist/release-manifest.json
           if-no-files-found: warn
           retention-days: 14

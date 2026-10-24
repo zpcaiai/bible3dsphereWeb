@@ -1,6 +1,10 @@
 import { expect, test } from '@playwright/test'
 import fs from 'node:fs/promises'
 
+if (process.env.DIGITAL_HUMAN_BUBBLE_LAYOUT_ONLY === '1') {
+  test.use({ screenshot: 'off', trace: 'off', video: 'off' })
+}
+
 async function openDavid(page) {
   await page.addInitScript(() => localStorage.setItem('app-lang', 'zh'))
   await page.addLocatorHandler(page.getByRole('button', { name: '暂时跳过', exact: true }), async button => button.click())
@@ -152,7 +156,6 @@ test('scripture: Samuel anointing David uses the actual relationship reference',
 })
 
 test.describe('conversation header layout', () => {
-  test.use({ screenshot: 'off', trace: 'off', video: 'off' })
   let lastTurnAt = 0
 
   for (const width of [320, 390]) for (const characterId of ['james_zebedee', 'philip_evangelist']) {
@@ -233,8 +236,13 @@ test.describe('conversation header layout', () => {
         const label = header.querySelector('.dh-grounding')
         const box = element => {
           const r = element.getBoundingClientRect()
+          const range = document.createRange()
+          range.selectNodeContents(element)
           return { left: r.left, right: r.right, top: r.top, bottom: r.bottom, width: r.width,
-            clientWidth: element.clientWidth, scrollWidth: element.scrollWidth }
+            clientWidth: element.clientWidth, scrollWidth: element.scrollWidth,
+            clientHeight: element.clientHeight, scrollHeight: element.scrollHeight,
+            lineHeight: getComputedStyle(element).lineHeight,
+            textRects: [...range.getClientRects()].filter(rect => rect.width > 0).map(rect => ({ left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom })) }
         }
         return { name: title.textContent, badge: label.textContent, header: box(header), title: box(title), label: box(label) }
       }))
@@ -246,13 +254,23 @@ test.describe('conversation header layout', () => {
         expect(row.badge).toBe(replies[step].body.response.groundingLevel)
         expect(row.header.width).toBeGreaterThan(0)
         expect(Math.abs(row.title.width - row.header.width)).toBeLessThanOrEqual(1)
+        expect(row.title.textRects).toHaveLength(1)
         expect(row.label.top).toBeGreaterThanOrEqual(row.title.bottom)
         for (const item of [row.title, row.label]) {
           expect(item.left).toBeGreaterThanOrEqual(row.header.left - 1)
           expect(item.right).toBeLessThanOrEqual(row.header.right + 1)
           expect(item.scrollWidth).toBeLessThanOrEqual(item.clientWidth)
+          expect(item.scrollHeight).toBeLessThanOrEqual(item.clientHeight)
+          expect(item.textRects.length).toBeGreaterThan(0)
+          for (const rect of item.textRects) {
+            expect(rect.left).toBeGreaterThanOrEqual(item.left - 1)
+            expect(rect.right).toBeLessThanOrEqual(item.right + 1)
+            expect(rect.top).toBeGreaterThanOrEqual(item.top - 1)
+            expect(rect.bottom).toBeLessThanOrEqual(item.bottom + 1)
+          }
         }
         expect(row.header.scrollWidth).toBeLessThanOrEqual(row.header.clientWidth)
+        expect(row.header.scrollHeight).toBeLessThanOrEqual(row.header.clientHeight)
       }
       await expect(page.locator('.guardian-widget-root')).toHaveCount(0)
       await expect(page.getByRole('navigation', { name: '主要导航', exact: true })).toBeVisible()
