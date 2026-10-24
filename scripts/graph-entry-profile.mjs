@@ -138,10 +138,10 @@ try{
     r.portrait.status='PASS'
     if(fault==='portrait-failure')r.portraitRetry='PASS'
     r.phase='mobile_chrome';r.predicate='mirror-without-floating-guardian'
-    r.mobileChrome={guardianCount:await page.locator('.guardian-widget-root').count(),navigationVisible:await page.getByRole('navigation',{name:'主要导航',exact:true}).isVisible()}
+    r.mobileChromeBefore={guardianCount:await page.locator('.guardian-widget-root').count(),navigationVisible:await page.getByRole('navigation',{name:'主要导航',exact:true}).isVisible()}
     await expect(page.locator('.guardian-widget-root')).toHaveCount(0,{timeout:5000})
     await expect(page.getByRole('navigation',{name:'主要导航',exact:true})).toBeVisible({timeout:5000})
-    r.mobileChrome.status='PASS'
+    r.mobileChrome={guardianCount:await page.locator('.guardian-widget-root').count(),navigationVisible:await page.getByRole('navigation',{name:'主要导航',exact:true}).isVisible(),status:'PASS'}
     await page.screenshot({path:root+'graph-rendered-'+width+'.png'})
     await expect(page.locator('.mobile-sphere-stage canvas')).toHaveCount(0,{timeout:5000})
     r.homeCanvasesAfter=await page.locator('.mobile-sphere-stage canvas').count()
