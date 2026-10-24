@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test'
 import fs from 'node:fs/promises'
+import crypto from 'node:crypto'
 
 if (process.env.DIGITAL_HUMAN_BUBBLE_LAYOUT_ONLY === '1') {
   test.use({ screenshot: 'off', trace: 'off', video: 'off' })
@@ -164,6 +165,19 @@ test.describe('conversation header layout', () => {
       const person = oracle.characters.find(item => item.characterId === characterId)
       expect(person).toBeTruthy()
       await page.setViewportSize({ width, height: 844 })
+      const stylesheets = new Map()
+      // Observe the browser's own loads; do not fetch or pre-warm styles.
+      page.on('response', response => {
+        const path = new URL(response.url()).pathname
+        if (response.request().resourceType() !== 'stylesheet' || !path.startsWith('/assets/') || !path.endsWith('.css') || stylesheets.has(path)) return
+        stylesheets.set(path, (async () => {
+          try {
+            const body = await response.body()
+            return { body, receipt: { path, status: response.status(), resourceType: 'stylesheet', contentType: response.headers()['content-type'],
+              bytes: body.length, sha256: crypto.createHash('sha256').update(body).digest('hex') } }
+          } catch (error) { return { receipt: { path, status: response.status(), errorType: error.name } } }
+        })())
+      })
       await page.addInitScript(() => localStorage.setItem('app-lang', 'zh'))
       await page.addLocatorHandler(page.getByRole('button', { name: '暂时跳过', exact: true }), button => button.click())
       let loginHTTP = null
@@ -228,6 +242,18 @@ test.describe('conversation header layout', () => {
         await expect(workspace.locator('.dh-message.assistant').last()).toContainText(body.response.displayText)
         replies.push({ request, body })
       }
+      const loadedStyles = []
+      for (const pending of stylesheets.values()) {
+        const loaded = await pending
+        expect(loaded.receipt.errorType).toBeUndefined()
+        expect(loaded.receipt.status).toBe(200)
+        expect(loaded.receipt.contentType).toContain('text/css')
+        const file = `loaded-css-${loaded.receipt.path.split('/').pop()}`
+        await fs.writeFile(info.outputPath(file), loaded.body)
+        loadedStyles.push({ ...loaded.receipt, file })
+      }
+      await evidence(info, 'loaded-stylesheets', loadedStyles)
+      expect(loadedStyles.some(style => style.path.includes('/DigitalHumanWorkspace-'))).toBe(true)
       await workspace.locator('.dh-message.assistant').last().scrollIntoViewIfNeeded()
       await page.screenshot({ path: info.outputPath('conversation.png') })
       const rows = await workspace.locator('.dh-message.assistant').evaluateAll(nodes => nodes.map(node => {

@@ -8,4 +8,13 @@
 .dh-study{padding:12px;border:1px solid rgba(177,153,255,.24);border-radius:13px;background:rgba(119,94,205,.07);overflow-wrap:anywhere}.dh-study summary{cursor:pointer;min-height:32px;color:#ddd1ff}.dh-study p,.dh-study small{font-size:12px;line-height:1.6;color:rgba(255,255,255,.7)}.dh-study ul{padding-left:20px;max-height:340px;overflow:auto}.dh-study li{margin:8px 0}.dh-study small{display:block}.dh-study button{min-height:40px;padding:5px 9px;border:1px solid rgba(177,153,255,.24);border-radius:8px;background:rgba(119,94,205,.12);color:#eee9ff;text-align:left;cursor:pointer}.dh-composer>div{flex-wrap:wrap}
 /* In text fallback the disclosure follows the controls in document flow. */
 .dh-portrait-fallback + .dh-disclosure{position:static;margin:0 8px 8px}
-@media(max-width:760px){.dh-intro{align-items:flex-start;flex-direction:column}.dh-assurance{border-left:0;text-align:left}.dh-layout{grid-template-columns:1fr}.dh-character-list{grid-template-columns:repeat(2,minmax(0,1fr));max-height:250px}.dh-stage iframe{height:260px}}
+@media(max-width:760px){
+  .dh-intro{align-items:flex-start;flex-direction:column}
+  .dh-assurance{border-left:0;text-align:left}
+  .dh-layout{grid-template-columns:1fr}
+  .dh-character-list{grid-template-columns:repeat(2,minmax(0,1fr));max-height:250px}
+  .dh-stage iframe{height:260px}
+  .dh-message header{display:grid;grid-template-columns:minmax(0,1fr);align-items:start;gap:6px}
+  .dh-message header>strong{min-width:0;justify-self:stretch;overflow-wrap:anywhere}
+  .dh-message header>.dh-grounding{box-sizing:border-box;min-width:0;max-width:100%;justify-self:start;white-space:normal;overflow-wrap:anywhere}
+}
