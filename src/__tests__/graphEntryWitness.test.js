@@ -1,5 +1,5 @@
 // Unit privacy/bounds controls. Actual Chrome and backend execution is separate.
-import { assetPath, sourceFrame, networkEvent, timelineEvent, cpuProfile, documentEvent, boundedCollector, withinWitnessBudget } from '../../scripts/graph-entry-witness.mjs'
+import { assetPath, sourceFrame, networkEvent, timelineEvent, cpuProfile, documentEvent, boundedCollector, boundedTimeline, withinWitnessBudget } from '../../scripts/graph-entry-witness.mjs'
 
 describe('graph causal witness privacy and evidence integrity', () => {
   it('retains only a static asset path and removes credentials, query and fragment', () => {
@@ -96,5 +96,29 @@ describe('graph causal witness privacy and evidence integrity', () => {
     expect(called).toBe(false)
     await expect(withinWitnessBudget(() => new Promise(() => {}), Date.now() + 1000, 5)).rejects.toMatchObject({ name: 'WitnessDeadlineError' })
     await expect(withinWitnessBudget(() => Promise.resolve(42), Date.now() + 1000)).resolves.toBe(42)
+  })
+
+  it('accounts for every tiny event while keeping script, slow-task and thread detail', () => {
+    const timeline = boundedTimeline(10)
+    for (const duration of [10, 20, 30]) timeline.append(timelineEvent({ name: 'FunctionCall', ph: 'X', ts: 100, dur: duration, pid: 1, tid: 2 }))
+    timeline.append(timelineEvent({ name: 'CompileScript', ph: 'X', ts: 100, dur: 10, pid: 1, tid: 2 }))
+    timeline.append(timelineEvent({ name: 'FunctionCall', ph: 'X', ts: 100, dur: 2000, pid: 1, tid: 2 }))
+    timeline.append(timelineEvent({ name: 'thread_name', ph: 'M', pid: 1, tid: 2, args: { name: 'CrRendererMain' } }))
+    expect(timeline.eligibleEvents).toBe(6)
+    expect(timeline.rows.map(row => row.name)).toEqual(['CompileScript', 'FunctionCall', 'thread_name'])
+    expect([...timeline.buckets.values()]).toEqual([{ name: 'FunctionCall', pid: 1, tid: 2, bucketStartMicroseconds: 0, count: 3, inclusiveDurationMicroseconds: 60, minDurationMicroseconds: 10, maxDurationMicroseconds: 30 }])
+    expect(timeline.dropped).toBe(0)
+  })
+
+  it('uses a single unchanged storage bound and reports every lost new timeline entry', () => {
+    const timeline = boundedTimeline(2)
+    timeline.append(timelineEvent({ name: 'RunTask', ph: 'X', ts: 1, dur: 1, pid: 1, tid: 2 }))
+    timeline.append(timelineEvent({ name: 'EvaluateScript', ph: 'X', ts: 1, dur: 1, pid: 1, tid: 2 }))
+    timeline.append(timelineEvent({ name: 'RunTask', ph: 'X', ts: 50001, dur: 2, pid: 1, tid: 2 }))
+    timeline.append(timelineEvent({ name: 'RunTask', ph: 'X', ts: 2, dur: 2, pid: 1, tid: 2 }))
+    expect(timeline.rows.length + timeline.buckets.size).toBe(2)
+    expect(timeline.eligibleEvents).toBe(4)
+    expect(timeline.dropped).toBe(1)
+    expect([...timeline.buckets.values()][0].count).toBe(2)
   })
 })

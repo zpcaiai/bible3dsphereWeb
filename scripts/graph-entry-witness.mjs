@@ -105,6 +105,35 @@ export function boundedCollector(limit = 20000) {
   return { rows: [], dropped: 0, append(row) { if (!row) return; if (this.rows.length < limit) this.rows.push(row); else this.dropped++ } }
 }
 
+// Keep causal script/long-task detail; quantify every selected tiny generic event.
+// Inclusive durations can overlap. These buckets are not exclusive CPU time.
+export function boundedTimeline(limit = 20000) {
+  if (!Number.isSafeInteger(limit) || limit <= 0) throw Error('Invalid timeline bound')
+  const generic = new Set(['RunTask', 'Task', 'FunctionCall', 'UpdateLayoutTree', 'Layout', 'Paint', 'V8.Execute'])
+  return {
+    rows: [], buckets: new Map(), dropped: 0, eligibleEvents: 0,
+    append(row) {
+      if (!row) return
+      this.eligibleEvents++
+      const short = generic.has(row.name) && Number.isFinite(row.durationMicroseconds) && row.durationMicroseconds >= 0 && row.durationMicroseconds < 1000 && Number.isFinite(row.timestampMicroseconds)
+      if (short) {
+        const bucketStartMicroseconds = Math.floor(row.timestampMicroseconds / 50000) * 50000
+        const key = [row.pid, row.tid, row.name, bucketStartMicroseconds].join(':')
+        let bucket = this.buckets.get(key)
+        if (!bucket) {
+          if (this.rows.length + this.buckets.size >= limit) { this.dropped++;return }
+          bucket = { name: row.name, pid: row.pid, tid: row.tid, bucketStartMicroseconds, count: 0, inclusiveDurationMicroseconds: 0, minDurationMicroseconds: row.durationMicroseconds, maxDurationMicroseconds: row.durationMicroseconds }
+          this.buckets.set(key, bucket)
+        }
+        bucket.count++;bucket.inclusiveDurationMicroseconds += row.durationMicroseconds
+        bucket.minDurationMicroseconds = Math.min(bucket.minDurationMicroseconds, row.durationMicroseconds)
+        bucket.maxDurationMicroseconds = Math.max(bucket.maxDurationMicroseconds, row.durationMicroseconds)
+      } else if (this.rows.length + this.buckets.size < limit) this.rows.push(row)
+      else this.dropped++
+    },
+  }
+}
+
 function observeDocument() {
   if (window.__graphCausalDocumentInstalled) return
   window.__graphCausalDocumentInstalled = true
@@ -123,9 +152,13 @@ function observeDocument() {
     if (visible) { headingSeen = true; emit('heading-visible');emit('observer-stats') }
     if (count !== lastLoading) { lastLoading = count; emit('loading-change', count);emit('observer-stats') }
   }
-  let observer
-  window.__graphCausalStop = () => { emit('observer-stats');observer?.disconnect();removeEventListener('pagehide', window.__graphCausalSnapshot) }
-  const start = () => { observe();observer = new MutationObserver(observe);observer.observe(document.documentElement, { childList: true, subtree: true }) }
+  let observer, stopped = false
+  window.__graphCausalStop = () => {
+    if (stopped) return
+    stopped = true;emit('observer-stats');observer?.disconnect()
+    removeEventListener('DOMContentLoaded', start);removeEventListener('pagehide', window.__graphCausalSnapshot)
+  }
+  const start = () => { if (stopped) return;observe();observer = new MutationObserver(observe);observer.observe(document.documentElement, { childList: true, subtree: true }) }
   if (document.documentElement) start()
   else addEventListener('DOMContentLoaded', start, { once: true })
 }
@@ -141,7 +174,7 @@ export async function withinWitnessBudget(operation, deadlineAt, capMs = 5000) {
 
 export async function startCausalWitness(page, { deadlineAt } = {}) {
   if (!Number.isFinite(deadlineAt)) throw Error('Original case deadline is required')
-  const network = boundedCollector(), scripts = boundedCollector(), timeline = boundedCollector(), documents = boundedCollector(1000), contexts = boundedCollector(1000), frames = boundedCollector(1000)
+  const network = boundedCollector(), scripts = boundedCollector(), timeline = boundedTimeline(), documents = boundedCollector(1000), contexts = boundedCollector(1000), frames = boundedCollector(1000)
   const pending = new Map(), phases = [], errorCollector = boundedCollector(100), startedAt = Date.now()
   const errors = errorCollector.rows
   const fail = (stage, name) => errorCollector.append({ stage, name })
@@ -154,9 +187,15 @@ export async function startCausalWitness(page, { deadlineAt } = {}) {
   page.once('close', closed)
   const send = (method, params) => bounded(() => session.send(method, params))
   const stopDocument = async () => {
-    await bounded(() => page.evaluate(() => window.__graphCausalStop?.()))
-    if (documentScriptId) { await send('Page.removeScriptToEvaluateOnNewDocument', { identifier: documentScriptId });documentScriptId = null;lateEffects.documentScript = 'REMOVED' }
-    if (bindingAttempted) { await send('Runtime.removeBinding', { name: '__graphCausalDocument' });bindingAttempted = false }
+    await bounded(() => page.evaluate(() => window.__graphCausalStop?.())).catch(error => fail('observer-stop', error.name))
+    if (documentScriptId) {
+      try { await send('Page.removeScriptToEvaluateOnNewDocument', { identifier: documentScriptId });documentScriptId = null;lateEffects.documentScript = 'REMOVED' }
+      catch (error) { fail('new-document-script-stop', error.name) }
+    }
+    if (bindingAttempted) {
+      try { await send('Runtime.removeBinding', { name: '__graphCausalDocument' });bindingAttempted = false }
+      catch (error) { fail('document-binding-stop', error.name) }
+    }
   }
   const metrics = async () => {
     const before = Date.now()
@@ -272,11 +311,13 @@ export async function startCausalWitness(page, { deadlineAt } = {}) {
       const cpuEpochs = epochs.map(epoch => ({ ...epoch, attributedSamples: sampleCounts.get(epoch.generation + ':' + epoch.executionContextId) ?? 0 }))
       const complete = epochs.length > 0 && epochs.every(epoch => epoch.frameId && epoch.loaderId) && rendererThreads.length > 0 && network.rows.length > 0 && cpu?.samples.length > 0 && cpu?.nodes.length > 0
       return { schema: WITNESS_SCHEMA, startedAt, stopRequestedAt, endedAt: Date.now(), predicate, phases, clocks: { before, after },
-        network: network.rows, pending: [...pending].map(([requestId, path]) => ({ requestId, path })), scripts: scripts.rows, timeline: timeline.rows, documents: documents.rows, contexts: contexts.rows, frames: frames.rows, cpu, dropped, errors, lateEffects,
+        network: network.rows, pending: [...pending].map(([requestId, path]) => ({ requestId, path })), scripts: scripts.rows, timeline: timeline.rows,
+        shortEventAggregates: [...timeline.buckets.values()], timelineSummary: { eligibleEvents: timeline.eligibleEvents, detailEvents: timeline.rows.length, aggregateEvents: [...timeline.buckets.values()].reduce((sum, bucket) => sum + bucket.count, 0), retainedEntries: timeline.rows.length + timeline.buckets.size, bucketWidthMicroseconds: 50000, aggregateBelowMicroseconds: 1000, inclusiveDurationsMayOverlap: true },
+        documents: documents.rows, contexts: contexts.rows, frames: frames.rows, cpu, dropped, errors, lateEffects,
         coverage: { epochs, rendererThreads, cpuEpochs, unattributedOrAmbiguousSamples: sampleCounts.get(null) ?? 0, cpuEpochContinuity: cpuEpochs.every(epoch => epoch.attributedSamples > 0) ? 'ATTRIBUTED_SAMPLES_EACH_EPOCH' : 'PARTIAL_OR_UNATTRIBUTED', observerOverhead: 'Observed DOM callback costs only; total CDP/CPU sampling perturbation is not known.' },
         status: errors.length || Object.values(dropped).some(Boolean) || cpu?.truncated || !complete ? 'INCOMPLETE' : 'CAPTURED_BOUNDED',
         limits: { eventRows: 20000, documentRows: 1000, cpuSamples: 60000 },
-        scope: 'Actual instrumented Chrome experiment with observer overhead. scriptParsed is not import resolution, DOM heading is not an internal React commit, sampling/epoch attribution does not establish complete CPU scheduling or historical causation.', historicalUniqueRoot: 'UNKNOWN' }
+        scope: 'Actual instrumented Chrome experiment with observer overhead. Selected generic sub1ms events are quantified in50ms buckets; individual tiny-event callsites are not retained. Script/evaluation/slow-event detail and CPU samples remain separate. scriptParsed is not import resolution, DOM heading is not an internal React commit, sampling/epoch attribution does not establish complete CPU scheduling or historical causation.', historicalUniqueRoot: 'UNKNOWN' }
     },
   }
 }
