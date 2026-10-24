@@ -1,0 +1,28 @@
+{
+  "schema": "digital-human-artistic-portrait/v1",
+  "characterId": "rehoboam",
+  "version": "artistic-v1",
+  "file": "rehoboam.webp",
+  "sha256": "0a0ee0a448e89140bf01ae575a3b5a6dc003b88535472044aad8941e2fb43d59",
+  "originalSha256": "daeb033e2a8e19bac4604c256ea0a61b5647d25c28a51923cb23abe8d9c9be80",
+  "originalDimensions": {
+    "width": 1254,
+    "height": 1254
+  },
+  "dimensions": {
+    "width": 384,
+    "height": 384
+  },
+  "bytes": 18952,
+  "generationMethod": "OpenAI built-in image_gen.imagegen, one independent call per character",
+  "prompt": "Use case: historical-scene. Asset type: an individual square avatar for an educational Bible character browser. Subject: 罗波安 (rehoboam), man40, square fleshy face, short black curls, trimmed squared beard, small bronze crown and plum mantle. Style: polished warm 3D illustrative CGI, distinct recognizable facial anatomy, subtle skin texture, family-friendly, consistent soft studio lighting against a plain dark charcoal background. Framing: one person only, centered head and shoulders, whole head safely within square crop, face large enough to read at80px. These appearance choices are imaginative artistic reconstruction, not an authentic historical likeness or an approved digital-human asset. No lettering, names, watermarks, halos, weapons, extra faces or collage. This character must have an individual face, not reuse a generic shared portrait. Square composition.",
+  "localProcessing": "Pillow RGB resize384LANCZOS WEBP quality82 method6; explicit user permission; original retained",
+  "reviewState": "PREVIEW_ONLY",
+  "historicalLikeness": false,
+  "sharedAcrossCharacters": false,
+  "restrictions": [
+    "Artistic reconstruction, not historical likeness.",
+    "Human review not approved.",
+    "Not an APPROVED production GLB/voice/media asset."
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "schema": "digital-human-artistic-portrait/v1",
+  "characterId": "hosea",
+  "version": "artistic-v1",
+  "file": "hosea.webp",
+  "sha256": "c05c5b33aeb71d96a1339d06947f02acff7124911d802ac22c457e00321b8750",
+  "originalSha256": "4c207962d6959e5913c1cc6bb04a90dfcc9eefe28e1cb423c209a1ba5831ee7e",
+  "originalDimensions": {
+    "width": 1254,
+    "height": 1254
+  },
+  "dimensions": {
+    "width": 384,
+    "height": 384
+  },
+  "bytes": 18900,
+  "generationMethod": "OpenAI built-in image_gen.imagegen, one independent call per character",
+  "prompt": "Use case: historical-scene. Asset type: an individual square avatar for an educational Bible character browser. Subject: 何西阿 (hosea), man40, broad gentle face, short wavy dark hair, short rounded beard, faded blue shawl. Style: polished warm 3D illustrative CGI, distinct recognizable facial anatomy, subtle skin texture, family-friendly, consistent soft studio lighting against a plain dark charcoal background. Framing: one person only, centered head and shoulders, whole head safely within square crop, face large enough to read at80px. These appearance choices are imaginative artistic reconstruction, not an authentic historical likeness or an approved digital-human asset. No lettering, names, watermarks, halos, weapons, extra faces or collage. This character must have an individual face, not reuse a generic shared portrait. Square composition.",
+  "localProcessing": "Pillow RGB resize384LANCZOS WEBP quality82 method6; explicit user permission; original retained",
+  "reviewState": "PREVIEW_ONLY",
+  "historicalLikeness": false,
+  "sharedAcrossCharacters": false,
+  "restrictions": [
+    "Artistic reconstruction, not historical likeness.",
+    "Human review not approved.",
+    "Not an APPROVED production GLB/voice/media asset."
+  ]
+}

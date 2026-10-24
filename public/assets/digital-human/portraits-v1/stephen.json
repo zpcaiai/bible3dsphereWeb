@@ -1,0 +1,28 @@
+{
+  "schema": "digital-human-artistic-portrait/v1",
+  "characterId": "stephen",
+  "version": "artistic-v1",
+  "file": "stephen.webp",
+  "sha256": "f0e16b90f9311dbee413702491f52d38845e23d5db088ee73eec4385fce4d188",
+  "originalSha256": "e1972f8faef3a30a5dfc0518fe9a1a8def6e0c86319c90ee5466ed7345d146ea",
+  "originalDimensions": {
+    "width": 1254,
+    "height": 1254
+  },
+  "dimensions": {
+    "width": 384,
+    "height": 384
+  },
+  "bytes": 15226,
+  "generationMethod": "OpenAI built-in image_gen.imagegen, one independent call per character",
+  "prompt": "Use case: historical-scene. Asset type: an individual square avatar for an educational Bible character browser. Subject: 司提反 (stephen), man25, youthful round face, short tight black curls, clean-shaven, simple cream linen and pale blue cloak. Style: polished warm 3D illustrative CGI, distinct recognizable facial anatomy, subtle skin texture, family-friendly, consistent soft studio lighting against a plain dark charcoal background. Framing: one person only, centered head and shoulders, whole head safely within square crop, face large enough to read at80px. These appearance choices are imaginative artistic reconstruction, not an authentic historical likeness or an approved digital-human asset. No lettering, names, watermarks, halos, weapons, extra faces or collage. This character must have an individual face, not reuse a generic shared portrait. Square composition.",
+  "localProcessing": "Pillow RGB resize384LANCZOS WEBP quality82 method6; explicit user permission; original retained",
+  "reviewState": "PREVIEW_ONLY",
+  "historicalLikeness": false,
+  "sharedAcrossCharacters": false,
+  "restrictions": [
+    "Artistic reconstruction, not historical likeness.",
+    "Human review not approved.",
+    "Not an APPROVED production GLB/voice/media asset."
+  ]
+}

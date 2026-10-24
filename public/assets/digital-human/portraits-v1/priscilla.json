@@ -1,0 +1,28 @@
+{
+  "schema": "digital-human-artistic-portrait/v1",
+  "characterId": "priscilla",
+  "version": "artistic-v1",
+  "file": "priscilla.webp",
+  "sha256": "5fc9751d9bc6721ad3f635bb4c45a39d7c2e96081d142a5fe29061d951974f88",
+  "originalSha256": "0aebbf5553589c20cc7efd91b9a70b64c4b0f996ac2059868c57214eaf5dfd6a",
+  "originalDimensions": {
+    "width": 1254,
+    "height": 1254
+  },
+  "dimensions": {
+    "width": 384,
+    "height": 384
+  },
+  "bytes": 17742,
+  "generationMethod": "OpenAI built-in image_gen.imagegen, one independent call per character",
+  "prompt": "Use case: historical-scene. Asset type: an individual square avatar for an educational Bible character browser. Subject: 百基拉 (priscilla), woman35, Mediterranean olive skin, confident oval face, coiled dark braids under a plum headscarf, plain cream tunic. Style: polished warm 3D illustrative CGI, distinct recognizable facial anatomy, subtle skin texture, family-friendly, consistent soft studio lighting against a plain dark charcoal background. Framing: one person only, centered head and shoulders, whole head safely within square crop, face large enough to read at80px. These appearance choices are imaginative artistic reconstruction, not an authentic historical likeness or an approved digital-human asset. No lettering, names, watermarks, halos, weapons, extra faces or collage. This character must have an individual face, not reuse a generic shared portrait. Square composition.",
+  "localProcessing": "Pillow RGB resize384LANCZOS WEBP quality82 method6; explicit user permission; original retained",
+  "reviewState": "PREVIEW_ONLY",
+  "historicalLikeness": false,
+  "sharedAcrossCharacters": false,
+  "restrictions": [
+    "Artistic reconstruction, not historical likeness.",
+    "Human review not approved.",
+    "Not an APPROVED production GLB/voice/media asset."
+  ]
+}

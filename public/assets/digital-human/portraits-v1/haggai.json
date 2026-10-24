@@ -1,0 +1,28 @@
+{
+  "schema": "digital-human-artistic-portrait/v1",
+  "characterId": "haggai",
+  "version": "artistic-v1",
+  "file": "haggai.webp",
+  "sha256": "4a9391b80d9d4e78b603da1267577c5a7ffd91d839852ddd180a0143356c6bf7",
+  "originalSha256": "efd5280051dbadf9c80f65ead206558d53ae4e403f8ff51aea5b4ccad36727c6",
+  "originalDimensions": {
+    "width": 1254,
+    "height": 1254
+  },
+  "dimensions": {
+    "width": 384,
+    "height": 384
+  },
+  "bytes": 22880,
+  "generationMethod": "OpenAI built-in image_gen.imagegen, one independent call per character",
+  "prompt": "Use case: historical-scene. Asset type: an individual square avatar for an educational Bible character browser. Subject: 哈该 (haggai), man70, bald crown, long thin white beard, heavily lined face, plain dark gray hood. Style: polished warm 3D illustrative CGI, distinct recognizable facial anatomy, subtle skin texture, family-friendly, consistent soft studio lighting against a plain dark charcoal background. Framing: one person only, centered head and shoulders, whole head safely within square crop, face large enough to read at80px. These appearance choices are imaginative artistic reconstruction, not an authentic historical likeness or an approved digital-human asset. No lettering, names, watermarks, halos, weapons, extra faces or collage. This character must have an individual face, not reuse a generic shared portrait. Square composition.",
+  "localProcessing": "Pillow RGB resize384LANCZOS WEBP quality82 method6; explicit user permission; original retained",
+  "reviewState": "PREVIEW_ONLY",
+  "historicalLikeness": false,
+  "sharedAcrossCharacters": false,
+  "restrictions": [
+    "Artistic reconstruction, not historical likeness.",
+    "Human review not approved.",
+    "Not an APPROVED production GLB/voice/media asset."
+  ]
+}

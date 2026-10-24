@@ -3,6 +3,9 @@ import { API_BASE } from './api'
 import { getRuntimeLang } from './i18n/runtime'
 import { AutoText } from './autoTranslate'
 import { a11yClickProps } from './lib/a11yClick';
+import CharacterPortrait from './features/spiritual-planet/digital-human/CharacterPortrait'
+import { getArtisticPortrait } from './features/spiritual-planet/digital-human/portraitCatalog'
+import { getMirrorDigitalHumanId } from './features/spiritual-planet/digital-human/mirrorCharacterMap'
 
 // 圣经人物关系图谱 —— 无第三方依赖的力导向图（SVG + requestAnimationFrame）
 // 数据来源：GET /api/characters/knowledge-graph
@@ -63,12 +66,17 @@ function chronoKey(node) {
 }
 
 const EMPTY_CHARACTERS = []
+const validCharacterId = id => typeof id === 'number' && Number.isSafeInteger(id) && id > 0
+const graphPortraitId = node => node?.type === 'character' && validCharacterId(node.characterId) ? getMirrorDigitalHumanId({ id: node.characterId }) : null
 const stripParen = (x) => String(x || '').replace(/[（(][^)）]*[)）]/g, '').trim()
 function cardResolver(characters) {
+ const byId = new Map(characters.map(c => [Number(c.id), c]))
  const byName = new Map()
  for (const c of characters) if (!byName.has(c.name)) byName.set(c.name, c)
  return function resolveCard(node) {
   if (!node || (node.type && node.type !== 'character')) return null
+  // An explicit DTO identity must never fall through to an ambiguous name.
+  if (Object.hasOwn(node, 'characterId') && node.characterId !== undefined) return validCharacterId(node.characterId) ? byId.get(node.characterId) || null : null
   const cands = [node.chineseName, node.name, ...(node.aliases || [])].filter(Boolean)
   for (const nm of cands) { if (byName.has(nm)) return byName.get(nm) }
   const bases = cands.map(stripParen).filter(Boolean)
@@ -89,6 +97,8 @@ export default function RelationshipGraphView({ token, onBack, initialFocus = ''
   const [depth, setDepth] = useState(1)
   const [typeFilter, setTypeFilter] = useState('all')
   const [selected, setSelected] = useState(null)
+  const [failedPortraits, setFailedPortraits] = useState(() => new Set())
+  const [portraitRetryRevision, setPortraitRetryRevision] = useState(0)
 
   const wrapRef = useRef(null)
   const [size, setSize] = useState({ w: 900, h: 620 })
@@ -279,7 +289,7 @@ export default function RelationshipGraphView({ token, onBack, initialFocus = ''
         const otherId = e.source === selId ? e.target : e.source
         const otherType = e.source === selId ? e.targetType : e.sourceType
         set.add(otherId)
-        rels.push({ id: e.id, label: (en && e.labelEn) ? e.labelEn : (e.label || e.type), otherName: e.source === selId ? e.targetName : e.sourceName, otherType, dir: e.source === selId ? 'out' : 'in', chrono: chronoKey(nodeById.get(otherId)), isChar: otherType === 'character' ? 0 : 1 })
+        rels.push({ id: e.id, label: (en && e.labelEn) ? e.labelEn : (e.label || e.type), otherName: e.source === selId ? e.targetName : e.sourceName, otherCharacterId: nodeById.get(otherId)?.characterId, otherType, dir: e.source === selId ? 'out' : 'in', chrono: chronoKey(nodeById.get(otherId)), isChar: otherType === 'character' ? 0 : 1 })
       }
     }
     // 时间先后：人物在前（按年代序），其余节点在后
@@ -288,6 +298,7 @@ export default function RelationshipGraphView({ token, onBack, initialFocus = ''
   }, [selId, raw.edges, raw.nodes, en])
 
   const selCard = selected ? resolveCard(selected) : null
+  const selectedPortraitId = graphPortraitId(selected)
   const v = viewRef.current
   const labelCut = nodes.length > 120 ? 4 : 2
   const nm = (node) => { if (!en) return node.chineseName || node.name; const cc = resolveCard(node); return (cc && cc.en) || node.englishName || node.nameEn || node.name }
@@ -335,6 +346,13 @@ export default function RelationshipGraphView({ token, onBack, initialFocus = ''
         <button onClick={fitView} style={{ padding: '5px 11px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.8)', fontSize: 12, cursor: 'pointer' }}>{en ? 'Fit' : '适应'}</button>
       </div>
 
+      <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.65)', marginBottom: 8 }}>
+        {en ? 'Artistic reconstruction · Nonhistorical portraits · Pending human review' : '艺术重建 · 非历史肖像 · 待人工审核'}
+      </div>
+      {failedPortraits.size > 0 && <div role="status" aria-label={en ? 'Graph artistic portrait status' : '图谱艺术头像状态'} style={{ fontSize: 12, color: '#ffd60a', marginBottom: 8 }}>
+        {en ? 'Some artistic portraits are unavailable. Graph data remains visible.' : '部分艺术头像加载失败，图谱数据仍可查看。'}
+        <button onClick={() => { setFailedPortraits(new Set()); setPortraitRetryRevision(n => n + 1) }}>{en ? 'Retry portraits' : '重试头像'}</button>
+      </div>}
       {/* Canvas */}
       <div ref={wrapRef} style={{ position: 'relative', flex: 1, minHeight: 420, borderRadius: 14, overflow: 'hidden', background: 'radial-gradient(circle at 50% 40%, rgba(40,40,60,0.45), rgba(10,10,18,0.6))', border: '1px solid rgba(255,255,255,0.08)', touchAction: 'none' }}>
         {loading && <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'rgba(255,255,255,0.6)', fontSize: 14 }}>{en ? 'Loading graph…' : '加载图谱中…'}</div>}
@@ -360,6 +378,8 @@ export default function RelationshipGraphView({ token, onBack, initialFocus = ''
                 stroke={hot ? 'rgba(0,180,255,0.75)' : 'rgba(255,255,255,0.10)'} strokeWidth={hot ? 1.6 : 0.8} />
             })}
             {nodes.map((node) => {
+              const portraitId = graphPortraitId(node)
+              const portrait = getArtisticPortrait(portraitId)
               const isSel = node.id === selId
               const typeMiss = typeFilter !== 'all' && node.type !== typeFilter
               const dim = (selId && !isSel && !(adj && adj.set.has(node.id))) || typeMiss
@@ -368,6 +388,10 @@ export default function RelationshipGraphView({ token, onBack, initialFocus = ''
                 <g key={node.id} transform={`translate(${node.x},${node.y})`} style={{ cursor: 'pointer', opacity: dim ? 0.25 : 1 }}
                   onPointerDown={(ev) => onPointerDown(ev, node)}>
                   <circle r={node.r} fill={colorOf(node.type)} stroke={isSel ? '#fff' : 'rgba(0,0,0,0.35)'} strokeWidth={isSel ? 2 : 1} />
+                  {portrait && !failedPortraits.has(portrait.url) && <image href={portrait.url} x={-node.r} y={-node.r} width={node.r * 2} height={node.r * 2}
+                    preserveAspectRatio="xMidYMid slice" data-portrait-character-id={portraitId} data-review-state="PREVIEW_ONLY"
+                    style={{ clipPath: 'circle(50%)', pointerEvents: 'none' }}
+                    onError={() => setFailedPortraits(previous => new Set(previous).add(portrait.url))} />}
                   {showLabel && (
                     <text x={node.r + 3} y={4} fontSize={isSel ? 12 : 10} fill={isSel ? '#fff' : 'rgba(255,255,255,0.78)'}
                       style={{ pointerEvents: 'none', userSelect: 'none', paintOrder: 'stroke', stroke: 'rgba(0,0,0,0.55)', strokeWidth: 2.4 }}>{nm(node)}</text>
@@ -391,6 +415,7 @@ export default function RelationshipGraphView({ token, onBack, initialFocus = ''
             background: 'rgba(20,20,30,0.92)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 12, padding: '12px 14px', backdropFilter: 'blur(8px)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
               <div>
+                {selectedPortraitId && <CharacterPortrait key={`${selectedPortraitId}:${portraitRetryRevision}`} characterId={selectedPortraitId} name={nm(selected)} context="graph-selected" size={64} compact={false} />}
                 {selCard && onOpenChar ? (
                   <div onClick={() => onOpenChar(selCard)} title={en ? 'Open mirror card' : '查看镜鉴卡片'}
                     style={{ fontSize: 16, fontWeight: 700, color: '#9ecbff', cursor: 'pointer', textDecoration: 'underline', textUnderlineOffset: 3 }} {...a11yClickProps(() => onOpenChar(selCard))}>{nm(selected)}</div>
@@ -413,7 +438,7 @@ export default function RelationshipGraphView({ token, onBack, initialFocus = ''
               <div style={{ marginTop: 10 }}>
                 <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', marginBottom: 5 }}>{en ? 'Relationships' : '关系'} ({adj.rels.length})</div>
                 {adj.rels.slice(0, 40).map((r) => {
-                  const rc = r.otherType === 'character' ? resolveCard({ name: r.otherName, type: 'character' }) : null
+                  const rc = r.otherType === 'character' ? resolveCard({ name: r.otherName, characterId: r.otherCharacterId, type: 'character' }) : null
                   return (
                   <div key={r.id} style={{ fontSize: 12, color: 'rgba(255,255,255,0.78)', padding: '3px 0', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
                     <span style={{ color: 'rgba(255,255,255,0.45)' }}>{r.dir === 'out' ? '→ ' : '← '}</span>

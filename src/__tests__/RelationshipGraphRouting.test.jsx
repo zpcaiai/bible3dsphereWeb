@@ -1,7 +1,9 @@
 import { afterEach, expect, it, vi } from 'vitest'
-import { cleanup, fireEvent, render, screen } from '@testing-library/react'
+import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import RelationshipGraphView, { graphApiBase } from '../RelationshipGraphView'
 import { setRuntimeLang } from '../i18n/runtime'
+import oracle from '../../e2e/fixtures/digital-human-all100.json'
+import { getArtisticPortrait } from '../features/spiritual-planet/digital-human/portraitCatalog'
 
 afterEach(() => { cleanup(); vi.unstubAllGlobals() })
 
@@ -46,4 +48,78 @@ it('cancels superseded graph requests and the remaining request on unmount', () 
   expect(second.aborted).toBe(false)
   unmount()
   expect(second.aborted).toBe(true)
+})
+
+it('maps all100 numeric identities to different artistic images and retains graph circles on image failure and retry', async () => {
+  setRuntimeLang('zh')
+  vi.stubGlobal('ResizeObserver', class { observe() {} disconnect() {} })
+  const nodes = oracle.characters.map((person) => ({ id: `char-${person.mirrorId}`, characterId: person.mirrorId, name: person.canonicalName, type: 'character', degree: 1 }))
+  vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true, json: async () => ({ success: true, data: { nodes, edges: [] } }) }))
+  const { container } = render(<RelationshipGraphView />)
+  await waitFor(() => expect(container.querySelectorAll('svg image[data-portrait-character-id]').length).toBe(100))
+  const images = [...container.querySelectorAll('svg image[data-portrait-character-id]')]
+  expect(new Set(images.map((image) => image.getAttribute('href'))).size).toBe(100)
+  for (const image of images) {
+    expect(image.getAttribute('href')).toBe(getArtisticPortrait(image.dataset.portraitCharacterId).url)
+    expect(image.dataset.reviewState).toBe('PREVIEW_ONLY')
+  }
+  expect(container.querySelectorAll('svg circle').length).toBe(100)
+  fireEvent.pointerDown(images[0].parentElement, { clientX: 100, clientY: 100, pointerId: 1 })
+  const selectedPortrait = container.querySelector('img[data-portrait-context="graph-selected"]')
+  expect(selectedPortrait).toBeTruthy()
+  fireEvent.error(selectedPortrait)
+  expect(container.querySelector('img[data-portrait-context="graph-selected"]')).toBeNull()
+  fireEvent.error(images[0])
+  expect(container.querySelectorAll('svg image[data-portrait-character-id]').length).toBe(99)
+  expect(container.querySelectorAll('svg circle').length).toBe(100)
+  expect(screen.getByRole('status', { name: '图谱艺术头像状态' })).toBeTruthy()
+  fireEvent.click(within(screen.getByRole('status', { name: '图谱艺术头像状态' })).getByRole('button', { name: '重试头像', exact: true }))
+  expect(container.querySelectorAll('svg image[data-portrait-character-id]').length).toBe(100)
+  expect(container.querySelector('img[data-portrait-context="graph-selected"]')?.getAttribute('src')).toBe(images[0].getAttribute('href'))
+  expect(screen.queryByRole('status', { name: '图谱艺术头像状态' })).toBeNull()
+})
+
+it.each([true, null, 1.5])('rejects malformed authoritative graph identity %s without numeric coercion', async (characterId) => {
+  setRuntimeLang('zh')
+  vi.stubGlobal('ResizeObserver', class { observe() {} disconnect() {} })
+  const node = { id: 'malformed', characterId, name: '亚当', type: 'character', degree: 1 }
+  vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true, json: async () => ({ success: true, data: { nodes: [node], edges: [] } }) }))
+  const { container } = render(<RelationshipGraphView characters={[{ id: 1, name: '亚当', en: 'Adam' }]} onOpenChar={vi.fn()} />)
+  await waitFor(() => expect(container.querySelectorAll('svg circle').length).toBe(1))
+  fireEvent.pointerDown(container.querySelector('svg circle').parentElement, { clientX: 100, clientY: 100, pointerId: 1 })
+  expect(screen.queryByRole('button', { name: '亚当', exact: true })).toBeNull()
+  expect(container.querySelector('svg image')).toBeNull()
+  expect(container.querySelector('img[data-portrait-context="graph-selected"]')).toBeNull()
+})
+
+it('opens the exact numeric card when a real graph name differs from the Mirror name', async () => {
+  setRuntimeLang('zh')
+  vi.stubGlobal('ResizeObserver', class { observe() {} disconnect() {} })
+  // Public graph DTO captured2026-10-24: the old name-only resolver cannot
+  // match this to Mirror's 雅各（西庇太之子）. This is a UI boundary fixture;
+  // real graph/asset HTTP verification remains in the browser campaign.
+  const node = { id: 'char-212', characterId: 212, name: '西庇太的雅各', chineseName: '西庇太的雅各', aliases: ['西庇太的雅各', 'James son of Zebedee'], type: 'character', degree: 1 }
+  const target = { id: 212, name: '雅各（西庇太之子）', en: 'James son of Zebedee' }
+  const onOpenChar = vi.fn()
+  vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true, json: async () => ({ success: true, data: { nodes: [node], edges: [] } }) }))
+  const { container } = render(<RelationshipGraphView characters={[{ id: 10, name: '雅各', en: 'Jacob' }, target]} onOpenChar={onOpenChar} />)
+  await waitFor(() => expect(container.querySelectorAll('svg circle').length).toBe(1))
+  fireEvent.pointerDown(container.querySelector('svg circle').parentElement, { clientX: 100, clientY: 100, pointerId: 1 })
+  fireEvent.click(await screen.findByRole('button', { name: '西庇太的雅各', exact: true }))
+  expect(onOpenChar).toHaveBeenCalledWith(target)
+  const selectedPortrait = container.querySelector('img[data-portrait-context="graph-selected"]')
+  expect(selectedPortrait.dataset.portraitCharacterId).toBe('james_zebedee')
+  expect(selectedPortrait.getAttribute('src')).toBe(getArtisticPortrait('james_zebedee').url)
+})
+
+it('does not substitute a name match for an unknown authoritative graph characterId', async () => {
+  setRuntimeLang('zh')
+  vi.stubGlobal('ResizeObserver', class { observe() {} disconnect() {} })
+  const node = { id: 'unknown', characterId: 999999, name: '雅各', type: 'character', degree: 1 }
+  vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true, json: async () => ({ success: true, data: { nodes: [node], edges: [] } }) }))
+  const { container } = render(<RelationshipGraphView characters={[{ id: 10, name: '雅各', en: 'Jacob' }]} onOpenChar={vi.fn()} />)
+  await waitFor(() => expect(container.querySelectorAll('svg circle').length).toBe(1))
+  fireEvent.pointerDown(container.querySelector('svg circle').parentElement, { clientX: 100, clientY: 100, pointerId: 1 })
+  expect(screen.queryByRole('button', { name: '雅各', exact: true })).toBeNull()
+  expect(container.querySelector('svg image')).toBeNull()
 })

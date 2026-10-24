@@ -1,0 +1,28 @@
+{
+  "schema": "digital-human-artistic-portrait/v1",
+  "characterId": "moses",
+  "version": "artistic-v1",
+  "file": "moses.webp",
+  "sha256": "26a3611420aab7f88b0a232926d664b455c894eea727b5f7145da8f9e44536d9",
+  "originalSha256": "c27b0760f4bf5a88d84b968ef0bb15d90a8d26ddd8c3b02a25dbffc4f252e957",
+  "originalDimensions": {
+    "width": 1254,
+    "height": 1254
+  },
+  "dimensions": {
+    "width": 384,
+    "height": 384
+  },
+  "bytes": 23172,
+  "generationMethod": "OpenAI built-in image_gen.imagegen, one independent call per character",
+  "prompt": "Use case: historical-scene. Asset type: an individual square avatar portrait for an educational Bible character browser. Subject: Moses (摩西), an elderly ancient Hebrew man around 75 with a long silver beard, deeply lined broad face, thick white brows, dark brown eyes, dignified gentle expression, simple sand linen head covering and muted burgundy wool mantle. Style: polished warm 3D illustrative CGI, recognizable facial anatomy, subtle skin texture, family-friendly, consistent soft studio lighting against a plain dark charcoal background. Framing: one person only, centered head and shoulders, whole top of head and shoulders safely inside square crop, face large enough to read at 80px. This is an imaginative artistic reconstruction, not an authentic historical likeness. No lettering, names, watermarks, halos, weapons, extra faces or collage. Make a distinct individual face, not the generic shared preview portrait. Square composition.",
+  "localProcessing": "Pillow RGB resize384LANCZOS WEBP quality82 method6; explicit user permission; original retained",
+  "reviewState": "PREVIEW_ONLY",
+  "historicalLikeness": false,
+  "sharedAcrossCharacters": false,
+  "restrictions": [
+    "Artistic reconstruction, not historical likeness.",
+    "Human review not approved.",
+    "Not an APPROVED production GLB/voice/media asset."
+  ]
+}

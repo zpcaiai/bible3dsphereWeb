@@ -1,6 +1,9 @@
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import DigitalHumanWorkspace from '../digital-human/DigitalHumanWorkspace'
+import MirrorPage from '../../../MirrorPage'
+import { setRuntimeLang } from '../../../i18n/runtime'
+import { getArtisticPortrait } from '../digital-human/portraitCatalog'
 import { LiveKitRealtimeSession } from '../digital-human/LiveKitRealtimeSession'
 import {
   getDigitalHumanCatalog,
@@ -104,7 +107,7 @@ describe('DigitalHumanWorkspace embedded character mode', () => {
     expect(catalogSignal.aborted).toBe(true)
   })
 
-  it('uses the shared preview portrait and speaks only the fixed voice disclosure', async () => {
+  it('uses this character artistic portrait and speaks only the fixed voice disclosure', async () => {
     getDigitalHumanCatalog.mockResolvedValue({
       characters: [{ ...DAVID, avatar: { ...DAVID.avatar, portraitUrl: null, reviewState: 'THEOLOGY_REVIEW' } }],
       characterCount: 100,
@@ -114,15 +117,39 @@ describe('DigitalHumanWorkspace embedded character mode', () => {
 
     render(<DigitalHumanWorkspace initialCharacterId="david" lockCharacter showOperations={false} variant="embedded" />)
 
-    const portrait = await screen.findByRole('img', { name: '大卫共用3D艺术占位肖像' })
-    expect(portrait.getAttribute('src')).toBe('/assets/digital-human/shared-preview-portrait-3d-v1.jpg')
-    expect(screen.getByText('共享3D艺术占位肖像 · 非历史真实肖像')).toBeTruthy()
+    const portrait = await screen.findByRole('img', { name: '大卫艺术重建肖像' })
+    expect(portrait.getAttribute('src')).toBe(getArtisticPortrait('david').url)
+    expect(portrait.dataset.portraitCharacterId).toBe('david')
+    expect(screen.getByText('艺术重建 · 非历史真实肖像 · 待人工审核')).toBeTruthy()
 
     fireEvent.click(screen.getByRole('button', { name: '试听默认预览音色' }))
     expect(globalThis.speechSynthesis.speak).toHaveBeenCalledTimes(1)
     const utterance = globalThis.speechSynthesis.speak.mock.calls[0][0]
     expect(utterance.text).toBe('这是默认预览音色，只用于确认声音播放功能，不代表任何圣经人物的真实声音。')
     expect(utterance.text).not.toContain('大卫')
+  })
+
+  it.each([
+    [11, 'joseph', '约瑟', 'Joseph'],
+    [99, 'joseph_of_nazareth', '约瑟（拿撒勒）', 'Joseph of Nazareth'],
+    [466, 'joseph_arimathea', '亚利马太的约瑟', 'Joseph of Arimathea'],
+  ])('binds actual Mirror and workspace portraits to numeric identity %s without same-name substitution', async (mirrorId, characterId, canonicalName, englishName) => {
+    setRuntimeLang('zh')
+    getDigitalHumanCatalog.mockResolvedValueOnce({
+      characters: [{ ...DAVID, id: characterId, canonicalName, englishName, recommendedQuestions: [], avatar: { ...DAVID.avatar, portraitUrl: null, reviewState: 'THEOLOGY_REVIEW' } }],
+      characterCount: 100, truthCaseCount: 532, contentVersion: '1.3.0',
+    })
+    render(<MirrorPage initialView="character" initialCharId={mirrorId} onBack={() => {}} />)
+    await screen.findByRole('region', { name: `${canonicalName}数字人`, exact: true }, { timeout: 5000 })
+    const portraits = ['mirror', 'workspace'].map((context) => document.querySelector(`img[data-portrait-context="${context}"]`))
+    for (const portrait of portraits) {
+      expect(portrait).not.toBeNull()
+      expect(portrait.dataset.portraitCharacterId).toBe(characterId)
+      expect(portrait.dataset.reviewState).toBe('PREVIEW_ONLY')
+      expect(portrait.getAttribute('src')).toBe(getArtisticPortrait(characterId).url)
+    }
+    expect(portraits[0].getAttribute('src')).toBe(portraits[1].getAttribute('src'))
+    expect(document.querySelectorAll('img[src*="shared-preview"]').length).toBe(0)
   })
 
   const envelope = (text, characterId = 'david') => ({
