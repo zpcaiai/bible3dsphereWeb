@@ -73,6 +73,8 @@ async function choose(person, info) {
   await card.tap()
   const workspace = page.getByRole('region', { name: `${person.canonicalName}数字人`, exact: true })
   await expect(workspace).toBeVisible() // Original5s; no pre-wait for API or load.
+  await expect(page.locator('.guardian-widget-root')).toHaveCount(0)
+  await expect(page.getByRole('navigation', { name: '主要导航', exact: true })).toBeVisible()
   await expect(workspace.locator('.dh-message')).toHaveCount(0)
   await expect(workspace.getByRole('textbox', { name: '向当前圣经人物提问', exact: true })).toHaveValue('')
   await expect(workspace.getByRole('button', { name: '重试上次提问', exact: true })).toHaveCount(0)
@@ -168,7 +170,9 @@ async function verifyMobileHeader(person, info) {
     const box = node.getBoundingClientRect()
     const header = node.querySelector('header')
     const title = header.firstElementChild
-    return { sectionLeft: box.left, sectionRight: box.right, viewportWidth: window.innerWidth, documentWidth: document.documentElement.scrollWidth,
+    return { guardianCount: document.querySelectorAll('.guardian-widget-root').length,
+      navigationVisible: Boolean(document.querySelector('.mobile-bottom-nav')?.getBoundingClientRect().height),
+      sectionLeft: box.left, sectionRight: box.right, viewportWidth: window.innerWidth, documentWidth: document.documentElement.scrollWidth,
       headerClientWidth: header.clientWidth, headerScrollWidth: header.scrollWidth,
       titleClientWidth: title.clientWidth, titleScrollWidth: title.scrollWidth }
   })
@@ -182,6 +186,8 @@ async function verifyMobileHeader(person, info) {
     return { badgeLeft: box.left, badgeRight: box.right, badgeClientWidth: node.clientWidth, badgeScrollWidth: node.scrollWidth }
   }))
   save(info, 'header-layout', layout)
+  expect(layout.guardianCount).toBe(0)
+  expect(layout.navigationVisible).toBe(true)
   expect(layout.headingWidth, 'Mobile title/disclosure must not be squeezed into a narrow ID column').toBeGreaterThanOrEqual(200)
   expect(layout.headingTop).toBeGreaterThanOrEqual(0)
   expect(layout.headingBottom).toBeLessThanOrEqual(layout.viewportHeight)
