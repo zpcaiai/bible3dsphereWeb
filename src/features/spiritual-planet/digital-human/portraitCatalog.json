@@ -1,0 +1,808 @@
+{
+  "schema": "digital-human-artistic-portrait-catalog/v1",
+  "version": "artistic-v1",
+  "reviewState": "PREVIEW_ONLY",
+  "historicalLikeness": false,
+  "portraits": {
+    "moses": {
+      "url": "/assets/digital-human/portraits-v1/moses.webp",
+      "sha256": "26a3611420aab7f88b0a232926d664b455c894eea727b5f7145da8f9e44536d9",
+      "originalSha256": "c27b0760f4bf5a88d84b968ef0bb15d90a8d26ddd8c3b02a25dbffc4f252e957",
+      "width": 384,
+      "height": 384,
+      "bytes": 23172
+    },
+    "david": {
+      "url": "/assets/digital-human/portraits-v1/david.webp",
+      "sha256": "a13f8451d2a1e16d714a9c80f2ad966493acdd53480d9394d07a5d94f40da0d1",
+      "originalSha256": "fdacc590ee6c1468b44285908527e1c0a3589016c8c1f14bdb29166e14ecdf3d",
+      "width": 384,
+      "height": 384,
+      "bytes": 22858
+    },
+    "peter": {
+      "url": "/assets/digital-human/portraits-v1/peter.webp",
+      "sha256": "d3fd755d065d008927a1b37d34c785d9932baa4c98ea35d6838e63b0d979d1f7",
+      "originalSha256": "41e5a6067dd4c31bce0af7e4d61ff17c3620c19ba6cf41bff8473a94f6d337ec",
+      "width": 384,
+      "height": 384,
+      "bytes": 22772
+    },
+    "paul": {
+      "url": "/assets/digital-human/portraits-v1/paul.webp",
+      "sha256": "3da23d4a293c92f22060279ccafddfa1635062ec43bf29d1f793dd424ce7343e",
+      "originalSha256": "7ef2c987985db2c140b20123b3b877fab4ac3b077f5690de8512a2450d207a4e",
+      "width": 384,
+      "height": 384,
+      "bytes": 18572
+    },
+    "adam": {
+      "url": "/assets/digital-human/portraits-v1/adam.webp",
+      "sha256": "3195a9ca487de64caebc68b479a2b12ea7d80aa42d12a25bd5ebf86450a3a399",
+      "originalSha256": "42da4819f21fa66b3abadabf367a831fd6f001d90edcb248498e8fa9bdde11bc",
+      "width": 384,
+      "height": 384,
+      "bytes": 21568
+    },
+    "noah": {
+      "url": "/assets/digital-human/portraits-v1/noah.webp",
+      "sha256": "e34476010e86f84adb8760b15bb0b3b685d4be44ee3fa436b7313a82bd4e6fca",
+      "originalSha256": "defd9c91e6c5e5ccfd98c0540411dfac4831f6837a1cd1a9eb8641028bd6f968",
+      "width": 384,
+      "height": 384,
+      "bytes": 27824
+    },
+    "abraham": {
+      "url": "/assets/digital-human/portraits-v1/abraham.webp",
+      "sha256": "58b58ece455c4d538264f6419595364f742ee5441f32e1c3ae196f6658b120c4",
+      "originalSha256": "34bce3d0b3d61fe48fc745b24b80b005c752aab2020aff96febf49ec9c6b5cd0",
+      "width": 384,
+      "height": 384,
+      "bytes": 21818
+    },
+    "sarah": {
+      "url": "/assets/digital-human/portraits-v1/sarah.webp",
+      "sha256": "2da9fd6b87718bc35ce156f14f43c697faa6be7c6bdb351c174871f44b42ac9b",
+      "originalSha256": "0820c726bbd007e61e2626ab4cc3a0cfd04735f87616d72377a49cd0081e0f08",
+      "width": 384,
+      "height": 384,
+      "bytes": 23470
+    },
+    "isaac": {
+      "url": "/assets/digital-human/portraits-v1/isaac.webp",
+      "sha256": "b70c6b1a4d3042775dacbe501eff34869158ca33dcad84c7ca9763793060723f",
+      "originalSha256": "6056855cfd671d2548850aea12d3510ef5987257b87d95a0c7005e302484dff6",
+      "width": 384,
+      "height": 384,
+      "bytes": 29552
+    },
+    "jacob": {
+      "url": "/assets/digital-human/portraits-v1/jacob.webp",
+      "sha256": "fd0c730bac63e8d4eee489ae30b30fc2a87634a6ebd1e1498cce1bd8d11a01ad",
+      "originalSha256": "8b8fef532ea4f0f549561679a3b113e6b8a49c07dc097e0bb47390b653004e7f",
+      "width": 384,
+      "height": 384,
+      "bytes": 22486
+    },
+    "joseph": {
+      "url": "/assets/digital-human/portraits-v1/joseph.webp",
+      "sha256": "e1efd3f4ae76c50eb5a63ade84723cb0d33f0efcdb1b2b6f21a271a7f5f8d294",
+      "originalSha256": "117cc5a42f024f5fd9de0c4584474d13ff3ed1f19158c1c2f402f4b30cb88f0b",
+      "width": 384,
+      "height": 384,
+      "bytes": 23828
+    },
+    "joshua": {
+      "url": "/assets/digital-human/portraits-v1/joshua.webp",
+      "sha256": "9a258effa562a42e2a9fcf1a1c3dff1060425d84b05c159f0b3461c424af8393",
+      "originalSha256": "30dbac67a9335ad50e5d30761d42747506a8dee48bf3091034c89bd407247ba0",
+      "width": 384,
+      "height": 384,
+      "bytes": 18286
+    },
+    "samuel": {
+      "url": "/assets/digital-human/portraits-v1/samuel.webp",
+      "sha256": "2288b2973c1aed2489e049c3ebcac5a1d53ff3171ebf5d6fdc1e676eb997e9cc",
+      "originalSha256": "cc925c80ad557a23d17b67fa1919a62db5a35edd926cf087987dba8ba83427fa",
+      "width": 384,
+      "height": 384,
+      "bytes": 24868
+    },
+    "saul": {
+      "url": "/assets/digital-human/portraits-v1/saul.webp",
+      "sha256": "b451ae68e107585118927c3f48d6efc2da4f9a09198ca73ac8ced4a1167e6425",
+      "originalSha256": "75bdfe89a269bb926fb405908f7f87883b45c7c6563317ef200a7ec9746505d8",
+      "width": 384,
+      "height": 384,
+      "bytes": 17378
+    },
+    "solomon": {
+      "url": "/assets/digital-human/portraits-v1/solomon.webp",
+      "sha256": "cde018d4eb3e149113dbe1c5ad3ad0c869b58cc5db3d1c4ee7d206c3776d5b7a",
+      "originalSha256": "cded166a4f24ac77a35a90912bb6dfa1ac74c988a584c5bc0d91468b891f3cb9",
+      "width": 384,
+      "height": 384,
+      "bytes": 27608
+    },
+    "elijah": {
+      "url": "/assets/digital-human/portraits-v1/elijah.webp",
+      "sha256": "91ebb5b13474ab616924bb0b66ac03777a21471ca2da760275a3eb53bc7bc2a9",
+      "originalSha256": "c3ea31e1443b022e17c6e856c9e5c4b9b38a0a0280183f2bcadf8507ecb31f5b",
+      "width": 384,
+      "height": 384,
+      "bytes": 28298
+    },
+    "isaiah": {
+      "url": "/assets/digital-human/portraits-v1/isaiah.webp",
+      "sha256": "e2119e1225245c95bb5dcc036c19d2ec69a6a08c81139bc3722c83cdb7a9b6f6",
+      "originalSha256": "04d808609fcc4dad0936c8f7b54e7d583427831e337a815443ce3b7c5911d207",
+      "width": 384,
+      "height": 384,
+      "bytes": 26556
+    },
+    "jeremiah": {
+      "url": "/assets/digital-human/portraits-v1/jeremiah.webp",
+      "sha256": "0d98bbfc26ac3cd1c9d0021bc0e019445a276d6a8a63362607090758c017b162",
+      "originalSha256": "c079de5e6e3ee17c13894b6052cf1b3fa9639bb353369934d4e140b9c7ebe5da",
+      "width": 384,
+      "height": 384,
+      "bytes": 23730
+    },
+    "daniel": {
+      "url": "/assets/digital-human/portraits-v1/daniel.webp",
+      "sha256": "fdc99a757973f89b897cb254065e44fbd9c2e618644a3ad9392d1a8c96bf1b74",
+      "originalSha256": "6133f5566c45498eb5fbeb374ec59e189b1c72a9aa2637429095fb357cbecc44",
+      "width": 384,
+      "height": 384,
+      "bytes": 20386
+    },
+    "ruth": {
+      "url": "/assets/digital-human/portraits-v1/ruth.webp",
+      "sha256": "8b3fa33ef9cd5ac863332ff9fd6ab91ec20f0dd3802ae9e3d0bd21cde0fe01e2",
+      "originalSha256": "1560218a6023146dbec0c6342926c849352ced3091e15b20c21b1e3130bdecd0",
+      "width": 384,
+      "height": 384,
+      "bytes": 17062
+    },
+    "esther": {
+      "url": "/assets/digital-human/portraits-v1/esther.webp",
+      "sha256": "500f144408365313985f601269ef6e58b701b62102533965fca7eaa2d31e4e04",
+      "originalSha256": "776abce548b9913d7bb572e5df8f8acf923c0bc9d46bea29ac8668ff96ea9559",
+      "width": 384,
+      "height": 384,
+      "bytes": 22484
+    },
+    "mary": {
+      "url": "/assets/digital-human/portraits-v1/mary.webp",
+      "sha256": "ad6bc8a0119ceee6e270c4e58f640ddc388c736495aa1793886e1689120f4d9d",
+      "originalSha256": "90f583b3e91afc05a090ce8111640bfa84c2c58e55ccef3568326dc306f628a1",
+      "width": 384,
+      "height": 384,
+      "bytes": 16106
+    },
+    "john": {
+      "url": "/assets/digital-human/portraits-v1/john.webp",
+      "sha256": "603dc0165ad728ec84dca2bdaa36787f887a254edf7d692bf5c811fea27f6d04",
+      "originalSha256": "10bda4eeb668f0a30931f9c930a29591ffd9b361c1ae64541281f7b756cb6941",
+      "width": 384,
+      "height": 384,
+      "bytes": 15622
+    },
+    "barnabas": {
+      "url": "/assets/digital-human/portraits-v1/barnabas.webp",
+      "sha256": "8dd0ae096c60a640c9334454c2f3a8f904a67a9742be10b8c5607a26825b6c09",
+      "originalSha256": "343ebb27709313b5bbf9292f73c78c5e40f74b2ad0328025ae4bf613982f188d",
+      "width": 384,
+      "height": 384,
+      "bytes": 22594
+    },
+    "eve": {
+      "url": "/assets/digital-human/portraits-v1/eve.webp",
+      "sha256": "ff0e42898a1f54cb440407a8a0e9197c6e231b9f6cad2e8920ae10fdaee57fa6",
+      "originalSha256": "7e5b1dbcfc8c9336df4017b94cf9a8d04c7ed7a95dc4bbbad5d0b8181c03625c",
+      "width": 384,
+      "height": 384,
+      "bytes": 18988
+    },
+    "cain": {
+      "url": "/assets/digital-human/portraits-v1/cain.webp",
+      "sha256": "b20374bda24a4c83515fd24b2d21cca848a322e0d67ae32ade34f07f7f2302cf",
+      "originalSha256": "ee459c9cea7841961c5c76cc96fd59948cc3f18bed34c7d9ba3d8780b6f2374e",
+      "width": 384,
+      "height": 384,
+      "bytes": 19482
+    },
+    "abel": {
+      "url": "/assets/digital-human/portraits-v1/abel.webp",
+      "sha256": "313b82e1a3bdd34263d9f4839c8e2cb6999a6f6697b85e7214e17ce416a0ae98",
+      "originalSha256": "97610bb81cb1e6ce0f7d5801a79f7e1ee0288f514adaf6f40d64fe30f998392b",
+      "width": 384,
+      "height": 384,
+      "bytes": 23108
+    },
+    "enoch": {
+      "url": "/assets/digital-human/portraits-v1/enoch.webp",
+      "sha256": "da1fd5390ee727791e7c5f2a9a006dd2267109eb5f1d5fa1320d3d542e55e5b3",
+      "originalSha256": "91b9c7b0b50e99789e1272509b012c5982abb78b8a77badbcac5a9de37263d2e",
+      "width": 384,
+      "height": 384,
+      "bytes": 25986
+    },
+    "job": {
+      "url": "/assets/digital-human/portraits-v1/job.webp",
+      "sha256": "9b6398510b17710b9be81b004561eaad99fce0270473571b8668d974dede9c79",
+      "originalSha256": "75c2ebba0dab89fd45d9167c21e06fc41374748716bd78421561016d5816a8b3",
+      "width": 384,
+      "height": 384,
+      "bytes": 23744
+    },
+    "melchizedek": {
+      "url": "/assets/digital-human/portraits-v1/melchizedek.webp",
+      "sha256": "6dc67267d7a63b2c0ee6d97da14ddb677ef99750fc3bd79d73796fc7150549f8",
+      "originalSha256": "4e89f41b653ea5606332a15d748c1962f46cde7e9d75c4075229fe0ae1ea1892",
+      "width": 384,
+      "height": 384,
+      "bytes": 21016
+    },
+    "ishmael": {
+      "url": "/assets/digital-human/portraits-v1/ishmael.webp",
+      "sha256": "8fc95fdbb5183a0fe2a9db9760c7ae0bfd37ab4fbb41cc119689d8c58c758deb",
+      "originalSha256": "cf9e8e049e55c23cda813d78ccdbf391d7ca1dc92c87aac13be5ba79524d0016",
+      "width": 384,
+      "height": 384,
+      "bytes": 27446
+    },
+    "rebecca": {
+      "url": "/assets/digital-human/portraits-v1/rebecca.webp",
+      "sha256": "5a4c399112a318cddc2d3ef97cd670a0eae3c30fadce17fb31db146d84a86e2d",
+      "originalSha256": "edc385a8453d350931257c6d27c6481ed76754ed7496b18069dcef61f774f293",
+      "width": 384,
+      "height": 384,
+      "bytes": 19736
+    },
+    "esau": {
+      "url": "/assets/digital-human/portraits-v1/esau.webp",
+      "sha256": "3f0ec707fe5156aa917d84cd1274ba47e1f2d6a569e591e666269819b00b4fb8",
+      "originalSha256": "ba27394c1a73a673c1fb594baf79e326bd42dc0d78303debc9f25a3e5a4eaafb",
+      "width": 384,
+      "height": 384,
+      "bytes": 27362
+    },
+    "leah": {
+      "url": "/assets/digital-human/portraits-v1/leah.webp",
+      "sha256": "4a953792a5c0daa12ed325a515650028ac2ac243b54ad8f7014e3474cbcfaf92",
+      "originalSha256": "358bee759e9c81075c05afd3504e98cc603cddcc4520bd6d1b2970121e1caf66",
+      "width": 384,
+      "height": 384,
+      "bytes": 21696
+    },
+    "rachel": {
+      "url": "/assets/digital-human/portraits-v1/rachel.webp",
+      "sha256": "13b4e111fe0af1198b00e32f8db72475ade1eb0829b8f0a5f3f06491d50ba1e6",
+      "originalSha256": "6dbbfa462e927281a0a28a406abd30df4e9accfd7ba1d86f94c3dc699f43bf05",
+      "width": 384,
+      "height": 384,
+      "bytes": 20978
+    },
+    "aaron": {
+      "url": "/assets/digital-human/portraits-v1/aaron.webp",
+      "sha256": "b4c3b8c87737991839b50f30c7387b96c2030a8416db6504162ee8a956b634e3",
+      "originalSha256": "c6e463ee857ae757faceb45f55b56807e377f6c80f9f638efd93eb242641a072",
+      "width": 384,
+      "height": 384,
+      "bytes": 26628
+    },
+    "miriam": {
+      "url": "/assets/digital-human/portraits-v1/miriam.webp",
+      "sha256": "495291f43b97812cad0aad31567e884eb57483b7c1ab49220a5f79a7aaf0bb67",
+      "originalSha256": "aa66cb546d53f85b44823403df3b3ede1e42a258f46d766636311e20c4de34cf",
+      "width": 384,
+      "height": 384,
+      "bytes": 21944
+    },
+    "caleb": {
+      "url": "/assets/digital-human/portraits-v1/caleb.webp",
+      "sha256": "e25705e6a2ef1d215a28cc0a71a67b0e1ddf87a7ce65cd399813ae9be85e1387",
+      "originalSha256": "576b93d2c98366d40f736af9b105cadda21ef8d5aaf59bb6e162f579076525d4",
+      "width": 384,
+      "height": 384,
+      "bytes": 25774
+    },
+    "rahab": {
+      "url": "/assets/digital-human/portraits-v1/rahab.webp",
+      "sha256": "9923d86d75c538719e43b9299840d2f6498ec32ca10e9767f4c9cc3cb5ebda44",
+      "originalSha256": "c9bca67029457c67a75de7bc3a4a48021315fcb4e8b7214b2f5cf38838e0f056",
+      "width": 384,
+      "height": 384,
+      "bytes": 18248
+    },
+    "deborah": {
+      "url": "/assets/digital-human/portraits-v1/deborah.webp",
+      "sha256": "e98135a6091179fa7179b52ee60c86c05dd09166d90b1e5f38ab77a809b92ce7",
+      "originalSha256": "1e79b24aca89420dad052c2887cb0add02f68d4ee7b17806e9defce98168c39a",
+      "width": 384,
+      "height": 384,
+      "bytes": 18492
+    },
+    "gideon": {
+      "url": "/assets/digital-human/portraits-v1/gideon.webp",
+      "sha256": "c2ea822dc9965af3e0044e79d102b2cb5dabe641d928d6050bcf848ef128a1a6",
+      "originalSha256": "4bffdfb7458f900ca317257d3a389828588cb0f31f58ce1b4392a57eece8f3c3",
+      "width": 384,
+      "height": 384,
+      "bytes": 24292
+    },
+    "samson": {
+      "url": "/assets/digital-human/portraits-v1/samson.webp",
+      "sha256": "7debfd6e15ce497b09904b06f3bda619616b4b3aefabee859c53669d82f1a497",
+      "originalSha256": "947f8bda0cc9fbb05f211a078d74b666f8617e0392d50cd1e3301e18ee7936dc",
+      "width": 384,
+      "height": 384,
+      "bytes": 21320
+    },
+    "hannah": {
+      "url": "/assets/digital-human/portraits-v1/hannah.webp",
+      "sha256": "6c8267aa76a1bf4eb6c66df350040f0cf98ca37207e676997926b466b4ecbf08",
+      "originalSha256": "a3024faee36ce6cc573fab07063ea95845b9ea10cb40059a8968b27f5ac3aa7e",
+      "width": 384,
+      "height": 384,
+      "bytes": 17824
+    },
+    "eli": {
+      "url": "/assets/digital-human/portraits-v1/eli.webp",
+      "sha256": "4e4eabca3831d3eea7c76846acec0f5a09795afd9989be1199d0da3324ba6990",
+      "originalSha256": "3987370e982476626ad40c7a9684b577b59515ec83cd8f2509c182b46795f78d",
+      "width": 384,
+      "height": 384,
+      "bytes": 22714
+    },
+    "jonathan": {
+      "url": "/assets/digital-human/portraits-v1/jonathan.webp",
+      "sha256": "36e436b1bdc34643af16682e4d213c6843161422a4b52d9f1c520050980f7c8a",
+      "originalSha256": "eb79080c56dd34f13295176c37befd713f18fa92410d87de03d0593b562e72eb",
+      "width": 384,
+      "height": 384,
+      "bytes": 16956
+    },
+    "michal": {
+      "url": "/assets/digital-human/portraits-v1/michal.webp",
+      "sha256": "847ac21450811393109becd63b762f853fea5ab525b4a09c060cf620bd634383",
+      "originalSha256": "80ce1379b317c54618c4c8b47d1cfe1d069f55797095d7d999f53a34bbec5e6d",
+      "width": 384,
+      "height": 384,
+      "bytes": 20070
+    },
+    "abigail": {
+      "url": "/assets/digital-human/portraits-v1/abigail.webp",
+      "sha256": "1f8b2cee11e9a3c7a25fc4c5e1e4d137abd8f044f5cface5ce2af4470d773b12",
+      "originalSha256": "47e2957ecb8cf534facce0f7014dfa6962d983cf0033783e43142a26e72d5c38",
+      "width": 384,
+      "height": 384,
+      "bytes": 23500
+    },
+    "nathan": {
+      "url": "/assets/digital-human/portraits-v1/nathan.webp",
+      "sha256": "08cbcb1bb2dfb9a80af4a450fe798d134cc555a93181e6f386f980027878b7fc",
+      "originalSha256": "65744e95b2c5cc83986e0c49577748bab3196ec0b0a48afd80a156f1e15f3668",
+      "width": 384,
+      "height": 384,
+      "bytes": 18522
+    },
+    "absalom": {
+      "url": "/assets/digital-human/portraits-v1/absalom.webp",
+      "sha256": "b6661372903cc122d6da81b69bb197b8371c53e8382428a95d8aeb5b00bf5c60",
+      "originalSha256": "be0ea07e7fe368d1117af314247940984725d2593da22146931fab76acfc7b8e",
+      "width": 384,
+      "height": 384,
+      "bytes": 22162
+    },
+    "bathsheba": {
+      "url": "/assets/digital-human/portraits-v1/bathsheba.webp",
+      "sha256": "f648463f013451239748d5de324c6ba264c6e9a38d652e4426b687658e01e9eb",
+      "originalSha256": "f99e22c5ffe7511f0b469ad65f8a9bfac38bec67783e11841080a81d52844bba",
+      "width": 384,
+      "height": 384,
+      "bytes": 16410
+    },
+    "rehoboam": {
+      "url": "/assets/digital-human/portraits-v1/rehoboam.webp",
+      "sha256": "0a0ee0a448e89140bf01ae575a3b5a6dc003b88535472044aad8941e2fb43d59",
+      "originalSha256": "daeb033e2a8e19bac4604c256ea0a61b5647d25c28a51923cb23abe8d9c9be80",
+      "width": 384,
+      "height": 384,
+      "bytes": 18952
+    },
+    "jeroboam": {
+      "url": "/assets/digital-human/portraits-v1/jeroboam.webp",
+      "sha256": "1332ab0e3c2a9624e7749cc0156e6d4f0477f8d23cda2b9e9181bb03c97d6cd5",
+      "originalSha256": "52ef11e9f6f15f0a9fdd47a9ca2ad2e0b603642707ba6731727ad3c6dda8c8a4",
+      "width": 384,
+      "height": 384,
+      "bytes": 20572
+    },
+    "ahab": {
+      "url": "/assets/digital-human/portraits-v1/ahab.webp",
+      "sha256": "236f1792b0bcb910a229aaa09c09ff1ed58803eb657354ce7e8532de644dfc3c",
+      "originalSha256": "cc569267be5e338eb9791768102b5ecfd642c20334aabe7c8641008bb588e3e5",
+      "width": 384,
+      "height": 384,
+      "bytes": 19534
+    },
+    "jezebel": {
+      "url": "/assets/digital-human/portraits-v1/jezebel.webp",
+      "sha256": "5fdde7340d5b82e39acc3584d336519ec5ecf6bb353c838b7ec86adb1304f85e",
+      "originalSha256": "369729b99cadf47be1f4c0bd9c611dd8e876649077ca2127511a9d3580a3a956",
+      "width": 384,
+      "height": 384,
+      "bytes": 20724
+    },
+    "elisha": {
+      "url": "/assets/digital-human/portraits-v1/elisha.webp",
+      "sha256": "0f9c307597224d24d4a85dea0101ceaebf4bc8309f9a211d7a27040133217396",
+      "originalSha256": "2ca4850f1f3a91b977ef1ee1cb96b3b85d5b1c17b77dadd3a914feb259ffac3b",
+      "width": 384,
+      "height": 384,
+      "bytes": 20108
+    },
+    "hezekiah": {
+      "url": "/assets/digital-human/portraits-v1/hezekiah.webp",
+      "sha256": "eb8d067abd7a85376dcb5a488cc4b9d4ed319ff1a9c3196c90f1e1e08747a7eb",
+      "originalSha256": "852641fc22f8dfcf94d7e67da1352902d3abd60acd6a02ce62e2d179c4d807a1",
+      "width": 384,
+      "height": 384,
+      "bytes": 20390
+    },
+    "josiah": {
+      "url": "/assets/digital-human/portraits-v1/josiah.webp",
+      "sha256": "ffea39d077b9a687330e29b5b920be08995f2c2090bc2da49fa28dfe404ea9da",
+      "originalSha256": "a98a53c178d2148aed4d61e3f417c0f728c7499491dcc63a132f786123926a02",
+      "width": 384,
+      "height": 384,
+      "bytes": 17982
+    },
+    "ezekiel": {
+      "url": "/assets/digital-human/portraits-v1/ezekiel.webp",
+      "sha256": "a1acdd6e399e09ec58f826162019ab69efdbed2f21222af41754638e2d9f0a89",
+      "originalSha256": "16cdd2c7d770c809304e82a93399951c4979837800b0b3ae91d04a5fe8ad9fe2",
+      "width": 384,
+      "height": 384,
+      "bytes": 23690
+    },
+    "hosea": {
+      "url": "/assets/digital-human/portraits-v1/hosea.webp",
+      "sha256": "c05c5b33aeb71d96a1339d06947f02acff7124911d802ac22c457e00321b8750",
+      "originalSha256": "4c207962d6959e5913c1cc6bb04a90dfcc9eefe28e1cb423c209a1ba5831ee7e",
+      "width": 384,
+      "height": 384,
+      "bytes": 18900
+    },
+    "jonah": {
+      "url": "/assets/digital-human/portraits-v1/jonah.webp",
+      "sha256": "a2e1143dbaae1379bddf6db1e9d75b8b8565d9895b559c9aea2030d58e3c765e",
+      "originalSha256": "651219c23f50555dc3b9db0ecdae93fd4c455c54c918517ddf23e31188d5abef",
+      "width": 384,
+      "height": 384,
+      "bytes": 28170
+    },
+    "micah": {
+      "url": "/assets/digital-human/portraits-v1/micah.webp",
+      "sha256": "a81baff2ddb04187f6eaf662943b6e34c495f2419f0ff1018438c616935a693e",
+      "originalSha256": "0d73516a602194d3a3814c5f67c50bfa075683f6e991f902d3790fa691848461",
+      "width": 384,
+      "height": 384,
+      "bytes": 21366
+    },
+    "habakkuk": {
+      "url": "/assets/digital-human/portraits-v1/habakkuk.webp",
+      "sha256": "78aceafa2571b53c83c1663a904ece2a932a4d6940740f7248a1878063982e19",
+      "originalSha256": "bd63101b794cabc3f81c9fcdbc2581d1a3d9f6d7b50e7740320c744b934635a6",
+      "width": 384,
+      "height": 384,
+      "bytes": 21890
+    },
+    "haggai": {
+      "url": "/assets/digital-human/portraits-v1/haggai.webp",
+      "sha256": "4a9391b80d9d4e78b603da1267577c5a7ffd91d839852ddd180a0143356c6bf7",
+      "originalSha256": "efd5280051dbadf9c80f65ead206558d53ae4e403f8ff51aea5b4ccad36727c6",
+      "width": 384,
+      "height": 384,
+      "bytes": 22880
+    },
+    "zechariah_prophet": {
+      "url": "/assets/digital-human/portraits-v1/zechariah_prophet.webp",
+      "sha256": "b188f2586a1493030fc5772cf6c8d1a2d3638a62ed00fbbd6c87acea3d41a05c",
+      "originalSha256": "b11554aba80190dfca8b8db128e264c4387660c0a17fc2137b5284e5b177a679",
+      "width": 384,
+      "height": 384,
+      "bytes": 21336
+    },
+    "ezra": {
+      "url": "/assets/digital-human/portraits-v1/ezra.webp",
+      "sha256": "487e6d6b35449d1455fe1ed863466eaa5b6fa3b4201b57ff0c6b0ab3aa53855a",
+      "originalSha256": "2fc42e2702cf25b8e2c806dec084c5e6adef563d4fc6275ba7dea91b37b2ad73",
+      "width": 384,
+      "height": 384,
+      "bytes": 22762
+    },
+    "nehemiah": {
+      "url": "/assets/digital-human/portraits-v1/nehemiah.webp",
+      "sha256": "ab896ef59c863d7b03653dbdcb456961fc546001e980d8ea90739a7de8a85700",
+      "originalSha256": "941b2c8c0d5a3b9ff25b2918ad2bdef6a3eb2b45e6bedd5727491e59947458a8",
+      "width": 384,
+      "height": 384,
+      "bytes": 18448
+    },
+    "mordecai": {
+      "url": "/assets/digital-human/portraits-v1/mordecai.webp",
+      "sha256": "66dfdbb68556a1cd5d4e3f239a21532f0310e3b68aa184fd7eba9773ee92c6e6",
+      "originalSha256": "2fa6c9303305fb0fe3bc33b374051ece5d6adfbc36ffd701acf65f96a4ba1cd4",
+      "width": 384,
+      "height": 384,
+      "bytes": 25070
+    },
+    "boaz": {
+      "url": "/assets/digital-human/portraits-v1/boaz.webp",
+      "sha256": "12aab03e93dd3e3f3e0d0b5e006de120319123702099551a56b5ba8e537d9801",
+      "originalSha256": "f8c52582f68764d3cf008439a39f8ce46c21f1f922b46bf8b55fb465f7892cce",
+      "width": 384,
+      "height": 384,
+      "bytes": 27430
+    },
+    "naomi": {
+      "url": "/assets/digital-human/portraits-v1/naomi.webp",
+      "sha256": "617b30114f885a3a34f6545b5931670238b1f37a405f0a71b743bf07271d102c",
+      "originalSha256": "f30b61181dd1de06ddf47fadcfd2a6782458cdd33cd45e992a9f43a3c02c59ff",
+      "width": 384,
+      "height": 384,
+      "bytes": 25744
+    },
+    "zechariah_priest": {
+      "url": "/assets/digital-human/portraits-v1/zechariah_priest.webp",
+      "sha256": "2c7b32a04d4f2adcb376d079e21eb98ef6d7f37a86e5e84ae42f669e1923c2af",
+      "originalSha256": "915f01db47dea47f01e52e579d002b3d87a3b0a76ec1bb8481516bfa272f8681",
+      "width": 384,
+      "height": 384,
+      "bytes": 21326
+    },
+    "elizabeth": {
+      "url": "/assets/digital-human/portraits-v1/elizabeth.webp",
+      "sha256": "3e461a31070c145eb3864744c68582c52193c772729d98bc1a8c6ae6a40004ee",
+      "originalSha256": "f9b20f042d5a114e5005c128b0148191c87cc7cad350f0d31ab713684cb852f1",
+      "width": 384,
+      "height": 384,
+      "bytes": 23548
+    },
+    "joseph_of_nazareth": {
+      "url": "/assets/digital-human/portraits-v1/joseph_of_nazareth.webp",
+      "sha256": "11c26198f52bd0188176055108bac826b788d8916a49b79fd93ddff3d99e7ed9",
+      "originalSha256": "8ae7ccb23fb2e8b13361283a550f3a4c87157c6731659c166c71365250125b7c",
+      "width": 384,
+      "height": 384,
+      "bytes": 20434
+    },
+    "john_baptist": {
+      "url": "/assets/digital-human/portraits-v1/john_baptist.webp",
+      "sha256": "fa34b34f1a06e90450fa8ac9afb1611ca44906875ae7024c16269d8645a36e16",
+      "originalSha256": "d2be78bf6fd923268df220232f409a57d810a3465a462dc38fa7f941498aea20",
+      "width": 384,
+      "height": 384,
+      "bytes": 28622
+    },
+    "mary_magdalene": {
+      "url": "/assets/digital-human/portraits-v1/mary_magdalene.webp",
+      "sha256": "9961ee450e15058b91d5bb4e03da1930a5f314cb936578f8d85e36590625214d",
+      "originalSha256": "3e3e94574721dbeb8c334e8991a0badf1bef3ecfc303f740103d458dea13cea2",
+      "width": 384,
+      "height": 384,
+      "bytes": 18506
+    },
+    "martha": {
+      "url": "/assets/digital-human/portraits-v1/martha.webp",
+      "sha256": "d0aab26e473a91da526459864317cf14558641cb94c9cf16ca550ecdc8a5b473",
+      "originalSha256": "d9e1fa1f9b65ebb0285f83f58791c15233daf77385d935b8afb3e18cd14298f5",
+      "width": 384,
+      "height": 384,
+      "bytes": 16832
+    },
+    "mary_of_bethany": {
+      "url": "/assets/digital-human/portraits-v1/mary_of_bethany.webp",
+      "sha256": "75c4c706a4534eed80434ed32ca45c577aa61ae7c14ed53e63bcdcd0f8338332",
+      "originalSha256": "6daf4afe9a77ef840ed1cc6809b699dfd7e67993e45070f607e479122f670afe",
+      "width": 384,
+      "height": 384,
+      "bytes": 17946
+    },
+    "lazarus": {
+      "url": "/assets/digital-human/portraits-v1/lazarus.webp",
+      "sha256": "ffae07aa847ed2dd35ad8b6a508efb2b674a3e52748f61051bca38eb8237231c",
+      "originalSha256": "bc87096e735ac0e5d70308caacfec05663d087489cc17f6ef75de4e3996381f2",
+      "width": 384,
+      "height": 384,
+      "bytes": 20186
+    },
+    "nicodemus": {
+      "url": "/assets/digital-human/portraits-v1/nicodemus.webp",
+      "sha256": "701e676f373f2e84bd763d7ec274bed1ad95f287ac93fd0c71e83c86dd6ca456",
+      "originalSha256": "c3f3d338fca08c212ffa9225189ba0203ad1030883ba96ce4c4232fdc86ed831",
+      "width": 384,
+      "height": 384,
+      "bytes": 27710
+    },
+    "joseph_arimathea": {
+      "url": "/assets/digital-human/portraits-v1/joseph_arimathea.webp",
+      "sha256": "a22ac0e8d38fa34ee47b81ce5cbf5cf9c3089fb15be00e765e62be9aa429c22f",
+      "originalSha256": "7fd47de7c01eaf86b9798e9908240932ef7756c00ea254eff0cc94a7f1f23c51",
+      "width": 384,
+      "height": 384,
+      "bytes": 17572
+    },
+    "matthew": {
+      "url": "/assets/digital-human/portraits-v1/matthew.webp",
+      "sha256": "7bcd18f5ad7f9874d975ba0df13f54a6bd4c386017853c6889ff16f686363d92",
+      "originalSha256": "5f04471b8978ad9ad3e2be4ffb7be1d7f1aac6a64b12bf6544be61c221458889",
+      "width": 384,
+      "height": 384,
+      "bytes": 18148
+    },
+    "mark": {
+      "url": "/assets/digital-human/portraits-v1/mark.webp",
+      "sha256": "a8bd72306610fe45febb5dc7711db55aa36a2eef13f7824726ad42e757243162",
+      "originalSha256": "1e5905aa5085a874c4cfefea2b70bed911c5578e7fc23693bcfc896460f8a1f7",
+      "width": 384,
+      "height": 384,
+      "bytes": 17026
+    },
+    "luke": {
+      "url": "/assets/digital-human/portraits-v1/luke.webp",
+      "sha256": "708f5c5a76721b8d89df68d2d94d575f1fbf272b7905ab6b48109bd8ba62cb44",
+      "originalSha256": "0167e443b966fa922f065a2802b4971b9176ffd077a67fdd86cc6d5e42d46f25",
+      "width": 384,
+      "height": 384,
+      "bytes": 15448
+    },
+    "andrew": {
+      "url": "/assets/digital-human/portraits-v1/andrew.webp",
+      "sha256": "5783b72c3145436bad8bcb98085aaec500c4cefdf9c7b6eaffe378d20cc443b3",
+      "originalSha256": "57b3e33585ac47ff97b1895c05d0c1e4562eb8e1a651902fe062dbdf6216808b",
+      "width": 384,
+      "height": 384,
+      "bytes": 27308
+    },
+    "philip_apostle": {
+      "url": "/assets/digital-human/portraits-v1/philip_apostle.webp",
+      "sha256": "b80f79035417d1702cc17beeb1df0face5009c72af76b35d3e8ae79d49b58a2b",
+      "originalSha256": "acd96021c5be55ad0d096160d665d4f7cdc72d4edd42d4c168016ce3a3ae8d33",
+      "width": 384,
+      "height": 384,
+      "bytes": 16010
+    },
+    "thomas": {
+      "url": "/assets/digital-human/portraits-v1/thomas.webp",
+      "sha256": "1915d53867ceb62645f79b5ef754833e70931963d055da689856e2bf24de5277",
+      "originalSha256": "8e1aca06ebce5a71f0d973aaf286d0e74de4ede60e66e625dc71c2ea9e5027dd",
+      "width": 384,
+      "height": 384,
+      "bytes": 14468
+    },
+    "james_zebedee": {
+      "url": "/assets/digital-human/portraits-v1/james_zebedee.webp",
+      "sha256": "b514ed1a8cdd3a3e905f6475d20bcdd2d21f6ea0ee5234df1b2ced3e7a1d155a",
+      "originalSha256": "42c39a11cd165a3ac55261ffd7a1d5c91e554e5218f52e4e934ee34b827c1c28",
+      "width": 384,
+      "height": 384,
+      "bytes": 17786
+    },
+    "james_brother_jesus": {
+      "url": "/assets/digital-human/portraits-v1/james_brother_jesus.webp",
+      "sha256": "85a2314b0d5fe12f86a59cd10bb6bfbe9fedc82feaf505408c645baba685d41f",
+      "originalSha256": "3387ba445d4799ef724d7f4e37ac20224e50081078358c0d583c0e4ed6e199e0",
+      "width": 384,
+      "height": 384,
+      "bytes": 19286
+    },
+    "stephen": {
+      "url": "/assets/digital-human/portraits-v1/stephen.webp",
+      "sha256": "f0e16b90f9311dbee413702491f52d38845e23d5db088ee73eec4385fce4d188",
+      "originalSha256": "e1972f8faef3a30a5dfc0518fe9a1a8def6e0c86319c90ee5466ed7345d146ea",
+      "width": 384,
+      "height": 384,
+      "bytes": 15226
+    },
+    "philip_evangelist": {
+      "url": "/assets/digital-human/portraits-v1/philip_evangelist.webp",
+      "sha256": "03928f8f2b75740de430bf9970979477d8c1bcae183db9ed5981fbedd6222be2",
+      "originalSha256": "b47fbc2d7754ff193001e1ee97c4dbc784c975d08feae9d0125a8520e3192b29",
+      "width": 384,
+      "height": 384,
+      "bytes": 20500
+    },
+    "timothy": {
+      "url": "/assets/digital-human/portraits-v1/timothy.webp",
+      "sha256": "2fb3c1496009aacd3a5397ea416b822079f2e6fbbd627e62141cb1ba89ba3d96",
+      "originalSha256": "f0179522d47508aee6a5c4b33c396ccc1d1e4c7a878c9a83a2b8e2d8661230ec",
+      "width": 384,
+      "height": 384,
+      "bytes": 17218
+    },
+    "titus": {
+      "url": "/assets/digital-human/portraits-v1/titus.webp",
+      "sha256": "4539ecd98d1acc3e8680ade0d3fffb14196de33679bd81c4e898f14122f0d0ae",
+      "originalSha256": "1a2d510a2a289a0cd7f14ff24125709180bb5f4a5c149a7ff703224b21dae746",
+      "width": 384,
+      "height": 384,
+      "bytes": 16678
+    },
+    "silas": {
+      "url": "/assets/digital-human/portraits-v1/silas.webp",
+      "sha256": "0e5dbd5ca623cde0d7308f4b749581f4934ae2490c421dc060eb134272828ffd",
+      "originalSha256": "a398e5a80e44a30bcec4028e2baf5963d3e3748c8eb2db750c192ba18f9cf962",
+      "width": 384,
+      "height": 384,
+      "bytes": 19104
+    },
+    "priscilla": {
+      "url": "/assets/digital-human/portraits-v1/priscilla.webp",
+      "sha256": "5fc9751d9bc6721ad3f635bb4c45a39d7c2e96081d142a5fe29061d951974f88",
+      "originalSha256": "0aebbf5553589c20cc7efd91b9a70b64c4b0f996ac2059868c57214eaf5dfd6a",
+      "width": 384,
+      "height": 384,
+      "bytes": 17742
+    },
+    "aquila": {
+      "url": "/assets/digital-human/portraits-v1/aquila.webp",
+      "sha256": "dbb89b3fac27bc97046dc53b888b3a1b99a7bc129df519a3a3717743dcd30289",
+      "originalSha256": "882ff6af757f8ad9af75f955cc7045893a0086579c7e9fc2f6e37ae5ec61b978",
+      "width": 384,
+      "height": 384,
+      "bytes": 20034
+    },
+    "lydia": {
+      "url": "/assets/digital-human/portraits-v1/lydia.webp",
+      "sha256": "57813fadda5deb32d2380a3a65c37dae920935bbaf954a6d947cf4929766baa9",
+      "originalSha256": "c962727603ada9397259fa3cd56469558202d7291288c00ad8e6af485930ca76",
+      "width": 384,
+      "height": 384,
+      "bytes": 21088
+    },
+    "apollos": {
+      "url": "/assets/digital-human/portraits-v1/apollos.webp",
+      "sha256": "d85a110f1cac65f33c8ca17e756e89db168d369574ec41a0c74d49fcc5b04d5a",
+      "originalSha256": "34bc0863e943e095468acb1f7b99da1d2e40723fe633e99649633bdbab9d064c",
+      "width": 384,
+      "height": 384,
+      "bytes": 18564
+    },
+    "phoebe": {
+      "url": "/assets/digital-human/portraits-v1/phoebe.webp",
+      "sha256": "63d8135be677d567a5a8c1da3c66c521c9fb0bb2c3e9fc7568936dd8c03b360d",
+      "originalSha256": "99a93fc95af3b8a5e6bfb3950a7580d6a428fd4b4f2aaa31e5e09dcadaf00d91",
+      "width": 384,
+      "height": 384,
+      "bytes": 20508
+    },
+    "onesimus": {
+      "url": "/assets/digital-human/portraits-v1/onesimus.webp",
+      "sha256": "bcc2d1921ad6c78a685dec092aa102edb41497b5d2dc848d2f1a4a4b8bbadc28",
+      "originalSha256": "3a1bfa77eda619554d102b1bd24d9e0053a88cdf84de17a9bfb8fb64d5e024a7",
+      "width": 384,
+      "height": 384,
+      "bytes": 17782
+    },
+    "philemon": {
+      "url": "/assets/digital-human/portraits-v1/philemon.webp",
+      "sha256": "962f895ee837de8325ff312a63f34beb08a0b91e93a8afdcf7a01628f7d1a8aa",
+      "originalSha256": "9c188206f1d471029c9f62c22702938a4b25024ba3b3cb4189ea35405222b11c",
+      "width": 384,
+      "height": 384,
+      "bytes": 22158
+    },
+    "cornelius": {
+      "url": "/assets/digital-human/portraits-v1/cornelius.webp",
+      "sha256": "f8f3d89074a2b8e31db0037cb13daff2b632a0b96a7c013cf089d2dd273dce36",
+      "originalSha256": "c59ef0d697859ad49fa2e19f945b31b1411f695e2f20005db0c5638bb7a7ca91",
+      "width": 384,
+      "height": 384,
+      "bytes": 17886
+    }
+  }
+}
