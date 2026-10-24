@@ -94,7 +94,7 @@ jobs:
           import hashlib,json,os,pathlib,subprocess
           def git(*args): return subprocess.check_output(['git',*args],text=True).strip()
           event=json.loads(pathlib.Path(os.environ['GITHUB_EVENT_PATH']).read_text())
-          files=['src/App.jsx','src/MirrorPage.jsx','src/RelationshipGraphView.jsx','src/lazyWithRetry.js','scripts/graph-entry-profile.mjs']
+          files=['src/App.jsx','src/MirrorPage.jsx','src/RelationshipGraphView.jsx','src/lazyWithRetry.js','scripts/graph-entry-profile.mjs','src/features/spiritual-planet/digital-human/digitalHuman.css','e2e/digital-human-repairs.spec.js']
           files+=sorted(str(p) for p in pathlib.Path('dist').rglob('*') if p.is_file())
           receipt={'checkoutSHA':git('rev-parse','HEAD'),'checkoutTree':git('rev-parse','HEAD^{tree}'),'prHeadSHA':event.get('pull_request',{}).get('head',{}).get('sha'),'files':{p:hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest() for p in files}}
           pathlib.Path(os.environ['RUNNER_TEMP'],'graph-entry-server','source-identity.json').write_text(json.dumps(receipt,indent=2))
@@ -121,6 +121,38 @@ jobs:
           GRAPH_ENTRY_PROFILE_DIR="$RUNNER_TEMP/graph-entry-cache-fault" GRAPH_ENTRY_PROFILE_FAULT=chunk-cache-hang timeout 300s node scripts/graph-entry-profile.mjs || status=1
           GRAPH_ENTRY_PROFILE_DIR="$RUNNER_TEMP/graph-entry-catalogue-fault" GRAPH_ENTRY_PROFILE_FAULT=catalogue-failure timeout 300s node scripts/graph-entry-profile.mjs || status=1
           GRAPH_ENTRY_PROFILE_DIR="$RUNNER_TEMP/graph-entry-portrait-fault" GRAPH_ENTRY_PROFILE_FAULT=portrait-failure timeout 300s node scripts/graph-entry-profile.mjs || status=1
+          python3 - <<'PY'
+          import json,os,pathlib,shutil,time
+          rows=[]
+          try:
+              for index in range(2):
+                  if index: time.sleep(10)
+                  start=time.monotonic()
+                  time.sleep(2)
+                  row={"load":os.getloadavg(),"cpus":os.cpu_count(),"freeBytes":shutil.disk_usage(".").free,"sampleSeconds":time.monotonic()-start}
+                  row["loadLimit"]=min(32,4*row["cpus"])
+                  rows.append(row)
+                  print(json.dumps(row),flush=True)
+                  assert row["load"][0]<=row["loadLimit"] and row["freeBytes"]>=2*1024**3 and row["sampleSeconds"]<=3
+          finally:
+              pathlib.Path(os.environ['RUNNER_TEMP'],'graph-entry-server','conversation-layout-admission.json').write_text(json.dumps(rows))
+          PY
+          mkdir "$RUNNER_TEMP/conversation-layout"
+          DIGITAL_HUMAN_BUBBLE_LAYOUT_ONLY=1 DIGITAL_HUMAN_REPAIR_BASE_URL=http://127.0.0.1:4173 DIGITAL_HUMAN_REPAIR_EVIDENCE_DIR="$RUNNER_TEMP/conversation-layout" PLAYWRIGHT_JSON_OUTPUT_FILE="$RUNNER_TEMP/conversation-layout/playwright-report.json" PLAYWRIGHT_NO_COPY_PROMPT=1 timeout --kill-after=5s 300s node_modules/.bin/playwright test --config=playwright.digital-human-repairs.config.js --grep 'conversation header layout' --reporter=line,json > "$RUNNER_TEMP/conversation-layout-browser.log" 2>&1 &
+          layout_pid=$!
+          layout_exit=0
+          wait "$layout_pid" || layout_exit=$?
+          mkdir -p "$RUNNER_TEMP/conversation-layout"
+          cp "$RUNNER_TEMP/conversation-layout-browser.log" "$RUNNER_TEMP/conversation-layout/browser.log"
+          LAYOUT_PID="$layout_pid" LAYOUT_EXIT="$layout_exit" python3 - <<'PY'
+          import hashlib,json,os,pathlib,subprocess
+          root=pathlib.Path(os.environ['RUNNER_TEMP'],'conversation-layout')
+          receipt={'executed':True,'pid':int(os.environ['LAYOUT_PID']),'exit_code':int(os.environ['LAYOUT_EXIT']),'sourceSHA':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),'command':['timeout','--kill-after=5s','300s','node_modules/.bin/playwright','test','--config=playwright.digital-human-repairs.config.js','--grep','conversation header layout','--reporter=line,json'],'baseURL':'http://127.0.0.1:4173','log':'browser.log','sha256':hashlib.sha256((root/'browser.log').read_bytes()).hexdigest()}
+          receipt['gate']=json.loads((root.parent/'graph-entry-server'/'conversation-layout-admission.json').read_text())
+          (root/'process-receipt.json').write_text(json.dumps(receipt,indent=2))
+          print(json.dumps(receipt))
+          PY
+          if [ "$layout_exit" -ne 0 ]; then status=1; fi
           exit "$status"
 
       - name: Preserve actual successful or failed evidence
@@ -134,9 +166,11 @@ jobs:
             ${{ runner.temp }}/graph-entry-catalogue-fault/
             ${{ runner.temp }}/graph-entry-portrait-fault/
             ${{ runner.temp }}/graph-entry-server/
+            ${{ runner.temp }}/conversation-layout/
             dist/assets/MirrorPage-*.js
             dist/assets/RelationshipGraphView-*.js
             dist/assets/index-*.js
+            dist/assets/*.css
             dist/release-manifest.json
           if-no-files-found: warn
           retention-days: 14

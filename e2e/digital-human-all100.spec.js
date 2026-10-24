@@ -200,6 +200,51 @@ async function verifyMobileHeader(person, info) {
   expect(layout.documentWidth).toBeLessThanOrEqual(layout.viewportWidth)
 }
 
+async function verifyMessageHeaders(workspace, person, info, levels) {
+  const messages = workspace.locator('.dh-message.assistant')
+  await expect(messages).toHaveCount(3)
+  const rows = await messages.evaluateAll(nodes => nodes.map(node => {
+    const header = node.querySelector('header')
+    const name = header.querySelector('strong')
+    const badge = header.querySelector('.dh-grounding')
+    const box = element => {
+      const r = element.getBoundingClientRect()
+      const range = document.createRange()
+      range.selectNodeContents(element)
+      return { left: r.left, right: r.right, top: r.top, bottom: r.bottom, width: r.width,
+        clientWidth: element.clientWidth, scrollWidth: element.scrollWidth,
+        clientHeight: element.clientHeight, scrollHeight: element.scrollHeight,
+        lineHeight: getComputedStyle(element).lineHeight,
+        textRects: [...range.getClientRects()].filter(rect => rect.width > 0).map(rect => ({ left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom })) }
+    }
+    return { name: name.textContent, badge: badge.textContent, header: box(header), title: box(name), label: box(badge) }
+  }))
+  save(info, 'bubble-layout', { characterId: person.characterId, viewport: page.viewportSize(), messages: rows })
+  for (const [step, row] of rows.entries()) {
+    expect(row.name).toBe(person.canonicalName)
+    expect(row.badge).toBe(levels[step])
+    expect(row.header.width).toBeGreaterThan(0)
+    // Full line budget prevents long names being squeezed into a narrow column.
+    expect(Math.abs(row.title.width - row.header.width)).toBeLessThanOrEqual(1)
+    expect(row.label.top).toBeGreaterThanOrEqual(row.title.bottom)
+    for (const item of [row.title, row.label]) {
+      expect(item.left).toBeGreaterThanOrEqual(row.header.left - 1)
+      expect(item.right).toBeLessThanOrEqual(row.header.right + 1)
+      expect(item.scrollWidth).toBeLessThanOrEqual(item.clientWidth)
+      expect(item.scrollHeight).toBeLessThanOrEqual(item.clientHeight)
+      expect(item.textRects.length).toBeGreaterThan(0)
+      for (const rect of item.textRects) {
+        expect(rect.left).toBeGreaterThanOrEqual(item.left - 1)
+        expect(rect.right).toBeLessThanOrEqual(item.right + 1)
+        expect(rect.top).toBeGreaterThanOrEqual(item.top - 1)
+        expect(rect.bottom).toBeLessThanOrEqual(item.bottom + 1)
+      }
+    }
+    expect(row.header.scrollWidth).toBeLessThanOrEqual(row.header.clientWidth)
+    expect(row.header.scrollHeight).toBeLessThanOrEqual(row.header.clientHeight)
+  }
+}
+
 test.beforeAll(async ({ browser, baseURL }, info) => {
   expect(cases).toHaveLength(100)
   expect(new Set(cases.map(person => person.characterId)).size).toBe(100)
@@ -241,14 +286,17 @@ for (const person of cases) {
       await verifyMobileHeader(person, info)
       await page.screenshot({ path: info.outputPath('entry.png') })
       let last
+      const levels = []
       for (const [step, question] of [person.question, ...person.followups].entries()) {
         last = await ask(workspace, person, question, step, info, last, `turn-${step}`)
+        levels.push(last.body.response.groundingLevel)
         result.steps.push({ step, question, sessionId: last.request.sessionId, references: last.body.response.references.map(ref => ref.locator), matched: true })
       }
       await expect(workspace.locator('.dh-message.user')).toHaveCount(3)
       await expect(workspace.locator('.dh-message.assistant')).toHaveCount(3)
       await workspace.locator('.dh-message.assistant').last().scrollIntoViewIfNeeded()
       await page.screenshot({ path: info.outputPath('followups.png') })
+      await verifyMessageHeaders(workspace, person, info, levels)
       previous = last
       result.completed = true
     } finally { save(info, 'person-result', result) }
