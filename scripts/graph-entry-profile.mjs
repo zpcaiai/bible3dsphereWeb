@@ -137,6 +137,11 @@ try{
     expect(r.portrait.decode).toEqual({width:384,height:384,complete:true})
     r.portrait.status='PASS'
     if(fault==='portrait-failure')r.portraitRetry='PASS'
+    r.phase='mobile_chrome';r.predicate='mirror-without-floating-guardian'
+    r.mobileChromeBefore={guardianCount:await page.locator('.guardian-widget-root').count(),navigationVisible:await page.getByRole('navigation',{name:'主要导航',exact:true}).isVisible()}
+    await expect(page.locator('.guardian-widget-root')).toHaveCount(0,{timeout:5000})
+    await expect(page.getByRole('navigation',{name:'主要导航',exact:true})).toBeVisible({timeout:5000})
+    r.mobileChrome={guardianCount:await page.locator('.guardian-widget-root').count(),navigationVisible:await page.getByRole('navigation',{name:'主要导航',exact:true}).isVisible(),status:'PASS'}
     await page.screenshot({path:root+'graph-rendered-'+width+'.png'})
     await expect(page.locator('.mobile-sphere-stage canvas')).toHaveCount(0,{timeout:5000})
     r.homeCanvasesAfter=await page.locator('.mobile-sphere-stage canvas').count()
@@ -162,6 +167,8 @@ try{
      const layoutResponse=await layoutRequest
      r.homeLayoutHTTP=layoutResponse.status();expect(r.homeLayoutHTTP).toBe(200)
      await expect(page.locator('.mobile-sphere-stage canvas')).toHaveCount(1,{timeout:5000})
+     await expect(page.getByRole('button',{name:'打开属灵守护者（按住可拖动）',exact:true})).toBeVisible({timeout:5000})
+     r.homeGuardianRestored='PASS'
      r.homeRequestsResumed='PASS'
     }
    }catch(error){

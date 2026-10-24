@@ -3162,8 +3162,8 @@ function AppContent() {
         {/* 全局实时：唯一 WebSocket + 任意页面来电弹窗 */}
         <RealtimeRoot user={user} />
 
-        {/* 属灵守护者·和平鸽精灵（右下角常驻） */}
-        {!suppressGlobalChrome ? (
+        {/* 镜鉴的图谱与数字人已有完整操作区，避免浮层遮住手机端正文；保留底部导航。 */}
+        {!suppressGlobalChrome && !mirrorActive ? (
           <Suspense fallback={null}>
             <GuardianWidget />
           </Suspense>
