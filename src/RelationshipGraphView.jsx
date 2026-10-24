@@ -386,7 +386,7 @@ export default function RelationshipGraphView({ token, onBack, initialFocus = ''
                   onPointerDown={(ev) => onPointerDown(ev, node)}>
                   <circle r={node.r} fill={colorOf(node.type)} stroke={isSel ? '#fff' : 'rgba(0,0,0,0.35)'} strokeWidth={isSel ? 2 : 1} />
                   {portrait && !failedPortraits.has(portrait.url) && <image href={portrait.url} x={-node.r} y={-node.r} width={node.r * 2} height={node.r * 2}
-                    preserveAspectRatio="xMidYMid slice" data-portrait-character-id={portraitId} data-portrait-review-state="PREVIEW_ONLY"
+                    preserveAspectRatio="xMidYMid slice" data-portrait-character-id={portraitId} data-review-state="PREVIEW_ONLY"
                     style={{ clipPath: 'circle(50%)', pointerEvents: 'none' }}
                     onError={() => setFailedPortraits(previous => new Set(previous).add(portrait.url))} />}
                   {showLabel && (
