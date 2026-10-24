@@ -35,6 +35,10 @@ try{
    const page=await context.newPage();page.setDefaultTimeout(30000);page.setDefaultNavigationTimeout(30000)
    const r={width,started:Date.now(),phase:'setup',originalAssertionMs:5000,assetEvents:[],parentSamples:[],onboardingEvents:[],observedTurnPOSTs:0}
    let causalWitness
+   let witnessStop
+   const stopWitness=()=>{
+    if(causalWitness&&!witnessStop)witnessStop=causalWitness.finish({name:'graph-heading-visible',assertionMs:5000,startAt:r.assertStartAt??null,endAt:r.assertEndAt??null,outcome:r.originalFiveSecondAssertion}).then(value=>({value}),error=>({errorName:error.name}))
+   }
    const pendingAssets=new Map()
    const imageResponses=new Map()
    page.on('response',response=>{
@@ -111,6 +115,7 @@ try{
     await expect(page.getByRole('heading',{name:'关系图谱',exact:true})).toBeVisible({timeout:5000})
     r.assertEndAt=Date.now();r.originalFiveSecondAssertion='PASS'
     causalWitness.mark('heading-expect-pass')
+    stopWitness()
     r.phase='graph_data'
     const response=await graphReply
     if(response.probeErrorName)throw Error('Graph API response unavailable: '+response.probeErrorName)
@@ -187,6 +192,7 @@ try{
     r.failureAt=Date.now();r.originalFiveSecondAssertion=r.originalFiveSecondAssertion==='PASS'?'PASS':(r.phase==='graph_assert'?'FAIL':'NOT_RUN');r.errorName=error.name
     if(r.phase==='graph_assert')r.assertEndAt=r.failureAt
     if(r.phase==='graph_assert')causalWitness?.mark('heading-expect-fail')
+    stopWitness()
     r.error=r.phase==='login'?'Login stage failed; auth inputs intentionally not logged':error.message
     if(r.phase==='graph_data')r.graphDataStatus='FAIL'
     process.exitCode=1
@@ -205,7 +211,10 @@ try{
     r.pendingAssetsAtCapture=[...pendingAssets.values()]
     if(causalWitness){
      try{
-      const value=await causalWitness.finish({name:'graph-heading-visible',assertionMs:5000,startAt:r.assertStartAt??null,endAt:r.assertEndAt??null,outcome:r.originalFiveSecondAssertion})
+      stopWitness()
+      const stopped=await witnessStop
+      if(stopped.errorName)throw Error('Causal witness capture failed: '+stopped.errorName)
+      const value=stopped.value
       const file='causal-witness-'+width+'.json',bytes=Buffer.from(JSON.stringify(value,null,2))
       fs.writeFileSync(root+file,bytes)
       r.causalWitness={file,sha256:crypto.createHash('sha256').update(bytes).digest('hex'),status:value.status}

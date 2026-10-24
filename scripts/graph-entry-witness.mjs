@@ -123,7 +123,9 @@ function observeDocument() {
     if (visible) { headingSeen = true; emit('heading-visible');emit('observer-stats') }
     if (count !== lastLoading) { lastLoading = count; emit('loading-change', count);emit('observer-stats') }
   }
-  const start = () => { observe(); new MutationObserver(observe).observe(document.documentElement, { childList: true, subtree: true }) }
+  let observer
+  window.__graphCausalStop = () => { emit('observer-stats');observer?.disconnect();removeEventListener('pagehide', window.__graphCausalSnapshot) }
+  const start = () => { observe();observer = new MutationObserver(observe);observer.observe(document.documentElement, { childList: true, subtree: true }) }
   if (document.documentElement) start()
   else addEventListener('DOMContentLoaded', start, { once: true })
 }
@@ -144,13 +146,18 @@ export async function startCausalWitness(page, { deadlineAt } = {}) {
   const errors = errorCollector.rows
   const fail = (stage, name) => errorCollector.append({ stage, name })
   const bounded = operation => withinWitnessBudget(operation, deadlineAt)
-  let session, before = null, after = null, cpuStarted = false, traceStarted = false, cpuAttempted = false, traceAttempted = false, generation = 0, startupAbandoned = false, mainFrameId = null
-  const lateEffects = { session: 'NOT_REQUESTED', cpuStartAttempted: false, traceStartAttempted: false }
+  let session, before = null, after = null, cpuStarted = false, traceStarted = false, cpuAttempted = false, traceAttempted = false, generation = 0, startupAbandoned = false, mainFrameId = null, documentScriptId = null, bindingAttempted = false
+  const lateEffects = { session: 'NOT_REQUESTED', documentScript: 'NOT_REQUESTED', cpuStartAttempted: false, traceStartAttempted: false }
   let resolveTrace
   const traceDone = new Promise(resolve => { resolveTrace = resolve })
   const closed = () => { fail('page-close', 'PageClosed');resolveTrace() }
   page.once('close', closed)
   const send = (method, params) => bounded(() => session.send(method, params))
+  const stopDocument = async () => {
+    await bounded(() => page.evaluate(() => window.__graphCausalStop?.()))
+    if (documentScriptId) { await send('Page.removeScriptToEvaluateOnNewDocument', { identifier: documentScriptId });documentScriptId = null;lateEffects.documentScript = 'REMOVED' }
+    if (bindingAttempted) { await send('Runtime.removeBinding', { name: '__graphCausalDocument' });bindingAttempted = false }
+  }
   const metrics = async () => {
     const before = Date.now()
     const reply = await send('Performance.getMetrics')
@@ -197,8 +204,11 @@ export async function startCausalWitness(page, { deadlineAt } = {}) {
     mainFrameId = token(frameTree.frame.id)
     frames.append({ kind: 'frame-navigated', frameId: token(frameTree.frame.id), loaderId: token(frameTree.frame.loaderId), parentAt: Date.now() })
     await send('Runtime.enable')
+    bindingAttempted = true
     await send('Runtime.addBinding', { name: '__graphCausalDocument' })
-    await bounded(() => page.addInitScript(observeDocument))
+    lateEffects.documentScript = 'PENDING'
+    documentScriptId = (await send('Page.addScriptToEvaluateOnNewDocument', { source: '(' + observeDocument.toString() + ')()' })).identifier
+    lateEffects.documentScript = 'INSTALLED'
     await bounded(() => page.evaluate(observeDocument))
     await send('Network.enable')
     await send('Debugger.enable')
@@ -214,6 +224,7 @@ export async function startCausalWitness(page, { deadlineAt } = {}) {
     startupAbandoned = true
     fail('startup', error.name)
     if (session) {
+      await stopDocument().catch(failure => fail('startup-document-cleanup', failure.name))
       if (cpuAttempted) await send('Profiler.stop').catch(failure => fail('startup-cpu-cleanup', failure.name))
       if (traceAttempted) await send('Tracing.end').catch(failure => fail('startup-trace-cleanup', failure.name))
       await bounded(() => session.detach()).then(() => { lateEffects.session = 'DETACHED_AFTER_STARTUP_FAILURE' }).catch(failure => { lateEffects.session = 'CLEANUP_UNCONFIRMED';fail('startup-detach', failure.name) })
@@ -229,11 +240,13 @@ export async function startCausalWitness(page, { deadlineAt } = {}) {
     async finish(predicate) {
       if (finished) throw Error('Evidence already finalized')
       finished = true
+      const stopRequestedAt = Date.now()
       let cpu = null
-      if (cpuStarted) try {
-        await bounded(() => page.evaluate(() => window.__graphCausalSnapshot?.()))
-        after = await metrics();cpu = cpuProfile((await send('Profiler.stop')).profile)
-      } catch (error) { fail('cpu-stop', error.name) }
+      if (cpuStarted) {
+        await stopDocument().catch(error => fail('document-stop', error.name))
+        try { after = await metrics() } catch (error) { fail('metrics-stop', error.name) }
+        try { cpu = cpuProfile((await send('Profiler.stop')).profile) } catch (error) { fail('cpu-stop', error.name) }
+      }
       if (traceStarted) try { await send('Tracing.end');await bounded(() => traceDone) } catch (error) { fail('trace-stop', error.name) }
       page.off('close', closed)
       if (session && (cpuStarted || traceStarted)) await bounded(() => session.detach()).then(() => { lateEffects.session = 'DETACHED' }).catch(error => { lateEffects.session = 'CLEANUP_UNCONFIRMED';fail('detach', error.name) })
@@ -258,7 +271,7 @@ export async function startCausalWitness(page, { deadlineAt } = {}) {
       for (const id of cpu?.samples ?? []) { const context = nodeContexts.get(id);sampleCounts.set(context, (sampleCounts.get(context) ?? 0) + 1) }
       const cpuEpochs = epochs.map(epoch => ({ ...epoch, attributedSamples: sampleCounts.get(epoch.generation + ':' + epoch.executionContextId) ?? 0 }))
       const complete = epochs.length > 0 && epochs.every(epoch => epoch.frameId && epoch.loaderId) && rendererThreads.length > 0 && network.rows.length > 0 && cpu?.samples.length > 0 && cpu?.nodes.length > 0
-      return { schema: WITNESS_SCHEMA, startedAt, endedAt: Date.now(), predicate, phases, clocks: { before, after },
+      return { schema: WITNESS_SCHEMA, startedAt, stopRequestedAt, endedAt: Date.now(), predicate, phases, clocks: { before, after },
         network: network.rows, pending: [...pending].map(([requestId, path]) => ({ requestId, path })), scripts: scripts.rows, timeline: timeline.rows, documents: documents.rows, contexts: contexts.rows, frames: frames.rows, cpu, dropped, errors, lateEffects,
         coverage: { epochs, rendererThreads, cpuEpochs, unattributedOrAmbiguousSamples: sampleCounts.get(null) ?? 0, cpuEpochContinuity: cpuEpochs.every(epoch => epoch.attributedSamples > 0) ? 'ATTRIBUTED_SAMPLES_EACH_EPOCH' : 'PARTIAL_OR_UNATTRIBUTED', observerOverhead: 'Observed DOM callback costs only; total CDP/CPU sampling perturbation is not known.' },
         status: errors.length || Object.values(dropped).some(Boolean) || cpu?.truncated || !complete ? 'INCOMPLETE' : 'CAPTURED_BOUNDED',
