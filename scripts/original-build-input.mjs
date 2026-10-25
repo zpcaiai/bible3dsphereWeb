@@ -2,6 +2,9 @@ import assert from 'node:assert/strict'
 import { createHash } from 'node:crypto'
 import { parse } from '@babel/parser'
 import { spawn } from 'node:child_process'
+import fs from 'node:fs'
+import os from 'node:os'
+import path from 'node:path'
 import { PUBLIC_BUILD_ENV_KEYS } from './production-build-contract.mjs'
 
 export const ORIGINAL_BUILD_INPUT = Object.freeze({
@@ -14,27 +17,35 @@ export async function fetchOriginalBuildEnvironment(budgetMs = 10000) {
   const deadline = Date.now() + budgetMs, attempts = []
   for (const origin of ['https://bible3dsphere-8qpybwrwn-zpchoney-6160s-projects.vercel.app', 'https://holiness.uk']) {
     const attempt = { url: origin + '/assets/JerusalemSandbox-AR_hnVIf.js' };attempts.push(attempt)
+    const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'bible-original-input-')), identity = fs.lstatSync(directory)
+    const bodyFile = path.join(directory, 'input.js');fs.closeSync(fs.openSync(bodyFile, 'wx', 0o600))
     try {
       const remaining = Math.min(5000, deadline - Date.now());assert(remaining > 0)
-      // curl honours the host's configured HTTPS transport; body stays in this
-      // private pipe, never in shell arguments, stdout logs or an artifact file.
-      attempt.command = ['curl', '--http1.1', '--ipv4', '--compressed', '--fail', '--silent', '--max-time', String(remaining / 1000), '--max-filesize', String(1024 ** 2), '--write-out', '\n%{http_code}', attempt.url]
+      // A private0600 body file prevents payload bytes from entering stdout or
+      // logs. Only the HTTP status traverses the pipe; cleanup runs on failure.
+      attempt.command = ['curl', '--http1.1', '--ipv4', '--compressed', '--fail', '--silent', '--max-time', String(remaining / 1000), '--max-filesize', String(1024 ** 2), '--output', bodyFile, '--write-out', '%{http_code}', attempt.url]
       attempt.startedAt = Date.now()
       const child = spawn(attempt.command[0], attempt.command.slice(1), { stdio: ['ignore', 'pipe', 'pipe'] })
-      attempt.pid = child.pid;const chunks = [];let size = 0
+      attempt.pid = child.pid;let status = ''
       const timer = setTimeout(() => { attempt.deadlineExceeded = true;child.kill('SIGTERM') }, remaining)
-      child.stdout.on('data', chunk => { size += chunk.length;if (size <= 1024 ** 2 + 4) chunks.push(chunk);else { attempt.boundsExceeded = true;child.kill('SIGTERM') } })
+      child.stdout.on('data', chunk => { status += chunk.toString();if (status.length > 3) { attempt.boundsExceeded = true;child.kill('SIGTERM') } })
       child.stderr.on('data', () => {})
       try {
         attempt.exit_code = await new Promise((resolve, reject) => { child.once('error', reject);child.once('close', resolve) })
       } finally { clearTimeout(timer);attempt.endedAt = Date.now() }
-      const raw = Buffer.concat(chunks);attempt.http = Number(raw.subarray(-3).toString())
+      attempt.http = Number(status)
       assert(attempt.exit_code === 0 && !attempt.deadlineExceeded && !attempt.boundsExceeded && attempt.http === 200, 'Original input transport failure')
-      const bytes = raw.subarray(0, -4);attempt.sha256 = createHash('sha256').update(bytes).digest('hex')
+      assert(fs.statSync(bodyFile).size <= 1024 ** 2, 'Original input exceeds bound')
+      const bytes = fs.readFileSync(bodyFile);attempt.sha256 = createHash('sha256').update(bytes).digest('hex')
       const environment = recoverOriginalBuildEnvironment(bytes, ORIGINAL_BUILD_INPUT)
       attempt.sha256 = ORIGINAL_BUILD_INPUT.sha256;attempt.bytes = bytes.length
       return { environment, proof: { attempts, sha256: ORIGINAL_BUILD_INPUT.sha256, keyNames: Object.keys(environment).sort(), mode: 'OPAQUE_COMPILER_INPUT_NOT_PROVIDER_AUTH' } }
     } catch (error) { attempt.failed = true;attempt.errorName = error.name }
+    finally {
+      const current = fs.lstatSync(directory)
+      assert(current.isDirectory() && !current.isSymbolicLink() && current.dev === identity.dev && current.ino === identity.ino, 'Original input temporary owner changed')
+      fs.rmSync(directory, { recursive: true });attempt.privateTemporaryRemoved = !fs.existsSync(directory)
+    }
   }
   const error = Error('Hash-bound original compiler input unavailable; no identity waiver')
   error.attempts = attempts
