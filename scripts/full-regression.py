@@ -91,7 +91,7 @@ try:
     before = snapshot()
     (OUTPUT / 'source-before.json').write_text(json.dumps(before, indent=2))
     assert all(not value['trackedStatus'] for value in before.values()), 'Tracked sources must start clean'
-    assert before['backend']['head'] == 'f8116ea1d268e5b92489cb9dac3b5f88e8558f01'
+    assert before['backend']['head'] == 'bfced56f00daf2fdffcbe1a6888c6d2fa6f8004c'
     run('release-proof-unit', FRONTEND, [sys.executable, '-m', 'unittest', 'discover', '-s', 'scripts', '-p', 'test_release_html.py', '-v'])
     run('frontend-full', FRONTEND, ['node_modules/.bin/vitest', 'run', '--maxWorkers=1', '--minWorkers=1',
         '--reporter=default', '--reporter=json', '--outputFile=' + str(OUTPUT / 'vitest.json')])
