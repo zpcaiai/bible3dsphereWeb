@@ -105,6 +105,8 @@ try:
     assert not any(case.find(tag) is not None for case in cases for tag in ['failure', 'error', 'skipped'])
     run('frontend-lint', FRONTEND, ['npm', 'run', 'lint'])
     run('frontend-build', FRONTEND, ['npm', 'run', 'build'])
+    run('production-build-input-controls', FRONTEND, ['node', 'scripts/verify-production-build-parity.mjs',
+        str(OUTPUT / 'build-parity'), str(remaining())])
     after = snapshot()
     (OUTPUT / 'source-after.json').write_text(json.dumps(after, indent=2))
     assert before == after, 'Tracked sources changed during native regression'
