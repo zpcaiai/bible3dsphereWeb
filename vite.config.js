@@ -1,7 +1,12 @@
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 import { fileURLToPath, URL } from 'node:url'
 import { createHash } from 'node:crypto'
+import { readFileSync } from 'node:fs'
+import { resolvePublicApiBase } from './scripts/production-build-contract.mjs'
+
+const projectRoot = fileURLToPath(new URL('.', import.meta.url))
+const deployment = JSON.parse(readFileSync(new URL('./vercel.json', import.meta.url), 'utf8'))
 
 const localApiTarget = process.env.VITE_LOCAL_API_TARGET?.trim() || 'http://localhost:8000'
 
@@ -30,7 +35,10 @@ function precacheManifestPlugin() {
   }
 }
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
+  define: {
+    'import.meta.env.VITE_API_BASE': JSON.stringify(resolvePublicApiBase(deployment, loadEnv(mode, projectRoot, 'VITE_'))),
+  },
   envPrefix: ['VITE_', 'NEXT_PUBLIC_'],
   plugins: [react(), precacheManifestPlugin()],
   // 生产构建：移除噪声调试日志（保留 console.warn/error）与 debugger 语句；
@@ -95,4 +103,4 @@ export default defineConfig({
       },
     },
   },
-})
+}))
