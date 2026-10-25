@@ -33,7 +33,9 @@ async function run(name, command, args, cwd, env = process.env, cap = 300000) {
   const row = { name, command: ['timeout', ...argv], cwd, startedAt: Date.now(), executed: false }
   receipt.phases.push(row)
   try {
-    const child = spawn('timeout', argv, { cwd, env, stdio: ['ignore', fd, fd] })
+    const childEnvironment = { ...env }
+    delete childEnvironment.BUILD_REPRO_F7_INPUT_BASE64
+    const child = spawn('timeout', argv, { cwd, env: childEnvironment, stdio: ['ignore', fd, fd] })
     row.pid = child.pid;row.executed = Boolean(child.pid)
     row.exit_code = await new Promise((resolve, reject) => { child.once('error', reject);child.once('close', (code, signal) => { row.signal = signal;resolve(code) }) })
     assert.equal(row.exit_code, 0, name + ' failed')
@@ -111,7 +113,7 @@ try {
     const environment = { ...process.env, VERCEL_GIT_COMMIT_SHA: ORIGINAL }
     for (const key of Object.keys(environment)) if (key.startsWith('VITE_') || key.startsWith('NEXT_PUBLIC_')) delete environment[key]
     if (name === 'crossOrigin') Object.assign(environment, originalEnvironment)
-    if (name === 'canonical') Object.assign(environment, canonicalPublicBuildEnvironment({ VITE_API_BASE: api }, originalEnvironment))
+    if (name === 'canonical') Object.assign(environment, canonicalPublicBuildEnvironment({ ...process.env, VITE_API_BASE: api }, originalEnvironment))
     if (api !== undefined) environment.VITE_API_BASE = api
     await run('build-' + name, 'npm', ['run', 'build'], source, environment)
     assert.deepEqual(inventory(), before)
@@ -138,9 +140,15 @@ try {
 } catch (error) { receipt.errorName = error.name;receipt.error = error.message;process.exitCode = 1 }
 finally {
   if (temporary) {
-    const actual = fs.lstatSync(temporary)
-    assert(actual.isDirectory() && !actual.isSymbolicLink() && actual.dev === temporaryIdentity.dev && actual.ino === temporaryIdentity.ino, 'Refuse cleanup of changed temporary owner')
-    fs.rmSync(temporary, { recursive: true });receipt.privateTemporaryRemoved = !fs.existsSync(temporary)
+    try {
+      const actual = fs.lstatSync(temporary)
+      assert(actual.isDirectory() && !actual.isSymbolicLink() && actual.dev === temporaryIdentity.dev && actual.ino === temporaryIdentity.ino, 'Refuse cleanup of changed temporary owner')
+      fs.rmSync(temporary, { recursive: true });receipt.privateTemporaryRemoved = !fs.existsSync(temporary)
+    } catch (error) {
+      receipt.status = 'INCOMPLETE';receipt.privateTemporaryRemoved = false
+      receipt.cleanupErrorName = error.name;receipt.cleanupError = 'Owned temporary cleanup failed; experiment incomplete'
+      process.exitCode = 1
+    }
   }
   receipt.endedAt = Date.now();write('parity-receipt.json', receipt)
   const all = {}

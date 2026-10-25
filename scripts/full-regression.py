@@ -48,8 +48,11 @@ def run(name, cwd, command):
     try:
         remaining()
         with log.open('xb') as stream:
+            environment = {**os.environ, 'PYTHONPATH': str(BACKEND / 'backend')}
+            if name not in {'frontend-build', 'production-build-input-controls'}:
+                environment.pop('BUILD_REPRO_F7_INPUT_BASE64', None)
             child = subprocess.Popen(command, cwd=cwd, stdout=stream, stderr=subprocess.STDOUT,
-                                     start_new_session=True, env={**os.environ, 'PYTHONPATH': str(BACKEND / 'backend')})
+                                     start_new_session=True, env=environment)
             row['pid'] = child.pid
             row['executed'] = True
             print(json.dumps(row), flush=True)
