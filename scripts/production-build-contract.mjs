@@ -1,3 +1,16 @@
+// Keep whole import.meta.env references from exporting unrelated deployment or
+// provider variables. These are the existing browser-consumed public settings.
+export const PUBLIC_BUILD_ENV_PREFIXES = Object.freeze([
+  'VITE_API_BASE', 'VITE_AI_FORMATION_ENABLED',
+  'VITE_ATTENTION_MODULE_ENABLED', 'VITE_ATTENTION_AI_ENABLED',
+  'VITE_ATTENTION_COMMUNITY_ENABLED', 'VITE_ATTENTION_GROUPS_ENABLED',
+  'VITE_ATTENTION_ADMIN_ENABLED', 'VITE_ATTENTION_E2E_MODE',
+  'VITE_ATTENTION_DEMO_SEED_ENABLED',
+  'VITE_BOOK_BASE', 'VITE_CESIUM_TOKEN', 'VITE_HYMN_AUDIO_BASE',
+  'VITE_MAPBOX_TOKEN', 'NEXT_PUBLIC_MAPBOX_TOKEN', 'VITE_MAPLIBRE_STYLE',
+  'VITE_MAP_PROVIDER', 'VITE_TEMPLE_GLTF_URL',
+])
+
 // Resolve only the public API input; never export account/provider environment.
 export function resolvePublicApiBase(deployment, environment) {
   const fallback = deployment?.env?.VITE_API_BASE
