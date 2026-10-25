@@ -40,9 +40,10 @@ async function probe() {
     const account = await page.getByLabel('默认登录账号', { exact: true }).locator('code').allTextContents()
     expect(account).toHaveLength(2)
     await page.getByLabel('邮箱', { exact: true }).fill(account[0]);await page.getByLabel('密码', { exact: true }).fill(account[1])
-    const login = page.waitForResponse(response => response.url().endsWith('/api/auth/email/login'))
+    const login = page.waitForResponse(response => response.url().endsWith('/api/auth/email/login')).then(response => ({ response }), error => ({ error }))
     await page.getByRole('button', { name: '🔑 登录', exact: true }).click()
-    result.loginHTTP = (await login).status();expect(result.loginHTTP).toBe(200)
+    const auth = await login;if (auth.error) throw auth.error
+    result.loginHTTP = auth.response.status();expect(result.loginHTTP).toBe(200)
     await expect(page.getByRole('button', { name: '退出登录', exact: true })).toBeVisible({ timeout: 5000 })
     result.phase = 'witness';witness = await startCausalWitness(page, { deadlineAt })
     result.phase = 'tap';result.beforeTapAt = Date.now();witness.mark('before-tap')
@@ -68,11 +69,11 @@ async function probe() {
       else result.witnessErrorName = value.errorName
     }
     clearInterval(sample);clearTimeout(timer)
-    if (context) await context.close().catch(error => { result.contextCloseErrorName = error.name })
-    if (browser) await browser.close().catch(error => { result.browserCloseErrorName = error.name })
+    if (context) await context.close().then(() => { result.contextCloseConfirmed = true }, error => { result.contextCloseErrorName = error.name })
+    if (browser) await browser.close().then(() => { result.browserCloseConfirmed = true }, error => { result.browserCloseErrorName = error.name })
     result.endedAt = Date.now()
     result.functionalAssertionExit = result.headingOutcome === 'PASS' ? 0 : result.headingOutcome === 'FAIL' ? 1 : null
-    result.recordComplete = result.loginHTTP === 200 && Boolean(result.witness?.status === 'CAPTURED_BOUNDED') && Boolean(result.screenshot) && !result.captureErrorName && !result.caseDeadlineTriggeredAt && result.observedTurnPOSTs === 0
+    result.recordComplete = result.loginHTTP === 200 && Boolean(result.witness?.status === 'CAPTURED_BOUNDED') && Boolean(result.screenshot) && !result.captureErrorName && !result.caseDeadlineTriggeredAt && result.contextCloseConfirmed === true && result.browserCloseConfirmed === true && !result.contextCloseErrorName && !result.browserCloseErrorName && result.observedTurnPOSTs === 0
     result.scopeLimits = 'Current runtime, service and account state differ from the historical event. NOT_RUN headings and failed assertions remain unfinished/failed, never product acceptance.'
     write('case-result.json', result)
   }
