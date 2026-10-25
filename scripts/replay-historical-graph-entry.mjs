@@ -147,12 +147,15 @@ async function experiment() {
     const walk = directory => { for (const item of fs.readdirSync(directory, { withFileTypes: true })) { const file = path.join(directory, item.name);if (item.isDirectory()) walk(file);else if (item.isFile()) distFiles[path.relative(path.join(source, 'dist'), file)] = sha(fs.readFileSync(file));else throw Error('Unexpected compiled source file type') } }
     walk(path.join(source, 'dist'));write('original-build-manifest.json', distFiles)
     previewLog = fs.openSync(path.join(root, 'original-preview.log'), 'wx')
-    preview = spawn('npm', ['run', 'preview', '--', '--host', '127.0.0.1', '--port', '4174', '--strictPort'], { cwd: source, env: environment, detached: true, stdio: ['ignore', previewLog, previewLog] })
+    // Original npm preview is exactly `vite preview`. Own its actual Node process
+    // directly, so npm/sh wrappers cannot exit ahead of the server they started.
+    const previewArgs = [path.join(source, 'node_modules/vite/bin/vite.js'), 'preview', '--host', '127.0.0.1', '--port', '4174', '--strictPort']
+    preview = spawn(process.execPath, previewArgs, { cwd: source, env: environment, detached: true, stdio: ['ignore', previewLog, previewLog] })
     previewClosed = new Promise(resolve => {
       preview.once('error', error => resolve({ errorName: error.name }))
       preview.once('close', (exit_code, signal) => resolve({ exit_code, signal }))
     })
-    receipt.preview = { pid: preview.pid, ownedProcessGroup: true, cwd: source, command: ['npm', 'run', 'preview', '--', '--host', '127.0.0.1', '--port', '4174', '--strictPort'] }
+    receipt.preview = { pid: preview.pid, ownedProcessGroup: true, cwd: source, command: [process.execPath, ...previewArgs], originalNpmScript: 'vite preview' }
     expect(Number.isInteger(preview.pid) && preview.pid > 0).toBe(true)
     let ready = false
     for (let attempt = 1; attempt <= 30; attempt++) {
@@ -186,6 +189,11 @@ async function experiment() {
       receipt.preview.closeObservation = closed
       let groupExists = true
       try { process.kill(-preview.pid, 0) } catch (error) { if (error.code === 'ESRCH') groupExists = false }
+      if (groupExists) {
+        try {
+          receipt.preview.remainingGroupProcesses = execFileSync('ps', ['-eo', 'pid=,ppid=,pgid=,stat=,comm='], { encoding: 'utf8', timeout: 2000 }).split('\n').map(line => line.trim().split(/\s+/)).filter(parts => Number(parts[2]) === preview.pid).map(parts => ({ pid: Number(parts[0]), ppid: Number(parts[1]), pgid: Number(parts[2]), state: parts[3], name: parts.slice(4).join(' ') }))
+        } catch (error) { receipt.preview.processStateErrorName = error.name }
+      }
       receipt.preview.cleanup = closed && !groupExists ? 'OWNED_GROUP_EXIT_OBSERVED' : 'UNCONFIRMED'
       if (receipt.preview.cleanup !== 'OWNED_GROUP_EXIT_OBSERVED') { receipt.status = 'INCOMPLETE';process.exitCode = 1 }
     }
