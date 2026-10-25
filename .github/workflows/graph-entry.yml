@@ -154,6 +154,9 @@ jobs:
           PY
           if [ "$layout_exit" -ne 0 ]; then status=1; fi
           GRAPH_LEGACY_EVIDENCE_DIR="$RUNNER_TEMP/graph-entry-legacy" timeout --kill-after=5s 300s node scripts/replay-historical-graph-entry.mjs || status=1
+          if [ "$GITHUB_REF" = refs/heads/main ]; then
+            GRAPH_ENTRY_PROFILE_BASE_URL=https://holiness.uk GRAPH_ENTRY_PROFILE_DIR="$RUNNER_TEMP/graph-entry-canonical" timeout 300s node scripts/graph-entry-profile.mjs || status=1
+          fi
           exit "$status"
 
       - name: Preserve actual successful or failed evidence
@@ -169,6 +172,7 @@ jobs:
             ${{ runner.temp }}/graph-entry-server/
             ${{ runner.temp }}/conversation-layout/
             ${{ runner.temp }}/graph-entry-legacy/
+            ${{ runner.temp }}/graph-entry-canonical/
             dist/assets/MirrorPage-*.js
             dist/assets/RelationshipGraphView-*.js
             dist/assets/index-*.js
