@@ -50,6 +50,17 @@ describe('hash-bound original compiler input, never provider execution', () => {
     expect(() => assertPublishableBuildOutput(Buffer.from('npm run build exited 0'), values)).not.toThrow()
     expect(() => assertPublishableBuildOutput(Buffer.from('compiler-test-private-value'), values)).toThrow('publication refused')
   })
+  it('rejects JSON escaping and decoded Unicode JS literals without executing them', () => {
+    const secret = 'compiler-test-"quoted"\\backslash\nnewline'
+    expect(() => assertPublishableBuildOutput(Buffer.from(JSON.stringify({ value: secret })), [secret])).toThrow('publication refused')
+    const escaped = Array.from(secret).map(char => '\\u' + char.charCodeAt(0).toString(16).padStart(4, '0')).join('')
+    expect(() => assertPublishableBuildOutput(Buffer.from('const value="' + escaped + '";'), [secret], true)).toThrow('publication refused')
+  })
+  it('permits declared public tokens while withholding unrelated service inputs', () => {
+    const values = privateBuildValues({ VITE_MAPBOX_TOKEN: 'compiler-test-public-map', VITE_CESIUM_TOKEN: 'compiler-test-public-cesium', VITE_SERVICE_TOKEN: 'compiler-test-private-service' })
+    expect(values).toEqual(['compiler-test-private-service'])
+    expect(() => assertPublishableBuildOutput(Buffer.from('const token="compiler-test-public-map";'), values, true)).not.toThrow()
+  })
   it('copies supported public defaults without the historical API, provider keys or metadata', () => {
     const value = canonicalPublicBuildEnvironment({}, { VITE_MAPBOX_TOKEN: 'compiler-test-public-map', VITE_API_BASE: api, VITE_DEEPGRAM_API_KEY: 'compiler-test-private', VITE_VERCEL_ENV: 'production' })
     expect(value).toEqual({ VITE_MAPBOX_TOKEN: 'compiler-test-public-map' })

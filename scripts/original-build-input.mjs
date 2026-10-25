@@ -83,9 +83,26 @@ export function recoverOriginalBuildEnvironment(bytes, expected) {
 }
 
 export function privateBuildValues(environment) {
-  return [...new Set(Object.entries(environment).filter(([key, value]) => /KEY|TOKEN|SECRET|OBSERVABILITY/.test(key) && value).map(([, value]) => value))]
+  return [...new Set(Object.entries(environment).filter(([key, value]) => !PUBLIC_BUILD_ENV_KEYS.includes(key) && /KEY|TOKEN|SECRET|OBSERVABILITY/.test(key) && value).map(([, value]) => value))]
 }
 
-export function assertPublishableBuildOutput(bytes, privateValues) {
-  assert(!privateValues.some(value => bytes.includes(Buffer.from(value))), 'Private original input detected in output; publication refused')
+export function assertPublishableBuildOutput(bytes, privateValues, javascript = false) {
+  const containsPrivate = text => privateValues.some(value => text.includes(value))
+  const variants = privateValues.flatMap(value => [value, JSON.stringify(value).slice(1, -1), JSON.stringify(JSON.stringify(value)).slice(1, -1)])
+  assert(!variants.some(value => bytes.includes(Buffer.from(value))), 'Private original input detected in output; publication refused')
+  if (!javascript) return
+  let ast
+  try { ast = parse(bytes.toString('utf8'), { sourceType: 'module' }) }
+  catch { throw Error('Build output syntax invalid; publication refused') }
+  const stack = [ast]
+  while (stack.length) {
+    const node = stack.pop()
+    if (!node || typeof node !== 'object') continue
+    if (node.type === 'StringLiteral') assert(!containsPrivate(node.value), 'Private decoded literal detected; publication refused')
+    if (node.type === 'TemplateElement' && typeof node.value.cooked === 'string') assert(!containsPrivate(node.value.cooked), 'Private decoded template detected; publication refused')
+    for (const value of Object.values(node)) {
+      if (Array.isArray(value)) stack.push(...value)
+      else if (value && typeof value === 'object') stack.push(value)
+    }
+  }
 }
