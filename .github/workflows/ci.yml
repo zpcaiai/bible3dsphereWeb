@@ -54,4 +54,6 @@ jobs:
         run: npm ci
 
       - name: Build
+        env:
+          BUILD_REPRO_F7_INPUT_BASE64: ${{ secrets.BUILD_REPRO_F7_INPUT_BASE64 }}
         run: npm run build

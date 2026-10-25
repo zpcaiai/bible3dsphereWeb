@@ -19,7 +19,9 @@ RECEIPT = {'executed': True, 'pid': os.getpid(), 'status': 'RUNNING', 'phases': 
            'external': {'providers': 'NOT_RUN', 'media': 'NOT_VERIFIED', 'humanReview': 'NOT_APPROVED'}}
 
 def git(root, *args):
-    return subprocess.check_output(['git', *args], cwd=root, text=True, timeout=remaining()).strip()
+    environment = dict(os.environ)
+    environment.pop('BUILD_REPRO_F7_INPUT_BASE64', None)
+    return subprocess.check_output(['git', *args], cwd=root, text=True, env=environment, timeout=remaining()).strip()
 
 def remaining():
     budget = 300 - (time.monotonic() - START)
@@ -48,8 +50,11 @@ def run(name, cwd, command):
     try:
         remaining()
         with log.open('xb') as stream:
+            environment = {**os.environ, 'PYTHONPATH': str(BACKEND / 'backend')}
+            if name not in {'frontend-build', 'production-build-input-controls'}:
+                environment.pop('BUILD_REPRO_F7_INPUT_BASE64', None)
             child = subprocess.Popen(command, cwd=cwd, stdout=stream, stderr=subprocess.STDOUT,
-                                     start_new_session=True, env={**os.environ, 'PYTHONPATH': str(BACKEND / 'backend')})
+                                     start_new_session=True, env=environment)
             row['pid'] = child.pid
             row['executed'] = True
             print(json.dumps(row), flush=True)
@@ -105,6 +110,8 @@ try:
     assert not any(case.find(tag) is not None for case in cases for tag in ['failure', 'error', 'skipped'])
     run('frontend-lint', FRONTEND, ['npm', 'run', 'lint'])
     run('frontend-build', FRONTEND, ['npm', 'run', 'build'])
+    run('production-build-input-controls', FRONTEND, ['node', 'scripts/verify-production-build-parity.mjs',
+        str(OUTPUT / 'build-parity'), str(remaining())])
     after = snapshot()
     (OUTPUT / 'source-after.json').write_text(json.dumps(after, indent=2))
     assert before == after, 'Tracked sources changed during native regression'

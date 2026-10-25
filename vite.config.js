@@ -1,7 +1,13 @@
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 import { fileURLToPath, URL } from 'node:url'
 import { createHash } from 'node:crypto'
+import { readFileSync } from 'node:fs'
+import { publicBuildDefinitions } from './scripts/production-build-contract.mjs'
+import { loadCanonicalPublicBuildEnvironment } from './scripts/original-build-input.mjs'
+
+const projectRoot = fileURLToPath(new URL('.', import.meta.url))
+const deployment = JSON.parse(readFileSync(new URL('./vercel.json', import.meta.url), 'utf8'))
 
 const localApiTarget = process.env.VITE_LOCAL_API_TARGET?.trim() || 'http://localhost:8000'
 
@@ -30,8 +36,12 @@ function precacheManifestPlugin() {
   }
 }
 
-export default defineConfig({
-  envPrefix: ['VITE_', 'NEXT_PUBLIC_'],
+export default defineConfig(async ({ mode, command }) => {
+  const configured = loadEnv(mode, projectRoot, ['VITE_', 'NEXT_PUBLIC_'])
+  const environment = command === 'build' && mode === 'production' ? await loadCanonicalPublicBuildEnvironment(configured) : configured
+  return ({
+  define: publicBuildDefinitions(deployment, environment),
+  envPrefix: [],
   plugins: [react(), precacheManifestPlugin()],
   // 生产构建：移除噪声调试日志（保留 console.warn/error）与 debugger 语句；
   // pure 仅在压缩阶段（build）生效，开发环境日志不受影响。
@@ -95,4 +105,5 @@ export default defineConfig({
       },
     },
   },
+  })
 })

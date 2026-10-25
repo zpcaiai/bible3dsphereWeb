@@ -78,6 +78,8 @@ jobs:
       - run: npm ci
 
       - name: Build exact PR source
+        env:
+          BUILD_REPRO_F7_INPUT_BASE64: ${{ secrets.BUILD_REPRO_F7_INPUT_BASE64 }}
         run: |
           npm run i18n:audit
           timeout 300s npm run build
@@ -426,6 +428,7 @@ jobs:
           PYTHONPATH="$RUNNER_TEMP/backend/backend" python -m pytest --noconftest --collect-only -q "$RUNNER_TEMP/backend/backend/tests"/test_digital_human*.py
       - name: Actual full frontend, backend, lint and build
         env:
+          BUILD_REPRO_F7_INPUT_BASE64: ${{ secrets.BUILD_REPRO_F7_INPUT_BASE64 }}
           REGRESSION_BACKEND_DIR: ${{ runner.temp }}/backend
           REGRESSION_EVIDENCE_DIR: ${{ runner.temp }}/native-regression
         run: timeout 300s python scripts/full-regression.py

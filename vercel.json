@@ -1,5 +1,5 @@
 {
-  "buildCommand": "npm ci && npm run build",
+  "buildCommand": "npm ci && VITE_API_BASE=/api npm run build",
   "outputDirectory": "dist",
   "framework": null,
   "env": {
