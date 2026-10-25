@@ -1,6 +1,6 @@
 // Keep whole import.meta.env references from exporting unrelated deployment or
 // provider variables. These are the existing browser-consumed public settings.
-export const PUBLIC_BUILD_ENV_PREFIXES = Object.freeze([
+export const PUBLIC_BUILD_ENV_KEYS = Object.freeze([
   'VITE_API_BASE', 'VITE_AI_FORMATION_ENABLED',
   'VITE_ATTENTION_MODULE_ENABLED', 'VITE_ATTENTION_AI_ENABLED',
   'VITE_ATTENTION_COMMUNITY_ENABLED', 'VITE_ATTENTION_GROUPS_ENABLED',
@@ -11,12 +11,15 @@ export const PUBLIC_BUILD_ENV_PREFIXES = Object.freeze([
   'VITE_MAP_PROVIDER', 'VITE_TEMPLE_GLTF_URL',
 ])
 
-// Vite envPrefix matches prefixes; filter the final environment by exact name
-// as well, so e.g. VITE_API_BASE_DEBUG_SECRET cannot enter a browser bundle.
-export function constrainPublicBuildEnvironment(environment) {
-  for (const key of Object.keys(environment)) {
-    if ((key.startsWith('VITE_') || key.startsWith('NEXT_PUBLIC_')) && !PUBLIC_BUILD_ENV_PREFIXES.includes(key)) delete environment[key]
+// Explicit definitions also populate whole import.meta.env references. Do this
+// before Vite creates its define plugin; a configResolved filter is too late.
+export function publicBuildDefinitions(deployment, environment) {
+  const definitions = {}
+  for (const key of PUBLIC_BUILD_ENV_KEYS) {
+    if (environment[key] !== undefined) definitions['import.meta.env.' + key] = JSON.stringify(environment[key])
   }
+  definitions['import.meta.env.VITE_API_BASE'] = JSON.stringify(resolvePublicApiBase(deployment, environment))
+  return definitions
 }
 
 // Resolve only the public API input; never export account/provider environment.

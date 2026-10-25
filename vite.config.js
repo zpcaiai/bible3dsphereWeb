@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react'
 import { fileURLToPath, URL } from 'node:url'
 import { createHash } from 'node:crypto'
 import { readFileSync } from 'node:fs'
-import { PUBLIC_BUILD_ENV_PREFIXES, constrainPublicBuildEnvironment, resolvePublicApiBase } from './scripts/production-build-contract.mjs'
+import { publicBuildDefinitions } from './scripts/production-build-contract.mjs'
 
 const projectRoot = fileURLToPath(new URL('.', import.meta.url))
 const deployment = JSON.parse(readFileSync(new URL('./vercel.json', import.meta.url), 'utf8'))
@@ -36,14 +36,9 @@ function precacheManifestPlugin() {
 }
 
 export default defineConfig(({ mode }) => ({
-  define: {
-    'import.meta.env.VITE_API_BASE': JSON.stringify(resolvePublicApiBase(deployment, loadEnv(mode, projectRoot, 'VITE_'))),
-  },
-  envPrefix: PUBLIC_BUILD_ENV_PREFIXES,
-  plugins: [react(), precacheManifestPlugin(), {
-    name: 'public-build-environment',
-    configResolved(config) { constrainPublicBuildEnvironment(config.env) },
-  }],
+  define: publicBuildDefinitions(deployment, loadEnv(mode, projectRoot, ['VITE_', 'NEXT_PUBLIC_'])),
+  envPrefix: [],
+  plugins: [react(), precacheManifestPlugin()],
   // 生产构建：移除噪声调试日志（保留 console.warn/error）与 debugger 语句；
   // pure 仅在压缩阶段（build）生效，开发环境日志不受影响。
   esbuild: {
