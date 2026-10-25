@@ -15,7 +15,7 @@ export const ORIGINAL_BUILD_INPUT = Object.freeze({
 
 export async function fetchOriginalBuildEnvironment(budgetMs = 10000) {
   const deadline = Date.now() + budgetMs, attempts = []
-  for (const origin of ['https://bible3dsphere-8qpybwrwn-zpchoney-6160s-projects.vercel.app', 'https://holiness.uk']) {
+  for (const origin of ['https://holiness.uk']) {
     const attempt = { url: origin + '/assets/JerusalemSandbox-AR_hnVIf.js' };attempts.push(attempt)
     const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'bible-original-input-')), identity = fs.lstatSync(directory)
     const bodyFile = path.join(directory, 'input.js');fs.closeSync(fs.openSync(bodyFile, 'wx', 0o600))
