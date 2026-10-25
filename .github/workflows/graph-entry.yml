@@ -22,6 +22,7 @@ jobs:
     timeout-minutes: 10
     outputs:
       cjk-font-artifact-id: ${{ steps.font-upload.outputs.artifact-id }}
+      graph-artifact-id: ${{ steps.graph-upload.outputs.artifact-id }}
     steps:
       - uses: actions/checkout@v4
 
@@ -119,6 +120,7 @@ jobs:
           done
           curl --fail --silent --max-time 25 http://127.0.0.1:4173/ > /dev/null
           status=0
+          CANONICAL_HTML_MODE=preview CANONICAL_HTML_BASE_URL=http://127.0.0.1:4173 CANONICAL_HTML_EVIDENCE_DIR="$RUNNER_TEMP/canonical-html-preview" timeout --kill-after=5s 120s node scripts/verify-canonical-html.mjs || status=1
           timeout 300s node scripts/graph-entry-profile.mjs || status=1
           GRAPH_ENTRY_PROFILE_DIR="$RUNNER_TEMP/graph-entry-cache-fault" GRAPH_ENTRY_PROFILE_FAULT=chunk-cache-hang timeout 300s node scripts/graph-entry-profile.mjs || status=1
           GRAPH_ENTRY_PROFILE_DIR="$RUNNER_TEMP/graph-entry-catalogue-fault" GRAPH_ENTRY_PROFILE_FAULT=catalogue-failure timeout 300s node scripts/graph-entry-profile.mjs || status=1
@@ -162,6 +164,7 @@ jobs:
           exit "$status"
 
       - name: Preserve actual successful or failed evidence
+        id: graph-upload
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -175,11 +178,13 @@ jobs:
             ${{ runner.temp }}/conversation-layout/
             ${{ runner.temp }}/graph-entry-legacy/
             ${{ runner.temp }}/graph-entry-canonical/
+            ${{ runner.temp }}/canonical-html-preview/
             dist/assets/MirrorPage-*.js
             dist/assets/RelationshipGraphView-*.js
             dist/assets/index-*.js
             dist/assets/*.css
             dist/release-manifest.json
+            dist/index.html
           if-no-files-found: warn
           retention-days: 14
 
@@ -204,10 +209,68 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
 
+  canonical-html-proof:
+    name: Exact raw HTML and real analytics
+    if: github.ref == 'refs/heads/main'
+    needs: [cold-entry, deployment-proof]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Original resource admission before dependencies
+        run: |
+          python3 - <<'PY'
+          import json,os,shutil,time
+          for index in range(2):
+              if index: time.sleep(10)
+              at=time.monotonic(); time.sleep(2)
+              row={'load':os.getloadavg(),'cpus':os.cpu_count(),'freeBytes':shutil.disk_usage('.').free,'sampleSeconds':time.monotonic()-at}
+              row['loadLimit']=min(32,4*row['cpus']); print(json.dumps(row),flush=True)
+              assert row['load'][0]<=row['loadLimit'] and row['freeBytes']>=2*1024**3 and row['sampleSeconds']<=3
+          PY
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - run: npm ci
+      - name: Require the actual current-run build artifact
+        env:
+          GRAPH_ARTIFACT_ID: ${{ needs.cold-entry.outputs.graph-artifact-id }}
+        run: '[[ "$GRAPH_ARTIFACT_ID" =~ ^[0-9]+$ ]]'
+      - uses: actions/download-artifact@v4
+        with:
+          artifact-ids: ${{ needs.cold-entry.outputs.graph-artifact-id }}
+          path: ${{ runner.temp }}/canonical-html-build
+      - name: Compare original HTML bytes and actual browser analytics
+        env:
+          EXPECTED_FRONTEND_SHA: ${{ github.sha }}
+          CANONICAL_HTML_EVIDENCE_DIR: ${{ runner.temp }}/canonical-html-production
+        run: |
+          html_build_directory=$(python3 - <<'PY'
+          import hashlib,json,os,pathlib
+          root=pathlib.Path(os.environ['RUNNER_TEMP'],'canonical-html-build')
+          manifests=list(root.rglob('dist/release-manifest.json'))
+          assert len(manifests)==1, 'Expected one actual current-run CI dist'
+          manifest=manifests[0]; value=json.loads(manifest.read_text())
+          assert value['sourceCommit']==os.environ['GITHUB_SHA']
+          assert hashlib.sha256((manifest.parent/'index.html').read_bytes()).hexdigest()==value['files']['index.html']
+          print(manifest.parent)
+          PY
+          )
+          export CANONICAL_HTML_EXPECTED_DIR="$html_build_directory"
+          timeout --kill-after=5s 120s node scripts/verify-canonical-html.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: canonical-html-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/canonical-html-production/
+          if-no-files-found: error
+          retention-days: 14
+
   production-all100:
     name: Actual deployed main all100 mobile regression
     if: github.ref == 'refs/heads/main' && ((github.event_name == 'push' && contains(github.event.head_commit.message, '[verify-all100]')) || (github.event_name == 'workflow_dispatch' && inputs.all100))
-    needs: [cold-entry, native-regression, deployment-proof]
+    needs: [cold-entry, native-regression, deployment-proof, canonical-html-proof]
     runs-on: ubuntu-latest
     timeout-minutes: 45
     concurrency:

@@ -93,6 +93,8 @@ export default defineConfig(async ({ mode, command }) => {
   preview: {
     port: 4173,
     host: '0.0.0.0',
+    // Exercise the actual production CSP before release, including analytics.
+    headers: Object.fromEntries(deployment.headers.find(rule => rule.source === '/(.*)').headers.map(header => [header.key, header.value])),
     proxy: {
       '/api': {
         target: localApiTarget,
