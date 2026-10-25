@@ -21,6 +21,19 @@ export function writeReleaseManifest(dist, sourceCommit) {
   record(path.join(dist, 'index.html'))
   walk(path.join(dist, 'assets'))
   const manifest = { schemaVersion: 1, sourceCommit, files }
+  // Public boot entries are outside the historical index/assets map. Bind them
+  // separately so new runtime code cannot escape CI/production byte checks.
+  const bootstrapPaths = ['js/sw-cleanup.js', 'js/lang-init.js']
+  const present = bootstrapPaths.map(file => fs.existsSync(path.join(dist, file)))
+  if (present.some(Boolean)) {
+    if (!present.every(Boolean)) throw new Error('Incomplete public bootstrap output')
+    manifest.runtimeFiles = {}
+    for (const file of bootstrapPaths) {
+      const target = path.join(dist, file)
+      if (!fs.lstatSync(target).isFile()) throw new Error('Unexpected public bootstrap type')
+      manifest.runtimeFiles[file] = createHash('sha256').update(fs.readFileSync(target)).digest('hex')
+    }
+  }
   fs.writeFileSync(path.join(dist, 'release-manifest.json'), JSON.stringify(manifest, null, 2) + '\n')
   return manifest
 }
@@ -31,5 +44,6 @@ if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.ar
   const platformCommit = process.env.VERCEL_GIT_COMMIT_SHA
   if (gitCommit && platformCommit && gitCommit !== platformCommit) throw new Error('Git and deployment source commits differ')
   const manifest = writeReleaseManifest(path.resolve('dist'), platformCommit || gitCommit)
+  if (Object.keys(manifest.runtimeFiles || {}).length !== 2) throw new Error('Production public bootstrap output missing')
   console.log(`Release manifest: ${manifest.sourceCommit}, ${Object.keys(manifest.files).length} files`)
 }
