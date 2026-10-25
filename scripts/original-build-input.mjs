@@ -88,8 +88,14 @@ export function recoverOriginalBuildEnvironment(bytes, expected) {
     names.add(key)
     if (['BASE_URL', 'MODE', 'DEV', 'PROD', 'SSR'].includes(key)) continue
     assert(/^(VITE_|NEXT_PUBLIC_)[A-Z0-9_]+$/.test(key), 'Original input contains a nonpublic namespace')
-    assert(property.value.type === 'StringLiteral', 'Original input value is not a string literal')
-    environment[key] = property.value.value
+    const literal = property.value
+    if (literal.type === 'TemplateLiteral') {
+      assert(literal.expressions.length === 0 && literal.quasis.length === 1 && typeof literal.quasis[0].value.cooked === 'string', 'Original input template contains an expression')
+      environment[key] = literal.quasis[0].value.cooked
+    } else {
+      assert(literal.type === 'StringLiteral', 'Original input value is not a string literal')
+      environment[key] = literal.value
+    }
   }
   assert(environment.VITE_VERCEL_GIT_COMMIT_SHA === expected.source, 'Original input source identity mismatch')
   assert(environment.VITE_API_BASE === expected.api, 'Original input API identity mismatch')

@@ -19,6 +19,17 @@ describe('hash-bound original compiler input, never provider execution', () => {
     const bytes = moduleFor('')
     expect(() => recoverOriginalBuildEnvironment(Buffer.concat([bytes, Buffer.from(' ')]), expected(bytes))).toThrow('digest mismatch')
   })
+  it('decodes minified multiline constant templates exactly', () => {
+    const bytes = moduleFor(',VITE_VERCEL_GIT_COMMIT_MESSAGE:`compiler-test first\nsecond`')
+    expect(recoverOriginalBuildEnvironment(bytes, expected(bytes)).VITE_VERCEL_GIT_COMMIT_MESSAGE).toBe('compiler-test first\nsecond')
+  })
+  it('rejects interpolation without executing template expressions', () => {
+    const bytes = moduleFor(',VITE_SERVICE_TOKEN:`compiler-test-${globalThis.__inputExecuted=true}`')
+    globalThis.__inputExecuted = false
+    expect(() => recoverOriginalBuildEnvironment(bytes, expected(bytes))).toThrow('template contains an expression')
+    expect(globalThis.__inputExecuted).toBe(false)
+    delete globalThis.__inputExecuted
+  })
   it('rejects a different source identity without printing values', () => {
     const bytes = moduleFor('')
     expect(() => recoverOriginalBuildEnvironment(bytes, { ...expected(bytes), source: 'b'.repeat(40) })).toThrow('source identity mismatch')
