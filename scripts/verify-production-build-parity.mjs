@@ -5,7 +5,7 @@ import os from 'node:os'
 import crypto from 'node:crypto'
 import assert from 'node:assert/strict'
 import { spawn, execFileSync } from 'node:child_process'
-import { assertPublishableBuildOutput, canonicalPublicBuildEnvironment, fetchOriginalBuildEnvironment, privateBuildValues } from './original-build-input.mjs'
+import { assertPublishableBuildOutput, fetchOriginalBuildEnvironment, loadCanonicalPublicBuildEnvironment, privateBuildValues } from './original-build-input.mjs'
 
 const ORIGINAL = 'f7fac42f96f6a45be8c1601df1fa7d0a37bff7d8'
 // Pinned complete 311-entry file maps from the preserved real f7 CI/production manifests.
@@ -115,13 +115,7 @@ try {
     const environment = { ...process.env, VERCEL_GIT_COMMIT_SHA: ORIGINAL }
     for (const key of Object.keys(environment)) if (key.startsWith('VITE_') || key.startsWith('NEXT_PUBLIC_')) delete environment[key]
     if (name === 'crossOrigin') Object.assign(environment, originalEnvironment)
-    if (name === 'canonical') {
-      const configured = { ...process.env, VITE_API_BASE: api }
-      // Match loadCanonicalPublicBuildEnvironment: either explicit map alias,
-      // including an empty value, disables historical defaults for this build.
-      const defaults = configured.VITE_MAPBOX_TOKEN !== undefined || configured.NEXT_PUBLIC_MAPBOX_TOKEN !== undefined ? {} : originalEnvironment
-      Object.assign(environment, canonicalPublicBuildEnvironment(configured, defaults))
-    }
+    if (name === 'canonical') Object.assign(environment, await loadCanonicalPublicBuildEnvironment({ ...process.env, VITE_API_BASE: api }))
     if (api !== undefined) environment.VITE_API_BASE = api
     await run('build-' + name, 'npm', ['run', 'build'], source, environment)
     assert.deepEqual(inventory(), before)
