@@ -27,3 +27,22 @@
     }
   } catch (e) { /* ignore */ }
 })();
+
+/* 使用现有统计站点；由外置启动链加载，避免 CDN 改写入口 HTML。 */
+(function () {
+  function startAnalytics() {
+    if (document.querySelector('script[data-cf-beacon]')) return;
+    var beacon = document.createElement('script');
+    beacon.async = true;
+    beacon.setAttribute('async', '');
+    beacon.type = 'module';
+    beacon.src = 'https://static.cloudflareinsights.com/beacon.min.js';
+    beacon.setAttribute('data-cf-beacon', '{"token":"d51f673030244340b8c447d622dd2afb"}');
+    document.body.appendChild(beacon);
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', startAnalytics, { once: true });
+  } else {
+    startAnalytics();
+  }
+})();

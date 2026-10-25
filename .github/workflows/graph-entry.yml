@@ -185,6 +185,8 @@ jobs:
             dist/assets/*.css
             dist/release-manifest.json
             dist/index.html
+            dist/js/lang-init.js
+            dist/js/sw-cleanup.js
           if-no-files-found: warn
           retention-days: 14
 

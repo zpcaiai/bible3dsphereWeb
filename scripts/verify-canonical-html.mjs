@@ -20,15 +20,13 @@ export function verifyCanonicalHTML({ html, expectedHTML, manifest, expectedMani
   assert.equal(sha256(html), sha256(expectedHTML), 'Canonical raw HTML differs from actual CI HTML; no normalization allowed')
   const document = new JSDOM(html.toString('utf8')).window.document
   const beacons = [...document.querySelectorAll('script[data-cf-beacon]')]
-  assert.equal(beacons.length, 1, 'Exactly one existing-provider beacon is required')
-  const beacon = beacons[0]
-  assert.equal(beacon.getAttribute('src'), BEACON_URL)
-  assert.equal(beacon.type, 'module')
-  assert(beacon.hasAttribute('async'), 'Analytics must not delay app DOM readiness')
-  assert.equal(beacon.parentElement, document.body)
-  const config = JSON.parse(beacon.dataset.cfBeacon)
-  assert.deepEqual(Object.keys(config), ['token'])
-  assert.equal(sha256(config.token), siteIdentitySHA256, 'Existing analytics site identity changed')
+  assert.equal(beacons.length, 0, 'Raw HTML must not contain edge-injected analytics')
+  const bootstrapPaths = ['js/sw-cleanup.js', 'js/lang-init.js']
+  assert.deepEqual(Object.keys(manifest.runtimeFiles || {}), bootstrapPaths, 'Both public bootstrap identities are required')
+  for (const file of bootstrapPaths) {
+    assert.match(manifest.runtimeFiles[file], /^[a-f0-9]{64}$/)
+    assert(document.querySelector(`script[src="/${file}"]`), 'Original external boot entry missing')
+  }
   const policy = headers['content-security-policy'] || ''
   const scripts = policy.split(';').map(value => value.trim()).find(value => value.startsWith('script-src '))
   assert(scripts?.split(/\s+/).includes(BEACON_URL), 'Effective CSP blocks the exact analytics script')
@@ -36,7 +34,28 @@ export function verifyCanonicalHTML({ html, expectedHTML, manifest, expectedMani
     const cache = (headers['cache-control'] || '').split(',').map(value => value.trim())
     for (const value of ['public', 'max-age=0', 'must-revalidate', 'no-transform']) assert(cache.includes(value), 'Effective HTML cache policy missing ' + value)
   }
-  return { rawHTMLBytesEqual: true, rawHTMLSHA256: sha256(html), actualCIHTMLSHA256: sha256(expectedHTML), beaconCount: beacons.length, siteIdentitySHA256 }
+  return { rawHTMLBytesEqual: true, rawHTMLSHA256: sha256(html), actualCIHTMLSHA256: sha256(expectedHTML), rawEdgeBeaconCount: beacons.length, runtimeFileCount: bootstrapPaths.length }
+}
+
+export function verifyRuntimeFile({ file, actual, expected, manifest }) {
+  assert(['js/sw-cleanup.js', 'js/lang-init.js'].includes(file), 'Unexpected bootstrap path')
+  assert.equal(sha256(actual), sha256(expected), 'Served public bootstrap differs from actual CI bytes')
+  assert.equal(sha256(actual), manifest.runtimeFiles?.[file], 'Public bootstrap manifest mismatch')
+  return { file, bytes: actual.length, sha256: sha256(actual), actualCIBytesEqual: true }
+}
+
+export function verifyBeaconDOM(beacons) {
+  assert.equal(beacons.length, 1, 'Exactly one existing-provider beacon is required in the real DOM')
+  const beacon = beacons[0]
+  assert.equal(beacon.src, BEACON_URL)
+  assert.equal(beacon.type, 'module')
+  assert.equal(beacon.async, true, 'Analytics must not delay app DOM readiness')
+  assert.equal(beacon.parent, 'BODY')
+  assert.equal(beacon.text, '')
+  const config = JSON.parse(beacon.configuration)
+  assert.deepEqual(Object.keys(config), ['token'])
+  assert.equal(sha256(config.token), siteIdentitySHA256, 'Existing analytics site identity changed')
+  return { beaconCount: beacons.length, siteIdentitySHA256, async: beacon.async }
 }
 
 export function verifyAnalyticsTraffic(input, production, deadlineMs = Infinity) {
@@ -64,7 +83,7 @@ async function main() {
   const env = { ...process.env };delete env.BUILD_REPRO_F7_INPUT_BASE64
   const git = (...args) => execFileSync('git', args, { encoding: 'utf8', env, timeout: 5000 }).trim()
   const source = git('rev-parse', 'HEAD')
-  const receipt = { executed: true, pid: process.pid, command: process.argv, mode, source, status: 'RUNNING', admission: [], pages: [], network: [],
+  const receipt = { executed: true, pid: process.pid, command: process.argv, mode, source, status: 'RUNNING', admission: [], pages: [], runtimeFiles: [], network: [],
     scope: 'Exact decoded HTTP entity bytes against this CI build; real Chrome script/CSP/analytics traffic. No historical cause, dashboard, digital-human provider, media or human approval.' }
   let browser
   const started = performance.now()
@@ -102,6 +121,15 @@ async function main() {
       writeFileSync(join(output, `canonical-${i}.headers.json`), JSON.stringify(headers, null, 2))
       receipt.pages.push({ path, ...verifyCanonicalHTML({ html, expectedHTML, manifest, expectedManifest, expectedSource, headers, production }) })
     }
+    for (const file of ['js/sw-cleanup.js', 'js/lang-init.js']) {
+      const expected = readFileSync(join(expectedDirectory, file))
+      assert.deepEqual(expected, readFileSync(join('public', file)), 'CI public bootstrap differs from checked-out source')
+      const response = await context.request.get(new URL('/' + file, base).href, { timeout: 25000 })
+      assert.equal(response.status(), 200)
+      const actual = await response.body()
+      writeFileSync(join(output, file.replace('/', '-')), actual)
+      receipt.runtimeFiles.push(verifyRuntimeFile({ file, actual, expected, manifest }))
+    }
     const page = await context.newPage()
     await page.addInitScript(() => {
       window.__analyticsCSPViolations = []
@@ -126,6 +154,10 @@ async function main() {
     const navHTML = await navigation.body();writeFileSync(join(output, 'browser-navigation.html'), navHTML)
     verifyCanonicalHTML({ html: navHTML, expectedHTML, manifest, expectedManifest, expectedSource, headers: navigation.headers(), production })
     assert.equal(await page.locator('script[data-cf-beacon]').count(), 1)
+    receipt.runtimeBeacon = verifyBeaconDOM(await page.locator('script[data-cf-beacon]').evaluateAll(nodes => nodes.map(node => ({
+      src: node.src, type: node.type, async: node.hasAttribute('async'), parent: node.parentElement.tagName,
+      text: node.textContent, configuration: node.dataset.cfBeacon,
+    }))))
     const observationStart = performance.now()
     receipt.analyticsDeadlineMs = observationStart - started + 5000
     while (performance.now() - observationStart < 5000) {

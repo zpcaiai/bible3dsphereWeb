@@ -1,12 +1,13 @@
 import { describe, expect, it } from 'vitest'
 import { readFileSync } from 'node:fs'
 import { createHash } from 'node:crypto'
-import { BEACON_URL, verifyCanonicalHTML, verifyAnalyticsTraffic } from '../../scripts/verify-canonical-html.mjs'
+import { BEACON_URL, verifyCanonicalHTML, verifyAnalyticsTraffic, verifyRuntimeFile, verifyBeaconDOM } from '../../scripts/verify-canonical-html.mjs'
 
 const source = '9e736ac26813d9c21838bc8e0a06e8d78d50feb5'
 const html = readFileSync('index.html')
 const digest = value => createHash('sha256').update(value).digest('hex')
-const manifest = { sourceCommit: source, files: { 'index.html': digest(html) } }
+const bootstraps = Object.fromEntries(['js/sw-cleanup.js', 'js/lang-init.js'].map(file => [file, readFileSync('public/' + file)]))
+const manifest = { sourceCommit: source, files: { 'index.html': digest(html) }, runtimeFiles: Object.fromEntries(Object.entries(bootstraps).map(([file, bytes]) => [file, digest(bytes)])) }
 const headers = { 'content-security-policy': `script-src 'self' ${BEACON_URL}`, 'cache-control': 'public, max-age=0, must-revalidate, no-transform' }
 const input = () => ({ html, expectedHTML: html, manifest: structuredClone(manifest), expectedManifest: structuredClone(manifest), expectedSource: source, headers: { ...headers }, production: true })
 const traffic = () => [
@@ -17,7 +18,7 @@ const traffic = () => [
 
 describe('strict canonical HTML verifier', () => {
   it('accepts exact raw bytes and the actual expected manifest', () => {
-    expect(verifyCanonicalHTML(input())).toMatchObject({ rawHTMLBytesEqual: true, rawHTMLSHA256: digest(html), beaconCount: 1 })
+    expect(verifyCanonicalHTML(input())).toMatchObject({ rawHTMLBytesEqual: true, rawHTMLSHA256: digest(html), rawEdgeBeaconCount: 0, runtimeFileCount: 2 })
   })
   it('rejects an appended edge beacon rather than normalizing it away', () => {
     const value = input();value.html = Buffer.concat([html, Buffer.from('<script data-cf-beacon="{}"></script>')])
@@ -44,6 +45,27 @@ describe('strict canonical HTML verifier', () => {
     expect(verifyCanonicalHTML(value).rawHTMLBytesEqual).toBe(true)
     value.production = true
     expect(() => verifyCanonicalHTML(value)).toThrow('cache policy')
+  })
+  it('rejects a missing runtime source map even when all original app-map hashes agree', () => {
+    const value = input();delete value.manifest.runtimeFiles;delete value.expectedManifest.runtimeFiles
+    expect(() => verifyCanonicalHTML(value)).toThrow('Both public bootstrap identities')
+  })
+})
+
+describe('separately bound public boot code and actual DOM', () => {
+  it('requires actual served boot bytes to equal both CI bytes and the runtime map', () => {
+    const file = 'js/lang-init.js', expected = bootstraps[file]
+    expect(verifyRuntimeFile({ file, expected, actual: expected, manifest }).actualCIBytesEqual).toBe(true)
+    expect(() => verifyRuntimeFile({ file, expected, actual: Buffer.concat([expected, Buffer.from('\n')]), manifest })).toThrow('actual CI bytes')
+    const wrong = structuredClone(manifest);wrong.runtimeFiles[file] = '0'.repeat(64)
+    expect(() => verifyRuntimeFile({ file, expected, actual: expected, manifest: wrong })).toThrow('manifest mismatch')
+  })
+  it('retains exact real-DOM provider, identity and nonblocking requirements', () => {
+    const beacon = { src: BEACON_URL, type: 'module', async: true, parent: 'BODY', text: '', configuration: '{"token":"d51f673030244340b8c447d622dd2afb"}' }
+    expect(verifyBeaconDOM([beacon]).beaconCount).toBe(1)
+    expect(() => verifyBeaconDOM([beacon, beacon])).toThrow('Exactly one')
+    expect(() => verifyBeaconDOM([{ ...beacon, async: false }])).toThrow('DOM readiness')
+    expect(() => verifyBeaconDOM([{ ...beacon, configuration: '{"token":"another-site"}' }])).toThrow('site identity changed')
   })
 })
 
