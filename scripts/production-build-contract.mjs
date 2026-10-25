@@ -11,6 +11,14 @@ export const PUBLIC_BUILD_ENV_PREFIXES = Object.freeze([
   'VITE_MAP_PROVIDER', 'VITE_TEMPLE_GLTF_URL',
 ])
 
+// Vite envPrefix matches prefixes; filter the final environment by exact name
+// as well, so e.g. VITE_API_BASE_DEBUG_SECRET cannot enter a browser bundle.
+export function constrainPublicBuildEnvironment(environment) {
+  for (const key of Object.keys(environment)) {
+    if ((key.startsWith('VITE_') || key.startsWith('NEXT_PUBLIC_')) && !PUBLIC_BUILD_ENV_PREFIXES.includes(key)) delete environment[key]
+  }
+}
+
 // Resolve only the public API input; never export account/provider environment.
 export function resolvePublicApiBase(deployment, environment) {
   const fallback = deployment?.env?.VITE_API_BASE

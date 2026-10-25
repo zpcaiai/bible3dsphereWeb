@@ -10,6 +10,7 @@ describe('public production build contract', () => {
   it('uses actual Vite configuration to exclude unrelated keys and deployment metadata', async () => {
     const inputs = {
       VITE_DEEPGRAM_API_KEY: 'regression-only-unused-provider-input',
+      VITE_API_BASE_DEBUG_SECRET: 'regression-only-same-prefix-input',
       VITE_VERCEL_DEPLOYMENT_ID: 'regression-only-deployment-metadata',
       NEXT_PUBLIC_VERCEL_OBSERVABILITY_CLIENT_CONFIG: 'regression-only-metadata',
       VITE_MAPBOX_TOKEN: 'regression-only-public-map-token',
@@ -21,11 +22,15 @@ describe('public production build contract', () => {
       Object.assign(process.env, inputs)
       const actual = await resolveConfig({ logLevel: 'silent' }, 'build', 'production')
       expect(actual.env).not.toHaveProperty('VITE_DEEPGRAM_API_KEY')
+      expect(actual.env).not.toHaveProperty('VITE_API_BASE_DEBUG_SECRET')
       expect(actual.env).not.toHaveProperty('VITE_VERCEL_DEPLOYMENT_ID')
       expect(actual.env).not.toHaveProperty('NEXT_PUBLIC_VERCEL_OBSERVABILITY_CLIENT_CONFIG')
       expect(actual.env.VITE_MAPBOX_TOKEN).toBe(inputs.VITE_MAPBOX_TOKEN)
       expect(actual.env.VITE_ATTENTION_GROUPS_ENABLED).toBe('false')
       expect(actual.env.VITE_HYMN_AUDIO_BASE).toBe(inputs.VITE_HYMN_AUDIO_BASE)
+      expect(actual.env.MODE).toBe('production')
+      expect(actual.env.PROD).toBe(true)
+      expect(actual.env.DEV).toBe(false)
     } finally {
       for (const [key, value] of Object.entries(before)) {
         if (value === undefined) delete process.env[key]
