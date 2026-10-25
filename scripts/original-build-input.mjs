@@ -18,7 +18,7 @@ export async function fetchOriginalBuildEnvironment(budgetMs = 10000) {
       const remaining = Math.min(5000, deadline - Date.now());assert(remaining > 0)
       // curl honours the host's configured HTTPS transport; body stays in this
       // private pipe, never in shell arguments, stdout logs or an artifact file.
-      attempt.command = ['curl', '--http1.1', '--compressed', '--fail', '--silent', '--max-time', String(remaining / 1000), '--max-filesize', String(1024 ** 2), '--write-out', '\n%{http_code}', attempt.url]
+      attempt.command = ['curl', '--http1.1', '--ipv4', '--compressed', '--fail', '--silent', '--max-time', String(remaining / 1000), '--max-filesize', String(1024 ** 2), '--write-out', '\n%{http_code}', attempt.url]
       attempt.startedAt = Date.now()
       const child = spawn(attempt.command[0], attempt.command.slice(1), { stdio: ['ignore', 'pipe', 'pipe'] })
       attempt.pid = child.pid;const chunks = [];let size = 0
