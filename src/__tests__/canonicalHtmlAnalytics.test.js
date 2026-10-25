@@ -39,12 +39,18 @@ describe('canonical HTML integrity with the existing analytics service', () => {
     expect(beacons[0].textContent).toBe('')
   })
 
-  it('reuses the publicly served site identity without unrelated provider fields', () => {
+  it('reuses the publicly served site identity and original proxy metadata', () => {
     expect(beacons).toHaveLength(1)
     const configuration = JSON.parse(beacons[0].dataset.cfBeacon)
-    expect(Object.keys(configuration)).toEqual(['token'])
+    expect(Object.keys(configuration)).toEqual(['version', 'token', 'r', 'spa'])
     expect(createHash('sha256').update(configuration.token).digest('hex'))
       .toBe('4d52b65daf1a65696bbd3bcda4131d1042987ce085dd48447cd2b897d0f12023')
+  })
+
+  it('preserves the complete original edge beacon metadata byte identity', () => {
+    expect(createHash('sha256').update(beacons[0].dataset.cfBeacon).digest('hex'))
+      .toBe('38d12d8ab8604c6ad9475a453416cb6f24cc238783d0ce59975a4b8d0c52ec8c')
+    expect(JSON.parse(beacons[0].dataset.cfBeacon)).toMatchObject({ version: '2024.11.0', r: 1, spa: 2 })
   })
 
   it('does not duplicate the provider when the existing boot entry runs twice', () => {

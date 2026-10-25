@@ -9,7 +9,9 @@ import { JSDOM } from 'jsdom'
 import { chromium } from '@playwright/test'
 
 export const BEACON_URL = 'https://static.cloudflareinsights.com/beacon.min.js'
+const ingestionURL = 'https://holiness.uk/cdn-cgi/rum'
 const siteIdentitySHA256 = '4d52b65daf1a65696bbd3bcda4131d1042987ce085dd48447cd2b897d0f12023'
+const originalConfigurationSHA256 = '38d12d8ab8604c6ad9475a453416cb6f24cc238783d0ce59975a4b8d0c52ec8c'
 const sha256 = bytes => createHash('sha256').update(bytes).digest('hex')
 
 export function verifyCanonicalHTML({ html, expectedHTML, manifest, expectedManifest, expectedSource, headers, production }) {
@@ -53,9 +55,10 @@ export function verifyBeaconDOM(beacons) {
   assert.equal(beacon.parent, 'BODY')
   assert.equal(beacon.text, '')
   const config = JSON.parse(beacon.configuration)
-  assert.deepEqual(Object.keys(config), ['token'])
+  assert.deepEqual(Object.keys(config), ['version', 'token', 'r', 'spa'])
   assert.equal(sha256(config.token), siteIdentitySHA256, 'Existing analytics site identity changed')
-  return { beaconCount: beacons.length, siteIdentitySHA256, async: beacon.async }
+  assert.equal(sha256(beacon.configuration), originalConfigurationSHA256, 'Original proxy routing and SPA metadata changed')
+  return { beaconCount: beacons.length, siteIdentitySHA256, configurationSHA256: originalConfigurationSHA256, async: beacon.async }
 }
 
 export function verifyAnalyticsTraffic(input, production, deadlineMs = Infinity) {
@@ -65,7 +68,7 @@ export function verifyAnalyticsTraffic(input, production, deadlineMs = Infinity)
   assert.equal(scripts[0].status, 200, 'Actual provider script did not load')
   const posts = rows.filter(row => row.method === 'POST' && row.path === '/cdn-cgi/rum')
   assert(posts.some(row => row.kind === 'request'), 'No actual browser-generated analytics request')
-  const accepted = posts.filter(row => row.kind === 'response' && row.status >= 200 && row.status < 300)
+  const accepted = posts.filter(row => row.kind === 'response' && row.url === ingestionURL && row.status === 204)
   if (production) assert(accepted.length > 0, 'No accepted real analytics POST within original five-second observation')
   return { scriptLoads: scripts.length, actualPOSTRequests: posts.filter(row => row.kind === 'request').length, acceptedPOSTResponses: accepted.length,
     acceptance: production ? 'REAL_BROWSER_HTTP_ACCEPTED_NOT_DASHBOARD_CERTIFICATION' : 'PREVIEW_SCRIPT_AND_CSP_ONLY_NOT_PROVIDER_ACCEPTANCE' }
@@ -162,7 +165,7 @@ async function main() {
     receipt.analyticsDeadlineMs = observationStart - started + 5000
     while (performance.now() - observationStart < 5000) {
       const script = receipt.network.find(row => row.kind === 'response' && row.url === BEACON_URL)
-      const post = receipt.network.find(row => row.method === 'POST' && row.path === '/cdn-cgi/rum' && (production ? row.kind === 'response' && row.status >= 200 && row.status < 300 : row.kind === 'request'))
+      const post = receipt.network.find(row => row.method === 'POST' && row.path === '/cdn-cgi/rum' && (production ? row.kind === 'response' && row.url === ingestionURL && row.status === 204 : row.kind === 'request'))
       if (script && post) break
       await new Promise(resolve => setTimeout(resolve, 50))
     }
