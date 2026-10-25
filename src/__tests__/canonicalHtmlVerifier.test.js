@@ -12,8 +12,8 @@ const headers = { 'content-security-policy': `script-src 'self' ${BEACON_URL}`, 
 const input = () => ({ html, expectedHTML: html, manifest: structuredClone(manifest), expectedManifest: structuredClone(manifest), expectedSource: source, headers: { ...headers }, production: true })
 const traffic = () => [
   { kind: 'response', url: BEACON_URL, method: 'GET', path: '/beacon.min.js', status: 200 },
-  { kind: 'request', url: 'https://cloudflareinsights.com/cdn-cgi/rum', method: 'POST', path: '/cdn-cgi/rum' },
-  { kind: 'response', url: 'https://cloudflareinsights.com/cdn-cgi/rum', method: 'POST', path: '/cdn-cgi/rum', status: 204 },
+  { kind: 'request', url: 'https://holiness.uk/cdn-cgi/rum', method: 'POST', path: '/cdn-cgi/rum' },
+  { kind: 'response', url: 'https://holiness.uk/cdn-cgi/rum', method: 'POST', path: '/cdn-cgi/rum', status: 204 },
 ]
 
 describe('strict canonical HTML verifier', () => {
@@ -61,11 +61,20 @@ describe('separately bound public boot code and actual DOM', () => {
     expect(() => verifyRuntimeFile({ file, expected, actual: expected, manifest: wrong })).toThrow('manifest mismatch')
   })
   it('retains exact real-DOM provider, identity and nonblocking requirements', () => {
-    const beacon = { src: BEACON_URL, type: 'module', async: true, parent: 'BODY', text: '', configuration: '{"token":"d51f673030244340b8c447d622dd2afb"}' }
+    const beacon = { src: BEACON_URL, type: 'module', async: true, parent: 'BODY', text: '', configuration: '{"version":"2024.11.0","token":"d51f673030244340b8c447d622dd2afb","r":1,"spa":2}' }
     expect(verifyBeaconDOM([beacon]).beaconCount).toBe(1)
     expect(() => verifyBeaconDOM([beacon, beacon])).toThrow('Exactly one')
     expect(() => verifyBeaconDOM([{ ...beacon, async: false }])).toThrow('DOM readiness')
-    expect(() => verifyBeaconDOM([{ ...beacon, configuration: '{"token":"another-site"}' }])).toThrow('site identity changed')
+    expect(() => verifyBeaconDOM([{ ...beacon, configuration: beacon.configuration.replace('d51f673030244340b8c447d622dd2afb', 'another-site') }])).toThrow('site identity changed')
+  })
+  it('rejects missing or changed original proxy routing and SPA metadata', () => {
+    const original = { version: '2024.11.0', token: 'd51f673030244340b8c447d622dd2afb', r: 1, spa: 2 }
+    const beacon = { src: BEACON_URL, type: 'module', async: true, parent: 'BODY', text: '' }
+    for (const key of ['version', 'r', 'spa']) {
+      const missing = { ...original };delete missing[key]
+      expect(() => verifyBeaconDOM([{ ...beacon, configuration: JSON.stringify(missing) }])).toThrow()
+      expect(() => verifyBeaconDOM([{ ...beacon, configuration: JSON.stringify({ ...original, [key]: 'changed' }) }])).toThrow()
+    }
   })
 })
 
@@ -84,6 +93,12 @@ describe('analytics traffic assertions', () => {
     const rejected = traffic();rejected[2].status = 403
     expect(() => verifyAnalyticsTraffic(rejected, true)).toThrow('No accepted real analytics POST')
     expect(() => verifyAnalyticsTraffic(traffic().slice(0, 1), true)).toThrow('No actual browser-generated')
+  })
+  it('rejects global-site204 and same-origin HTML fallback200 as proxy analytics acceptance', () => {
+    const wrongEndpoint = traffic().map(row => row.path === '/cdn-cgi/rum' ? { ...row, url: 'https://cloudflareinsights.com/cdn-cgi/rum' } : row)
+    expect(() => verifyAnalyticsTraffic(wrongEndpoint, true)).toThrow('No accepted real analytics POST')
+    const htmlFallback = traffic();htmlFallback[2].status = 200
+    expect(() => verifyAnalyticsTraffic(htmlFallback, true)).toThrow('No accepted real analytics POST')
   })
   it('does not promote preview script/CSP coverage to provider acceptance', () => {
     expect(verifyAnalyticsTraffic(traffic().slice(0, 2), false)).toMatchObject({ acceptedPOSTResponses: 0, acceptance: 'PREVIEW_SCRIPT_AND_CSP_ONLY_NOT_PROVIDER_ACCEPTANCE' })

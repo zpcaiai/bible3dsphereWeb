@@ -37,7 +37,7 @@
     beacon.setAttribute('async', '');
     beacon.type = 'module';
     beacon.src = 'https://static.cloudflareinsights.com/beacon.min.js';
-    beacon.setAttribute('data-cf-beacon', '{"token":"d51f673030244340b8c447d622dd2afb"}');
+    beacon.setAttribute('data-cf-beacon', '{"version":"2024.11.0","token":"d51f673030244340b8c447d622dd2afb","r":1,"spa":2}');
     document.body.appendChild(beacon);
   }
   if (document.readyState === 'loading') {
