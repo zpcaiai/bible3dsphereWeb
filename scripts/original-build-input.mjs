@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import { createHash } from 'node:crypto'
 import { parse } from '@babel/parser'
+import { spawn } from 'node:child_process'
 import { PUBLIC_BUILD_ENV_KEYS } from './production-build-contract.mjs'
 
 export const ORIGINAL_BUILD_INPUT = Object.freeze({
@@ -15,16 +16,29 @@ export async function fetchOriginalBuildEnvironment(budgetMs = 10000) {
     const attempt = { url: origin + '/assets/JerusalemSandbox-AR_hnVIf.js' };attempts.push(attempt)
     try {
       const remaining = Math.min(5000, deadline - Date.now());assert(remaining > 0)
-      const response = await fetch(attempt.url, { signal: AbortSignal.timeout(remaining) })
-      attempt.http = response.status;assert(response.ok)
-      const chunks = [];let size = 0
-      for await (const chunk of response.body) { size += chunk.length;assert(size <= 1024 ** 2);chunks.push(chunk) }
-      const bytes = Buffer.concat(chunks), environment = recoverOriginalBuildEnvironment(bytes, ORIGINAL_BUILD_INPUT)
+      // curl honours the host's configured HTTPS transport; body stays in this
+      // private pipe, never in shell arguments, stdout logs or an artifact file.
+      attempt.command = ['curl', '--http1.1', '--compressed', '--fail', '--silent', '--max-time', String(remaining / 1000), '--max-filesize', String(1024 ** 2), '--write-out', '\n%{http_code}', attempt.url]
+      attempt.startedAt = Date.now()
+      const child = spawn(attempt.command[0], attempt.command.slice(1), { stdio: ['ignore', 'pipe', 'pipe'] })
+      attempt.pid = child.pid;const chunks = [];let size = 0
+      const timer = setTimeout(() => { attempt.deadlineExceeded = true;child.kill('SIGTERM') }, remaining)
+      child.stdout.on('data', chunk => { size += chunk.length;if (size <= 1024 ** 2 + 4) chunks.push(chunk);else { attempt.boundsExceeded = true;child.kill('SIGTERM') } })
+      child.stderr.on('data', () => {})
+      try {
+        attempt.exit_code = await new Promise((resolve, reject) => { child.once('error', reject);child.once('close', resolve) })
+      } finally { clearTimeout(timer);attempt.endedAt = Date.now() }
+      const raw = Buffer.concat(chunks);attempt.http = Number(raw.subarray(-3).toString())
+      assert(attempt.exit_code === 0 && !attempt.deadlineExceeded && !attempt.boundsExceeded && attempt.http === 200, 'Original input transport failure')
+      const bytes = raw.subarray(0, -4);attempt.sha256 = createHash('sha256').update(bytes).digest('hex')
+      const environment = recoverOriginalBuildEnvironment(bytes, ORIGINAL_BUILD_INPUT)
       attempt.sha256 = ORIGINAL_BUILD_INPUT.sha256;attempt.bytes = bytes.length
       return { environment, proof: { attempts, sha256: ORIGINAL_BUILD_INPUT.sha256, keyNames: Object.keys(environment).sort(), mode: 'OPAQUE_COMPILER_INPUT_NOT_PROVIDER_AUTH' } }
-    } catch { attempt.failed = true }
+    } catch (error) { attempt.failed = true;attempt.errorName = error.name }
   }
-  throw Error('Hash-bound original compiler input unavailable; no identity waiver')
+  const error = Error('Hash-bound original compiler input unavailable; no identity waiver')
+  error.attempts = attempts
+  throw error
 }
 
 export function canonicalPublicBuildEnvironment(configured, original) {
