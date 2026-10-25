@@ -5,6 +5,7 @@ import os from 'node:os'
 import crypto from 'node:crypto'
 import assert from 'node:assert/strict'
 import { spawn, execFileSync } from 'node:child_process'
+import { assertPublishableBuildOutput, canonicalPublicBuildEnvironment, fetchOriginalBuildEnvironment, privateBuildValues } from './original-build-input.mjs'
 
 const ORIGINAL = 'f7fac42f96f6a45be8c1601df1fa7d0a37bff7d8'
 // Pinned complete 311-entry file maps from the preserved real f7 CI/production manifests.
@@ -20,10 +21,13 @@ const pause = ms => new Promise(resolve => setTimeout(resolve, ms))
 const remaining = () => { const value = deadlineAt - Date.now();assert(value > 0, 'Original native budget exhausted');return value }
 const filesHash = files => hash(JSON.stringify(Object.fromEntries(Object.entries(files).sort(([a], [b]) => a < b ? -1 : a > b ? 1 : 0))))
 const receipt = { executed: true, pid: process.pid, originalSource: ORIGINAL, harnessSource: process.env.GITHUB_SHA, startedAt, deadlineAt, originalNativeBudgetSeconds: 300, status: 'INCOMPLETE', phases: [], gate: [], builds: [], historicalUniqueRoot: 'UNKNOWN' }
-let ownedSession = false
+let ownedSession = false, temporary, temporaryIdentity
+let privateValues = []
 const git = (...args) => execFileSync('git', args, { encoding: 'utf8', maxBuffer: 16 * 1024 ** 2, timeout: Math.floor(remaining()) }).trim()
 async function run(name, command, args, cwd, env = process.env, cap = 300000) {
-  const file = path.join(root, name + '.log'), fd = fs.openSync(file, 'wx')
+  const file = path.join(root, name + '.log')
+  const privateFile = name === 'build-crossOrigin' ? path.join(temporary, name + '.private.log') : file
+  const fd = fs.openSync(privateFile, 'wx', 0o600)
   const budget = Math.floor(Math.min(remaining(), cap) / 1000);assert(budget > 0)
   const argv = ['--foreground', '--kill-after=1s', budget + 's', command, ...args]
   const row = { name, command: ['timeout', ...argv], cwd, startedAt: Date.now(), executed: false }
@@ -33,7 +37,19 @@ async function run(name, command, args, cwd, env = process.env, cap = 300000) {
     row.pid = child.pid;row.executed = Boolean(child.pid)
     row.exit_code = await new Promise((resolve, reject) => { child.once('error', reject);child.once('close', (code, signal) => { row.signal = signal;resolve(code) }) })
     assert.equal(row.exit_code, 0, name + ' failed')
-  } finally { fs.closeSync(fd);row.endedAt = Date.now();row.log = path.basename(file);row.sha256 = hash(fs.readFileSync(file)) }
+  } finally {
+    fs.closeSync(fd);row.endedAt = Date.now();row.log = path.basename(file)
+    const raw = fs.readFileSync(privateFile)
+    if (privateFile !== file) {
+      try { assertPublishableBuildOutput(raw, privateValues);fs.writeFileSync(file, raw, { flag: 'wx', mode: 0o600 }) }
+      catch {
+        fs.writeFileSync(file, JSON.stringify({ privateOutputWithheld: true, rawBytes: raw.length, rawSHA256: hash(raw) }), { flag: 'wx' })
+        row.rawOutputWithheld = true
+      }
+    }
+    row.sha256 = hash(fs.readFileSync(file))
+    assert(!row.rawOutputWithheld, 'Private build output withheld; strict experiment incomplete')
+  }
 }
 function manifest(dist) {
   const declared = load(path.join(dist, 'release-manifest.json')), actual = {}
@@ -63,7 +79,9 @@ try {
   }
   await run('fetch-source', 'git', ['fetch', '--depth', '1', 'origin', ORIGINAL], process.cwd(), process.env, 30000)
   assert.equal(git('rev-parse', ORIGINAL), ORIGINAL);receipt.originalTree = git('rev-parse', ORIGINAL + '^{tree}')
-  const temporary = fs.mkdtempSync(path.join(os.tmpdir(), 'production-build-controls-')), source = path.join(temporary, 'source'), archive = path.join(temporary, 'source.tar')
+  temporary = fs.mkdtempSync(path.join(os.tmpdir(), 'production-build-controls-'))
+  temporaryIdentity = fs.lstatSync(temporary)
+  const source = path.join(temporary, 'source'), archive = path.join(temporary, 'source.tar')
   fs.mkdirSync(source)
   await run('archive-source', 'git', ['archive', '--format=tar', '--output', archive, ORIGINAL], process.cwd())
   receipt.archiveSHA256 = hash(fs.readFileSync(archive))
@@ -82,20 +100,31 @@ try {
   receipt.lockSHA256 = hash(fs.readFileSync('package-lock.json'));receipt.sourceFileCount = entries.length
   assert(!fs.existsSync(path.join(source, 'node_modules')))
   fs.symlinkSync(path.resolve('node_modules'), path.join(source, 'node_modules'), 'dir')
+  const recovered = await fetchOriginalBuildEnvironment(Math.min(10000, Math.floor(remaining())))
+  const originalEnvironment = recovered.environment
+  receipt.inputRecovery = recovered.proof
+  receipt.controlledVariableScope = 'COMPLETE_ORIGINAL_PREFIXED_BUILD_INPUTS_AND_CANONICAL_PUBLIC_PROFILE'
+  privateValues = privateBuildValues(originalEnvironment)
   for (const [name, api] of [['unset', undefined], ['crossOrigin', 'https://stephenzao-biblesphere.hf.space/api'], ['canonical', '/api']]) {
     // This truthful archive-source identity is required by the existing postbuild writer;
     // it is not a claim that this CI control ran on Vercel or deployed anything.
     const environment = { ...process.env, VERCEL_GIT_COMMIT_SHA: ORIGINAL }
-    delete environment.VITE_API_BASE
+    for (const key of Object.keys(environment)) if (key.startsWith('VITE_') || key.startsWith('NEXT_PUBLIC_')) delete environment[key]
+    if (name === 'crossOrigin') Object.assign(environment, originalEnvironment)
+    if (name === 'canonical') Object.assign(environment, canonicalPublicBuildEnvironment({ VITE_API_BASE: api }, originalEnvironment))
     if (api !== undefined) environment.VITE_API_BASE = api
     await run('build-' + name, 'npm', ['run', 'build'], source, environment)
     assert.deepEqual(inventory(), before)
     const value = manifest(path.join(source, 'dist'));assert.equal(value.sourceCommit, ORIGINAL)
     const directory = path.join(root, name);fs.mkdirSync(directory)
-    fs.copyFileSync(path.join(source, 'dist/index.html'), path.join(directory, 'index.html'))
+    const html = fs.readFileSync(path.join(source, 'dist/index.html'));assertPublishableBuildOutput(html, privateValues)
+    fs.writeFileSync(path.join(directory, 'index.html'), html, { flag: 'wx' })
     const startup = fs.readFileSync(path.join(source, 'dist/index.html'), 'utf8').match(/<script[^>]*type="module"[^>]*src="([^"]+)"/)[1].replace(/^\//, '')
     const mirrors = Object.keys(value.files).filter(file => /^assets\/MirrorPage-[A-Za-z0-9_-]+\.js$/.test(file));assert.equal(mirrors.length, 1)
-    for (const [file, save] of [[startup, 'startup.js'], [mirrors[0], 'mirror.js']]) fs.copyFileSync(path.join(source, 'dist', file), path.join(directory, save))
+    for (const [file, save] of [[startup, 'startup.js'], [mirrors[0], 'mirror.js']]) {
+      const bytes = fs.readFileSync(path.join(source, 'dist', file));assertPublishableBuildOutput(bytes, privateValues, true)
+      fs.writeFileSync(path.join(directory, save), bytes, { flag: 'wx' })
+    }
     write(name + '-build-manifest.json', value)
     const row = { name, source: ORIGINAL, apiInput: api ?? 'UNSET', files: Object.keys(value.files).length, filesSHA256: filesHash(value.files), startupSHA256: value.files[startup], mirrorSHA256: value.files[mirrors[0]], manifest: name + '-build-manifest.json' }
     receipt.builds.push(row)
@@ -108,6 +137,11 @@ try {
   receipt.status = 'PASS_CONTROLLED_BUILD_INPUT_CAUSE_ONLY'
 } catch (error) { receipt.errorName = error.name;receipt.error = error.message;process.exitCode = 1 }
 finally {
+  if (temporary) {
+    const actual = fs.lstatSync(temporary)
+    assert(actual.isDirectory() && !actual.isSymbolicLink() && actual.dev === temporaryIdentity.dev && actual.ino === temporaryIdentity.ino, 'Refuse cleanup of changed temporary owner')
+    fs.rmSync(temporary, { recursive: true });receipt.privateTemporaryRemoved = !fs.existsSync(temporary)
+  }
   receipt.endedAt = Date.now();write('parity-receipt.json', receipt)
   const all = {}
   const collect = dir => { for (const item of fs.readdirSync(dir, { withFileTypes: true })) { const file = path.join(dir, item.name);if (item.isDirectory()) collect(file);else if (item.isFile()) all[path.relative(root, file)] = hash(fs.readFileSync(file)) } }

@@ -4,6 +4,7 @@ import { fileURLToPath, URL } from 'node:url'
 import { createHash } from 'node:crypto'
 import { readFileSync } from 'node:fs'
 import { publicBuildDefinitions } from './scripts/production-build-contract.mjs'
+import { loadCanonicalPublicBuildEnvironment } from './scripts/original-build-input.mjs'
 
 const projectRoot = fileURLToPath(new URL('.', import.meta.url))
 const deployment = JSON.parse(readFileSync(new URL('./vercel.json', import.meta.url), 'utf8'))
@@ -35,8 +36,11 @@ function precacheManifestPlugin() {
   }
 }
 
-export default defineConfig(({ mode }) => ({
-  define: publicBuildDefinitions(deployment, loadEnv(mode, projectRoot, ['VITE_', 'NEXT_PUBLIC_'])),
+export default defineConfig(async ({ mode, command }) => {
+  const configured = loadEnv(mode, projectRoot, ['VITE_', 'NEXT_PUBLIC_'])
+  const environment = command === 'build' && mode === 'production' ? await loadCanonicalPublicBuildEnvironment(configured) : configured
+  return ({
+  define: publicBuildDefinitions(deployment, environment),
   envPrefix: [],
   plugins: [react(), precacheManifestPlugin()],
   // 生产构建：移除噪声调试日志（保留 console.warn/error）与 debugger 语句；
@@ -101,4 +105,5 @@ export default defineConfig(({ mode }) => ({
       },
     },
   },
-}))
+  })
+})
