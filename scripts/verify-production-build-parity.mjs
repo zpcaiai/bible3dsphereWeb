@@ -23,7 +23,9 @@ const filesHash = files => hash(JSON.stringify(Object.fromEntries(Object.entries
 const receipt = { executed: true, pid: process.pid, originalSource: ORIGINAL, harnessSource: process.env.GITHUB_SHA, startedAt, deadlineAt, originalNativeBudgetSeconds: 300, status: 'INCOMPLETE', phases: [], gate: [], builds: [], historicalUniqueRoot: 'UNKNOWN' }
 let ownedSession = false, temporary, temporaryIdentity
 let privateValues = []
-const git = (...args) => execFileSync('git', args, { encoding: 'utf8', maxBuffer: 16 * 1024 ** 2, timeout: Math.floor(remaining()) }).trim()
+const sourceEnvironment = { ...process.env }
+delete sourceEnvironment.BUILD_REPRO_F7_INPUT_BASE64
+const git = (...args) => execFileSync('git', args, { env: sourceEnvironment, encoding: 'utf8', maxBuffer: 16 * 1024 ** 2, timeout: Math.floor(remaining()) }).trim()
 async function run(name, command, args, cwd, env = process.env, cap = 300000) {
   const file = path.join(root, name + '.log')
   const privateFile = name === 'build-crossOrigin' ? path.join(temporary, name + '.private.log') : file
@@ -61,7 +63,7 @@ function manifest(dist) {
   return declared
 }
 try {
-  const pgid = Number(execFileSync('ps', ['-o', 'pgid=', '-p', String(process.pid)], { encoding: 'utf8', timeout: Math.floor(remaining()) }).trim())
+  const pgid = Number(execFileSync('ps', ['-o', 'pgid=', '-p', String(process.pid)], { env: sourceEnvironment, encoding: 'utf8', timeout: Math.floor(remaining()) }).trim())
   assert.equal(pgid, process.pid, 'Control builds require an exclusively owned native-runner session')
   ownedSession = true;receipt.processGroup = pgid
   const deployment = load('vercel.json')
@@ -88,7 +90,7 @@ try {
   await run('archive-source', 'git', ['archive', '--format=tar', '--output', archive, ORIGINAL], process.cwd())
   receipt.archiveSHA256 = hash(fs.readFileSync(archive))
   await run('extract-source', 'tar', ['-xf', archive, '-C', source], process.cwd())
-  const entries = execFileSync('git', ['ls-tree', '-r', '-z', ORIGINAL], { maxBuffer: 16 * 1024 ** 2, timeout: Math.floor(remaining()) }).toString().split('\0').filter(Boolean).map(line => {
+  const entries = execFileSync('git', ['ls-tree', '-r', '-z', ORIGINAL], { env: sourceEnvironment, maxBuffer: 16 * 1024 ** 2, timeout: Math.floor(remaining()) }).toString().split('\0').filter(Boolean).map(line => {
     const [meta, name] = line.split('\t'), [mode, kind, blob] = meta.split(' ')
     assert.equal(kind, 'blob');assert.notEqual(mode, '120000');assert(path.resolve(source, name).startsWith(source + path.sep));return { name, blob }
   })
@@ -113,7 +115,13 @@ try {
     const environment = { ...process.env, VERCEL_GIT_COMMIT_SHA: ORIGINAL }
     for (const key of Object.keys(environment)) if (key.startsWith('VITE_') || key.startsWith('NEXT_PUBLIC_')) delete environment[key]
     if (name === 'crossOrigin') Object.assign(environment, originalEnvironment)
-    if (name === 'canonical') Object.assign(environment, canonicalPublicBuildEnvironment({ ...process.env, VITE_API_BASE: api }, originalEnvironment))
+    if (name === 'canonical') {
+      const configured = { ...process.env, VITE_API_BASE: api }
+      // Match loadCanonicalPublicBuildEnvironment: either explicit map alias,
+      // including an empty value, disables historical defaults for this build.
+      const defaults = configured.VITE_MAPBOX_TOKEN !== undefined || configured.NEXT_PUBLIC_MAPBOX_TOKEN !== undefined ? {} : originalEnvironment
+      Object.assign(environment, canonicalPublicBuildEnvironment(configured, defaults))
+    }
     if (api !== undefined) environment.VITE_API_BASE = api
     await run('build-' + name, 'npm', ['run', 'build'], source, environment)
     assert.deepEqual(inventory(), before)

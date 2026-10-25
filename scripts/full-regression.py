@@ -19,7 +19,9 @@ RECEIPT = {'executed': True, 'pid': os.getpid(), 'status': 'RUNNING', 'phases': 
            'external': {'providers': 'NOT_RUN', 'media': 'NOT_VERIFIED', 'humanReview': 'NOT_APPROVED'}}
 
 def git(root, *args):
-    return subprocess.check_output(['git', *args], cwd=root, text=True, timeout=remaining()).strip()
+    environment = dict(os.environ)
+    environment.pop('BUILD_REPRO_F7_INPUT_BASE64', None)
+    return subprocess.check_output(['git', *args], cwd=root, text=True, env=environment, timeout=remaining()).strip()
 
 def remaining():
     budget = 300 - (time.monotonic() - START)
