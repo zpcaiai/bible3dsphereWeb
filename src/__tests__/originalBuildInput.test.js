@@ -1,7 +1,7 @@
 // @vitest-environment node
 import { createHash } from 'node:crypto'
 import { describe, expect, it } from 'vitest'
-import { assertPublishableBuildOutput, canonicalPublicBuildEnvironment, loadCanonicalPublicBuildEnvironment, privateBuildValues, recoverOriginalBuildEnvironment } from '../../scripts/original-build-input.mjs'
+import { assertPublishableBuildOutput, canonicalPublicBuildEnvironment, decodeOriginalBuildInputSnapshot, fetchOriginalBuildEnvironment, loadCanonicalPublicBuildEnvironment, privateBuildValues, recoverOriginalBuildEnvironment } from '../../scripts/original-build-input.mjs'
 
 const source = 'a'.repeat(40), api = 'https://compile-only.example/api'
 const moduleFor = extra => Buffer.from(`const input={BASE_URL:"/",MODE:"production",DEV:!1,PROD:!0,SSR:!1,VITE_API_BASE:${JSON.stringify(api)},VITE_VERCEL_GIT_COMMIT_SHA:${JSON.stringify(source)}${extra}};`)
@@ -81,5 +81,45 @@ describe('hash-bound original compiler input, never provider execution', () => {
   })
   it('needs no remote defaults when public map configuration is explicit', async () => {
     await expect(loadCanonicalPublicBuildEnvironment({ VITE_MAPBOX_TOKEN: '', VITE_DEEPGRAM_API_KEY: 'compiler-test-private' })).resolves.toEqual({ VITE_MAPBOX_TOKEN: '' })
+  })
+  it('decodes a canonical private snapshot with exact digest and no values in its proof', () => {
+    const bytes = moduleFor(',VITE_SERVICE_TOKEN:"compiler-test-private"')
+    const recovered = decodeOriginalBuildInputSnapshot(bytes.toString('base64'), expected(bytes))
+    expect(recovered.environment.VITE_SERVICE_TOKEN).toBe('compiler-test-private')
+    expect(recovered.proof).toEqual({ mode: 'PRIVATE_REPOSITORY_INPUT_SNAPSHOT', archiveVariable: 'BUILD_REPRO_F7_INPUT_BASE64', sha256: expected(bytes).sha256, bytes: bytes.length, keyNames: ['VITE_API_BASE', 'VITE_SERVICE_TOKEN', 'VITE_VERCEL_GIT_COMMIT_SHA'], valuesPublished: false })
+    expect(JSON.stringify(recovered.proof)).not.toContain('compiler-test-private')
+  })
+  it('rejects malformed and noncanonical archive encoding before parsing', () => {
+    const bytes = moduleFor('')
+    for (const encoded of ['', '%%%invalid', bytes.toString('base64') + '\n']) {
+      expect(() => decodeOriginalBuildInputSnapshot(encoded, expected(bytes))).toThrow(/encoding/)
+    }
+  })
+  it('rejects changed archived bytes against the pinned digest', () => {
+    const bytes = moduleFor('')
+    expect(() => decodeOriginalBuildInputSnapshot(Buffer.concat([bytes, Buffer.from(' ')]).toString('base64'), expected(bytes))).toThrow('digest mismatch')
+  })
+  it('builds without historical network defaults when no archive or public map token is configured', async () => {
+    const saved = process.env.BUILD_REPRO_F7_INPUT_BASE64
+    delete process.env.BUILD_REPRO_F7_INPUT_BASE64
+    try {
+      await expect(loadCanonicalPublicBuildEnvironment({ VITE_API_BASE: '/custom', VITE_SERVICE_TOKEN: 'compiler-test-private' })).resolves.toEqual({ VITE_API_BASE: '/custom' })
+    } finally {
+      if (saved === undefined) delete process.env.BUILD_REPRO_F7_INPUT_BASE64
+      else process.env.BUILD_REPRO_F7_INPUT_BASE64 = saved
+    }
+  })
+  it('fails closed in CI when the private historical archive is absent', async () => {
+    const saved = process.env.BUILD_REPRO_F7_INPUT_BASE64, ci = process.env.GITHUB_ACTIONS
+    delete process.env.BUILD_REPRO_F7_INPUT_BASE64
+    process.env.GITHUB_ACTIONS = 'true'
+    try {
+      await expect(fetchOriginalBuildEnvironment()).rejects.toThrow('Private original input archive required in CI')
+    } finally {
+      if (saved === undefined) delete process.env.BUILD_REPRO_F7_INPUT_BASE64
+      else process.env.BUILD_REPRO_F7_INPUT_BASE64 = saved
+      if (ci === undefined) delete process.env.GITHUB_ACTIONS
+      else process.env.GITHUB_ACTIONS = ci
+    }
   })
 })

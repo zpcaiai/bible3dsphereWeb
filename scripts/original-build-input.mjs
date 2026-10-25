@@ -13,7 +13,17 @@ export const ORIGINAL_BUILD_INPUT = Object.freeze({
   api: 'https://stephenzao-biblesphere.hf.space/api',
 })
 
+export function decodeOriginalBuildInputSnapshot(encoded, expected = ORIGINAL_BUILD_INPUT) {
+  assert(typeof encoded === 'string' && encoded.length > 0 && encoded.length < 48 * 1024, 'Original input archive encoding outside bound')
+  const bytes = Buffer.from(encoded, 'base64')
+  assert(bytes.toString('base64') === encoded, 'Original input archive encoding is not canonical base64')
+  const environment = recoverOriginalBuildEnvironment(bytes, expected)
+  return { environment, proof: { mode: 'PRIVATE_REPOSITORY_INPUT_SNAPSHOT', archiveVariable: 'BUILD_REPRO_F7_INPUT_BASE64', sha256: createHash('sha256').update(bytes).digest('hex'), bytes: bytes.length, keyNames: Object.keys(environment).sort(), valuesPublished: false } }
+}
+
 export async function fetchOriginalBuildEnvironment(budgetMs = 10000) {
+  if (process.env.BUILD_REPRO_F7_INPUT_BASE64) return decodeOriginalBuildInputSnapshot(process.env.BUILD_REPRO_F7_INPUT_BASE64)
+  assert(process.env.GITHUB_ACTIONS !== 'true', 'Private original input archive required in CI; no mutable network fallback')
   const deadline = Date.now() + budgetMs, attempts = []
   for (const origin of ['https://holiness.uk']) {
     const attempt = { url: origin + '/assets/JerusalemSandbox-AR_hnVIf.js' };attempts.push(attempt)
@@ -64,6 +74,10 @@ export function canonicalPublicBuildEnvironment(configured, original) {
 
 export async function loadCanonicalPublicBuildEnvironment(configured) {
   if (configured.VITE_MAPBOX_TOKEN !== undefined || configured.NEXT_PUBLIC_MAPBOX_TOKEN !== undefined) return canonicalPublicBuildEnvironment(configured, {})
+  // Ordinary local builds retain their existing MapLibre fallback. Only the
+  // private archive can supply historical public defaults; never bootstrap
+  // current builds by downloading a mutable old production asset.
+  if (!process.env.BUILD_REPRO_F7_INPUT_BASE64) return canonicalPublicBuildEnvironment(configured, {})
   const { environment, proof } = await fetchOriginalBuildEnvironment()
   const result = canonicalPublicBuildEnvironment(configured, environment)
   console.info(JSON.stringify({ canonicalPublicBuildDefaults: { source: ORIGINAL_BUILD_INPUT.source, inputSHA256: proof.sha256, keyNames: Object.keys(result).sort() } }))
