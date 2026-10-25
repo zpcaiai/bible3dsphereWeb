@@ -184,17 +184,30 @@ async function experiment() {
   } catch (error) { receipt.errorName = error.name;process.exitCode = 1 }
   finally {
     if (preview?.pid) {
+      const cleanupDeadline = Date.now() + 5000
       try { process.kill(-preview.pid, 'SIGTERM');receipt.preview.cleanup = 'SIGTERM_SENT_TO_OWNED_GROUP' } catch (error) { receipt.preview.cleanupErrorName = error.name }
-      const closed = await Promise.race([previewClosed, pause(5000).then(() => null)])
+      let closeTimer
+      const closed = await Promise.race([previewClosed, new Promise(resolve => { closeTimer = setTimeout(() => resolve(null), Math.max(0, cleanupDeadline - Date.now())) })])
+      clearTimeout(closeTimer)
       receipt.preview.closeObservation = closed
       let groupExists = true
-      try { process.kill(-preview.pid, 0) } catch (error) { if (error.code === 'ESRCH') groupExists = false }
+      receipt.preview.cleanupDeadline = cleanupDeadline
+      receipt.preview.cleanupObservations = []
+      // Parent close can precede group disappearance by a scheduler tick. Require
+      // actual absence within the same original 5s cleanup budget, not one tick.
+      while (receipt.preview.cleanupObservations.length < 101) {
+        let errorCode = null
+        try { process.kill(-preview.pid, 0) } catch (error) { errorCode = error.code;if (error.code === 'ESRCH') groupExists = false }
+        receipt.preview.cleanupObservations.push({ at: Date.now(), groupExists, errorCode })
+        if (!groupExists || Date.now() >= cleanupDeadline) break
+        await pause(Math.min(50, cleanupDeadline - Date.now()))
+      }
       if (groupExists) {
         try {
           receipt.preview.remainingGroupProcesses = execFileSync('ps', ['-eo', 'pid=,ppid=,pgid=,stat=,comm='], { encoding: 'utf8', timeout: 2000 }).split('\n').map(line => line.trim().split(/\s+/)).filter(parts => Number(parts[2]) === preview.pid).map(parts => ({ pid: Number(parts[0]), ppid: Number(parts[1]), pgid: Number(parts[2]), state: parts[3], name: parts.slice(4).join(' ') }))
         } catch (error) { receipt.preview.processStateErrorName = error.name }
       }
-      receipt.preview.cleanup = closed && !groupExists ? 'OWNED_GROUP_EXIT_OBSERVED' : 'UNCONFIRMED'
+      receipt.preview.cleanup = closed && !groupExists && receipt.preview.cleanupObservations.at(-1).at <= cleanupDeadline ? 'OWNED_GROUP_EXIT_OBSERVED' : 'UNCONFIRMED'
       if (receipt.preview.cleanup !== 'OWNED_GROUP_EXIT_OBSERVED') { receipt.status = 'INCOMPLETE';process.exitCode = 1 }
     }
     if (previewLog !== undefined) fs.closeSync(previewLog)
