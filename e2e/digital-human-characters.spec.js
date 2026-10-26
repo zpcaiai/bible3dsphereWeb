@@ -32,6 +32,9 @@ async function openMirror(page) {
   await page.getByRole('button', { name: '人物图谱', exact: false }).tap()
   await expect(page.getByRole('heading', { name: '关系图谱', exact: true })).toBeVisible()
   await page.getByRole('button', { name: '返回', exact: true }).tap()
+  // Returning can render asynchronously while the catalogue is still loading.
+  // Establish the list before choose() decides whether another back is needed.
+  await expect(page.getByRole('textbox', { name: '搜索人物', exact: true })).toBeVisible()
 }
 
 async function choose(page, name) {
