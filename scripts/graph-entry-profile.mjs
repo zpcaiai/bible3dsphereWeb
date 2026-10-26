@@ -3,6 +3,7 @@ import os from 'node:os'
 import { chromium, expect } from '@playwright/test'
 import crypto from 'node:crypto'
 import { startCausalWitness } from './graph-entry-witness.mjs'
+import { observeSessionChecks } from './session-check-timing.mjs'
 const root=(process.env.GRAPH_ENTRY_PROFILE_DIR || os.tmpdir()+'/graph-entry-profile-'+process.pid+'-'+Date.now()).replace(/\/$/, '')+'/'
 const baseURL=process.env.GRAPH_ENTRY_PROFILE_BASE_URL || 'https://holiness.uk'
 const fault=process.env.GRAPH_ENTRY_PROFILE_FAULT || 'none'
@@ -34,6 +35,7 @@ try{
    const context=await browser.newContext({baseURL,viewport:{width,height:844},isMobile:true,hasTouch:true,serviceWorkers:fault==='none'?'allow':'block'})
    const page=await context.newPage();page.setDefaultTimeout(30000);page.setDefaultNavigationTimeout(30000)
    const r={width,started:Date.now(),phase:'setup',originalAssertionMs:5000,assetEvents:[],parentSamples:[],onboardingEvents:[],observedTurnPOSTs:0}
+   const sessionChecks=observeSessionChecks(page,{origin:baseURL})
    let causalWitness
    let witnessStop
    const stopWitness=()=>{
@@ -205,6 +207,8 @@ try{
     if(r.phase==='graph_data')r.graphDataStatus='FAIL'
     process.exitCode=1
    }finally{
+    r.sessionCheckTiming=sessionChecks.stop()
+    if(r.sessionCheckTiming.status!=='CAPTURED_BOUNDED'){r.sessionTimingCapture='INCOMPLETE';process.exitCode=1}
     r.captureStartAt=Date.now()
     const authPanelVisible=await page.getByLabel('默认登录账号',{exact:true}).isVisible().catch(()=>true)
     if(r.loginHTTP===200&&!authPanelVisible)try{
