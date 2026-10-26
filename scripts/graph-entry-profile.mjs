@@ -37,7 +37,7 @@ try{
    let causalWitness
    let witnessStop
    const stopWitness=()=>{
-    if(causalWitness&&!witnessStop)witnessStop=causalWitness.finish({name:'graph-heading-visible',assertionMs:5000,startAt:r.assertStartAt??null,endAt:r.assertEndAt??null,outcome:r.originalFiveSecondAssertion}).then(value=>({value}),error=>({errorName:error.name}))
+    if(causalWitness&&!witnessStop)witnessStop=causalWitness.finish({name:'graph-heading-visible',assertionMs:5000,startAt:r.assertStartAt??null,endAt:r.assertEndAt??null,outcome:r.originalFiveSecondAssertion,catalogueRetry:r.catalogueRetryEvidence??null}).then(value=>({value}),error=>({errorName:error.name}))
    }
    const pendingAssets=new Map()
    const imageResponses=new Map()
@@ -115,7 +115,6 @@ try{
     await expect(page.getByRole('heading',{name:'关系图谱',exact:true})).toBeVisible({timeout:5000})
     r.assertEndAt=Date.now();r.originalFiveSecondAssertion='PASS'
     causalWitness.mark('heading-expect-pass')
-    stopWitness()
     r.phase='graph_data'
     const response=await graphReply
     if(response.probeErrorName)throw Error('Graph API response unavailable: '+response.probeErrorName)
@@ -169,9 +168,14 @@ try{
     if(fault==='catalogue-failure'){
      r.phase='catalogue_retry';r.predicate='catalogue-retry-alert-and-return'
      await expect(page.getByRole('alert')).toBeVisible({timeout:5000})
+     r.catalogueRetryEvidence={startAt:Date.now(),originalAssertionMs:5000,outcome:'PENDING'}
+     causalWitness.mark('catalogue-retry-start')
      await page.getByRole('button',{name:'重试',exact:true}).tap()
      await expect(page.getByRole('alert')).toHaveCount(0,{timeout:5000})
+     r.catalogueRetryEvidence.headingAssertStartAt=Date.now()
      await expect(page.getByRole('heading',{name:'关系图谱',exact:true})).toBeVisible({timeout:5000})
+     r.catalogueRetryEvidence.endAt=Date.now();r.catalogueRetryEvidence.outcome='PASS'
+     causalWitness.mark('catalogue-retry-pass')
      await page.getByRole('button',{name:'返回',exact:true}).tap()
      await expect(page.getByRole('textbox',{name:'搜索人物',exact:true})).toBeVisible({timeout:5000})
      r.catalogueRetry='PASS'
@@ -192,6 +196,10 @@ try{
     r.failureAt=Date.now();r.originalFiveSecondAssertion=r.originalFiveSecondAssertion==='PASS'?'PASS':(r.phase==='graph_assert'?'FAIL':'NOT_RUN');r.errorName=error.name
     if(r.phase==='graph_assert')r.assertEndAt=r.failureAt
     if(r.phase==='graph_assert')causalWitness?.mark('heading-expect-fail')
+    if(r.catalogueRetryEvidence?.outcome==='PENDING'){
+     r.catalogueRetryEvidence.endAt=r.failureAt;r.catalogueRetryEvidence.outcome='FAIL'
+     causalWitness?.mark('catalogue-retry-fail')
+    }
     stopWitness()
     r.error=r.phase==='login'?'Login stage failed; auth inputs intentionally not logged':error.message
     if(r.phase==='graph_data')r.graphDataStatus='FAIL'
@@ -219,6 +227,17 @@ try{
       fs.writeFileSync(root+file,bytes)
       r.causalWitness={file,sha256:crypto.createHash('sha256').update(bytes).digest('hex'),status:value.status}
       expect(value.status).toBe('CAPTURED_BOUNDED')
+      if((fault==='chunk-cache-hang'&&r.originalFiveSecondAssertion==='PASS')||r.catalogueRetry==='PASS'){
+       expect(value.network.some(event=>event.kind==='request'&&event.resourceType==='Document'&&event.path==='/')).toBe(true)
+       expect(value.network.some(event=>event.kind==='response'&&event.path==='/'&&event.status===200)).toBe(true)
+       r.reloadTransportCoverage='PASS'
+      }
+      if(r.catalogueRetry==='PASS'){
+       expect(value.predicate.catalogueRetry).toEqual(r.catalogueRetryEvidence)
+       expect(value.stopRequestedAt).toBeGreaterThanOrEqual(r.catalogueRetryEvidence.endAt)
+       expect(value.phases.map(phase=>phase.kind)).toEqual(expect.arrayContaining(['catalogue-retry-start','catalogue-retry-pass']))
+       r.catalogueRetryWitnessCoverage='PASS'
+      }
      }catch(error){r.witnessErrorName=error.name;process.exitCode=1}
     }else r.causalWitness={status:'NOT_RUN',reason:'Authenticated witness startup was not completed'}
     if(fault!=='none'&&r.originalFiveSecondAssertion==='FAIL'){

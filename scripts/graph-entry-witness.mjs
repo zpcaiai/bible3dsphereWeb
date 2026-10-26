@@ -1,4 +1,5 @@
-// Read-only Chrome evidence. Never export raw CDP packets, headers, bodies or URLs.
+// Read-only Chrome evidence. Never export raw CDP packets, private headers,
+// bodies or URLs. Only allowlisted public response correlation IDs are retained.
 export const WITNESS_SCHEMA = 'graph-entry-causal-witness/v1'
 const finite = value => typeof value === 'number' && Number.isFinite(value) ? value : null
 const token = value => typeof value === 'string' && /^[A-Za-z0-9_.:-]{1,96}$/.test(value) ? value : null
@@ -17,10 +18,18 @@ export function sourceFrame(frame) {
   return { path, scriptId: token(frame.scriptId), line: finite(frame.lineNumber), column: finite(frame.columnNumber) }
 }
 
-export function networkEvent(kind, event, pending) {
+export function networkEvent(kind, event, pending, { origin } = {}) {
   const id = token(event.requestId)
   const url = event.request?.url ?? event.response?.url
-  let path = assetPath(url) ?? pending.get(id)
+  let path = assetPath(url) ?? (url == null ? pending.get(id) : null)
+  if (!path && typeof url === 'string' && origin) {
+    try {
+      const parsed = new URL(url)
+      if (parsed.origin === origin && !parsed.username && !parsed.password &&
+          ((event.type === 'Document' && ['/', '/index.html'].includes(parsed.pathname)) ||
+           (['Fetch', 'XHR'].includes(event.type) && parsed.pathname === '/api/health'))) path = parsed.pathname
+    } catch { /* not an eligible same-origin endpoint */ }
+  }
   // Background connections matter for contention, but their endpoint/IDs do not.
   if (!path && typeof url === 'string' && ['Fetch', 'XHR', 'EventSource'].includes(event.type)) {
     try {
@@ -55,6 +64,14 @@ export function networkEvent(kind, event, pending) {
     row.fromServiceWorker = response.fromServiceWorker === true
     row.fromDiskCache = response.fromDiskCache === true
     row.eventStream = response.mimeType === 'text/event-stream'
+    row.remoteAddress = {
+      ip: typeof response.remoteIPAddress === 'string' && /^[0-9a-fA-F:.]{1,45}$/.test(response.remoteIPAddress) ? response.remoteIPAddress : null,
+      port: Number.isInteger(response.remotePort) && response.remotePort > 0 && response.remotePort <= 65535 ? response.remotePort : null,
+    }
+    row.correlation = Object.fromEntries(Object.entries(response.headers ?? {}).flatMap(([name, value]) => {
+      const key = name.toLowerCase()
+      return ['cf-ray', 'x-vercel-id', 'x-request-id'].includes(key) && typeof value === 'string' && /^[A-Za-z0-9:._-]{1,160}$/.test(value) ? [[key, value]] : []
+    }))
     row.timing = Object.fromEntries(['requestTime', 'proxyStart', 'proxyEnd', 'dnsStart', 'dnsEnd', 'connectStart', 'connectEnd', 'sslStart', 'sslEnd', 'workerStart', 'workerReady', 'sendStart', 'sendEnd', 'receiveHeadersStart', 'receiveHeadersEnd'].map(key => [key, finite(response.timing?.[key])]))
   }
   if (kind === 'finished' || kind === 'failed') {
@@ -213,7 +230,11 @@ export async function startCausalWitness(page, { deadlineAt } = {}) {
       }
       return value
     }))
-    for (const [event, kind] of [['requestWillBeSent', 'request'], ['responseReceived', 'response'], ['loadingFinished', 'finished'], ['loadingFailed', 'failed']]) session.on('Network.' + event, value => network.append(networkEvent(kind, value, pending)))
+    const origin = new URL(page.url()).origin
+    for (const [event, kind] of [['requestWillBeSent', 'request'], ['responseReceived', 'response'], ['loadingFinished', 'finished'], ['loadingFailed', 'failed']]) session.on('Network.' + event, value => {
+      const row = networkEvent(kind, value, pending, { origin })
+      if (row) network.append({ ...row, parentAt: Date.now() })
+    })
     session.on('Page.frameNavigated', ({ frame }) => {
       if (!frame.parentId) mainFrameId = token(frame.id)
       frames.append({ kind: 'frame-navigated', frameId: token(frame.id), loaderId: token(frame.loaderId), parentAt: Date.now() })
@@ -273,7 +294,7 @@ export async function startCausalWitness(page, { deadlineAt } = {}) {
   let finished = false
   return {
     mark(kind) {
-      if (!['before-tap', 'tap-complete', 'heading-expect-start', 'heading-expect-pass', 'heading-expect-fail'].includes(kind)) throw Error('Unsupported phase')
+      if (!['before-tap', 'tap-complete', 'heading-expect-start', 'heading-expect-pass', 'heading-expect-fail', 'catalogue-retry-start', 'catalogue-retry-pass', 'catalogue-retry-fail'].includes(kind)) throw Error('Unsupported phase')
       phases.push({ kind, wallTime: Date.now() })
     },
     async finish(predicate) {
