@@ -9,6 +9,8 @@ import subprocess
 import sys
 import time
 import xml.etree.ElementTree as ET
+from concurrent.futures import ThreadPoolExecutor
+from threading import Lock
 
 FRONTEND = Path.cwd()
 BACKEND = Path(os.environ['REGRESSION_BACKEND_DIR']).resolve()
@@ -17,6 +19,11 @@ OUTPUT.mkdir(parents=True, exist_ok=False)
 START = time.monotonic()
 RECEIPT = {'executed': True, 'pid': os.getpid(), 'status': 'RUNNING', 'phases': [], 'gate': [],
            'external': {'providers': 'NOT_RUN', 'media': 'NOT_VERIFIED', 'humanReview': 'NOT_APPROVED'}}
+RECEIPT_LOCK = Lock()
+
+def emit(row):
+    with RECEIPT_LOCK:
+        print(json.dumps(row), flush=True)
 
 def git(root, *args):
     environment = dict(os.environ)
@@ -44,7 +51,8 @@ def run(name, cwd, command):
     log = OUTPUT / (name + '.log')
     row = {'name': name, 'command': command, 'cwd': str(cwd), 'executed': False, 'exit_code': None,
            'startedAt': time.time(), 'startOffsetSeconds': time.monotonic() - START}
-    RECEIPT['phases'].append(row)
+    with RECEIPT_LOCK:
+        RECEIPT['phases'].append(row)
     child = None
     at = time.monotonic()
     try:
@@ -57,7 +65,7 @@ def run(name, cwd, command):
                                      start_new_session=True, env=environment)
             row['pid'] = child.pid
             row['executed'] = True
-            print(json.dumps(row), flush=True)
+            emit(row)
             row['exit_code'] = child.wait(timeout=remaining())
     finally:
         if child and child.poll() is None:
@@ -70,7 +78,7 @@ def run(name, cwd, command):
         row.update(elapsedSeconds=time.monotonic() - at, endedAt=time.time(), endOffsetSeconds=time.monotonic() - START)
         if log.exists():
             row.update(log=log.name, sha256=hashlib.sha256(log.read_bytes()).hexdigest())
-        print(json.dumps(row), flush=True)
+        emit(row)
     assert row['exit_code'] == 0, name + ' failed; see raw log'
 
 def interrupted(_signum, _frame):
@@ -93,25 +101,31 @@ try:
     assert all(not value['trackedStatus'] for value in before.values()), 'Tracked sources must start clean'
     assert before['backend']['head'] == 'bfced56f00daf2fdffcbe1a6888c6d2fa6f8004c'
     run('release-proof-unit', FRONTEND, [sys.executable, '-m', 'unittest', 'discover', '-s', 'scripts', '-p', 'test_release_html.py', '-v'])
-    run('frontend-full', FRONTEND, ['node_modules/.bin/vitest', 'run', '--maxWorkers=1', '--minWorkers=1',
-        '--reporter=default', '--reporter=json', '--outputFile=' + str(OUTPUT / 'vitest.json')])
-    vitest = json.loads((OUTPUT / 'vitest.json').read_text())
-    assert vitest['success'] and vitest['numPassedTests'] == vitest['numTotalTests'] >= 803
-    assert vitest['numFailedTests'] == 0 and vitest['numPendingTests'] == 0
-    tests = sorted(str(p.relative_to(BACKEND)) for p in (BACKEND / 'backend/tests').glob('test_digital_human*.py'))
-    assert tests
-    RECEIPT['backendTestFiles'] = tests
-    RECEIPT['pythonExecutable'] = sys.executable
-    run('backend-digital-full', BACKEND, [sys.executable, '-m', 'pytest', '--noconftest', '-q',
-        '--junitxml=' + str(OUTPUT / 'pytest.xml'), *tests])
-    junit = ET.parse(OUTPUT / 'pytest.xml').getroot()
-    cases = junit.findall('.//testcase')
-    assert len(cases) >= 114
-    assert not any(case.find(tag) is not None for case in cases for tag in ['failure', 'error', 'skipped'])
-    run('frontend-lint', FRONTEND, ['npm', 'run', 'lint'])
     run('frontend-build', FRONTEND, ['npm', 'run', 'build'])
-    run('production-build-input-controls', FRONTEND, ['node', 'scripts/verify-production-build-parity.mjs',
-        str(OUTPUT / 'build-parity'), str(remaining())])
+    # The ordinary build may write generated translations, so finish it first.
+    # Control builds only write exclusively owned Git-archive directories. One
+    # background branch can share the original deadline with read-only checks;
+    # the frontend test worker count and every test/assertion remain unchanged.
+    with ThreadPoolExecutor(max_workers=1, thread_name_prefix='archive-build-controls') as controls:
+        parity = controls.submit(run, 'production-build-input-controls', FRONTEND,
+            ['node', 'scripts/verify-production-build-parity.mjs', str(OUTPUT / 'build-parity'), str(remaining())])
+        run('frontend-full', FRONTEND, ['node_modules/.bin/vitest', 'run', '--maxWorkers=1', '--minWorkers=1',
+            '--reporter=default', '--reporter=json', '--outputFile=' + str(OUTPUT / 'vitest.json')])
+        vitest = json.loads((OUTPUT / 'vitest.json').read_text())
+        assert vitest['success'] and vitest['numPassedTests'] == vitest['numTotalTests'] >= 803
+        assert vitest['numFailedTests'] == 0 and vitest['numPendingTests'] == 0
+        tests = sorted(str(p.relative_to(BACKEND)) for p in (BACKEND / 'backend/tests').glob('test_digital_human*.py'))
+        assert tests
+        RECEIPT['backendTestFiles'] = tests
+        RECEIPT['pythonExecutable'] = sys.executable
+        run('backend-digital-full', BACKEND, [sys.executable, '-m', 'pytest', '--noconftest', '-q',
+            '--junitxml=' + str(OUTPUT / 'pytest.xml'), *tests])
+        junit = ET.parse(OUTPUT / 'pytest.xml').getroot()
+        cases = junit.findall('.//testcase')
+        assert len(cases) >= 114
+        assert not any(case.find(tag) is not None for case in cases for tag in ['failure', 'error', 'skipped'])
+        run('frontend-lint', FRONTEND, ['npm', 'run', 'lint'])
+        parity.result(timeout=remaining())
     after = snapshot()
     (OUTPUT / 'source-after.json').write_text(json.dumps(after, indent=2))
     assert before == after, 'Tracked sources changed during native regression'

@@ -178,32 +178,34 @@ function normalizeScripturePayload(data) {
   }
 }
 
-export async function fetchLayout() {
+export async function fetchLayout({ signal } = {}) {
   devlog('[api] fetchLayout')
   try {
-    const response = await fetch(`${API_BASE}/layout`)
+    const response = await fetch(`${API_BASE}/layout`, { signal })
     if (!response.ok) throw new Error('Failed to fetch layout')
     const data = await response.json()
     devlog(`[api] fetchLayout ok: ${data.count} items`)
     return data
   } catch (err) {
+    if (signal?.aborted) throw err
     devlog('[api] fetchLayout api failed, fallback to static json', err.message)
     try {
-      const response = await fetch('/emotion_sphere_layout.json')
+      const response = await fetch('/emotion_sphere_layout.json', { signal })
       if (!response.ok) throw new Error('static fallback not found')
       const items = await response.json()
       devlog(`[api] fetchLayout static ok: ${items.length} items`)
       return { items, count: items.length }
     } catch (err2) {
+      if (signal?.aborted) throw err2
       devlog('[api] fetchLayout static fallback also failed, returning empty', err2.message)
       return { items: [], count: 0 }
     }
   }
 }
 
-export async function fetchHistory() {
+export async function fetchHistory({ signal } = {}) {
   devlog('[api] fetchHistory')
-  const response = await fetch(`${API_BASE}/history`)
+  const response = await fetch(`${API_BASE}/history`, { signal })
   const contentType = response.headers.get('content-type') || ''
   if (!contentType.includes('application/json')) {
     devlog('[api] fetchHistory backend unavailable, returning empty')
@@ -331,8 +333,9 @@ export async function fetchSermon(query) {
   return data
 }
 
-export async function fetchDailySnapshot(token) {
+export async function fetchDailySnapshot(token, { signal } = {}) {
   const response = await fetch(`${API_BASE}/daily-snapshot`, {
+    signal,
     headers: token ? { 'Authorization': `Bearer ${token}` } : {},
   })
   if (!response.ok) return null
@@ -340,8 +343,9 @@ export async function fetchDailySnapshot(token) {
   return data.ok ? data : null
 }
 
-export async function fetchEmotionTrajectory(token, limit = 30) {
+export async function fetchEmotionTrajectory(token, limit = 30, { signal } = {}) {
   const response = await fetch(`${API_BASE}/user/emotion-trajectory?limit=${limit}`, {
+    signal,
     headers: token ? { 'Authorization': `Bearer ${token}` } : {},
   })
   if (!response.ok) return null
@@ -349,13 +353,14 @@ export async function fetchEmotionTrajectory(token, limit = 30) {
   return data.ok ? data : null
 }
 
-export async function fetchCommunityHeatmap(windowHours = 24, topN = 8) {
+export async function fetchCommunityHeatmap(windowHours = 24, topN = 8, { signal } = {}) {
   try {
     const params = new URLSearchParams({ window_hours: windowHours, top_n: topN })
-    const res = await fetch(`${API_BASE}/community/emotion-heatmap?${params}`)
+    const res = await fetch(`${API_BASE}/community/emotion-heatmap?${params}`, { signal })
     if (!res.ok) return { emotions: [], total_checkins: 0 }
     return await res.json()
-  } catch {
+  } catch (error) {
+    if (signal?.aborted) throw error
     return { emotions: [], total_checkins: 0 }
   }
 }

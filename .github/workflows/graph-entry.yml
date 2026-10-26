@@ -97,7 +97,7 @@ jobs:
           import hashlib,json,os,pathlib,subprocess
           def git(*args): return subprocess.check_output(['git',*args],text=True).strip()
           event=json.loads(pathlib.Path(os.environ['GITHUB_EVENT_PATH']).read_text())
-          files=['src/App.jsx','src/MirrorPage.jsx','src/RelationshipGraphView.jsx','src/lazyWithRetry.js','scripts/graph-entry-profile.mjs','scripts/graph-entry-witness.mjs','scripts/check-graph-heading-visibility.mjs','scripts/replay-historical-graph-entry.mjs','.github/workflows/graph-entry.yml','src/features/spiritual-planet/digital-human/digitalHuman.css','e2e/digital-human-repairs.spec.js']
+          files=['src/App.jsx','src/api.js','src/MirrorPage.jsx','src/RelationshipGraphView.jsx','src/lazyWithRetry.js','scripts/graph-entry-profile.mjs','scripts/graph-entry-witness.mjs','scripts/check-graph-heading-visibility.mjs','scripts/check-home-request-cancellation.mjs','scripts/replay-historical-graph-entry.mjs','.github/workflows/graph-entry.yml','src/features/spiritual-planet/digital-human/digitalHuman.css','e2e/digital-human-repairs.spec.js']
           files+=sorted(str(p) for p in pathlib.Path('dist').rglob('*') if p.is_file())
           receipt={'checkoutSHA':git('rev-parse','HEAD'),'checkoutTree':git('rev-parse','HEAD^{tree}'),'prHeadSHA':event.get('pull_request',{}).get('head',{}).get('sha'),'files':{p:hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest() for p in files}}
           pathlib.Path(os.environ['RUNNER_TEMP'],'graph-entry-server','source-identity.json').write_text(json.dumps(receipt,indent=2))
@@ -499,6 +499,10 @@ jobs:
           REGRESSION_BACKEND_DIR: ${{ runner.temp }}/backend
           REGRESSION_EVIDENCE_DIR: ${{ runner.temp }}/native-regression
         run: timeout 300s python scripts/full-regression.py
+      - name: Real Chrome cancellation of owned home API requests
+        env:
+          HOME_REQUEST_CANCEL_DIR: ${{ runner.temp }}/native-regression/home-request-cancellation
+        run: timeout --kill-after=5s 300s node scripts/check-home-request-cancellation.mjs
       - name: Retain source, process and test receipts
         if: always()
         uses: actions/upload-artifact@v4
