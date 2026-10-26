@@ -163,7 +163,8 @@ function observeDocument() {
   const observe = () => {
     const at = performance.now(), headings = [...document.querySelectorAll('h2')], nodes = [...document.querySelectorAll('p,span')]
     const heading = headings.find(node => node.textContent.trim() === '关系图谱')
-    const visible = !headingSeen && heading?.getClientRects().length && getComputedStyle(heading).visibility !== 'hidden'
+    const box = heading?.getBoundingClientRect()
+    const visible = !headingSeen && box?.width > 0 && box.height > 0 && getComputedStyle(heading).visibility === 'visible'
     const count = nodes.filter(node => node.childElementCount === 0 && node.textContent.trim() === '加载中…').length
     stats.calls++;stats.scannedNodes += headings.length + nodes.length;stats.observerMs += performance.now() - at
     if (visible) { headingSeen = true; emit('heading-visible');emit('observer-stats') }
