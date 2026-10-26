@@ -227,6 +227,17 @@ try{
       fs.writeFileSync(root+file,bytes)
       r.causalWitness={file,sha256:crypto.createHash('sha256').update(bytes).digest('hex'),status:value.status}
       expect(value.status).toBe('CAPTURED_BOUNDED')
+      if((fault==='chunk-cache-hang'&&r.originalFiveSecondAssertion==='PASS')||r.catalogueRetry==='PASS'){
+       expect(value.network.some(event=>event.kind==='request'&&event.resourceType==='Document'&&event.path==='/')).toBe(true)
+       expect(value.network.some(event=>event.kind==='response'&&event.path==='/'&&event.status===200)).toBe(true)
+       r.reloadTransportCoverage='PASS'
+      }
+      if(r.catalogueRetry==='PASS'){
+       expect(value.predicate.catalogueRetry).toEqual(r.catalogueRetryEvidence)
+       expect(value.stopRequestedAt).toBeGreaterThanOrEqual(r.catalogueRetryEvidence.endAt)
+       expect(value.phases.map(phase=>phase.kind)).toEqual(expect.arrayContaining(['catalogue-retry-start','catalogue-retry-pass']))
+       r.catalogueRetryWitnessCoverage='PASS'
+      }
      }catch(error){r.witnessErrorName=error.name;process.exitCode=1}
     }else r.causalWitness={status:'NOT_RUN',reason:'Authenticated witness startup was not completed'}
     if(fault!=='none'&&r.originalFiveSecondAssertion==='FAIL'){
