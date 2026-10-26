@@ -244,35 +244,48 @@ function AppContent() {
     // Restored mirror routes need their code/API connections first. These
     // datasets belong to the covered home screen and resume when it returns.
     if (mirrorActive) return
-    fetchLayout()
-      .then((data) => setLayoutItems(curateAnthropicEmotionLayout(data.items || [])))
+    const controller = new AbortController()
+    fetchLayout({ signal: controller.signal })
+      .then((data) => { if (!controller.signal.aborted) setLayoutItems(curateAnthropicEmotionLayout(data.items || [])) })
       .catch((err) => {
+        if (controller.signal.aborted) return
         setLayoutItems(curateAnthropicEmotionLayout([]))
         setError(String(err))
       })
-    fetchHistory().then((data) => setHistoryItems(data.items || [])).catch((err) => { console.warn('[App.jsx] ignored async error', err) })
+    fetchHistory({ signal: controller.signal })
+      .then((data) => { if (!controller.signal.aborted) setHistoryItems(data.items || []) })
+      .catch((err) => { if (!controller.signal.aborted) console.warn('[App.jsx] ignored async error', err) })
+    return () => controller.abort()
   }, [mirrorActive, setLayoutItems, setHistoryItems, setError])
 
-  const loadDailySnapshot = useCallback(async () => {
+  const loadDailySnapshot = useCallback(async (options = {}) => {
+    const signal = options?.signal
+    if (signal?.aborted) return
     setDailySnapshotLoading(true)
     setDailySnapshotError(false)
     try {
-      const snapshot = await fetchDailySnapshot(getToken())
+      const snapshot = await fetchDailySnapshot(getToken(), { signal })
+      if (signal?.aborted) return
       if (!snapshot) throw new Error('daily snapshot unavailable')
       setDailySnapshot(snapshot)
     } catch (err) {
+      if (signal?.aborted) return
       console.warn('[App.jsx] daily snapshot unavailable', err)
       setDailySnapshotError(true)
     } finally {
-      setDailySnapshotLoading(false)
+      if (!signal?.aborted) setDailySnapshotLoading(false)
     }
   }, [])
 
   useEffect(() => {
     if (user) {
       if (!mirrorActive) {
-        loadDailySnapshot()
-        fetchEmotionTrajectory(getToken()).then(setEmotionTrajectory).catch((err) => { console.warn('[App.jsx] ignored async error', err) })
+        const controller = new AbortController()
+        loadDailySnapshot({ signal: controller.signal })
+        fetchEmotionTrajectory(getToken(), 30, { signal: controller.signal })
+          .then(data => { if (!controller.signal.aborted) setEmotionTrajectory(data) })
+          .catch((err) => { if (!controller.signal.aborted) console.warn('[App.jsx] ignored async error', err) })
+        return () => controller.abort()
       }
     } else {
       setDailySnapshot(null)
@@ -290,14 +303,15 @@ function AppContent() {
   // Community heatmap — fetch on mount and every 5 minutes (no auth required)
   useEffect(() => {
     if (mirrorActive) return
+    const controller = new AbortController()
     function loadHeatmap () {
-      fetchCommunityHeatmap(24, 8).then(data => {
-        if (data.emotions?.length) setCommunityHeatmap(data.emotions)
-      }).catch((err) => { console.warn('[App.jsx] ignored async error', err) })
+      fetchCommunityHeatmap(24, 8, { signal: controller.signal }).then(data => {
+        if (!controller.signal.aborted && data.emotions?.length) setCommunityHeatmap(data.emotions)
+      }).catch((err) => { if (!controller.signal.aborted) console.warn('[App.jsx] ignored async error', err) })
     }
     loadHeatmap()
     const interval = setInterval(loadHeatmap, 5 * 60 * 1000)
-    return () => clearInterval(interval)
+    return () => { clearInterval(interval); controller.abort() }
   }, [mirrorActive, setCommunityHeatmap])
 
   useEffect(() => {
