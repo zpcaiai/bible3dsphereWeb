@@ -2,6 +2,23 @@
 import { assetPath, sourceFrame, networkEvent, timelineEvent, cpuProfile, documentEvent, boundedCollector, boundedTimeline, withinWitnessBudget } from '../../scripts/graph-entry-witness.mjs'
 
 describe('graph causal witness privacy and evidence integrity', () => {
+  it('retains same-origin reload and health timing while excluding private documents and foreign roots', () => {
+    const pending = new Map(), options = { origin: 'https://holiness.uk' }
+    for (const [id, type, path] of [['doc', 'Document', '/'], ['health', 'Fetch', '/api/health']]) {
+      const request = networkEvent('request', { requestId: id, type, timestamp: 10, wallTime: 20, request: { url: `https://holiness.uk${path}?token=secret`, headers: { Authorization: 'secret' } } }, pending, options)
+      expect(request?.path).toBe(path)
+      const response = networkEvent('response', { requestId: id, type, timestamp: 11, response: { url: `https://holiness.uk${path}`, status: 200, protocol: 'h2', remoteIPAddress: '104.21.1.2', remotePort: 443, headers: { 'cf-ray': 'abc123-SIN', 'x-vercel-id': 'sin1::abc-123', 'Set-Cookie': 'secret' }, timing: { requestTime: 10, receiveHeadersStart: 800, receiveHeadersEnd: 801 } } }, pending, options)
+      expect(response.remoteAddress).toEqual({ ip: '104.21.1.2', port: 443 })
+      expect(response.correlation).toEqual({ 'cf-ray': 'abc123-SIN', 'x-vercel-id': 'sin1::abc-123' })
+      expect(response.timing.receiveHeadersStart).toBe(800)
+      expect(JSON.stringify([request, response])).not.toMatch(/secret|Authorization|Set-Cookie|token=/)
+      expect(networkEvent('finished', { requestId: id, timestamp: 12 }, pending, options).path).toBe(path)
+    }
+    for (const url of ['https://foreign.test/', 'https://holiness.uk/private/account', 'https://holiness.uk/api/auth/email/login']) {
+      expect(networkEvent('request', { requestId: 'private', type: 'Document', request: { url } }, pending, options)).toBeNull()
+    }
+  })
+
   it('retains only a static asset path and removes credentials, query and fragment', () => {
     expect(assetPath('https://user:password@example.test/assets/MirrorPage-abc.js?token=secret#private')).toBe('/assets/MirrorPage-abc.js')
     expect(assetPath('/assets/digital-human/portraits-v1/moses.webp')).toBe('/assets/digital-human/portraits-v1/moses.webp')
