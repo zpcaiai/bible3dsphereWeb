@@ -9,7 +9,7 @@ import { assertPublishableBuildOutput, fetchOriginalBuildEnvironment, loadCanoni
 
 const ORIGINAL = 'f7fac42f96f6a45be8c1601df1fa7d0a37bff7d8'
 // Pinned complete 311-entry file maps from the preserved real f7 CI/production manifests.
-const ORACLES = { unset: '39da9a5cbc0c8648b8a56009d9c2f1131fbbf651cf5ba4ef7fb9c6d43c158495', crossOrigin: '2a2ddd48a894c4680b3cde87fe79f21d509d1078bc15c668b0eebf6bb9219e26' }
+const ORACLES = { unset: '39da9a5cbc0c8648b8a56009d9c2f1131fbbf651cf5ba4ef7fb9c6d43c158495', crossOrigin: '2a2ddd48a894c4680b3cde87fe79f21d509d1078bc15c668b0eebf6bb9219e26', canonical: '76f790b07a8d867f147698e9475e658975f321a77b2ed21ea7954be9542d2349' }
 const root = path.resolve(process.argv[2]), seconds = Number(process.argv[3])
 assert(Number.isFinite(seconds) && seconds > 0 && seconds <= 300)
 fs.mkdirSync(root, { recursive: false })
@@ -132,12 +132,53 @@ try {
     write(name + '-build-manifest.json', value)
     const row = { name, source: ORIGINAL, apiInput: api ?? 'UNSET', files: Object.keys(value.files).length, filesSHA256: filesHash(value.files), startupSHA256: value.files[startup], mirrorSHA256: value.files[mirrors[0]], manifest: name + '-build-manifest.json' }
     receipt.builds.push(row)
-    if (name !== 'canonical') assert.equal(row.filesSHA256, ORACLES[name], 'Preserved real f7 build identity not reproduced')
-    else assert.deepEqual(value.files, current.files, 'Canonical control differs from current real candidate bytes')
+    assert.equal(row.filesSHA256, ORACLES[name], 'Preserved real f7 build identity not reproduced')
     remaining()
   }
   assert.notEqual(receipt.builds[0].filesSHA256, receipt.builds[1].filesSHA256)
   assert.deepEqual(inventory(), before);write('source-after.json', inventory())
+  // A changed application must reproduce its own source, not the historical f7
+  // application. Preserve the three f7 controls above and rebuild this exact
+  // candidate separately under the same canonical public build profile.
+  const candidateSource = path.join(temporary, 'candidate-source'), candidateArchive = path.join(temporary, 'candidate-source.tar')
+  fs.mkdirSync(candidateSource)
+  await run('archive-candidate-source', 'git', ['archive', '--format=tar', '--output', candidateArchive, current.sourceCommit], process.cwd())
+  receipt.candidateArchiveSHA256 = hash(fs.readFileSync(candidateArchive))
+  await run('extract-candidate-source', 'tar', ['-xf', candidateArchive, '-C', candidateSource], process.cwd())
+  const candidateEntries = execFileSync('git', ['ls-tree', '-r', '-z', current.sourceCommit], { env: sourceEnvironment, maxBuffer: 16 * 1024 ** 2, timeout: Math.floor(remaining()) }).toString().split('\0').filter(Boolean).map(line => {
+    const [meta, name] = line.split('\t'), [mode, kind, blob] = meta.split(' ')
+    assert.equal(kind, 'blob');assert.notEqual(mode, '120000');assert(path.resolve(candidateSource, name).startsWith(candidateSource + path.sep));return { name, blob }
+  })
+  const candidateInventory = () => Object.fromEntries(candidateEntries.map(({ name, blob }) => {
+    const bytes = fs.readFileSync(path.join(candidateSource, name))
+    assert.equal(crypto.createHash('sha1').update(Buffer.from('blob ' + bytes.length + '\0')).update(bytes).digest('hex'), blob)
+    return [name, hash(bytes)]
+  }))
+  const candidateBefore = candidateInventory();write('candidate-source-before.json', candidateBefore)
+  assert.equal(hash(fs.readFileSync(path.join(candidateSource, 'package-lock.json'))), receipt.lockSHA256)
+  assert(!fs.existsSync(path.join(candidateSource, 'node_modules')))
+  fs.symlinkSync(path.resolve('node_modules'), path.join(candidateSource, 'node_modules'), 'dir')
+  const candidateEnvironment = { ...process.env, VERCEL_GIT_COMMIT_SHA: current.sourceCommit }
+  for (const key of Object.keys(candidateEnvironment)) if (key.startsWith('VITE_') || key.startsWith('NEXT_PUBLIC_')) delete candidateEnvironment[key]
+  Object.assign(candidateEnvironment, await loadCanonicalPublicBuildEnvironment({ ...process.env, VITE_API_BASE: '/api' }))
+  candidateEnvironment.VITE_API_BASE = '/api'
+  await run('build-candidate-canonical', 'npm', ['run', 'build'], candidateSource, candidateEnvironment)
+  assert.deepEqual(candidateInventory(), candidateBefore)
+  const candidate = manifest(path.join(candidateSource, 'dist'));assert.equal(candidate.sourceCommit, current.sourceCommit)
+  assert.deepEqual(candidate.files, current.files, 'Canonical control differs from current real candidate bytes')
+  write('candidate-canonical-build-manifest.json', candidate)
+  const candidateDirectory = path.join(root, 'candidate-canonical');fs.mkdirSync(candidateDirectory)
+  const candidateHTML = fs.readFileSync(path.join(candidateSource, 'dist/index.html'))
+  const candidateStartup = candidateHTML.toString().match(/<script[^>]*type="module"[^>]*src="([^"]+)"/)[1].replace(/^\//, '')
+  const candidateMirrors = Object.keys(candidate.files).filter(file => /^assets\/MirrorPage-[A-Za-z0-9_-]+\.js$/.test(file));assert.equal(candidateMirrors.length, 1)
+  for (const [file, save] of [['index.html', 'index.html'], [candidateStartup, 'startup.js'], [candidateMirrors[0], 'mirror.js']]) {
+    const bytes = fs.readFileSync(path.join(candidateSource, 'dist', file));assertPublishableBuildOutput(bytes, privateValues, file !== 'index.html')
+    fs.writeFileSync(path.join(candidateDirectory, save), bytes, { flag: 'wx' })
+  }
+  receipt.builds.push({ name: 'candidate-canonical', source: current.sourceCommit, apiInput: '/api', files: Object.keys(candidate.files).length, filesSHA256: filesHash(candidate.files), startupSHA256: candidate.files[candidateStartup], mirrorSHA256: candidate.files[candidateMirrors[0]], manifest: 'candidate-canonical-build-manifest.json' })
+  assert.deepEqual(candidateInventory(), candidateBefore);write('candidate-source-after.json', candidateInventory())
+  assert.deepEqual(inventory(), before)
+  remaining()
   receipt.status = 'PASS_CONTROLLED_BUILD_INPUT_CAUSE_ONLY'
 } catch (error) { receipt.errorName = error.name;receipt.error = error.message;process.exitCode = 1 }
 finally {
