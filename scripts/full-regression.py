@@ -99,7 +99,7 @@ try:
     before = snapshot()
     (OUTPUT / 'source-before.json').write_text(json.dumps(before, indent=2))
     assert all(not value['trackedStatus'] for value in before.values()), 'Tracked sources must start clean'
-    assert before['backend']['head'] == 'bfced56f00daf2fdffcbe1a6888c6d2fa6f8004c'
+    assert before['backend']['head'] == '90514f30b55c1c3037db0935a912aad5cce3fb8d'
     run('release-proof-unit', FRONTEND, [sys.executable, '-m', 'unittest', 'discover', '-s', 'scripts', '-p', 'test_release_html.py', '-v'])
     run('frontend-build', FRONTEND, ['npm', 'run', 'build'])
     # The ordinary build may write generated translations, so finish it first.
