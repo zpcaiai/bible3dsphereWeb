@@ -4,6 +4,7 @@ import { seedTerritories } from '../data/seed-territories'
 import { seedEvents } from '../data/seed-events'
 import { seedProphecies } from '../data/seed-prophecies'
 import { seedCampaigns } from '../data/seed-campaigns'
+import { seedPeople } from '../data/seed-people'
 import { localGraph, localNeighbors } from '../data/graph'
 import { EVENT_YEAR_WINDOW } from '../domain/constants'
 import type {
@@ -11,6 +12,7 @@ import type {
   BibleGraph,
   BibleLayer,
   BibleMapEventDTO,
+  BiblePersonJourneyDTO,
   BibleProphecyDTO,
   BibleTerritoryDTO,
   GraphNeighbors,
@@ -61,6 +63,11 @@ export async function fetchProphecies(): Promise<BibleProphecyDTO[]> {
 export async function fetchCampaigns(): Promise<BibleCampaignDTO[]> {
   const api = await apiGet<BibleCampaignDTO[]>('/campaigns')
   return api ?? seedCampaigns
+}
+
+export async function fetchPeople(): Promise<BiblePersonJourneyDTO[]> {
+  const api = await apiGet<BiblePersonJourneyDTO[]>('/people')
+  return api ?? seedPeople
 }
 
 export async function fetchGraph(): Promise<BibleGraph> {

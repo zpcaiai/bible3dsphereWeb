@@ -7,7 +7,53 @@ import { useEffect, useRef, useState } from 'react'
 import BackButton from './BackButton'
 import { JERU_ERAS, TEMPLE_CENTER, PASSION_WEEK, eraGeoJSON, locationsFor, JERU_LOCATIONS } from './data/jerusalemChronology'
 import { TEMPLE_GEOJSON, TEMPLE_PARTS, TEMPLE_LABELS, TEMPLE_CAMERA } from './data/templeStructure'
+import { TEMPLE_GEOJSON_TABERNACLE, TEMPLE_PARTS_TABERNACLE, TEMPLE_LABELS_TABERNACLE, TEMPLE_CAMERA_TABERNACLE } from './data/templeStructureTabernacle'
+import { TEMPLE_GEOJSON_ZERUBBABEL, TEMPLE_PARTS_ZERUBBABEL, TEMPLE_LABELS_ZERUBBABEL, TEMPLE_CAMERA_ZERUBBABEL } from './data/templeStructureZerubbabel'
+import { TEMPLE_GEOJSON_HEROD, TEMPLE_PARTS_HEROD, TEMPLE_LABELS_HEROD, TEMPLE_CAMERA_HEROD } from './data/templeStructureHerod'
 import { speakOnce, stopAllAudio } from './useGlobalAudio'
+
+export const TEMPLE_VARIANTS = [
+  {
+    id: 'tabernacle',
+    label: '⛺ 摩西会幕',
+    period: '出埃及–士师时期',
+    hint: '⛺ 摩西会幕（出25–27、36–40，按肘比例示意复原）· 点击任一部件看经文与尺寸 · ✂ 剖视揭开罩棚察看圣所与至圣所',
+    geojson: TEMPLE_GEOJSON_TABERNACLE,
+    parts: TEMPLE_PARTS_TABERNACLE,
+    labels: TEMPLE_LABELS_TABERNACLE,
+    camera: TEMPLE_CAMERA_TABERNACLE,
+  },
+  {
+    id: 'solomon',
+    label: '🏛 所罗门圣殿',
+    period: '主前957–586年',
+    hint: '🏛 所罗门第一圣殿（王上6–7，按肘比例示意复原）· 点击任一部件看经文与尺寸 · ✂ 剖视揭开殿顶察看圣所与至圣所',
+    geojson: TEMPLE_GEOJSON,
+    parts: TEMPLE_PARTS,
+    labels: TEMPLE_LABELS,
+    camera: TEMPLE_CAMERA,
+  },
+  {
+    id: 'zerubbabel',
+    label: '🧱 所罗巴伯圣殿',
+    period: '主前516–20年',
+    hint: '🧱 所罗巴伯第二圣殿（拉3–6；该1–2，按肘比例示意复原）· 点击任一部件看经文与尺寸 · ✂ 剖视揭开殿顶察看圣所与至圣所',
+    geojson: TEMPLE_GEOJSON_ZERUBBABEL,
+    parts: TEMPLE_PARTS_ZERUBBABEL,
+    labels: TEMPLE_LABELS_ZERUBBABEL,
+    camera: TEMPLE_CAMERA_ZERUBBABEL,
+  },
+  {
+    id: 'herod',
+    label: '👑 希律圣殿',
+    period: '主前20–主后70年',
+    hint: '👑 希律第二圣殿（约2:20；可13:1-2；米示拿，同心院落示意复原）· 点击任一部件看经文与尺寸 · ✂ 剖视揭开殿顶察看圣所与至圣所',
+    geojson: TEMPLE_GEOJSON_HEROD,
+    parts: TEMPLE_PARTS_HEROD,
+    labels: TEMPLE_LABELS_HEROD,
+    camera: TEMPLE_CAMERA_HEROD,
+  },
+]
 import { useAmbience } from './lib/media/useAmbience'
 import { MediaToggleRow } from './lib/media/MediaControls'
 import { getMediaPref } from './lib/media/mediaPrefs'
@@ -104,10 +150,14 @@ export default function JerusalemSandbox({ onBack }) {
   const [showOsm, setShowOsm] = useState(false)
   // —— 圣殿3D结构模式 ——
   const [templeMode, setTempleMode] = useState(false)
+  const [templeVariantId, setTempleVariantId] = useState('solomon')
   const [cutaway, setCutaway] = useState(true)
   const [selectedPart, setSelectedPart] = useState(null)
   const templeMarkersRef = useRef([])
   const templeModeRef = useRef(false)
+  const templeVariantRef = useRef('solomon')
+  templeVariantRef.current = templeVariantId
+  const activeTemple = TEMPLE_VARIANTS.find(v => v.id === templeVariantId) || TEMPLE_VARIANTS[1]
   // —— 声音：巡游解说 + 旷野风环境音（都必须由用户显式开启）——
   const [narrate, setNarrate] = useState(false)
   const narrateRef = useRef(false)   // 巡游是一个跨多次渲染的 async 循环，读 ref 才能中途改主意
@@ -219,7 +269,8 @@ export default function JerusalemSandbox({ onBack }) {
 
     // 圣殿精细结构（默认隐藏，进入圣殿模式时显示）
     try {
-      map.addSource('temple', { type: 'geojson', data: TEMPLE_GEOJSON })
+      const initTemple = TEMPLE_VARIANTS.find(v => v.id === templeVariantRef.current) || TEMPLE_VARIANTS[1]
+      map.addSource('temple', { type: 'geojson', data: initTemple.geojson })
       map.addLayer({
         id: 'temple-fill', type: 'fill-extrusion', source: 'temple',
         layout: { visibility: 'none' },
@@ -232,8 +283,9 @@ export default function JerusalemSandbox({ onBack }) {
       })
       map.on('click', 'temple-fill', (e) => {
         const f = e.features && e.features[0]
-        if (f && f.properties && TEMPLE_PARTS[f.properties.id]) {
-          setSelectedPart({ id: f.properties.id, ...TEMPLE_PARTS[f.properties.id] })
+        const curTemple = TEMPLE_VARIANTS.find(v => v.id === templeVariantRef.current) || TEMPLE_VARIANTS[1]
+        if (f && f.properties && curTemple.parts[f.properties.id]) {
+          setSelectedPart({ id: f.properties.id, ...curTemple.parts[f.properties.id] })
         }
       })
       map.on('mouseenter', 'temple-fill', () => { map.getCanvas().style.cursor = 'pointer' })
@@ -332,12 +384,39 @@ export default function JerusalemSandbox({ onBack }) {
     templeMarkersRef.current.forEach(m => { try { m.remove() } catch (_) {} })
     templeMarkersRef.current = []
   }
-  function enterTemple() {
+  function applyTempleVariantToMap(variant) {
     const map = mapRef.current, gl = glRef.current
-    if (!map || !map.getLayer || !map.getLayer('temple-fill')) return
+    if (!map || !gl || !map.getLayer || !map.getLayer('temple-fill')) return
+    try {
+      const src = map.getSource && map.getSource('temple')
+      if (src && src.setData) src.setData(variant.geojson)
+    } catch (_) {}
+    clearTempleMarkers()
+    variant.labels.forEach(l => {
+      const el = document.createElement('div'); el.className = 'jeru-structlabel'; el.textContent = l.name
+      el.style.pointerEvents = 'auto'; el.style.cursor = 'pointer'
+      el.onclick = (ev) => { ev.stopPropagation(); if (variant.parts[l.id]) setSelectedPart({ id: l.id, ...variant.parts[l.id] }) }
+      const mk = new gl.Marker({ element: el, anchor: 'center' }).setLngLat(l.coord).addTo(map)
+      templeMarkersRef.current.push(mk)
+    })
+    map.flyTo({ center: variant.camera.center, zoom: variant.camera.zoom, pitch: variant.camera.pitch, bearing: variant.camera.bearing, duration: reducedMotion ? 0 : 2200, essential: true })
+  }
+  function selectTempleVariant(nextId) {
+    const variant = TEMPLE_VARIANTS.find(v => v.id === nextId) || TEMPLE_VARIANTS[1]
+    templeVariantRef.current = variant.id
+    setTempleVariantId(variant.id)
+    setSelectedPart(null)
+    if (templeModeRef.current) {
+      applyTempleVariantToMap(variant)
+    }
+  }
+  function enterTemple() {
+    const map = mapRef.current
+    const variant = TEMPLE_VARIANTS.find(v => v.id === templeVariantRef.current) || TEMPLE_VARIANTS[1]
     passionRunRef.current = false; setPassionActive(false)
     if (spokeRef.current) { spokeRef.current = false; stopAllAudio() }
     templeModeRef.current = true; setTempleMode(true); setSelectedLoc(null)
+    if (!map || !map.getLayer || !map.getLayer('temple-fill')) return
     try {
       map.setLayoutProperty('jeru-fill', 'visibility', 'none')
       map.setLayoutProperty('jeru-wall-line', 'visibility', 'none')
@@ -345,15 +424,7 @@ export default function JerusalemSandbox({ onBack }) {
       map.setFilter('temple-fill', cutaway ? ['!=', ['get', 'cut'], 1] : null)
     } catch (_) {}
     clearMarkers()
-    clearTempleMarkers()
-    TEMPLE_LABELS.forEach(l => {
-      const el = document.createElement('div'); el.className = 'jeru-structlabel'; el.textContent = l.name
-      el.style.pointerEvents = 'auto'; el.style.cursor = 'pointer'
-      el.onclick = (ev) => { ev.stopPropagation(); if (TEMPLE_PARTS[l.id]) setSelectedPart({ id: l.id, ...TEMPLE_PARTS[l.id] }) }
-      const mk = new gl.Marker({ element: el, anchor: 'center' }).setLngLat(l.coord).addTo(map)
-      templeMarkersRef.current.push(mk)
-    })
-    map.flyTo({ center: TEMPLE_CAMERA.center, zoom: TEMPLE_CAMERA.zoom, pitch: TEMPLE_CAMERA.pitch, bearing: TEMPLE_CAMERA.bearing, duration: reducedMotion ? 0 : 2200, essential: true })
+    applyTempleVariantToMap(variant)
   }
   function exitTemple() {
     const map = mapRef.current, gl = glRef.current
@@ -529,12 +600,44 @@ export default function JerusalemSandbox({ onBack }) {
         )}
       </div>
 
-      {/* 圣殿模式提示 */}
-      {templeMode && (
-        <div className="jeru-temple-hint">
-          {i18nT('🏛 所罗门第一圣殿（王上6–7，按肘比例示意复原）· 点击任一部件看经文与尺寸 · ✂ 剖视揭开殿顶察看圣所与至圣所')}
+      {/* 圣殿四代结构切换与构件名录 */}
+      <div className="jeru-passion" data-testid="jeru-temple-selector">
+        <div className="jeru-passion-h">{i18nT('🏛 历代圣所与圣殿三维结构（会幕 · 所罗门 · 所罗巴伯 · 希律）')}</div>
+        <div className="jeru-stops">
+          {TEMPLE_VARIANTS.map((v) => (
+            <button
+              key={v.id}
+              type="button"
+              data-testid={`jeru-temple-variant-${v.id}`}
+              className={`jeru-stop ${templeVariantId === v.id ? 'on' : ''}`}
+              onClick={() => selectTempleVariant(v.id)}
+            >
+              <span className="d">{i18nT(v.period)}</span>
+              <span className="t">{i18nT(v.label)}</span>
+            </button>
+          ))}
         </div>
-      )}
+        <div className="jeru-temple-hint" style={{ marginTop: 8 }}>
+          {i18nT(activeTemple.hint)}
+        </div>
+        <div className="jeru-stops" style={{ marginTop: 8 }}>
+          {activeTemple.labels.map((l) => (
+            <button
+              key={`${activeTemple.id}-${l.id}`}
+              type="button"
+              data-testid={`jeru-temple-part-${l.id}`}
+              className={`jeru-stop ${selectedPart?.id === l.id ? 'on' : ''}`}
+              onClick={() => {
+                if (activeTemple.parts[l.id]) {
+                  setSelectedPart({ id: l.id, ...activeTemple.parts[l.id] })
+                }
+              }}
+            >
+              <span className="t">{i18nT(l.name)}</span>
+            </button>
+          ))}
+        </div>
+      </div>
 
       {/* 圣殿部件详情 */}
       {selectedPart && (

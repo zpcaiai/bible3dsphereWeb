@@ -347,19 +347,18 @@ export default function EngineeringPage({ onBack, user, token }) {
       .finally(() => setLoading(false))
   }, [user?.email])
 
-  // Build formation scores from daily devotion data (it includes formation dimension)
-  // We also call the formation endpoint to get all 8 scores
+  // Build formation scores from formation profile endpoint to get all 8 scores
   const [scores, setScores] = useState(null)
   useEffect(() => {
-    if (!user) return
+    if (!user?.email) return
     const headers = token ? { Authorization: `Bearer ${token}` } : {}
-    fetch(`${API_BASE}/daily-devotion-personal`, { headers })
+    fetch(`${API_BASE}/sfds/v3/formation/profile/${encodeURIComponent(user.email)}`, { headers })
       .then(r => r.ok ? r.json() : null)
       .then(d => {
-        // The endpoint returns focus_dim info but not all 8 scores
-        // We'll derive approximate scores from health check data and defaults
+        const vec = d?.formation?.state_vector || d?.state_vector || d?.scores || null
+        if (vec && typeof vec === 'object') setScores(vec)
       }).catch((err) => { console.warn('[EngineeringPage.jsx] ignored async error', err) })
-  }, [user?.email])
+  }, [user?.email, token])
 
   return (
     <div style={{
@@ -479,13 +478,13 @@ export default function EngineeringPage({ onBack, user, token }) {
             }}>
               {i18nT('评分来自你的情绪打卡、灵修日记和属灵操练记录。每次互动后自动更新，帮助你看见灵命成长的轨迹。')}
             </div>
-            {Object.entries(DIM_META).map(([key, meta]) => {
-              // We don't have individual scores here, show placeholder bars based on focus_dim
+            {Object.entries(DIM_META).map(([key]) => {
               const isFocus = formation?.focus_dim === key
               const defaultScore = isFocus
                 ? (formation?.stage === 'blind_spot' ? 0.25 : formation?.stage === 'growing' ? 0.5 : 0.75)
                 : 0.5
-              return <DimBar key={key} dimKey={key} score={defaultScore} />
+              const resolvedScore = typeof scores?.[key] === 'number' ? scores[key] : defaultScore
+              return <DimBar key={key} dimKey={key} score={resolvedScore} />
             })}
 
             <div style={{

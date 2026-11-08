@@ -2,7 +2,7 @@ import { t as i18nT } from '../../../i18n/runtime'
 'use client'
 import { LAYERS } from '../domain/constants'
 import type { BibleLayer } from '../domain/types'
-import { cn } from '@/lib/utils'
+import { cn } from '../../../lib/utils'
 
 interface Props {
   layer: BibleLayer

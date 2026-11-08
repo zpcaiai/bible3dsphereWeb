@@ -33,7 +33,8 @@ function buildLoveOrderRings(currentKeys, records) {
 function readRecords(userId) {
   if (typeof window === 'undefined') return []
   try {
-    return JSON.parse(window.localStorage.getItem(STORAGE_KEY) || '[]').filter((item) => item.userId === userId)
+    const parsed = JSON.parse(window.localStorage.getItem(STORAGE_KEY) || '[]')
+    return (Array.isArray(parsed) ? parsed : []).filter((item) => item && item.userId === userId)
   } catch {
     return []
   }
@@ -41,10 +42,20 @@ function readRecords(userId) {
 
 function writeRecord(record) {
   if (typeof window === 'undefined') return []
-  const all = JSON.parse(window.localStorage.getItem(STORAGE_KEY) || '[]')
-  const next = [record, ...all.filter((item) => item.id !== record.id)].slice(0, 60)
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next))
-  return next.filter((item) => item.userId === record.userId)
+  let all = []
+  try {
+    const parsed = JSON.parse(window.localStorage.getItem(STORAGE_KEY) || '[]')
+    all = Array.isArray(parsed) ? parsed : []
+  } catch {
+    all = []
+  }
+  const next = [record, ...all.filter((item) => item && item.id !== record.id)].slice(0, 60)
+  try {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next))
+  } catch {
+    /* quota/storage ignore */
+  }
+  return next.filter((item) => item && item.userId === record.userId)
 }
 
 export default function OrdoAmorisDashboard({ userId = 'local-user', token }) {

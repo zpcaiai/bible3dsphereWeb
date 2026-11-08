@@ -34,7 +34,7 @@ export default function VoicemailModal({ peer, onClose }) {
     else toast(t('连接断开，留言发送失败'), 'error')
   }
 
-  function close() { stopNotes(); clearNotes(); realtimeStore.clearMissed(); onClose?.() }
+  function close() { stopNotes(); clearNotes();  onClose?.() }
 
   return (
     <div style={S.overlay} onClick={close} {...a11yClickProps(close)}>

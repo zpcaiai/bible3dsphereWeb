@@ -248,7 +248,14 @@ export default function HabitsPage({ user, token: propToken, embedded = false, o
             )}
             <div style={{ textAlign: 'center' }}>
               <div style={{ fontSize: 18, fontWeight: 700, color: '#60a5fa' }}>{doneCount}/{habits.length}</div>
-              <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.35)' }}>{i18nT('今日完成')}</div>
+              <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.35)' }}>
+                {i18nT('今日完成')}
+                {todayCount > 0 && (
+                  <span data-testid="habits-today-executions" style={{ marginLeft: 4, color: '#93c5fd' }}>
+                    ({todayCount}{i18nT('次')})
+                  </span>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -305,7 +312,8 @@ export default function HabitsPage({ user, token: propToken, embedded = false, o
                 const log = todayLogs[habit.id]
                 const done = log?.done || false
                 const note = notes[habit.id] ?? (log?.note || '')
-                const preset = PRESET_HABITS.find(p => p.key === habit.preset_key || p.name === habit.name)
+                const habitTitle = habit.name || habit.habit_name || ''
+                const preset = PRESET_HABITS.find(p => p.key === habit.preset_key || p.name === habitTitle)
                 const color = preset?.color || '#60a5fa'
                 const icon  = preset?.icon || '🌿'
                 const isSaving = saving[habit.id]
@@ -339,7 +347,7 @@ export default function HabitsPage({ user, token: propToken, embedded = false, o
                       <span style={{ fontSize: 18, flexShrink: 0 }}>{icon}</span>
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ fontSize: 14, fontWeight: 600, color: done ? color : '#fff', textDecoration: done ? 'line-through' : 'none', textDecorationColor: 'rgba(255,255,255,0.3)' }}>
-                          {habit.name}
+                          {habitTitle}
                         </div>
                         {habit.description && (
                           <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', marginTop: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>

@@ -111,10 +111,10 @@ async function dgTranscribe(blob, contentType) {
   try {
     let data
     try {
-      data = await transcribeAudioBlob(blob, { contentType: contentType || 'audio/webm' })
+      data = await transcribeAudioBlob(blob, { contentType: contentType || 'audio/webm', language: curLang })
     } catch {
       await new Promise((r) => setTimeout(r, 600))
-      data = await transcribeAudioBlob(blob, { contentType: contentType || 'audio/webm' })
+      data = await transcribeAudioBlob(blob, { contentType: contentType || 'audio/webm', language: curLang })
     }
     if (data.transcript?.trim()) pushLocal(data.transcript.trim())
   } catch { /* 单段失败丢弃，不中断会话 */ }

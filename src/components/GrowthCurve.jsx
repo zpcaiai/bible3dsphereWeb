@@ -53,7 +53,12 @@ export default function GrowthCurve({ token }) {
     const r = RANGES.find((x) => x.key === range) || RANGES[1]
     setErr('')
     fetchFormationCurve(token, r.days, r.bucket).then(setData).catch((e) => setErr(e.message))
-    fetchMilestones(token).then((d) => setMiles(((d && (d.milestones || d.items)) || []).length || 0)).catch((err) => { console.warn('[GrowthCurve.jsx] ignored async error', err) })
+    fetchMilestones(token)
+      .then((d) => {
+        const list = Array.isArray(d) ? d : (d?.milestones || d?.items || [])
+        setMiles(list.length || 0)
+      })
+      .catch((err) => { console.warn('[GrowthCurve.jsx] ignored async error', err) })
   }, [token, range])
 
   if (!token) return null

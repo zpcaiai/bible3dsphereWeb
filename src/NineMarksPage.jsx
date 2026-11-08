@@ -515,7 +515,7 @@ function DiscipleshipTab({ token }) {
           {list.map((d) => (
             <div key={d.id} style={{ padding: '8px 0', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
               <div style={{ fontSize: 13, fontWeight: 600 }}>
-                {(REL_TYPE.find((r) => r[0] === d.relation_type) || [, d.relation_type])[1]}
+                {(REL_TYPE.find((r) => r[0] === d.relation_type) || [null, d.relation_type])[1]}
                 {d.counterpart ? ` · ${d.counterpart}` : ''}
               </div>
               {d.meeting_rhythm && <div style={C.sub}>{d.meeting_rhythm}</div>}
@@ -594,7 +594,7 @@ function RestorationTab({ token }) {
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <span style={{ fontSize: 13 }}>{r.sin_pattern}</span>
                 <span style={C.chip(r.risk_level === 'crisis' ? '#ff8787' : '#5ac8fa')}>
-                  {(REPENT_STATUS.find((s) => s[0] === r.repentance_status) || [, r.repentance_status])[1]}
+                  {(REPENT_STATUS.find((s) => s[0] === r.repentance_status) || [null, r.repentance_status])[1]}
                 </span>
               </div>
             </div>

@@ -259,17 +259,7 @@ export function MapCanvas({
     }
   }, [focusEvent])
 
-  if (!token) {
-    return (
-      <div className="flex h-full min-h-[320px] w-full items-center justify-center rounded-xl border border-white/10 bg-white/5 p-6 text-center">
-        <div>
-          <div className="mb-2 text-3xl">🗺️</div>
-          <p className="text-sm text-gray-300">{i18nT('请配置 NEXT_PUBLIC_MAPBOX_TOKEN 以启用地图。')}</p>
-          <p className="mt-1 text-xs text-gray-500">{i18nT('（左侧时间轴、图层、事件与右侧详情仍可正常使用。）')}</p>
-        </div>
-      </div>
-    )
-  }
+  
 
   return <div ref={containerRef} className="h-full min-h-[320px] w-full rounded-xl" />
 }

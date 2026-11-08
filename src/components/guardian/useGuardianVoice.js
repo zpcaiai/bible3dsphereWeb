@@ -28,7 +28,7 @@ function pickVoice() {
 /** 朗读前清理：去 emoji / 括号符号 / markdown 残留，保留语句本身 */
 export function cleanForSpeech(text) {
   return (text || '')
-    .replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}]/gu, '')
+    .replace(/(?:[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]|\u{FE0F})/gu, '')
     .replace(/[（）()【】「」*#`]/g, '')
     .replace(/\n+/g, '。')
     .replace(/。+/g, '。')

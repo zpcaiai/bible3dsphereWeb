@@ -9,10 +9,12 @@ import {
 } from '../data/seed-temple'
 import { formatYear } from '../lib/format'
 import { DISCLAIMER } from '../domain/constants'
+import { createModelLayer } from '../../../lib/gltfModelLayer'
 import type { GeoJsonPolygon } from '../domain/types'
 
 const SRC = 'temple-structures'
 const LYR = 'temple-structures-3d'
+const GLTF_LYR = 'temple-gltf-3d'
 const YEAR_MIN = -1010
 const YEAR_MAX = 100
 
@@ -31,6 +33,7 @@ export function TempleSandbox({ onBack }: Props) {
   const mapRef = useRef<maplibregl.Map | null>(null)
   const loadedRef = useRef(false)
   const [year, setYear] = useState<number>(-960)
+  const [showGltfModel, setShowGltfModel] = useState<boolean>(true)
   const era = templeEraForYear(year)
 
   function buildData(y: number) {
@@ -48,24 +51,30 @@ export function TempleSandbox({ onBack }: Props) {
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return
-    const map = new maplibregl.Map({
-      container: containerRef.current,
-      style: {
-        version: 8,
-        sources: { osm: { type: 'raster', tiles: ['https://a.tile.openstreetmap.org/{z}/{x}/{y}.png'], tileSize: 256 } },
-        layers: [
-          { id: 'background', type: 'background', paint: { 'background-color': '#08101c' } },
-          { id: 'osm', type: 'raster', source: 'osm', paint: { 'raster-opacity': 0.42, 'raster-saturation': -0.8 } },
-        ],
-      },
-      center: TEMPLE_CENTER,
-      zoom: 15.2,
-      pitch: 60,
-      bearing: -20,
-      antialias: true,
-    })
+    let map: maplibregl.Map | null = null
+    try {
+      map = new maplibregl.Map({
+        container: containerRef.current,
+        style: {
+          version: 8,
+          sources: { osm: { type: 'raster', tiles: ['https://a.tile.openstreetmap.org/{z}/{x}/{y}.png'], tileSize: 256 } },
+          layers: [
+            { id: 'background', type: 'background', paint: { 'background-color': '#08101c' } },
+            { id: 'osm', type: 'raster', source: 'osm', paint: { 'raster-opacity': 0.42, 'raster-saturation': -0.8 } },
+          ],
+        },
+        center: TEMPLE_CENTER,
+        zoom: 15.2,
+        pitch: 60,
+        bearing: -20,
+        antialias: true,
+      })
+    } catch {
+      return
+    }
     mapRef.current = map
     map.on('load', () => {
+      if (!map) return
       map.addSource(SRC, { type: 'geojson', data: buildData(year) })
       map.addLayer({
         id: LYR,
@@ -78,11 +87,15 @@ export function TempleSandbox({ onBack }: Props) {
           'fill-extrusion-opacity': 0.92,
         },
       })
+      if (showGltfModel && !map.getLayer(GLTF_LYR)) {
+        const customLayer = createModelLayer({ glLib: maplibregl, id: GLTF_LYR, origin: TEMPLE_CENTER, modelScale: 1 })
+        map.addLayer(customLayer as unknown as maplibregl.CustomLayerInterface)
+      }
       loadedRef.current = true
     })
     return () => {
       loadedRef.current = false
-      map.remove()
+      map?.remove()
       mapRef.current = null
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -96,6 +109,18 @@ export function TempleSandbox({ onBack }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [year])
 
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map || !loadedRef.current) return
+    const exists = Boolean(map.getLayer(GLTF_LYR))
+    if (showGltfModel && !exists) {
+      const customLayer = createModelLayer({ glLib: maplibregl, id: GLTF_LYR, origin: TEMPLE_CENTER, modelScale: 1 })
+      map.addLayer(customLayer as unknown as maplibregl.CustomLayerInterface)
+    } else if (!showGltfModel && exists) {
+      map.removeLayer(GLTF_LYR)
+    }
+  }, [showGltfModel])
+
   return (
     <div className="flex h-screen flex-col">
       <header className="flex items-center justify-between border-b border-white/10 px-4 py-3">
@@ -103,9 +128,23 @@ export function TempleSandbox({ onBack }: Props) {
           <h1 className="text-lg font-bold text-white">{i18nT('🏛️ 圣殿山数字孪生沙盘')}</h1>
           <p className="text-xs text-gray-400">{i18nT('拖动时间轴，看耶路撒冷圣殿山从禾场到希律圣殿的「平地起高楼」')}</p>
         </div>
-        <button onClick={onBack} className="rounded-lg border border-white/15 bg-white/5 px-3 py-1.5 text-sm text-gray-200 hover:bg-white/10">
-          {i18nT('‹ 返回地图')}
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            data-testid="temple-gltf-toggle"
+            onClick={() => setShowGltfModel((v) => !v)}
+            className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition ${
+              showGltfModel
+                ? 'border-amber-400/60 bg-amber-400/15 text-amber-300'
+                : 'border-white/15 bg-white/5 text-gray-300 hover:bg-white/10'
+            }`}
+          >
+            {showGltfModel ? i18nT('🏛 3D 精细模型：开') : i18nT('🏛 3D 精细模型：关')}
+          </button>
+          <button onClick={onBack} className="rounded-lg border border-white/15 bg-white/5 px-3 py-1.5 text-sm text-gray-200 hover:bg-white/10">
+            {i18nT('‹ 返回地图')}
+          </button>
+        </div>
       </header>
 
       <div className="relative flex-1">
@@ -116,6 +155,11 @@ export function TempleSandbox({ onBack }: Props) {
           <div className="text-xs text-amber-400">{formatYear(era.year)}</div>
           <h2 className="mb-1 text-base font-bold text-white">{era.label}</h2>
           <p className="text-sm leading-relaxed text-gray-300">{era.note}</p>
+          {showGltfModel && (
+            <div data-testid="temple-gltf-active-badge" className="mt-2 rounded-lg border border-amber-400/30 bg-amber-400/10 px-2.5 py-1 text-[11px] text-amber-200">
+              {i18nT('已叠加 Three.js 3D 圣殿模型（雅斤/波阿斯铜柱 · 铜海 · 至圣所）')}
+            </div>
+          )}
         </div>
       </div>
 

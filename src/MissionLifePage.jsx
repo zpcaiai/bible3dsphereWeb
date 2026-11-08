@@ -36,7 +36,12 @@ export default function MissionLifePage({ user, onBack }) {
 
   function reload() {
     const t = getToken(); if (!t) return
-    fetchLatestMissionProfile(t).then(r => { if (r.profile) setProfile(r.profile) }).catch((err) => { console.warn('[MissionLifePage.jsx] ignored async error', err) })
+    fetchLatestMissionProfile(t).then(r => {
+      if (r && r.profile) {
+        setProfile(r.profile)
+        if (r.profile.life_season) setSeason(r.profile.life_season)
+      }
+    }).catch((err) => { console.warn('[MissionLifePage.jsx] ignored async error', err) })
     fetchMissionCommitments(t).then(r => setCommitments(r.commitments || [])).catch((err) => { console.warn('[MissionLifePage.jsx] ignored async error', err) })
     fetchMissionProjects(t).then(r => setProjects(r.projects || [])).catch((err) => { console.warn('[MissionLifePage.jsx] ignored async error', err) })
   }
@@ -78,6 +83,20 @@ export default function MissionLifePage({ user, onBack }) {
       <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.55)', marginBottom: 14 }}>{i18nT('把基督的使命整合进日常 · 始于日常忠心，而非靠项目证明自己')}</div>
 
       {error && <div style={{ ...card, borderColor: 'rgba(255,107,107,0.4)', color: '#ffb4b4' }}>{error}</div>}
+
+      {profile && profile.mission_summary && (
+        <div style={{ ...card, borderColor: 'rgba(139,233,192,0.3)', background: 'rgba(52,199,89,0.06)' }} data-testid="mission-adopted-profile">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: '#8be9c0' }}>{i18nT('当前使命画像')}</div>
+            {profile.life_season && (
+              <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.6)' }}>
+                {i18nT('生命季节：')}{SEASONS.find(([k]) => k === profile.life_season)?.[1] || profile.life_season}
+              </span>
+            )}
+          </div>
+          <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.88)', lineHeight: 1.6 }}>{profile.mission_summary}</div>
+        </div>
+      )}
 
       {/* 设计 */}
       <div style={card}>

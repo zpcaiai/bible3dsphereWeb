@@ -4,15 +4,20 @@ import * as api from '../api/missionApi'
 import { listMyOrganizations, createOrganization } from '../api/organizations'
 import GuidedInput from '../../../components/mission-bridge/GuidedInput'
 import { missionOptionLabel } from '../../../components/mission-bridge/optionLabels'
+import MissionFeatureSettings from '../components/MissionFeatureSettings'
+import MissionIncidentConsole from '../components/MissionIncidentConsole'
+import MissionAuditConsole from '../components/MissionAuditConsole'
+import MissionOutboxConsole from '../components/MissionOutboxConsole'
+import MissionOrganizationConsole from '../components/MissionOrganizationConsole'
 
 /**
  * MissionConsole — Mission OS 工作台
- * 覆盖生命周期主线：禾场情报 → 呼召辨识 → 工人准备度 → 部署财务 → Deployment Gate。
+ * 覆盖生命周期主线：禾场情报 → 呼召辨识 → 工人准备度 → 部署财务 → Deployment Gate，及 B1 治理控制台。
  * 每个面板接真实后端 API（/api/v1/mission/...），含 加载/空/错误/无权限 四态。
  */
 
-// ---- 生命周期阶段（镜像 backend mission_os/pipeline.py）----
-const STAGES = [
+// ---- 生命周期阶段与治理控制台（镜像 backend mission_os/pipeline.py）----
+export const STAGES = [
   ['field', '禾场情报', 'B2'],
   ['calling', '呼召辨识', 'B3'],
   ['readiness', '工人准备度', 'B3'],
@@ -26,6 +31,11 @@ const STAGES = [
   ['compliance', '合规审核', 'B6'],
   ['vault', '证件 Vault', 'B6'],
   ['gate', '部署就绪 Gate', 'B6'],
+  ['organization', '组织画像', 'B1'],
+  ['features', '功能开关', 'B1'],
+  ['incidents', '安全事件', 'B1'],
+  ['audit', '审计血缘', 'B1'],
+  ['outbox', '事件投递', 'B1'],
 ]
 
 const ORIENTATIONS = [
@@ -366,6 +376,11 @@ const PANELS = {
   field: FieldsPanel, calling: CallingPanel, readiness: ReadinessPanel, training: TrainingPanel,
   sending: SendingPanel, committee: CommitteePanel, team: TeamPanel, finance: FinancePanel, identity: IdentityPanel, family: FamilyPanel,
   compliance: CompliancePanel, vault: VaultPanel, gate: GatePanel,
+  organization: MissionOrganizationConsole,
+  features: MissionFeatureSettings,
+  incidents: MissionIncidentConsole,
+  audit: MissionAuditConsole,
+  outbox: MissionOutboxConsole,
 }
 
 const ORG_STORE_KEY = 'mission-os-selected-org'
@@ -477,7 +492,7 @@ export default function MissionConsole({ token, organizationId, initialPanel = '
       <div style={{ fontSize: 11.5, color: 'rgba(255,255,255,0.4)', margin: '0 2px 12px', lineHeight: 1.5 }}>
         {t('主线：禾场情报 → 呼召辨识 → 准备度 → 装备训练 → 差派与团队 → 财务/身份/家庭 → Deployment Gate。上游未达标不能进下游；任何自动阶段都不会把工人标记为「已出发」。')}
       </div>
-      <Panel token={token} org={org} />
+      <Panel token={token} org={org} organizationId={org} />
     </div>
   )
 }

@@ -502,7 +502,10 @@ export async function fetchMilestones(token) {
   })
   if (!response.ok) return []
   const data = await response.json()
-  return data.ok ? data.items : []
+  if (Array.isArray(data)) return data
+  if (Array.isArray(data?.items)) return data.items
+  if (Array.isArray(data?.milestones)) return data.milestones
+  return []
 }
 
 // ── A10: 圣经通读 ─────────────────────────────────────────────
@@ -588,6 +591,10 @@ export async function fetchTranslateBatch(texts, targetLang = 'en') {
 // autoTranslate.jsx 的统一入口，复用 fetchTranslateBatch 的内容寻址缓存与批量逻辑。
 export async function translateTexts(texts, targetLang = 'en') {
   return fetchTranslateBatch(texts, targetLang)
+}
+
+export async function translateText(text, targetLang = 'en') {
+  return fetchTranslate(text, targetLang)
 }
 
 export async function fetchFaithQA(question) {
@@ -802,6 +809,24 @@ export async function restorePrayer(prayerId, token) {
   const data = await response.json()
   if (!response.ok) throw new Error(data.detail || data.error || 'Restore failed')
   devlog(`[api] restorePrayer ok id=${prayerId}`)
+  return data
+}
+
+export async function fetchSharedPrayer(shareToken) {
+  devlog(`[api] fetchSharedPrayer token=${shareToken}`)
+  const response = await fetch(`${API_BASE}/prayers/shared/${encodeURIComponent(shareToken)}`)
+  const data = await response.json().catch(() => ({}))
+  if (!response.ok) throw new Error(data.detail || data.error || '这条代祷不存在或已被删除。')
+  return data
+}
+
+export async function amenSharedPrayer(shareToken) {
+  devlog(`[api] amenSharedPrayer token=${shareToken}`)
+  const response = await fetch(`${API_BASE}/prayers/shared/${encodeURIComponent(shareToken)}/amen`, {
+    method: 'POST',
+  })
+  const data = await response.json().catch(() => ({}))
+  if (!response.ok) throw new Error(data.detail || data.error || 'Amen failed')
   return data
 }
 

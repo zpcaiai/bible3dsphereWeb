@@ -220,7 +220,14 @@ export default function SoulDashboard({ user, onOpenDevotion }) {
           `${API_BASE}/sfds/decisions?user_id=${encodeURIComponent(uid)}`,
           { headers: { Authorization: `Bearer ${token}` } }
         ).catch(() => null)
-        const decisions = decisionsRes?.ok ? await decisionsRes.json() : []
+        const decisionsRaw = decisionsRes?.ok ? await decisionsRes.json() : []
+        const decisions = Array.isArray(decisionsRaw)
+          ? decisionsRaw
+          : Array.isArray(decisionsRaw?.decisions)
+            ? decisionsRaw.decisions
+            : Array.isArray(decisionsRaw?.items)
+              ? decisionsRaw.items
+              : []
         setDashData({ formation: profileData?.profile || null, habits: habitsDash, decisions: decisions.slice(0, 5) })
         setMvfeData(mvfeDash)
         setMvfeLast(mvfeLastRes?.result || null)
@@ -341,6 +348,56 @@ export default function SoulDashboard({ user, onOpenDevotion }) {
       )}
 
       {/* ── 模块分类切换 Tab ── */}
+      {insight && (
+        <div
+          data-testid="soul-dashboard-insight"
+          style={{
+            margin: '10px 16px 8px',
+            borderRadius: 14,
+            padding: '12px 14px',
+            background: 'rgba(255,255,255,0.04)',
+            border: '1px solid rgba(255,255,255,0.08)',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+            <span style={{ fontSize: 18 }}>{insight.emoji}</span>
+            <span style={{ fontSize: 13.5, fontWeight: 700, color: '#fff' }}>{i18nT(insight.title)}</span>
+          </div>
+          <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.72)', lineHeight: 1.6 }}>{insight.body}</div>
+          {insight.verse && (
+            <div style={{ fontSize: 11, color: '#9ecbff', marginTop: 6 }}>{insight.verse}</div>
+          )}
+        </div>
+      )}
+
+      <div
+        data-testid="soul-dashboard-signals"
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(3, 1fr)',
+          gap: 8,
+          margin: '0 16px 10px',
+        }}
+      >
+        {signals.map((sig) => (
+          <div
+            key={sig.label}
+            style={{
+              background: 'rgba(255,255,255,0.04)',
+              border: '1px solid rgba(255,255,255,0.08)',
+              borderRadius: 12,
+              padding: '10px 8px',
+              textAlign: 'center',
+            }}
+          >
+            <div style={{ fontSize: 16, marginBottom: 2 }}>{sig.icon}</div>
+            <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.45)' }}>{i18nT(sig.label)}</div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: sig.color, marginTop: 2 }}>{sig.value}</div>
+            {sig.sub && <div style={{ fontSize: 9.5, color: 'rgba(255,255,255,0.38)', marginTop: 2 }}>{sig.sub}</div>}
+          </div>
+        ))}
+      </div>
+
       <div style={{
         display: 'flex',
         gap: 6,

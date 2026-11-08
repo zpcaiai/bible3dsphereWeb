@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; connect-src 'self'; style-src 'self' 'unsafe-inline'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'">
+  <title>属灵星球 · 申请删除账号</title>
+  <style>body{font:17px/1.7 system-ui,sans-serif;max-width:38rem;margin:3rem auto;padding:0 1.2rem;color:#172435;background:#f6f8fb}label{display:block;margin:1rem 0}input:not([type=checkbox]),button{font:inherit;padding:.7rem;box-sizing:border-box;width:100%}button{cursor:pointer}#message{white-space:pre-wrap}a{color:#174f90}</style>
+</head>
+<body>
+  <main>
+    <h1>属灵星球 · 申请删除账号</h1>
+    <p>无需安装 App。请使用要删除的账号重新验证身份，并提交整个账号的删除申请。</p>
+    <p>申请受理后，所有现有登录会话将被撤销。数据删除仍待处理；受理回执不代表数据已经删除。</p>
+    <form id="deletion-form">
+      <label>账号邮箱 <input name="email" type="email" autocomplete="username" required maxlength="254"></label>
+      <label>当前账号密码 <input name="password" type="password" autocomplete="current-password" required maxlength="128"></label>
+      <label><input name="confirmation" type="checkbox" required> 我确认申请删除整个账号</label>
+      <button type="submit">验证身份并提交申请</button>
+    </form>
+    <p id="message" role="status" aria-live="polite"></p>
+    <p><a href="/">返回属灵星球</a></p>
+  </main>
+  <script src="/account-deletion.js" type="module"></script>
+</body>
+</html>

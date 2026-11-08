@@ -1,17 +1,38 @@
 import { t as i18nT } from '../../i18n/runtime'
 import './bible-map.css'
-import { useState } from 'react'
+import { Component, type ReactNode, useState } from 'react'
 import { BibleMapClient } from './components/BibleMapClient'
 import { TempleSandbox } from './components/TempleSandbox'
 import { SolomonTempleSection } from './components/SolomonTempleSection'
+import { GraphPanel } from './components/GraphPanel'
 
 interface Props {
   onBack?: () => void
 }
 
-type View = 'map' | 'temple' | 'section'
+type View = 'map' | 'temple' | 'section' | 'graph'
 
-// Vite 入口：圣经地图集（A 策略，新独立视图）。地图 / 3D 圣殿沙盘 / 所罗门圣殿剖面 内部切换。
+class MapViewBoundary extends Component<{ children: ReactNode }, { hasError: boolean }> {
+  constructor(props: { children: ReactNode }) {
+    super(props)
+    this.state = { hasError: false }
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true }
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="flex h-full min-h-[320px] items-center justify-center p-6 text-sm text-gray-400">
+          {i18nT('当前环境未启用 WebGL 地图渲染，您仍可切换上方「关系图谱 / 圣殿剖面 / 3D 圣殿沙盘」视图。')}
+        </div>
+      )
+    }
+    return this.props.children
+  }
+}
+
+// Vite 入口：圣经地图集（A 策略，新独立视图）。地图 / 3D 圣殿沙盘 / 所罗门圣殿剖面 / 关系图谱 内部切换。
 export default function BibleAtlasPage({ onBack }: Props) {
   const [view, setView] = useState<View>('map')
 
@@ -27,6 +48,14 @@ export default function BibleAtlasPage({ onBack }: Props) {
     return (
       <div className="h-full w-full overflow-hidden bg-[#0b1220] text-gray-200">
         <SolomonTempleSection onBack={() => setView('map')} />
+      </div>
+    )
+  }
+
+  if (view === 'graph') {
+    return (
+      <div className="h-full w-full overflow-hidden bg-[#0b1220] text-gray-200">
+        <GraphPanel onBack={() => setView('map')} />
       </div>
     )
   }
@@ -47,12 +76,22 @@ export default function BibleAtlasPage({ onBack }: Props) {
         </div>
         <div className="flex items-center gap-2">
           <button
+            type="button"
+            data-testid="bible-atlas-graph-btn"
+            onClick={() => setView('graph')}
+            className="rounded-lg border border-amber-400/40 bg-amber-400/10 px-3 py-1.5 text-sm text-amber-300 hover:bg-amber-400/20"
+          >
+            {i18nT('🕸 关系图谱')}
+          </button>
+          <button
+            type="button"
             onClick={() => setView('section')}
             className="rounded-lg border border-amber-400/40 bg-amber-400/10 px-3 py-1.5 text-sm text-amber-300 hover:bg-amber-400/20"
           >
             {i18nT('📐 所罗门圣殿剖面')}
           </button>
           <button
+            type="button"
             onClick={() => setView('temple')}
             className="rounded-lg border border-amber-400/40 bg-amber-400/10 px-3 py-1.5 text-sm text-amber-300 hover:bg-amber-400/20"
           >
@@ -61,7 +100,9 @@ export default function BibleAtlasPage({ onBack }: Props) {
         </div>
       </header>
       <div className="flex-1">
-        <BibleMapClient />
+        <MapViewBoundary>
+          <BibleMapClient />
+        </MapViewBoundary>
       </div>
     </div>
   )

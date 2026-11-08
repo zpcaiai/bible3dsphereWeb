@@ -39,14 +39,17 @@ function ListEditor({ label, items, onChange, placeholder }) {
 export default function SafetyPlanEditor({ plan, regionCode = 'TW', onSave, syncing }) {
   const [draft, setDraft] = useState(() => plan || buildSafetyPlanTemplate(regionCode))
   const [saved, setSaved] = useState(false)
+  const [saving, setSaving] = useState(false)
+  const [saveError, setSaveError] = useState(false)
 
   function patch(key, value) {
     setDraft((d) => ({ ...d, [key]: value }))
     setSaved(false)
+    setSaveError(false)
   }
 
-  function save() {
-    if (!hasPerson) return
+  async function save() {
+    if (!hasPerson || saving || syncing) return
     const resources = getResources(draft.regionCode || regionCode).resources
     const finalPlan = {
       ...draft,
@@ -54,8 +57,18 @@ export default function SafetyPlanEditor({ plan, regionCode = 'TW', onSave, sync
       emergencyMessageTemplate: draft.emergencyMessageTemplate || EMERGENCY_COPY_TEXT,
       lastReviewedAt: new Date().toISOString(),
     }
-    onSave && onSave(finalPlan)
-    setSaved(true)
+    setSaving(true)
+    setSaved(false)
+    setSaveError(false)
+    try {
+      if (!onSave) throw new Error('SAVE_HANDLER_UNAVAILABLE')
+      await onSave(finalPlan)
+      setSaved(true)
+    } catch {
+      setSaveError(true)
+    } finally {
+      setSaving(false)
+    }
   }
 
   const hasPerson = (draft.safePeople || []).some((p) => p && p.trim())
@@ -86,8 +99,9 @@ export default function SafetyPlanEditor({ plan, regionCode = 'TW', onSave, sync
 
       {!hasPerson && <p className="cc-muted" style={{ color: '#ff9f8a' }}>{i18nT('建议至少填一位可以联系的真人 —— 危机中，被真实的人接住很重要。')}</p>}
 
-      <button className="cc-btn full" type="button" onClick={save} disabled={syncing || !hasPerson}>{syncing ? '保存中…' : '保存安全计划'}</button>
+      <button className="cc-btn full" type="button" onClick={save} disabled={saving || syncing || !hasPerson}>{saving || syncing ? '保存中…' : '保存安全计划'}</button>
       <div className="cc-toast">{saved ? '已保存。' : ''}</div>
+      {saveError && <p role="alert">保存失败，请重试。</p>}
 
       {/* 危机时打开 App 本身就是负担。把计划做成一张图，截图 / 设为锁屏 / 打印出来贴在墙上，
           不用解锁、不用找入口、断网也看得见。 */}

@@ -101,5 +101,36 @@ export function DetailPanel({ selection }: Props) {
     )
   }
 
+  if (selection.kind === 'person' && selection.person) {
+    const p = selection.person
+    return (
+      <div className="rounded-xl border border-white/10 bg-white/5 p-4" data-testid="bible-map-person-detail">
+        <div className="mb-2 flex items-center gap-2">
+          <span className="h-3 w-3 rounded-full" style={{ background: p.color }} />
+          <h3 className="text-lg font-bold text-white">{p.personZh}</h3>
+          <span className="text-xs text-gray-400">{p.person}</span>
+        </div>
+        <Row label={i18nT('时期')} value={p.era} />
+        <Row label={i18nT('职分')} value={p.role} />
+        <Row label={i18nT('经文范围')} value={p.scriptureRange} />
+        <p className="mt-2 text-sm leading-relaxed text-gray-300">{p.description}</p>
+        <div className="mt-3 border-t border-white/10 pt-2">
+          <div className="mb-1.5 text-xs font-semibold text-amber-300">{i18nT('行程站点')}（{p.stops.length}）</div>
+          <ol className="max-h-56 space-y-1.5 overflow-y-auto pr-1 text-xs">
+            {p.stops.map((s) => (
+              <li key={s.id} className="rounded-lg border border-white/10 bg-white/[0.03] px-2.5 py-1.5">
+                <div className="flex items-center justify-between font-medium text-gray-100">
+                  <span>{s.sequence}. {s.nameZh} ({s.name})</span>
+                  <span className="text-[11px] text-amber-300">{s.ref}</span>
+                </div>
+                <div className="mt-0.5 text-gray-400">{s.summary}</div>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </div>
+    )
+  }
+
   return null
 }

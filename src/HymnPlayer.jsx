@@ -1,6 +1,7 @@
 import { t as i18nT } from './i18n/runtime'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { fetchFaithQA } from './api'
+import HYMN_TIMINGS from './hymnTimings'
 
 // 诗歌音频托管在 Cloudflare R2（不放进 git，避免 HF 对二进制的限制）。
 // 在前端构建环境设置 VITE_HYMN_AUDIO_BASE，例如 https://<你的R2公开域名>/hymns
@@ -219,6 +220,85 @@ function ScorePlaceholder({ title }) {
   )
 }
 
+export function buildKaraokeTimeline(hymn) {
+  const timing = (hymn && hymn.id && HYMN_TIMINGS[hymn.id]) || null
+  const cycleSyls = timing?.lines ? timing.lines.flatMap((l) => l.syls || []) : []
+  const cycleEnd = timing?.end > 0
+    ? timing.end
+    : (cycleSyls.length ? (cycleSyls[cycleSyls.length - 1].t || 0) + 1 : 0)
+  const hasMelodyTiming = cycleSyls.length > 0 && cycleEnd > 0
+
+  const lines = []
+  let timed = 0
+  for (const stanza of hymn?.lyrics || []) {
+    for (const raw of String(stanza).split('\n')) {
+      if (!raw.trim()) continue
+      const chars = Array.from(raw).map((ch) => {
+        if (/\s/.test(ch)) return { ch, order: -1, rawSec: 0, relT: 0 }
+        const order = timed++
+        let rawSec = order
+        if (hasMelodyTiming) {
+          const cycleIdx = Math.floor(order / cycleSyls.length)
+          const sylIdx = order % cycleSyls.length
+          rawSec = cycleIdx * cycleEnd + (cycleSyls[sylIdx]?.t ?? 0)
+        }
+        return { ch, order, rawSec, relT: 0 }
+      })
+      const orders = chars.filter((c) => c.order >= 0)
+      lines.push({
+        chars,
+        first: orders.length ? orders[0].order : Infinity,
+        firstRawSec: orders.length ? orders[0].rawSec : 0,
+        firstRelT: 0,
+      })
+    }
+  }
+
+  const totalCycles = hasMelodyTiming ? Math.max(1, Math.ceil(timed / cycleSyls.length)) : 1
+  const nominalDuration = hasMelodyTiming ? totalCycles * cycleEnd : Math.max(1, timed)
+
+  for (const ln of lines) {
+    for (const c of ln.chars) {
+      if (c.order >= 0) {
+        c.relT = hasMelodyTiming ? c.rawSec / nominalDuration : c.order / Math.max(1, timed)
+      }
+    }
+    const firstValid = ln.chars.find((c) => c.order >= 0)
+    ln.firstRelT = firstValid ? firstValid.relT : 0
+  }
+
+  return { lines, total: timed, hasMelodyTiming, nominalDuration, cycleEnd }
+}
+
+export function computeKaraokeState(hymn, cur, dur, playing) {
+  const kData = buildKaraokeTimeline(hymn)
+  const totalChars = kData.total
+  const effectiveDur = dur > 0 ? dur : (kData.hasMelodyTiming ? kData.nominalDuration : 0)
+  const progress = effectiveDur > 0 ? Math.min(1, Math.max(0, cur / effectiveDur)) : 0
+  let activeChar = -1
+  if (effectiveDur > 0 && totalChars > 0 && (playing || cur > 0)) {
+    if (kData.hasMelodyTiming) {
+      activeChar = 0
+      for (const ln of kData.lines) {
+        for (const c of ln.chars) {
+          if (c.order >= 0 && c.relT <= progress + 1e-6) {
+            activeChar = c.order
+          }
+        }
+      }
+    } else {
+      activeChar = Math.min(totalChars - 1, Math.floor(progress * totalChars))
+    }
+  }
+  let activeLine = -1
+  if (activeChar >= 0) {
+    for (let i = 0; i < kData.lines.length; i++) {
+      if (activeChar >= kData.lines[i].first) activeLine = i
+    }
+  }
+  return { kData, activeChar, activeLine, progress, effectiveDur }
+}
+
 export default function HymnPlayer() {
   const [idx, setIdx] = useState(() => {
     const dl = typeof window !== 'undefined' ? window.__deepLink : null
@@ -255,7 +335,7 @@ export default function HymnPlayer() {
     setTranscendError(null)
     setTranscendLoading(false)
     const a = audioRef.current
-    if (a) { a.pause(); a.currentTime = 0 }
+    if (a) { try { a.pause?.(); a.currentTime = 0 } catch {} }
   }, [idx])
 
   // 调用信仰问答后端，按这首诗歌生成「灵性超越」成长路径
@@ -295,7 +375,7 @@ export default function HymnPlayer() {
   const goNext = () => setIdx((i) => (i + 1) % HYMNS.length)
 
   // 离开页面时停止音频，避免在后台继续播放
-  useEffect(() => () => { const a = audioRef.current; if (a) { a.pause(); a.removeAttribute('src'); a.load() } }, [])
+  useEffect(() => () => { const a = audioRef.current; if (a) { try { a.pause?.(); a.removeAttribute('src'); a.load?.() } catch {} } }, [])
 
   // 键盘快捷键：空格/Enter 播放暂停，左右箭头微调进度（输入框聚焦时不拦截）
   const onPlayerKey = (e) => {
@@ -314,29 +394,20 @@ export default function HymnPlayer() {
 
   const pct = dur ? (cur / dur) * 100 : 0
 
-  // ── KTV 跟唱：把整首歌词按字数均匀铺满音频真实时长，逐字扫过（自适应，无需逐字对齐）──
-  const kData = useMemo(() => {
-    const lines = []
-    let timed = 0
-    for (const stanza of hymn.lyrics || []) {
-      for (const raw of String(stanza).split('\n')) {
-        if (!raw.trim()) continue
-        const chars = Array.from(raw).map((ch) => ({ ch, order: /\s/.test(ch) ? -1 : timed++ }))
-        const orders = chars.filter((c) => c.order >= 0)
-        lines.push({ chars, first: orders.length ? orders[0].order : Infinity })
-      }
-    }
-    return { lines, total: timed }
-  }, [hymn.id])
+  // ── KTV 跟唱：优先走 HYMN_TIMINGS 旋律逐字时间轴，无时间轴时回退按字数均匀插值 ──
+  const { kData, activeChar, activeLine, effectiveDur } = useMemo(
+    () => computeKaraokeState(hymn, cur, dur, playing),
+    [hymn, cur, dur, playing],
+  )
 
-  const totalChars = kData.total
-  const progress = dur > 0 ? Math.min(1, Math.max(0, cur / dur)) : 0
-  const activeChar = (dur > 0 && totalChars > 0 && (playing || cur > 0))
-    ? Math.min(totalChars - 1, Math.floor(progress * totalChars))
-    : -1
-  let activeLine = -1
-  if (activeChar >= 0) {
-    for (let i = 0; i < kData.lines.length; i++) if (activeChar >= kData.lines[i].first) activeLine = i
+  const seekToLine = (ln) => {
+    if (!ln || effectiveDur <= 0) return
+    const targetSec = ln.firstRelT * effectiveDur
+    setCur(targetSec)
+    const a = audioRef.current
+    if (a && dur > 0) {
+      a.currentTime = targetSec
+    }
   }
 
   // 自动滚动让当前演唱行保持在跟唱框中央（只滚动跟唱框，不影响整页）
@@ -344,7 +415,7 @@ export default function HymnPlayer() {
     const box = karaokeRef.current, el = activeLineRef.current
     if (!box || !el || activeLine < 0) return
     const target = el.offsetTop - (box.clientHeight - el.clientHeight) / 2
-    box.scrollTo({ top: Math.max(0, target), behavior: 'smooth' })
+    box.scrollTo?.({ top: Math.max(0, target), behavior: 'smooth' })
   }, [activeLine])
 
   return (
@@ -448,10 +519,18 @@ export default function HymnPlayer() {
       {/* 跟唱：KTV 逐字高亮，跟随音频进度 */}
       {kData.lines.length > 0 && (
         <div className="hymn-karaoke" ref={karaokeRef}>
+          {kData.hasMelodyTiming && (
+            <div data-testid="hymn-timing-badge" style={{ fontSize: 11, color: '#e8b04b', marginBottom: 6, opacity: 0.85 }}>
+              {i18nT('🎵 旋律逐字对齐 · 点击任意歌词行可跳转跟唱')}
+            </div>
+          )}
           {kData.lines.map((ln, i) => (
             <div
               key={i}
+              data-testid={`hymn-kline-${i}`}
               ref={i === activeLine ? activeLineRef : null}
+              onClick={() => seekToLine(ln)}
+              style={{ cursor: 'pointer' }}
               className={`hymn-kline ${i === activeLine ? 'active' : ''} ${activeLine >= 0 && i < activeLine ? 'sung' : ''}`}
             >
               {(() => {

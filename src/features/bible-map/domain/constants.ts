@@ -19,6 +19,7 @@ export const LAYERS: ReadonlyArray<{ id: BibleLayer; label: string }> = [
   { id: 'all', label: '全部疆域' },
   { id: 'prophecies', label: '先知预言' },
   { id: 'campaigns', label: '战役路线' },
+  { id: 'people', label: '人物足迹' },
 ]
 
 export const DISCLAIMER =

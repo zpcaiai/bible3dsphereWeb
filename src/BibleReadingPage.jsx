@@ -10,6 +10,7 @@ import BackButton from './BackButton'
 import { fetchReadingProgress, markChapterRead, fetchBibleStudy, fetchScripture } from './api'
 import { TTSFullBar, TTSButton } from './useGlobalAudio.jsx'
 import { a11yClickProps } from './lib/a11yClick';
+import { putJson, getJson, packSize } from './lib/offlinePack'
 
 // ── 全部 66 卷（旧约 39 + 新约 27）────────────────────────────────────────────
 const BOOKS = [
@@ -223,6 +224,8 @@ function CrossRefText({ text, autoExpand = false }) {
 function ChapterReader({ book, chapter, doneChapters, onMark, onBack, onNav, user, token, autoStudy = false }) {
   const [verses, setVerses] = useState(null)
   const [loadErr, setLoadErr] = useState(null)
+  const [fromOffline, setFromOffline] = useState(false)
+  const [offlineCount, setOfflineCount] = useState(0)
   const [highlight, setHighlight] = useState('')
   const [marking, setMarking] = useState(false)
   const [marked, setMarked] = useState(false)
@@ -238,14 +241,52 @@ function ChapterReader({ book, chapter, doneChapters, onMark, onBack, onNav, use
   const isDone = (doneChapters || []).includes(chapter)
 
   const load = useCallback(() => {
-    setVerses(null); setLoadErr(null)
-    fetchScripture(book.name + chapter)
-      .then(d => {
-        if (d.ok && d.verses?.length) setVerses(d.verses)
-        else setLoadErr(d.error || '暂无经文内容')
+    const key = book.name + chapter
+    setVerses(null); setLoadErr(null); setFromOffline(false)
+    fetchScripture(key)
+      .then(async (d) => {
+        if (d.ok && d.verses?.length) {
+          setVerses(d.verses)
+          setFromOffline(false)
+          await putJson('scripture', key, { verses: d.verses })
+          const cnt = await packSize()
+          setOfflineCount(cnt)
+          if (chapter < book.chapters) {
+            const nextKey = book.name + (chapter + 1)
+            const cachedNext = await getJson('scripture', nextKey)
+            if (!cachedNext?.verses?.length) {
+              fetchScripture(nextKey)
+                .then(async (nd) => {
+                  if (nd?.ok && nd.verses?.length) {
+                    await putJson('scripture', nextKey, { verses: nd.verses })
+                    setOfflineCount(await packSize())
+                  }
+                })
+                .catch(() => {})
+            }
+          }
+        } else {
+          const cached = await getJson('scripture', key)
+          if (cached?.verses?.length) {
+            setVerses(cached.verses)
+            setFromOffline(true)
+            setOfflineCount(await packSize())
+          } else {
+            setLoadErr(d.error || '暂无经文内容')
+          }
+        }
       })
-      .catch(() => setLoadErr('加载失败，请检查网络'))
-  }, [book.name, chapter])
+      .catch(async () => {
+        const cached = await getJson('scripture', key)
+        if (cached?.verses?.length) {
+          setVerses(cached.verses)
+          setFromOffline(true)
+          setOfflineCount(await packSize())
+        } else {
+          setLoadErr('加载失败，请检查网络')
+        }
+      })
+  }, [book.name, book.chapters, chapter])
 
   useEffect(() => {
     load()
@@ -370,8 +411,18 @@ function ChapterReader({ book, chapter, doneChapters, onMark, onBack, onNav, use
           <>
             {/* Chapter title + TTS */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
-              <div style={{ fontSize: 12, color: 'rgba(90,200,250,0.6)', fontWeight: 600, letterSpacing: '0.05em' }}>
-                {book.name} {chapter}{i18nT('章 · 共')}{verses.length}{i18nT('节')}
+              <div style={{ fontSize: 12, color: 'rgba(90,200,250,0.6)', fontWeight: 600, letterSpacing: '0.05em', display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span>{book.name} {chapter}{i18nT('章 · 共')}{verses.length}{i18nT('节')}</span>
+                {fromOffline && (
+                  <span data-testid="bible-offline-pack-badge" style={{ fontSize: 11, color: '#34c759', background: 'rgba(52,199,89,0.14)', borderRadius: 6, padding: '2px 6px' }}>
+                    {i18nT('📦 离线包已缓存')}
+                  </span>
+                )}
+                {offlineCount > 0 && (
+                  <span data-testid="bible-offline-pack-count" style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)' }}>
+                    {i18nT('离线包')} {offlineCount} {i18nT('章')}
+                  </span>
+                )}
               </div>
               <TTSButton
                 text={`${book.name}第${chapter}章。\n` + verses.map(v => `第${v.verse}节。${v.text}`).join('\n')}

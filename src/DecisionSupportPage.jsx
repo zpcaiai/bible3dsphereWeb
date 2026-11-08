@@ -583,7 +583,14 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
       })
       if (!res.ok) throw new Error('加载失败')
       const data = await res.json()
-      setDecisions(data)
+      const list = Array.isArray(data)
+        ? data
+        : Array.isArray(data?.decisions)
+          ? data.decisions
+          : Array.isArray(data?.items)
+            ? data.items
+            : []
+      setDecisions(list)
     } catch (err) {
       console.error('加载决策历史失败:', err)
     }
@@ -1623,7 +1630,52 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
 
   // 渲染历史记录
   const renderHistory = () => (
-    <div style={{ padding: '16px' }}>
+    <div style={{ padding: '16px' }} data-testid="decision-history-panel">
+      {selectedDecision && (
+        <div
+          data-testid="selected-decision-detail"
+          style={{
+            background: 'rgba(90,200,250,0.08)',
+            border: '1px solid rgba(90,200,250,0.3)',
+            borderRadius: '12px',
+            padding: '14px',
+            marginBottom: '14px',
+          }}
+        >
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+            <div style={{ fontWeight: 700, fontSize: '14px', color: '#5ac8fa' }}>{selectedDecision.title}</div>
+            <button
+              type="button"
+              onClick={() => setSelectedDecision(null)}
+              style={{ background: 'transparent', border: 'none', color: 'rgba(255,255,255,0.5)', fontSize: '12px', cursor: 'pointer' }}
+            >
+              ✕
+            </button>
+          </div>
+          {selectedDecision.description && (
+            <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.78)', lineHeight: 1.6, marginBottom: '10px' }}>
+              {selectedDecision.description}
+            </div>
+          )}
+          <button
+            type="button"
+            data-testid="reuse-selected-decision-btn"
+            onClick={() => loadHistoryItem(selectedDecision)}
+            style={{
+              padding: '6px 12px',
+              borderRadius: '8px',
+              border: '1px solid rgba(90,200,250,0.45)',
+              background: 'rgba(90,200,250,0.16)',
+              color: '#5ac8fa',
+              fontSize: '12px',
+              fontWeight: 600,
+              cursor: 'pointer',
+            }}
+          >
+            {i18nT('载入到当前分辨')}
+          </button>
+        </div>
+      )}
       {decisions.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '40px', color: 'rgba(255,255,255,0.5)' }}>
           <div style={{ fontSize: '48px', marginBottom: '16px' }}>📭</div>
@@ -1737,7 +1789,13 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
       urgency: item.urgency || 3,
       importance: item.importance || 3,
     }))
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    setDiscernSituation(item.description || item.title || '')
+    setDiscernCategory(item.category || 'other')
+    setDiscernStep(1)
+    setActiveTab('new')
+    if (typeof window !== 'undefined' && typeof window.scrollTo === 'function') {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
   }
 
   const formatDate = (dateStr) => {
@@ -1820,7 +1878,45 @@ export default function DecisionSupportPage({ user, onBack, embedded = false, on
         {activeTab !== 'dashboard' && activeTab !== 'personality' && activeTab !== 'graph' && activeTab !== 'habits' && activeTab !== 'library' && activeTab !== 'crisis' && (
           analysisResult ? renderAnalysisResult() : (
             <>
+              <div style={{ display: 'flex', gap: 8, padding: '8px 16px 12px' }} data-testid="discern-subtabs">
+                {[
+                  { id: 'new', label: i18nT('当前分辨') },
+                  { id: 'history', label: i18nT('历史记录') },
+                  { id: 'principles', label: i18nT('灵性原则') },
+                ].map((sub) => (
+                  <button
+                    key={sub.id}
+                    type="button"
+                    data-testid={`discern-subtab-${sub.id}`}
+                    onClick={() => setActiveTab(sub.id)}
+                    style={{
+                      padding: '6px 12px',
+                      borderRadius: 999,
+                      border: `1px solid ${activeTab === sub.id ? 'rgba(90,200,250,0.5)' : 'rgba(255,255,255,0.12)'}`,
+                      background: activeTab === sub.id ? 'rgba(90,200,250,0.16)' : 'rgba(255,255,255,0.04)',
+                      color: activeTab === sub.id ? '#5ac8fa' : 'rgba(255,255,255,0.65)',
+                      fontSize: 12,
+                      fontWeight: activeTab === sub.id ? 700 : 500,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {sub.label}
+                  </button>
+                ))}
+              </div>
+              {(loading || mvfeProcessing) && (
+                <div style={{ margin: '0 16px 10px', fontSize: 12, color: '#5ac8fa' }} data-testid="decision-loading-banner">
+                  {i18nT('正在分析中…')}
+                </div>
+              )}
+              {mvfeError && (
+                <div style={{ margin: '0 16px 10px', padding: '8px 12px', borderRadius: 8, background: 'rgba(248,113,113,0.14)', color: '#fca5a5', fontSize: 12 }} data-testid="decision-mvfe-error">
+                  {mvfeError}
+                </div>
+              )}
               {activeTab === 'new' && renderNewDecisionForm()}
+              {activeTab === 'history' && renderHistory()}
+              {activeTab === 'principles' && renderPrinciples()}
             </>
           )
         )}

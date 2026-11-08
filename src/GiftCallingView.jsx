@@ -637,7 +637,7 @@ function ReviewForm({ token }) {
           {items.map(it => (
             <div key={it.id} style={card}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                <span style={{ fontSize: 12, color: ACCENT, fontWeight: 600 }}>{(REVIEW_OPTS.find(o => o[0] === it.review_type) || [, it.review_type])[1]}</span>
+                <span style={{ fontSize: 12, color: ACCENT, fontWeight: 600 }}>{(REVIEW_OPTS.find(o => o[0] === it.review_type) || [null, it.review_type])[1]}</span>
                 <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)' }}>{(it.created_at || '').slice(0, 10)}</span>
               </div>
               {it.observations && <div style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.8)', lineHeight: 1.6 }}>{it.observations}</div>}
@@ -729,8 +729,8 @@ export default function GiftCallingView({ user, token }) {
 
       <div style={{ flex: 1, overflowY: 'auto', padding: '12px 14px', minHeight: 0 }}>
         {view === 'dash' && (
-          report
-            ? <Report r={report} meta={meta} user={user} />
+          (report || (profile?.has_assessment ? profile : null))
+            ? <Report r={report || profile} meta={meta} user={user} />
             : (
               <div style={{ textAlign: 'center', padding: '40px 20px' }}>
                 <div style={{ fontSize: 40, marginBottom: 10 }}>🎁</div>

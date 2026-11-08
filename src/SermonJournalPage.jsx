@@ -223,7 +223,7 @@ export default function SermonJournalPage({ user, token, onBack }) {
         setActiveId(rj.id)
       }
     } catch (e) {
-      console.error('Failed to create journal:', e)
+      console.error('Failed to create journal:', e);
       (window.showToast || window.alert)('创建失败: ' + e.message, 'error')
     }
   }
@@ -323,7 +323,7 @@ export default function SermonJournalPage({ user, token, onBack }) {
       setTimeout(() => setSaveStatus(''), 2000)
     } catch (e) {
       console.error('Failed to save:', e)
-      setSaveStatus('')
+      setSaveStatus('');
       (window.showToast || window.alert)('保存失败: ' + e.message, 'error')
     }
   }
@@ -532,7 +532,22 @@ export default function SermonJournalPage({ user, token, onBack }) {
       {view === 'list' && (
         <div className="sj-list" ref={listRef} style={{ position: 'relative' }}>
           <div style={indicatorStyle}>{indicatorText}</div>
-          {journals.length === 0 ? (
+          {error && (
+            <div data-testid="sermon-journal-error" style={{ padding: '10px 12px', marginBottom: 12, borderRadius: 10, background: 'rgba(255,69,58,0.12)', border: '1px solid rgba(255,69,58,0.35)', color: '#ff6961', fontSize: 13 }}>
+              ⚠️ {error}
+            </div>
+          )}
+          {total > 0 && (
+            <div data-testid="sermon-journal-total" style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)', marginBottom: 10 }}>
+              📖 {total}
+            </div>
+          )}
+          {loading && journals.length === 0 ? (
+            <div className="sj-empty" data-testid="sermon-journal-loading">
+              <div className="sj-empty-icon">⏳</div>
+              <div className="sj-empty-title">{i18nT('正在加载主日信息...')}</div>
+            </div>
+          ) : journals.length === 0 ? (
             <div className="sj-empty">
               <div className="sj-empty-icon">📖</div>
               <div className="sj-empty-title">{i18nT('还没有主日信息')}</div>

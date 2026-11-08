@@ -2,6 +2,8 @@ import { t as i18nT } from './i18n/runtime'
 import { useState, useEffect, useRef, useCallback } from 'react'
 import BackButton from './BackButton'
 import NotesButton from './realtime/NotesButton'
+import MinutesModal from './realtime/MinutesModal'
+import { getTranscript, stopNotes } from './realtime/callNotes'
 import VideoTile from './realtime/VideoTile'
 import {
   VOICE_AUDIO_CAPTURE_DEFAULTS,
@@ -57,6 +59,7 @@ export default function VoiceRoomPage({ user, token, onBack }) {
   const [groups, setGroups] = useState([])
   const [loading, setLoading] = useState(true)
   const [activeGroup, setActiveGroup] = useState(null)
+  const [minutesTitle, setMinutesTitle] = useState(null)
 
   const refresh = useCallback(async () => {
     try {
@@ -76,7 +79,16 @@ export default function VoiceRoomPage({ user, token, onBack }) {
   }, [token, refresh])
 
   const enterCall = (group) => { setActiveGroup(group); setView('call') }
-  const exitCall = () => { setView('list'); setActiveGroup(null); refresh() }
+  const exitCall = () => {
+    const endedName = activeGroup?.name || i18nT('语音祷告群')
+    stopNotes()
+    if (getTranscript().trim().length > 0) {
+      setMinutesTitle(endedName)
+    }
+    setView('list')
+    setActiveGroup(null)
+    refresh()
+  }
   // 群聊与群语音共用同一份成员表(voice_group_members)，所以直接挂在语音群页下。
   const enterChat = (group) => { setActiveGroup(group); setView('chat') }
   const exitChat = () => { setView('list'); setActiveGroup(null) }
@@ -86,7 +98,14 @@ export default function VoiceRoomPage({ user, token, onBack }) {
       <header style={S.header}>
         <BackButton onClick={onBack} size={40} />
         <span style={S.title}>{i18nT('🎙 语音通话')}</span>
-        <span style={{ width: 56 }} />
+        <button
+          type="button"
+          data-testid="voice-room-minutes-btn"
+          style={{ ...S.ghostBtn, padding: '6px 10px', fontSize: 12 }}
+          onClick={() => setMinutesTitle(activeGroup?.name || i18nT('语音祷告群'))}
+        >
+          {i18nT('📝 纪要')}
+        </button>
       </header>
 
       {view === 'call' && activeGroup ? (
@@ -97,6 +116,13 @@ export default function VoiceRoomPage({ user, token, onBack }) {
         <GroupList
           enabled={enabled} groups={groups} loading={loading}
           token={token} onRefresh={refresh} onEnter={enterCall} onOpenChat={enterChat}
+        />
+      )}
+
+      {minutesTitle && (
+        <MinutesModal
+          title={minutesTitle}
+          onClose={() => setMinutesTitle(null)}
         />
       )}
     </div>
@@ -111,6 +137,21 @@ function GroupList({ enabled, groups, loading, token, onRefresh, onEnter, onOpen
   const [code, setCode] = useState('')
   const [creating, setCreating] = useState(false)
   const [joining, setJoining] = useState(false)
+  const [leavingId, setLeavingId] = useState(null)
+
+  const doLeave = async (g) => {
+    if (!g?.id || leavingId) return
+    setLeavingId(g.id)
+    try {
+      await leaveVoiceGroup(g.id, token)
+      toast(`已退出「${g.name}」`, 'success')
+      await onRefresh()
+    } catch (e) {
+      toast(e.message || '退出失败', 'error')
+    } finally {
+      setLeavingId(null)
+    }
+  }
 
   const doCreate = async () => {
     const name = newName.trim() || '语音祷告群'
@@ -200,6 +241,15 @@ function GroupList({ enabled, groups, loading, token, onRefresh, onEnter, onOpen
             </button>
             <button style={S.callBtn} onClick={() => onEnter(g)} disabled={!enabled}>
               {i18nT('📞 进入')}
+            </button>
+            <button
+              type="button"
+              data-testid={`voice-group-leave-${g.id}`}
+              style={{ ...S.chatBtn, color: '#fca5a5', borderColor: 'rgba(248,113,113,0.3)' }}
+              disabled={leavingId === g.id}
+              onClick={() => doLeave(g)}
+            >
+              {leavingId === g.id ? i18nT('退出中…') : i18nT('退出')}
             </button>
           </div>
         ))

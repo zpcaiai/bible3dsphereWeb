@@ -405,9 +405,29 @@ function JournalDetail({ journal, onEdit, onBack }) {
         <BackButton onClick={onBack} ariaLabel={i18nT('返回')} />
         <div className="dj-editor-hcenter">
           <div className="dj-editor-htitle">{journal.title || '灵修日记'}</div>
-          <div className="dj-editor-hdate">{formatDate(journal.date)}</div>
+          <div className="dj-editor-hdate">{formatDate(journal.date)}{journal.updated_at ? ` · ${formatDateTime(journal.updated_at)}` : ''}</div>
         </div>
-        <button className="dj-save-btn" onClick={onEdit}>✏️</button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <button
+            type="button"
+            className="dj-save-btn"
+            data-testid="devotion-export-txt"
+            title={i18nT('📄 导出 TXT')}
+            onClick={() => exportJournalToTxt(journal)}
+          >
+            {i18nT('📄 导出 TXT')}
+          </button>
+          <button
+            type="button"
+            className="dj-save-btn"
+            data-testid="devotion-export-pdf"
+            title={i18nT('📑 导出 PDF')}
+            onClick={() => exportJournalToPdf(journal)}
+          >
+            {i18nT('📑 导出 PDF')}
+          </button>
+          <button className="dj-save-btn" onClick={onEdit}>✏️</button>
+        </div>
       </div>
 
       <div className="dj-detail-body">

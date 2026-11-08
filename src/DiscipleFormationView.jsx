@@ -683,6 +683,24 @@ function Network({ token }) {
               <div style={{ fontSize: 13.5, color: '#fff' }}>{r.disciple_name || r.disciple_email}</div>
               <div style={{ fontSize: 11, color: ACCENT }}>{REL_ZH[r.relationship_type] || r.relationship_type}</div>
             </div>
+            {r.id != null && (
+              <button
+                type="button"
+                data-testid={`disciple-end-rel-${r.id}`}
+                onClick={() => end(r.id)}
+                style={{
+                  padding: '4px 10px',
+                  borderRadius: 8,
+                  border: '1px solid rgba(255,107,107,0.35)',
+                  background: 'rgba(255,107,107,0.1)',
+                  color: '#ff8a8a',
+                  fontSize: 11.5,
+                  cursor: 'pointer',
+                }}
+              >
+                {i18nT('结束关系')}
+              </button>
+            )}
           </div>
         ))}
       </div>

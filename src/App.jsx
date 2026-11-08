@@ -76,6 +76,10 @@ const SpiritualPlanetPlatformPage = lazyWithRetry(() => import('./features/spiri
 const AiFormationPage = lazyWithRetry(() => import('./features/ai-formation/AiFormationPage'))
 const DatingPriorityPage = lazyWithRetry(() => import('./DatingPriorityPage'))
 const DatingPriorityStatsPage = lazyWithRetry(() => import('./DatingPriorityStatsPage'))
+const SharedPrayerPage = lazyWithRetry(() => import('./SharedPrayerPage'))
+const GroupHubPage = lazyWithRetry(() => import('./GroupHubPage'))
+const CareDashboardPage = lazyWithRetry(() => import('./CareDashboardPage'))
+const OnboardingPage = lazyWithRetry(() => import('./OnboardingPage'))
 
 // React Query client for HabitsPage
 const queryClient = new QueryClient({
@@ -181,6 +185,7 @@ function AppContent() {
   const [attentionInitialSection, setAttentionInitialSection] = useState('dashboard')
   const [aiFormationInitialRoute, setAiFormationInitialRoute] = useState('')
   const [aiFormationReturnPanel, setAiFormationReturnPanel] = useState('sphere')
+  const [sharedPrayerToken, setSharedPrayerToken] = useState('')
   const [gardenClickCount, setGardenClickCount] = useState(0)
   const includeBiblicalExample = true
   const [comparisonMode, setComparisonMode] = useState(true)
@@ -366,7 +371,7 @@ function AppContent() {
     setInstallMessage('')
     setGuidance(null)
     setBiblicalExample(null)
-    setActivePanel('garden')
+    setActivePanel('sphere')
     try {
       const result = await runQuery({
         query,
@@ -1063,8 +1068,25 @@ function AppContent() {
         setTimeout(() => openRoutedPanel('ai-formation'), 60)
         return
       }
+      const sharedPrayerMatch = window.location.pathname.match(/^\/p\/([^/]+)\/?$/)
+      if (sharedPrayerMatch) {
+        setSharedPrayerToken(decodeURIComponent(sharedPrayerMatch[1]))
+        setTimeout(() => setActivePanel('shared-prayer'), 60)
+        return
+      }
       const sp = new URLSearchParams(window.location.search)
       const panel = sp.get('panel')
+      if (panel === 'group-hub' || panel === 'care-dashboard' || panel === 'onboarding' || panel === 'shared-prayer') {
+        if (panel === 'shared-prayer') {
+          setSharedPrayerToken(sp.get('token') || '')
+          sp.delete('token')
+        }
+        sp.delete('panel')
+        const nextSearch = sp.toString()
+        window.history.replaceState({}, '', `${window.location.pathname}${nextSearch ? `?${nextSearch}` : ''}${window.location.hash}`)
+        setTimeout(() => setActivePanel(panel), 60)
+        return
+      }
       if (panel === 'attention') {
         const attentionSection = sp.get('attentionSection') || 'dashboard'
         setAttentionInitialSection(attentionSection)
@@ -1772,11 +1794,14 @@ function AppContent() {
                       {
                         group: i18nT('🌱 辨析成长'),
                         items: [
+                          { icon: '🌱', labelKey: '从这里开始', panel: 'onboarding' },
                           { icon: '🔍', labelKey: 'home.snapshot.soulQuestion', panel: 'soul-question' },
                           { icon: '🧭', labelKey: 'home.snapshot.worldview', panel: 'worldview' },
                           { icon: '📊', labelKey: 'home.snapshot.growthMap', panel: 'growth-map' },
                           { icon: '📈', labelKey: 'home.snapshot.growth', panel: 'engineering' },
                           { icon: '🤝', labelKey: 'home.snapshot.partner', panel: 'partner' },
+                          { icon: '🏘️', labelKey: '小组中心', panel: 'group-hub' },
+                          { icon: '🫶', labelKey: '关怀面板', panel: 'care-dashboard' },
                         ],
                       },
                       {
@@ -2089,7 +2114,7 @@ function AppContent() {
                       onClick={() => {
                         const newCount = gardenClickCount + 1
                         setGardenClickCount(newCount)
-                        setActivePanel('garden')
+                        setActivePanel('sphere')
                         if (newCount > 2) {
                           setGuidance(null)
                           setBiblicalExample(null)
@@ -2956,7 +2981,60 @@ function AppContent() {
         {activePanel === 'communion' && (
           <div className="page-overlay">
             <Suspense fallback={null}>
-              <CommunionPage user={user} onBack={() => setActivePanel('sphere')} />
+              <CommunionPage
+                user={user}
+                onBack={() => setActivePanel('sphere')}
+                onOpenVoice={() => setActivePanel('voice')}
+              />
+            </Suspense>
+          </div>
+        )}
+
+        {/* 代祷分享公开页（/p/{token}） */}
+        {activePanel === 'shared-prayer' && (
+          <div className="page-overlay">
+            <Suspense fallback={null}>
+              <SharedPrayerPage shareToken={sharedPrayerToken} />
+            </Suspense>
+          </div>
+        )}
+
+        {/* 小组中心：聚合语音群 / 聊天 / 祷告墙 / 聚会排期 */}
+        {activePanel === 'group-hub' && (
+          <div className="page-overlay">
+            <Suspense fallback={null}>
+              <GroupHubPage
+                user={user}
+                token={getToken()}
+                onBack={() => setActivePanel('sphere')}
+                onOpenPanel={(p) => handlePanelSwitch(p)}
+              />
+            </Suspense>
+          </div>
+        )}
+
+        {/* 小组长关怀面板 */}
+        {activePanel === 'care-dashboard' && (
+          <div className="page-overlay">
+            <Suspense fallback={null}>
+              <CareDashboardPage
+                user={user}
+                token={getToken()}
+                churchId={myChurch?.id || ''}
+                onBack={() => setActivePanel('sphere')}
+              />
+            </Suspense>
+          </div>
+        )}
+
+        {/* 统一入门漏斗 / 基线诊断 */}
+        {activePanel === 'onboarding' && (
+          <div className="page-overlay">
+            <Suspense fallback={null}>
+              <OnboardingPage
+                onBack={() => setActivePanel('sphere')}
+                onNavigate={(route) => handlePastoralRoute(route)}
+              />
             </Suspense>
           </div>
         )}
@@ -3248,6 +3326,16 @@ export default function App() {
     return (
       <QueryClientProvider client={queryClient}>
         <SeekersStandalonePage />
+      </QueryClientProvider>
+    )
+  }
+  const sharedPrayerRouteMatch = window.location.pathname.match(/^\/p\/([^/]+)\/?$/)
+  if (sharedPrayerRouteMatch) {
+    return (
+      <QueryClientProvider client={queryClient}>
+        <Suspense fallback={<div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0a1020', color: 'rgba(255,255,255,0.4)' }}>{i18nT('加载中…')}</div>}>
+          <SharedPrayerPage shareToken={decodeURIComponent(sharedPrayerRouteMatch[1])} />
+        </Suspense>
       </QueryClientProvider>
     )
   }

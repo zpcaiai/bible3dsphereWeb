@@ -5,6 +5,8 @@ import { fetchMilestones } from './api'
 import { API_BASE } from './api'
 import { Radar } from './components/charts'
 import { CardActions } from './lib/media/CardActions'
+import GrowthCurve from './components/GrowthCurve'
+import FormationHistory from './components/FormationHistory'
 
 const DIM_LABELS = {
   humility: { zh: '谦卑', icon: '🌿', color: '#34c759' },
@@ -54,7 +56,8 @@ function DimBar({ dim, value, delta }) {
 }
 
 export default function GrowthMapPage({ user, token, onBack }) {
-  const [tab, setTab] = useState('chart') // 'chart' | 'milestones'
+  const [tab, setTab] = useState('chart') // 'chart' | 'curve' | 'history' | 'milestones'
+  const [historySource, setHistorySource] = useState('')
   const [profile, setProfile] = useState(null)
   const [milestones, setMilestones] = useState([])
   const [loading, setLoading] = useState(true)
@@ -110,8 +113,8 @@ export default function GrowthMapPage({ user, token, onBack }) {
           <div className="pw-subtitle">{i18nT('SFDS 8维度灵命轨迹可视化')}</div>
         </div>
         <div style={{ display: 'flex', gap: 6 }}>
-          {[['chart', '图谱'], ['milestones', '徽章']].map(([k, l]) => (
-            <button key={k} onClick={() => setTab(k)} style={{ fontSize: 11, padding: '4px 10px', borderRadius: 8, border: 'none', background: tab === k ? 'rgba(88,86,214,0.4)' : 'rgba(255,255,255,0.1)', color: '#fff', cursor: 'pointer' }}>{l}</button>
+          {[['chart', '图谱'], ['curve', '曲线'], ['history', '足迹'], ['milestones', '徽章']].map(([k, l]) => (
+            <button key={k} data-testid={`growth-map-tab-${k}`} onClick={() => setTab(k)} style={{ fontSize: 11, padding: '4px 10px', borderRadius: 8, border: 'none', background: tab === k ? 'rgba(88,86,214,0.4)' : 'rgba(255,255,255,0.1)', color: '#fff', cursor: 'pointer' }}>{i18nT(l)}</button>
           ))}
         </div>
       </header>
@@ -189,6 +192,49 @@ export default function GrowthMapPage({ user, token, onBack }) {
               </div>
             )}
           </>
+        ) : tab === 'curve' ? (
+          <div data-testid="growth-map-curve-view">
+            <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.55)', marginBottom: 12 }}>
+              {i18nT('按周/月聚合你的灵命操练、省察与里程碑轨迹（平稳 / 需留意 / 高负荷），非属灵打分。')}
+            </div>
+            <GrowthCurve token={token || 'session'} />
+          </div>
+        ) : tab === 'history' ? (
+          <div data-testid="growth-map-history-view">
+            <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.55)', marginBottom: 12 }}>
+              {i18nT('你在各模块留下的真实属灵足迹，可按来源筛选查看。')}
+            </div>
+            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 14 }}>
+              {[
+                ['', '全部'],
+                ['spiritual_formation', '塑造'],
+                ['worldview', '世界观'],
+                ['discernment', '辨识'],
+                ['gift', '恩赐'],
+                ['weekly_review', '复盘'],
+                ['habits', '操练'],
+              ].map(([srcKey, srcLabel]) => (
+                <button
+                  key={srcKey || 'all'}
+                  type="button"
+                  data-testid={`growth-history-filter-${srcKey || 'all'}`}
+                  onClick={() => setHistorySource(srcKey)}
+                  style={{
+                    fontSize: 11,
+                    padding: '4px 10px',
+                    borderRadius: 999,
+                    border: '1px solid ' + (historySource === srcKey ? '#9ecbff' : 'rgba(255,255,255,0.14)'),
+                    background: historySource === srcKey ? 'rgba(158,203,255,0.16)' : 'rgba(255,255,255,0.04)',
+                    color: historySource === srcKey ? '#cfe6ff' : 'rgba(255,255,255,0.65)',
+                    cursor: 'pointer',
+                  }}
+                >
+                  {i18nT(srcLabel)}
+                </button>
+              ))}
+            </div>
+            <FormationHistory token={token || 'session'} source={historySource || undefined} />
+          </div>
         ) : (
           /* Milestones tab */
           <>
