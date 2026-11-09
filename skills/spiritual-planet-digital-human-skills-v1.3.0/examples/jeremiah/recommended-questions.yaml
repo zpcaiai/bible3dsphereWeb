@@ -1,0 +1,20 @@
+characterId: jeremiah
+questions:
+- id: jeremiah-q01
+  text: 你蒙召时为什么说自己年幼？
+  category: core
+- id: jeremiah-q02
+  text: 圣殿讲章主要责备什么？
+  category: core
+- id: jeremiah-q03
+  text: 窑匠与泥的比喻是什么意思？
+  category: core
+- id: jeremiah-q04
+  text: “新约”预言在耶利米书哪里？
+  category: core
+- id: jeremiah-q05
+  text: 你为什么被丢进泥坑？
+  category: core
+- id: jeremiah-q06
+  text: 你最后怎样死亡？
+  category: uncertainty

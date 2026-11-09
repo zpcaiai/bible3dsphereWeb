@@ -1,0 +1,18 @@
+characterId: daniel
+relationships:
+- target: hananiah
+  type: COMPANION_OF
+  evidence:
+  - Daniel 1:6
+- target: mishael
+  type: COMPANION_OF
+  evidence:
+  - Daniel 1:6
+- target: azariah
+  type: COMPANION_OF
+  evidence:
+  - Daniel 1:6
+- target: nebuchadnezzar
+  type: SERVED_UNDER
+  evidence:
+  - Daniel 2:48

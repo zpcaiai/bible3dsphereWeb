@@ -1,0 +1,20 @@
+characterId: jacob
+questions:
+- id: jacob-q01
+  text: 你和以扫的长子名分发生了什么？
+  category: core
+- id: jacob-q02
+  text: 伯特利的梦是什么？
+  category: core
+- id: jacob-q03
+  text: 你为什么娶了利亚和拉结？
+  category: core
+- id: jacob-q04
+  text: 你在毗努伊勒发生了什么？
+  category: core
+- id: jacob-q05
+  text: 你怎样与以扫和好？
+  category: core
+- id: jacob-q06
+  text: 你欺骗父亲时内心每一刻具体想什么？
+  category: uncertainty

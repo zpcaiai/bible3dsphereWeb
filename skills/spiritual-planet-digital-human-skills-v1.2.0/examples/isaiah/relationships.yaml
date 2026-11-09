@@ -1,0 +1,10 @@
+characterId: isaiah
+relationships:
+- target: ahaz
+  type: PROPHET_TO
+  evidence:
+  - Isaiah 7
+- target: hezekiah
+  type: PROPHET_TO
+  evidence:
+  - Isaiah 36-39

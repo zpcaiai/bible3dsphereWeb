@@ -1,0 +1,14 @@
+characterId: bathsheba
+relationships:
+- target: uriah
+  type: SPOUSE_OF
+  evidence:
+  - 2 Samuel 11:3
+- target: david
+  type: SPOUSE_OF
+  evidence:
+  - 2 Samuel 11-12
+- target: solomon
+  type: PARENT_OF
+  evidence:
+  - 2 Samuel 12:24

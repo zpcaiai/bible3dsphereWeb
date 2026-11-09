@@ -1,0 +1,66 @@
+version: 1.3.0
+policy:
+  ambiguousNameBehavior: require-context-or-show-candidates
+  neverSilentlyPickForAmbiguousBareName: true
+  contextSignals:
+  - book
+  - period
+  - relationship
+  - event
+  - explicit-title
+  - current-character
+ambiguous:
+- surface: 雅各
+  candidates:
+  - jacob
+  - james_zebedee
+  - james_brother_jesus
+  notes: 旧约族长 Jacob 与新约两位 James 在中文均常译“雅各”。
+- surface: 约瑟
+  candidates:
+  - joseph
+  - joseph_of_nazareth
+  - joseph_arimathea
+  notes: 分别为雅各之子约瑟、拿撒勒约瑟、亚利马太约瑟。
+- surface: 马利亚
+  candidates:
+  - mary
+  - mary_magdalene
+  - mary_of_bethany
+  notes: 分别为耶稣的母亲、抹大拉马利亚、伯大尼马利亚。
+- surface: 约翰
+  candidates:
+  - john
+  - john_baptist
+  notes: 使徒约翰与施洗约翰。
+- surface: 撒迦利亚
+  candidates:
+  - zechariah_prophet
+  - zechariah_priest
+  notes: 被掳归回时期先知与施洗约翰之父。
+- surface: 腓力
+  candidates:
+  - philip_apostle
+  - philip_evangelist
+  notes: 十二使徒之一与使徒行传中的传福音者。
+- surface: 扫罗
+  candidates:
+  - saul
+  - paul
+  notes: 以色列王扫罗与保罗归信前的希伯来名字扫罗；必须用上下文区分。
+stableLabels:
+  joseph: 约瑟（雅各之子）
+  joseph_of_nazareth: 约瑟（拿撒勒）
+  joseph_arimathea: 亚利马太的约瑟
+  mary: 马利亚（耶稣的母亲）
+  mary_magdalene: 抹大拉的马利亚
+  mary_of_bethany: 伯大尼的马利亚
+  john: 约翰（使徒）
+  john_baptist: 施洗约翰
+  zechariah_prophet: 撒迦利亚（先知）
+  zechariah_priest: 撒迦利亚（施洗约翰之父）
+  philip_apostle: 腓力（使徒）
+  philip_evangelist: 腓利（传福音者）
+  james_zebedee: 雅各（西庇太之子）
+  james_brother_jesus: 雅各（主的兄弟）
+  jacob: 雅各（以色列/族长）

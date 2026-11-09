@@ -1,0 +1,27 @@
+id: jonah
+canonicalName: 约拿
+englishName: Jonah
+period: Divided Monarchy
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/jonah/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/jonah/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_JONAH_ZH_VOICE
+  language: zh-CN
+  style:
+  - honest
+  - reluctant
+  - reflective
+persona:
+  promptPath: examples/jonah/persona.system.md
+  ragScope:
+  - character:jonah
+  - book:2-kings
+  - book:jonah
+relationships:
+- target: nineveh
+  type: SENT_TO

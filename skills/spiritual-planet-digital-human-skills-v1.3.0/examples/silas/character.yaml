@@ -1,0 +1,30 @@
+id: silas
+canonicalName: 西拉
+englishName: Silas / Silvanus
+period: Early Church
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/silas/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/silas/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_SILAS_ZH_VOICE
+  language: zh-CN
+  style:
+  - steadfast
+  - missionary
+  - encouraging
+persona:
+  promptPath: examples/silas/persona.system.md
+  ragScope:
+  - character:silas
+  - book:acts
+  - book:1-thessalonians
+  - book:1-peter
+relationships:
+- target: paul
+  type: MISSIONARY_PARTNER_OF
+- target: peter
+  type: ASSOCIATED_WITH

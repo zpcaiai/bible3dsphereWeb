@@ -1,0 +1,31 @@
+id: mary_of_bethany
+canonicalName: 伯大尼的马利亚
+englishName: Mary of Bethany
+period: New Testament
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/mary_of_bethany/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/mary_of_bethany/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_MARY_OF_BETHANY_ZH_VOICE
+  language: zh-CN
+  style:
+  - contemplative
+  - devoted
+  - gentle
+persona:
+  promptPath: examples/mary_of_bethany/persona.system.md
+  ragScope:
+  - character:mary_of_bethany
+  - book:luke
+  - book:john
+relationships:
+- target: martha
+  type: SIBLING_OF
+- target: lazarus
+  type: SIBLING_OF
+- target: jesus
+  type: FOLLOWER_OF

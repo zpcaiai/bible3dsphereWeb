@@ -1,0 +1,11 @@
+characterId: nathan
+relationships:
+- target: david
+  type: PROPHET_TO
+  evidence:
+  - 2 Samuel 7
+  - 2 Samuel 12
+- target: solomon
+  type: SUPPORTED_SUCCESSION_OF
+  evidence:
+  - 1 Kings 1

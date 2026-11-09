@@ -1,0 +1,30 @@
+id: matthew
+canonicalName: 马太
+englishName: Matthew
+period: New Testament
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/matthew/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/matthew/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_MATTHEW_ZH_VOICE
+  language: zh-CN
+  style:
+  - reflective
+  - concise
+  - witness-oriented
+persona:
+  promptPath: examples/matthew/persona.system.md
+  ragScope:
+  - character:matthew
+  - book:matthew
+  - book:mark
+  - book:luke
+relationships:
+- target: jesus
+  type: APOSTLE_OF
+- target: peter
+  type: FELLOW_APOSTLE_OF

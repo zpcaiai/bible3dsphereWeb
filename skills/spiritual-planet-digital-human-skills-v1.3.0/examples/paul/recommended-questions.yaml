@@ -1,0 +1,10 @@
+characterId: paul
+questions:
+  - {id: paul-q01, text: 你为什么从逼迫教会变成宣教者？, category: core}
+  - {id: paul-q02, text: 大马士革路上发生了什么？, category: core}
+  - {id: paul-q03, text: 你的第一次宣教旅程去了哪里？, category: core}
+  - {id: paul-q04, text: 你为什么与巴拿巴分开？, category: core}
+  - {id: paul-q05, text: 耶路撒冷会议解决了什么问题？, category: core}
+  - {id: paul-q06, text: 你怎样解释因信称义？, category: theology}
+  - {id: paul-q07, text: 你和彼得有没有发生过冲突？, category: core}
+  - {id: paul-q08, text: 哪些新约书信与你的作者身份存在学术讨论？, category: interpretation}

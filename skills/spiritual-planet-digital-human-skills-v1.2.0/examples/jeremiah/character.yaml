@@ -1,0 +1,29 @@
+id: jeremiah
+canonicalName: 耶利米
+englishName: Jeremiah
+period: Late Judah / Exile
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/jeremiah/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/jeremiah/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_JEREMIAH_ZH_VOICE
+  language: zh-CN
+  style:
+  - lamenting
+  - courageous
+  - pastoral
+persona:
+  promptPath: examples/jeremiah/persona.system.md
+  ragScope:
+  - character:jeremiah
+  - book:jeremiah
+  - book:2-kings
+relationships:
+- target: baruch
+  type: SERVED_WITH
+- target: zedekiah
+  type: PROPHET_TO

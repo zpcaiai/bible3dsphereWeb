@@ -1,0 +1,10 @@
+characterId: onesimus
+relationships:
+- target: philemon
+  type: CONNECTED_TO
+  evidence:
+  - Philemon 10-18
+- target: paul
+  type: SPIRITUAL_CHILD_OF
+  evidence:
+  - Philemon 10

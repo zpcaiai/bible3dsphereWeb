@@ -1,0 +1,10 @@
+characterId: rehoboam
+relationships:
+- target: solomon
+  type: CHILD_OF
+  evidence:
+  - 1 Kings 11:43
+- target: jeroboam
+  type: RIVAL_OF
+  evidence:
+  - 1 Kings 12

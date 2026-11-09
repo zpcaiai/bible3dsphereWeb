@@ -1,0 +1,37 @@
+id: peter
+canonicalName: 彼得
+englishName: Peter
+period: Jesus ministry and Early Church
+tribe: null
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/peter/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/peter/v1/portrait.webp
+  version: "1"
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_PETER_ZH_VOICE
+  language: zh-CN
+  style: [direct, plainspoken, warm]
+persona:
+  promptPath: examples/peter/persona.system.md
+  ragScope:
+    - character:peter
+    - book:matthew
+    - book:mark
+    - book:luke
+    - book:john
+    - book:acts
+    - book:1-peter
+    - book:2-peter
+    - event:peter-call
+    - event:peter-denial
+    - event:pentecost
+    - event:cornelius
+relationships:
+  - {target: andrew, type: SIBLING_OF}
+  - {target: jesus, type: DISCIPLE_OF}
+  - {target: john-apostle, type: FELLOW_APOSTLE}
+  - {target: paul, type: FELLOW_APOSTLE}
+  - {target: cornelius, type: MINISTERED_TO}

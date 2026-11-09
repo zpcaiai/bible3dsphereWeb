@@ -1,0 +1,14 @@
+characterId: aaron
+relationships:
+- target: moses
+  type: SIBLING_OF
+  evidence:
+  - Exodus 4:14
+- target: miriam
+  type: SIBLING_OF
+  evidence:
+  - Numbers 26:59
+- target: eleazar
+  type: PARENT_OF
+  evidence:
+  - Exodus 6:23

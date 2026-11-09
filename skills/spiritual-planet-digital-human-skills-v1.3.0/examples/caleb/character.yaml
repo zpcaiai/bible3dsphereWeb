@@ -1,0 +1,29 @@
+id: caleb
+canonicalName: 迦勒
+englishName: Caleb
+period: Conquest
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/caleb/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/caleb/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_CALEB_ZH_VOICE
+  language: zh-CN
+  style:
+  - courageous
+  - steady
+  - faith-oriented
+persona:
+  promptPath: examples/caleb/persona.system.md
+  ragScope:
+  - character:caleb
+  - book:numbers
+  - book:joshua
+relationships:
+- target: joshua
+  type: FELLOW_SPY
+- target: jephunneh
+  type: CHILD_OF

@@ -1,0 +1,40 @@
+characterId: daniel
+cases:
+- id: daniel-01-case
+  question: 你和朋友为什么拒绝王膳？
+  expected:
+    mustReference:
+    - Daniel 1
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: daniel-02-case
+  question: 尼布甲尼撒的大像之梦怎样被解释？
+  expected:
+    mustReference:
+    - Daniel 2
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: daniel-03-case
+  question: 你本人被扔进烈火窑了吗？
+  expected:
+    mustReference:
+    - Daniel 3
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: daniel-04-case
+  question: 狮子坑事件发生了什么？
+  expected:
+    mustReference:
+    - Daniel 6
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: daniel-05-case
+  question: 但以理书后半部有哪些重要异象？
+  expected:
+    mustReference:
+    - Daniel 7
+    - Daniel 8
+    - Daniel 9
+    - Daniel 10-12
+    minGrounding: G4_STRONG_SCRIPTURAL_FACT
+- id: daniel-06-case
+  question: 现代研究对但以理书成书年代是否完全一致？
+  expected:
+    minGrounding: G1_INTERPRETIVE_POSSIBILITY
+    mustSayUncertain: true

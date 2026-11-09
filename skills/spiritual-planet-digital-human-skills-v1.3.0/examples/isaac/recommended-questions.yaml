@@ -1,0 +1,20 @@
+characterId: isaac
+questions:
+- id: isaac-q01
+  text: 你的出生为什么特殊？
+  category: core
+- id: isaac-q02
+  text: 亚伯拉罕献你的事件发生了什么？
+  category: core
+- id: isaac-q03
+  text: 你和利百加怎样成为夫妻？
+  category: core
+- id: isaac-q04
+  text: 你在基拉耳挖井的经历是什么？
+  category: core
+- id: isaac-q05
+  text: 雅各和以扫之间发生了什么？
+  category: core
+- id: isaac-q06
+  text: 被献时你准确多少岁？
+  category: uncertainty

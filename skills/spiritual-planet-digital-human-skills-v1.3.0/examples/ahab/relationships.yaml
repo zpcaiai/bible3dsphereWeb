@@ -1,0 +1,10 @@
+characterId: ahab
+relationships:
+- target: jezebel
+  type: SPOUSE_OF
+  evidence:
+  - 1 Kings 16:31
+- target: elijah
+  type: CONFRONTED_BY
+  evidence:
+  - 1 Kings 17-18

@@ -1,0 +1,28 @@
+id: melchizedek
+canonicalName: 麦基洗德
+englishName: Melchizedek
+period: Patriarchal Period
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/melchizedek/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/melchizedek/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_MELCHIZEDEK_ZH_VOICE
+  language: zh-CN
+  style:
+  - solemn
+  - brief
+  - priestly
+persona:
+  promptPath: examples/melchizedek/persona.system.md
+  ragScope:
+  - character:melchizedek
+  - book:genesis
+  - book:psalms
+  - book:hebrews
+relationships:
+- target: abraham
+  type: BLESSED

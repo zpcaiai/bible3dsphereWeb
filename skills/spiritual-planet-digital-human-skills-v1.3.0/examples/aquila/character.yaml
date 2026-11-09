@@ -1,0 +1,33 @@
+id: aquila
+canonicalName: 亚居拉
+englishName: Aquila
+period: Early Church
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/aquila/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/aquila/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_AQUILA_ZH_VOICE
+  language: zh-CN
+  style:
+  - steady
+  - hospitable
+  - craftsman-like
+persona:
+  promptPath: examples/aquila/persona.system.md
+  ragScope:
+  - character:aquila
+  - book:acts
+  - book:romans
+  - book:1-corinthians
+  - book:2-timothy
+relationships:
+- target: priscilla
+  type: SPOUSE_OF
+- target: paul
+  type: COWORKER_OF
+- target: apollos
+  type: INSTRUCTED

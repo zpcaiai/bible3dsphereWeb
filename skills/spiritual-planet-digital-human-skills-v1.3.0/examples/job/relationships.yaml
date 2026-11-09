@@ -1,0 +1,14 @@
+characterId: job
+relationships:
+- target: job_wife
+  type: SPOUSE_OF
+  evidence:
+  - Job 2:9-10
+- target: eliphaz
+  type: DIALOGUED_WITH
+  evidence:
+  - Job 4-5
+- target: elihu
+  type: DIALOGUED_WITH
+  evidence:
+  - Job 32-37

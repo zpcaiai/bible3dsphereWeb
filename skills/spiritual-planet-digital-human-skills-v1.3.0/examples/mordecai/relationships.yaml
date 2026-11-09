@@ -1,0 +1,10 @@
+characterId: mordecai
+relationships:
+- target: esther
+  type: GUARDIAN_OF
+  evidence:
+  - Esther 2:7
+- target: haman
+  type: OPPOSED_BY
+  evidence:
+  - Esther 3-7

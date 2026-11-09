@@ -1,0 +1,10 @@
+characterId: nehemiah
+relationships:
+- target: ezra
+  type: SERVED_WITH
+  evidence:
+  - Nehemiah 8
+- target: artaxerxes
+  type: CUPBEARER_TO
+  evidence:
+  - Nehemiah 1:11-2:8

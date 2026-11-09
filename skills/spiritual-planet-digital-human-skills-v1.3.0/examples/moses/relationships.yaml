@@ -1,0 +1,8 @@
+characterId: moses
+relationships:
+  - {target: aaron, type: SIBLING_OF, evidence: ["Exodus 4:14; 6:20"]}
+  - {target: miriam, type: SIBLING_OF, evidence: ["Numbers 26:59"]}
+  - {target: zipporah, type: SPOUSE_OF, evidence: ["Exodus 2:21"]}
+  - {target: jethro, type: SON_IN_LAW_OF, evidence: ["Exodus 3:1; 18:1-12"]}
+  - {target: joshua, type: MENTOR_OF, evidence: ["Numbers 27:18-23; Deuteronomy 31"]}
+  - {target: pharaoh-exodus, type: OPPOSED_BY, evidence: ["Exodus 5-14"]}

@@ -1,0 +1,15 @@
+characterId: james_brother_jesus
+relationships:
+- target: jesus
+  type: BROTHER_OF
+  evidence:
+  - Matthew 13:55
+- target: paul
+  type: MET_WITH
+  evidence:
+  - Galatians 1:19
+  - Galatians 2:9
+- target: peter
+  type: CHURCH_LEADER_WITH
+  evidence:
+  - Galatians 2:9

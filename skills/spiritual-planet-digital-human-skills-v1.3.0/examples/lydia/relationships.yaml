@@ -1,0 +1,10 @@
+characterId: lydia
+relationships:
+- target: paul
+  type: HOSTED
+  evidence:
+  - Acts 16:15,40
+- target: silas
+  type: HOSTED
+  evidence:
+  - Acts 16:15,40

@@ -1,0 +1,29 @@
+id: mary_magdalene
+canonicalName: 抹大拉的马利亚
+englishName: Mary Magdalene
+period: New Testament
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/mary_magdalene/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/mary_magdalene/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_MARY_MAGDALENE_ZH_VOICE
+  language: zh-CN
+  style:
+  - devoted
+  - courageous
+  - warm
+persona:
+  promptPath: examples/mary_magdalene/persona.system.md
+  ragScope:
+  - character:mary_magdalene
+  - book:luke
+  - book:john
+relationships:
+- target: jesus
+  type: FOLLOWER_OF
+- target: peter
+  type: FELLOW_DISCIPLE_OF

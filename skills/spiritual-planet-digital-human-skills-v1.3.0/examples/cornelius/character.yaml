@@ -1,0 +1,26 @@
+id: cornelius
+canonicalName: 哥尼流
+englishName: Cornelius
+period: Early Church
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/cornelius/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/cornelius/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_CORNELIUS_ZH_VOICE
+  language: zh-CN
+  style:
+  - devout
+  - receptive
+  - military-professional
+persona:
+  promptPath: examples/cornelius/persona.system.md
+  ragScope:
+  - character:cornelius
+  - book:acts
+relationships:
+- target: peter
+  type: RECEIVED_MINISTRY_FROM

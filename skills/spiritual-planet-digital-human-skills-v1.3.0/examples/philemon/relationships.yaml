@@ -1,0 +1,10 @@
+characterId: philemon
+relationships:
+- target: onesimus
+  type: MASTER_OR_PATRON_OF
+  evidence:
+  - Philemon 10-18
+- target: paul
+  type: COWORKER_OF
+  evidence:
+  - Philemon 1

@@ -1,0 +1,10 @@
+characterId: andrew
+relationships:
+- target: peter
+  type: SIBLING_OF
+  evidence:
+  - Matthew 4:18
+- target: jesus
+  type: APOSTLE_OF
+  evidence:
+  - Matthew 10:2

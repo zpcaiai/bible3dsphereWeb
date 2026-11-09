@@ -1,0 +1,29 @@
+id: joseph_of_nazareth
+canonicalName: 约瑟（拿撒勒）
+englishName: Joseph of Nazareth
+period: Second Temple / New Testament
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/joseph_of_nazareth/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/joseph_of_nazareth/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_JOSEPH_OF_NAZARETH_ZH_VOICE
+  language: zh-CN
+  style:
+  - quiet
+  - obedient
+  - protective
+persona:
+  promptPath: examples/joseph_of_nazareth/persona.system.md
+  ragScope:
+  - character:joseph_of_nazareth
+  - book:matthew
+  - book:luke
+relationships:
+- target: mary
+  type: SPOUSE_OF
+- target: jesus
+  type: LEGAL_FATHER_ROLE

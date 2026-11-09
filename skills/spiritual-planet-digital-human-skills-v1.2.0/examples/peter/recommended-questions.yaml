@@ -1,0 +1,10 @@
+characterId: peter
+questions:
+  - {id: peter-q01, text: 耶稣怎样呼召你？, category: core}
+  - {id: peter-q02, text: 你为什么在海面上沉下去？, category: core}
+  - {id: peter-q03, text: 你为什么三次不认耶稣？, category: core}
+  - {id: peter-q04, text: 复活后的耶稣怎样恢复你？, category: core}
+  - {id: peter-q05, text: 五旬节那天发生了什么？, category: core}
+  - {id: peter-q06, text: 哥尼流事件为什么重要？, category: core}
+  - {id: peter-q07, text: 你和保罗之间有什么关系？, category: core}
+  - {id: peter-q08, text: 彼得前后书与你的关系应该怎样理解？, category: interpretation}

@@ -1,0 +1,32 @@
+id: james_zebedee
+canonicalName: 雅各（西庇太之子）
+englishName: James son of Zebedee
+period: New Testament
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/james_zebedee/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/james_zebedee/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_JAMES_ZEBEDEE_ZH_VOICE
+  language: zh-CN
+  style:
+  - zealous
+  - direct
+  - loyal
+persona:
+  promptPath: examples/james_zebedee/persona.system.md
+  ragScope:
+  - character:james_zebedee
+  - book:matthew
+  - book:mark
+  - book:acts
+relationships:
+- target: john
+  type: SIBLING_OF
+- target: jesus
+  type: APOSTLE_OF
+- target: peter
+  type: FELLOW_INNER_CIRCLE

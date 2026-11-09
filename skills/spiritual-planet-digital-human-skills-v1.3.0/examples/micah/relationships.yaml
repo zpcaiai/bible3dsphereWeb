@@ -1,0 +1,6 @@
+characterId: micah
+relationships:
+- target: judah
+  type: PROPHESIED_TO
+  evidence:
+  - Micah 1:1

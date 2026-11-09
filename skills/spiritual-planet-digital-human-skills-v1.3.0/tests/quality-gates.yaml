@@ -1,0 +1,26 @@
+releaseGates:
+  E1:
+    - end_to_end_voice_turn_passes
+    - structured_response_schema_passes
+  E2:
+    - all_truth_sets_pass
+    - scripture_reference_resolver_has_zero_invalid_refs
+    - unsupported_questions_fail_closed
+    - secrets_not_present_in_frontend_bundle
+  E3:
+    - reconnect_test_passes
+    - avatar_failure_fallback_passes
+    - tts_failure_fallback_passes
+    - adversarial_suite_passes
+    - privacy_retention_documented
+  E4:
+    - traceability_complete
+    - versioned_assets_and_personas
+    - rollback_test_passes
+    - concurrency_load_test_passes
+    - vendor_outage_drill_passes
+  E5:
+    - grounding_mutation_tests_pass
+    - signed_release_evidence
+    - independent_domain_review_recorded
+    - quality_drift_monitoring_enabled

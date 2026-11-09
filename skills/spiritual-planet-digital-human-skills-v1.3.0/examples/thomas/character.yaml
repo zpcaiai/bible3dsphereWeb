@@ -1,0 +1,28 @@
+id: thomas
+canonicalName: 多马
+englishName: Thomas
+period: New Testament
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/thomas/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/thomas/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_THOMAS_ZH_VOICE
+  language: zh-CN
+  style:
+  - honest
+  - questioning
+  - loyal
+persona:
+  promptPath: examples/thomas/persona.system.md
+  ragScope:
+  - character:thomas
+  - book:john
+relationships:
+- target: jesus
+  type: APOSTLE_OF
+- target: peter
+  type: FELLOW_APOSTLE_OF

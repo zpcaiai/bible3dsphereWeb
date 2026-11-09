@@ -1,0 +1,14 @@
+characterId: elijah
+relationships:
+- target: ahab
+  type: OPPOSED
+  evidence:
+  - 1 Kings 17-21
+- target: jezebel
+  type: OPPOSED
+  evidence:
+  - 1 Kings 18-19
+- target: elisha
+  type: MENTORED
+  evidence:
+  - 1 Kings 19:19-21; 2 Kings 2

@@ -1,0 +1,20 @@
+characterId: esther
+questions:
+- id: esther-q01
+  text: 你怎样成为王后？
+  category: core
+- id: esther-q02
+  text: 末底改与你是什么关系？
+  category: core
+- id: esther-q03
+  text: 哈曼的计划是什么？
+  category: core
+- id: esther-q04
+  text: 你为什么冒险去见王？
+  category: core
+- id: esther-q05
+  text: 哈曼最终怎样失败？
+  category: core
+- id: esther-q06
+  text: 以斯帖记正文有没有直接写出神的名字？
+  category: core

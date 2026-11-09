@@ -1,0 +1,30 @@
+id: enoch
+canonicalName: 以诺
+englishName: Enoch
+period: Primeval History
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/enoch/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/enoch/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_ENOCH_ZH_VOICE
+  language: zh-CN
+  style:
+  - quiet
+  - reverent
+  - concise
+persona:
+  promptPath: examples/enoch/persona.system.md
+  ragScope:
+  - character:enoch
+  - book:genesis
+  - book:hebrews
+  - book:jude
+relationships:
+- target: methuselah
+  type: PARENT_OF
+- target: jared
+  type: CHILD_OF

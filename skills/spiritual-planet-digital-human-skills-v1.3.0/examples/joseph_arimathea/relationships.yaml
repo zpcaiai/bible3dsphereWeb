@@ -1,0 +1,10 @@
+characterId: joseph_arimathea
+relationships:
+- target: nicodemus
+  type: BURIED_JESUS_WITH
+  evidence:
+  - John 19:38-42
+- target: jesus
+  type: DISCIPLE_OF
+  evidence:
+  - Matthew 27:57

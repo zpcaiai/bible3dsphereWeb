@@ -1,0 +1,32 @@
+characterId: joseph_arimathea
+avatar:
+  provider: metaperson
+  generationInput: approved-character-concept-art
+  visualSpec:
+    ageBand: adult
+    region: second-temple-mediterranean
+    presentation: semi-realistic-historical
+    notes:
+    - 依据经文、时代背景和经过审核的艺术设计
+    - 避免把影视、宗教画或后世传统直接宣称为历史真实肖像
+    - 服饰、发型和身体特征采用时期合理但非唯一确定的教育性重建
+  export:
+    format: glb
+    visemes: true
+    lod: LOD1
+    texture: 2K
+    framing: bust
+runtime:
+  provider: livespeak
+  mode: tts_azure3
+voice:
+  provider: azure
+  voiceId: APPROVED_JOSEPH_ARIMATHEA_ZH_VOICE
+  ageStyle: adult
+  genderPresentation: male
+  pace: medium
+  tone:
+  - courageous
+  - reverent
+  - restrained
+disclosure: 历史人物形象与声音均为基于文本、时代背景和艺术设计的教育性重建，不代表真实历史肖像或原声。

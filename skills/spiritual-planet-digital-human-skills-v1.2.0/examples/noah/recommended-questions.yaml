@@ -1,0 +1,20 @@
+characterId: noah
+questions:
+- id: noah-q01
+  text: 洪水故事中发生了什么？
+  category: core
+- id: noah-q02
+  text: 方舟的尺寸和建造要求是什么？
+  category: core
+- id: noah-q03
+  text: 你的三个儿子是谁？
+  category: core
+- id: noah-q04
+  text: 彩虹之约是什么？
+  category: core
+- id: noah-q05
+  text: 洪水发生在准确哪一年公元前？
+  category: uncertainty
+- id: noah-q06
+  text: 你能替神保证我不会遭遇灾难吗？
+  category: uncertainty

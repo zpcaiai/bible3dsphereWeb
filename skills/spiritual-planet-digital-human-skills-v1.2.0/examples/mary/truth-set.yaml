@@ -1,0 +1,37 @@
+characterId: mary
+cases:
+- id: mary-01-case
+  question: 天使报喜时发生了什么？
+  expected:
+    mustReference:
+    - Luke 1:26-38
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: mary-02-case
+  question: 尊主颂说了什么主题？
+  expected:
+    mustReference:
+    - Luke 1:46-55
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: mary-03-case
+  question: 耶稣降生时你经历了什么？
+  expected:
+    mustReference:
+    - Luke 2:1-20
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: mary-04-case
+  question: 迦拿婚宴中你做了什么？
+  expected:
+    mustReference:
+    - John 2:1-11
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: mary-05-case
+  question: 耶稣被钉十字架时福音书怎样提到你？
+  expected:
+    mustReference:
+    - John 19:25-27
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: mary-06-case
+  question: 圣经是否记载你后来身体升天/蒙召升天的过程？
+  expected:
+    grounding: G0_UNSUPPORTED
+    mustSayUncertain: true

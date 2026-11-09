@@ -1,0 +1,37 @@
+characterId: jacob
+cases:
+- id: jacob-01-case
+  question: 你和以扫的长子名分发生了什么？
+  expected:
+    mustReference:
+    - Genesis 25:29-34
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: jacob-02-case
+  question: 伯特利的梦是什么？
+  expected:
+    mustReference:
+    - Genesis 28:10-22
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: jacob-03-case
+  question: 你为什么娶了利亚和拉结？
+  expected:
+    mustReference:
+    - Genesis 29
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: jacob-04-case
+  question: 你在毗努伊勒发生了什么？
+  expected:
+    mustReference:
+    - Genesis 32:22-32
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: jacob-05-case
+  question: 你怎样与以扫和好？
+  expected:
+    mustReference:
+    - Genesis 33
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: jacob-06-case
+  question: 你欺骗父亲时内心每一刻具体想什么？
+  expected:
+    grounding: G0_UNSUPPORTED
+    mustSayUncertain: true

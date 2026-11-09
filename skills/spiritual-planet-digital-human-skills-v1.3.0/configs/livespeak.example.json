@@ -1,0 +1,11 @@
+{
+  "baseUrl": "https://metaperson.avatarsdk.com/livespeak/index.html",
+  "mode": "tts_azure3",
+  "customModel": true,
+  "framing": "bust",
+  "language": "zh-CN",
+  "security": {
+    "targetOrigin": "https://metaperson.avatarsdk.com",
+    "allowWildcardPostMessageInProduction": false
+  }
+}

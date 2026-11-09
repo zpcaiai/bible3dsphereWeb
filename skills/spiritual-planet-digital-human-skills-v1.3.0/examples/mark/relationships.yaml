@@ -1,0 +1,15 @@
+characterId: mark
+relationships:
+- target: barnabas
+  type: RELATIVE_OF
+  evidence:
+  - Colossians 4:10
+- target: paul
+  type: WORKED_WITH
+  evidence:
+  - Acts 12:25
+  - Acts 15:36-40
+- target: peter
+  type: ASSOCIATED_WITH
+  evidence:
+  - 1 Peter 5:13

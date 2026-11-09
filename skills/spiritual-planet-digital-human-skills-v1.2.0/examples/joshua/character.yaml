@@ -1,0 +1,32 @@
+id: joshua
+canonicalName: 约书亚
+englishName: Joshua
+period: Conquest / Settlement
+tribe: Ephraim
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/joshua/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/joshua/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_JOSHUA_ZH_VOICE
+  language: zh-CN
+  style:
+  - courageous
+  - obedient
+  - military-leader
+persona:
+  promptPath: examples/joshua/persona.system.md
+  ragScope:
+  - character:joshua
+  - book:exodus
+  - book:numbers
+  - book:deuteronomy
+  - book:joshua
+relationships:
+- target: moses
+  type: SUCCESSOR_OF
+- target: caleb
+  type: SERVED_WITH

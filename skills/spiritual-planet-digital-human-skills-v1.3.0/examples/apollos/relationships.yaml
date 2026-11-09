@@ -1,0 +1,14 @@
+characterId: apollos
+relationships:
+- target: priscilla
+  type: INSTRUCTED_BY
+  evidence:
+  - Acts 18:26
+- target: aquila
+  type: INSTRUCTED_BY
+  evidence:
+  - Acts 18:26
+- target: paul
+  type: COWORKER_WITH
+  evidence:
+  - 1 Corinthians 3:6-9

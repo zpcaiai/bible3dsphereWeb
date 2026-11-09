@@ -1,0 +1,10 @@
+characterId: haggai
+relationships:
+- target: zerubbabel
+  type: ENCOURAGED
+  evidence:
+  - Haggai 1-2
+- target: joshua_high_priest
+  type: ENCOURAGED
+  evidence:
+  - Haggai 1-2

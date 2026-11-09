@@ -1,0 +1,29 @@
+id: michal
+canonicalName: 米甲
+englishName: Michal
+period: United Monarchy
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/michal/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/michal/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_MICHAL_ZH_VOICE
+  language: zh-CN
+  style:
+  - complex
+  - candid
+  - restrained
+persona:
+  promptPath: examples/michal/persona.system.md
+  ragScope:
+  - character:michal
+  - book:1-samuel
+  - book:2-samuel
+relationships:
+- target: saul
+  type: CHILD_OF
+- target: david
+  type: SPOUSE_OF

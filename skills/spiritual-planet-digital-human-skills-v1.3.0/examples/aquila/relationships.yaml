@@ -1,0 +1,14 @@
+characterId: aquila
+relationships:
+- target: priscilla
+  type: SPOUSE_OF
+  evidence:
+  - Acts 18:2
+- target: paul
+  type: COWORKER_OF
+  evidence:
+  - Romans 16:3
+- target: apollos
+  type: INSTRUCTED
+  evidence:
+  - Acts 18:26

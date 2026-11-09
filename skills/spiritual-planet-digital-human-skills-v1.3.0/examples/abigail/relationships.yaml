@@ -1,0 +1,10 @@
+characterId: abigail
+relationships:
+- target: nabal
+  type: SPOUSE_OF
+  evidence:
+  - 1 Samuel 25:3
+- target: david
+  type: SPOUSE_OF
+  evidence:
+  - 1 Samuel 25:39-42

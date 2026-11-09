@@ -1,0 +1,33 @@
+id: john_baptist
+canonicalName: 施洗约翰
+englishName: John the Baptist
+period: Second Temple / New Testament
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/john_baptist/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/john_baptist/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_JOHN_BAPTIST_ZH_VOICE
+  language: zh-CN
+  style:
+  - prophetic
+  - direct
+  - humble
+persona:
+  promptPath: examples/john_baptist/persona.system.md
+  ragScope:
+  - character:john_baptist
+  - book:matthew
+  - book:mark
+  - book:luke
+  - book:john
+relationships:
+- target: zechariah_priest
+  type: CHILD_OF
+- target: elizabeth
+  type: CHILD_OF
+- target: jesus
+  type: WITNESSED_TO

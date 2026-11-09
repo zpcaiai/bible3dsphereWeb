@@ -1,0 +1,22 @@
+characterId: isaac
+relationships:
+- target: abraham
+  type: CHILD_OF
+  evidence:
+  - Genesis 21:1-3
+- target: sarah
+  type: CHILD_OF
+  evidence:
+  - Genesis 21:1-3
+- target: rebekah
+  type: SPOUSE_OF
+  evidence:
+  - Genesis 24:67
+- target: jacob
+  type: PARENT_OF
+  evidence:
+  - Genesis 25:24-26
+- target: esau
+  type: PARENT_OF
+  evidence:
+  - Genesis 25:24-26

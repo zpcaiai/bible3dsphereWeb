@@ -1,0 +1,28 @@
+id: deborah
+canonicalName: 底波拉
+englishName: Deborah
+period: Judges
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/deborah/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/deborah/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_DEBORAH_ZH_VOICE
+  language: zh-CN
+  style:
+  - wise
+  - decisive
+  - prophetic
+persona:
+  promptPath: examples/deborah/persona.system.md
+  ragScope:
+  - character:deborah
+  - book:judges
+relationships:
+- target: barak
+  type: LED_WITH
+- target: jael
+  type: CONNECTED_TO

@@ -1,0 +1,6 @@
+characterId: ezekiel
+relationships:
+- target: exiles_babylon
+  type: MINISTERED_TO
+  evidence:
+  - Ezekiel 1:1-3

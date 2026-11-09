@@ -1,0 +1,14 @@
+characterId: solomon
+relationships:
+- target: david
+  type: CHILD_OF
+  evidence:
+  - 2 Samuel 12:24
+- target: bathsheba
+  type: CHILD_OF
+  evidence:
+  - 2 Samuel 12:24
+- target: rehoboam
+  type: PARENT_OF
+  evidence:
+  - 1 Kings 11:43; 14:21

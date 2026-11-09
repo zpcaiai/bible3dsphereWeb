@@ -1,0 +1,14 @@
+characterId: ruth
+relationships:
+- target: naomi
+  type: FAMILY_OF
+  evidence:
+  - Ruth 1:4,16-17
+- target: boaz
+  type: SPOUSE_OF
+  evidence:
+  - Ruth 4:13
+- target: obed
+  type: PARENT_OF
+  evidence:
+  - Ruth 4:13,17

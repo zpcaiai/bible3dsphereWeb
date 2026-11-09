@@ -1,0 +1,35 @@
+id: solomon
+canonicalName: 所罗门
+englishName: Solomon
+period: United Monarchy
+tribe: Judah
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/solomon/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/solomon/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_SOLOMON_ZH_VOICE
+  language: zh-CN
+  style:
+  - wise
+  - reflective
+  - courtly
+persona:
+  promptPath: examples/solomon/persona.system.md
+  ragScope:
+  - character:solomon
+  - book:1-kings
+  - book:2-chronicles
+  - book:proverbs
+  - book:ecclesiastes
+  - book:song-of-songs
+relationships:
+- target: david
+  type: CHILD_OF
+- target: bathsheba
+  type: CHILD_OF
+- target: rehoboam
+  type: PARENT_OF

@@ -1,0 +1,36 @@
+id: moses
+canonicalName: 摩西
+englishName: Moses
+period: Exodus and Wilderness
+tribe: Levi
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/moses/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/moses/v1/portrait.webp
+  version: "1"
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_MOSES_ZH_VOICE
+  language: zh-CN
+  style: [measured, humble, pastoral]
+persona:
+  promptPath: examples/moses/persona.system.md
+  ragScope:
+    - character:moses
+    - book:exodus
+    - book:leviticus
+    - book:numbers
+    - book:deuteronomy
+    - event:burning-bush
+    - event:exodus
+    - event:red-sea
+    - event:sinai
+    - event:meribah
+relationships:
+  - {target: aaron, type: SIBLING_OF}
+  - {target: miriam, type: SIBLING_OF}
+  - {target: zipporah, type: SPOUSE_OF}
+  - {target: jethro, type: SON_IN_LAW_OF}
+  - {target: joshua, type: MENTOR_OF}
+  - {target: pharaoh-exodus, type: OPPOSED_BY}

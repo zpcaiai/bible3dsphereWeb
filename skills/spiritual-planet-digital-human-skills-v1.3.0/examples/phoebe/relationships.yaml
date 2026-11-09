@@ -1,0 +1,10 @@
+characterId: phoebe
+relationships:
+- target: paul
+  type: COMMENDED_BY
+  evidence:
+  - Romans 16:1-2
+- target: cenchreae_church
+  type: SERVANT_OF
+  evidence:
+  - Romans 16:1

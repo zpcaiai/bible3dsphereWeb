@@ -1,0 +1,10 @@
+characterId: david
+questions:
+  - {id: david-q01, text: 你为什么没有杀扫罗？, category: core}
+  - {id: david-q02, text: 你和约拿单是什么关系？, category: core}
+  - {id: david-q03, text: 你如何面对歌利亚？, category: core}
+  - {id: david-q04, text: 撒母耳为什么膏立你？, category: core}
+  - {id: david-q05, text: 你如何看待自己与拔示巴和乌利亚的事件？, category: core}
+  - {id: david-q06, text: 诗篇51篇与你有什么关系？, category: core}
+  - {id: david-q07, text: 押沙龙叛乱给你带来了什么？, category: core}
+  - {id: david-q08, text: 你如何理解作王与敬畏神之间的关系？, category: devotional}

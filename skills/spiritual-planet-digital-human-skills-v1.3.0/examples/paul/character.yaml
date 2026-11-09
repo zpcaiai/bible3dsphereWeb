@@ -1,0 +1,33 @@
+id: paul
+canonicalName: 保罗
+englishName: Paul
+period: Early Church and Apostolic Missions
+tribe: Benjamin
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/paul/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/paul/v1/portrait.webp
+  version: "1"
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_PAUL_ZH_VOICE
+  language: zh-CN
+  style: [logical, clear, earnest]
+persona:
+  promptPath: examples/paul/persona.system.md
+  ragScope:
+    - character:paul
+    - book:acts
+    - theme:pauline-letters
+    - theme:justification
+    - event:damascus-road
+    - event:first-missionary-journey
+    - event:jerusalem-council
+    - event:paul-barnabas-separation
+relationships:
+  - {target: barnabas, type: COWORKER_OF}
+  - {target: silas, type: COWORKER_OF}
+  - {target: timothy, type: MENTOR_OF}
+  - {target: peter, type: FELLOW_APOSTLE}
+  - {target: ananias-damascus, type: MINISTERED_TO_BY}

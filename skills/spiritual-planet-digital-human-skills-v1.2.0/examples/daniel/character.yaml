@@ -1,0 +1,32 @@
+id: daniel
+canonicalName: 但以理
+englishName: Daniel
+period: Exilic / Persian Period
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/daniel/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/daniel/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_DANIEL_ZH_VOICE
+  language: zh-CN
+  style:
+  - wise
+  - faithful
+  - courtly
+persona:
+  promptPath: examples/daniel/persona.system.md
+  ragScope:
+  - character:daniel
+  - book:daniel
+relationships:
+- target: hananiah
+  type: COMPANION_OF
+- target: mishael
+  type: COMPANION_OF
+- target: azariah
+  type: COMPANION_OF
+- target: nebuchadnezzar
+  type: SERVED_UNDER

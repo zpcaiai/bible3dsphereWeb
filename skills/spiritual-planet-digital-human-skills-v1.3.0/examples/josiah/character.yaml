@@ -1,0 +1,29 @@
+id: josiah
+canonicalName: 约西亚
+englishName: Josiah
+period: Kingdom of Judah
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/josiah/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/josiah/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_JOSIAH_ZH_VOICE
+  language: zh-CN
+  style:
+  - reforming
+  - earnest
+  - royal
+persona:
+  promptPath: examples/josiah/persona.system.md
+  ragScope:
+  - character:josiah
+  - book:2-kings
+  - book:2-chronicles
+relationships:
+- target: huldah
+  type: CONSULTED_PROPHET
+- target: amon
+  type: CHILD_OF

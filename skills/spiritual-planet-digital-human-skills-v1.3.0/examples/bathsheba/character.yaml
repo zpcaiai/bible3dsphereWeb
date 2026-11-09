@@ -1,0 +1,31 @@
+id: bathsheba
+canonicalName: 拔示巴
+englishName: Bathsheba
+period: United Monarchy
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/bathsheba/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/bathsheba/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_BATHSHEBA_ZH_VOICE
+  language: zh-CN
+  style:
+  - measured
+  - resilient
+  - court-aware
+persona:
+  promptPath: examples/bathsheba/persona.system.md
+  ragScope:
+  - character:bathsheba
+  - book:2-samuel
+  - book:1-kings
+relationships:
+- target: uriah
+  type: SPOUSE_OF
+- target: david
+  type: SPOUSE_OF
+- target: solomon
+  type: PARENT_OF

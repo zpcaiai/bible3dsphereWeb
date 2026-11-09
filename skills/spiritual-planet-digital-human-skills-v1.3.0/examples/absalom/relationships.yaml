@@ -1,0 +1,14 @@
+characterId: absalom
+relationships:
+- target: david
+  type: CHILD_OF
+  evidence:
+  - 2 Samuel 3:3
+- target: tamar_david_daughter
+  type: SIBLING_OF
+  evidence:
+  - 2 Samuel 13:1
+- target: amnon
+  type: HALF_SIBLING_OF
+  evidence:
+  - 2 Samuel 13

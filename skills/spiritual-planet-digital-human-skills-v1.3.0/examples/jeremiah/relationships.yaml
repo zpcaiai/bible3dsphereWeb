@@ -1,0 +1,10 @@
+characterId: jeremiah
+relationships:
+- target: baruch
+  type: SERVED_WITH
+  evidence:
+  - Jeremiah 36:4
+- target: zedekiah
+  type: PROPHET_TO
+  evidence:
+  - Jeremiah 37-38

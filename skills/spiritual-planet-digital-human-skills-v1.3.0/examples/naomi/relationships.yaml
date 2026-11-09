@@ -1,0 +1,10 @@
+characterId: naomi
+relationships:
+- target: ruth
+  type: MOTHER_IN_LAW_OF
+  evidence:
+  - Ruth 1:4,16-18
+- target: boaz
+  type: KIN_OF
+  evidence:
+  - Ruth 2:1

@@ -1,0 +1,29 @@
+id: philip_apostle
+canonicalName: 腓力（使徒）
+englishName: Philip the Apostle
+period: New Testament
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/philip_apostle/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/philip_apostle/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_PHILIP_APOSTLE_ZH_VOICE
+  language: zh-CN
+  style:
+  - curious
+  - practical
+  - direct
+persona:
+  promptPath: examples/philip_apostle/persona.system.md
+  ragScope:
+  - character:philip_apostle
+  - book:john
+  - book:matthew
+relationships:
+- target: nathanael
+  type: BROUGHT_TO_JESUS
+- target: jesus
+  type: APOSTLE_OF

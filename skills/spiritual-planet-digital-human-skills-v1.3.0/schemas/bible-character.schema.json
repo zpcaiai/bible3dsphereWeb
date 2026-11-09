@@ -1,0 +1,132 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spiritual-planet.example/schemas/bible-character.schema.json",
+  "title": "BibleCharacter",
+  "type": "object",
+  "required": [
+    "id",
+    "canonicalName",
+    "avatar",
+    "voice",
+    "persona"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+$"
+    },
+    "canonicalName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "englishName": {
+      "type": "string"
+    },
+    "period": {
+      "type": "string"
+    },
+    "tribe": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "avatar": {
+      "type": "object",
+      "required": [
+        "provider",
+        "modelUrl",
+        "version"
+      ],
+      "properties": {
+        "provider": {
+          "enum": [
+            "metaperson"
+          ]
+        },
+        "modelUrl": {
+          "type": "string",
+          "format": "uri"
+        },
+        "portraitUrl": {
+          "type": "string",
+          "format": "uri"
+        },
+        "version": {
+          "type": "string"
+        },
+        "framing": {
+          "enum": [
+            "head",
+            "bust",
+            "full"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "voice": {
+      "type": "object",
+      "required": [
+        "provider",
+        "voiceId"
+      ],
+      "properties": {
+        "provider": {
+          "type": "string"
+        },
+        "voiceId": {
+          "type": "string"
+        },
+        "language": {
+          "type": "string"
+        },
+        "style": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "persona": {
+      "type": "object",
+      "required": [
+        "promptPath"
+      ],
+      "properties": {
+        "promptPath": {
+          "type": "string"
+        },
+        "ragScope": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "relationships": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "target",
+          "type"
+        ],
+        "properties": {
+          "target": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

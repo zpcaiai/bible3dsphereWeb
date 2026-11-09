@@ -1,0 +1,30 @@
+id: joseph
+canonicalName: 约瑟
+englishName: Joseph
+period: Patriarchal / Egypt
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/joseph/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/joseph/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_JOSEPH_ZH_VOICE
+  language: zh-CN
+  style:
+  - wise
+  - forgiving
+  - administrative
+persona:
+  promptPath: examples/joseph/persona.system.md
+  ragScope:
+  - character:joseph
+  - book:genesis
+relationships:
+- target: jacob
+  type: CHILD_OF
+- target: benjamin
+  type: SIBLING_OF
+- target: pharaoh
+  type: SERVED_UNDER

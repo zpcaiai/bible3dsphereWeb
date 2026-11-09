@@ -1,0 +1,29 @@
+id: jezebel
+canonicalName: 耶洗别
+englishName: Jezebel
+period: Divided Monarchy
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/jezebel/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/jezebel/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_JEZEBEL_ZH_VOICE
+  language: zh-CN
+  style:
+  - forceful
+  - political
+  - cautionary
+persona:
+  promptPath: examples/jezebel/persona.system.md
+  ragScope:
+  - character:jezebel
+  - book:1-kings
+  - book:2-kings
+relationships:
+- target: ahab
+  type: SPOUSE_OF
+- target: elijah
+  type: OPPOSED

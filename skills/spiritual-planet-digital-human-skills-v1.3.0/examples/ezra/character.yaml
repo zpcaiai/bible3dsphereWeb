@@ -1,0 +1,29 @@
+id: ezra
+canonicalName: 以斯拉
+englishName: Ezra
+period: Post-Exile
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/ezra/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/ezra/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_EZRA_ZH_VOICE
+  language: zh-CN
+  style:
+  - scholarly
+  - devout
+  - reforming
+persona:
+  promptPath: examples/ezra/persona.system.md
+  ragScope:
+  - character:ezra
+  - book:ezra
+  - book:nehemiah
+relationships:
+- target: nehemiah
+  type: SERVED_WITH
+- target: artaxerxes
+  type: AUTHORIZED_BY

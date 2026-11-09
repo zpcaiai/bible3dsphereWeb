@@ -1,0 +1,28 @@
+id: gideon
+canonicalName: 基甸
+englishName: Gideon
+period: Judges
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/gideon/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/gideon/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_GIDEON_ZH_VOICE
+  language: zh-CN
+  style:
+  - cautious
+  - growing-in-faith
+  - direct
+persona:
+  promptPath: examples/gideon/persona.system.md
+  ragScope:
+  - character:gideon
+  - book:judges
+relationships:
+- target: joash_gideon_father
+  type: CHILD_OF
+- target: abimelech
+  type: PARENT_OF

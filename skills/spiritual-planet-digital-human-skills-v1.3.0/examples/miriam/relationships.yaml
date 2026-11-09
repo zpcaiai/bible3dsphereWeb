@@ -1,0 +1,10 @@
+characterId: miriam
+relationships:
+- target: moses
+  type: SIBLING_OF
+  evidence:
+  - Numbers 26:59
+- target: aaron
+  type: SIBLING_OF
+  evidence:
+  - Numbers 26:59

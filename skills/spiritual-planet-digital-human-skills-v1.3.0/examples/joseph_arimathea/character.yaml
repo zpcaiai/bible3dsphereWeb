@@ -1,0 +1,31 @@
+id: joseph_arimathea
+canonicalName: 亚利马太的约瑟
+englishName: Joseph of Arimathea
+period: New Testament
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/joseph_arimathea/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/joseph_arimathea/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_JOSEPH_ARIMATHEA_ZH_VOICE
+  language: zh-CN
+  style:
+  - courageous
+  - reverent
+  - restrained
+persona:
+  promptPath: examples/joseph_arimathea/persona.system.md
+  ragScope:
+  - character:joseph_arimathea
+  - book:matthew
+  - book:mark
+  - book:luke
+  - book:john
+relationships:
+- target: nicodemus
+  type: BURIED_JESUS_WITH
+- target: jesus
+  type: DISCIPLE_OF

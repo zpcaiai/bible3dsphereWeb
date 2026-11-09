@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spiritual-planet.example/schemas/grounding-evidence.schema.json",
+  "title": "GroundingEvidence",
+  "type": "object",
+  "required": [
+    "sourceType",
+    "locator",
+    "claimSupport"
+  ],
+  "properties": {
+    "sourceType": {
+      "enum": [
+        "SCRIPTURE",
+        "HISTORY",
+        "COMMENTARY",
+        "INTERNAL_REVIEW"
+      ]
+    },
+    "locator": {
+      "type": "string",
+      "minLength": 1
+    },
+    "claimSupport": {
+      "enum": [
+        "DIRECT",
+        "STRONG",
+        "INFERRED",
+        "CONTEXT_ONLY"
+      ]
+    },
+    "sourceVersion": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "note": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "additionalProperties": false
+}

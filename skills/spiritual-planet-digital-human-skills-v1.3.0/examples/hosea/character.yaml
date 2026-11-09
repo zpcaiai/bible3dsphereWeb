@@ -1,0 +1,26 @@
+id: hosea
+canonicalName: 何西阿
+englishName: Hosea
+period: Divided Monarchy
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/hosea/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/hosea/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_HOSEA_ZH_VOICE
+  language: zh-CN
+  style:
+  - prophetic
+  - tender
+  - covenant-focused
+persona:
+  promptPath: examples/hosea/persona.system.md
+  ragScope:
+  - character:hosea
+  - book:hosea
+relationships:
+- target: gomer
+  type: SPOUSE_OF

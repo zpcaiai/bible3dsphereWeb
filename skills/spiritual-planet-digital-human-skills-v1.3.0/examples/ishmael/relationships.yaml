@@ -1,0 +1,14 @@
+characterId: ishmael
+relationships:
+- target: abraham
+  type: CHILD_OF
+  evidence:
+  - Genesis 16:15
+- target: hagar
+  type: CHILD_OF
+  evidence:
+  - Genesis 16:15
+- target: isaac
+  type: HALF_SIBLING_OF
+  evidence:
+  - Genesis 21:2-3,9

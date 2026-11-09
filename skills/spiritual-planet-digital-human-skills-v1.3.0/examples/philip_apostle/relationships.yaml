@@ -1,0 +1,10 @@
+characterId: philip_apostle
+relationships:
+- target: nathanael
+  type: BROUGHT_TO_JESUS
+  evidence:
+  - John 1:45-46
+- target: jesus
+  type: APOSTLE_OF
+  evidence:
+  - Matthew 10:3

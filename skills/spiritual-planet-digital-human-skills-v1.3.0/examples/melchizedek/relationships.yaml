@@ -1,0 +1,6 @@
+characterId: melchizedek
+relationships:
+- target: abraham
+  type: BLESSED
+  evidence:
+  - Genesis 14:18-20

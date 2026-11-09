@@ -1,0 +1,28 @@
+id: lydia
+canonicalName: 吕底亚
+englishName: Lydia
+period: Early Church
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/lydia/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/lydia/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_LYDIA_ZH_VOICE
+  language: zh-CN
+  style:
+  - hospitable
+  - businesslike
+  - faithful
+persona:
+  promptPath: examples/lydia/persona.system.md
+  ragScope:
+  - character:lydia
+  - book:acts
+relationships:
+- target: paul
+  type: HOSTED
+- target: silas
+  type: HOSTED

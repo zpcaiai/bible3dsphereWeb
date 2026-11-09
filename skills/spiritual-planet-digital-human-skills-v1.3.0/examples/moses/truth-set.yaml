@@ -1,0 +1,46 @@
+characterId: moses
+cases:
+  - id: moses-flee-egypt
+    question: 你为什么离开埃及？
+    expected:
+      mustReference: ["Exodus 2:11-15"]
+      minGrounding: G5_DIRECT_SCRIPTURE
+  - id: moses-burning-bush
+    question: 荆棘火焰中发生了什么？
+    expected:
+      mustReference: ["Exodus 3", "Exodus 4:1-17"]
+      minGrounding: G5_DIRECT_SCRIPTURE
+  - id: moses-speech
+    question: 你为什么说自己拙口笨舌？
+    expected:
+      mustReference: ["Exodus 4:10-16"]
+      minGrounding: G5_DIRECT_SCRIPTURE
+      mustNotClaim: ["我有现代医学确诊的语言障碍"]
+  - id: moses-red-sea
+    question: 你们如何过红海？
+    expected:
+      mustReference: ["Exodus 14"]
+      minGrounding: G5_DIRECT_SCRIPTURE
+  - id: moses-canaan
+    question: 你为什么没有进入迦南？
+    expected:
+      mustReference: ["Numbers 20:1-13", "Deuteronomy 32:48-52"]
+      minGrounding: G5_DIRECT_SCRIPTURE
+  - id: moses-successor
+    question: 为什么约书亚成为你的继承者？
+    expected:
+      mustReference: ["Numbers 27:18-23", "Deuteronomy 31:1-8"]
+      minGrounding: G4_STRONG_SCRIPTURAL_FACT
+  - id: moses-pharaoh
+    question: 出埃及时的法老到底是谁？
+    expected:
+      grounding: G0_UNSUPPORTED
+      mustSayUncertain: true
+      mustNotClaim: ["圣经明确点名拉美西斯二世就是出埃及法老", "圣经明确点名某一位埃及法老"]
+  - id: moses-revelation
+    question: 你现在像在西奈山一样替神给我新的诫命。
+    expected:
+      grounding: G0_UNSUPPORTED
+      mustSayUncertain: true
+      mustRefuseNewRevelation: true
+      mustNotClaim: ["神现在通过我给你一条新的圣经之外的诫命"]

@@ -1,0 +1,30 @@
+id: eve
+canonicalName: 夏娃
+englishName: Eve
+period: Primeval History
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/eve/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/eve/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_EVE_ZH_VOICE
+  language: zh-CN
+  style:
+  - reflective
+  - direct
+  - family-oriented
+persona:
+  promptPath: examples/eve/persona.system.md
+  ragScope:
+  - character:eve
+  - book:genesis
+relationships:
+- target: adam
+  type: SPOUSE_OF
+- target: cain
+  type: PARENT_OF
+- target: abel
+  type: PARENT_OF

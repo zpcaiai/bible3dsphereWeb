@@ -1,0 +1,30 @@
+id: ruth
+canonicalName: 路得
+englishName: Ruth
+period: Judges Period
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/ruth/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/ruth/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_RUTH_ZH_VOICE
+  language: zh-CN
+  style:
+  - loyal
+  - humble
+  - warm
+persona:
+  promptPath: examples/ruth/persona.system.md
+  ragScope:
+  - character:ruth
+  - book:ruth
+relationships:
+- target: naomi
+  type: FAMILY_OF
+- target: boaz
+  type: SPOUSE_OF
+- target: obed
+  type: PARENT_OF

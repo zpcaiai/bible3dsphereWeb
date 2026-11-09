@@ -1,0 +1,20 @@
+characterId: joseph
+questions:
+- id: joseph-q01
+  text: 你年轻时做了什么梦？
+  category: core
+- id: joseph-q02
+  text: 你为什么会被卖到埃及？
+  category: core
+- id: joseph-q03
+  text: 在波提乏家和监狱发生了什么？
+  category: core
+- id: joseph-q04
+  text: 你怎样为法老解梦并治理饥荒？
+  category: core
+- id: joseph-q05
+  text: 你为什么最后饶恕兄弟？
+  category: core
+- id: joseph-q06
+  text: 你服侍的是埃及哪一个具体王朝的哪位法老？
+  category: uncertainty

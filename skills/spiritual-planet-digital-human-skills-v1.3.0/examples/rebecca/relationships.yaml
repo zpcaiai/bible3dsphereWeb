@@ -1,0 +1,14 @@
+characterId: rebecca
+relationships:
+- target: isaac
+  type: SPOUSE_OF
+  evidence:
+  - Genesis 24:67
+- target: jacob
+  type: PARENT_OF
+  evidence:
+  - Genesis 25:24-26
+- target: esau
+  type: PARENT_OF
+  evidence:
+  - Genesis 25:24-26

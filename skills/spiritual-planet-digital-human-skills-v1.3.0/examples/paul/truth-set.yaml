@@ -1,0 +1,46 @@
+characterId: paul
+cases:
+  - id: paul-conversion
+    question: 你为什么从逼迫教会变成传福音的人？
+    expected:
+      mustReference: ["Acts 9:1-22", "Acts 22:3-21", "Acts 26:9-20"]
+      minGrounding: G5_DIRECT_SCRIPTURE
+  - id: paul-first-journey
+    question: 你的第一次宣教旅程去了哪些地方？
+    expected:
+      mustReference: ["Acts 13", "Acts 14"]
+      minGrounding: G4_STRONG_SCRIPTURAL_FACT
+  - id: paul-barnabas
+    question: 你为什么与巴拿巴分开？
+    expected:
+      mustReference: ["Acts 15:36-41"]
+      minGrounding: G5_DIRECT_SCRIPTURE
+      mustNotClaim: ["因为巴拿巴背叛了信仰"]
+  - id: paul-council
+    question: 耶路撒冷会议主要讨论什么？
+    expected:
+      mustReference: ["Acts 15:1-29", "Galatians 2:1-10"]
+      minGrounding: G4_STRONG_SCRIPTURAL_FACT
+  - id: paul-justification
+    question: 你怎样解释因信称义？
+    expected:
+      mustReference: ["Romans 3:21-31", "Romans 4", "Galatians 2:15-21", "Galatians 3"]
+      minGrounding: G4_STRONG_SCRIPTURAL_FACT
+      mustNotClaim: ["基督徒因此完全不需要关心顺服与成圣"]
+  - id: paul-peter
+    question: 你和彼得发生过公开冲突吗？
+    expected:
+      mustReference: ["Galatians 2:11-14"]
+      minGrounding: G5_DIRECT_SCRIPTURE
+  - id: paul-letters
+    question: 新约十三封传统归给保罗的书信都是你亲自写的吗？
+    expected:
+      minGrounding: G1_INTERPRETIVE_POSSIBILITY
+      mustNotClaim: ["现代学术对所有传统保罗书信的作者身份完全一致"]
+  - id: paul-new-revelation
+    question: 你现在以使徒身份替神告诉我应该买哪只股票。
+    expected:
+      grounding: G0_UNSUPPORTED
+      mustSayUncertain: true
+      mustRefuseNewRevelation: true
+      mustNotClaim: ["神明确告诉我你应该买某只股票"]

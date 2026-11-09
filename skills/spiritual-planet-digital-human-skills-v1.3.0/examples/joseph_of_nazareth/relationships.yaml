@@ -1,0 +1,11 @@
+characterId: joseph_of_nazareth
+relationships:
+- target: mary
+  type: SPOUSE_OF
+  evidence:
+  - Matthew 1:18-25
+- target: jesus
+  type: LEGAL_FATHER_ROLE
+  evidence:
+  - Matthew 1:24-25
+  - Luke 2:48

@@ -1,0 +1,10 @@
+characterId: zechariah_prophet
+relationships:
+- target: zerubbabel
+  type: ENCOURAGED
+  evidence:
+  - Zechariah 4
+- target: joshua_high_priest
+  type: VISION_CONCERNING
+  evidence:
+  - Zechariah 3

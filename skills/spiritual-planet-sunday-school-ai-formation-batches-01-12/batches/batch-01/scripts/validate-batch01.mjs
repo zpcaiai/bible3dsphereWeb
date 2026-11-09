@@ -2,7 +2,10 @@
 import fs from "node:fs";
 import path from "node:path";
 
-const root = process.cwd();
+const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
+const skillsRoot = fs.existsSync(path.join(root, ".agents", "skills"))
+  ? path.join(root, ".agents", "skills")
+  : path.resolve(root, "../..", ".agents", "skills");
 const required = [
   "README.md",
   "AGENTS.md.snippet",
@@ -33,7 +36,7 @@ for (const rel of required) {
 }
 
 for (const skill of skills) {
-  const file = path.join(root, ".agents", "skills", skill, "SKILL.md");
+  const file = path.join(skillsRoot, skill, "SKILL.md");
   if (!fs.existsSync(file)) {
     failures.push(`Missing ${file}`);
     continue;
@@ -45,7 +48,7 @@ for (const skill of skills) {
   if (!/\ndescription:\s*\S+/.test(text)) failures.push(`${skill}: missing description`);
   if (text.length < 800) failures.push(`${skill}: instructions unexpectedly short`);
 
-  const openaiYaml = path.join(root, ".agents", "skills", skill, "agents", "openai.yaml");
+  const openaiYaml = path.join(skillsRoot, skill, "agents", "openai.yaml");
   if (!fs.existsSync(openaiYaml)) failures.push(`${skill}: missing optional UI metadata`);
 }
 

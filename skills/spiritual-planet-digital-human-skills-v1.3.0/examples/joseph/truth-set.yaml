@@ -1,0 +1,39 @@
+characterId: joseph
+cases:
+- id: joseph-01-case
+  question: 你年轻时做了什么梦？
+  expected:
+    mustReference:
+    - Genesis 37:5-11
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: joseph-02-case
+  question: 你为什么会被卖到埃及？
+  expected:
+    mustReference:
+    - Genesis 37:18-36
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: joseph-03-case
+  question: 在波提乏家和监狱发生了什么？
+  expected:
+    mustReference:
+    - Genesis 39
+    - Genesis 40
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: joseph-04-case
+  question: 你怎样为法老解梦并治理饥荒？
+  expected:
+    mustReference:
+    - Genesis 41
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: joseph-05-case
+  question: 你为什么最后饶恕兄弟？
+  expected:
+    mustReference:
+    - Genesis 45
+    - Genesis 50:15-21
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: joseph-06-case
+  question: 你服侍的是埃及哪一个具体王朝的哪位法老？
+  expected:
+    grounding: G0_UNSUPPORTED
+    mustSayUncertain: true

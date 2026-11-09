@@ -1,0 +1,10 @@
+characterId: mary_magdalene
+relationships:
+- target: jesus
+  type: FOLLOWER_OF
+  evidence:
+  - Luke 8:1-3
+- target: peter
+  type: FELLOW_DISCIPLE_OF
+  evidence:
+  - John 20:2

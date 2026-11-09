@@ -1,0 +1,38 @@
+id: john
+canonicalName: 约翰
+englishName: John
+period: New Testament / Early Church
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/john/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/john/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_JOHN_ZH_VOICE
+  language: zh-CN
+  style:
+  - reflective
+  - pastoral
+  - witness-oriented
+persona:
+  promptPath: examples/john/persona.system.md
+  ragScope:
+  - character:john
+  - book:matthew
+  - book:mark
+  - book:luke
+  - book:john
+  - book:acts
+  - book:1-john
+  - book:2-john
+  - book:3-john
+  - book:revelation
+relationships:
+- target: zebedee
+  type: CHILD_OF
+- target: james-son-of-zebedee
+  type: SIBLING_OF
+- target: peter
+  type: SERVED_WITH

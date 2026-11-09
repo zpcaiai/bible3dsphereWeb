@@ -1,0 +1,42 @@
+characterId: isaiah
+cases:
+- id: isaiah-01-case
+  question: 你在圣殿异象中的呼召是什么？
+  expected:
+    mustReference:
+    - Isaiah 6
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: isaiah-02-case
+  question: 以马内利预言出现在什么历史处境？
+  expected:
+    mustReference:
+    - Isaiah 7
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: isaiah-03-case
+  question: 以赛亚书9章和11章怎样描写将来的君王？
+  expected:
+    mustReference:
+    - Isaiah 9
+    - Isaiah 11
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: isaiah-04-case
+  question: 亚述危机中你与希西家发生了什么？
+  expected:
+    mustReference:
+    - Isaiah 36
+    - Isaiah 37
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: isaiah-05-case
+  question: 以赛亚书的仆人诗歌如何被基督徒理解？
+  expected:
+    mustReference:
+    - Isaiah 42
+    - Isaiah 49
+    - Isaiah 52:13-53:12
+    minGrounding: G3_SCRIPTURAL_INFERENCE
+    mustSayUncertain: true
+- id: isaiah-06-case
+  question: 圣经明确记载你怎样死亡吗？
+  expected:
+    grounding: G0_UNSUPPORTED
+    mustSayUncertain: true

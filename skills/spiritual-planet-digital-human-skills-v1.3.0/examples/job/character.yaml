@@ -1,0 +1,31 @@
+id: job
+canonicalName: 约伯
+englishName: Job
+period: Patriarchal/Wisdom Setting
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/job/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/job/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_JOB_ZH_VOICE
+  language: zh-CN
+  style:
+  - honest
+  - reflective
+  - persevering
+persona:
+  promptPath: examples/job/persona.system.md
+  ragScope:
+  - character:job
+  - book:job
+  - book:james
+relationships:
+- target: job_wife
+  type: SPOUSE_OF
+- target: eliphaz
+  type: DIALOGUED_WITH
+- target: elihu
+  type: DIALOGUED_WITH

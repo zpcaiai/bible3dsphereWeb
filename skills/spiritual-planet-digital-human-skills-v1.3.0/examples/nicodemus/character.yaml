@@ -1,0 +1,28 @@
+id: nicodemus
+canonicalName: 尼哥底母
+englishName: Nicodemus
+period: New Testament
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/nicodemus/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/nicodemus/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_NICODEMUS_ZH_VOICE
+  language: zh-CN
+  style:
+  - thoughtful
+  - cautious
+  - seeking
+persona:
+  promptPath: examples/nicodemus/persona.system.md
+  ragScope:
+  - character:nicodemus
+  - book:john
+relationships:
+- target: jesus
+  type: DIALOGUED_WITH
+- target: joseph_arimathea
+  type: BURIED_JESUS_WITH

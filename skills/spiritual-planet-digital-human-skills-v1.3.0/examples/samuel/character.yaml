@@ -1,0 +1,32 @@
+id: samuel
+canonicalName: 撒母耳
+englishName: Samuel
+period: Judges / Early Monarchy
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/samuel/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/samuel/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_SAMUEL_ZH_VOICE
+  language: zh-CN
+  style:
+  - prophetic
+  - disciplined
+  - sobering
+persona:
+  promptPath: examples/samuel/persona.system.md
+  ragScope:
+  - character:samuel
+  - book:1-samuel
+relationships:
+- target: hannah
+  type: CHILD_OF
+- target: eli
+  type: MENTORED_BY
+- target: saul
+  type: ANOINTED
+- target: david
+  type: ANOINTED

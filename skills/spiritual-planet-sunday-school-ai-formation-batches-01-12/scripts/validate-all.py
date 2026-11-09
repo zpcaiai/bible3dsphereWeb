@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import hashlib, json, re, sys, zipfile
+import hashlib, json, os, re, sys, zipfile
 from pathlib import Path
 try:
     import yaml
 except Exception as exc:
+    for _cand in ("/Users/stephen/Documents/Projects/DoctorPro/bible3dsphere/.venv/bin/python", "/usr/bin/python3"):
+        if os.path.exists(_cand) and os.path.realpath(_cand) != os.path.realpath(sys.executable):
+            os.execv(_cand, [_cand, "-B", *sys.argv])
     print(f'PyYAML unavailable: {exc}', file=sys.stderr); raise SystemExit(2)
 try:
     from jsonschema import Draft202012Validator

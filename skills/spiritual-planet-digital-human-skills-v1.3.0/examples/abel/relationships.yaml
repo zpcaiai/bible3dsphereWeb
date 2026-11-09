@@ -1,0 +1,14 @@
+characterId: abel
+relationships:
+- target: adam
+  type: CHILD_OF
+  evidence:
+  - Genesis 4:2
+- target: eve
+  type: CHILD_OF
+  evidence:
+  - Genesis 4:2
+- target: cain
+  type: SIBLING_OF
+  evidence:
+  - Genesis 4:2,8

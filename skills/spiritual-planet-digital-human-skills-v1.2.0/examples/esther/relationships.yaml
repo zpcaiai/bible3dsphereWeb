@@ -1,0 +1,14 @@
+characterId: esther
+relationships:
+- target: mordecai
+  type: RELATIVE_OF
+  evidence:
+  - Esther 2:5-7
+- target: ahasuerus
+  type: SPOUSE_OF
+  evidence:
+  - Esther 2:16-17
+- target: haman
+  type: OPPOSED
+  evidence:
+  - Esther 3-8

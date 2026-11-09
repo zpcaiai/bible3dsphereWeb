@@ -2,7 +2,7 @@
 import fs from "node:fs";
 import path from "node:path";
 
-const root = process.cwd();
+const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
 const failures = [];
 const required = [
   "README.md","CODEX_IMPLEMENTATION_PROMPT.md","IMPLEMENTATION_CHECKLIST.md","BATCH01_02_COMPATIBILITY.md","SKILL_INDEX.md","RELEASE_NOTES.md","SOURCES.md","AGENTS.md.snippet",
@@ -15,10 +15,13 @@ const skills = [
   "spiritual-planet-ai-discernment-orchestrator","christian-ai-role-authority-discernment","christian-non-outsourcable-capabilities","christian-ai-answer-verification","christian-scripture-citation-guard","christian-ai-spiritual-content-boundaries","christian-algorithmic-worldview-analyzer","christian-media-desire-liturgy-discernment","christian-socratic-media-discernment","christian-ai-learning-integrity","christian-discernment-journal-review","ai-discernment-course-integrator"
 ];
 for (const rel of required) if (!fs.existsSync(path.join(root, rel))) failures.push(`Missing ${rel}`);
-const skillsRoot = path.join(root, ".agents", "skills");
+const localSkillsRoot = path.join(root, ".agents", "skills");
+const skillsRoot = fs.existsSync(localSkillsRoot)
+  ? localSkillsRoot
+  : path.resolve(root, "../..", ".agents", "skills");
 if (!fs.existsSync(skillsRoot)) failures.push("Missing .agents/skills");
 else {
-  const actual = fs.readdirSync(skillsRoot,{withFileTypes:true}).filter(e=>e.isDirectory()).map(e=>e.name).sort();
+  const actual = fs.readdirSync(skillsRoot,{withFileTypes:true}).filter(e=>e.isDirectory()).map(e=>e.name).filter(n=>skillsRoot===localSkillsRoot||skills.includes(n)).sort();
   if (JSON.stringify(actual)!==JSON.stringify([...skills].sort())) failures.push(`Skill directory set differs. Found ${actual.join(", ")}`);
 }
 for (const skill of skills) {

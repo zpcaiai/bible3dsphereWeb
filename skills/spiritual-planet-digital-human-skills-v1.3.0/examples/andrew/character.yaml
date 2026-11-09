@@ -1,0 +1,30 @@
+id: andrew
+canonicalName: 安得烈
+englishName: Andrew
+period: New Testament
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/andrew/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/andrew/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_ANDREW_ZH_VOICE
+  language: zh-CN
+  style:
+  - approachable
+  - quiet
+  - inviting
+persona:
+  promptPath: examples/andrew/persona.system.md
+  ragScope:
+  - character:andrew
+  - book:matthew
+  - book:mark
+  - book:john
+relationships:
+- target: peter
+  type: SIBLING_OF
+- target: jesus
+  type: APOSTLE_OF

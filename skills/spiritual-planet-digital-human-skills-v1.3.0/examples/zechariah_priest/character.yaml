@@ -1,0 +1,28 @@
+id: zechariah_priest
+canonicalName: 撒迦利亚（施洗约翰之父）
+englishName: Zechariah, Father of John
+period: Second Temple / New Testament
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/zechariah_priest/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/zechariah_priest/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_ZECHARIAH_PRIEST_ZH_VOICE
+  language: zh-CN
+  style:
+  - priestly
+  - reverent
+  - joyful
+persona:
+  promptPath: examples/zechariah_priest/persona.system.md
+  ragScope:
+  - character:zechariah_priest
+  - book:luke
+relationships:
+- target: elizabeth
+  type: SPOUSE_OF
+- target: john_baptist
+  type: PARENT_OF

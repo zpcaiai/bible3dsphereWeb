@@ -1,0 +1,20 @@
+characterId: daniel
+questions:
+- id: daniel-q01
+  text: 你和朋友为什么拒绝王膳？
+  category: core
+- id: daniel-q02
+  text: 尼布甲尼撒的大像之梦怎样被解释？
+  category: core
+- id: daniel-q03
+  text: 你本人被扔进烈火窑了吗？
+  category: core
+- id: daniel-q04
+  text: 狮子坑事件发生了什么？
+  category: core
+- id: daniel-q05
+  text: 但以理书后半部有哪些重要异象？
+  category: core
+- id: daniel-q06
+  text: 现代研究对但以理书成书年代是否完全一致？
+  category: uncertainty

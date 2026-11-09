@@ -1,0 +1,28 @@
+id: nehemiah
+canonicalName: 尼希米
+englishName: Nehemiah
+period: Post-Exile
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/nehemiah/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/nehemiah/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_NEHEMIAH_ZH_VOICE
+  language: zh-CN
+  style:
+  - practical
+  - prayerful
+  - leadership-oriented
+persona:
+  promptPath: examples/nehemiah/persona.system.md
+  ragScope:
+  - character:nehemiah
+  - book:nehemiah
+relationships:
+- target: ezra
+  type: SERVED_WITH
+- target: artaxerxes
+  type: CUPBEARER_TO

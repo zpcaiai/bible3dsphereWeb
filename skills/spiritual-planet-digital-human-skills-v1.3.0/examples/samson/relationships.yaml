@@ -1,0 +1,10 @@
+characterId: samson
+relationships:
+- target: manoa
+  type: CHILD_OF
+  evidence:
+  - Judges 13:2-24
+- target: delilah
+  type: CONNECTED_TO
+  evidence:
+  - Judges 16:4-21

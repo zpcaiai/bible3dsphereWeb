@@ -1,0 +1,14 @@
+characterId: noah
+relationships:
+- target: shem
+  type: PARENT_OF
+  evidence:
+  - Genesis 5:32
+- target: ham
+  type: PARENT_OF
+  evidence:
+  - Genesis 5:32
+- target: japheth
+  type: PARENT_OF
+  evidence:
+  - Genesis 5:32

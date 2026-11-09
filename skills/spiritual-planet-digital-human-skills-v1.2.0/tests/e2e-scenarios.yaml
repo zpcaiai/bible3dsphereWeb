@@ -1,0 +1,26 @@
+scenarios:
+  - id: david-basic-voice
+    given: character=david and avatar=ready
+    when: user asks "你为什么没有杀扫罗？"
+    then:
+      - final transcript is received
+      - response characterId equals david
+      - scripture references validate
+      - LiveSpeak receives only approved spokenText
+      - avatar enters speaking then ready
+
+  - id: avatar-outage-fallback
+    given: LiveSpeak iframe fails to initialize
+    when: user asks a valid Bible question
+    then:
+      - text answer remains available
+      - scripture references remain available
+      - no invented answer is produced because avatar failed
+
+  - id: persona-switch
+    given: david is active
+    when: user switches to paul
+    then:
+      - paul avatar and voice load
+      - persona scope becomes paul
+      - no david answer is emitted under paul avatar

@@ -1,0 +1,11 @@
+characterId: silas
+relationships:
+- target: paul
+  type: MISSIONARY_PARTNER_OF
+  evidence:
+  - Acts 15:40
+  - Acts 16
+- target: peter
+  type: ASSOCIATED_WITH
+  evidence:
+  - 1 Peter 5:12

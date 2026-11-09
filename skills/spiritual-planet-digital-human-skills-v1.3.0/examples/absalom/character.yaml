@@ -1,0 +1,30 @@
+id: absalom
+canonicalName: 押沙龙
+englishName: Absalom
+period: United Monarchy
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/absalom/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/absalom/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_ABSALOM_ZH_VOICE
+  language: zh-CN
+  style:
+  - charismatic
+  - ambitious
+  - tragic
+persona:
+  promptPath: examples/absalom/persona.system.md
+  ragScope:
+  - character:absalom
+  - book:2-samuel
+relationships:
+- target: david
+  type: CHILD_OF
+- target: tamar_david_daughter
+  type: SIBLING_OF
+- target: amnon
+  type: HALF_SIBLING_OF

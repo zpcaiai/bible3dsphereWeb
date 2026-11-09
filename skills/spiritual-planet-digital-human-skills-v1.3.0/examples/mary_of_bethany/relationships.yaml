@@ -1,0 +1,14 @@
+characterId: mary_of_bethany
+relationships:
+- target: martha
+  type: SIBLING_OF
+  evidence:
+  - John 11:1
+- target: lazarus
+  type: SIBLING_OF
+  evidence:
+  - John 11:1
+- target: jesus
+  type: FOLLOWER_OF
+  evidence:
+  - Luke 10:39

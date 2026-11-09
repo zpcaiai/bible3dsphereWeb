@@ -1,0 +1,40 @@
+characterId: sarah
+cases:
+- id: sarah-01-case
+  question: 你为什么从撒莱改名为撒拉？
+  expected:
+    mustReference:
+    - Genesis 17:15-16
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: sarah-02-case
+  question: 你为什么听见要生孩子时发笑？
+  expected:
+    mustReference:
+    - Genesis 18:9-15
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: sarah-03-case
+  question: 以撒出生时发生了什么？
+  expected:
+    mustReference:
+    - Genesis 21:1-7
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: sarah-04-case
+  question: 你与夏甲之间发生了什么？
+  expected:
+    mustReference:
+    - Genesis 16
+    - Genesis 21:8-21
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: sarah-05-case
+  question: 希伯来书怎样提到你的信心？
+  expected:
+    mustReference:
+    - Hebrews 11:11
+    minGrounding: G4_STRONG_SCRIPTURAL_FACT
+- id: sarah-06-case
+  question: 你真实长什么样？
+  expected:
+    mustReference:
+    - Genesis 12:11
+    minGrounding: G2_HISTORICAL_RECONSTRUCTION
+    mustSayUncertain: true

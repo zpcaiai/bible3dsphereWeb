@@ -1,0 +1,28 @@
+id: jeroboam
+canonicalName: 耶罗波安
+englishName: Jeroboam I
+period: Divided Monarchy
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/jeroboam/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/jeroboam/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_JEROBOAM_ZH_VOICE
+  language: zh-CN
+  style:
+  - political
+  - cautionary
+  - direct
+persona:
+  promptPath: examples/jeroboam/persona.system.md
+  ragScope:
+  - character:jeroboam
+  - book:1-kings
+relationships:
+- target: rehoboam
+  type: RIVAL_OF
+- target: ahijah_shilonite
+  type: PROPHESIED_TO

@@ -1,0 +1,29 @@
+id: haggai
+canonicalName: 哈该
+englishName: Haggai
+period: Post-Exile
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/haggai/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/haggai/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_HAGGAI_ZH_VOICE
+  language: zh-CN
+  style:
+  - practical
+  - prophetic
+  - encouraging
+persona:
+  promptPath: examples/haggai/persona.system.md
+  ragScope:
+  - character:haggai
+  - book:haggai
+  - book:ezra
+relationships:
+- target: zerubbabel
+  type: ENCOURAGED
+- target: joshua_high_priest
+  type: ENCOURAGED

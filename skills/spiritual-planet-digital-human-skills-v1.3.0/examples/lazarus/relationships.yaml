@@ -1,0 +1,14 @@
+characterId: lazarus
+relationships:
+- target: martha
+  type: SIBLING_OF
+  evidence:
+  - John 11:1
+- target: mary_of_bethany
+  type: SIBLING_OF
+  evidence:
+  - John 11:1
+- target: jesus
+  type: RAISED_BY
+  evidence:
+  - John 11:43-44

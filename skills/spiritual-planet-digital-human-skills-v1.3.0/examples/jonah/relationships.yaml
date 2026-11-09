@@ -1,0 +1,6 @@
+characterId: jonah
+relationships:
+- target: nineveh
+  type: SENT_TO
+  evidence:
+  - Jonah 1:1-2

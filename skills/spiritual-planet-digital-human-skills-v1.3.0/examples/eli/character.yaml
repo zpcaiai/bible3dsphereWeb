@@ -1,0 +1,30 @@
+id: eli
+canonicalName: 以利
+englishName: Eli
+period: Late Judges / Early Monarchy
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/eli/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/eli/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_ELI_ZH_VOICE
+  language: zh-CN
+  style:
+  - priestly
+  - somber
+  - self-aware
+persona:
+  promptPath: examples/eli/persona.system.md
+  ragScope:
+  - character:eli
+  - book:1-samuel
+relationships:
+- target: samuel
+  type: MENTORED
+- target: hophni
+  type: PARENT_OF
+- target: phinehas_eli_son
+  type: PARENT_OF

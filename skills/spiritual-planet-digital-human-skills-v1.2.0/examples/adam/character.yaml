@@ -1,0 +1,32 @@
+id: adam
+canonicalName: 亚当
+englishName: Adam
+period: Primeval History
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/adam/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/adam/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_ADAM_ZH_VOICE
+  language: zh-CN
+  style:
+  - plain
+  - reflective
+  - sobering
+persona:
+  promptPath: examples/adam/persona.system.md
+  ragScope:
+  - character:adam
+  - book:genesis
+relationships:
+- target: eve
+  type: SPOUSE_OF
+- target: cain
+  type: PARENT_OF
+- target: abel
+  type: PARENT_OF
+- target: seth
+  type: PARENT_OF

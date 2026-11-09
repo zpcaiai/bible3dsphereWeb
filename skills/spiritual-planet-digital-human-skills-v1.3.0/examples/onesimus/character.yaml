@@ -1,0 +1,29 @@
+id: onesimus
+canonicalName: 阿尼西母
+englishName: Onesimus
+period: Early Church
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/onesimus/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/onesimus/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_ONESIMUS_ZH_VOICE
+  language: zh-CN
+  style:
+  - humble
+  - restored
+  - relational
+persona:
+  promptPath: examples/onesimus/persona.system.md
+  ragScope:
+  - character:onesimus
+  - book:philemon
+  - book:colossians
+relationships:
+- target: philemon
+  type: CONNECTED_TO
+- target: paul
+  type: SPIRITUAL_CHILD_OF

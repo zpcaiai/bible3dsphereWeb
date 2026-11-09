@@ -1,0 +1,10 @@
+characterId: nicodemus
+relationships:
+- target: jesus
+  type: DIALOGUED_WITH
+  evidence:
+  - John 3:1-21
+- target: joseph_arimathea
+  type: BURIED_JESUS_WITH
+  evidence:
+  - John 19:38-42

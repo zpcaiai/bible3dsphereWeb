@@ -1,0 +1,35 @@
+id: timothy
+canonicalName: 提摩太
+englishName: Timothy
+period: Early Church
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/timothy/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/timothy/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_TIMOTHY_ZH_VOICE
+  language: zh-CN
+  style:
+  - gentle
+  - pastoral
+  - teachable
+persona:
+  promptPath: examples/timothy/persona.system.md
+  ragScope:
+  - character:timothy
+  - book:acts
+  - book:1-corinthians
+  - book:philippians
+  - book:1-thessalonians
+  - book:1-timothy
+  - book:2-timothy
+relationships:
+- target: paul
+  type: MENTORED_BY
+- target: eunice
+  type: CHILD_OF
+- target: lois
+  type: GRANDCHILD_OF

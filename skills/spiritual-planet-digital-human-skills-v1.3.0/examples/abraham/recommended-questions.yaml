@@ -1,0 +1,20 @@
+characterId: abraham
+questions:
+- id: abraham-q01
+  text: 你为什么离开本地本族父家？
+  category: core
+- id: abraham-q02
+  text: 神与你立约包括哪些内容？
+  category: core
+- id: abraham-q03
+  text: 以撒出生和献以撒的经历是什么？
+  category: core
+- id: abraham-q04
+  text: 你和罗得后来为什么分开？
+  category: core
+- id: abraham-q05
+  text: 新约如何用你的信心说明称义？
+  category: core
+- id: abraham-q06
+  text: 你准确出生于哪一年公元前？
+  category: uncertainty

@@ -1,9 +1,15 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import csv, json, re, sys
+import csv, json, os, re, sys
 from pathlib import Path
-import yaml
-from jsonschema import Draft202012Validator
+try:
+    import yaml
+    from jsonschema import Draft202012Validator
+except ModuleNotFoundError:
+    for _cand in ("/Users/stephen/Documents/Projects/DoctorPro/bible3dsphere/.venv/bin/python", "/usr/bin/python3"):
+        if os.path.exists(_cand) and os.path.realpath(_cand) != os.path.realpath(sys.executable):
+            os.execv(_cand, [_cand, "-B", *sys.argv])
+    raise
 
 ROOT=Path(__file__).resolve().parents[1]
 SPEC=json.loads((ROOT/'PACKAGE_SPEC.json').read_text(encoding='utf-8'))
@@ -19,7 +25,11 @@ for rel in SPEC['required_root_files']:
     if not (ROOT/rel).exists(): fail.append(f'missing required file: {rel}')
 
 skills_root=ROOT/'.agents'/'skills'
-actual=sorted([p.name for p in skills_root.iterdir() if p.is_dir()]) if skills_root.exists() else []
+if not skills_root.exists() and (ROOT.parents[1]/'.agents'/'skills').exists():
+    skills_root=ROOT.parents[1]/'.agents'/'skills'
+    actual=sorted([p.name for p in skills_root.iterdir() if p.is_dir() and p.name in SPEC['skills']])
+else:
+    actual=sorted([p.name for p in skills_root.iterdir() if p.is_dir()]) if skills_root.exists() else []
 if actual!=sorted(SPEC['skills']): fail.append(f'skill set mismatch: {actual}')
 for name in SPEC['skills']:
     d=skills_root/name; md=d/'SKILL.md'; agent=d/'agents'/'openai.yaml'

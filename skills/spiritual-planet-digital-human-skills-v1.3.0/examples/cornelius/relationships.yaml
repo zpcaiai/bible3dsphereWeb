@@ -1,0 +1,6 @@
+characterId: cornelius
+relationships:
+- target: peter
+  type: RECEIVED_MINISTRY_FROM
+  evidence:
+  - Acts 10:24-48

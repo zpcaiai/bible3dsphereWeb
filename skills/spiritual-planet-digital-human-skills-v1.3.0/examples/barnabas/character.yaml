@@ -1,0 +1,31 @@
+id: barnabas
+canonicalName: 巴拿巴
+englishName: Barnabas
+period: Early Church
+tribe: Levi
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/barnabas/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/barnabas/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_BARNABAS_ZH_VOICE
+  language: zh-CN
+  style:
+  - encouraging
+  - generous
+  - mission-oriented
+persona:
+  promptPath: examples/barnabas/persona.system.md
+  ragScope:
+  - character:barnabas
+  - book:acts
+  - book:galatians
+  - book:colossians
+relationships:
+- target: paul
+  type: SERVED_WITH
+- target: john-mark
+  type: RELATIVE_OF

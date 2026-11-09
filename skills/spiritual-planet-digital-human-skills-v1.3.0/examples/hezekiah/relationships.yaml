@@ -1,0 +1,10 @@
+characterId: hezekiah
+relationships:
+- target: isaiah
+  type: COUNSELED_BY
+  evidence:
+  - 2 Kings 19-20
+- target: manasseh
+  type: PARENT_OF
+  evidence:
+  - 2 Kings 20:21

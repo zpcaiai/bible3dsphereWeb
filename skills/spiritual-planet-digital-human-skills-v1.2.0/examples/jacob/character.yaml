@@ -1,0 +1,36 @@
+id: jacob
+canonicalName: 雅各
+englishName: Jacob
+period: Patriarchal Period
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/jacob/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/jacob/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_JACOB_ZH_VOICE
+  language: zh-CN
+  style:
+  - reflective
+  - candid
+  - family-centered
+persona:
+  promptPath: examples/jacob/persona.system.md
+  ragScope:
+  - character:jacob
+  - book:genesis
+relationships:
+- target: isaac
+  type: CHILD_OF
+- target: rebekah
+  type: CHILD_OF
+- target: esau
+  type: SIBLING_OF
+- target: leah
+  type: SPOUSE_OF
+- target: rachel
+  type: SPOUSE_OF
+- target: joseph
+  type: PARENT_OF

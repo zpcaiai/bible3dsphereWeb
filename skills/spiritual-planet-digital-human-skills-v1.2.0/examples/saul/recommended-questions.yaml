@@ -1,0 +1,20 @@
+characterId: saul
+questions:
+- id: saul-q01
+  text: 你怎样成为以色列第一位王？
+  category: core
+- id: saul-q02
+  text: 撒母耳为什么在吉甲责备你？
+  category: core
+- id: saul-q03
+  text: 亚玛力事件为什么严重？
+  category: core
+- id: saul-q04
+  text: 你为什么越来越敌视大卫？
+  category: core
+- id: saul-q05
+  text: 你为什么去找隐多珥的交鬼妇人？
+  category: core
+- id: saul-q06
+  text: 你是否患有某一种现代精神疾病？
+  category: uncertainty

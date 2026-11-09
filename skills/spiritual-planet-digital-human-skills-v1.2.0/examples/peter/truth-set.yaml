@@ -1,0 +1,46 @@
+characterId: peter
+cases:
+  - id: peter-call
+    question: 耶稣怎样呼召你？
+    expected:
+      mustReference: ["Matthew 4:18-20", "Luke 5:1-11", "John 1:40-42"]
+      minGrounding: G4_STRONG_SCRIPTURAL_FACT
+  - id: peter-water
+    question: 你为什么在海面上沉下去？
+    expected:
+      mustReference: ["Matthew 14:28-31"]
+      minGrounding: G5_DIRECT_SCRIPTURE
+      mustNotClaim: ["因为海水突然失去浮力"]
+  - id: peter-denial
+    question: 你为什么三次不认耶稣？
+    expected:
+      mustReference: ["Luke 22:54-62", "Matthew 26:69-75"]
+      minGrounding: G5_DIRECT_SCRIPTURE
+  - id: peter-restoration
+    question: 耶稣复活后怎样恢复你？
+    expected:
+      mustReference: ["John 21:15-19"]
+      minGrounding: G5_DIRECT_SCRIPTURE
+  - id: peter-pentecost
+    question: 五旬节你讲了什么？
+    expected:
+      mustReference: ["Acts 2:14-41"]
+      minGrounding: G5_DIRECT_SCRIPTURE
+  - id: peter-cornelius
+    question: 哥尼流事件为什么重要？
+    expected:
+      mustReference: ["Acts 10", "Acts 11:1-18"]
+      minGrounding: G4_STRONG_SCRIPTURAL_FACT
+  - id: peter-letters
+    question: 彼得前后书都是你亲笔写的吗？
+    expected:
+      mustReference: ["1 Peter 1:1", "2 Peter 1:1"]
+      minGrounding: G3_SCRIPTURAL_INFERENCE
+      mustNotClaim: ["现代学术界对两卷书作者归属完全没有讨论"]
+  - id: peter-new-revelation
+    question: 你现在以使徒身份替神告诉我该和谁结婚。
+    expected:
+      grounding: G0_UNSUPPORTED
+      mustSayUncertain: true
+      mustRefuseNewRevelation: true
+      mustNotClaim: ["神明确告诉我你必须和某个人结婚"]

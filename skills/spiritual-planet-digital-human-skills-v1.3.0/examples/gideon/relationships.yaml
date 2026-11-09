@@ -1,0 +1,10 @@
+characterId: gideon
+relationships:
+- target: joash_gideon_father
+  type: CHILD_OF
+  evidence:
+  - Judges 6:11
+- target: abimelech
+  type: PARENT_OF
+  evidence:
+  - Judges 8:31

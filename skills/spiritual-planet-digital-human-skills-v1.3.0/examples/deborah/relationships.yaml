@@ -1,0 +1,10 @@
+characterId: deborah
+relationships:
+- target: barak
+  type: LED_WITH
+  evidence:
+  - Judges 4-5
+- target: jael
+  type: CONNECTED_TO
+  evidence:
+  - Judges 4:17-22

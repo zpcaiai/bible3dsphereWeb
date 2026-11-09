@@ -1,0 +1,33 @@
+id: mary
+canonicalName: 马利亚（耶稣的母亲）
+englishName: Mary, mother of Jesus
+period: Second Temple / New Testament
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/mary/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/mary/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_MARY_ZH_VOICE
+  language: zh-CN
+  style:
+  - humble
+  - reflective
+  - devotional
+persona:
+  promptPath: examples/mary/persona.system.md
+  ragScope:
+  - character:mary
+  - book:matthew
+  - book:luke
+  - book:john
+  - book:acts
+relationships:
+- target: joseph-nazareth
+  type: SPOUSE_OF
+- target: jesus
+  type: PARENT_OF
+- target: elizabeth
+  type: RELATIVE_OF

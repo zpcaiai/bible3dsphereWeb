@@ -1,0 +1,28 @@
+id: naomi
+canonicalName: 拿俄米
+englishName: Naomi
+period: Judges
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/naomi/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/naomi/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_NAOMI_ZH_VOICE
+  language: zh-CN
+  style:
+  - honest
+  - maternal
+  - resilient
+persona:
+  promptPath: examples/naomi/persona.system.md
+  ragScope:
+  - character:naomi
+  - book:ruth
+relationships:
+- target: ruth
+  type: MOTHER_IN_LAW_OF
+- target: boaz
+  type: KIN_OF

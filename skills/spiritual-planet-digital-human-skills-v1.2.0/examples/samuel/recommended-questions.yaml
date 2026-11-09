@@ -1,0 +1,20 @@
+characterId: samuel
+questions:
+- id: samuel-q01
+  text: 哈拿怎样为你祷告并把你带到会幕？
+  category: core
+- id: samuel-q02
+  text: 你年幼时怎样听见呼召？
+  category: core
+- id: samuel-q03
+  text: 你为什么膏扫罗为王？
+  category: core
+- id: samuel-q04
+  text: 扫罗为什么被责备和弃绝？
+  category: core
+- id: samuel-q05
+  text: 你为什么膏大卫？
+  category: core
+- id: samuel-q06
+  text: 隐多珥事件是不是证明人可以随意召死人？
+  category: core

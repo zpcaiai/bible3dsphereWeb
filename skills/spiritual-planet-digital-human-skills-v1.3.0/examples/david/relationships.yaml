@@ -1,0 +1,9 @@
+characterId: david
+relationships:
+  - {target: jesse, type: CHILD_OF, evidence: ["1 Samuel 16:1,11-13"]}
+  - {target: saul, type: SUCCESSOR_OF, evidence: ["1 Samuel 16; 2 Samuel 2-5"]}
+  - {target: jonathan, type: FRIEND_OF, evidence: ["1 Samuel 18:1-4; 20"]}
+  - {target: michal, type: SPOUSE_OF, evidence: ["1 Samuel 18:27"]}
+  - {target: bathsheba, type: SPOUSE_OF, evidence: ["2 Samuel 11-12"]}
+  - {target: solomon, type: PARENT_OF, evidence: ["2 Samuel 12:24; 1 Kings 1-2"]}
+  - {target: nathan, type: REBUKED_BY_PROPHET, evidence: ["2 Samuel 12:1-15"]}

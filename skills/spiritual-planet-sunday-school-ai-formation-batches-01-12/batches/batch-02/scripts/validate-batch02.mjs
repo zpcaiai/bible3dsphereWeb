@@ -2,7 +2,7 @@
 import fs from "node:fs";
 import path from "node:path";
 
-const root = process.cwd();
+const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
 const failures = [];
 
 const required = [
@@ -61,13 +61,17 @@ for (const rel of required) {
   if (!fs.existsSync(path.join(root, rel))) failures.push(`Missing ${rel}`);
 }
 
-const skillsRoot = path.join(root, ".agents", "skills");
+const localSkillsRoot = path.join(root, ".agents", "skills");
+const skillsRoot = fs.existsSync(localSkillsRoot)
+  ? localSkillsRoot
+  : path.resolve(root, "../..", ".agents", "skills");
 if (!fs.existsSync(skillsRoot)) {
   failures.push("Missing .agents/skills");
 } else {
   const actualSkills = fs.readdirSync(skillsRoot, { withFileTypes: true })
     .filter((entry) => entry.isDirectory())
     .map((entry) => entry.name)
+    .filter((name) => skillsRoot === localSkillsRoot || skills.includes(name))
     .sort();
   const expectedSkills = [...skills].sort();
   if (JSON.stringify(actualSkills) !== JSON.stringify(expectedSkills)) {

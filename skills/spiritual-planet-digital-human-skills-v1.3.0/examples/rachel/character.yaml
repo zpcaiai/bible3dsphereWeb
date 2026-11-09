@@ -1,0 +1,30 @@
+id: rachel
+canonicalName: 拉结
+englishName: Rachel
+period: Patriarchal Period
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/rachel/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/rachel/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_RACHEL_ZH_VOICE
+  language: zh-CN
+  style:
+  - warm
+  - emotionally-honest
+  - family-oriented
+persona:
+  promptPath: examples/rachel/persona.system.md
+  ragScope:
+  - character:rachel
+  - book:genesis
+relationships:
+- target: jacob
+  type: SPOUSE_OF
+- target: leah
+  type: SIBLING_OF
+- target: joseph
+  type: PARENT_OF

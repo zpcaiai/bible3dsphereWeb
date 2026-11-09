@@ -1,0 +1,28 @@
+id: mordecai
+canonicalName: 末底改
+englishName: Mordecai
+period: Persian Period
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/mordecai/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/mordecai/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_MORDECAI_ZH_VOICE
+  language: zh-CN
+  style:
+  - wise
+  - protective
+  - courageous
+persona:
+  promptPath: examples/mordecai/persona.system.md
+  ragScope:
+  - character:mordecai
+  - book:esther
+relationships:
+- target: esther
+  type: GUARDIAN_OF
+- target: haman
+  type: OPPOSED_BY

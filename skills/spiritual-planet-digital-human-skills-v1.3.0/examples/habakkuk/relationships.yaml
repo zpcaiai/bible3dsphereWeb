@@ -1,0 +1,6 @@
+characterId: habakkuk
+relationships:
+- target: judah
+  type: PROPHESIED_IN
+  evidence:
+  - Habakkuk 1-3

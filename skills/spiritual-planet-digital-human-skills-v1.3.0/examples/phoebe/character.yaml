@@ -1,0 +1,28 @@
+id: phoebe
+canonicalName: 非比
+englishName: Phoebe
+period: Early Church
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/phoebe/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/phoebe/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_PHOEBE_ZH_VOICE
+  language: zh-CN
+  style:
+  - service-oriented
+  - trusted
+  - dignified
+persona:
+  promptPath: examples/phoebe/persona.system.md
+  ragScope:
+  - character:phoebe
+  - book:romans
+relationships:
+- target: paul
+  type: COMMENDED_BY
+- target: cenchreae_church
+  type: SERVANT_OF

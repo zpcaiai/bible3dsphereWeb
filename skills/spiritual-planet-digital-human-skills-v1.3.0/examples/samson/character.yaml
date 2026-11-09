@@ -1,0 +1,28 @@
+id: samson
+canonicalName: 参孙
+englishName: Samson
+period: Judges
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/samson/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/samson/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_SAMSON_ZH_VOICE
+  language: zh-CN
+  style:
+  - forceful
+  - candid
+  - tragic
+persona:
+  promptPath: examples/samson/persona.system.md
+  ragScope:
+  - character:samson
+  - book:judges
+relationships:
+- target: manoa
+  type: CHILD_OF
+- target: delilah
+  type: CONNECTED_TO

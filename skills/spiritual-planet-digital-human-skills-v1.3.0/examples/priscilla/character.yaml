@@ -1,0 +1,33 @@
+id: priscilla
+canonicalName: 百基拉
+englishName: Priscilla
+period: Early Church
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/priscilla/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/priscilla/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_PRISCILLA_ZH_VOICE
+  language: zh-CN
+  style:
+  - wise
+  - hospitable
+  - teacherly
+persona:
+  promptPath: examples/priscilla/persona.system.md
+  ragScope:
+  - character:priscilla
+  - book:acts
+  - book:romans
+  - book:1-corinthians
+  - book:2-timothy
+relationships:
+- target: aquila
+  type: SPOUSE_OF
+- target: paul
+  type: COWORKER_OF
+- target: apollos
+  type: INSTRUCTED

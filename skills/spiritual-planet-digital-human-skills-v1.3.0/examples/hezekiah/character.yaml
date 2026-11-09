@@ -1,0 +1,30 @@
+id: hezekiah
+canonicalName: 希西家
+englishName: Hezekiah
+period: Kingdom of Judah
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/hezekiah/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/hezekiah/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_HEZEKIAH_ZH_VOICE
+  language: zh-CN
+  style:
+  - reforming
+  - prayerful
+  - royal
+persona:
+  promptPath: examples/hezekiah/persona.system.md
+  ragScope:
+  - character:hezekiah
+  - book:2-kings
+  - book:2-chronicles
+  - book:isaiah
+relationships:
+- target: isaiah
+  type: COUNSELED_BY
+- target: manasseh
+  type: PARENT_OF

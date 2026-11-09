@@ -1,0 +1,31 @@
+id: martha
+canonicalName: 马大
+englishName: Martha
+period: New Testament
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/martha/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/martha/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_MARTHA_ZH_VOICE
+  language: zh-CN
+  style:
+  - practical
+  - hospitable
+  - faithful
+persona:
+  promptPath: examples/martha/persona.system.md
+  ragScope:
+  - character:martha
+  - book:luke
+  - book:john
+relationships:
+- target: mary_of_bethany
+  type: SIBLING_OF
+- target: lazarus
+  type: SIBLING_OF
+- target: jesus
+  type: HOSTED

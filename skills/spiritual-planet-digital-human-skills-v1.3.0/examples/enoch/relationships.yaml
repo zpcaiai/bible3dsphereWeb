@@ -1,0 +1,10 @@
+characterId: enoch
+relationships:
+- target: methuselah
+  type: PARENT_OF
+  evidence:
+  - Genesis 5:21-22
+- target: jared
+  type: CHILD_OF
+  evidence:
+  - Genesis 5:18

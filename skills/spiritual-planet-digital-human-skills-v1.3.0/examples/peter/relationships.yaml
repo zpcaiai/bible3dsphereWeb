@@ -1,0 +1,7 @@
+characterId: peter
+relationships:
+  - {target: andrew, type: SIBLING_OF, evidence: ["Matthew 4:18; John 1:40-42"]}
+  - {target: jesus, type: DISCIPLE_OF, evidence: ["Matthew 4:18-20; Mark 3:16"]}
+  - {target: john-apostle, type: FELLOW_APOSTLE, evidence: ["Acts 3-4"]}
+  - {target: paul, type: FELLOW_APOSTLE, evidence: ["Galatians 2:7-9"]}
+  - {target: cornelius, type: MINISTERED_TO, evidence: ["Acts 10"]}

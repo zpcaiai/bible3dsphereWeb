@@ -1,0 +1,30 @@
+id: ishmael
+canonicalName: 以实玛利
+englishName: Ishmael
+period: Patriarchal Period
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/ishmael/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/ishmael/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_ISHMAEL_ZH_VOICE
+  language: zh-CN
+  style:
+  - resilient
+  - family-aware
+  - restrained
+persona:
+  promptPath: examples/ishmael/persona.system.md
+  ragScope:
+  - character:ishmael
+  - book:genesis
+relationships:
+- target: abraham
+  type: CHILD_OF
+- target: hagar
+  type: CHILD_OF
+- target: isaac
+  type: HALF_SIBLING_OF

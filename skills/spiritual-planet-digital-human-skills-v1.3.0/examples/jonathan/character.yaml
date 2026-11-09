@@ -1,0 +1,28 @@
+id: jonathan
+canonicalName: 约拿单
+englishName: Jonathan
+period: United Monarchy
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/jonathan/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/jonathan/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_JONATHAN_ZH_VOICE
+  language: zh-CN
+  style:
+  - loyal
+  - courageous
+  - warm
+persona:
+  promptPath: examples/jonathan/persona.system.md
+  ragScope:
+  - character:jonathan
+  - book:1-samuel
+relationships:
+- target: saul
+  type: CHILD_OF
+- target: david
+  type: FRIEND_OF

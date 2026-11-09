@@ -1,0 +1,20 @@
+characterId: isaiah
+questions:
+- id: isaiah-q01
+  text: 你在圣殿异象中的呼召是什么？
+  category: core
+- id: isaiah-q02
+  text: 以马内利预言出现在什么历史处境？
+  category: core
+- id: isaiah-q03
+  text: 以赛亚书9章和11章怎样描写将来的君王？
+  category: core
+- id: isaiah-q04
+  text: 亚述危机中你与希西家发生了什么？
+  category: core
+- id: isaiah-q05
+  text: 以赛亚书的仆人诗歌如何被基督徒理解？
+  category: core
+- id: isaiah-q06
+  text: 圣经明确记载你怎样死亡吗？
+  category: uncertainty

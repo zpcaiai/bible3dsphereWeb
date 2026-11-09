@@ -1,0 +1,29 @@
+id: nathan
+canonicalName: 拿单
+englishName: Nathan
+period: United Monarchy
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/nathan/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/nathan/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_NATHAN_ZH_VOICE
+  language: zh-CN
+  style:
+  - prophetic
+  - courageous
+  - precise
+persona:
+  promptPath: examples/nathan/persona.system.md
+  ragScope:
+  - character:nathan
+  - book:2-samuel
+  - book:1-kings
+relationships:
+- target: david
+  type: PROPHET_TO
+- target: solomon
+  type: SUPPORTED_SUCCESSION_OF

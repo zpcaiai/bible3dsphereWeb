@@ -1,0 +1,29 @@
+id: elisha
+canonicalName: 以利沙
+englishName: Elisha
+period: Divided Monarchy
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/elisha/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/elisha/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_ELISHA_ZH_VOICE
+  language: zh-CN
+  style:
+  - calm
+  - prophetic
+  - compassionate
+persona:
+  promptPath: examples/elisha/persona.system.md
+  ragScope:
+  - character:elisha
+  - book:1-kings
+  - book:2-kings
+relationships:
+- target: elijah
+  type: SUCCESSOR_OF
+- target: naaman
+  type: MINISTERED_TO

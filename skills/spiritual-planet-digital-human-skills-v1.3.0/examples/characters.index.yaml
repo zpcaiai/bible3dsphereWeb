@@ -1,0 +1,1002 @@
+version: 1.3.0
+characters:
+- id: moses
+  name: 摩西
+  status: alpha-ready
+  paths:
+    character: examples/moses/character.yaml
+    persona: examples/moses/persona.system.md
+    truthSet: examples/moses/truth-set.yaml
+    relationships: examples/moses/relationships.yaml
+    avatarVoice: examples/moses/avatar-voice.yaml
+    review: examples/moses/review-notes.md
+- id: david
+  name: 大卫
+  status: alpha-ready
+  paths:
+    character: examples/david/character.yaml
+    persona: examples/david/persona.system.md
+    truthSet: examples/david/truth-set.yaml
+    relationships: examples/david/relationships.yaml
+    avatarVoice: examples/david/avatar-voice.yaml
+    review: examples/david/review-notes.md
+- id: peter
+  name: 彼得
+  status: alpha-ready
+  paths:
+    character: examples/peter/character.yaml
+    persona: examples/peter/persona.system.md
+    truthSet: examples/peter/truth-set.yaml
+    relationships: examples/peter/relationships.yaml
+    avatarVoice: examples/peter/avatar-voice.yaml
+    review: examples/peter/review-notes.md
+- id: paul
+  name: 保罗
+  status: alpha-ready
+  paths:
+    character: examples/paul/character.yaml
+    persona: examples/paul/persona.system.md
+    truthSet: examples/paul/truth-set.yaml
+    relationships: examples/paul/relationships.yaml
+    avatarVoice: examples/paul/avatar-voice.yaml
+    review: examples/paul/review-notes.md
+- id: adam
+  name: 亚当
+  status: alpha-ready
+  paths:
+    character: examples/adam/character.yaml
+    persona: examples/adam/persona.system.md
+    truthSet: examples/adam/truth-set.yaml
+    relationships: examples/adam/relationships.yaml
+    avatarVoice: examples/adam/avatar-voice.yaml
+    review: examples/adam/review-notes.md
+- id: noah
+  name: 挪亚
+  status: alpha-ready
+  paths:
+    character: examples/noah/character.yaml
+    persona: examples/noah/persona.system.md
+    truthSet: examples/noah/truth-set.yaml
+    relationships: examples/noah/relationships.yaml
+    avatarVoice: examples/noah/avatar-voice.yaml
+    review: examples/noah/review-notes.md
+- id: abraham
+  name: 亚伯拉罕
+  status: alpha-ready
+  paths:
+    character: examples/abraham/character.yaml
+    persona: examples/abraham/persona.system.md
+    truthSet: examples/abraham/truth-set.yaml
+    relationships: examples/abraham/relationships.yaml
+    avatarVoice: examples/abraham/avatar-voice.yaml
+    review: examples/abraham/review-notes.md
+- id: sarah
+  name: 撒拉
+  status: alpha-ready
+  paths:
+    character: examples/sarah/character.yaml
+    persona: examples/sarah/persona.system.md
+    truthSet: examples/sarah/truth-set.yaml
+    relationships: examples/sarah/relationships.yaml
+    avatarVoice: examples/sarah/avatar-voice.yaml
+    review: examples/sarah/review-notes.md
+- id: isaac
+  name: 以撒
+  status: alpha-ready
+  paths:
+    character: examples/isaac/character.yaml
+    persona: examples/isaac/persona.system.md
+    truthSet: examples/isaac/truth-set.yaml
+    relationships: examples/isaac/relationships.yaml
+    avatarVoice: examples/isaac/avatar-voice.yaml
+    review: examples/isaac/review-notes.md
+- id: jacob
+  name: 雅各
+  status: alpha-ready
+  paths:
+    character: examples/jacob/character.yaml
+    persona: examples/jacob/persona.system.md
+    truthSet: examples/jacob/truth-set.yaml
+    relationships: examples/jacob/relationships.yaml
+    avatarVoice: examples/jacob/avatar-voice.yaml
+    review: examples/jacob/review-notes.md
+- id: joseph
+  name: 约瑟
+  status: alpha-ready
+  paths:
+    character: examples/joseph/character.yaml
+    persona: examples/joseph/persona.system.md
+    truthSet: examples/joseph/truth-set.yaml
+    relationships: examples/joseph/relationships.yaml
+    avatarVoice: examples/joseph/avatar-voice.yaml
+    review: examples/joseph/review-notes.md
+- id: joshua
+  name: 约书亚
+  status: alpha-ready
+  paths:
+    character: examples/joshua/character.yaml
+    persona: examples/joshua/persona.system.md
+    truthSet: examples/joshua/truth-set.yaml
+    relationships: examples/joshua/relationships.yaml
+    avatarVoice: examples/joshua/avatar-voice.yaml
+    review: examples/joshua/review-notes.md
+- id: samuel
+  name: 撒母耳
+  status: alpha-ready
+  paths:
+    character: examples/samuel/character.yaml
+    persona: examples/samuel/persona.system.md
+    truthSet: examples/samuel/truth-set.yaml
+    relationships: examples/samuel/relationships.yaml
+    avatarVoice: examples/samuel/avatar-voice.yaml
+    review: examples/samuel/review-notes.md
+- id: saul
+  name: 扫罗
+  status: alpha-ready
+  paths:
+    character: examples/saul/character.yaml
+    persona: examples/saul/persona.system.md
+    truthSet: examples/saul/truth-set.yaml
+    relationships: examples/saul/relationships.yaml
+    avatarVoice: examples/saul/avatar-voice.yaml
+    review: examples/saul/review-notes.md
+- id: solomon
+  name: 所罗门
+  status: alpha-ready
+  paths:
+    character: examples/solomon/character.yaml
+    persona: examples/solomon/persona.system.md
+    truthSet: examples/solomon/truth-set.yaml
+    relationships: examples/solomon/relationships.yaml
+    avatarVoice: examples/solomon/avatar-voice.yaml
+    review: examples/solomon/review-notes.md
+- id: elijah
+  name: 以利亚
+  status: alpha-ready
+  paths:
+    character: examples/elijah/character.yaml
+    persona: examples/elijah/persona.system.md
+    truthSet: examples/elijah/truth-set.yaml
+    relationships: examples/elijah/relationships.yaml
+    avatarVoice: examples/elijah/avatar-voice.yaml
+    review: examples/elijah/review-notes.md
+- id: isaiah
+  name: 以赛亚
+  status: alpha-ready
+  paths:
+    character: examples/isaiah/character.yaml
+    persona: examples/isaiah/persona.system.md
+    truthSet: examples/isaiah/truth-set.yaml
+    relationships: examples/isaiah/relationships.yaml
+    avatarVoice: examples/isaiah/avatar-voice.yaml
+    review: examples/isaiah/review-notes.md
+- id: jeremiah
+  name: 耶利米
+  status: alpha-ready
+  paths:
+    character: examples/jeremiah/character.yaml
+    persona: examples/jeremiah/persona.system.md
+    truthSet: examples/jeremiah/truth-set.yaml
+    relationships: examples/jeremiah/relationships.yaml
+    avatarVoice: examples/jeremiah/avatar-voice.yaml
+    review: examples/jeremiah/review-notes.md
+- id: daniel
+  name: 但以理
+  status: alpha-ready
+  paths:
+    character: examples/daniel/character.yaml
+    persona: examples/daniel/persona.system.md
+    truthSet: examples/daniel/truth-set.yaml
+    relationships: examples/daniel/relationships.yaml
+    avatarVoice: examples/daniel/avatar-voice.yaml
+    review: examples/daniel/review-notes.md
+- id: ruth
+  name: 路得
+  status: alpha-ready
+  paths:
+    character: examples/ruth/character.yaml
+    persona: examples/ruth/persona.system.md
+    truthSet: examples/ruth/truth-set.yaml
+    relationships: examples/ruth/relationships.yaml
+    avatarVoice: examples/ruth/avatar-voice.yaml
+    review: examples/ruth/review-notes.md
+- id: esther
+  name: 以斯帖
+  status: alpha-ready
+  paths:
+    character: examples/esther/character.yaml
+    persona: examples/esther/persona.system.md
+    truthSet: examples/esther/truth-set.yaml
+    relationships: examples/esther/relationships.yaml
+    avatarVoice: examples/esther/avatar-voice.yaml
+    review: examples/esther/review-notes.md
+- id: mary
+  name: 马利亚（耶稣的母亲）
+  status: alpha-ready
+  paths:
+    character: examples/mary/character.yaml
+    persona: examples/mary/persona.system.md
+    truthSet: examples/mary/truth-set.yaml
+    relationships: examples/mary/relationships.yaml
+    avatarVoice: examples/mary/avatar-voice.yaml
+    review: examples/mary/review-notes.md
+- id: john
+  name: 约翰
+  status: alpha-ready
+  paths:
+    character: examples/john/character.yaml
+    persona: examples/john/persona.system.md
+    truthSet: examples/john/truth-set.yaml
+    relationships: examples/john/relationships.yaml
+    avatarVoice: examples/john/avatar-voice.yaml
+    review: examples/john/review-notes.md
+- id: barnabas
+  name: 巴拿巴
+  status: alpha-ready
+  paths:
+    character: examples/barnabas/character.yaml
+    persona: examples/barnabas/persona.system.md
+    truthSet: examples/barnabas/truth-set.yaml
+    relationships: examples/barnabas/relationships.yaml
+    avatarVoice: examples/barnabas/avatar-voice.yaml
+    review: examples/barnabas/review-notes.md
+- id: eve
+  name: 夏娃
+  status: standard-alpha
+  paths:
+    character: examples/eve/character.yaml
+    persona: examples/eve/persona.system.md
+    truthSet: examples/eve/truth-set.yaml
+    relationships: examples/eve/relationships.yaml
+    avatarVoice: examples/eve/avatar-voice.yaml
+    review: examples/eve/review-notes.md
+- id: cain
+  name: 该隐
+  status: standard-alpha
+  paths:
+    character: examples/cain/character.yaml
+    persona: examples/cain/persona.system.md
+    truthSet: examples/cain/truth-set.yaml
+    relationships: examples/cain/relationships.yaml
+    avatarVoice: examples/cain/avatar-voice.yaml
+    review: examples/cain/review-notes.md
+- id: abel
+  name: 亚伯
+  status: standard-alpha
+  paths:
+    character: examples/abel/character.yaml
+    persona: examples/abel/persona.system.md
+    truthSet: examples/abel/truth-set.yaml
+    relationships: examples/abel/relationships.yaml
+    avatarVoice: examples/abel/avatar-voice.yaml
+    review: examples/abel/review-notes.md
+- id: enoch
+  name: 以诺
+  status: standard-alpha
+  paths:
+    character: examples/enoch/character.yaml
+    persona: examples/enoch/persona.system.md
+    truthSet: examples/enoch/truth-set.yaml
+    relationships: examples/enoch/relationships.yaml
+    avatarVoice: examples/enoch/avatar-voice.yaml
+    review: examples/enoch/review-notes.md
+- id: job
+  name: 约伯
+  status: standard-alpha
+  paths:
+    character: examples/job/character.yaml
+    persona: examples/job/persona.system.md
+    truthSet: examples/job/truth-set.yaml
+    relationships: examples/job/relationships.yaml
+    avatarVoice: examples/job/avatar-voice.yaml
+    review: examples/job/review-notes.md
+- id: melchizedek
+  name: 麦基洗德
+  status: standard-alpha
+  paths:
+    character: examples/melchizedek/character.yaml
+    persona: examples/melchizedek/persona.system.md
+    truthSet: examples/melchizedek/truth-set.yaml
+    relationships: examples/melchizedek/relationships.yaml
+    avatarVoice: examples/melchizedek/avatar-voice.yaml
+    review: examples/melchizedek/review-notes.md
+- id: ishmael
+  name: 以实玛利
+  status: standard-alpha
+  paths:
+    character: examples/ishmael/character.yaml
+    persona: examples/ishmael/persona.system.md
+    truthSet: examples/ishmael/truth-set.yaml
+    relationships: examples/ishmael/relationships.yaml
+    avatarVoice: examples/ishmael/avatar-voice.yaml
+    review: examples/ishmael/review-notes.md
+- id: rebecca
+  name: 利百加
+  status: standard-alpha
+  paths:
+    character: examples/rebecca/character.yaml
+    persona: examples/rebecca/persona.system.md
+    truthSet: examples/rebecca/truth-set.yaml
+    relationships: examples/rebecca/relationships.yaml
+    avatarVoice: examples/rebecca/avatar-voice.yaml
+    review: examples/rebecca/review-notes.md
+- id: esau
+  name: 以扫
+  status: standard-alpha
+  paths:
+    character: examples/esau/character.yaml
+    persona: examples/esau/persona.system.md
+    truthSet: examples/esau/truth-set.yaml
+    relationships: examples/esau/relationships.yaml
+    avatarVoice: examples/esau/avatar-voice.yaml
+    review: examples/esau/review-notes.md
+- id: leah
+  name: 利亚
+  status: standard-alpha
+  paths:
+    character: examples/leah/character.yaml
+    persona: examples/leah/persona.system.md
+    truthSet: examples/leah/truth-set.yaml
+    relationships: examples/leah/relationships.yaml
+    avatarVoice: examples/leah/avatar-voice.yaml
+    review: examples/leah/review-notes.md
+- id: rachel
+  name: 拉结
+  status: standard-alpha
+  paths:
+    character: examples/rachel/character.yaml
+    persona: examples/rachel/persona.system.md
+    truthSet: examples/rachel/truth-set.yaml
+    relationships: examples/rachel/relationships.yaml
+    avatarVoice: examples/rachel/avatar-voice.yaml
+    review: examples/rachel/review-notes.md
+- id: aaron
+  name: 亚伦
+  status: standard-alpha
+  paths:
+    character: examples/aaron/character.yaml
+    persona: examples/aaron/persona.system.md
+    truthSet: examples/aaron/truth-set.yaml
+    relationships: examples/aaron/relationships.yaml
+    avatarVoice: examples/aaron/avatar-voice.yaml
+    review: examples/aaron/review-notes.md
+- id: miriam
+  name: 米利暗
+  status: standard-alpha
+  paths:
+    character: examples/miriam/character.yaml
+    persona: examples/miriam/persona.system.md
+    truthSet: examples/miriam/truth-set.yaml
+    relationships: examples/miriam/relationships.yaml
+    avatarVoice: examples/miriam/avatar-voice.yaml
+    review: examples/miriam/review-notes.md
+- id: caleb
+  name: 迦勒
+  status: standard-alpha
+  paths:
+    character: examples/caleb/character.yaml
+    persona: examples/caleb/persona.system.md
+    truthSet: examples/caleb/truth-set.yaml
+    relationships: examples/caleb/relationships.yaml
+    avatarVoice: examples/caleb/avatar-voice.yaml
+    review: examples/caleb/review-notes.md
+- id: rahab
+  name: 喇合
+  status: standard-alpha
+  paths:
+    character: examples/rahab/character.yaml
+    persona: examples/rahab/persona.system.md
+    truthSet: examples/rahab/truth-set.yaml
+    relationships: examples/rahab/relationships.yaml
+    avatarVoice: examples/rahab/avatar-voice.yaml
+    review: examples/rahab/review-notes.md
+- id: deborah
+  name: 底波拉
+  status: standard-alpha
+  paths:
+    character: examples/deborah/character.yaml
+    persona: examples/deborah/persona.system.md
+    truthSet: examples/deborah/truth-set.yaml
+    relationships: examples/deborah/relationships.yaml
+    avatarVoice: examples/deborah/avatar-voice.yaml
+    review: examples/deborah/review-notes.md
+- id: gideon
+  name: 基甸
+  status: standard-alpha
+  paths:
+    character: examples/gideon/character.yaml
+    persona: examples/gideon/persona.system.md
+    truthSet: examples/gideon/truth-set.yaml
+    relationships: examples/gideon/relationships.yaml
+    avatarVoice: examples/gideon/avatar-voice.yaml
+    review: examples/gideon/review-notes.md
+- id: samson
+  name: 参孙
+  status: standard-alpha
+  paths:
+    character: examples/samson/character.yaml
+    persona: examples/samson/persona.system.md
+    truthSet: examples/samson/truth-set.yaml
+    relationships: examples/samson/relationships.yaml
+    avatarVoice: examples/samson/avatar-voice.yaml
+    review: examples/samson/review-notes.md
+- id: hannah
+  name: 哈拿
+  status: standard-alpha
+  paths:
+    character: examples/hannah/character.yaml
+    persona: examples/hannah/persona.system.md
+    truthSet: examples/hannah/truth-set.yaml
+    relationships: examples/hannah/relationships.yaml
+    avatarVoice: examples/hannah/avatar-voice.yaml
+    review: examples/hannah/review-notes.md
+- id: eli
+  name: 以利
+  status: standard-alpha
+  paths:
+    character: examples/eli/character.yaml
+    persona: examples/eli/persona.system.md
+    truthSet: examples/eli/truth-set.yaml
+    relationships: examples/eli/relationships.yaml
+    avatarVoice: examples/eli/avatar-voice.yaml
+    review: examples/eli/review-notes.md
+- id: jonathan
+  name: 约拿单
+  status: standard-alpha
+  paths:
+    character: examples/jonathan/character.yaml
+    persona: examples/jonathan/persona.system.md
+    truthSet: examples/jonathan/truth-set.yaml
+    relationships: examples/jonathan/relationships.yaml
+    avatarVoice: examples/jonathan/avatar-voice.yaml
+    review: examples/jonathan/review-notes.md
+- id: michal
+  name: 米甲
+  status: standard-alpha
+  paths:
+    character: examples/michal/character.yaml
+    persona: examples/michal/persona.system.md
+    truthSet: examples/michal/truth-set.yaml
+    relationships: examples/michal/relationships.yaml
+    avatarVoice: examples/michal/avatar-voice.yaml
+    review: examples/michal/review-notes.md
+- id: abigail
+  name: 亚比该
+  status: standard-alpha
+  paths:
+    character: examples/abigail/character.yaml
+    persona: examples/abigail/persona.system.md
+    truthSet: examples/abigail/truth-set.yaml
+    relationships: examples/abigail/relationships.yaml
+    avatarVoice: examples/abigail/avatar-voice.yaml
+    review: examples/abigail/review-notes.md
+- id: nathan
+  name: 拿单
+  status: standard-alpha
+  paths:
+    character: examples/nathan/character.yaml
+    persona: examples/nathan/persona.system.md
+    truthSet: examples/nathan/truth-set.yaml
+    relationships: examples/nathan/relationships.yaml
+    avatarVoice: examples/nathan/avatar-voice.yaml
+    review: examples/nathan/review-notes.md
+- id: absalom
+  name: 押沙龙
+  status: standard-alpha
+  paths:
+    character: examples/absalom/character.yaml
+    persona: examples/absalom/persona.system.md
+    truthSet: examples/absalom/truth-set.yaml
+    relationships: examples/absalom/relationships.yaml
+    avatarVoice: examples/absalom/avatar-voice.yaml
+    review: examples/absalom/review-notes.md
+- id: bathsheba
+  name: 拔示巴
+  status: standard-alpha
+  paths:
+    character: examples/bathsheba/character.yaml
+    persona: examples/bathsheba/persona.system.md
+    truthSet: examples/bathsheba/truth-set.yaml
+    relationships: examples/bathsheba/relationships.yaml
+    avatarVoice: examples/bathsheba/avatar-voice.yaml
+    review: examples/bathsheba/review-notes.md
+- id: rehoboam
+  name: 罗波安
+  status: standard-alpha
+  paths:
+    character: examples/rehoboam/character.yaml
+    persona: examples/rehoboam/persona.system.md
+    truthSet: examples/rehoboam/truth-set.yaml
+    relationships: examples/rehoboam/relationships.yaml
+    avatarVoice: examples/rehoboam/avatar-voice.yaml
+    review: examples/rehoboam/review-notes.md
+- id: jeroboam
+  name: 耶罗波安
+  status: standard-alpha
+  paths:
+    character: examples/jeroboam/character.yaml
+    persona: examples/jeroboam/persona.system.md
+    truthSet: examples/jeroboam/truth-set.yaml
+    relationships: examples/jeroboam/relationships.yaml
+    avatarVoice: examples/jeroboam/avatar-voice.yaml
+    review: examples/jeroboam/review-notes.md
+- id: ahab
+  name: 亚哈
+  status: standard-alpha
+  paths:
+    character: examples/ahab/character.yaml
+    persona: examples/ahab/persona.system.md
+    truthSet: examples/ahab/truth-set.yaml
+    relationships: examples/ahab/relationships.yaml
+    avatarVoice: examples/ahab/avatar-voice.yaml
+    review: examples/ahab/review-notes.md
+- id: jezebel
+  name: 耶洗别
+  status: standard-alpha
+  paths:
+    character: examples/jezebel/character.yaml
+    persona: examples/jezebel/persona.system.md
+    truthSet: examples/jezebel/truth-set.yaml
+    relationships: examples/jezebel/relationships.yaml
+    avatarVoice: examples/jezebel/avatar-voice.yaml
+    review: examples/jezebel/review-notes.md
+- id: elisha
+  name: 以利沙
+  status: standard-alpha
+  paths:
+    character: examples/elisha/character.yaml
+    persona: examples/elisha/persona.system.md
+    truthSet: examples/elisha/truth-set.yaml
+    relationships: examples/elisha/relationships.yaml
+    avatarVoice: examples/elisha/avatar-voice.yaml
+    review: examples/elisha/review-notes.md
+- id: hezekiah
+  name: 希西家
+  status: standard-alpha
+  paths:
+    character: examples/hezekiah/character.yaml
+    persona: examples/hezekiah/persona.system.md
+    truthSet: examples/hezekiah/truth-set.yaml
+    relationships: examples/hezekiah/relationships.yaml
+    avatarVoice: examples/hezekiah/avatar-voice.yaml
+    review: examples/hezekiah/review-notes.md
+- id: josiah
+  name: 约西亚
+  status: standard-alpha
+  paths:
+    character: examples/josiah/character.yaml
+    persona: examples/josiah/persona.system.md
+    truthSet: examples/josiah/truth-set.yaml
+    relationships: examples/josiah/relationships.yaml
+    avatarVoice: examples/josiah/avatar-voice.yaml
+    review: examples/josiah/review-notes.md
+- id: ezekiel
+  name: 以西结
+  status: standard-alpha
+  paths:
+    character: examples/ezekiel/character.yaml
+    persona: examples/ezekiel/persona.system.md
+    truthSet: examples/ezekiel/truth-set.yaml
+    relationships: examples/ezekiel/relationships.yaml
+    avatarVoice: examples/ezekiel/avatar-voice.yaml
+    review: examples/ezekiel/review-notes.md
+- id: hosea
+  name: 何西阿
+  status: standard-alpha
+  paths:
+    character: examples/hosea/character.yaml
+    persona: examples/hosea/persona.system.md
+    truthSet: examples/hosea/truth-set.yaml
+    relationships: examples/hosea/relationships.yaml
+    avatarVoice: examples/hosea/avatar-voice.yaml
+    review: examples/hosea/review-notes.md
+- id: jonah
+  name: 约拿
+  status: standard-alpha
+  paths:
+    character: examples/jonah/character.yaml
+    persona: examples/jonah/persona.system.md
+    truthSet: examples/jonah/truth-set.yaml
+    relationships: examples/jonah/relationships.yaml
+    avatarVoice: examples/jonah/avatar-voice.yaml
+    review: examples/jonah/review-notes.md
+- id: micah
+  name: 弥迦
+  status: standard-alpha
+  paths:
+    character: examples/micah/character.yaml
+    persona: examples/micah/persona.system.md
+    truthSet: examples/micah/truth-set.yaml
+    relationships: examples/micah/relationships.yaml
+    avatarVoice: examples/micah/avatar-voice.yaml
+    review: examples/micah/review-notes.md
+- id: habakkuk
+  name: 哈巴谷
+  status: standard-alpha
+  paths:
+    character: examples/habakkuk/character.yaml
+    persona: examples/habakkuk/persona.system.md
+    truthSet: examples/habakkuk/truth-set.yaml
+    relationships: examples/habakkuk/relationships.yaml
+    avatarVoice: examples/habakkuk/avatar-voice.yaml
+    review: examples/habakkuk/review-notes.md
+- id: haggai
+  name: 哈该
+  status: standard-alpha
+  paths:
+    character: examples/haggai/character.yaml
+    persona: examples/haggai/persona.system.md
+    truthSet: examples/haggai/truth-set.yaml
+    relationships: examples/haggai/relationships.yaml
+    avatarVoice: examples/haggai/avatar-voice.yaml
+    review: examples/haggai/review-notes.md
+- id: zechariah_prophet
+  name: 撒迦利亚
+  status: standard-alpha
+  paths:
+    character: examples/zechariah_prophet/character.yaml
+    persona: examples/zechariah_prophet/persona.system.md
+    truthSet: examples/zechariah_prophet/truth-set.yaml
+    relationships: examples/zechariah_prophet/relationships.yaml
+    avatarVoice: examples/zechariah_prophet/avatar-voice.yaml
+    review: examples/zechariah_prophet/review-notes.md
+- id: ezra
+  name: 以斯拉
+  status: standard-alpha
+  paths:
+    character: examples/ezra/character.yaml
+    persona: examples/ezra/persona.system.md
+    truthSet: examples/ezra/truth-set.yaml
+    relationships: examples/ezra/relationships.yaml
+    avatarVoice: examples/ezra/avatar-voice.yaml
+    review: examples/ezra/review-notes.md
+- id: nehemiah
+  name: 尼希米
+  status: standard-alpha
+  paths:
+    character: examples/nehemiah/character.yaml
+    persona: examples/nehemiah/persona.system.md
+    truthSet: examples/nehemiah/truth-set.yaml
+    relationships: examples/nehemiah/relationships.yaml
+    avatarVoice: examples/nehemiah/avatar-voice.yaml
+    review: examples/nehemiah/review-notes.md
+- id: mordecai
+  name: 末底改
+  status: standard-alpha
+  paths:
+    character: examples/mordecai/character.yaml
+    persona: examples/mordecai/persona.system.md
+    truthSet: examples/mordecai/truth-set.yaml
+    relationships: examples/mordecai/relationships.yaml
+    avatarVoice: examples/mordecai/avatar-voice.yaml
+    review: examples/mordecai/review-notes.md
+- id: boaz
+  name: 波阿斯
+  status: standard-alpha
+  paths:
+    character: examples/boaz/character.yaml
+    persona: examples/boaz/persona.system.md
+    truthSet: examples/boaz/truth-set.yaml
+    relationships: examples/boaz/relationships.yaml
+    avatarVoice: examples/boaz/avatar-voice.yaml
+    review: examples/boaz/review-notes.md
+- id: naomi
+  name: 拿俄米
+  status: standard-alpha
+  paths:
+    character: examples/naomi/character.yaml
+    persona: examples/naomi/persona.system.md
+    truthSet: examples/naomi/truth-set.yaml
+    relationships: examples/naomi/relationships.yaml
+    avatarVoice: examples/naomi/avatar-voice.yaml
+    review: examples/naomi/review-notes.md
+- id: zechariah_priest
+  name: 撒迦利亚（施洗约翰之父）
+  status: standard-alpha
+  paths:
+    character: examples/zechariah_priest/character.yaml
+    persona: examples/zechariah_priest/persona.system.md
+    truthSet: examples/zechariah_priest/truth-set.yaml
+    relationships: examples/zechariah_priest/relationships.yaml
+    avatarVoice: examples/zechariah_priest/avatar-voice.yaml
+    review: examples/zechariah_priest/review-notes.md
+- id: elizabeth
+  name: 伊利莎白
+  status: standard-alpha
+  paths:
+    character: examples/elizabeth/character.yaml
+    persona: examples/elizabeth/persona.system.md
+    truthSet: examples/elizabeth/truth-set.yaml
+    relationships: examples/elizabeth/relationships.yaml
+    avatarVoice: examples/elizabeth/avatar-voice.yaml
+    review: examples/elizabeth/review-notes.md
+- id: joseph_of_nazareth
+  name: 约瑟（拿撒勒）
+  status: standard-alpha
+  paths:
+    character: examples/joseph_of_nazareth/character.yaml
+    persona: examples/joseph_of_nazareth/persona.system.md
+    truthSet: examples/joseph_of_nazareth/truth-set.yaml
+    relationships: examples/joseph_of_nazareth/relationships.yaml
+    avatarVoice: examples/joseph_of_nazareth/avatar-voice.yaml
+    review: examples/joseph_of_nazareth/review-notes.md
+- id: john_baptist
+  name: 施洗约翰
+  status: standard-alpha
+  paths:
+    character: examples/john_baptist/character.yaml
+    persona: examples/john_baptist/persona.system.md
+    truthSet: examples/john_baptist/truth-set.yaml
+    relationships: examples/john_baptist/relationships.yaml
+    avatarVoice: examples/john_baptist/avatar-voice.yaml
+    review: examples/john_baptist/review-notes.md
+- id: mary_magdalene
+  name: 抹大拉的马利亚
+  status: standard-alpha
+  paths:
+    character: examples/mary_magdalene/character.yaml
+    persona: examples/mary_magdalene/persona.system.md
+    truthSet: examples/mary_magdalene/truth-set.yaml
+    relationships: examples/mary_magdalene/relationships.yaml
+    avatarVoice: examples/mary_magdalene/avatar-voice.yaml
+    review: examples/mary_magdalene/review-notes.md
+- id: martha
+  name: 马大
+  status: standard-alpha
+  paths:
+    character: examples/martha/character.yaml
+    persona: examples/martha/persona.system.md
+    truthSet: examples/martha/truth-set.yaml
+    relationships: examples/martha/relationships.yaml
+    avatarVoice: examples/martha/avatar-voice.yaml
+    review: examples/martha/review-notes.md
+- id: mary_of_bethany
+  name: 伯大尼的马利亚
+  status: standard-alpha
+  paths:
+    character: examples/mary_of_bethany/character.yaml
+    persona: examples/mary_of_bethany/persona.system.md
+    truthSet: examples/mary_of_bethany/truth-set.yaml
+    relationships: examples/mary_of_bethany/relationships.yaml
+    avatarVoice: examples/mary_of_bethany/avatar-voice.yaml
+    review: examples/mary_of_bethany/review-notes.md
+- id: lazarus
+  name: 拉撒路
+  status: standard-alpha
+  paths:
+    character: examples/lazarus/character.yaml
+    persona: examples/lazarus/persona.system.md
+    truthSet: examples/lazarus/truth-set.yaml
+    relationships: examples/lazarus/relationships.yaml
+    avatarVoice: examples/lazarus/avatar-voice.yaml
+    review: examples/lazarus/review-notes.md
+- id: nicodemus
+  name: 尼哥底母
+  status: standard-alpha
+  paths:
+    character: examples/nicodemus/character.yaml
+    persona: examples/nicodemus/persona.system.md
+    truthSet: examples/nicodemus/truth-set.yaml
+    relationships: examples/nicodemus/relationships.yaml
+    avatarVoice: examples/nicodemus/avatar-voice.yaml
+    review: examples/nicodemus/review-notes.md
+- id: joseph_arimathea
+  name: 亚利马太的约瑟
+  status: standard-alpha
+  paths:
+    character: examples/joseph_arimathea/character.yaml
+    persona: examples/joseph_arimathea/persona.system.md
+    truthSet: examples/joseph_arimathea/truth-set.yaml
+    relationships: examples/joseph_arimathea/relationships.yaml
+    avatarVoice: examples/joseph_arimathea/avatar-voice.yaml
+    review: examples/joseph_arimathea/review-notes.md
+- id: matthew
+  name: 马太
+  status: standard-alpha
+  paths:
+    character: examples/matthew/character.yaml
+    persona: examples/matthew/persona.system.md
+    truthSet: examples/matthew/truth-set.yaml
+    relationships: examples/matthew/relationships.yaml
+    avatarVoice: examples/matthew/avatar-voice.yaml
+    review: examples/matthew/review-notes.md
+- id: mark
+  name: 马可
+  status: standard-alpha
+  paths:
+    character: examples/mark/character.yaml
+    persona: examples/mark/persona.system.md
+    truthSet: examples/mark/truth-set.yaml
+    relationships: examples/mark/relationships.yaml
+    avatarVoice: examples/mark/avatar-voice.yaml
+    review: examples/mark/review-notes.md
+- id: luke
+  name: 路加
+  status: standard-alpha
+  paths:
+    character: examples/luke/character.yaml
+    persona: examples/luke/persona.system.md
+    truthSet: examples/luke/truth-set.yaml
+    relationships: examples/luke/relationships.yaml
+    avatarVoice: examples/luke/avatar-voice.yaml
+    review: examples/luke/review-notes.md
+- id: andrew
+  name: 安得烈
+  status: standard-alpha
+  paths:
+    character: examples/andrew/character.yaml
+    persona: examples/andrew/persona.system.md
+    truthSet: examples/andrew/truth-set.yaml
+    relationships: examples/andrew/relationships.yaml
+    avatarVoice: examples/andrew/avatar-voice.yaml
+    review: examples/andrew/review-notes.md
+- id: philip_apostle
+  name: 腓力（使徒）
+  status: standard-alpha
+  paths:
+    character: examples/philip_apostle/character.yaml
+    persona: examples/philip_apostle/persona.system.md
+    truthSet: examples/philip_apostle/truth-set.yaml
+    relationships: examples/philip_apostle/relationships.yaml
+    avatarVoice: examples/philip_apostle/avatar-voice.yaml
+    review: examples/philip_apostle/review-notes.md
+- id: thomas
+  name: 多马
+  status: standard-alpha
+  paths:
+    character: examples/thomas/character.yaml
+    persona: examples/thomas/persona.system.md
+    truthSet: examples/thomas/truth-set.yaml
+    relationships: examples/thomas/relationships.yaml
+    avatarVoice: examples/thomas/avatar-voice.yaml
+    review: examples/thomas/review-notes.md
+- id: james_zebedee
+  name: 雅各（西庇太之子）
+  status: standard-alpha
+  paths:
+    character: examples/james_zebedee/character.yaml
+    persona: examples/james_zebedee/persona.system.md
+    truthSet: examples/james_zebedee/truth-set.yaml
+    relationships: examples/james_zebedee/relationships.yaml
+    avatarVoice: examples/james_zebedee/avatar-voice.yaml
+    review: examples/james_zebedee/review-notes.md
+- id: james_brother_jesus
+  name: 雅各（主的兄弟）
+  status: standard-alpha
+  paths:
+    character: examples/james_brother_jesus/character.yaml
+    persona: examples/james_brother_jesus/persona.system.md
+    truthSet: examples/james_brother_jesus/truth-set.yaml
+    relationships: examples/james_brother_jesus/relationships.yaml
+    avatarVoice: examples/james_brother_jesus/avatar-voice.yaml
+    review: examples/james_brother_jesus/review-notes.md
+- id: stephen
+  name: 司提反
+  status: standard-alpha
+  paths:
+    character: examples/stephen/character.yaml
+    persona: examples/stephen/persona.system.md
+    truthSet: examples/stephen/truth-set.yaml
+    relationships: examples/stephen/relationships.yaml
+    avatarVoice: examples/stephen/avatar-voice.yaml
+    review: examples/stephen/review-notes.md
+- id: philip_evangelist
+  name: 腓利（传福音者）
+  status: standard-alpha
+  paths:
+    character: examples/philip_evangelist/character.yaml
+    persona: examples/philip_evangelist/persona.system.md
+    truthSet: examples/philip_evangelist/truth-set.yaml
+    relationships: examples/philip_evangelist/relationships.yaml
+    avatarVoice: examples/philip_evangelist/avatar-voice.yaml
+    review: examples/philip_evangelist/review-notes.md
+- id: timothy
+  name: 提摩太
+  status: standard-alpha
+  paths:
+    character: examples/timothy/character.yaml
+    persona: examples/timothy/persona.system.md
+    truthSet: examples/timothy/truth-set.yaml
+    relationships: examples/timothy/relationships.yaml
+    avatarVoice: examples/timothy/avatar-voice.yaml
+    review: examples/timothy/review-notes.md
+- id: titus
+  name: 提多
+  status: standard-alpha
+  paths:
+    character: examples/titus/character.yaml
+    persona: examples/titus/persona.system.md
+    truthSet: examples/titus/truth-set.yaml
+    relationships: examples/titus/relationships.yaml
+    avatarVoice: examples/titus/avatar-voice.yaml
+    review: examples/titus/review-notes.md
+- id: silas
+  name: 西拉
+  status: standard-alpha
+  paths:
+    character: examples/silas/character.yaml
+    persona: examples/silas/persona.system.md
+    truthSet: examples/silas/truth-set.yaml
+    relationships: examples/silas/relationships.yaml
+    avatarVoice: examples/silas/avatar-voice.yaml
+    review: examples/silas/review-notes.md
+- id: priscilla
+  name: 百基拉
+  status: standard-alpha
+  paths:
+    character: examples/priscilla/character.yaml
+    persona: examples/priscilla/persona.system.md
+    truthSet: examples/priscilla/truth-set.yaml
+    relationships: examples/priscilla/relationships.yaml
+    avatarVoice: examples/priscilla/avatar-voice.yaml
+    review: examples/priscilla/review-notes.md
+- id: aquila
+  name: 亚居拉
+  status: standard-alpha
+  paths:
+    character: examples/aquila/character.yaml
+    persona: examples/aquila/persona.system.md
+    truthSet: examples/aquila/truth-set.yaml
+    relationships: examples/aquila/relationships.yaml
+    avatarVoice: examples/aquila/avatar-voice.yaml
+    review: examples/aquila/review-notes.md
+- id: lydia
+  name: 吕底亚
+  status: standard-alpha
+  paths:
+    character: examples/lydia/character.yaml
+    persona: examples/lydia/persona.system.md
+    truthSet: examples/lydia/truth-set.yaml
+    relationships: examples/lydia/relationships.yaml
+    avatarVoice: examples/lydia/avatar-voice.yaml
+    review: examples/lydia/review-notes.md
+- id: apollos
+  name: 亚波罗
+  status: standard-alpha
+  paths:
+    character: examples/apollos/character.yaml
+    persona: examples/apollos/persona.system.md
+    truthSet: examples/apollos/truth-set.yaml
+    relationships: examples/apollos/relationships.yaml
+    avatarVoice: examples/apollos/avatar-voice.yaml
+    review: examples/apollos/review-notes.md
+- id: phoebe
+  name: 非比
+  status: standard-alpha
+  paths:
+    character: examples/phoebe/character.yaml
+    persona: examples/phoebe/persona.system.md
+    truthSet: examples/phoebe/truth-set.yaml
+    relationships: examples/phoebe/relationships.yaml
+    avatarVoice: examples/phoebe/avatar-voice.yaml
+    review: examples/phoebe/review-notes.md
+- id: onesimus
+  name: 阿尼西母
+  status: standard-alpha
+  paths:
+    character: examples/onesimus/character.yaml
+    persona: examples/onesimus/persona.system.md
+    truthSet: examples/onesimus/truth-set.yaml
+    relationships: examples/onesimus/relationships.yaml
+    avatarVoice: examples/onesimus/avatar-voice.yaml
+    review: examples/onesimus/review-notes.md
+- id: philemon
+  name: 腓利门
+  status: standard-alpha
+  paths:
+    character: examples/philemon/character.yaml
+    persona: examples/philemon/persona.system.md
+    truthSet: examples/philemon/truth-set.yaml
+    relationships: examples/philemon/relationships.yaml
+    avatarVoice: examples/philemon/avatar-voice.yaml
+    review: examples/philemon/review-notes.md
+- id: cornelius
+  name: 哥尼流
+  status: standard-alpha
+  paths:
+    character: examples/cornelius/character.yaml
+    persona: examples/cornelius/persona.system.md
+    truthSet: examples/cornelius/truth-set.yaml
+    relationships: examples/cornelius/relationships.yaml
+    avatarVoice: examples/cornelius/avatar-voice.yaml
+    review: examples/cornelius/review-notes.md

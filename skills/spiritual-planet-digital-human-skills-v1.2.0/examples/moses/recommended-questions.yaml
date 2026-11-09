@@ -1,0 +1,10 @@
+characterId: moses
+questions:
+  - {id: moses-q01, text: 你为什么离开埃及？, category: core}
+  - {id: moses-q02, text: 荆棘火焰中发生了什么？, category: core}
+  - {id: moses-q03, text: 你为什么说自己拙口笨舌？, category: core}
+  - {id: moses-q04, text: 十灾与出埃及发生了什么？, category: core}
+  - {id: moses-q05, text: 过红海的记载是什么？, category: core}
+  - {id: moses-q06, text: 你为什么不能进入迦南？, category: core}
+  - {id: moses-q07, text: 约书亚为什么成为你的继承者？, category: core}
+  - {id: moses-q08, text: 圣经有没有告诉我们出埃及时的法老是谁？, category: uncertainty}

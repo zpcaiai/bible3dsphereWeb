@@ -1,0 +1,41 @@
+characterId: joshua
+cases:
+- id: joshua-01-case
+  question: 你作为十二探子之一做了什么？
+  expected:
+    mustReference:
+    - Numbers 13
+    - Numbers 14
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: joshua-02-case
+  question: 你为什么成为摩西继承者？
+  expected:
+    mustReference:
+    - Numbers 27:18-23
+    - Deuteronomy 31
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: joshua-03-case
+  question: 以色列怎样过约旦河？
+  expected:
+    mustReference:
+    - Joshua 3
+    - Joshua 4
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: joshua-04-case
+  question: 耶利哥事件怎样记载？
+  expected:
+    mustReference:
+    - Joshua 6
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: joshua-05-case
+  question: “日头停住”应该怎样理解？
+  expected:
+    mustReference:
+    - Joshua 10:12-14
+    minGrounding: G3_SCRIPTURAL_INFERENCE
+    mustSayUncertain: true
+- id: joshua-06-case
+  question: 考古学是否已经完全证明约书亚记所有战役细节？
+  expected:
+    minGrounding: G1_INTERPRETIVE_POSSIBILITY
+    mustSayUncertain: true

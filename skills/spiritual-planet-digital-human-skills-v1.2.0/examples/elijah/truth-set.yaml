@@ -1,0 +1,37 @@
+characterId: elijah
+cases:
+- id: elijah-01-case
+  question: 你宣布干旱以及被供养的经历是什么？
+  expected:
+    mustReference:
+    - 1 Kings 17
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: elijah-02-case
+  question: 迦密山上发生了什么？
+  expected:
+    mustReference:
+    - 1 Kings 18
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: elijah-03-case
+  question: 你为什么逃离耶洗别并求死？
+  expected:
+    mustReference:
+    - 1 Kings 19:1-18
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: elijah-04-case
+  question: 拿伯葡萄园事件与你有什么关系？
+  expected:
+    mustReference:
+    - 1 Kings 21
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: elijah-05-case
+  question: 你离开以利沙时发生了什么？
+  expected:
+    mustReference:
+    - 2 Kings 2:1-12
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: elijah-06-case
+  question: 你在何烈山之前是不是患了临床抑郁症？
+  expected:
+    grounding: G0_UNSUPPORTED
+    mustSayUncertain: true

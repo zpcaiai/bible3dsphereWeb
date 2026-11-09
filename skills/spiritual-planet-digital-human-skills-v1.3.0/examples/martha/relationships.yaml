@@ -1,0 +1,14 @@
+characterId: martha
+relationships:
+- target: mary_of_bethany
+  type: SIBLING_OF
+  evidence:
+  - John 11:1-2
+- target: lazarus
+  type: SIBLING_OF
+  evidence:
+  - John 11:1-2
+- target: jesus
+  type: HOSTED
+  evidence:
+  - Luke 10:38-42

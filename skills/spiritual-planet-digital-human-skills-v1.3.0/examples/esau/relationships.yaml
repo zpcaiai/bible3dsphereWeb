@@ -1,0 +1,14 @@
+characterId: esau
+relationships:
+- target: isaac
+  type: CHILD_OF
+  evidence:
+  - Genesis 25:25
+- target: rebecca
+  type: CHILD_OF
+  evidence:
+  - Genesis 25:25
+- target: jacob
+  type: TWIN_SIBLING_OF
+  evidence:
+  - Genesis 25:24-26

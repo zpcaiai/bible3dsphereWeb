@@ -1,0 +1,10 @@
+characterId: josiah
+relationships:
+- target: huldah
+  type: CONSULTED_PROPHET
+  evidence:
+  - 2 Kings 22:14-20
+- target: amon
+  type: CHILD_OF
+  evidence:
+  - 2 Kings 22:1

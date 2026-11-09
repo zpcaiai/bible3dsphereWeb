@@ -1,0 +1,11 @@
+characterId: luke
+relationships:
+- target: paul
+  type: TRAVELED_WITH
+  evidence:
+  - Acts 16:10-17
+  - Acts 20:5-15
+- target: mark
+  type: FELLOW_WORKER_WITH
+  evidence:
+  - Philemon 24

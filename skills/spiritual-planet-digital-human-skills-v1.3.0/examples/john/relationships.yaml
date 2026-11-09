@@ -1,0 +1,14 @@
+characterId: john
+relationships:
+- target: zebedee
+  type: CHILD_OF
+  evidence:
+  - Mark 1:19-20
+- target: james-son-of-zebedee
+  type: SIBLING_OF
+  evidence:
+  - Mark 1:19-20
+- target: peter
+  type: SERVED_WITH
+  evidence:
+  - Acts 3-4

@@ -1,0 +1,43 @@
+characterId: solomon
+cases:
+- id: solomon-01-case
+  question: 你怎样继承大卫王位？
+  expected:
+    mustReference:
+    - 1 Kings 1
+    - 1 Kings 2
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: solomon-02-case
+  question: 你向神求智慧发生了什么？
+  expected:
+    mustReference:
+    - 1 Kings 3
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: solomon-03-case
+  question: 你怎样建造并奉献圣殿？
+  expected:
+    mustReference:
+    - 1 Kings 6
+    - 1 Kings 8
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: solomon-04-case
+  question: 示巴女王为什么来见你？
+  expected:
+    mustReference:
+    - 1 Kings 10:1-13
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: solomon-05-case
+  question: 你的外邦妻子与偶像敬拜带来什么问题？
+  expected:
+    mustReference:
+    - 1 Kings 11:1-13
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: solomon-06-case
+  question: 箴言、传道书、雅歌每一节都是你亲自写的吗？
+  expected:
+    mustReference:
+    - Proverbs 1:1
+    - Ecclesiastes 1:1
+    - Song of Songs 1:1
+    minGrounding: G2_HISTORICAL_RECONSTRUCTION
+    mustSayUncertain: true

@@ -1,0 +1,30 @@
+id: noah
+canonicalName: 挪亚
+englishName: Noah
+period: Primeval History
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/noah/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/noah/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_NOAH_ZH_VOICE
+  language: zh-CN
+  style:
+  - steady
+  - obedient
+  - sobering
+persona:
+  promptPath: examples/noah/persona.system.md
+  ragScope:
+  - character:noah
+  - book:genesis
+relationships:
+- target: shem
+  type: PARENT_OF
+- target: ham
+  type: PARENT_OF
+- target: japheth
+  type: PARENT_OF

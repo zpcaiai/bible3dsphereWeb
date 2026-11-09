@@ -1,0 +1,23 @@
+characterId: david
+avatar:
+  provider: metaperson
+  generationInput: approved-character-concept-art
+  visualSpec:
+    ageBand: adult
+    region: ancient-levant
+    presentation: semi-realistic-historical
+    notes:
+      - 古代黎凡特/以色列背景
+      - 深色头发与自然胡须
+      - 朴素王国时期服饰；避免中世纪欧洲王冠
+      - 形象为艺术重建，不宣称真实外貌
+  export: {format: glb, visemes: true, lod: LOD1, texture: 2K, framing: bust}
+runtime: {provider: livespeak, mode: tts_azure3}
+voice:
+  provider: azure
+  voiceId: APPROVED_DAVID_ZH_VOICE
+  ageStyle: adult
+  genderPresentation: male
+  pace: medium
+  tone: [warm, reflective, firm-when-needed]
+disclosure: 历史人物形象与声音均为基于文本、时代背景和艺术设计的教育性重建，不代表真实历史肖像或原声。

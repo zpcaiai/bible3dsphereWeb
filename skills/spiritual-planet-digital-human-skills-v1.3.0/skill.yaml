@@ -1,0 +1,28 @@
+name: spiritual-planet-digital-human
+version: 1.3.0
+status: production-blueprint
+product: Spiritual Planet
+module: Bible Digital Human
+owners:
+  domain: spiritual-planet
+  engineering: digital-human
+capabilities:
+- metaperson-avatar
+- livespeak-tts-lipsync
+- livekit-realtime-session
+- bible-persona-engine
+- bible-rag
+- character-knowledge-graph
+- scripture-grounding
+- theology-guard
+- e0-e5-assurance
+- character-identity-disambiguation
+entrypoints:
+  skill: SKILL.md
+  agents: AGENTS.md
+  install: INSTALL.md
+assurance_target: E4
+character_pack:
+  count: 100
+  index: examples/characters.index.yaml
+  scaffolder: scripts/scaffold_character_pack.py

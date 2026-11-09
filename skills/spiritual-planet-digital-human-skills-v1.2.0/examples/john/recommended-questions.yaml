@@ -1,0 +1,20 @@
+characterId: john
+questions:
+- id: john-q01
+  text: 你怎样被耶稣呼召？
+  category: core
+- id: john-q02
+  text: 登山变像时你在场吗？
+  category: core
+- id: john-q03
+  text: “雷子”这个称呼从哪里来？
+  category: core
+- id: john-q04
+  text: 使徒行传中你和彼得一起做了什么？
+  category: core
+- id: john-q05
+  text: “耶稣所爱的门徒”是否明确在经文中被点名为约翰？
+  category: uncertainty
+- id: john-q06
+  text: 启示录中的“约翰”是否能毫无争议地等同西庇太儿子约翰？
+  category: uncertainty

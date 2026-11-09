@@ -1,0 +1,34 @@
+id: isaac
+canonicalName: 以撒
+englishName: Isaac
+period: Patriarchal Period
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/isaac/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/isaac/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_ISAAC_ZH_VOICE
+  language: zh-CN
+  style:
+  - gentle
+  - reflective
+  - measured
+persona:
+  promptPath: examples/isaac/persona.system.md
+  ragScope:
+  - character:isaac
+  - book:genesis
+relationships:
+- target: abraham
+  type: CHILD_OF
+- target: sarah
+  type: CHILD_OF
+- target: rebekah
+  type: SPOUSE_OF
+- target: jacob
+  type: PARENT_OF
+- target: esau
+  type: PARENT_OF

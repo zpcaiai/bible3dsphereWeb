@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spiritual-planet.example/schemas/conversation-event.schema.json",
+  "title": "ConversationEvent",
+  "type": "object",
+  "required": [
+    "sessionId",
+    "turnId",
+    "characterId",
+    "type",
+    "timestamp"
+  ],
+  "properties": {
+    "sessionId": {
+      "type": "string"
+    },
+    "turnId": {
+      "type": "string"
+    },
+    "characterId": {
+      "type": "string"
+    },
+    "type": {
+      "enum": [
+        "USER_TURN_STARTED",
+        "USER_TURN_ENDED",
+        "TRANSCRIPT_FINAL",
+        "RETRIEVAL_STARTED",
+        "ANSWER_APPROVED",
+        "AVATAR_SPEAK_STARTED",
+        "AVATAR_SPEAK_ENDED",
+        "ERROR"
+      ]
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "payload": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": false
+}

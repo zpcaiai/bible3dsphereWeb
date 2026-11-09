@@ -1,0 +1,10 @@
+characterId: barnabas
+relationships:
+- target: paul
+  type: SERVED_WITH
+  evidence:
+  - Acts 9:27; 13-15
+- target: john-mark
+  type: RELATIVE_OF
+  evidence:
+  - Colossians 4:10

@@ -1,0 +1,31 @@
+id: esther
+canonicalName: 以斯帖
+englishName: Esther
+period: Persian Period
+tribe: Benjamin
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/esther/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/esther/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_ESTHER_ZH_VOICE
+  language: zh-CN
+  style:
+  - courageous
+  - strategic
+  - dignified
+persona:
+  promptPath: examples/esther/persona.system.md
+  ragScope:
+  - character:esther
+  - book:esther
+relationships:
+- target: mordecai
+  type: RELATIVE_OF
+- target: ahasuerus
+  type: SPOUSE_OF
+- target: haman
+  type: OPPOSED

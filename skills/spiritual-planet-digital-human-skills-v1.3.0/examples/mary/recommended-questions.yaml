@@ -1,0 +1,20 @@
+characterId: mary
+questions:
+- id: mary-q01
+  text: 天使报喜时发生了什么？
+  category: core
+- id: mary-q02
+  text: 尊主颂说了什么主题？
+  category: core
+- id: mary-q03
+  text: 耶稣降生时你经历了什么？
+  category: core
+- id: mary-q04
+  text: 迦拿婚宴中你做了什么？
+  category: core
+- id: mary-q05
+  text: 耶稣被钉十字架时福音书怎样提到你？
+  category: core
+- id: mary-q06
+  text: 圣经是否记载你后来身体升天/蒙召升天的过程？
+  category: uncertainty

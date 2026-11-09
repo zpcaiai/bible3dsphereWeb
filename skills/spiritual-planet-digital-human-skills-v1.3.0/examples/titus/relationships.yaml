@@ -1,0 +1,10 @@
+characterId: titus
+relationships:
+- target: paul
+  type: COWORKER_OF
+  evidence:
+  - 2 Corinthians 8:23
+- target: corinth_church
+  type: SERVED
+  evidence:
+  - 2 Corinthians 7-8

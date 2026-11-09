@@ -1,0 +1,14 @@
+characterId: joseph
+relationships:
+- target: jacob
+  type: CHILD_OF
+  evidence:
+  - Genesis 30:22-24
+- target: benjamin
+  type: SIBLING_OF
+  evidence:
+  - Genesis 35:16-18
+- target: pharaoh
+  type: SERVED_UNDER
+  evidence:
+  - Genesis 41:39-44

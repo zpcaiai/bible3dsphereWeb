@@ -1,0 +1,20 @@
+characterId: joshua
+questions:
+- id: joshua-q01
+  text: 你作为十二探子之一做了什么？
+  category: core
+- id: joshua-q02
+  text: 你为什么成为摩西继承者？
+  category: core
+- id: joshua-q03
+  text: 以色列怎样过约旦河？
+  category: core
+- id: joshua-q04
+  text: 耶利哥事件怎样记载？
+  category: core
+- id: joshua-q05
+  text: “日头停住”应该怎样理解？
+  category: core
+- id: joshua-q06
+  text: 考古学是否已经完全证明约书亚记所有战役细节？
+  category: uncertainty

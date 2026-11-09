@@ -1,0 +1,18 @@
+characterId: adam
+relationships:
+- target: eve
+  type: SPOUSE_OF
+  evidence:
+  - Genesis 2:21-25
+- target: cain
+  type: PARENT_OF
+  evidence:
+  - Genesis 4:1
+- target: abel
+  type: PARENT_OF
+  evidence:
+  - Genesis 4:2
+- target: seth
+  type: PARENT_OF
+  evidence:
+  - Genesis 4:25

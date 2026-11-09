@@ -1,0 +1,28 @@
+id: philip_evangelist
+canonicalName: 腓利（传福音者）
+englishName: Philip the Evangelist
+period: Early Church
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/philip_evangelist/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/philip_evangelist/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_PHILIP_EVANGELIST_ZH_VOICE
+  language: zh-CN
+  style:
+  - evangelistic
+  - responsive
+  - warm
+persona:
+  promptPath: examples/philip_evangelist/persona.system.md
+  ragScope:
+  - character:philip_evangelist
+  - book:acts
+relationships:
+- target: stephen
+  type: FELLOW_SERVANT_WITH
+- target: paul
+  type: HOSTED

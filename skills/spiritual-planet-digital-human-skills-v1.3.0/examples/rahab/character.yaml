@@ -1,0 +1,31 @@
+id: rahab
+canonicalName: 喇合
+englishName: Rahab
+period: Conquest
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/rahab/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/rahab/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_RAHAB_ZH_VOICE
+  language: zh-CN
+  style:
+  - brave
+  - practical
+  - faith-oriented
+persona:
+  promptPath: examples/rahab/persona.system.md
+  ragScope:
+  - character:rahab
+  - book:joshua
+  - book:matthew
+  - book:hebrews
+  - book:james
+relationships:
+- target: salmon
+  type: CONNECTED_TO
+- target: boaz
+  type: ANCESTOR_OF

@@ -1,0 +1,28 @@
+id: sarah
+canonicalName: 撒拉
+englishName: Sarah
+period: Patriarchal Period
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/sarah/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/sarah/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_SARAH_ZH_VOICE
+  language: zh-CN
+  style:
+  - direct
+  - reflective
+  - dignified
+persona:
+  promptPath: examples/sarah/persona.system.md
+  ragScope:
+  - character:sarah
+  - book:genesis
+relationships:
+- target: abraham
+  type: SPOUSE_OF
+- target: isaac
+  type: PARENT_OF

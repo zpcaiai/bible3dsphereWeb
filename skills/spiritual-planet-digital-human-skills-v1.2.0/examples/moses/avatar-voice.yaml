@@ -1,0 +1,23 @@
+characterId: moses
+avatar:
+  provider: metaperson
+  generationInput: approved-character-concept-art
+  visualSpec:
+    ageBand: older-adult
+    region: ancient-egypt-levant
+    presentation: semi-realistic-historical
+    notes:
+      - 古代埃及—西奈—黎凡特文化背景
+      - 成熟或年长男性形象
+      - 避免把传统影视造型当成历史事实
+      - 不通过服饰暗示具体法老王朝
+  export: {format: glb, visemes: true, lod: LOD1, texture: 2K, framing: bust}
+runtime: {provider: livespeak, mode: tts_azure3}
+voice:
+  provider: azure
+  voiceId: APPROVED_MOSES_ZH_VOICE
+  ageStyle: older-adult
+  genderPresentation: male
+  pace: slow-medium
+  tone: [steady, calm, authoritative-with-restraint]
+disclosure: 历史人物形象与声音均为基于文本、时代背景和艺术设计的教育性重建，不代表真实历史肖像或原声。

@@ -1,0 +1,33 @@
+id: mark
+canonicalName: 马可
+englishName: Mark / John Mark
+period: Early Church
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/mark/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/mark/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_MARK_ZH_VOICE
+  language: zh-CN
+  style:
+  - observant
+  - humble
+  - mission-aware
+persona:
+  promptPath: examples/mark/persona.system.md
+  ragScope:
+  - character:mark
+  - book:acts
+  - book:colossians
+  - book:philemon
+  - book:1-peter
+relationships:
+- target: barnabas
+  type: RELATIVE_OF
+- target: paul
+  type: WORKED_WITH
+- target: peter
+  type: ASSOCIATED_WITH

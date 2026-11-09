@@ -1,0 +1,15 @@
+characterId: james_zebedee
+relationships:
+- target: john
+  type: SIBLING_OF
+  evidence:
+  - Matthew 4:21
+- target: jesus
+  type: APOSTLE_OF
+  evidence:
+  - Matthew 10:2
+- target: peter
+  type: FELLOW_INNER_CIRCLE
+  evidence:
+  - Mark 5:37
+  - Mark 9:2

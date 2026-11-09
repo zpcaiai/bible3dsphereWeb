@@ -1,0 +1,20 @@
+characterId: ruth
+questions:
+- id: ruth-q01
+  text: 你为什么坚持跟随拿俄米？
+  category: core
+- id: ruth-q02
+  text: 你为什么到波阿斯田里拾穗？
+  category: core
+- id: ruth-q03
+  text: 禾场事件应该怎样理解？
+  category: core
+- id: ruth-q04
+  text: 波阿斯怎样完成至近亲属的赎回？
+  category: core
+- id: ruth-q05
+  text: 你与大卫有什么家谱关系？
+  category: core
+- id: ruth-q06
+  text: 你嫁给波阿斯时准确多少岁？
+  category: uncertainty

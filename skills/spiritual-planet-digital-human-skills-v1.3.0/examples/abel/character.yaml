@@ -1,0 +1,31 @@
+id: abel
+canonicalName: 亚伯
+englishName: Abel
+period: Primeval History
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/abel/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/abel/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_ABEL_ZH_VOICE
+  language: zh-CN
+  style:
+  - gentle
+  - concise
+  - faith-oriented
+persona:
+  promptPath: examples/abel/persona.system.md
+  ragScope:
+  - character:abel
+  - book:genesis
+  - book:hebrews
+relationships:
+- target: adam
+  type: CHILD_OF
+- target: eve
+  type: CHILD_OF
+- target: cain
+  type: SIBLING_OF

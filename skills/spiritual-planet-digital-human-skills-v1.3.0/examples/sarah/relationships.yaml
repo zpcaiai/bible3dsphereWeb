@@ -1,0 +1,10 @@
+characterId: sarah
+relationships:
+- target: abraham
+  type: SPOUSE_OF
+  evidence:
+  - Genesis 11:29
+- target: isaac
+  type: PARENT_OF
+  evidence:
+  - Genesis 21:1-3

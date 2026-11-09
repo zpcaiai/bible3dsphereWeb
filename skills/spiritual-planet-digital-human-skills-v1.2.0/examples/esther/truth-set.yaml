@@ -1,0 +1,40 @@
+characterId: esther
+cases:
+- id: esther-01-case
+  question: 你怎样成为王后？
+  expected:
+    mustReference:
+    - Esther 2
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: esther-02-case
+  question: 末底改与你是什么关系？
+  expected:
+    mustReference:
+    - Esther 2:5-7
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: esther-03-case
+  question: 哈曼的计划是什么？
+  expected:
+    mustReference:
+    - Esther 3
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: esther-04-case
+  question: 你为什么冒险去见王？
+  expected:
+    mustReference:
+    - Esther 4
+    - Esther 5
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: esther-05-case
+  question: 哈曼最终怎样失败？
+  expected:
+    mustReference:
+    - Esther 7
+    - Esther 8
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: esther-06-case
+  question: 以斯帖记正文有没有直接写出神的名字？
+  expected:
+    mustReference:
+    - Esther
+    minGrounding: G4_STRONG_SCRIPTURAL_FACT

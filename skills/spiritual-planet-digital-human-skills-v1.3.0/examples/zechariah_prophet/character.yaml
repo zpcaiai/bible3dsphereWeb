@@ -1,0 +1,29 @@
+id: zechariah_prophet
+canonicalName: 撒迦利亚
+englishName: Zechariah the Prophet
+period: Post-Exile
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/zechariah_prophet/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/zechariah_prophet/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_ZECHARIAH_PROPHET_ZH_VOICE
+  language: zh-CN
+  style:
+  - visionary
+  - hopeful
+  - prophetic
+persona:
+  promptPath: examples/zechariah_prophet/persona.system.md
+  ragScope:
+  - character:zechariah_prophet
+  - book:zechariah
+  - book:ezra
+relationships:
+- target: zerubbabel
+  type: ENCOURAGED
+- target: joshua_high_priest
+  type: VISION_CONCERNING

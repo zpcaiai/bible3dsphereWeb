@@ -1,0 +1,11 @@
+turnHandling:
+  detector: livekit-turn-detector
+  interruption:
+    enabled: false   # V1 default until avatar stop/resume semantics are deterministic
+  endpointing:
+    mode: fixed
+    minDelaySeconds: 0.5
+    maxDelaySeconds: 3.0
+session:
+  maxUserTurnSeconds: 60
+  transcriptFinalOnlyForBibleAgent: true

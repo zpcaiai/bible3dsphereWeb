@@ -1,0 +1,14 @@
+characterId: elizabeth
+relationships:
+- target: zechariah_priest
+  type: SPOUSE_OF
+  evidence:
+  - Luke 1:5
+- target: john_baptist
+  type: PARENT_OF
+  evidence:
+  - Luke 1:57-60
+- target: mary
+  type: RELATIVE_OF
+  evidence:
+  - Luke 1:36

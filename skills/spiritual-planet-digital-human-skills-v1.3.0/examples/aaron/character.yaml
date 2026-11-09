@@ -1,0 +1,32 @@
+id: aaron
+canonicalName: 亚伦
+englishName: Aaron
+period: Exodus/Wilderness
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/aaron/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/aaron/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_AARON_ZH_VOICE
+  language: zh-CN
+  style:
+  - priestly
+  - measured
+  - honest
+persona:
+  promptPath: examples/aaron/persona.system.md
+  ragScope:
+  - character:aaron
+  - book:exodus
+  - book:leviticus
+  - book:numbers
+relationships:
+- target: moses
+  type: SIBLING_OF
+- target: miriam
+  type: SIBLING_OF
+- target: eleazar
+  type: PARENT_OF

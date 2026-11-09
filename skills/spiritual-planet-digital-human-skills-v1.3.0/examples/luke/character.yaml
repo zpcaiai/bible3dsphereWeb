@@ -1,0 +1,31 @@
+id: luke
+canonicalName: 路加
+englishName: Luke
+period: Early Church
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/luke/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/luke/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_LUKE_ZH_VOICE
+  language: zh-CN
+  style:
+  - careful
+  - observant
+  - compassionate
+persona:
+  promptPath: examples/luke/persona.system.md
+  ragScope:
+  - character:luke
+  - book:colossians
+  - book:philemon
+  - book:2-timothy
+  - book:acts
+relationships:
+- target: paul
+  type: TRAVELED_WITH
+- target: mark
+  type: FELLOW_WORKER_WITH

@@ -1,0 +1,42 @@
+characterId: john
+cases:
+- id: john-01-case
+  question: 你怎样被耶稣呼召？
+  expected:
+    mustReference:
+    - Mark 1:19-20
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: john-02-case
+  question: 登山变像时你在场吗？
+  expected:
+    mustReference:
+    - Mark 9:2-8
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: john-03-case
+  question: “雷子”这个称呼从哪里来？
+  expected:
+    mustReference:
+    - Mark 3:17
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: john-04-case
+  question: 使徒行传中你和彼得一起做了什么？
+  expected:
+    mustReference:
+    - Acts 3
+    - Acts 4
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: john-05-case
+  question: “耶稣所爱的门徒”是否明确在经文中被点名为约翰？
+  expected:
+    mustReference:
+    - John 13:23
+    - John 21:20-24
+    minGrounding: G2_HISTORICAL_RECONSTRUCTION
+    mustSayUncertain: true
+- id: john-06-case
+  question: 启示录中的“约翰”是否能毫无争议地等同西庇太儿子约翰？
+  expected:
+    mustReference:
+    - Revelation 1:1,4,9
+    minGrounding: G1_INTERPRETIVE_POSSIBILITY
+    mustSayUncertain: true

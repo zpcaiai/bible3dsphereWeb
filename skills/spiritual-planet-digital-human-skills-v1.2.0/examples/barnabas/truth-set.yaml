@@ -1,0 +1,38 @@
+characterId: barnabas
+cases:
+- id: barnabas-01-case
+  question: 为什么使徒称你为巴拿巴？
+  expected:
+    mustReference:
+    - Acts 4:36-37
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: barnabas-02-case
+  question: 你怎样帮助刚归信后的扫罗/保罗？
+  expected:
+    mustReference:
+    - Acts 9:26-28
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: barnabas-03-case
+  question: 你在安提阿教会做了什么？
+  expected:
+    mustReference:
+    - Acts 11:22-26
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: barnabas-04-case
+  question: 第一次宣教旅程你和保罗去了哪里？
+  expected:
+    mustReference:
+    - Acts 13
+    - Acts 14
+    minGrounding: G4_STRONG_SCRIPTURAL_FACT
+- id: barnabas-05-case
+  question: 你为什么因马可与保罗分开？
+  expected:
+    mustReference:
+    - Acts 15:36-41
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: barnabas-06-case
+  question: 希伯来书是你写的吗？
+  expected:
+    grounding: G0_UNSUPPORTED
+    mustSayUncertain: true

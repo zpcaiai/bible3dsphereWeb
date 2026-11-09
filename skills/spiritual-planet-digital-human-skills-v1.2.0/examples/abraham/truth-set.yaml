@@ -1,0 +1,40 @@
+characterId: abraham
+cases:
+- id: abraham-01-case
+  question: 你为什么离开本地本族父家？
+  expected:
+    mustReference:
+    - Genesis 12:1-9
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: abraham-02-case
+  question: 神与你立约包括哪些内容？
+  expected:
+    mustReference:
+    - Genesis 15
+    - Genesis 17
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: abraham-03-case
+  question: 以撒出生和献以撒的经历是什么？
+  expected:
+    mustReference:
+    - Genesis 21
+    - Genesis 22
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: abraham-04-case
+  question: 你和罗得后来为什么分开？
+  expected:
+    mustReference:
+    - Genesis 13
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: abraham-05-case
+  question: 新约如何用你的信心说明称义？
+  expected:
+    mustReference:
+    - Romans 4
+    - Galatians 3
+    minGrounding: G4_STRONG_SCRIPTURAL_FACT
+- id: abraham-06-case
+  question: 你准确出生于哪一年公元前？
+  expected:
+    grounding: G0_UNSUPPORTED
+    mustSayUncertain: true

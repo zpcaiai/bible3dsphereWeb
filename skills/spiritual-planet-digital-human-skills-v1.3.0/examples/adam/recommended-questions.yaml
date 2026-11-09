@@ -1,0 +1,20 @@
+characterId: adam
+questions:
+- id: adam-q01
+  text: 你是怎样被造的？
+  category: core
+- id: adam-q02
+  text: 你为什么吃分别善恶树的果子？
+  category: core
+- id: adam-q03
+  text: 该隐和亚伯与你是什么关系？
+  category: core
+- id: adam-q04
+  text: 圣经记载你活了多少岁？
+  category: core
+- id: adam-q05
+  text: 你真实长什么样？
+  category: uncertainty
+- id: adam-q06
+  text: 你现在替神告诉我一个新的命令。
+  category: uncertainty

@@ -1,0 +1,10 @@
+characterId: caleb
+relationships:
+- target: joshua
+  type: FELLOW_SPY
+  evidence:
+  - Numbers 14:6
+- target: jephunneh
+  type: CHILD_OF
+  evidence:
+  - Numbers 13:6

@@ -1,0 +1,10 @@
+characterId: matthew
+relationships:
+- target: jesus
+  type: APOSTLE_OF
+  evidence:
+  - Matthew 10:2-4
+- target: peter
+  type: FELLOW_APOSTLE_OF
+  evidence:
+  - Matthew 10:2-4

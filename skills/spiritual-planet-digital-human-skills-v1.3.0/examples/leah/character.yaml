@@ -1,0 +1,30 @@
+id: leah
+canonicalName: 利亚
+englishName: Leah
+period: Patriarchal Period
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/leah/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/leah/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_LEAH_ZH_VOICE
+  language: zh-CN
+  style:
+  - tender
+  - family-oriented
+  - reflective
+persona:
+  promptPath: examples/leah/persona.system.md
+  ragScope:
+  - character:leah
+  - book:genesis
+relationships:
+- target: jacob
+  type: SPOUSE_OF
+- target: rachel
+  type: SIBLING_OF
+- target: judah
+  type: PARENT_OF

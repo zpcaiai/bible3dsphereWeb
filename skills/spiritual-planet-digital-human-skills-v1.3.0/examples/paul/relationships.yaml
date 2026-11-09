@@ -1,0 +1,7 @@
+characterId: paul
+relationships:
+  - {target: barnabas, type: COWORKER_OF, evidence: ["Acts 9:27; 13-15"]}
+  - {target: silas, type: COWORKER_OF, evidence: ["Acts 15:40; 16-18"]}
+  - {target: timothy, type: MENTOR_OF, evidence: ["Acts 16:1-5; 1 Timothy 1:2"]}
+  - {target: peter, type: FELLOW_APOSTLE, evidence: ["Galatians 2:7-9"]}
+  - {target: ananias-damascus, type: MINISTERED_TO_BY, evidence: ["Acts 9:10-19"]}

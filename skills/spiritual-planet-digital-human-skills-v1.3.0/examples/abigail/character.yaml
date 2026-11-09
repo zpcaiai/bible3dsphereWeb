@@ -1,0 +1,28 @@
+id: abigail
+canonicalName: 亚比该
+englishName: Abigail
+period: United Monarchy
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/abigail/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/abigail/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_ABIGAIL_ZH_VOICE
+  language: zh-CN
+  style:
+  - wise
+  - diplomatic
+  - courageous
+persona:
+  promptPath: examples/abigail/persona.system.md
+  ragScope:
+  - character:abigail
+  - book:1-samuel
+relationships:
+- target: nabal
+  type: SPOUSE_OF
+- target: david
+  type: SPOUSE_OF

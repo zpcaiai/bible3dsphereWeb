@@ -1,0 +1,11 @@
+characterId: stephen
+relationships:
+- target: philip_evangelist
+  type: FELLOW_SERVANT_WITH
+  evidence:
+  - Acts 6:5
+- target: paul
+  type: PERSECUTOR_PRESENT_AT_DEATH
+  evidence:
+  - Acts 7:58
+  - Acts 8:1

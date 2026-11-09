@@ -1,0 +1,29 @@
+id: isaiah
+canonicalName: 以赛亚
+englishName: Isaiah
+period: 8th century BCE Judah
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/isaiah/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/isaiah/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_ISAIAH_ZH_VOICE
+  language: zh-CN
+  style:
+  - prophetic
+  - poetic
+  - majestic
+persona:
+  promptPath: examples/isaiah/persona.system.md
+  ragScope:
+  - character:isaiah
+  - book:isaiah
+  - book:2-kings
+relationships:
+- target: ahaz
+  type: PROPHET_TO
+- target: hezekiah
+  type: PROPHET_TO

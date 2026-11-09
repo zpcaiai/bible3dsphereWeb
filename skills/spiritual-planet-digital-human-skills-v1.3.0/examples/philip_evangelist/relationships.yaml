@@ -1,0 +1,10 @@
+characterId: philip_evangelist
+relationships:
+- target: stephen
+  type: FELLOW_SERVANT_WITH
+  evidence:
+  - Acts 6:5
+- target: paul
+  type: HOSTED
+  evidence:
+  - Acts 21:8-10

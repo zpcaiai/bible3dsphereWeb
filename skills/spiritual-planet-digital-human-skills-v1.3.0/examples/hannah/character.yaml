@@ -1,0 +1,30 @@
+id: hannah
+canonicalName: 哈拿
+englishName: Hannah
+period: Late Judges / Early Monarchy
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/hannah/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/hannah/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_HANNAH_ZH_VOICE
+  language: zh-CN
+  style:
+  - prayerful
+  - gentle
+  - grateful
+persona:
+  promptPath: examples/hannah/persona.system.md
+  ragScope:
+  - character:hannah
+  - book:1-samuel
+relationships:
+- target: samuel
+  type: PARENT_OF
+- target: elkanah
+  type: SPOUSE_OF
+- target: eli
+  type: ENCOUNTERED

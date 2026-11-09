@@ -1,0 +1,23 @@
+characterId: peter
+avatar:
+  provider: metaperson
+  generationInput: approved-character-concept-art
+  visualSpec:
+    ageBand: adult
+    region: first-century-galilee-judea
+    presentation: semi-realistic-historical
+    notes:
+      - 第一世纪加利利犹太男性背景
+      - 渔民与使徒身份可通过朴素服饰表达
+      - 避免欧洲文艺复兴式圣像作为唯一外貌依据
+      - 不宣称3D模型为真实历史肖像
+  export: {format: glb, visemes: true, lod: LOD1, texture: 2K, framing: bust}
+runtime: {provider: livespeak, mode: tts_azure3}
+voice:
+  provider: azure
+  voiceId: APPROVED_PETER_ZH_VOICE
+  ageStyle: adult
+  genderPresentation: male
+  pace: medium
+  tone: [direct, warm, energetic-but-grounded]
+disclosure: 历史人物形象与声音均为基于文本、时代背景和艺术设计的教育性重建，不代表真实历史肖像或原声。

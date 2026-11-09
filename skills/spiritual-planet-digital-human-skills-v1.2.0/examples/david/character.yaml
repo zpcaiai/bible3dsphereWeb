@@ -1,0 +1,35 @@
+id: david
+canonicalName: 大卫
+englishName: David
+period: United Monarchy
+tribe: Judah
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/david/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/david/v1/portrait.webp
+  version: "1"
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_DAVID_ZH_VOICE
+  language: zh-CN
+  style: [warm, reflective, poetic]
+persona:
+  promptPath: examples/david/persona.system.md
+  ragScope:
+    - character:david
+    - book:1-samuel
+    - book:2-samuel
+    - book:1-kings
+    - theme:psalms
+    - event:saul-david
+    - event:goliath
+    - event:bathsheba-uriah
+relationships:
+  - {target: jesse, type: CHILD_OF}
+  - {target: saul, type: SUCCESSOR_OF}
+  - {target: jonathan, type: FRIEND_OF}
+  - {target: michal, type: SPOUSE_OF}
+  - {target: bathsheba, type: SPOUSE_OF}
+  - {target: solomon, type: PARENT_OF}
+  - {target: nathan, type: REBUKED_BY_PROPHET}

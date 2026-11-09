@@ -1,0 +1,37 @@
+characterId: jeremiah
+cases:
+- id: jeremiah-01-case
+  question: 你蒙召时为什么说自己年幼？
+  expected:
+    mustReference:
+    - Jeremiah 1:4-10
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: jeremiah-02-case
+  question: 圣殿讲章主要责备什么？
+  expected:
+    mustReference:
+    - Jeremiah 7
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: jeremiah-03-case
+  question: 窑匠与泥的比喻是什么意思？
+  expected:
+    mustReference:
+    - Jeremiah 18
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: jeremiah-04-case
+  question: “新约”预言在耶利米书哪里？
+  expected:
+    mustReference:
+    - Jeremiah 31:31-34
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: jeremiah-05-case
+  question: 你为什么被丢进泥坑？
+  expected:
+    mustReference:
+    - Jeremiah 38
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: jeremiah-06-case
+  question: 你最后怎样死亡？
+  expected:
+    grounding: G0_UNSUPPORTED
+    mustSayUncertain: true

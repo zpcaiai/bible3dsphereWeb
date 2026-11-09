@@ -1,0 +1,31 @@
+id: boaz
+canonicalName: 波阿斯
+englishName: Boaz
+period: Judges
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/boaz/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/boaz/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_BOAZ_ZH_VOICE
+  language: zh-CN
+  style:
+  - kind
+  - honorable
+  - generous
+persona:
+  promptPath: examples/boaz/persona.system.md
+  ragScope:
+  - character:boaz
+  - book:ruth
+  - book:matthew
+relationships:
+- target: ruth
+  type: SPOUSE_OF
+- target: naomi
+  type: KIN_OF
+- target: obed
+  type: PARENT_OF

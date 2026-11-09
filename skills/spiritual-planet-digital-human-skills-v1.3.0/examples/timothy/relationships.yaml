@@ -1,0 +1,15 @@
+characterId: timothy
+relationships:
+- target: paul
+  type: MENTORED_BY
+  evidence:
+  - 1 Timothy 1:2
+  - 2 Timothy 1:2
+- target: eunice
+  type: CHILD_OF
+  evidence:
+  - 2 Timothy 1:5
+- target: lois
+  type: GRANDCHILD_OF
+  evidence:
+  - 2 Timothy 1:5

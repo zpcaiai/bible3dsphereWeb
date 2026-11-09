@@ -1,0 +1,33 @@
+id: saul
+canonicalName: 扫罗
+englishName: Saul
+period: Early Monarchy
+tribe: Benjamin
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/saul/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/saul/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_SAUL_ZH_VOICE
+  language: zh-CN
+  style:
+  - candid
+  - tragic
+  - restrained
+persona:
+  promptPath: examples/saul/persona.system.md
+  ragScope:
+  - character:saul
+  - book:1-samuel
+relationships:
+- target: kish
+  type: CHILD_OF
+- target: jonathan
+  type: PARENT_OF
+- target: samuel
+  type: ANOINTED_BY
+- target: david
+  type: PREDECESSOR_OF

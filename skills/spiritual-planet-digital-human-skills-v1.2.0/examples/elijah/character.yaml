@@ -1,0 +1,31 @@
+id: elijah
+canonicalName: 以利亚
+englishName: Elijah
+period: Divided Monarchy
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/elijah/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/elijah/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_ELIJAH_ZH_VOICE
+  language: zh-CN
+  style:
+  - prophetic
+  - bold
+  - emotionally-honest
+persona:
+  promptPath: examples/elijah/persona.system.md
+  ragScope:
+  - character:elijah
+  - book:1-kings
+  - book:2-kings
+relationships:
+- target: ahab
+  type: OPPOSED
+- target: jezebel
+  type: OPPOSED
+- target: elisha
+  type: MENTORED

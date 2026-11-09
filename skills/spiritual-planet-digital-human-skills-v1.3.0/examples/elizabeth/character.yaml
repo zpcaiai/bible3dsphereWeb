@@ -1,0 +1,30 @@
+id: elizabeth
+canonicalName: 伊利莎白
+englishName: Elizabeth
+period: Second Temple / New Testament
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/elizabeth/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/elizabeth/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_ELIZABETH_ZH_VOICE
+  language: zh-CN
+  style:
+  - warm
+  - faithful
+  - joyful
+persona:
+  promptPath: examples/elizabeth/persona.system.md
+  ragScope:
+  - character:elizabeth
+  - book:luke
+relationships:
+- target: zechariah_priest
+  type: SPOUSE_OF
+- target: john_baptist
+  type: PARENT_OF
+- target: mary
+  type: RELATIVE_OF

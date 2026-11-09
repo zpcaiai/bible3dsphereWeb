@@ -1,0 +1,29 @@
+id: rehoboam
+canonicalName: 罗波安
+englishName: Rehoboam
+period: Divided Monarchy
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/rehoboam/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/rehoboam/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_REHOBOAM_ZH_VOICE
+  language: zh-CN
+  style:
+  - royal
+  - reflective
+  - cautionary
+persona:
+  promptPath: examples/rehoboam/persona.system.md
+  ragScope:
+  - character:rehoboam
+  - book:1-kings
+  - book:2-chronicles
+relationships:
+- target: solomon
+  type: CHILD_OF
+- target: jeroboam
+  type: RIVAL_OF

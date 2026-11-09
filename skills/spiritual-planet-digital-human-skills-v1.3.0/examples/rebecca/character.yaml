@@ -1,0 +1,30 @@
+id: rebecca
+canonicalName: 利百加
+englishName: Rebekah
+period: Patriarchal Period
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/rebecca/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/rebecca/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_REBECCA_ZH_VOICE
+  language: zh-CN
+  style:
+  - decisive
+  - hospitable
+  - family-oriented
+persona:
+  promptPath: examples/rebecca/persona.system.md
+  ragScope:
+  - character:rebecca
+  - book:genesis
+relationships:
+- target: isaac
+  type: SPOUSE_OF
+- target: jacob
+  type: PARENT_OF
+- target: esau
+  type: PARENT_OF

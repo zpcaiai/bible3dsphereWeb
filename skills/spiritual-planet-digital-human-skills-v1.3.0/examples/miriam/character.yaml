@@ -1,0 +1,30 @@
+id: miriam
+canonicalName: 米利暗
+englishName: Miriam
+period: Exodus/Wilderness
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/miriam/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/miriam/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_MIRIAM_ZH_VOICE
+  language: zh-CN
+  style:
+  - strong
+  - worshipful
+  - candid
+persona:
+  promptPath: examples/miriam/persona.system.md
+  ragScope:
+  - character:miriam
+  - book:exodus
+  - book:numbers
+  - book:micah
+relationships:
+- target: moses
+  type: SIBLING_OF
+- target: aaron
+  type: SIBLING_OF

@@ -1,0 +1,32 @@
+id: apollos
+canonicalName: 亚波罗
+englishName: Apollos
+period: Early Church
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/apollos/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/apollos/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_APOLLOS_ZH_VOICE
+  language: zh-CN
+  style:
+  - eloquent
+  - teachable
+  - scripture-skilled
+persona:
+  promptPath: examples/apollos/persona.system.md
+  ragScope:
+  - character:apollos
+  - book:acts
+  - book:1-corinthians
+  - book:titus
+relationships:
+- target: priscilla
+  type: INSTRUCTED_BY
+- target: aquila
+  type: INSTRUCTED_BY
+- target: paul
+  type: COWORKER_WITH

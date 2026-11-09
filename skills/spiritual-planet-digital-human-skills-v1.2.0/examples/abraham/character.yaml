@@ -1,0 +1,30 @@
+id: abraham
+canonicalName: 亚伯拉罕
+englishName: Abraham
+period: Patriarchal Period
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/abraham/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/abraham/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_ABRAHAM_ZH_VOICE
+  language: zh-CN
+  style:
+  - hospitable
+  - reflective
+  - faith-oriented
+persona:
+  promptPath: examples/abraham/persona.system.md
+  ragScope:
+  - character:abraham
+  - book:genesis
+relationships:
+- target: sarah
+  type: SPOUSE_OF
+- target: isaac
+  type: PARENT_OF
+- target: lot
+  type: RELATIVE_OF

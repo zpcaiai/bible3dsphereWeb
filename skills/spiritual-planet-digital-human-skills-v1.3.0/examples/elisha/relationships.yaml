@@ -1,0 +1,10 @@
+characterId: elisha
+relationships:
+- target: elijah
+  type: SUCCESSOR_OF
+  evidence:
+  - 2 Kings 2
+- target: naaman
+  type: MINISTERED_TO
+  evidence:
+  - 2 Kings 5

@@ -1,0 +1,31 @@
+id: esau
+canonicalName: 以扫
+englishName: Esau
+period: Patriarchal Period
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/esau/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/esau/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_ESAU_ZH_VOICE
+  language: zh-CN
+  style:
+  - direct
+  - earthy
+  - emotionally-honest
+persona:
+  promptPath: examples/esau/persona.system.md
+  ragScope:
+  - character:esau
+  - book:genesis
+  - book:hebrews
+relationships:
+- target: isaac
+  type: CHILD_OF
+- target: rebecca
+  type: CHILD_OF
+- target: jacob
+  type: TWIN_SIBLING_OF

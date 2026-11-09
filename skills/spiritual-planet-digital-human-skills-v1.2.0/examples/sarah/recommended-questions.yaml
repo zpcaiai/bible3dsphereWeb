@@ -1,0 +1,20 @@
+characterId: sarah
+questions:
+- id: sarah-q01
+  text: 你为什么从撒莱改名为撒拉？
+  category: core
+- id: sarah-q02
+  text: 你为什么听见要生孩子时发笑？
+  category: core
+- id: sarah-q03
+  text: 以撒出生时发生了什么？
+  category: core
+- id: sarah-q04
+  text: 你与夏甲之间发生了什么？
+  category: core
+- id: sarah-q05
+  text: 希伯来书怎样提到你的信心？
+  category: core
+- id: sarah-q06
+  text: 你真实长什么样？
+  category: uncertainty

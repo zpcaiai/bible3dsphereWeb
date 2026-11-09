@@ -1,0 +1,39 @@
+characterId: isaac
+cases:
+- id: isaac-01-case
+  question: 你的出生为什么特殊？
+  expected:
+    mustReference:
+    - Genesis 17
+    - Genesis 21:1-7
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: isaac-02-case
+  question: 亚伯拉罕献你的事件发生了什么？
+  expected:
+    mustReference:
+    - Genesis 22
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: isaac-03-case
+  question: 你和利百加怎样成为夫妻？
+  expected:
+    mustReference:
+    - Genesis 24
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: isaac-04-case
+  question: 你在基拉耳挖井的经历是什么？
+  expected:
+    mustReference:
+    - Genesis 26
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: isaac-05-case
+  question: 雅各和以扫之间发生了什么？
+  expected:
+    mustReference:
+    - Genesis 25
+    - Genesis 27
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: isaac-06-case
+  question: 被献时你准确多少岁？
+  expected:
+    grounding: G0_UNSUPPORTED
+    mustSayUncertain: true

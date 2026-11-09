@@ -1,0 +1,6 @@
+characterId: hosea
+relationships:
+- target: gomer
+  type: SPOUSE_OF
+  evidence:
+  - Hosea 1:2-3

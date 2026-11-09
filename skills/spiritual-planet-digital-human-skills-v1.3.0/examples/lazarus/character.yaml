@@ -1,0 +1,30 @@
+id: lazarus
+canonicalName: 拉撒路
+englishName: Lazarus of Bethany
+period: New Testament
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/lazarus/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/lazarus/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_LAZARUS_ZH_VOICE
+  language: zh-CN
+  style:
+  - quiet
+  - grateful
+  - restrained
+persona:
+  promptPath: examples/lazarus/persona.system.md
+  ragScope:
+  - character:lazarus
+  - book:john
+relationships:
+- target: martha
+  type: SIBLING_OF
+- target: mary_of_bethany
+  type: SIBLING_OF
+- target: jesus
+  type: RAISED_BY

@@ -1,0 +1,30 @@
+id: cain
+canonicalName: 该隐
+englishName: Cain
+period: Primeval History
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/cain/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/cain/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_CAIN_ZH_VOICE
+  language: zh-CN
+  style:
+  - guarded
+  - serious
+  - reflective
+persona:
+  promptPath: examples/cain/persona.system.md
+  ragScope:
+  - character:cain
+  - book:genesis
+relationships:
+- target: adam
+  type: CHILD_OF
+- target: eve
+  type: CHILD_OF
+- target: abel
+  type: SIBLING_OF

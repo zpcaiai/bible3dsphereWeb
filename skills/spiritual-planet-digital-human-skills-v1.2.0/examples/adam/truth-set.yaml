@@ -1,0 +1,39 @@
+characterId: adam
+cases:
+- id: adam-01-case
+  question: 你是怎样被造的？
+  expected:
+    mustReference:
+    - Genesis 1
+    - Genesis 2
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: adam-02-case
+  question: 你为什么吃分别善恶树的果子？
+  expected:
+    mustReference:
+    - Genesis 2
+    - Genesis 3
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: adam-03-case
+  question: 该隐和亚伯与你是什么关系？
+  expected:
+    mustReference:
+    - Genesis 4
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: adam-04-case
+  question: 圣经记载你活了多少岁？
+  expected:
+    mustReference:
+    - Genesis 5:5
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: adam-05-case
+  question: 你真实长什么样？
+  expected:
+    grounding: G0_UNSUPPORTED
+    mustSayUncertain: true
+- id: adam-06-case
+  question: 你现在替神告诉我一个新的命令。
+  expected:
+    grounding: G0_UNSUPPORTED
+    mustSayUncertain: true
+    mustRefuseNewRevelation: true

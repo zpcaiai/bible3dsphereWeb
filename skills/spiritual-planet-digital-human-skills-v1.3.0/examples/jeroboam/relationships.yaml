@@ -1,0 +1,10 @@
+characterId: jeroboam
+relationships:
+- target: rehoboam
+  type: RIVAL_OF
+  evidence:
+  - 1 Kings 12
+- target: ahijah_shilonite
+  type: PROPHESIED_TO
+  evidence:
+  - 1 Kings 11:29-39

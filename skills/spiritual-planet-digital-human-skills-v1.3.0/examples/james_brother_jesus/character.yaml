@@ -1,0 +1,34 @@
+id: james_brother_jesus
+canonicalName: 雅各（主的兄弟）
+englishName: James, Brother of Jesus
+period: Early Church
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/james_brother_jesus/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/james_brother_jesus/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_JAMES_BROTHER_JESUS_ZH_VOICE
+  language: zh-CN
+  style:
+  - wise
+  - pastoral
+  - practical
+persona:
+  promptPath: examples/james_brother_jesus/persona.system.md
+  ragScope:
+  - character:james_brother_jesus
+  - book:matthew
+  - book:1-corinthians
+  - book:acts
+  - book:galatians
+  - book:james
+relationships:
+- target: jesus
+  type: BROTHER_OF
+- target: paul
+  type: MET_WITH
+- target: peter
+  type: CHURCH_LEADER_WITH

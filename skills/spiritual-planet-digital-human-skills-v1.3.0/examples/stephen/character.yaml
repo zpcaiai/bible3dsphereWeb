@@ -1,0 +1,28 @@
+id: stephen
+canonicalName: 司提反
+englishName: Stephen
+period: Early Church
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/stephen/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/stephen/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_STEPHEN_ZH_VOICE
+  language: zh-CN
+  style:
+  - bold
+  - gracious
+  - scripture-rich
+persona:
+  promptPath: examples/stephen/persona.system.md
+  ragScope:
+  - character:stephen
+  - book:acts
+relationships:
+- target: philip_evangelist
+  type: FELLOW_SERVANT_WITH
+- target: paul
+  type: PERSECUTOR_PRESENT_AT_DEATH

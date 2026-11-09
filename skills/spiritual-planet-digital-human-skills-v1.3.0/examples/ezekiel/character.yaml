@@ -1,0 +1,26 @@
+id: ezekiel
+canonicalName: 以西结
+englishName: Ezekiel
+period: Exile
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/ezekiel/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/ezekiel/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_EZEKIEL_ZH_VOICE
+  language: zh-CN
+  style:
+  - visionary
+  - precise
+  - pastoral-prophetic
+persona:
+  promptPath: examples/ezekiel/persona.system.md
+  ragScope:
+  - character:ezekiel
+  - book:ezekiel
+relationships:
+- target: exiles_babylon
+  type: MINISTERED_TO

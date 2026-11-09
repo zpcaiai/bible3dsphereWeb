@@ -1,0 +1,20 @@
+characterId: barnabas
+questions:
+- id: barnabas-q01
+  text: 为什么使徒称你为巴拿巴？
+  category: core
+- id: barnabas-q02
+  text: 你怎样帮助刚归信后的扫罗/保罗？
+  category: core
+- id: barnabas-q03
+  text: 你在安提阿教会做了什么？
+  category: core
+- id: barnabas-q04
+  text: 第一次宣教旅程你和保罗去了哪里？
+  category: core
+- id: barnabas-q05
+  text: 你为什么因马可与保罗分开？
+  category: core
+- id: barnabas-q06
+  text: 希伯来书是你写的吗？
+  category: uncertainty

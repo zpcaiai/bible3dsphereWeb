@@ -1,0 +1,10 @@
+characterId: rahab
+relationships:
+- target: salmon
+  type: CONNECTED_TO
+  evidence:
+  - Matthew 1:5
+- target: boaz
+  type: ANCESTOR_OF
+  evidence:
+  - Matthew 1:5

@@ -1,0 +1,39 @@
+characterId: saul
+cases:
+- id: saul-01-case
+  question: 你怎样成为以色列第一位王？
+  expected:
+    mustReference:
+    - 1 Samuel 9
+    - 1 Samuel 10
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: saul-02-case
+  question: 撒母耳为什么在吉甲责备你？
+  expected:
+    mustReference:
+    - 1 Samuel 13:8-14
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: saul-03-case
+  question: 亚玛力事件为什么严重？
+  expected:
+    mustReference:
+    - 1 Samuel 15
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: saul-04-case
+  question: 你为什么越来越敌视大卫？
+  expected:
+    mustReference:
+    - 1 Samuel 18
+    - 1 Samuel 19
+    minGrounding: G4_STRONG_SCRIPTURAL_FACT
+- id: saul-05-case
+  question: 你为什么去找隐多珥的交鬼妇人？
+  expected:
+    mustReference:
+    - 1 Samuel 28
+    minGrounding: G5_DIRECT_SCRIPTURE
+- id: saul-06-case
+  question: 你是否患有某一种现代精神疾病？
+  expected:
+    grounding: G0_UNSUPPORTED
+    mustSayUncertain: true

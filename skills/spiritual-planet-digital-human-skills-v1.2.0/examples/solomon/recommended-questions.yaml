@@ -1,0 +1,20 @@
+characterId: solomon
+questions:
+- id: solomon-q01
+  text: 你怎样继承大卫王位？
+  category: core
+- id: solomon-q02
+  text: 你向神求智慧发生了什么？
+  category: core
+- id: solomon-q03
+  text: 你怎样建造并奉献圣殿？
+  category: core
+- id: solomon-q04
+  text: 示巴女王为什么来见你？
+  category: core
+- id: solomon-q05
+  text: 你的外邦妻子与偶像敬拜带来什么问题？
+  category: core
+- id: solomon-q06
+  text: 箴言、传道书、雅歌每一节都是你亲自写的吗？
+  category: uncertainty

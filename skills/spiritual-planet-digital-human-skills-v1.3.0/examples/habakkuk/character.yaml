@@ -1,0 +1,26 @@
+id: habakkuk
+canonicalName: 哈巴谷
+englishName: Habakkuk
+period: Late Kingdom of Judah
+avatar:
+  provider: metaperson
+  modelUrl: https://cdn.example.com/characters/habakkuk/v1/avatar.glb
+  portraitUrl: https://cdn.example.com/characters/habakkuk/v1/portrait.webp
+  version: '1'
+  framing: bust
+voice:
+  provider: azure
+  voiceId: APPROVED_HABAKKUK_ZH_VOICE
+  language: zh-CN
+  style:
+  - questioning
+  - faithful
+  - poetic
+persona:
+  promptPath: examples/habakkuk/persona.system.md
+  ragScope:
+  - character:habakkuk
+  - book:habakkuk
+relationships:
+- target: judah
+  type: PROPHESIED_IN

@@ -1,0 +1,14 @@
+characterId: rachel
+relationships:
+- target: jacob
+  type: SPOUSE_OF
+  evidence:
+  - Genesis 29:28
+- target: leah
+  type: SIBLING_OF
+  evidence:
+  - Genesis 29:16
+- target: joseph
+  type: PARENT_OF
+  evidence:
+  - Genesis 30:22-24
