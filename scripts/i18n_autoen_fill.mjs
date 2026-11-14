@@ -11,6 +11,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import url from 'node:url'
+import subpageEn from '../src/i18n/subpage-en.js'
 
 const ROOT = path.resolve(path.dirname(url.fileURLToPath(import.meta.url)), '..')
 const SRC = path.join(ROOT, 'src')
@@ -112,7 +113,7 @@ async function translateBatch(items, p) {
 async function main() {
   const { map, curated } = loadExisting()
   const keys = collectKeys()
-  const missing = [...keys].filter((k) => !(k in map) && !(k in curated) && !(k in GLOSSARY))
+  const missing = [...keys].filter((k) => !(k in map) && !(k in curated) && !(k in subpageEn) && !(k in GLOSSARY))
   // 词表直填
   for (const k of keys) if (k in GLOSSARY && !(k in map)) map[k] = GLOSSARY[k]
   console.log(`扫描到 t() 中文键 ${keys.size} 个，缺失 ${missing.length} 个`)
