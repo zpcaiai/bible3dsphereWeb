@@ -11,7 +11,7 @@ from urllib.error import HTTPError
 from release_html import verify_html
 
 expected = os.environ['EXPECTED_FRONTEND_SHA']
-backend = '90514f30b55c1c3037db0935a912aad5cce3fb8d'
+backend = '680af8afe9f60c73bf05dd6b2fd6ebbf849b3ea1'
 output = Path(os.environ['RELEASE_EVIDENCE_DIR'])
 output.mkdir(parents=True, exist_ok=False)
 receipt = {'expectedFrontendSHA': expected, 'expectedBackendSHA': backend,
