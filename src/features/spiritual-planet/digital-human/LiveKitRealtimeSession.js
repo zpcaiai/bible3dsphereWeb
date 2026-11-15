@@ -20,6 +20,7 @@ export class LiveKitRealtimeSession {
     this.avatarSpeaking = false
     this.connectionState = REALTIME_STATES.DISCONNECTED
     this.microphoneRevision = 0
+    this.reconnectMute = null
   }
 
   async connect(token, wsUrl) {
@@ -28,9 +29,24 @@ export class LiveKitRealtimeSession {
     this.connectionState = REALTIME_STATES.CONNECTING
     const room = this.roomFactory({ adaptiveStream: true, dynacast: true, disconnectOnPageLeave: true })
     this.room = room
-    room.on(RoomEvent.Reconnecting, () => { if (this.room === room) { this.connectionState = REALTIME_STATES.RECOVERING; this.setState(REALTIME_STATES.RECOVERING) } })
+    room.on(RoomEvent.Reconnecting, () => {
+      if (this.room !== room) return
+      this.connectionState = REALTIME_STATES.RECOVERING
+      this.invalidateCapture()
+      this.setState(REALTIME_STATES.RECOVERING)
+      const pendingMute = room.localParticipant.setMicrophoneEnabled(false)
+      this.reconnectMute = pendingMute
+      void pendingMute.catch(() => {
+        if (this.room === room && this.reconnectMute === pendingMute) return this.disconnect().catch(() => {})
+      })
+    })
     room.on(RoomEvent.Reconnected, () => { if (this.room === room) { this.connectionState = REALTIME_STATES.IDLE; this.setState(this.avatarSpeaking ? REALTIME_STATES.AVATAR_SPEAKING : this.turnBlocked ? REALTIME_STATES.PROCESSING : REALTIME_STATES.IDLE) } })
-    room.on(RoomEvent.Disconnected, () => { if (this.room === room) { this.connectionState = REALTIME_STATES.DISCONNECTED; this.setState(REALTIME_STATES.DISCONNECTED) } })
+    room.on(RoomEvent.Disconnected, () => {
+      if (this.room !== room) return
+      this.invalidateCapture()
+      this.connectionState = REALTIME_STATES.DISCONNECTED
+      this.setState(REALTIME_STATES.DISCONNECTED)
+    })
     room.registerTextStreamHandler('lk.transcription', (reader, participantInfo) => {
       const attributes = reader.info?.attributes || {}
       const discard = () => reader.readAll({ maxSize: 16_000 }).catch(() => {})
@@ -58,7 +74,17 @@ export class LiveKitRealtimeSession {
         this.setState(REALTIME_STATES.PROCESSING)
         await this.onFinalTranscript(trimmed)
         if (this.state === REALTIME_STATES.PROCESSING) this.setState(REALTIME_STATES.IDLE)
-      }).catch(() => { if (this.room === room && captureRevision === this.microphoneRevision) this.setState(REALTIME_STATES.ERROR) }).finally(() => {
+      }).catch(async () => {
+        if (this.room !== room || captureRevision !== this.microphoneRevision) return
+        this.invalidateCapture()
+        const failureRevision = this.microphoneRevision
+        try {
+          await room.localParticipant.setMicrophoneEnabled(false)
+        } catch {
+          if (this.room === room) await this.disconnect().catch(() => {})
+        }
+        if (this.room === room && this.microphoneRevision === failureRevision) this.setState(REALTIME_STATES.ERROR)
+      }).finally(() => {
         if (this.activeTranscript === transcriptToken) { this.transcriptInFlight = false; this.activeTranscript = null }
       })
     })
@@ -68,10 +94,12 @@ export class LiveKitRealtimeSession {
       this.connectionState = REALTIME_STATES.IDLE
       this.setState(this.avatarSpeaking ? REALTIME_STATES.AVATAR_SPEAKING : this.turnBlocked ? REALTIME_STATES.PROCESSING : REALTIME_STATES.IDLE)
     } catch (error) {
-      this.setState(REALTIME_STATES.ERROR)
+      if (this.room === room) {
+        this.room = null
+        this.connectionState = REALTIME_STATES.DISCONNECTED
+        this.setState(REALTIME_STATES.ERROR)
+      }
       await room.disconnect().catch(() => {})
-      this.room = null
-      this.connectionState = REALTIME_STATES.DISCONNECTED
       throw error
     }
   }
@@ -83,6 +111,11 @@ export class LiveKitRealtimeSession {
     }
     const room = this.room
     const microphoneRevision = ++this.microphoneRevision
+    if (enabled && this.reconnectMute) {
+      await this.reconnectMute
+      if (room !== this.room || microphoneRevision !== this.microphoneRevision || this.turnBlocked || this.avatarSpeaking) throw new Error('Microphone activation was cancelled')
+      this.reconnectMute = null
+    }
     const publication = await room.localParticipant.setMicrophoneEnabled(enabled)
     if (enabled) {
       if (room !== this.room || microphoneRevision !== this.microphoneRevision || this.turnBlocked || this.avatarSpeaking) {
@@ -100,6 +133,7 @@ export class LiveKitRealtimeSession {
   }
 
   setAvatarSpeaking(speaking) {
+    if (speaking === this.avatarSpeaking) return
     this.avatarSpeaking = speaking
     if (speaking) {
       this.microphoneRevision += 1
@@ -128,24 +162,28 @@ export class LiveKitRealtimeSession {
 
   getState() { return this.state }
 
-  async disconnect() {
+  invalidateCapture() {
     this.microphoneRevision += 1
+    this.activeTranscript = null
+    this.transcriptInFlight = false
+    this.microphoneTrackSid = null
+  }
+
+  async disconnect() {
+    this.invalidateCapture()
     const room = this.room
     this.room = null
+    this.reconnectMute = null
+    this.seenSegments.clear()
+    this.turnBlocked = false
+    this.avatarSpeaking = false
+    this.connectionState = REALTIME_STATES.DISCONNECTED
+    this.setState(REALTIME_STATES.DISCONNECTED)
     if (room) {
       room.unregisterTextStreamHandler('lk.transcription')
       await room.localParticipant.setMicrophoneEnabled(false).catch(() => {})
       await room.disconnect()
     }
-    this.room = null
-    this.seenSegments.clear()
-    this.microphoneTrackSid = null
-    this.transcriptInFlight = false
-    this.activeTranscript = null
-    this.turnBlocked = false
-    this.avatarSpeaking = false
-    this.connectionState = REALTIME_STATES.DISCONNECTED
-    this.setState(REALTIME_STATES.DISCONNECTED)
   }
 
   setState(next) {

@@ -20,7 +20,7 @@ export default defineConfig({
       executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
       args: ['--use-fake-ui-for-media-stream', `--use-file-for-fake-audio-capture=${process.env.DIGITAL_HUMAN_E2E_AUDIO_FILE}`],
     },
-    trace: 'retain-on-failure',
+    trace: 'off', // Network traces can capture the LiveSpeak bearer and STT payloads.
     screenshot: 'only-on-failure',
   },
 })

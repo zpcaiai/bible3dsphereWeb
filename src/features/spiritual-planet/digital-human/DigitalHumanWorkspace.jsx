@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { createDigitalHumanLiveKitToken, createDigitalHumanTurn, getDigitalHumanCatalog, getDigitalHumanRuntime, recordDigitalHumanProviderTelemetry, resolveDigitalHumanIdentity } from './api'
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
+import { createDigitalHumanLiveKitToken, createDigitalHumanLiveSpeakToken, createDigitalHumanTurn, getDigitalHumanCatalog, getDigitalHumanRuntime, recordDigitalHumanProviderTelemetry, resolveDigitalHumanIdentity } from './api'
 import { validateCharacterProfile, validateDigitalHumanResponse } from './contracts'
-import { DIGITAL_HUMAN_STATES } from './DigitalHumanAdapter'
+import { DIGITAL_HUMAN_STATES, isDigitalHumanPlaybackActive } from './DigitalHumanAdapter'
 import { LiveKitRealtimeSession, REALTIME_STATES } from './LiveKitRealtimeSession'
 import { MetaPersonLiveSpeakAdapter } from './MetaPersonLiveSpeakAdapter'
 import { speakSharedPreviewDisclosure } from './previewAssets'
@@ -13,13 +13,15 @@ import './digitalHuman.css'
 
 const UI_STATES = Object.freeze({
   IDLE: 'IDLE', LISTENING: 'LISTENING', TRANSCRIBING: 'TRANSCRIBING', RETRIEVING: 'RETRIEVING',
-  VERIFYING: 'VERIFYING', READY_TO_SPEAK: 'READY_TO_SPEAK', SPEAKING: 'SPEAKING', ERROR: 'ERROR',
+  VERIFYING: 'VERIFYING', READY_TO_SPEAK: 'READY_TO_SPEAK', WAITING_FOR_TOUCH: 'WAITING_FOR_TOUCH', SPEAKING: 'SPEAKING', ERROR: 'ERROR',
 })
 
 const STATE_LABELS = {
   IDLE: '可以提问', LISTENING: '正在聆听', TRANSCRIBING: '正在确认语音', RETRIEVING: '正在查找相关经文',
-  VERIFYING: '正在核验引用与边界', READY_TO_SPEAK: '回答已通过结构门', SPEAKING: '人物正在讲述', ERROR: '暂时无法完成',
+  VERIFYING: '正在核验引用与边界', READY_TO_SPEAK: '正在准备语音回复', WAITING_FOR_TOUCH: '请轻触上方数字人以播放语音', SPEAKING: '人物正在讲述', ERROR: '暂时无法完成',
 }
+
+const METAPERSON_ORIGIN = 'https://metaperson.avatarsdk.com'
 
 function makeId(prefix) {
   const value = globalThis.crypto?.randomUUID?.() || `${Date.now()}_${Math.random().toString(16).slice(2)}`
@@ -28,6 +30,16 @@ function makeId(prefix) {
 
 function EvidenceBadge({ level }) {
   return <span className={`dh-grounding ${level === 'G0_UNSUPPORTED' ? 'blocked' : ''}`}>{level}</span>
+}
+
+function voiceUnavailableReason(runtime, loadError) {
+  if (!runtime) return loadError ? '暂时无法读取语音状态，请重新核对。' : '正在核对语音服务。'
+  const requirements = Array.isArray(runtime.readiness?.requirements) ? runtime.readiness.requirements : []
+  const missing = requirements.filter(({ state }) => state === 'MISSING')
+  const causes = []
+  if (missing.some(({ code }) => code === 'LIVEKIT_PROJECT')) causes.push('实时语音项目尚未配置')
+  if (missing.some(({ code }) => code === 'STT_WORKER')) causes.push('语音转写服务尚未声明就绪')
+  return causes.length ? `${causes.join('；')}。可先用文字提问。` : '语音提问暂不可用，可先用文字提问。'
 }
 
 export default function DigitalHumanWorkspace({
@@ -58,6 +70,7 @@ export default function DigitalHumanWorkspace({
   const [isTurnPending, setIsTurnPending] = useState(false)
   const [avatarFailed, setAvatarFailed] = useState(false)
   const [isMicPending, setIsMicPending] = useState(false)
+  const voiceNoticeId = useId()
   const micTransition = useRef(false)
   const micRequestRevision = useRef(0)
   const identityLookupRevision = useRef(0)
@@ -78,6 +91,9 @@ export default function DigitalHumanWorkspace({
   }, [])
 
   const selected = useMemo(() => catalog.find((item) => item.id === selectedId) || null, [catalog, selectedId])
+  const voiceEnabled = runtime?.liveKitEnabled === true
+  const avatarAvailable = Boolean(runtime?.liveSpeakEnabled && selected?.runtimeReady && selected.voice.provider === 'azure')
+  const playbackActive = avatarAvailable && !avatarFailed && isDigitalHumanPlaybackActive(avatarState)
   const filtered = useMemo(() => {
     const needle = search.trim().toLowerCase()
     if (!needle) return catalog
@@ -182,7 +198,7 @@ export default function DigitalHumanWorkspace({
     const isRetry = previous?.characterId === selected.id
       && previous.generation === conversationGeneration.current && previous.sessionId === sessionId.current
     if (retryOf && !isRetry) return
-    if (uiState === UI_STATES.SPEAKING || avatarAdapter.current?.getState() === DIGITAL_HUMAN_STATES.SPEAKING) {
+    if (isDigitalHumanPlaybackActive(avatarAdapter.current?.getState())) {
       setError('当前采用半双工策略：请等待人物讲述结束后再提问。')
       return
     }
@@ -214,13 +230,12 @@ export default function DigitalHumanWorkspace({
       setUiState(UI_STATES.VERIFYING)
       const response = validateDigitalHumanResponse(envelope.response, selected.id)
       topicContext.current = (response.relatedEvents || []).filter((id) => /^[a-z0-9_-]{1,100}$/.test(id)).slice(-4)
-      setMessages((items) => [...items, { id: envelope.turnId, role: 'assistant', response, traceId: envelope.traceId }].slice(-40))
+      const canSpeak = envelope.state === 'READY_TO_SPEAK' && response.speechApproved
+      setMessages((items) => [...items, { id: envelope.turnId, role: 'assistant', response, traceId: envelope.traceId, canSpeak }].slice(-40))
       responseCommitted = true
-      if (envelope.state === 'READY_TO_SPEAK' && response.speechApproved && avatarAdapter.current?.getState() === DIGITAL_HUMAN_STATES.READY) {
-        setUiState(UI_STATES.READY_TO_SPEAK)
-        await realtimeAdapter.current?.setMicrophoneEnabled(false).catch(() => {})
-        if (generation !== conversationGeneration.current) return
-        await avatarAdapter.current.speakApproved(response)
+      const avatar = avatarAdapter.current
+      if (canSpeak && avatar?.getState() === DIGITAL_HUMAN_STATES.READY) {
+        await avatar.speakApproved(response)
       } else {
         setUiState(UI_STATES.IDLE)
       }
@@ -240,9 +255,33 @@ export default function DigitalHumanWorkspace({
         setIsTurnPending(false)
       }
     }
-  }, [selected, uiState, failedTurn])
+  }, [selected, failedTurn])
 
   submitRef.current = submitQuestion
+
+  const replayReply = async (item) => {
+    const avatar = avatarAdapter.current
+    if (!item.canSpeak || item.response.characterId !== selectedId || micTransition.current ||
+        turnInFlight.current || avatar?.getState() !== DIGITAL_HUMAN_STATES.READY) return
+    const generation = conversationGeneration.current
+    const voiceSession = realtimeAdapter.current
+    turnInFlight.current = true
+    setIsTurnPending(true)
+    setError('')
+    try {
+      await voiceSession?.beginTurn()
+      if (generation !== conversationGeneration.current || avatar !== avatarAdapter.current) return
+      await avatar.speakApproved(item.response)
+    } catch (caught) {
+      if (generation === conversationGeneration.current) setError(caught.message)
+    } finally {
+      voiceSession?.finishTurn()
+      if (generation === conversationGeneration.current) {
+        turnInFlight.current = false
+        setIsTurnPending(false)
+      }
+    }
+  }
 
   useEffect(() => {
     let active = true
@@ -250,6 +289,11 @@ export default function DigitalHumanWorkspace({
       onStateChange: (next) => {
         if (!active) return
         setRealtimeState(next)
+        if ([REALTIME_STATES.RECOVERING, REALTIME_STATES.DISCONNECTED, REALTIME_STATES.ERROR].includes(next)) {
+          setUiState((current) => current === UI_STATES.LISTENING
+            ? (next === REALTIME_STATES.ERROR ? UI_STATES.ERROR : UI_STATES.IDLE)
+            : current)
+        }
         const mapped = { IDLE: 'READY', LISTENING: 'READY', PROCESSING: 'READY', ERROR: 'ERROR', DISCONNECTED: 'DISCONNECTED', RECOVERING: 'RECOVERING' }[next]
         if (mapped) reportProvider('livekit', mapped)
       },
@@ -267,10 +311,14 @@ export default function DigitalHumanWorkspace({
     let active = true
     avatarAdapter.current?.dispose()
     avatarAdapter.current = null
-    if (avatarFailed || !iframeRef.current || !runtime?.liveSpeakEnabled || !selected?.runtimeReady) return undefined
+    if (avatarFailed || !iframeRef.current || !avatarAvailable) return undefined
+    setAvatarState(DIGITAL_HUMAN_STATES.BOOTING)
     const adapter = new MetaPersonLiveSpeakAdapter({
       iframe: iframeRef.current,
       origin: runtime.liveSpeakOrigin,
+      requestAccessToken: runtime.liveSpeakOrigin === METAPERSON_ORIGIN
+        ? async (signal) => (await createDigitalHumanLiveSpeakToken(selected.id, { signal })).accessToken
+        : undefined,
       onError: (caught) => {
         if (!active) return
         setAvatarFailed(true)
@@ -281,21 +329,34 @@ export default function DigitalHumanWorkspace({
       onStateChange: (next) => {
         if (!active) return
         setAvatarState(next)
-        const speaking = next === DIGITAL_HUMAN_STATES.SPEAKING
-        realtimeAdapter.current?.setAvatarSpeaking(speaking)
-        if (speaking) setUiState(UI_STATES.SPEAKING)
-        else if (next === DIGITAL_HUMAN_STATES.READY) setUiState(UI_STATES.IDLE)
+        const playback = isDigitalHumanPlaybackActive(next)
+        realtimeAdapter.current?.setAvatarSpeaking(playback)
+        if (next === DIGITAL_HUMAN_STATES.PREPARING_SPEECH) setUiState(UI_STATES.READY_TO_SPEAK)
+        else if (next === DIGITAL_HUMAN_STATES.WAITING_FOR_TOUCH) setUiState(UI_STATES.WAITING_FOR_TOUCH)
+        else if (next === DIGITAL_HUMAN_STATES.SPEAKING) setUiState(UI_STATES.SPEAKING)
+        else if (next === DIGITAL_HUMAN_STATES.READY) {
+          setUiState((current) => [UI_STATES.READY_TO_SPEAK, UI_STATES.WAITING_FOR_TOUCH, UI_STATES.SPEAKING].includes(current) ? UI_STATES.IDLE : current)
+        }
         const mapped = { ready: 'READY', error: 'ERROR', disposed: 'DISCONNECTED' }[next]
         if (mapped) reportProvider('livespeak', mapped)
       },
     })
     avatarAdapter.current = adapter
     adapter.initialize().then(() => { if (active) return adapter.loadCharacter(selected) }).catch((caught) => { if (active) { reportProvider('livespeak', 'FALLBACK'); setAvatarFailed(true); setError(caught.message); setUiState(UI_STATES.ERROR) } })
-    return () => { active = false; adapter.dispose() }
-  }, [runtime, selected, reportProvider, sessionRevision, avatarFailed, loading])
+    return () => {
+      active = false
+      if (isDigitalHumanPlaybackActive(adapter.getState())) {
+        realtimeAdapter.current?.setAvatarSpeaking(false)
+        setUiState((current) => [UI_STATES.READY_TO_SPEAK, UI_STATES.WAITING_FOR_TOUCH, UI_STATES.SPEAKING].includes(current) ? UI_STATES.IDLE : current)
+      }
+      adapter.dispose()
+      if (avatarAdapter.current === adapter) avatarAdapter.current = null
+    }
+  }, [runtime, selected, reportProvider, sessionRevision, avatarFailed, avatarAvailable, loading])
 
   const toggleMic = async () => {
-    if (!runtime?.liveKitEnabled || !selected || micTransition.current || turnInFlight.current || avatarAdapter.current?.getState() === DIGITAL_HUMAN_STATES.SPEAKING) return
+    if (!voiceEnabled || !selected || micTransition.current || turnInFlight.current ||
+        isDigitalHumanPlaybackActive(avatarAdapter.current?.getState()) || realtimeState === REALTIME_STATES.RECOVERING) return
     micTransition.current = true
     setIsMicPending(true)
     const generation = conversationGeneration.current
@@ -311,6 +372,11 @@ export default function DigitalHumanWorkspace({
       }
       if (micRevision !== micRequestRevision.current || turnInFlight.current) return
       const enable = adapter.getState() !== REALTIME_STATES.LISTENING
+      if (enable && stopPreviewVoice.current) {
+        stopPreviewVoice.current()
+        stopPreviewVoice.current = null
+        setPreviewVoicePlaying(false)
+      }
       await adapter.setMicrophoneEnabled(enable)
       if (generation !== conversationGeneration.current || micRevision !== micRequestRevision.current) return
       setUiState(enable ? UI_STATES.LISTENING : UI_STATES.IDLE)
@@ -350,6 +416,7 @@ export default function DigitalHumanWorkspace({
   }
 
   const togglePreviewVoice = () => {
+    if (micTransition.current || realtimeAdapter.current?.getState() === REALTIME_STATES.LISTENING) return
     if (previewVoicePlaying) {
       stopPreviewVoice.current?.()
       stopPreviewVoice.current = null
@@ -387,9 +454,8 @@ export default function DigitalHumanWorkspace({
       <div className="dh-status" role="status"><span>{STATE_LABELS[uiState]}</span><small>内容 {runtime?.contentReviewState || catalogMeta?.contentReviewState || 'UNKNOWN'} · RAG {runtime?.retrievalMode || 'UNKNOWN'} · Avatar {avatarState} · Realtime {realtimeState}</small></div>
       {!runtime && <div className="dh-study" role={runtimeLoadError ? 'alert' : 'status'} aria-label="数字人运行状态核对">
         <p>{runtimeLoadError ? `运行状态暂不可用：${runtimeLoadError}` : '语音、Avatar 和运行配置仍在核对；可先使用经文约束文字提问。'}</p>
-        {runtimeLoadError && <button type="button" onClick={retryRuntime}>重新核对运行状态</button>}
       </div>}
-      {error && <div className="dh-error" role="alert"><span>{error}</span>{failedTurn && <button type="button" disabled={isTurnPending || uiState === UI_STATES.SPEAKING} onClick={() => submitQuestion(failedTurn.text, failedTurn)}>重试上次提问</button>}<button type="button" onClick={() => setError('')}>关闭</button></div>}
+      {error && <div className="dh-error" role="alert"><span>{error}</span>{failedTurn && <button type="button" disabled={isTurnPending || playbackActive} onClick={() => submitQuestion(failedTurn.text, failedTurn)}>重试上次提问</button>}<button type="button" onClick={() => setError('')}>关闭</button></div>}
       <DigitalHumanReadinessPanel readiness={runtime?.readiness} />
 
       <div className={`dh-layout ${lockCharacter ? 'dh-layout-locked' : ''}`}>
@@ -401,7 +467,8 @@ export default function DigitalHumanWorkspace({
 
         <div className="dh-experience">
           <section className="dh-stage">
-            {runtime?.liveSpeakEnabled && selected?.runtimeReady && !avatarFailed ? <iframe key={sessionRevision} ref={iframeRef} title={`${selected.canonicalName} LiveSpeak Avatar`} src={runtime.liveSpeakEmbedUrl} allow="microphone" sandbox="allow-scripts allow-same-origin" onError={() => { setAvatarFailed(true); setError('Avatar 页面加载失败，已保留文字回答。') }} /> : <div className="dh-portrait-fallback" style={{ gridTemplateColumns: 'minmax(0,1fr)', justifyItems: 'center' }}><CharacterPortrait characterId={selected?.id || selectedId} name={selected?.canonicalName} avatar={selected?.avatar} size={256} compact={false} context="workspace" /><strong>{selected?.canonicalName}</strong><small>{selected?.englishName} · 文本安全回退</small><p>{selected?.runtimeReady ? 'LiveSpeak 当前不可用。' : 'GLB、Voice 或内容尚未完成人工审批，因此不加载 Avatar。'}</p><button className="dh-preview-voice" type="button" onClick={togglePreviewVoice}>{previewVoicePlaying ? '停止默认预览音色' : '试听默认预览音色'}</button>{avatarFailed && <button type="button" disabled={isTurnPending} onClick={() => { setError(''); setAvatarFailed(false); setAvatarState(DIGITAL_HUMAN_STATES.BOOTING); setSessionRevision((value) => value + 1) }}>重新连接数字人</button>}</div>}
+            {avatarAvailable && !avatarFailed ? <iframe key={sessionRevision} ref={iframeRef} title={`${selected.canonicalName} LiveSpeak Avatar`} src={runtime.liveSpeakEmbedUrl} allow="autoplay" sandbox="allow-scripts allow-same-origin" onError={() => { setAvatarFailed(true); setAvatarState(DIGITAL_HUMAN_STATES.ERROR); setError('Avatar 页面加载失败，已保留文字回答。') }} /> : <div className="dh-portrait-fallback" style={{ gridTemplateColumns: 'minmax(0,1fr)', justifyItems: 'center' }}><CharacterPortrait characterId={selected?.id || selectedId} name={selected?.canonicalName} avatar={selected?.avatar} size={256} compact={false} context="workspace" /><strong>{selected?.canonicalName}</strong><small>{selected?.englishName} · 文本安全回退</small><p>{selected?.runtimeReady ? 'LiveSpeak 当前不可用。' : 'GLB、Voice 或内容尚未完成人工审批，因此不加载 Avatar。'}</p><button className="dh-preview-voice" type="button" onClick={togglePreviewVoice}>{previewVoicePlaying ? '停止默认预览音色' : '试听默认预览音色'}</button>{avatarFailed && <button type="button" disabled={isTurnPending} onClick={() => { setError(''); setAvatarFailed(false); setAvatarState(DIGITAL_HUMAN_STATES.BOOTING); setSessionRevision((value) => value + 1) }}>重新连接数字人</button>}</div>}
+            {avatarState === DIGITAL_HUMAN_STATES.WAITING_FOR_TOUCH && <p>手机需要轻触数字人画面后才能播放。</p>}
             <p className="dh-disclosure">{selected?.disclosure}</p>
           </section>
 
@@ -409,12 +476,16 @@ export default function DigitalHumanWorkspace({
 
           <section className="dh-conversation" aria-live="polite">
             {!messages.length && <div className="dh-empty"><strong>从示例问题开始</strong><div>{(selected?.recommendedQuestions || []).slice(0, 4).map((item) => <button type="button" key={item} onClick={() => submitQuestion(item)}>{item}</button>)}</div></div>}
-            {messages.map((item) => item.role === 'user' ? <article className="dh-message user" key={item.id}><span>你</span><p>{item.text}</p></article> : <article className="dh-message assistant" key={item.id}><header><strong>{selected?.canonicalName}</strong><EvidenceBadge level={item.response.groundingLevel} /></header><p>{item.response.displayText}</p>{!!item.response.references.length && <ul>{item.response.references.map((ref) => <li key={`${ref.sourceType}-${ref.locator}`}>{ref.locator} · {ref.claimSupport}</li>)}</ul>}{!!item.response.relatedCharacters.length && <p className="dh-related">人物图：{item.response.relatedCharacters.map((id) => catalog.find((character) => character.id === id)?.canonicalName || id).join(' · ')}</p>}<footer>{item.response.speechApproved ? '已通过发声门' : '仅文字显示 · 内容或资产仍需人工审核'} · Trace {item.traceId.slice(0, 10)}</footer></article>)}
+            {messages.map((item) => item.role === 'user' ? <article className="dh-message user" key={item.id}><span>你</span><p>{item.text}</p></article> : <article className="dh-message assistant" key={item.id}><header><strong>{selected?.canonicalName}</strong><EvidenceBadge level={item.response.groundingLevel} /></header><p>{item.response.displayText}</p>{!!item.response.references.length && <ul>{item.response.references.map((ref) => <li key={`${ref.sourceType}-${ref.locator}`}>{ref.locator} · {ref.claimSupport}</li>)}</ul>}{!!item.response.relatedCharacters.length && <p className="dh-related">人物图：{item.response.relatedCharacters.map((id) => catalog.find((character) => character.id === id)?.canonicalName || id).join(' · ')}</p>}<footer>{item.canSpeak ? '已通过发声门' : '仅文字显示 · 内容或资产仍需人工审核'} · Trace {item.traceId.slice(0, 10)}{item.canSpeak && avatarAvailable && !avatarFailed && <button type="button" disabled={avatarState !== DIGITAL_HUMAN_STATES.READY || isTurnPending || isMicPending || realtimeState === REALTIME_STATES.LISTENING} onClick={() => replayReply(item)}>播放语音回复</button>}</footer></article>)}
           </section>
 
           <form className="dh-composer" onSubmit={(event) => { event.preventDefault(); submitQuestion(question) }}>
             <textarea aria-label="向当前圣经人物提问" value={question} onChange={(event) => setQuestion(event.target.value)} maxLength={1200} placeholder={`向${selected?.canonicalName || '人物'}提问；未有足够证据时系统会拒绝断言。`} />
-            <div><button type="button" onClick={() => resetConversation(selectedId)}>清空本次会话</button><button type="button" onClick={toggleMic} disabled={!runtime?.liveKitEnabled || isMicPending || isTurnPending || uiState === UI_STATES.SPEAKING || realtimeState === REALTIME_STATES.PROCESSING}>{isMicPending ? '正在连接语音' : realtimeState === REALTIME_STATES.LISTENING ? '停止收音' : realtimeState === REALTIME_STATES.PROCESSING ? '正在处理语音' : '语音提问'}</button><button className="primary" type="submit" disabled={!question.trim() || isTurnPending || uiState === UI_STATES.SPEAKING}>发送并核验</button></div>
+            <div><button type="button" onClick={() => resetConversation(selectedId)}>清空本次会话</button><button type="button" onClick={toggleMic} aria-describedby={voiceEnabled ? undefined : voiceNoticeId} disabled={!voiceEnabled || isMicPending || isTurnPending || playbackActive || [REALTIME_STATES.PROCESSING, REALTIME_STATES.RECOVERING].includes(realtimeState)}>{isMicPending ? '正在连接语音' : realtimeState === REALTIME_STATES.LISTENING ? '停止收音' : realtimeState === REALTIME_STATES.PROCESSING ? '正在处理语音' : realtimeState === REALTIME_STATES.RECOVERING ? '语音正在重连' : '语音提问'}</button><button className="primary" type="submit" disabled={!question.trim() || isTurnPending || playbackActive}>发送并核验</button></div>
+            {!voiceEnabled && <>
+              <p id={voiceNoticeId} className="dh-privacy" role="status">{voiceUnavailableReason(runtime, runtimeLoadError)}</p>
+              {(runtime || runtimeLoadError) && <div><button type="button" onClick={retryRuntime} disabled={isTurnPending || playbackActive}>重新核对运行状态</button></div>}
+            </>}
           </form>
           <p className="dh-privacy">默认不持久化原始麦克风音频或转录正文；审计仅保存人物、证据等级、引用、原因码、延迟与 Trace ID。</p>
         </div>

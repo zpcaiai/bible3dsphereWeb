@@ -40,6 +40,7 @@ export const getDigitalHumanRuntime = (options = {}) => request('/runtime', opti
 export const createDigitalHumanTurn = (payload, options = {}) => request('/turns', { ...options, method: 'POST', body: JSON.stringify(payload) })
 export const getDigitalHumanStudy = (characterId, options = {}) => request(`/characters/${encodeURIComponent(characterId)}/study`, options)
 export const createDigitalHumanLiveKitToken = (payload) => request('/livekit/token', { method: 'POST', body: JSON.stringify(payload) })
+export const createDigitalHumanLiveSpeakToken = (characterId, options = {}) => request(`/livespeak/token/${encodeURIComponent(characterId)}`, { ...options, method: 'POST', cache: 'no-store' })
 export const resolveDigitalHumanIdentity = (payload) => request('/identity/resolve', { method: 'POST', body: JSON.stringify(payload) })
 export const getDigitalHumanMetrics = (windowSeconds = 900) => request(`/operations/metrics?window_seconds=${encodeURIComponent(windowSeconds)}`)
 export const recordDigitalHumanProviderTelemetry = (payload) => request('/telemetry/provider', { method: 'POST', body: JSON.stringify(payload) })

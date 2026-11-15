@@ -8,6 +8,7 @@ test('real audio reaches LiveKit STT, the reviewed turn gate, and LiveSpeak', as
   await expect(page.getByRole('heading', { name: '圣经人物 · 经文约束对话' })).toBeVisible()
   await expect(page.getByText(/内容 APPROVED/)).toBeVisible()
   await expect(page.getByText(/文本安全回退/)).toHaveCount(0)
+  await expect(page.getByText(/Avatar ready/i)).toBeVisible({ timeout: 30_000 })
 
   await page.getByRole('button', { name: '语音提问' }).click()
   await expect(page.getByText('正在聆听')).toBeVisible()
@@ -21,8 +22,15 @@ test('real audio reaches LiveKit STT, the reviewed turn gate, and LiveSpeak', as
   const answer = (await page.locator('.dh-message.assistant').last().textContent()) || ''
   expect(transcript.trim().length).toBeGreaterThan(2)
   expect(answer).toMatch(/G[1-5]_/)
+  await page.getByRole('button', { name: '播放语音回复' }).last().click()
+  await expect(page.getByText(/Avatar speaking/i)).toBeVisible({ timeout: 30_000 })
+  await expect(page.getByText(/Avatar ready/i)).toBeVisible({ timeout: 60_000 })
   await testInfo.attach('journey-evidence.json', {
-    body: JSON.stringify({ durationMs: Date.now() - started, transcriptObserved: true, reviewedSpeechObserved: true, avatarSpeakingObserved: true, rawAudioPersistedByTest: false }),
+    body: JSON.stringify({
+      durationMs: Date.now() - started, transcriptObserved: true, reviewedSpeechObserved: true,
+      avatarSpeakingObserved: true, replayStateCycleObserved: true, facialMotionVisualAcceptance: 'NOT_RUN',
+      rawAudioPersistedByTest: false,
+    }),
     contentType: 'application/json',
   })
 })

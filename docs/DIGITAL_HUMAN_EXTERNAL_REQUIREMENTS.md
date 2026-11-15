@@ -24,14 +24,15 @@
 
 - 可用的 LiveSpeak 账户/部署与 HTTPS 嵌入 URL；配置 `DIGITAL_HUMAN_LIVESPEAK_EMBED_URL`、`DIGITAL_HUMAN_LIVESPEAK_ALLOWED_ORIGINS`。
 - 本次已精确允许默认 `https://metaperson.avatarsdk.com` iframe 来源；自定义服务域必须在实际部署的 CSP 与后端允许源中同时精确配置，勿使用 `*`。
-- 在 LiveSpeak 服务侧配置真实 TTS 授权及区域，给出每个角色获批的 `voiceProvider`、`voiceId`、语言和版本。当前适配器使用 Azure voice setter；ElevenLabs 专用切换尚未验收。
+- 官方 LiveSpeak iframe 由后端指定 `custom_model` 和 `tts_azure2`，使用 Azure TTS 及同一语音的 ARKit 面部动画数据。通过服务端 Secrets 设置 `DIGITAL_HUMAN_METAPERSON_CLIENT_ID` 和 `DIGITAL_HUMAN_METAPERSON_CLIENT_SECRET`；iframe 仅收到供应商签发的访问令牌。自托管服务需自行配置同等的动画和认证模式。
+- 在 LiveSpeak 服务侧配置真实 Azure TTS 授权及区域，给出每个角色获批的 `voiceProvider=azure`、`voiceId`、语言和版本。按实际音色验证面部动画数据；Azure 的 `FacialExpression` 支持包括普通话 `zh-CN` 和英语 `en-US`。其他音色和 ElevenLabs 未纳入本次验收。
 - MetaPerson 账户/导出授权用于制作角色 GLB。若已拥有合规模型，可直接提供模型；仅填 `METAPERSON_CLIENT_ID/SECRET` 不会自动生成 100 个角色，当前应用没有资产生成批处理管线。
 
 ## 4. 每个角色的真实媒体与版权材料
 
 目标是 100 人，不能用共享预览 JPG 或浏览器固定说明音色替代。
 
-- HTTPS GLB（含适用口型/viseme）、肖像、可用音色及各自真实版本。
+- HTTPS GLB（含 LiveSpeak 兼容的口型、双眼眨眼和视线 blendshapes）、肖像、可用音色及各自真实版本。
 - 模型和图片可下载字节的 SHA256，以及音色配置 SHA256；资源访问/CORS/服务条款证明。
 - 模型、肖像、音色、人物描绘与使用场景的权利依据。
 - `DIGITAL_HUMAN_ASSET_MANIFEST_JSON` 须为 `digital-human-assets/v1` 的真实清单。每项包含 `characterId`、`version`、`modelUrl`、`portraitUrl`、`modelSha256`、`portraitSha256`、`voiceProfileSha256`、`voiceProvider`、`voiceId`、语言，以及神学/版权/无障碍审核引用。`APPROVED` 只能在真实审核后设置。
@@ -58,6 +59,7 @@
 - 可选本地向量模型：实际已部署模型与 `DIGITAL_HUMAN_EMBEDDING_MODEL_PATH`；没有时仍可使用词法与人物关系检索。
 - 真实浏览器语音验收需要 `DIGITAL_HUMAN_E2E_BASE_URL`、本地认证状态文件 `DIGITAL_HUMAN_E2E_STORAGE_STATE`、真实语音 WAV 路径 `DIGITAL_HUMAN_E2E_AUDIO_FILE`。认证文件属于敏感材料，留在本机/受控 CI。
 - 在目标设备实际验证半双工、切换人物、断连/重试、语音转写、审核门、Avatar 开始/结束与口型、目标并发与故障恢复。
+- 对大卫使用已审核的普通话问答样本：确认真实角色 GLB 已加载；录入问题后有转写，麦克风先停止收音，回复可听且可重播。观察闭唇音和圆唇音是否与对应声音同时发生，双眼是否自然眨动及改变视线，语句间停顿和播放结束时口型是否回到自然状态。加入 iPhone Safari，验证需要手势时轻触画面即可播放。浏览器的 `Speaking` / `Ready` 消息只验证状态流转，不能代替听觉和逐帧视觉检查。
 - 当前单进程指标不是跨实例持久监控；当前本地子进程 HTTP 的登录身份是测试夹具，未验收生产登录、数据库写入或供应商链路。
 
 Vercel CLI 在本次环境未安装。如后续由你选择使用 Vercel CLI 管理部署，建议安装 `npm i -g vercel` 以使用 env pull/deploy/logs；安装与生产部署未在本次执行。
