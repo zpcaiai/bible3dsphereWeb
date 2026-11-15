@@ -15,6 +15,7 @@ import {
 
 vi.mock('../digital-human/api', () => ({
   createDigitalHumanLiveKitToken: vi.fn(),
+  createDigitalHumanLiveSpeakToken: vi.fn(),
   createDigitalHumanTurn: vi.fn(),
   getDigitalHumanCatalog: vi.fn(),
   getDigitalHumanRuntime: vi.fn(),
@@ -202,6 +203,28 @@ describe('DigitalHumanWorkspace embedded character mode', () => {
     expect(screen.getByRole('textbox', { name: '向当前圣经人物提问' })).toBe(input)
   })
 
+  it('explains missing voice prerequisites and enables the microphone only after a successful recheck', async () => {
+    getDigitalHumanRuntime.mockResolvedValueOnce({
+      liveKitEnabled: false,
+      readiness: { requirements: [
+        { code: 'LIVEKIT_PROJECT', label: '实时语音项目配置', state: 'MISSING' },
+        { code: 'STT_WORKER', label: '转写服务就绪声明', state: 'MISSING' },
+      ] },
+    }).mockResolvedValueOnce({ liveKitEnabled: true })
+    render(<DigitalHumanWorkspace initialCharacterId="david" lockCharacter showOperations={false} />)
+    const note = await screen.findByText('实时语音项目尚未配置；语音转写服务尚未声明就绪。可先用文字提问。')
+    const mic = screen.getByRole('button', { name: '语音提问' })
+    expect(mic.disabled).toBe(true)
+    expect(mic.getAttribute('aria-describedby')).toBe(note.id)
+    const input = screen.getByRole('textbox', { name: '向当前圣经人物提问' })
+    fireEvent.change(input, { target: { value: '保留我的问题' } })
+    fireEvent.click(screen.getByRole('button', { name: '重新核对运行状态' }))
+    await waitFor(() => expect(mic.disabled).toBe(false))
+    expect(mic.hasAttribute('aria-describedby')).toBe(false)
+    expect(input.value).toBe('保留我的问题')
+    expect(createDigitalHumanLiveKitToken).not.toHaveBeenCalled()
+  })
+
   it('retains a failed question and explicitly retries without duplicating the user message', async () => {
     createDigitalHumanTurn.mockRejectedValueOnce(new Error('Failed to fetch')).mockResolvedValueOnce(envelope('重试后的证据'))
     render(<DigitalHumanWorkspace initialCharacterId="david" lockCharacter showOperations={false} />)
@@ -384,6 +407,13 @@ describe('DigitalHumanWorkspace embedded character mode', () => {
     const input = screen.getByRole('textbox', { name: '向当前圣经人物提问' })
     fireEvent.change(input, { target: { value: '歌利亚' } })
     fireEvent.submit(input.closest('form'))
+    await screen.findByText('正在准备语音回复')
+    expect(screen.queryByText('人物正在讲述')).toBeNull()
+    expect(iframe.getAttribute('allow')).toBe('autoplay')
+    emit('WaitingForTouch')
+    expect(screen.getByText(/请轻触上方数字人/)).toBeTruthy()
+    expect(screen.getByRole('button', { name: '播放语音回复' }).disabled).toBe(true)
+    emit('Speaking')
     await screen.findByText('人物正在讲述')
     fireEvent.change(input, { target: { value: '另一个问题' } })
     fireEvent.submit(input.closest('form'))
@@ -391,6 +421,10 @@ describe('DigitalHumanWorkspace embedded character mode', () => {
     fireEvent.click(screen.getByRole('button', { name: '关闭' }))
     expect(screen.getByText('人物正在讲述')).toBeTruthy()
     fireEvent.submit(input.closest('form'))
+    expect(createDigitalHumanTurn).toHaveBeenCalledTimes(1)
+    emit('Ready')
+    fireEvent.click(screen.getByRole('button', { name: '播放语音回复' }))
+    await screen.findByText('正在准备语音回复')
     expect(createDigitalHumanTurn).toHaveBeenCalledTimes(1)
   })
 })

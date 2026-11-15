@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
+import { RoomEvent } from 'livekit-client'
 import { LiveKitRealtimeSession, REALTIME_STATES } from '../digital-human/LiveKitRealtimeSession'
 
 describe('LiveKitRealtimeSession half-duplex policy', () => {
@@ -145,5 +146,35 @@ describe('LiveKitRealtimeSession half-duplex policy', () => {
     await Promise.resolve()
     expect(onFinalTranscript).not.toHaveBeenCalled()
     expect(session.getState()).toBe('IDLE')
+  })
+
+  it('mutes before reconnecting, discards the old capture, and waits for another microphone gesture', async () => {
+    let onTranscript, finishRead
+    const events = new Map()
+    const setMicrophoneEnabled = vi.fn().mockResolvedValue({ trackSid: 'mic-track-1' })
+    const room = {
+      on: (event, callback) => events.set(event, callback),
+      connect: vi.fn().mockResolvedValue(), disconnect: vi.fn().mockResolvedValue(),
+      registerTextStreamHandler: (_topic, next) => { onTranscript = next },
+      localParticipant: { identity: 'local-user', setMicrophoneEnabled },
+    }
+    const onFinalTranscript = vi.fn()
+    const session = new LiveKitRealtimeSession({ roomFactory: () => room, onFinalTranscript })
+    await session.connect('token', 'wss://unused.example.test')
+    await session.setMicrophoneEnabled(true)
+    onTranscript({ info: { id: 'before-reconnect', attributes: {
+      'lk.transcription_final': 'true', 'lk.transcribed_track_id': 'mic-track-1',
+    } }, readAll: () => new Promise((resolve) => { finishRead = resolve }) }, { identity: 'local-user' })
+    events.get(RoomEvent.Reconnecting)()
+    expect(session.getState()).toBe(REALTIME_STATES.RECOVERING)
+    await expect(session.setMicrophoneEnabled(true)).rejects.toThrow('Half-duplex')
+    events.get(RoomEvent.Reconnected)()
+    finishRead('interrupted old question')
+    await Promise.resolve()
+    expect(setMicrophoneEnabled.mock.calls.map(([enabled]) => enabled)).toEqual([true, false])
+    expect(onFinalTranscript).not.toHaveBeenCalled()
+    expect(session.getState()).toBe(REALTIME_STATES.IDLE)
+    await session.setMicrophoneEnabled(true)
+    expect(session.getState()).toBe(REALTIME_STATES.LISTENING)
   })
 })
