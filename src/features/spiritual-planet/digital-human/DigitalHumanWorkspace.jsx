@@ -2,9 +2,17 @@ import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
 import { createDigitalHumanLiveKitToken, createDigitalHumanLiveSpeakToken, createDigitalHumanTurn, getDigitalHumanCatalog, getDigitalHumanRuntime, recordDigitalHumanProviderTelemetry, resolveDigitalHumanIdentity } from './api'
 import { validateCharacterProfile, validateDigitalHumanResponse } from './contracts'
 import { DIGITAL_HUMAN_STATES, isDigitalHumanPlaybackActive } from './DigitalHumanAdapter'
+import { BROWSER_VOICE_STATES, BrowserSpeechTurnSession, isBrowserVoiceCaptureSupported } from './BrowserSpeechTurnSession'
 import { LiveKitRealtimeSession, REALTIME_STATES } from './LiveKitRealtimeSession'
+import {
+  createPreviewAnimationLoop,
+  isLocalSpeechSynthesisSupported,
+  LocalPortraitVisemeAdapter,
+  NEUTRAL_ANIMATION_FRAME,
+} from './LocalPortraitVisemeAdapter'
 import { MetaPersonLiveSpeakAdapter } from './MetaPersonLiveSpeakAdapter'
-import { speakSharedPreviewDisclosure } from './previewAssets'
+import { SHARED_PREVIEW_VOICE_DISCLOSURE, speakSharedPreviewDisclosure } from './previewAssets'
+import AnimatedCharacterStage from './AnimatedCharacterStage'
 import CharacterPortrait from './CharacterPortrait'
 import DigitalHumanOperationsPanel from './DigitalHumanOperationsPanel'
 import DigitalHumanStudyPanel from './DigitalHumanStudyPanel'
@@ -58,6 +66,8 @@ export default function DigitalHumanWorkspace({
   const [uiState, setUiState] = useState(UI_STATES.IDLE)
   const [avatarState, setAvatarState] = useState(DIGITAL_HUMAN_STATES.BOOTING)
   const [realtimeState, setRealtimeState] = useState(REALTIME_STATES.DISCONNECTED)
+  const [browserVoiceState, setBrowserVoiceState] = useState(BROWSER_VOICE_STATES.IDLE)
+  const [animationFrame, setAnimationFrame] = useState(NEUTRAL_ANIMATION_FRAME)
   const [error, setError] = useState('')
   const [failedTurn, setFailedTurn] = useState(null)
   const [identityCandidates, setIdentityCandidates] = useState([])
@@ -82,7 +92,9 @@ export default function DigitalHumanWorkspace({
   const iframeRef = useRef(null)
   const avatarAdapter = useRef(null)
   const realtimeAdapter = useRef(null)
+  const browserVoiceAdapter = useRef(null)
   const stopPreviewVoice = useRef(null)
+  const previewLoopRef = useRef(null)
   const submitRef = useRef(null)
   const runtimeRequestRevision = useRef(0)
   const runtimeRetryRequest = useRef(null)
@@ -92,13 +104,29 @@ export default function DigitalHumanWorkspace({
 
   const selected = useMemo(() => catalog.find((item) => item.id === selectedId) || null, [catalog, selectedId])
   const voiceEnabled = runtime?.liveKitEnabled === true
-  const avatarAvailable = Boolean(runtime?.liveSpeakEnabled && selected?.runtimeReady && selected.voice.provider === 'azure')
+  const browserVoiceSupported = isBrowserVoiceCaptureSupported()
+  const liveSpeakAvailable = Boolean(runtime?.liveSpeakEnabled && selected?.runtimeReady && selected.voice.provider === 'azure')
+  const localAvatarAvailable = !liveSpeakAvailable && Boolean(selected && isLocalSpeechSynthesisSupported())
+  const avatarAvailable = liveSpeakAvailable || localAvatarAvailable
+  const liveSpeakOrigin = runtime?.liveSpeakOrigin
   const playbackActive = avatarAvailable && !avatarFailed && isDigitalHumanPlaybackActive(avatarState)
   const filtered = useMemo(() => {
     const needle = search.trim().toLowerCase()
     if (!needle) return catalog
     return catalog.filter((item) => `${item.canonicalName} ${item.englishName} ${item.id}`.toLowerCase().includes(needle))
   }, [catalog, search])
+
+  const stopPreviewPlayback = useCallback(() => {
+    if (previewLoopRef.current) {
+      previewLoopRef.current.stop()
+      previewLoopRef.current = null
+    }
+    if (stopPreviewVoice.current) {
+      stopPreviewVoice.current()
+      stopPreviewVoice.current = null
+    }
+    setPreviewVoicePlaying(false)
+  }, [])
 
   const loadRuntime = useCallback((signal) => {
     const revision = ++runtimeRequestRevision.current
@@ -163,9 +191,9 @@ export default function DigitalHumanWorkspace({
     turnRequest.current = null
     turnInFlight.current = false
     topicContext.current = []
-    stopPreviewVoice.current?.()
-    stopPreviewVoice.current = null
-    setPreviewVoicePlaying(false)
+    browserVoiceAdapter.current?.cancelRecording()
+    stopPreviewPlayback()
+    setAnimationFrame(NEUTRAL_ANIMATION_FRAME)
     setSelectedId(characterId)
     setMessages([])
     setQuestion('')
@@ -179,15 +207,18 @@ export default function DigitalHumanWorkspace({
     setIdentityCandidates([])
     setAvatarState(DIGITAL_HUMAN_STATES.BOOTING)
     setRealtimeState(REALTIME_STATES.DISCONNECTED)
+    setBrowserVoiceState(isBrowserVoiceCaptureSupported() ? BROWSER_VOICE_STATES.IDLE : BROWSER_VOICE_STATES.DISCONNECTED)
     sessionId.current = makeId('session')
     setSessionRevision((value) => value + 1)
-  }, [])
+  }, [stopPreviewPlayback])
 
   useEffect(() => { resetConversation(initialCharacterId) }, [initialCharacterId, resetConversation])
 
   useEffect(() => () => {
     conversationGeneration.current += 1
     turnRequest.current?.abort()
+    browserVoiceAdapter.current?.disconnect()
+    previewLoopRef.current?.stop()
     stopPreviewVoice.current?.()
   }, [])
 
@@ -207,6 +238,8 @@ export default function DigitalHumanWorkspace({
     micTransition.current = false
     setIsMicPending(false)
     setIsTurnPending(true)
+    stopPreviewPlayback()
+    browserVoiceAdapter.current?.beginTurn()
     const generation = conversationGeneration.current
     const requestSession = sessionId.current
     const userMessageId = isRetry ? previous.userMessageId : makeId('user')
@@ -255,7 +288,7 @@ export default function DigitalHumanWorkspace({
         setIsTurnPending(false)
       }
     }
-  }, [selected, failedTurn])
+  }, [selected, failedTurn, stopPreviewPlayback])
 
   submitRef.current = submitQuestion
 
@@ -265,6 +298,8 @@ export default function DigitalHumanWorkspace({
         turnInFlight.current || avatar?.getState() !== DIGITAL_HUMAN_STATES.READY) return
     const generation = conversationGeneration.current
     const voiceSession = realtimeAdapter.current
+    stopPreviewPlayback()
+    browserVoiceAdapter.current?.beginTurn()
     turnInFlight.current = true
     setIsTurnPending(true)
     setError('')
@@ -308,55 +343,142 @@ export default function DigitalHumanWorkspace({
   }, [reportProvider, selectedId, sessionRevision])
 
   useEffect(() => {
+    if (!browserVoiceSupported) {
+      browserVoiceAdapter.current = null
+      setBrowserVoiceState(BROWSER_VOICE_STATES.DISCONNECTED)
+      return undefined
+    }
+    let active = true
+    const session = new BrowserSpeechTurnSession({
+      language: selected?.voice?.language || 'zh-CN',
+      onStateChange: (next) => {
+        if (!active) return
+        setBrowserVoiceState(next)
+        if (next === BROWSER_VOICE_STATES.RECORDING) {
+          setUiState(UI_STATES.LISTENING)
+        } else if (next === BROWSER_VOICE_STATES.TRANSCRIBING) {
+          setUiState(UI_STATES.TRANSCRIBING)
+        } else if (next === BROWSER_VOICE_STATES.IDLE) {
+          setUiState((current) => (
+            current === UI_STATES.LISTENING || current === UI_STATES.TRANSCRIBING
+              ? UI_STATES.IDLE
+              : current
+          ))
+        }
+      },
+      onFinalTranscript: (text) => {
+        if (!active) return undefined
+        return submitRef.current?.(text)
+      },
+      onError: (caught) => {
+        if (!active) return
+        setError(caught.message || '语音录入未完成，请重试或改用文字提问。')
+        setUiState(UI_STATES.ERROR)
+      },
+    })
+    browserVoiceAdapter.current = session
+    setBrowserVoiceState(session.getState())
+    return () => {
+      active = false
+      session.disconnect()
+      if (browserVoiceAdapter.current === session) {
+        browserVoiceAdapter.current = null
+      }
+    }
+  }, [browserVoiceSupported, selectedId, selected?.voice?.language, sessionRevision])
+
+  useEffect(() => {
     let active = true
     avatarAdapter.current?.dispose()
     avatarAdapter.current = null
-    if (avatarFailed || !iframeRef.current || !avatarAvailable) return undefined
+    if (avatarFailed || !avatarAvailable || !selected) return undefined
+    if (liveSpeakAvailable && !iframeRef.current) return undefined
+
     setAvatarState(DIGITAL_HUMAN_STATES.BOOTING)
-    const adapter = new MetaPersonLiveSpeakAdapter({
-      iframe: iframeRef.current,
-      origin: runtime.liveSpeakOrigin,
-      requestAccessToken: runtime.liveSpeakOrigin === METAPERSON_ORIGIN
-        ? async (signal) => (await createDigitalHumanLiveSpeakToken(selected.id, { signal })).accessToken
-        : undefined,
-      onError: (caught) => {
-        if (!active) return
-        setAvatarFailed(true)
-        setError(caught.message)
-        setUiState(UI_STATES.ERROR)
-        reportProvider('livespeak', 'FALLBACK')
-      },
-      onStateChange: (next) => {
-        if (!active) return
-        setAvatarState(next)
-        const playback = isDigitalHumanPlaybackActive(next)
-        realtimeAdapter.current?.setAvatarSpeaking(playback)
-        if (next === DIGITAL_HUMAN_STATES.PREPARING_SPEECH) setUiState(UI_STATES.READY_TO_SPEAK)
-        else if (next === DIGITAL_HUMAN_STATES.WAITING_FOR_TOUCH) setUiState(UI_STATES.WAITING_FOR_TOUCH)
-        else if (next === DIGITAL_HUMAN_STATES.SPEAKING) setUiState(UI_STATES.SPEAKING)
-        else if (next === DIGITAL_HUMAN_STATES.READY) {
-          setUiState((current) => [UI_STATES.READY_TO_SPEAK, UI_STATES.WAITING_FOR_TOUCH, UI_STATES.SPEAKING].includes(current) ? UI_STATES.IDLE : current)
-        }
+    const handleAvatarStateChange = (next, isLiveSpeak) => {
+      if (!active) return
+      setAvatarState(next)
+      const playback = isDigitalHumanPlaybackActive(next)
+      realtimeAdapter.current?.setAvatarSpeaking(playback)
+      browserVoiceAdapter.current?.setAvatarSpeaking(playback)
+      if (next === DIGITAL_HUMAN_STATES.PREPARING_SPEECH) setUiState(UI_STATES.READY_TO_SPEAK)
+      else if (next === DIGITAL_HUMAN_STATES.WAITING_FOR_TOUCH) setUiState(UI_STATES.WAITING_FOR_TOUCH)
+      else if (next === DIGITAL_HUMAN_STATES.SPEAKING) setUiState(UI_STATES.SPEAKING)
+      else if (next === DIGITAL_HUMAN_STATES.READY) {
+        setUiState((current) => [UI_STATES.READY_TO_SPEAK, UI_STATES.WAITING_FOR_TOUCH, UI_STATES.SPEAKING].includes(current) ? UI_STATES.IDLE : current)
+      }
+      if (isLiveSpeak) {
         const mapped = { ready: 'READY', error: 'ERROR', disposed: 'DISCONNECTED' }[next]
         if (mapped) reportProvider('livespeak', mapped)
-      },
-    })
+      }
+    }
+
+    const adapter = liveSpeakAvailable
+      ? new MetaPersonLiveSpeakAdapter({
+          iframe: iframeRef.current,
+          origin: liveSpeakOrigin,
+          requestAccessToken: liveSpeakOrigin === METAPERSON_ORIGIN
+            ? async (signal) => (await createDigitalHumanLiveSpeakToken(selected.id, { signal })).accessToken
+            : undefined,
+          onError: (caught) => {
+            if (!active) return
+            setAvatarFailed(true)
+            setError(caught.message)
+            setUiState(UI_STATES.ERROR)
+            reportProvider('livespeak', 'FALLBACK')
+          },
+          onStateChange: (next) => handleAvatarStateChange(next, true),
+        })
+      : new LocalPortraitVisemeAdapter({
+          onAnimationFrame: (frame) => {
+            if (active) setAnimationFrame(frame)
+          },
+          onError: (caught) => {
+            if (!active) return
+            setAvatarFailed(true)
+            setAnimationFrame(NEUTRAL_ANIMATION_FRAME)
+            setError(caught.message)
+            setUiState(UI_STATES.ERROR)
+          },
+          onStateChange: (next) => handleAvatarStateChange(next, false),
+        })
+
     avatarAdapter.current = adapter
-    adapter.initialize().then(() => { if (active) return adapter.loadCharacter(selected) }).catch((caught) => { if (active) { reportProvider('livespeak', 'FALLBACK'); setAvatarFailed(true); setError(caught.message); setUiState(UI_STATES.ERROR) } })
+    adapter.initialize()
+      .then(() => { if (active) return adapter.loadCharacter(selected) })
+      .catch((caught) => {
+        if (!active) return
+        if (liveSpeakAvailable) reportProvider('livespeak', 'FALLBACK')
+        setAvatarFailed(true)
+        setAnimationFrame(NEUTRAL_ANIMATION_FRAME)
+        setError(caught.message)
+        setUiState(UI_STATES.ERROR)
+      })
+
     return () => {
       active = false
       if (isDigitalHumanPlaybackActive(adapter.getState())) {
         realtimeAdapter.current?.setAvatarSpeaking(false)
+        browserVoiceAdapter.current?.setAvatarSpeaking(false)
         setUiState((current) => [UI_STATES.READY_TO_SPEAK, UI_STATES.WAITING_FOR_TOUCH, UI_STATES.SPEAKING].includes(current) ? UI_STATES.IDLE : current)
       }
       adapter.dispose()
       if (avatarAdapter.current === adapter) avatarAdapter.current = null
     }
-  }, [runtime, selected, reportProvider, sessionRevision, avatarFailed, avatarAvailable, loading])
+  }, [liveSpeakAvailable, liveSpeakOrigin, localAvatarAvailable, avatarAvailable, selected, reportProvider, sessionRevision, avatarFailed, loading])
+
+  const handleStageTouch = () => {
+    if (avatarState === DIGITAL_HUMAN_STATES.WAITING_FOR_TOUCH) {
+      avatarAdapter.current?.resumeAfterTouch?.()
+    }
+  }
 
   const toggleMic = async () => {
     if (!voiceEnabled || !selected || micTransition.current || turnInFlight.current ||
-        isDigitalHumanPlaybackActive(avatarAdapter.current?.getState()) || realtimeState === REALTIME_STATES.RECOVERING) return
+        isDigitalHumanPlaybackActive(avatarAdapter.current?.getState()) ||
+        browserVoiceState === BROWSER_VOICE_STATES.RECORDING ||
+        browserVoiceState === BROWSER_VOICE_STATES.TRANSCRIBING ||
+        realtimeState === REALTIME_STATES.RECOVERING) return
     micTransition.current = true
     setIsMicPending(true)
     const generation = conversationGeneration.current
@@ -372,11 +494,7 @@ export default function DigitalHumanWorkspace({
       }
       if (micRevision !== micRequestRevision.current || turnInFlight.current) return
       const enable = adapter.getState() !== REALTIME_STATES.LISTENING
-      if (enable && stopPreviewVoice.current) {
-        stopPreviewVoice.current()
-        stopPreviewVoice.current = null
-        setPreviewVoicePlaying(false)
-      }
+      if (enable) stopPreviewPlayback()
       await adapter.setMicrophoneEnabled(enable)
       if (generation !== conversationGeneration.current || micRevision !== micRequestRevision.current) return
       setUiState(enable ? UI_STATES.LISTENING : UI_STATES.IDLE)
@@ -390,6 +508,28 @@ export default function DigitalHumanWorkspace({
         setIsMicPending(false)
       }
     }
+  }
+
+  const toggleBrowserVoice = async () => {
+    const session = browserVoiceAdapter.current
+    if (!browserVoiceSupported || !session || !selected || isTurnPending || turnInFlight.current ||
+        playbackActive || isMicPending || realtimeState === REALTIME_STATES.LISTENING ||
+        browserVoiceState === BROWSER_VOICE_STATES.TRANSCRIBING) return
+    if (browserVoiceState === BROWSER_VOICE_STATES.RECORDING) {
+      await session.stopRecording()
+      return
+    }
+    stopPreviewPlayback()
+    setError('')
+    try {
+      await session.startRecording()
+    } catch {
+      // Error message and state are handled through session.onError.
+    }
+  }
+
+  const cancelBrowserVoice = () => {
+    browserVoiceAdapter.current?.cancelRecording()
   }
 
   const resolveSearch = async () => {
@@ -416,23 +556,39 @@ export default function DigitalHumanWorkspace({
   }
 
   const togglePreviewVoice = () => {
-    if (micTransition.current || realtimeAdapter.current?.getState() === REALTIME_STATES.LISTENING) return
+    if (micTransition.current || playbackActive ||
+        realtimeAdapter.current?.getState() === REALTIME_STATES.LISTENING ||
+        browserVoiceState === BROWSER_VOICE_STATES.RECORDING ||
+        browserVoiceState === BROWSER_VOICE_STATES.TRANSCRIBING) return
     if (previewVoicePlaying) {
-      stopPreviewVoice.current?.()
-      stopPreviewVoice.current = null
-      setPreviewVoicePlaying(false)
+      stopPreviewPlayback()
       return
     }
     setError('')
     try {
       setPreviewVoicePlaying(true)
+      const loop = createPreviewAnimationLoop(SHARED_PREVIEW_VOICE_DISCLOSURE, {
+        onAnimationFrame: setAnimationFrame,
+      })
+      previewLoopRef.current = loop
       stopPreviewVoice.current = speakSharedPreviewDisclosure({
+        onStart: () => {
+          if (previewLoopRef.current === loop) loop.start()
+        },
         onEnd: () => {
+          if (previewLoopRef.current === loop) {
+            loop.stop()
+            previewLoopRef.current = null
+          }
           stopPreviewVoice.current = null
           setPreviewVoicePlaying(false)
         },
       })
     } catch (caught) {
+      if (previewLoopRef.current) {
+        previewLoopRef.current.stop()
+        previewLoopRef.current = null
+      }
       setPreviewVoicePlaying(false)
       setError(caught.message)
     }
@@ -467,7 +623,7 @@ export default function DigitalHumanWorkspace({
 
         <div className="dh-experience">
           <section className="dh-stage">
-            {avatarAvailable && !avatarFailed ? <iframe key={sessionRevision} ref={iframeRef} title={`${selected.canonicalName} LiveSpeak Avatar`} src={runtime.liveSpeakEmbedUrl} allow="autoplay" sandbox="allow-scripts allow-same-origin" onError={() => { setAvatarFailed(true); setAvatarState(DIGITAL_HUMAN_STATES.ERROR); setError('Avatar 页面加载失败，已保留文字回答。') }} /> : <div className="dh-portrait-fallback" style={{ gridTemplateColumns: 'minmax(0,1fr)', justifyItems: 'center' }}><CharacterPortrait characterId={selected?.id || selectedId} name={selected?.canonicalName} avatar={selected?.avatar} size={256} compact={false} context="workspace" /><strong>{selected?.canonicalName}</strong><small>{selected?.englishName} · 文本安全回退</small><p>{selected?.runtimeReady ? 'LiveSpeak 当前不可用。' : 'GLB、Voice 或内容尚未完成人工审批，因此不加载 Avatar。'}</p><button className="dh-preview-voice" type="button" onClick={togglePreviewVoice}>{previewVoicePlaying ? '停止默认预览音色' : '试听默认预览音色'}</button>{avatarFailed && <button type="button" disabled={isTurnPending} onClick={() => { setError(''); setAvatarFailed(false); setAvatarState(DIGITAL_HUMAN_STATES.BOOTING); setSessionRevision((value) => value + 1) }}>重新连接数字人</button>}</div>}
+            {liveSpeakAvailable && !avatarFailed ? <iframe key={sessionRevision} ref={iframeRef} title={`${selected.canonicalName} LiveSpeak Avatar`} src={runtime.liveSpeakEmbedUrl} allow="autoplay" sandbox="allow-scripts allow-same-origin" onError={() => { setAvatarFailed(true); setAvatarState(DIGITAL_HUMAN_STATES.ERROR); setError('Avatar 页面加载失败，已保留文字回答。') }} /> : <div className="dh-portrait-fallback" style={{ gridTemplateColumns: 'minmax(0,1fr)', justifyItems: 'center' }}><AnimatedCharacterStage characterId={selected?.id || selectedId} name={selected?.canonicalName} avatar={selected?.avatar} size={256} frame={animationFrame} onStageTouch={handleStageTouch} /><strong>{selected?.canonicalName}</strong><small>{selected?.englishName} · 文本安全回退</small><p>{selected?.runtimeReady ? 'LiveSpeak 当前不可用。' : 'GLB、Voice 或内容尚未完成人工审批，因此不加载 Avatar。'}</p><button className="dh-preview-voice" type="button" onClick={togglePreviewVoice}>{previewVoicePlaying ? '停止默认预览音色' : '试听默认预览音色'}</button>{avatarFailed && <button type="button" disabled={isTurnPending} onClick={() => { setError(''); setAvatarFailed(false); setAvatarState(DIGITAL_HUMAN_STATES.BOOTING); setSessionRevision((value) => value + 1) }}>重新连接数字人</button>}</div>}
             {avatarState === DIGITAL_HUMAN_STATES.WAITING_FOR_TOUCH && <p>手机需要轻触数字人画面后才能播放。</p>}
             <p className="dh-disclosure">{selected?.disclosure}</p>
           </section>
@@ -476,12 +632,12 @@ export default function DigitalHumanWorkspace({
 
           <section className="dh-conversation" aria-live="polite">
             {!messages.length && <div className="dh-empty"><strong>从示例问题开始</strong><div>{(selected?.recommendedQuestions || []).slice(0, 4).map((item) => <button type="button" key={item} onClick={() => submitQuestion(item)}>{item}</button>)}</div></div>}
-            {messages.map((item) => item.role === 'user' ? <article className="dh-message user" key={item.id}><span>你</span><p>{item.text}</p></article> : <article className="dh-message assistant" key={item.id}><header><strong>{selected?.canonicalName}</strong><EvidenceBadge level={item.response.groundingLevel} /></header><p>{item.response.displayText}</p>{!!item.response.references.length && <ul>{item.response.references.map((ref) => <li key={`${ref.sourceType}-${ref.locator}`}>{ref.locator} · {ref.claimSupport}</li>)}</ul>}{!!item.response.relatedCharacters.length && <p className="dh-related">人物图：{item.response.relatedCharacters.map((id) => catalog.find((character) => character.id === id)?.canonicalName || id).join(' · ')}</p>}<footer>{item.canSpeak ? '已通过发声门' : '仅文字显示 · 内容或资产仍需人工审核'} · Trace {item.traceId.slice(0, 10)}{item.canSpeak && avatarAvailable && !avatarFailed && <button type="button" disabled={avatarState !== DIGITAL_HUMAN_STATES.READY || isTurnPending || isMicPending || realtimeState === REALTIME_STATES.LISTENING} onClick={() => replayReply(item)}>播放语音回复</button>}</footer></article>)}
+            {messages.map((item) => item.role === 'user' ? <article className="dh-message user" key={item.id}><span>你</span><p>{item.text}</p></article> : <article className="dh-message assistant" key={item.id}><header><strong>{selected?.canonicalName}</strong><EvidenceBadge level={item.response.groundingLevel} /></header><p>{item.response.displayText}</p>{!!item.response.references.length && <ul>{item.response.references.map((ref) => <li key={`${ref.sourceType}-${ref.locator}`}>{ref.locator} · {ref.claimSupport}</li>)}</ul>}{!!item.response.relatedCharacters.length && <p className="dh-related">人物图：{item.response.relatedCharacters.map((id) => catalog.find((character) => character.id === id)?.canonicalName || id).join(' · ')}</p>}<footer>{item.canSpeak ? '已通过发声门' : '仅文字显示 · 内容或资产仍需人工审核'} · Trace {item.traceId.slice(0, 10)}{item.canSpeak && avatarAvailable && !avatarFailed && <button type="button" disabled={avatarState !== DIGITAL_HUMAN_STATES.READY || isTurnPending || isMicPending || realtimeState === REALTIME_STATES.LISTENING || browserVoiceState === BROWSER_VOICE_STATES.RECORDING || browserVoiceState === BROWSER_VOICE_STATES.TRANSCRIBING} onClick={() => replayReply(item)}>播放语音回复</button>}</footer></article>)}
           </section>
 
           <form className="dh-composer" onSubmit={(event) => { event.preventDefault(); submitQuestion(question) }}>
             <textarea aria-label="向当前圣经人物提问" value={question} onChange={(event) => setQuestion(event.target.value)} maxLength={1200} placeholder={`向${selected?.canonicalName || '人物'}提问；未有足够证据时系统会拒绝断言。`} />
-            <div><button type="button" onClick={() => resetConversation(selectedId)}>清空本次会话</button><button type="button" onClick={toggleMic} aria-describedby={voiceEnabled ? undefined : voiceNoticeId} disabled={!voiceEnabled || isMicPending || isTurnPending || playbackActive || [REALTIME_STATES.PROCESSING, REALTIME_STATES.RECOVERING].includes(realtimeState)}>{isMicPending ? '正在连接语音' : realtimeState === REALTIME_STATES.LISTENING ? '停止收音' : realtimeState === REALTIME_STATES.PROCESSING ? '正在处理语音' : realtimeState === REALTIME_STATES.RECOVERING ? '语音正在重连' : '语音提问'}</button><button className="primary" type="submit" disabled={!question.trim() || isTurnPending || playbackActive}>发送并核验</button></div>
+            <div><button type="button" onClick={() => resetConversation(selectedId)}>清空本次会话</button><button type="button" onClick={toggleMic} aria-describedby={voiceEnabled ? undefined : voiceNoticeId} disabled={!voiceEnabled || isMicPending || isTurnPending || playbackActive || browserVoiceState === BROWSER_VOICE_STATES.RECORDING || browserVoiceState === BROWSER_VOICE_STATES.TRANSCRIBING || [REALTIME_STATES.PROCESSING, REALTIME_STATES.RECOVERING].includes(realtimeState)}>{isMicPending ? '正在连接语音' : realtimeState === REALTIME_STATES.LISTENING ? '停止收音' : realtimeState === REALTIME_STATES.PROCESSING ? '正在处理语音' : realtimeState === REALTIME_STATES.RECOVERING ? '语音正在重连' : '语音提问'}</button>{browserVoiceSupported && <><button type="button" className={browserVoiceState === BROWSER_VOICE_STATES.RECORDING ? 'recording' : undefined} onClick={toggleBrowserVoice} disabled={isTurnPending || playbackActive || isMicPending || realtimeState === REALTIME_STATES.LISTENING || browserVoiceState === BROWSER_VOICE_STATES.TRANSCRIBING}>{browserVoiceState === BROWSER_VOICE_STATES.RECORDING ? '结束录音并发送' : browserVoiceState === BROWSER_VOICE_STATES.TRANSCRIBING ? '正在转写语音' : '录音转写提问'}</button>{browserVoiceState === BROWSER_VOICE_STATES.RECORDING && <button type="button" onClick={cancelBrowserVoice}>取消录音</button>}</>}<button className="primary" type="submit" disabled={!question.trim() || isTurnPending || playbackActive}>发送并核验</button></div>
             {!voiceEnabled && <>
               <p id={voiceNoticeId} className="dh-privacy" role="status">{voiceUnavailableReason(runtime, runtimeLoadError)}</p>
               {(runtime || runtimeLoadError) && <div><button type="button" onClick={retryRuntime} disabled={isTurnPending || playbackActive}>重新核对运行状态</button></div>}

@@ -427,4 +427,181 @@ describe('DigitalHumanWorkspace embedded character mode', () => {
     await screen.findByText('正在准备语音回复')
     expect(createDigitalHumanTurn).toHaveBeenCalledTimes(1)
   })
+
+  it('captures a spoken question via browser MediaRecorder + transcribeAudioBlob when LiveKit is disabled and releases mic tracks', async () => {
+    const track = { stop: vi.fn() }
+    const stream = { getTracks: () => [track] }
+    const getUserMedia = vi.fn(() => Promise.resolve(stream))
+    class FakeMediaRecorder {
+      static isTypeSupported = vi.fn((type) => type === 'audio/webm')
+      constructor(mediaStream, options = {}) {
+        this.stream = mediaStream
+        this.mimeType = options.mimeType || 'audio/webm'
+        this.state = 'inactive'
+      }
+      start() { this.state = 'recording' }
+      stop() {
+        this.state = 'inactive'
+        this.ondataavailable?.({ data: new Blob(['spoken-david-query'], { type: this.mimeType }) })
+        this.onstop?.()
+      }
+    }
+    vi.stubGlobal('MediaRecorder', FakeMediaRecorder)
+    vi.stubGlobal('navigator', { ...globalThis.navigator, mediaDevices: { getUserMedia } })
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      headers: { get: () => 'application/json' },
+      json: async () => ({ transcript: '你为什么没有杀扫罗？', provider: 'deepgram' }),
+    })
+    vi.stubGlobal('fetch', fetchMock)
+    createDigitalHumanTurn.mockResolvedValueOnce(envelope('因他是耶和华的受膏者。'))
+
+    render(<DigitalHumanWorkspace initialCharacterId="david" lockCharacter showOperations={false} />)
+    const recordBtn = await screen.findByRole('button', { name: '录音转写提问' })
+    expect(screen.getByRole('button', { name: '语音提问' }).disabled).toBe(true)
+
+    await act(async () => {
+      fireEvent.click(recordBtn)
+    })
+    expect(getUserMedia).toHaveBeenCalledWith({ audio: true })
+    expect(screen.getByRole('button', { name: '结束录音并发送' })).toBeTruthy()
+    expect(screen.getByRole('button', { name: '取消录音' })).toBeTruthy()
+
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: '结束录音并发送' }))
+    })
+    expect(track.stop).toHaveBeenCalledTimes(1)
+    expect(fetchMock).toHaveBeenCalledTimes(1)
+    expect(String(fetchMock.mock.calls[0][0])).toContain('/speech/transcribe')
+
+    await screen.findByText('因他是耶和华的受膏者。')
+    expect(createDigitalHumanTurn).toHaveBeenCalledTimes(1)
+    expect(createDigitalHumanTurn.mock.calls[0][0].question).toBe('你为什么没有杀扫罗？')
+    expect(screen.getByRole('button', { name: '录音转写提问' })).toBeTruthy()
+  })
+
+  it('automatically speaks approved replies via LocalPortraitVisemeAdapter, animates visemes and eyes, enforces half-duplex, and replays on demand', async () => {
+    const track = { stop: vi.fn() }
+    vi.stubGlobal('MediaRecorder', class {
+      start() { this.state = 'recording' }
+      stop() { this.state = 'inactive'; this.onstop?.() }
+    })
+    vi.stubGlobal('navigator', { ...globalThis.navigator, mediaDevices: { getUserMedia: vi.fn(() => Promise.resolve({ getTracks: () => [track] })) } })
+
+    const utterances = []
+    globalThis.speechSynthesis.speak = vi.fn((utterance) => {
+      utterances.push(utterance)
+      utterance.onstart?.()
+    })
+
+    const approvedTurn = envelope('牧者主说大爱。')
+    approvedTurn.state = 'READY_TO_SPEAK'
+    approvedTurn.response.speechApproved = true
+    approvedTurn.response.contentReviewState = 'APPROVED'
+    createDigitalHumanTurn.mockResolvedValueOnce(approvedTurn)
+
+    render(<DigitalHumanWorkspace initialCharacterId="david" lockCharacter showOperations={false} />)
+    const input = await screen.findByRole('textbox', { name: '向当前圣经人物提问' })
+    const stage = screen.getByTestId('dh-animated-stage')
+    await waitFor(() => expect(screen.getByText(/Avatar ready/)).toBeTruthy())
+    expect(stage.dataset.speaking).toBe('false')
+    expect(stage.dataset.viseme).toBe('REST')
+
+    fireEvent.change(input, { target: { value: '诗篇二十三篇说什么？' } })
+    fireEvent.click(screen.getByRole('button', { name: '发送并核验' }))
+
+    await screen.findByText('人物正在讲述')
+    expect(globalThis.speechSynthesis.speak).toHaveBeenCalledTimes(1)
+    expect(utterances[0].text).toBe('牧者主说大爱。')
+    expect(stage.dataset.speaking).toBe('true')
+    expect(stage.dataset.viseme).toBe('BILABIAL')
+    expect(Number(stage.dataset.gazeX)).not.toBe(0)
+
+    // Half-duplex: browser voice button, replay button, and text form submission are blocked during speech.
+    expect(screen.getByRole('button', { name: '录音转写提问' }).disabled).toBe(true)
+    expect(screen.getByRole('button', { name: '播放语音回复' }).disabled).toBe(true)
+    fireEvent.change(input, { target: { value: '播放中抢话' } })
+    fireEvent.submit(input.closest('form'))
+    expect(await screen.findByRole('alert')).toBeTruthy()
+    expect(createDigitalHumanTurn).toHaveBeenCalledTimes(1)
+
+    // Utterance boundary updates mouth viseme through ROUNDED ('主') and OPEN ('大'), and timer drives eye blink.
+    await act(async () => {
+      utterances[0].onboundary?.({ charIndex: 2 })
+    })
+    expect(stage.dataset.viseme).toBe('ROUNDED')
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 120))
+      utterances[0].onboundary?.({ charIndex: 4 })
+    })
+    expect(stage.dataset.viseme).toBe('OPEN')
+    expect(stage.dataset.eyeBlinking).toBe('true')
+
+    // Utterance end resets viseme and eye rig to neutral REST and unlocks replay.
+    await act(async () => {
+      utterances[0].onend?.()
+    })
+    expect(stage.dataset.speaking).toBe('false')
+    expect(stage.dataset.viseme).toBe('REST')
+    expect(stage.dataset.eyeBlinking).toBe('false')
+    expect(stage.dataset.gazeX).toBe('0.00')
+    expect(stage.dataset.gazeY).toBe('0.00')
+
+    const replayBtn = screen.getByRole('button', { name: '播放语音回复' })
+    expect(replayBtn.disabled).toBe(false)
+    await act(async () => {
+      fireEvent.click(replayBtn)
+    })
+    expect(globalThis.speechSynthesis.speak).toHaveBeenCalledTimes(2)
+    expect(stage.dataset.speaking).toBe('true')
+    await act(async () => {
+      utterances[1].onend?.()
+    })
+    expect(stage.dataset.speaking).toBe('false')
+    expect(stage.dataset.viseme).toBe('REST')
+  })
+
+  it('animates dh-animated-stage during preview voice disclosure and resets to REST when stopped', async () => {
+    render(<DigitalHumanWorkspace initialCharacterId="david" lockCharacter showOperations={false} variant="embedded" />)
+    const previewBtn = await screen.findByRole('button', { name: '试听默认预览音色' })
+    const stage = screen.getByTestId('dh-animated-stage')
+    expect(stage.dataset.speaking).toBe('false')
+    expect(stage.dataset.viseme).toBe('REST')
+
+    fireEvent.click(previewBtn)
+    expect(globalThis.speechSynthesis.speak).toHaveBeenCalledTimes(1)
+    expect(globalThis.speechSynthesis.speak.mock.calls[0][0].text).toBe(
+      '这是默认预览音色，只用于确认声音播放功能，不代表任何圣经人物的真实声音。',
+    )
+    expect(stage.dataset.speaking).toBe('true')
+    expect(Number(stage.dataset.gazeX)).not.toBe(0)
+
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 120))
+    })
+    expect(stage.dataset.eyeBlinking).toBe('true')
+
+    fireEvent.click(screen.getByRole('button', { name: '停止默认预览音色' }))
+    expect(stage.dataset.speaking).toBe('false')
+    expect(stage.dataset.viseme).toBe('REST')
+    expect(stage.dataset.eyeBlinking).toBe('false')
+    expect(stage.dataset.gazeX).toBe('0.00')
+  })
+
+  it('never invokes speechSynthesis.speak or renders replay button for unapproved THEOLOGY_REVIEW turns', async () => {
+    createDigitalHumanTurn.mockResolvedValueOnce(envelope('待神学审核的经文摘要'))
+    render(<DigitalHumanWorkspace initialCharacterId="david" lockCharacter showOperations={false} />)
+    const input = await screen.findByRole('textbox', { name: '向当前圣经人物提问' })
+    await waitFor(() => expect(screen.getByText(/Avatar ready/)).toBeTruthy())
+
+    fireEvent.change(input, { target: { value: '你为什么没有杀扫罗？' } })
+    fireEvent.click(screen.getByRole('button', { name: '发送并核验' }))
+
+    await screen.findByText('待神学审核的经文摘要')
+    expect(globalThis.speechSynthesis.speak).not.toHaveBeenCalled()
+    expect(screen.queryByRole('button', { name: '播放语音回复' })).toBeNull()
+    expect(screen.getByTestId('dh-animated-stage').dataset.speaking).toBe('false')
+    expect(screen.getByTestId('dh-animated-stage').dataset.viseme).toBe('REST')
+  })
 })
