@@ -63,6 +63,7 @@ import SacramentCalendarOrbit from '../features/spiritual-formation/components/s
 import FormationTwinPage from '../features/formation-twin/FormationTwinPage'
 import SpiritualPlanetPlatformPage from '../features/spiritual-planet/SpiritualPlanetPlatformPage'
 import AiFormationPage from '../features/ai-formation/AiFormationPage'
+import CrisisCarePage from '../features/crisis-care/app/CrisisCarePage'
 import { a11yClickProps } from '../lib/a11yClick';
 import { resolveFormationMetric } from '../lib/formationMetrics'
 
@@ -685,7 +686,8 @@ export default function SoulDashboard({ user, onOpenDevotion }) {
             }[target]
             if (formationTarget) setOverlay(formationTarget)
           }} />}
-          {overlay === 'ai-tutor' && <AITutorChatPage user={user} onBack={() => setOverlay(null)} />}
+          {overlay === 'ai-tutor' && <AITutorChatPage user={user} onBack={() => setOverlay(null)} onOpenCrisis={() => setOverlay('crisis-care')} />}
+          {overlay === 'crisis-care' && <div className="sf-page"><BackOverlay onBack={() => setOverlay(null)} /><CrisisCarePage user={user} token={getToken()} onOpenLibrary={() => setOverlay('fuel')} /></div>}
           {overlay === 'spiritual-memory' && <SpiritualMemoryPage user={user} onBack={() => setOverlay(null)} />}
           {overlay === 'mvfe' && <MVFEPage user={user} onBack={() => setOverlay(null)} />}
           {overlay === 'pilgrim-game' && (

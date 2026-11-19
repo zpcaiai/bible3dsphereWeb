@@ -814,7 +814,7 @@ export async function restorePrayer(prayerId, token) {
 
 export async function fetchSharedPrayer(shareToken) {
   devlog(`[api] fetchSharedPrayer token=${shareToken}`)
-  const response = await fetch(`${API_BASE}/prayers/shared/${encodeURIComponent(shareToken)}`)
+  const response = await fetch(`${API_BASE}/prayer-share/${encodeURIComponent(shareToken)}`)
   const data = await response.json().catch(() => ({}))
   if (!response.ok) throw new Error(data.detail || data.error || '这条代祷不存在或已被删除。')
   return data
@@ -822,7 +822,7 @@ export async function fetchSharedPrayer(shareToken) {
 
 export async function amenSharedPrayer(shareToken) {
   devlog(`[api] amenSharedPrayer token=${shareToken}`)
-  const response = await fetch(`${API_BASE}/prayers/shared/${encodeURIComponent(shareToken)}/amen`, {
+  const response = await fetch(`${API_BASE}/prayer-share/${encodeURIComponent(shareToken)}/amen`, {
     method: 'POST',
   })
   const data = await response.json().catch(() => ({}))
@@ -1144,29 +1144,69 @@ export async function deletePersonalNote(noteId, token) {
 }
 
 export async function searchPersonal(kw, token) {
-  devlog(`[api] searchPersonal kw=${kw}`)
-  const params = new URLSearchParams({ kw: kw.trim() })
-  const response = await fetch(`${API_BASE}/personal/search?${params}`, {
-    headers: token ? { 'Authorization': `Bearer ${token}` } : {},
-  })
-  const contentType = response.headers.get('content-type') || ''
-  if (!contentType.includes('application/json')) {
-    // fallback: 本地搜索 personal notes / journal entries
-    // Guard against corrupted localStorage payloads: bad JSON must not throw
-    // and blow up the search fallback — degrade to empty arrays instead.
-    let notes = []
-    let entries = []
-    try { notes = JSON.parse(localStorage.getItem('personal_notes') || '[]') } catch { notes = [] }
-    try { entries = JSON.parse(localStorage.getItem('journal_entries') || '[]') } catch { entries = [] }
-    const all = [...notes, ...entries].filter(item => {
-      const text = JSON.stringify(item).toLowerCase()
-      return text.includes(kw.trim().toLowerCase())
-    })
-    return { query: kw.trim(), results: all, total: all.length }
+  const query = String(kw || '').trim()
+  devlog(`[api] searchPersonal kw=${query}`)
+  if (!query) return { query: '', results: [], total: 0 }
+
+  const needle = query.toLowerCase()
+  const candidates = []
+
+  if (token) {
+    const [journalsRes, notesRes] = await Promise.allSettled([
+      fetchJournals(token, 200, 0),
+      fetchPersonalNotes(token),
+    ])
+    if (journalsRes.status === 'fulfilled' && Array.isArray(journalsRes.value?.items)) {
+      for (const item of journalsRes.value.items) {
+        candidates.push({ source: 'journal', ...item })
+      }
+    }
+    if (notesRes.status === 'fulfilled' && Array.isArray(notesRes.value?.items)) {
+      for (const item of notesRes.value.items) {
+        candidates.push({ source: 'personal_note', ...item })
+      }
+    }
   }
-  const data = await response.json()
-  if (!response.ok) throw new Error(data.detail || data.error || 'Search failed')
-  return data
+
+  // Merge/fallback with local personal_notes & journal_entries (guarded against
+  // corrupted JSON or non-browser environments).
+  let localNotes = []
+  let localEntries = []
+  if (typeof localStorage !== 'undefined') {
+    try {
+      const parsed = JSON.parse(localStorage.getItem('personal_notes') || '[]')
+      localNotes = Array.isArray(parsed) ? parsed : []
+    } catch {
+      localNotes = []
+    }
+    try {
+      const parsed = JSON.parse(localStorage.getItem('journal_entries') || '[]')
+      localEntries = Array.isArray(parsed) ? parsed : []
+    } catch {
+      localEntries = []
+    }
+  }
+  for (const item of localNotes) {
+    if (item && typeof item === 'object') candidates.push({ source: item.source || 'personal_note', ...item })
+  }
+  for (const item of localEntries) {
+    if (item && typeof item === 'object') candidates.push({ source: item.source || 'journal', ...item })
+  }
+
+  const seen = new Set()
+  const results = []
+  for (const item of candidates) {
+    const text = JSON.stringify(item).toLowerCase()
+    if (!text.includes(needle)) continue
+    const dedupeKey = item.id != null
+      ? `${item.source || 'item'}:id:${item.id}`
+      : `${item.source || 'item'}:raw:${item.date || ''}:${item.title || ''}:${item.content || item.reflection || ''}`
+    if (seen.has(dedupeKey)) continue
+    seen.add(dedupeKey)
+    results.push(item)
+  }
+
+  return { query, results, total: results.length }
 }
 
 // ── User Profile API ─────────────────────────────────────────

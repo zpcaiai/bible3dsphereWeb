@@ -52,7 +52,7 @@ function AnswerActions({ answer, question, soundOn }) {
   )
 }
 
-export default function AITutorChatPage({ user, onBack }) {
+export default function AITutorChatPage({ user: _user, onBack, onOpenCrisis }) {
   const [threads, setThreads] = useState([])
   const [active, setActive] = useState(null)
   const [messages, setMessages] = useState([])
@@ -66,7 +66,7 @@ export default function AITutorChatPage({ user, onBack }) {
   useEffect(() => { loadThreads() }, [])
   // 离开这页时把自己播的朗读停掉,不让声音跟着用户跑到别的页面去。
   useEffect(() => () => stopAllAudio(), [])
-  useEffect(() => { if (endRef.current) endRef.current.scrollIntoView({ behavior: 'smooth' }) }, [messages])
+  useEffect(() => { endRef.current?.scrollIntoView?.({ behavior: 'smooth' }) }, [messages])
 
   async function loadThreads() {
     const t = getToken(); if (!t) return
@@ -84,7 +84,7 @@ export default function AITutorChatPage({ user, onBack }) {
   }
   async function newThread() {
     const t = getToken(); if (!t) return
-    try { const d = await tutorApi.createThread({ title: '新的对话' }, t); setActive(d.id); setMessages([]); loadThreads() }
+    try { const d = await tutorApi.createThread({ title: i18nT('新的对话') }, t); setActive(d.id); setMessages([]); loadThreads() }
     catch (e) { setError(e.message) }
   }
   async function send() {
@@ -98,7 +98,7 @@ export default function AITutorChatPage({ user, onBack }) {
       if (!tid) { const c = await tutorApi.createThread({ title: text.slice(0, 20) }, t); tid = c.id; setActive(tid); loadThreads() }
       const d = await tutorApi.send(tid, { content: text }, t)
       setMessages(m => [...m, { id: 'a' + Date.now(), role: 'assistant', content: d.reply, message_type: d.crisis ? 'safety' : 'chat', used_memory: d.used_memory, route_module: d.route ? d.route.module : '' }])
-      if (d.crisis) setCrisis(d.route || { endpoint: '/api/crisis' })
+      if (d.crisis) setCrisis(d.route || { triggered: true })
     } catch (e) { setError(e.message) }
     finally { setBusy(false) }
   }
@@ -111,19 +111,31 @@ export default function AITutorChatPage({ user, onBack }) {
       <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.55)', marginBottom: 12 }}>{i18nT('AI 是陪伴的工具,不能替代圣灵、牧者或辅导师 · 危机会优先引导你寻求真实的人')}</div>
 
       <div style={{ display: 'flex', gap: 8, marginBottom: 12, flexWrap: 'wrap' }}>
-        <button style={btn} onClick={newThread}>{i18nT('＋ 新对话')}</button>
+        <button type="button" style={btn} onClick={newThread}>{i18nT('＋ 新对话')}</button>
         {threads.map(th => (
-          <button key={th.id} style={{ ...ghost, ...(th.id === active ? { borderColor: 'rgba(125,211,252,0.7)', color: '#fff' } : {}) }} onClick={() => openThread(th.id)}>
-            {th.title || '对话'}{th.risk_level === 'high' ? ' ⚠️' : ''}
+          <button type="button" key={th.id} style={{ ...ghost, ...(th.id === active ? { borderColor: 'rgba(125,211,252,0.7)', color: '#fff' } : {}) }} onClick={() => openThread(th.id)}>
+            {th.title || i18nT('对话')}{th.risk_level === 'high' ? ' ⚠️' : ''}
           </button>
         ))}
       </div>
 
       {error && <div style={{ ...card, color: '#ffb4b4' }}>{error}</div>}
       {crisis && (
-        <div style={{ ...card, borderColor: 'rgba(255,120,120,0.5)', background: 'rgba(255,80,80,0.08)' }}>
+        <div role="alert" data-testid="ai-tutor-crisis-banner" style={{ ...card, borderColor: 'rgba(255,120,120,0.5)', background: 'rgba(255,80,80,0.08)' }}>
           <div style={{ fontWeight: 700, marginBottom: 4 }}>{i18nT('需要的是真实的人,不是 AI')}</div>
           <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.85)' }}>{i18nT('请前往「关怀与危机」入口,或联系信任的牧者 / 专业辅导。若有立即危险,请联系当地紧急服务。')}</div>
+          {onOpenCrisis && (
+            <div style={{ marginTop: 10 }}>
+              <button
+                type="button"
+                data-testid="ai-tutor-open-crisis-btn"
+                onClick={onOpenCrisis}
+                style={{ ...btn, background: 'linear-gradient(135deg, #ef4444, #dc2626)' }}
+              >
+                {i18nT('前往「关怀与危机」中心')}
+              </button>
+            </div>
+          )}
         </div>
       )}
 
@@ -154,7 +166,7 @@ export default function AITutorChatPage({ user, onBack }) {
         <textarea value={input} onChange={e => setInput(e.target.value)} rows={2} placeholder={i18nT('说点什么…')}
           onKeyDown={e => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) send() }}
           style={{ flex: 1, resize: 'none', borderRadius: 10, padding: '10px 12px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.12)', color: '#fff', fontSize: 14 }}  aria-label={i18nT('说点什么…')}/>
-        <button style={{ ...btn, opacity: busy ? 0.6 : 1 }} disabled={busy} onClick={send}>{busy ? '…' : '发送'}</button>
+        <button type="button" style={{ ...btn, opacity: busy ? 0.6 : 1 }} disabled={busy} onClick={send}>{busy ? '…' : i18nT('发送')}</button>
       </div>
       <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', marginTop: 8 }}>{i18nT('⌘/Ctrl + Enter 发送 · 记忆共享可在「属灵记忆库」开关')}</div>
     </div>

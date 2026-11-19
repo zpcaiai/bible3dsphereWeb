@@ -70,7 +70,10 @@ class TestWebDpSlicesRegression(unittest.TestCase):
         test_file = (ROOT / "src/test/SharedPrayerApiSlice.test.jsx").read_text(encoding="utf-8")
         self.assertIn("export async function fetchSharedPrayer(shareToken)", api_src)
         self.assertIn("export async function amenSharedPrayer(shareToken)", api_src)
-        self.assertIn("/prayers/shared/tok-pray-88", test_file)
+        self.assertIn("${API_BASE}/prayer-share/${encodeURIComponent(shareToken)}", api_src)
+        self.assertNotIn("${API_BASE}/prayers/shared/", api_src)
+        self.assertNotIn("${API_BASE}/personal/search", api_src)
+        self.assertIn("/prayer-share/tok-pray-88", test_file)
 
     def test_slice_8_growth_curve_and_formation_history_wired(self):
         growth_map = (ROOT / "src/GrowthMapPage.jsx").read_text(encoding="utf-8")
@@ -106,9 +109,11 @@ class TestWebDpSlicesRegression(unittest.TestCase):
 
     def test_slice_12_i18n_subpages_and_fetch_milestones_shape(self):
         i18n_src = (ROOT / "src/i18n/translations.js").read_text(encoding="utf-8")
+        subpage_en_src = (ROOT / "src/i18n/subpage-en.js").read_text(encoding="utf-8")
         api_src = (ROOT / "src/api.js").read_text(encoding="utf-8")
         curve_src = (ROOT / "src/components/GrowthCurve.jsx").read_text(encoding="utf-8")
-        self.assertIn("'📦 离线包已缓存': '📦 Offline pack cached'", i18n_src)
+        self.assertIn("import subpageAutoEn from './subpage-en.js'", i18n_src)
+        self.assertIn("'📦 离线包已缓存': '📦 Offline pack cached'", subpage_en_src)
         self.assertIn("if (Array.isArray(data)) return data", api_src)
         self.assertIn("const list = Array.isArray(d) ? d : (d?.milestones || d?.items || [])", curve_src)
 
@@ -173,9 +178,11 @@ class TestWebDpSlicesRegression(unittest.TestCase):
     def test_slice_19_mission_adopted_profile_and_i18n_subpages(self):
         mission_src = (ROOT / "src/MissionLifePage.jsx").read_text(encoding="utf-8")
         i18n_src = (ROOT / "src/i18n/translations.js").read_text(encoding="utf-8")
+        subpage_en_src = (ROOT / "src/i18n/subpage-en.js").read_text(encoding="utf-8")
         self.assertIn('data-testid="mission-adopted-profile"', mission_src)
-        self.assertIn("'当前使命画像': 'Current Mission Profile'", i18n_src)
-        self.assertIn("'载入到当前分辨': 'Load into Current Discernment'", i18n_src)
+        self.assertIn("import subpageAutoEn from './subpage-en.js'", i18n_src)
+        self.assertIn("'当前使命画像': 'Current Mission Profile'", subpage_en_src)
+        self.assertIn("'载入到当前分辨': 'Load into Current Discernment'", subpage_en_src)
 
 
 if __name__ == "__main__":
