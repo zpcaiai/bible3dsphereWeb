@@ -84,6 +84,15 @@ const namespacedZh = {
 
   'home.trajectory.title': '近30天情感轨迹',
 
+  'home.appDownload.title': '客户端 App 下载',
+  'home.appDownload.subtitle': '支持 Android 与 iOS 设备，随时随地安静灵修',
+  'home.appDownload.androidTitle': 'Android 版下载',
+  'home.appDownload.androidMeta': 'APK 安装包 · Android 5.0+',
+  'home.appDownload.iosTitle': 'iOS 版下载',
+  'home.appDownload.iosMeta': 'iPhone / iPad 客户端',
+  'home.appDownload.pendingAndroid': 'Android 安装包正在准备中，稍后开放下载',
+  'home.appDownload.pendingIos': 'iOS 安装包正在准备中，稍后开放下载',
+
   'nav.sphere': '星球',
   'nav.mirror': '镜鉴',
   'nav.sharewall': '分享',
@@ -221,6 +230,15 @@ const namespacedEn = {
   'home.pour.question.suffering': 'Why does God allow suffering?',
 
   'home.trajectory.title': 'Emotional Journey (last 30 days)',
+
+  'home.appDownload.title': 'Mobile App Download',
+  'home.appDownload.subtitle': 'Available for Android & iOS devices for daily devotion anywhere',
+  'home.appDownload.androidTitle': 'Download for Android',
+  'home.appDownload.androidMeta': 'APK Package · Android 5.0+',
+  'home.appDownload.iosTitle': 'Download for iOS',
+  'home.appDownload.iosMeta': 'iPhone & iPad App',
+  'home.appDownload.pendingAndroid': 'Android app package is being prepared and will be available soon',
+  'home.appDownload.pendingIos': 'iOS app package is being prepared and will be available soon',
 
   'nav.sphere': 'Planet',
   'nav.mirror': 'Mirror',

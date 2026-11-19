@@ -9,6 +9,7 @@ export const PUBLIC_BUILD_ENV_KEYS = Object.freeze([
   'VITE_BOOK_BASE', 'VITE_CESIUM_TOKEN', 'VITE_HYMN_AUDIO_BASE',
   'VITE_MAPBOX_TOKEN', 'NEXT_PUBLIC_MAPBOX_TOKEN', 'VITE_MAPLIBRE_STYLE',
   'VITE_MAP_PROVIDER', 'VITE_TEMPLE_GLTF_URL',
+  'VITE_APP_DOWNLOAD_BASE', 'VITE_ANDROID_APP_URL', 'VITE_IOS_APP_URL',
 ])
 
 // Explicit definitions also populate whole import.meta.env references. Do this
@@ -16,7 +17,8 @@ export const PUBLIC_BUILD_ENV_KEYS = Object.freeze([
 export function publicBuildDefinitions(deployment, environment) {
   const definitions = {}
   for (const key of PUBLIC_BUILD_ENV_KEYS) {
-    if (environment[key] !== undefined) definitions['import.meta.env.' + key] = JSON.stringify(environment[key])
+    const value = environment[key] !== undefined ? environment[key] : deployment?.env?.[key]
+    if (value !== undefined) definitions['import.meta.env.' + key] = JSON.stringify(value)
   }
   definitions['import.meta.env.VITE_API_BASE'] = JSON.stringify(resolvePublicApiBase(deployment, environment))
   return definitions

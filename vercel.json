@@ -3,7 +3,8 @@
   "outputDirectory": "dist",
   "framework": null,
   "env": {
-    "VITE_API_BASE": "/api"
+    "VITE_API_BASE": "/api",
+    "VITE_APP_DOWNLOAD_BASE": "https://cdn.holiness.uk/app"
   },
   "headers": [
     {

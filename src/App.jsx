@@ -30,6 +30,7 @@ import SeekersStandalonePage from './components/SeekersStandalonePage'
 import DevotionTabContainer from './components/DevotionTabContainer'
 import VoiceHoldButton from './components/VoiceHoldButton'
 import PastoralPathCard, { PASTORAL_ROUTE_TARGETS } from './components/PastoralPathCard'
+import AppDownloadFooterSection from './components/AppDownloadFooterSection'
 import { useGuardianStore } from './components/guardian/guardianStore'
 import { curateAnthropicEmotionLayout } from './data/anthropicEmotionConcepts'
 import { getCuratedEmotionScriptureDetail } from './data/emotionScriptureDetail'
@@ -2697,6 +2698,7 @@ function AppContent() {
                   {i18nT('实时统计 · 持久化存储')}
                 </div>
               </section>
+              <AppDownloadFooterSection onNotify={notifyUser} />
             </div>
           </section>
 
