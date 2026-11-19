@@ -1,0 +1,704 @@
+﻿组,源码键,名称,Web 入口,Web 源码,参数/能力,权限/配置,App 候选,映射,逐项用例,关联业务用例,迁移范围,状态
+panel,mirror,人物镜鉴,星球与主导航,src/App.jsx#L177,,按源页面及服务权限核对,lib/src/screens/mirror_screen.dart,候选待实测,REG-PANEL-MIRROR,MAP-05,需迁移核对,NOT_RUN
+panel,mirror-graph,人物关系图谱,星球与主导航,src/App.jsx#L177,,按源页面及服务权限核对,lib/src/screens/mirror_graph_screen.dart,候选待实测,REG-PANEL-MIRROR-GRAPH,MAP-06,需迁移核对,NOT_RUN
+panel,attention,守心,星球与主导航,src/App.jsx#L1518,,按源页面及服务权限核对,lib/src/screens/attention/attention_screen.dart,候选待实测,REG-PANEL-ATTENTION,ATT-01,需迁移核对,NOT_RUN
+panel,sphere,情绪星球,星球与主导航,src/App.jsx#L1659,,按源页面及服务权限核对,lib/src/screens/sphere_screen.dart,候选待实测,REG-PANEL-SPHERE,SPHERE-01,需迁移核对,NOT_RUN
+panel,prayer,代祷墙,星球与主导航,src/App.jsx#L2718,,按源页面及服务权限核对,lib/src/screens/prayer_screen.dart,候选待实测,REG-PANEL-PRAYER,SOC-01,需迁移核对,NOT_RUN
+panel,evangelism,福音宣扬,星球与主导航,src/App.jsx#L2732,,按源页面及服务权限核对,lib/src/screens/evangelism_screen.dart,候选待实测,REG-PANEL-EVANGELISM,SOC-09,需迁移核对,NOT_RUN
+panel,checkin,情绪签到,星球与主导航,src/App.jsx#L2746,,按源页面及服务权限核对,lib/src/screens/checkin_screen.dart,候选待实测,REG-PANEL-CHECKIN,SOUL-01,需迁移核对,NOT_RUN
+panel,journal,主日信息,星球与主导航,src/App.jsx#L2761,,按源页面及服务权限核对,lib/src/screens/sunday_screen.dart,候选待实测,REG-PANEL-JOURNAL,SOC-07,需迁移核对,NOT_RUN
+panel,devotion,灵修首页,星球与主导航,src/App.jsx#L2774,,按源页面及服务权限核对,lib/src/screens/devotion_screen.dart,候选待实测,REG-PANEL-DEVOTION,DEV-01,需迁移核对,NOT_RUN
+panel,sharewall,社区分享,星球与主导航,src/App.jsx#L2793,,按源页面及服务权限核对,lib/src/screens/community_screen.dart,候选待实测,REG-PANEL-SHAREWALL,SOC-19,需迁移核对,NOT_RUN
+panel,innerlife,心迹,星球与主导航,src/App.jsx#L2829,,按源页面及服务权限核对,lib/src/screens/innerlife_screen.dart,候选待实测,REG-PANEL-INNERLIFE,SOUL-02,需迁移核对,NOT_RUN
+panel,soul-question,每日灵魂一问,星球与主导航,src/App.jsx#L2859,,按源页面及服务权限核对,lib/src/screens/soul_question_history_screen.dart,候选待实测,REG-PANEL-SOUL-QUESTION,SOUL-03,需迁移核对,NOT_RUN
+panel,growth-map,灵命成长地图,星球与主导航,src/App.jsx#L2870,,按源页面及服务权限核对,lib/src/screens/growth_map_screen.dart,候选待实测,REG-PANEL-GROWTH-MAP,SOUL-04,需迁移核对,NOT_RUN
+panel,partner,属灵伙伴,星球与主导航,src/App.jsx#L2881,,按源页面及服务权限核对,lib/src/screens/spiritual_partner_screen.dart,候选待实测,REG-PANEL-PARTNER,SOC-15,需迁移核对,NOT_RUN
+panel,bible-reading,圣经通读,星球与主导航,src/App.jsx#L2892,,按源页面及服务权限核对,lib/src/screens/bible_reading_screen.dart,候选待实测,REG-PANEL-BIBLE-READING,DEV-11,需迁移核对,NOT_RUN
+panel,engineering,系统工程,星球与主导航,src/App.jsx#L2903,,按源页面及服务权限核对,,待定位,REG-PANEL-ENGINEERING,MAP-07,需迁移核对,NOT_RUN
+panel,bible-maps,圣经地图,星球与主导航,src/App.jsx#L2912,,按源页面及服务权限核对,lib/src/screens/bible_maps_screen.dart,候选待实测,REG-PANEL-BIBLE-MAPS,MAP-01,需迁移核对,NOT_RUN
+panel,bible-atlas,圣经地图图谱,星球与主导航,src/App.jsx#L2921,,按源页面及服务权限核对,lib/src/screens/bible_atlas_screen.dart,候选待实测,REG-PANEL-BIBLE-ATLAS,MAP-02,需迁移核对,NOT_RUN
+panel,worldview,世界观,星球与主导航,src/App.jsx#L2929,,按源页面及服务权限核对,lib/src/screens/formation/worldview_screen.dart,候选待实测,REG-PANEL-WORLDVIEW,MAP-08,需迁移核对,NOT_RUN
+panel,about,关于,星球与主导航,src/App.jsx#L2938,,按源页面及服务权限核对,lib/src/screens/profile_screen.dart,候选待实测,REG-PANEL-ABOUT,NAV-07,需迁移核对,NOT_RUN
+panel,community,社区,星球与主导航,src/App.jsx#L2957,,按源页面及服务权限核对,lib/src/screens/community_screen.dart,候选待实测,REG-PANEL-COMMUNITY,SOC-04,需迁移核对,NOT_RUN
+panel,voice,多人语音,星球与主导航,src/App.jsx#L2966,,按源页面及服务权限核对,lib/src/screens/voice_groups_screen.dart,候选待实测,REG-PANEL-VOICE,SOC-12,需迁移核对,NOT_RUN
+panel,communion,相通,星球与主导航,src/App.jsx#L2981,,按源页面及服务权限核对,lib/src/screens/communion_screen.dart,候选待实测,REG-PANEL-COMMUNION,SOC-10,需迁移核对,NOT_RUN
+panel,shared-prayer,公开分享代祷,星球与主导航,src/App.jsx#L2994,,按源页面及服务权限核对,lib/src/screens/shared_prayer_screen.dart,候选待实测,REG-PANEL-SHARED-PRAYER,SOC-02,需迁移核对,NOT_RUN
+panel,group-hub,小组中心,星球与主导航,src/App.jsx#L3003,,按源页面及服务权限核对,lib/src/screens/group_hub_screen.dart,候选待实测,REG-PANEL-GROUP-HUB,SOC-13,需迁移核对,NOT_RUN
+panel,care-dashboard,关怀面板,星球与主导航,src/App.jsx#L3017,,按源页面及服务权限核对,lib/src/screens/care_dashboard_screen.dart,候选待实测,REG-PANEL-CARE-DASHBOARD,SOC-14,需迁移核对,NOT_RUN
+panel,onboarding,新手引导,星球与主导航,src/App.jsx#L3031,,按源页面及服务权限核对,,待定位,REG-PANEL-ONBOARDING,SOC-16,需迁移核对,NOT_RUN
+panel,mccheyne,麦琴读经,星球与主导航,src/App.jsx#L3043,,按源页面及服务权限核对,lib/src/screens/devotion_screen.dart,候选待实测,REG-PANEL-MCCHEYNE,DEV-10,需迁移核对,NOT_RUN
+panel,bible-search,圣经搜索,星球与主导航,src/App.jsx#L3052,,按源页面及服务权限核对,lib/src/screens/bible_search_screen.dart,候选待实测,REG-PANEL-BIBLE-SEARCH,DEV-12,需迁移核对,NOT_RUN
+panel,memory-deck,背经卡组,星球与主导航,src/App.jsx#L3064,,按源页面及服务权限核对,lib/src/screens/memory_deck_screen.dart,候选待实测,REG-PANEL-MEMORY-DECK,DEV-14,需迁移核对,NOT_RUN
+panel,personal-search,个人搜索,星球与主导航,src/App.jsx#L3073,,按源页面及服务权限核对,lib/src/screens/personal_search_screen.dart,候选待实测,REG-PANEL-PERSONAL-SEARCH,DEV-17,需迁移核对,NOT_RUN
+panel,export-data,我的数据,星球与主导航,src/App.jsx#L3082,,按源页面及服务权限核对,lib/src/screens/export_data_screen.dart,候选待实测,REG-PANEL-EXPORT-DATA,DEV-18,需迁移核对,NOT_RUN
+panel,dating-priority,匿名关系问卷,星球与主导航,src/App.jsx#L3090,,按源页面及服务权限核对,lib/src/screens/dating_priority_screen.dart,候选待实测,REG-PANEL-DATING-PRIORITY,SOC-17,需迁移核对,NOT_RUN
+panel,dating-priority-stats,匿名关系统计,星球与主导航,src/App.jsx#L3103,,按源页面及服务权限核对,lib/src/screens/dating_priority_stats_screen.dart,候选待实测,REG-PANEL-DATING-PRIORITY-STATS,SOC-18,需迁移核对,NOT_RUN
+panel,spiritual-planet,统一门户,星球与主导航,src/App.jsx#L3121,,按源页面及服务权限核对,lib/src/screens/spiritual_planet_platform_screen.dart,候选待实测,REG-PANEL-SPIRITUAL-PLANET,PORTAL-01,需迁移核对,NOT_RUN
+panel,ai-formation,AI 时代心意更新,星球与主导航,src/App.jsx#L3132,,比对 flag 关闭/开启；待审内容与审核角色门,lib/src/screens/ai_formation_screen.dart,候选待实测,REG-PANEL-AI-FORMATION,AI-01,需迁移核对,NOT_RUN
+panel,formation-twin,情感—属灵形成孪生,星球与主导航,src/App.jsx#L3152,,按源页面及服务权限核对,lib/src/screens/formation_twin_screen.dart,候选待实测,REG-PANEL-FORMATION-TWIN,TWIN-01,需迁移核对,NOT_RUN
+panel,spiritual-formation,属灵塑造,星球与主导航,src/App.jsx#L3169,,按源页面及服务权限核对,lib/src/screens/spiritual_formation_screen.dart,候选待实测,REG-PANEL-SPIRITUAL-FORMATION,FORM-01,需迁移核对,NOT_RUN
+home,home.quick.seekers,home.quick.seekers,星球首页快捷与今日摘要,src/App.jsx#L1684,/seekers,按源页面及服务权限核对,lib/src/screens/evangelism_screen.dart,候选待实测,REG-HOME-HOME-QUICK-SEEKERS-3CE93C1A,SOC-08,需迁移核对,NOT_RUN
+home,home.quick.voice,home.quick.voice,星球首页快捷与今日摘要,src/App.jsx#L1685,voice,按源页面及服务权限核对,lib/src/screens/voice_groups_screen.dart,候选待实测,REG-HOME-HOME-QUICK-VOICE-112F7466,SOC-12,需迁移核对,NOT_RUN
+home,home.quick.communion,home.quick.communion,星球首页快捷与今日摘要,src/App.jsx#L1686,communion,按源页面及服务权限核对,lib/src/screens/communion_screen.dart,候选待实测,REG-HOME-HOME-QUICK-COMMUNION-00BD45AD,SOC-10,需迁移核对,NOT_RUN
+home,home.quick.mirrorGraph,home.quick.mirrorGraph,星球首页快捷与今日摘要,src/App.jsx#L1687,mirror-graph,按源页面及服务权限核对,lib/src/screens/mirror_graph_screen.dart,候选待实测,REG-HOME-HOME-QUICK-MIRRORGRAPH-B02A9769,MAP-06,需迁移核对,NOT_RUN
+home,home.quick.bibleMaps,home.quick.bibleMaps,星球首页快捷与今日摘要,src/App.jsx#L1688,bible-maps,按源页面及服务权限核对,lib/src/screens/bible_maps_screen.dart,候选待实测,REG-HOME-HOME-QUICK-BIBLEMAPS-DF51D6BA,MAP-01,需迁移核对,NOT_RUN
+home,home.quick.pilgrimProgress,home.quick.pilgrimProgress,星球首页快捷与今日摘要,src/App.jsx#L1689,https://pilgrims.holiness.uk/,按源页面及服务权限核对,lib/src/screens/web_game_screen.dart,候选待实测,REG-HOME-HOME-QUICK-PILGRIMPROGRESS-2D615820,SOUL-16,需迁移核对,NOT_RUN
+home,home.quick.oracles,home.quick.oracles,星球首页快捷与今日摘要,src/App.jsx#L1690,https://holiness.uk/oracles.html,按源页面及服务权限核对,lib/src/screens/oracles_screen.dart,候选待实测,REG-HOME-HOME-QUICK-ORACLES-5E6E8E48,UI-15,需迁移核对,NOT_RUN
+home,home.snapshot.quickDevotion,home.snapshot.quickDevotion,星球首页快捷与今日摘要,src/App.jsx#L1788,setShowQuickDevotion,按源页面及服务权限核对,lib/src/screens/devotion/quick_devotion_tab.dart,候选待实测,REG-HOME-HOME-SNAPSHOT-QUICKDEVOTION-47607EF0,DEV-05,需迁移核对,NOT_RUN
+home,home.snapshot.topicDevotion,home.snapshot.topicDevotion,星球首页快捷与今日摘要,src/App.jsx#L1789,openDevotionTopics,按源页面及服务权限核对,lib/src/screens/devotion/devotion_topics_tab.dart,候选待实测,REG-HOME-HOME-SNAPSHOT-TOPICDEVOTION-0A61112D,DEV-16,需迁移核对,NOT_RUN
+home,home.snapshot.bibleReading,home.snapshot.bibleReading,星球首页快捷与今日摘要,src/App.jsx#L1790,bible-reading,按源页面及服务权限核对,lib/src/screens/bible_reading_screen.dart,候选待实测,REG-HOME-HOME-SNAPSHOT-BIBLEREADING-2E602979,DEV-11,需迁移核对,NOT_RUN
+home,home.snapshot.mccheyne,home.snapshot.mccheyne,星球首页快捷与今日摘要,src/App.jsx#L1791,mccheyne,按源页面及服务权限核对,lib/src/screens/devotion_screen.dart,候选待实测,REG-HOME-HOME-SNAPSHOT-MCCHEYNE-92A0E8B2,DEV-10,需迁移核对,NOT_RUN
+home,从这里开始,从这里开始,星球首页快捷与今日摘要,src/App.jsx#L1797,onboarding,按源页面及服务权限核对,,待定位,REG-HOME-DF7006CA,SOC-16,需迁移核对,NOT_RUN
+home,home.snapshot.soulQuestion,home.snapshot.soulQuestion,星球首页快捷与今日摘要,src/App.jsx#L1798,soul-question,按源页面及服务权限核对,lib/src/screens/soul_question_history_screen.dart,候选待实测,REG-HOME-HOME-SNAPSHOT-SOULQUESTION-83ADEA61,SOUL-03,需迁移核对,NOT_RUN
+home,home.snapshot.worldview,home.snapshot.worldview,星球首页快捷与今日摘要,src/App.jsx#L1799,worldview,按源页面及服务权限核对,lib/src/screens/formation/worldview_screen.dart,候选待实测,REG-HOME-HOME-SNAPSHOT-WORLDVIEW-D7925F7D,MAP-08,需迁移核对,NOT_RUN
+home,home.snapshot.growthMap,home.snapshot.growthMap,星球首页快捷与今日摘要,src/App.jsx#L1800,growth-map,按源页面及服务权限核对,lib/src/screens/growth_map_screen.dart,候选待实测,REG-HOME-HOME-SNAPSHOT-GROWTHMAP-2FB73E8C,SOUL-04,需迁移核对,NOT_RUN
+home,home.snapshot.growth,home.snapshot.growth,星球首页快捷与今日摘要,src/App.jsx#L1801,engineering,按源页面及服务权限核对,,待定位,REG-HOME-HOME-SNAPSHOT-GROWTH-E0E7A2F3,MAP-07,需迁移核对,NOT_RUN
+home,home.snapshot.partner,home.snapshot.partner,星球首页快捷与今日摘要,src/App.jsx#L1802,partner,按源页面及服务权限核对,lib/src/screens/spiritual_partner_screen.dart,候选待实测,REG-HOME-HOME-SNAPSHOT-PARTNER-515B264E,SOC-15,需迁移核对,NOT_RUN
+home,小组中心,小组中心,星球首页快捷与今日摘要,src/App.jsx#L1803,group-hub,按源页面及服务权限核对,lib/src/screens/group_hub_screen.dart,候选待实测,REG-HOME-BD235F8D,SOC-13,需迁移核对,NOT_RUN
+home,关怀面板,关怀面板,星球首页快捷与今日摘要,src/App.jsx#L1804,care-dashboard,按源页面及服务权限核对,lib/src/screens/care_dashboard_screen.dart,候选待实测,REG-HOME-5EA779A0,SOC-14,需迁移核对,NOT_RUN
+home,home.snapshot.memoryDeck,home.snapshot.memoryDeck,星球首页快捷与今日摘要,src/App.jsx#L1810,memory-deck,按源页面及服务权限核对,lib/src/screens/memory_deck_screen.dart,候选待实测,REG-HOME-HOME-SNAPSHOT-MEMORYDECK-1D381FB2,DEV-14,需迁移核对,NOT_RUN
+home,home.snapshot.personalSearch,home.snapshot.personalSearch,星球首页快捷与今日摘要,src/App.jsx#L1811,personal-search,按源页面及服务权限核对,lib/src/screens/personal_search_screen.dart,候选待实测,REG-HOME-HOME-SNAPSHOT-PERSONALSEARCH-FC5AF6CA,DEV-17,需迁移核对,NOT_RUN
+home,home.snapshot.exportData,home.snapshot.exportData,星球首页快捷与今日摘要,src/App.jsx#L1812,export-data,按源页面及服务权限核对,lib/src/screens/export_data_screen.dart,候选待实测,REG-HOME-HOME-SNAPSHOT-EXPORTDATA-F7CAA502,DEV-18,需迁移核对,NOT_RUN
+overlay,idolatry,偶像监测,心迹 → 今日心镜的分类与弹层,src/components/SoulDashboard.jsx#L646,,按源页面及服务权限核对,,待定位,REG-OVERLAY-IDOLATRY,SOUL-20,需迁移核对,NOT_RUN
+overlay,waiting,等候之路,心迹 → 今日心镜的分类与弹层,src/components/SoulDashboard.jsx#L647,,按源页面及服务权限核对,lib/src/screens/waiting_detail_screen.dart,候选待实测,REG-OVERLAY-WAITING,SOUL-22,需迁移核对,NOT_RUN
+overlay,examen,今日省察,心迹 → 今日心镜的分类与弹层,src/components/SoulDashboard.jsx#L648,,按源页面及服务权限核对,lib/src/screens/examen_screen.dart,候选待实测,REG-OVERLAY-EXAMEN,SOUL-23,需迁移核对,NOT_RUN
+overlay,productization,产品化,心迹 → 今日心镜的分类与弹层,src/components/SoulDashboard.jsx#L649,,按源页面及服务权限核对,lib/src/screens/formation/analytics_productization_screens.dart,候选待实测,REG-OVERLAY-PRODUCTIZATION,FORM-29,需迁移核对,NOT_RUN
+overlay,analytics,形成分析,心迹 → 今日心镜的分类与弹层,src/components/SoulDashboard.jsx#L650,,按源页面及服务权限核对,lib/src/screens/formation/analytics_productization_screens.dart,候选待实测,REG-OVERLAY-ANALYTICS,FORM-25,需迁移核对,NOT_RUN
+overlay,charts,形成图表,心迹 → 今日心镜的分类与弹层,src/components/SoulDashboard.jsx#L651,,按源页面及服务权限核对,lib/src/screens/formation/formation_charts_screen.dart,候选待实测,REG-OVERLAY-CHARTS,SOUL-10,需迁移核对,NOT_RUN
+overlay,org-console,组织后台,心迹 → 今日心镜的分类与弹层,src/components/SoulDashboard.jsx#L652,,按源页面及服务权限核对,lib/src/screens/formation/org_console_screen.dart,候选待实测,REG-OVERLAY-ORG-CONSOLE,FORM-26,需迁移核对,NOT_RUN
+overlay,billing,计费,心迹 → 今日心镜的分类与弹层,src/components/SoulDashboard.jsx#L653,,按源页面及服务权限核对,lib/src/screens/formation/platform_admin_screens.dart,候选待实测,REG-OVERLAY-BILLING,FORM-28,需迁移核对,NOT_RUN
+overlay,platform-admin,平台管理,心迹 → 今日心镜的分类与弹层,src/components/SoulDashboard.jsx#L654,,按源页面及服务权限核对,lib/src/screens/formation/platform_admin_screens.dart,候选待实测,REG-OVERLAY-PLATFORM-ADMIN,FORM-27,需迁移核对,NOT_RUN
+overlay,formation-twin,形成孪生,心迹 → 今日心镜的分类与弹层,src/components/SoulDashboard.jsx#L655,,按源页面及服务权限核对,lib/src/screens/formation_twin_screen.dart,候选待实测,REG-OVERLAY-FORMATION-TWIN,TWIN-01,需迁移核对,NOT_RUN
+overlay,spiritual-planet,统一门户,心迹 → 今日心镜的分类与弹层,src/components/SoulDashboard.jsx#L672,,按源页面及服务权限核对,lib/src/screens/spiritual_planet_platform_screen.dart,候选待实测,REG-OVERLAY-SPIRITUAL-PLANET,PORTAL-01,需迁移核对,NOT_RUN
+overlay,ai-formation,AI 时代心意更新,心迹 → 今日心镜的分类与弹层,src/components/SoulDashboard.jsx#L681,,比对 flag 关闭/开启；待审内容与审核角色门,lib/src/screens/ai_formation_screen.dart,候选待实测,REG-OVERLAY-AI-FORMATION,AI-01,需迁移核对,NOT_RUN
+overlay,ai-tutor,AI 导师,心迹 → 今日心镜的分类与弹层,src/components/SoulDashboard.jsx#L688,,按源页面及服务权限核对,lib/src/screens/formation/ai_tutor_chat_screen.dart,候选待实测,REG-OVERLAY-AI-TUTOR,FORM-23,需迁移核对,NOT_RUN
+overlay,spiritual-memory,属灵记忆,心迹 → 今日心镜的分类与弹层,src/components/SoulDashboard.jsx#L689,,按源页面及服务权限核对,lib/src/screens/formation/spiritual_memory_screen.dart,候选待实测,REG-OVERLAY-SPIRITUAL-MEMORY,FORM-24,需迁移核对,NOT_RUN
+overlay,mvfe,MVFE,心迹 → 今日心镜的分类与弹层,src/components/SoulDashboard.jsx#L690,,按源页面及服务权限核对,,待定位,REG-OVERLAY-MVFE,FORM-31,需迁移核对,NOT_RUN
+overlay,pilgrim-game,天路历程游戏,心迹 → 今日心镜的分类与弹层,src/components/SoulDashboard.jsx#L691,,按源页面及服务权限核对,lib/src/screens/web_game_screen.dart,候选待实测,REG-OVERLAY-PILGRIM-GAME,SOUL-16,需迁移核对,NOT_RUN
+overlay,formation-home,形成代理,心迹 → 今日心镜的分类与弹层,src/components/SoulDashboard.jsx#L697,,按源页面及服务权限核对,lib/src/screens/formation/formation_dashboard_screen.dart,候选待实测,REG-OVERLAY-FORMATION-HOME,FORM-30,需迁移核对,NOT_RUN
+overlay,lectio,圣经默想,心迹 → 今日心镜的分类与弹层,src/components/SoulDashboard.jsx#L698,,按源页面及服务权限核对,lib/src/screens/formation/lectio_screen.dart,候选待实测,REG-OVERLAY-LECTIO,FORM-02,需迁移核对,NOT_RUN
+overlay,psalm,诗篇祷告,心迹 → 今日心镜的分类与弹层,src/components/SoulDashboard.jsx#L699,,按源页面及服务权限核对,lib/src/screens/formation/psalm_screen.dart,候选待实测,REG-OVERLAY-PSALM,FORM-05,需迁移核对,NOT_RUN
+overlay,mission-life,使命生活,心迹 → 今日心镜的分类与弹层,src/components/SoulDashboard.jsx#L700,,按源页面及服务权限核对,lib/src/screens/formation/mission_life_screen.dart,候选待实测,REG-OVERLAY-MISSION-LIFE,FORM-33,需迁移核对,NOT_RUN
+overlay,presence,操练同在,心迹 → 今日心镜的分类与弹层,src/components/SoulDashboard.jsx#L701,,按源页面及服务权限核对,lib/src/screens/formation/practice_screens.dart,候选待实测,REG-OVERLAY-PRESENCE,FORM-05,需迁移核对,NOT_RUN
+overlay,fasting,禁食简朴,心迹 → 今日心镜的分类与弹层,src/components/SoulDashboard.jsx#L702,,按源页面及服务权限核对,lib/src/screens/formation/practice_screens.dart,候选待实测,REG-OVERLAY-FASTING,FORM-07,需迁移核对,NOT_RUN
+overlay,doctrine,教义学习,心迹 → 今日心镜的分类与弹层,src/components/SoulDashboard.jsx#L703,,按源页面及服务权限核对,lib/src/screens/formation/batch14_dashboard_screen.dart,候选待实测,REG-OVERLAY-DOCTRINE,FORM-22,需迁移核对,NOT_RUN
+overlay,church-life,本地教会,心迹 → 今日心镜的分类与弹层,src/components/SoulDashboard.jsx#L704,,按源页面及服务权限核对,lib/src/screens/formation/church_integration_screen.dart,候选待实测,REG-OVERLAY-CHURCH-LIFE,FORM-12,需迁移核对,NOT_RUN
+overlay,disciple-path,门训路径,心迹 → 今日心镜的分类与弹层,src/components/SoulDashboard.jsx#L705,,按源页面及服务权限核对,lib/src/screens/formation/practice_screens.dart,候选待实测,REG-OVERLAY-DISCIPLE-PATH,FORM-12,需迁移核对,NOT_RUN
+overlay,acc-group,问责小组,心迹 → 今日心镜的分类与弹层,src/components/SoulDashboard.jsx#L706,,按源页面及服务权限核对,lib/src/screens/formation/practice_screens.dart,候选待实测,REG-OVERLAY-ACC-GROUP,FORM-12,需迁移核对,NOT_RUN
+overlay,mentor,导师陪跑,心迹 → 今日心镜的分类与弹层,src/components/SoulDashboard.jsx#L707,,按源页面及服务权限核对,lib/src/screens/formation/practice_screens.dart,候选待实测,REG-OVERLAY-MENTOR,FORM-12,需迁移核对,NOT_RUN
+overlay,sabbath,安息操练,心迹 → 今日心镜的分类与弹层,src/components/SoulDashboard.jsx#L708,,按源页面及服务权限核对,lib/src/screens/formation/practice_screens.dart,候选待实测,REG-OVERLAY-SABBATH,FORM-36,需迁移核对,NOT_RUN
+overlay,fruit,圣灵果子,心迹 → 今日心镜的分类与弹层,src/components/SoulDashboard.jsx#L709,,按源页面及服务权限核对,lib/src/screens/formation/fruit_tracker_screen.dart,候选待实测,REG-OVERLAY-FRUIT,FORM-06,需迁移核对,NOT_RUN
+overlay,temptation,试探抵抗,心迹 → 今日心镜的分类与弹层,src/components/SoulDashboard.jsx#L710,,按源页面及服务权限核对,lib/src/screens/formation/practice_screens.dart,候选待实测,REG-OVERLAY-TEMPTATION,FORM-35,需迁移核对,NOT_RUN
+overlay,intercession,代祷追踪,心迹 → 今日心镜的分类与弹层,src/components/SoulDashboard.jsx#L711,,按源页面及服务权限核对,lib/src/screens/formation/practice_screens.dart,候选待实测,REG-OVERLAY-INTERCESSION,FORM-34,需迁移核对,NOT_RUN
+overlay,prayer-rule,祷告规则,心迹 → 今日心镜的分类与弹层,src/components/SoulDashboard.jsx#L712,,按源页面及服务权限核对,lib/src/screens/formation/prayer_rule_screen.dart,候选待实测,REG-OVERLAY-PRAYER-RULE,FORM-05,需迁移核对,NOT_RUN
+overlay,reminder,提醒,心迹 → 今日心镜的分类与弹层,src/components/SoulDashboard.jsx#L713,,按源页面及服务权限核对,lib/src/screens/reminder_settings_screen.dart,候选待实测,REG-OVERLAY-REMINDER,DEV-15,需迁移核对,NOT_RUN
+overlay,hub,灵修操练,心迹 → 今日心镜的分类与弹层,src/components/SoulDashboard.jsx#L714,,按源页面及服务权限核对,lib/src/screens/practice_hub_screen.dart,候选待实测,REG-OVERLAY-HUB,FORM-20,需迁移核对,NOT_RUN
+overlay,gospel,福音诊断,心迹 → 今日心镜的分类与弹层,src/components/SoulDashboard.jsx#L715,,按源页面及服务权限核对,lib/src/screens/gospel_diagnostic_screen.dart,候选待实测,REG-OVERLAY-GOSPEL,SOUL-19,需迁移核对,NOT_RUN
+overlay,planet,属灵星球大陆,心迹 → 今日心镜的分类与弹层,src/components/SoulDashboard.jsx#L716,,按源页面及服务权限核对,lib/src/screens/spiritual_planet_home_screen.dart,候选待实测,REG-OVERLAY-PLANET,SOUL-14,需迁移核对,NOT_RUN
+overlay,pilgrim,天路历程,心迹 → 今日心镜的分类与弹层,src/components/SoulDashboard.jsx#L719,,按源页面及服务权限核对,lib/src/screens/pilgrim_screen.dart,候选待实测,REG-OVERLAY-PILGRIM,SOUL-15,需迁移核对,NOT_RUN
+overlay,fhl,信望爱星系,心迹 → 今日心镜的分类与弹层,src/components/SoulDashboard.jsx#L720,,按源页面及服务权限核对,,待定位,REG-OVERLAY-FHL,SOUL-17,需迁移核对,NOT_RUN
+overlay,discern,智慧辨识,心迹 → 今日心镜的分类与弹层,src/components/SoulDashboard.jsx#L721,,按源页面及服务权限核对,lib/src/screens/discernment_screen.dart,候选待实测,REG-OVERLAY-DISCERN,SOUL-24,需迁移核对,NOT_RUN
+overlay,fuel,养料库,心迹 → 今日心镜的分类与弹层,src/components/SoulDashboard.jsx#L722,,按源页面及服务权限核对,lib/src/screens/fuel_screen.dart,候选待实测,REG-OVERLAY-FUEL,SOUL-21,需迁移核对,NOT_RUN
+overlay,agent,属灵牧者助手,心迹 → 今日心镜的分类与弹层,src/components/SoulDashboard.jsx#L723,,按源页面及服务权限核对,lib/src/screens/agent_chat_screen.dart,候选待实测,REG-OVERLAY-AGENT,SOUL-25,需迁移核对,NOT_RUN
+overlay,checkup,低潮体检,心迹 → 今日心镜的分类与弹层,src/components/SoulDashboard.jsx#L724,,按源页面及服务权限核对,lib/src/screens/spiritual_checkup_screen.dart,候选待实测,REG-OVERLAY-CHECKUP,SOUL-18,需迁移核对,NOT_RUN
+overlay,holy-life,圣洁生活,心迹 → 今日心镜的分类与弹层,src/components/SoulDashboard.jsx#L725,,按源页面及服务权限核对,lib/src/screens/formation/holy_life_screen.dart,候选待实测,REG-OVERLAY-HOLY-LIFE,FORM-17,需迁移核对,NOT_RUN
+overlay,spiritual-formation,罪模式转化,心迹 → 今日心镜的分类与弹层,src/components/SoulDashboard.jsx#L726,,按源页面及服务权限核对,lib/src/screens/spiritual_formation_screen.dart,候选待实测,REG-OVERLAY-SPIRITUAL-FORMATION,FORM-01,需迁移核对,NOT_RUN
+overlay,attention,守心,心迹 → 今日心镜的分类与弹层,src/components/SoulDashboard.jsx#L727,,按源页面及服务权限核对,lib/src/screens/attention/attention_screen.dart,候选待实测,REG-OVERLAY-ATTENTION,ATT-01,需迁移核对,NOT_RUN
+overlay,nine-marks,健康教会九标志,心迹 → 今日心镜的分类与弹层,src/components/SoulDashboard.jsx#L728,,按源页面及服务权限核对,lib/src/screens/formation/nine_marks_screen.dart,候选待实测,REG-OVERLAY-NINE-MARKS,FORM-32,需迁移核对,NOT_RUN
+overlay,ordo-amoris,爱之秩序,心迹 → 今日心镜的分类与弹层,src/components/SoulDashboard.jsx#L729,,按源页面及服务权限核对,lib/src/screens/formation/batch14_dashboard_screen.dart,候选待实测,REG-OVERLAY-ORDO-AMORIS,FORM-03,需迁移核对,NOT_RUN
+overlay,creed-catechism,信经教理问答,心迹 → 今日心镜的分类与弹层,src/components/SoulDashboard.jsx#L730,,按源页面及服务权限核对,lib/src/screens/formation/batch14_dashboard_screen.dart,候选待实测,REG-OVERLAY-CREED-CATECHISM,FORM-04,需迁移核对,NOT_RUN
+overlay,rule-discernment,规则辨识,心迹 → 今日心镜的分类与弹层,src/components/SoulDashboard.jsx#L731,,按源页面及服务权限核对,lib/src/screens/formation/batch14_dashboard_screen.dart,候选待实测,REG-OVERLAY-RULE-DISCERNMENT,FORM-08,需迁移核对,NOT_RUN
+overlay,cross-lament-hope,十架哀歌,心迹 → 今日心镜的分类与弹层,src/components/SoulDashboard.jsx#L732,,按源页面及服务权限核对,lib/src/screens/formation/batch14_dashboard_screen.dart,候选待实测,REG-OVERLAY-CROSS-LAMENT-HOPE,FORM-11,需迁移核对,NOT_RUN
+overlay,sacrament-calendar,圣礼年历,心迹 → 今日心镜的分类与弹层,src/components/SoulDashboard.jsx#L733,,按源页面及服务权限核对,lib/src/screens/formation/batch14_dashboard_screen.dart,候选待实测,REG-OVERLAY-SACRAMENT-CALENDAR,FORM-13,需迁移核对,NOT_RUN
+soul,dashboard,今日心镜,心迹,src/components/SoulTabs.jsx#L12,,按源页面及服务权限核对,lib/src/screens/soul_hub_screen.dart,候选待实测,REG-SOUL-DASHBOARD,SOUL-02,需迁移核对,NOT_RUN
+soul,personality,人格塑造,心迹,src/components/SoulTabs.jsx#L13,,按源页面及服务权限核对,lib/src/screens/personality_screen.dart,候选待实测,REG-SOUL-PERSONALITY,SOUL-06,需迁移核对,NOT_RUN
+soul,graph,形成图谱,心迹,src/components/SoulTabs.jsx#L14,,按源页面及服务权限核对,lib/src/screens/formation_graph_screen.dart,候选待实测,REG-SOUL-GRAPH,SOUL-07,需迁移核对,NOT_RUN
+soul,habits,灵修操练,心迹,src/components/SoulTabs.jsx#L15,,按源页面及服务权限核对,lib/src/screens/habits_screen.dart,候选待实测,REG-SOUL-HABITS,SOUL-08,需迁移核对,NOT_RUN
+soul,library,模式库,心迹,src/components/SoulTabs.jsx#L16,,按源页面及服务权限核对,lib/src/screens/behavior_screen.dart,候选待实测,REG-SOUL-LIBRARY,SOUL-09,需迁移核对,NOT_RUN
+soul,crisis,危机守护,心迹,src/components/SoulTabs.jsx#L17,,按源页面及服务权限核对,lib/src/screens/sos_screen.dart,候选待实测,REG-SOUL-CRISIS,CARE-01,需迁移核对,NOT_RUN
+soul,new,决策支持,心迹,src/components/SoulTabs.jsx#L18,,按源页面及服务权限核对,lib/src/screens/decision_support_screen.dart,候选待实测,REG-SOUL-NEW,SOUL-05,需迁移核对,NOT_RUN
+share,share,社区分享,团契 → 社区分享,src/ShareWallPage.jsx#L740,,按源页面及服务权限核对,lib/src/screens/community_screen.dart,候选待实测,REG-SHARE-SHARE,SOC-19,需迁移核对,NOT_RUN
+share,sunday,主日学,团契 → 社区分享,src/ShareWallPage.jsx#L741,,按源页面及服务权限核对,lib/src/screens/community_screen.dart,候选待实测,REG-SHARE-SUNDAY,SOC-05,需迁移核对,NOT_RUN
+share,testimony,见证墙,团契 → 社区分享,src/ShareWallPage.jsx#L742,,按源页面及服务权限核对,lib/src/screens/testimony_wall_screen.dart,候选待实测,REG-SHARE-TESTIMONY,SOC-06,需迁移核对,NOT_RUN
+share,faith,信仰宣言,团契 → 社区分享,src/ShareWallPage.jsx#L783,,按源页面及服务权限核对,lib/src/screens/community_screen.dart,候选待实测,REG-SHARE-FAITH,SOC-05,需迁移核对,NOT_RUN
+evangelism,mission,宣教,团契 → 福音宣扬,src/EvangelismPage.jsx#L835,,按源页面及服务权限核对,lib/src/screens/evangelism_screen.dart,候选待实测,REG-EVANGELISM-MISSION,MIS-01,需迁移核对,NOT_RUN
+evangelism,map,圣经宣教地图,团契 → 福音宣扬,src/EvangelismPage.jsx#L835,,按源页面及服务权限核对,lib/src/screens/bible_maps_screen.dart,候选待实测,REG-EVANGELISM-MAP,MAP-01,需迁移核对,NOT_RUN
+evangelism,seekers,慕道班,团契 → 福音宣扬,src/EvangelismPage.jsx#L835,,按源页面及服务权限核对,lib/src/screens/evangelism_screen.dart,候选待实测,REG-EVANGELISM-SEEKERS,SOC-08,需迁移核对,NOT_RUN
+evangelism,fy,福音宣扬,团契 → 福音宣扬,src/EvangelismPage.jsx#L838,,按源页面及服务权限核对,lib/src/screens/evangelism_screen.dart,候选待实测,REG-EVANGELISM-FY,SOC-09,需迁移核对,NOT_RUN
+mission-entry,roadmap,roadmap,团契 → 福音宣扬 → 宣教,src/EvangelismPage.jsx#L835,,按源页面及服务权限核对,lib/src/screens/evangelism_screen.dart,候选待实测,REG-MISSION-ENTRY-ROADMAP,MIS-01,需迁移核对,NOT_RUN
+mission-entry,console,console,团契 → 福音宣扬 → 宣教,src/EvangelismPage.jsx#L835,,按源页面及服务权限核对,lib/src/screens/evangelism_screen.dart,候选待实测,REG-MISSION-ENTRY-CONSOLE,MIS-01,需迁移核对,NOT_RUN
+mission-entry,bridge,bridge,团契 → 福音宣扬 → 宣教,src/EvangelismPage.jsx#L1506,,按源页面及服务权限核对,lib/src/screens/evangelism_screen.dart,候选待实测,REG-MISSION-ENTRY-BRIDGE,MIS-01,需迁移核对,NOT_RUN
+mission-workspace,programs,programs,宣教 → 邻舍之桥,src/components/mission-bridge/MissionBridgePanel.jsx#L137,,角色能力、组织上下文、同意及发布状态,lib/src/screens/mission_os_screen.dart,候选待实测,REG-MISSION-WORKSPACE-PROGRAMS,MIS-02,需迁移核对,NOT_RUN
+mission-workspace,journey,journey,宣教 → 邻舍之桥,src/components/mission-bridge/MissionBridgePanel.jsx#L159,,角色能力、组织上下文、同意及发布状态,lib/src/screens/mission_os_screen.dart,候选待实测,REG-MISSION-WORKSPACE-JOURNEY,MIS-02,需迁移核对,NOT_RUN
+mission-workspace,safety,safety,宣教 → 邻舍之桥,src/components/mission-bridge/MissionBridgePanel.jsx#L177,,角色能力、组织上下文、同意及发布状态,lib/src/screens/mission_os_screen.dart,候选待实测,REG-MISSION-WORKSPACE-SAFETY,MIS-02,需迁移核对,NOT_RUN
+mission-workspace,incidents,incidents,宣教 → 邻舍之桥,src/components/mission-bridge/MissionBridgePanel.jsx#L186,,角色能力、组织上下文、同意及发布状态,lib/src/screens/mission_os_screen.dart,候选待实测,REG-MISSION-WORKSPACE-INCIDENTS,MIS-07,需迁移核对,NOT_RUN
+mission-workspace,privacy,privacy,宣教 → 邻舍之桥,src/components/mission-bridge/MissionBridgePanel.jsx#L190,,角色能力、组织上下文、同意及发布状态,lib/src/screens/mission_os_screen.dart,候选待实测,REG-MISSION-WORKSPACE-PRIVACY,MIS-02,需迁移核对,NOT_RUN
+mission-workspace,discovery,discovery,宣教 → 邻舍之桥,src/components/mission-bridge/MissionBridgePanel.jsx#L196,,角色能力、组织上下文、同意及发布状态,lib/src/screens/mission_os_screen.dart,候选待实测,REG-MISSION-WORKSPACE-DISCOVERY,MIS-02,需迁移核对,NOT_RUN
+mission-workspace,designer,designer,宣教 → 邻舍之桥,src/components/mission-bridge/MissionBridgePanel.jsx#L207,,角色能力、组织上下文、同意及发布状态,lib/src/screens/mission_os_screen.dart,候选待实测,REG-MISSION-WORKSPACE-DESIGNER,MIS-03,需迁移核对,NOT_RUN
+mission-workspace,training,training,宣教 → 邻舍之桥,src/components/mission-bridge/MissionBridgePanel.jsx#L208,,角色能力、组织上下文、同意及发布状态,lib/src/screens/mission_os_screen.dart,候选待实测,REG-MISSION-WORKSPACE-TRAINING,MIS-04,需迁移核对,NOT_RUN
+mission-workspace,content,content,宣教 → 邻舍之桥,src/components/mission-bridge/MissionBridgePanel.jsx#L209,,角色能力、组织上下文、同意及发布状态,lib/src/screens/mission_os_screen.dart,候选待实测,REG-MISSION-WORKSPACE-CONTENT,MIS-05,需迁移核对,NOT_RUN
+mission-workspace,agents,agents,宣教 → 邻舍之桥,src/components/mission-bridge/MissionBridgePanel.jsx#L210,,角色能力、组织上下文、同意及发布状态,lib/src/screens/mission_os_screen.dart,候选待实测,REG-MISSION-WORKSPACE-AGENTS,MIS-06,需迁移核对,NOT_RUN
+mission-workspace,specialized-directory,specialized-directory,宣教 → 邻舍之桥,src/components/mission-bridge/MissionBridgePanel.jsx#L211,,角色能力、组织上下文、同意及发布状态,lib/src/screens/mission_os_screen.dart,候选待实测,REG-MISSION-WORKSPACE-SPECIALIZED-DIRECTORY,MIS-02,需迁移核对,NOT_RUN
+mission-workspace,organizations,organizations,宣教 → 邻舍之桥,src/components/mission-bridge/MissionBridgePanel.jsx#L234,,角色能力、组织上下文、同意及发布状态,lib/src/screens/mission_os_screen.dart,候选待实测,REG-MISSION-WORKSPACE-ORGANIZATIONS,MIS-15,需迁移核对,NOT_RUN
+mission-workspace,leader,leader,宣教 → 邻舍之桥,src/components/mission-bridge/MissionBridgePanel.jsx#L235,,角色能力、组织上下文、同意及发布状态,lib/src/screens/mission_os_screen.dart,候选待实测,REG-MISSION-WORKSPACE-LEADER,MIS-08,需迁移核对,NOT_RUN
+mission-workspace,attention-pilot,attention-pilot,宣教 → 邻舍之桥,src/components/mission-bridge/MissionBridgePanel.jsx#L236,,角色能力、组织上下文、同意及发布状态,lib/src/screens/mission_os_screen.dart,候选待实测,REG-MISSION-WORKSPACE-ATTENTION-PILOT,MIS-09,需迁移核对,NOT_RUN
+mission-workspace,ai-faith,ai-faith,宣教 → 邻舍之桥,src/components/mission-bridge/MissionBridgePanel.jsx#L237,,角色能力、组织上下文、同意及发布状态,lib/src/screens/mission_os_screen.dart,候选待实测,REG-MISSION-WORKSPACE-AI-FAITH,MIS-10,需迁移核对,NOT_RUN
+mission-workspace,mobile-worker,mobile-worker,宣教 → 邻舍之桥,src/components/mission-bridge/MissionBridgePanel.jsx#L238,,角色能力、组织上下文、同意及发布状态,lib/src/screens/mission_os_screen.dart,候选待实测,REG-MISSION-WORKSPACE-MOBILE-WORKER,MIS-11,需迁移核对,NOT_RUN
+mission-workspace,night-shift,night-shift,宣教 → 邻舍之桥,src/components/mission-bridge/MissionBridgePanel.jsx#L239,,角色能力、组织上下文、同意及发布状态,lib/src/screens/mission_os_screen.dart,候选待实测,REG-MISSION-WORKSPACE-NIGHT-SHIFT,MIS-12,需迁移核对,NOT_RUN
+mission-workspace,mobile-family,mobile-family,宣教 → 邻舍之桥,src/components/mission-bridge/MissionBridgePanel.jsx#L240,,角色能力、组织上下文、同意及发布状态,lib/src/screens/mission_os_screen.dart,候选待实测,REG-MISSION-WORKSPACE-MOBILE-FAMILY,MIS-13,需迁移核对,NOT_RUN
+mission-workspace,specialized,specialized,宣教 → 邻舍之桥,src/components/mission-bridge/MissionBridgePanel.jsx#L241,,角色能力、组织上下文、同意及发布状态,lib/src/screens/mission_os_screen.dart,候选待实测,REG-MISSION-WORKSPACE-SPECIALIZED,MIS-14,需迁移核对,NOT_RUN
+mission-workspace,operations,operations,宣教 → 邻舍之桥,src/components/mission-bridge/MissionBridgePanel.jsx#L242,,角色能力、组织上下文、同意及发布状态,lib/src/screens/mission_os_screen.dart,候选待实测,REG-MISSION-WORKSPACE-OPERATIONS,MIS-07,需迁移核对,NOT_RUN
+prayer,hymn,诗歌,团契 → 代祷,src/PrayerWallPage.jsx#L526,,按源页面及服务权限核对,lib/src/screens/hymns_screen.dart,候选待实测,REG-PRAYER-HYMN,SOC-03,需迁移核对,NOT_RUN
+prayer,disciple,门徒塑造,团契 → 代祷,src/PrayerWallPage.jsx#L526,,按源页面及服务权限核对,lib/src/screens/disciple_formation_screen.dart,候选待实测,REG-PRAYER-DISCIPLE,FORM-15,需迁移核对,NOT_RUN
+prayer,gift,恩赐呼召,团契 → 代祷,src/PrayerWallPage.jsx#L526,,按源页面及服务权限核对,lib/src/screens/gift_calling_screen.dart,候选待实测,REG-PRAYER-GIFT,FORM-16,需迁移核对,NOT_RUN
+prayer,wall,代祷墙,团契 → 代祷,src/PrayerWallPage.jsx#L529,,按源页面及服务权限核对,lib/src/screens/prayer_screen.dart,候选待实测,REG-PRAYER-WALL,SOC-01,需迁移核对,NOT_RUN
+mirror,character,character,首页 → 人物镜鉴,src/MirrorPage.jsx#L910,,按源页面及服务权限核对,lib/src/screens/mirror_screen.dart,候选待实测,REG-MIRROR-CHARACTER,MAP-05,需迁移核对,NOT_RUN
+mirror,theme,theme,首页 → 人物镜鉴,src/MirrorPage.jsx#L918,,按源页面及服务权限核对,lib/src/screens/mirror_screen.dart,候选待实测,REG-MIRROR-THEME,MAP-05,需迁移核对,NOT_RUN
+mirror,themes,themes,首页 → 人物镜鉴,src/MirrorPage.jsx#L931,,按源页面及服务权限核对,lib/src/screens/mirror_screen.dart,候选待实测,REG-MIRROR-THEMES,MAP-05,需迁移核对,NOT_RUN
+mirror,graph,graph,首页 → 人物镜鉴,src/MirrorPage.jsx#L969,,按源页面及服务权限核对,lib/src/screens/mirror_screen.dart,候选待实测,REG-MIRROR-GRAPH,MAP-06,需迁移核对,NOT_RUN
+devotion,today,devotion.section.today,灵修,src/components/DevotionTabContainer.jsx#L36,,按源页面及服务权限核对,lib/src/screens/devotion_screen.dart,候选待实测,REG-DEVOTION-TODAY,DEV-01,需迁移核对,NOT_RUN
+devotion,scripture,devotion.section.scripture,灵修,src/components/DevotionTabContainer.jsx#L37,,按源页面及服务权限核对,lib/src/screens/devotion_screen.dart,候选待实测,REG-DEVOTION-SCRIPTURE,DEV-01,需迁移核对,NOT_RUN
+devotion,topics,devotion.section.topics,灵修,src/components/DevotionTabContainer.jsx#L38,,按源页面及服务权限核对,lib/src/screens/devotion_screen.dart,候选待实测,REG-DEVOTION-TOPICS,DEV-01,需迁移核对,NOT_RUN
+devotion,journal,devotion.section.journal,灵修,src/components/DevotionTabContainer.jsx#L39,,按源页面及服务权限核对,lib/src/screens/devotion_screen.dart,候选待实测,REG-DEVOTION-JOURNAL,DEV-01,需迁移核对,NOT_RUN
+devotion-today,personal,devotion.tab.personal,灵修 → 今日,src/components/DevotionTabContainer.jsx#L113,,按源页面及服务权限核对,lib/src/screens/devotion_screen.dart,候选待实测,REG-DEVOTION-TODAY-PERSONAL,DEV-02,需迁移核对,NOT_RUN
+devotion-today,dew,devotion.tab.dew,灵修 → 今日,src/components/DevotionTabContainer.jsx#L114,,按源页面及服务权限核对,lib/src/screens/devotion_screen.dart,候选待实测,REG-DEVOTION-TODAY-DEW,DEV-04,需迁移核对,NOT_RUN
+devotion-scripture,plan,devotion.tab.plan,灵修 → 圣经,src/components/DevotionTabContainer.jsx#L117,,按源页面及服务权限核对,lib/src/screens/devotion_screen.dart,候选待实测,REG-DEVOTION-SCRIPTURE-PLAN,DEV-09,需迁移核对,NOT_RUN
+devotion-scripture,memory,devotion.tab.memory,灵修 → 圣经,src/components/DevotionTabContainer.jsx#L118,,按源页面及服务权限核对,lib/src/screens/devotion_screen.dart,候选待实测,REG-DEVOTION-SCRIPTURE-MEMORY,DEV-13,需迁移核对,NOT_RUN
+devotion-scripture,books,devotion.tab.books,灵修 → 圣经,src/components/DevotionTabContainer.jsx#L119,,按源页面及服务权限核对,lib/src/screens/devotion_screen.dart,候选待实测,REG-DEVOTION-SCRIPTURE-BOOKS,DEV-08,需迁移核对,NOT_RUN
+legacy-devotion,journal,journal,旧版 DevotionHub 组件（源代码参考入口）,src/DevotionHubPage.jsx#L45,,按源页面及服务权限核对,,待定位,REG-LEGACY-DEVOTION-JOURNAL,DEV-03,待确认旧入口,NOT_RUN
+legacy-devotion,daily,daily,旧版 DevotionHub 组件（源代码参考入口）,src/DevotionHubPage.jsx#L46,,按源页面及服务权限核对,,待定位,REG-LEGACY-DEVOTION-DAILY,DEV-03,待确认旧入口,NOT_RUN
+legacy-devotion,dew,dew,旧版 DevotionHub 组件（源代码参考入口）,src/DevotionHubPage.jsx#L47,,按源页面及服务权限核对,,待定位,REG-LEGACY-DEVOTION-DEW,DEV-03,待确认旧入口,NOT_RUN
+legacy-devotion,personal,personal,旧版 DevotionHub 组件（源代码参考入口）,src/DevotionHubPage.jsx#L48,,按源页面及服务权限核对,,待定位,REG-LEGACY-DEVOTION-PERSONAL,DEV-03,待确认旧入口,NOT_RUN
+legacy-devotion,soul,soul,旧版 DevotionHub 组件（源代码参考入口）,src/DevotionHubPage.jsx#L49,,按源页面及服务权限核对,,待定位,REG-LEGACY-DEVOTION-SOUL,DEV-03,待确认旧入口,NOT_RUN
+legacy-devotion,quick,quick,旧版 DevotionHub 组件（源代码参考入口）,src/DevotionHubPage.jsx#L50,,按源页面及服务权限核对,,待定位,REG-LEGACY-DEVOTION-QUICK,DEV-03,待确认旧入口,NOT_RUN
+formation,home,首页,属灵形成,src/features/spiritual-formation/app/SpiritualFormationPage.jsx#L63,,按源页面及服务权限核对,lib/src/screens/spiritual_formation_screen.dart,候选待实测,REG-FORMATION-HOME,FORM-01,需迁移核对,NOT_RUN
+formation,scripture-formation,圣经默想,属灵形成,src/features/spiritual-formation/app/SpiritualFormationPage.jsx#L64,,按源页面及服务权限核对,lib/src/screens/spiritual_formation_screen.dart,候选待实测,REG-FORMATION-SCRIPTURE-FORMATION,FORM-02,需迁移核对,NOT_RUN
+formation,ordo-amoris,爱之秩序,属灵形成,src/features/spiritual-formation/app/SpiritualFormationPage.jsx#L65,,按源页面及服务权限核对,lib/src/screens/spiritual_formation_screen.dart,候选待实测,REG-FORMATION-ORDO-AMORIS,FORM-03,需迁移核对,NOT_RUN
+formation,creed-catechism,信经问答,属灵形成,src/features/spiritual-formation/app/SpiritualFormationPage.jsx#L66,,按源页面及服务权限核对,lib/src/screens/spiritual_formation_screen.dart,候选待实测,REG-FORMATION-CREED-CATECHISM,FORM-04,需迁移核对,NOT_RUN
+formation,prayer-communion,祷告相交,属灵形成,src/features/spiritual-formation/app/SpiritualFormationPage.jsx#L67,,按源页面及服务权限核对,lib/src/screens/spiritual_formation_screen.dart,候选待实测,REG-FORMATION-PRAYER-COMMUNION,FORM-05,需迁移核对,NOT_RUN
+formation,virtue-vice,德性罪性,属灵形成,src/features/spiritual-formation/app/SpiritualFormationPage.jsx#L68,,按源页面及服务权限核对,lib/src/screens/spiritual_formation_screen.dart,候选待实测,REG-FORMATION-VIRTUE-VICE,FORM-06,需迁移核对,NOT_RUN
+formation,rule-of-life,生活规则,属灵形成,src/features/spiritual-formation/app/SpiritualFormationPage.jsx#L69,,按源页面及服务权限核对,lib/src/screens/spiritual_formation_screen.dart,候选待实测,REG-FORMATION-RULE-OF-LIFE,FORM-07,需迁移核对,NOT_RUN
+formation,rule-discernment,规则辨识,属灵形成,src/features/spiritual-formation/app/SpiritualFormationPage.jsx#L70,,按源页面及服务权限核对,lib/src/screens/spiritual_formation_screen.dart,候选待实测,REG-FORMATION-RULE-DISCERNMENT,FORM-08,需迁移核对,NOT_RUN
+formation,worldview-formation,世界观塑造,属灵形成,src/features/spiritual-formation/app/SpiritualFormationPage.jsx#L71,,按源页面及服务权限核对,lib/src/screens/spiritual_formation_screen.dart,候选待实测,REG-FORMATION-WORLDVIEW-FORMATION,FORM-09,需迁移核对,NOT_RUN
+formation,suffering-care,苦难医治,属灵形成,src/features/spiritual-formation/app/SpiritualFormationPage.jsx#L72,,按源页面及服务权限核对,lib/src/screens/spiritual_formation_screen.dart,候选待实测,REG-FORMATION-SUFFERING-CARE,FORM-10,需迁移核对,NOT_RUN
+formation,cross-lament-hope,十架哀歌,属灵形成,src/features/spiritual-formation/app/SpiritualFormationPage.jsx#L73,,按源页面及服务权限核对,lib/src/screens/spiritual_formation_screen.dart,候选待实测,REG-FORMATION-CROSS-LAMENT-HOPE,FORM-11,需迁移核对,NOT_RUN
+formation,community-discipleship,群体门训,属灵形成,src/features/spiritual-formation/app/SpiritualFormationPage.jsx#L74,,按源页面及服务权限核对,lib/src/screens/spiritual_formation_screen.dart,候选待实测,REG-FORMATION-COMMUNITY-DISCIPLESHIP,FORM-12,需迁移核对,NOT_RUN
+formation,sacrament-calendar,圣礼年历,属灵形成,src/features/spiritual-formation/app/SpiritualFormationPage.jsx#L75,,按源页面及服务权限核对,lib/src/screens/spiritual_formation_screen.dart,候选待实测,REG-FORMATION-SACRAMENT-CALENDAR,FORM-13,需迁移核对,NOT_RUN
+formation,gift-calling,恩赐呼召,属灵形成,src/features/spiritual-formation/app/SpiritualFormationPage.jsx#L76,,按源页面及服务权限核对,lib/src/screens/spiritual_formation_screen.dart,候选待实测,REG-FORMATION-GIFT-CALLING,FORM-14,需迁移核对,NOT_RUN
+formation,platform-integration,知识智能企业,属灵形成,src/features/spiritual-formation/app/SpiritualFormationPage.jsx#L77,,按源页面及服务权限核对,lib/src/screens/spiritual_formation_screen.dart,候选待实测,REG-FORMATION-PLATFORM-INTEGRATION,FORM-21,需迁移核对,NOT_RUN
+formation,library,罪模式库,属灵形成,src/features/spiritual-formation/app/SpiritualFormationPage.jsx#L78,,按源页面及服务权限核对,lib/src/screens/spiritual_formation_screen.dart,候选待实测,REG-FORMATION-LIBRARY,SOUL-09,需迁移核对,NOT_RUN
+formation,stronghold,自高之事,属灵形成,src/features/spiritual-formation/app/SpiritualFormationPage.jsx#L79,,按源页面及服务权限核对,lib/src/screens/spiritual_formation_screen.dart,候选待实测,REG-FORMATION-STRONGHOLD,FORM-19,需迁移核对,NOT_RUN
+formation,holy-life,圣洁生活,属灵形成,src/features/spiritual-formation/app/SpiritualFormationPage.jsx#L80,,按源页面及服务权限核对,lib/src/screens/spiritual_formation_screen.dart,候选待实测,REG-FORMATION-HOLY-LIFE,FORM-17,需迁移核对,NOT_RUN
+formation,horarium,定时祷告,属灵形成,src/features/spiritual-formation/app/SpiritualFormationPage.jsx#L81,,按源页面及服务权限核对,lib/src/screens/spiritual_formation_screen.dart,候选待实测,REG-FORMATION-HORARIUM,FORM-17,需迁移核对,NOT_RUN
+formation,daily,每日扫描,属灵形成,src/features/spiritual-formation/app/SpiritualFormationPage.jsx#L82,,按源页面及服务权限核对,lib/src/screens/spiritual_formation_screen.dart,候选待实测,REG-FORMATION-DAILY,FORM-19,需迁移核对,NOT_RUN
+formation,thought,思想俘虏,属灵形成,src/features/spiritual-formation/app/SpiritualFormationPage.jsx#L83,,按源页面及服务权限核对,lib/src/screens/spiritual_formation_screen.dart,候选待实测,REG-FORMATION-THOUGHT,FORM-19,需迁移核对,NOT_RUN
+formation,recovery,恩典恢复,属灵形成,src/features/spiritual-formation/app/SpiritualFormationPage.jsx#L84,,按源页面及服务权限核对,lib/src/screens/spiritual_formation_screen.dart,候选待实测,REG-FORMATION-RECOVERY,FORM-19,需迁移核对,NOT_RUN
+formation,plans,转化计划,属灵形成,src/features/spiritual-formation/app/SpiritualFormationPage.jsx#L85,,按源页面及服务权限核对,lib/src/screens/spiritual_formation_screen.dart,候选待实测,REG-FORMATION-PLANS,FORM-18,需迁移核对,NOT_RUN
+formation,fruit,圣灵果实,属灵形成,src/features/spiritual-formation/app/SpiritualFormationPage.jsx#L86,,按源页面及服务权限核对,lib/src/screens/spiritual_formation_screen.dart,候选待实测,REG-FORMATION-FRUIT,FORM-06,需迁移核对,NOT_RUN
+formation,weekly,每周回顾,属灵形成,src/features/spiritual-formation/app/SpiritualFormationPage.jsx#L87,,按源页面及服务权限核对,lib/src/screens/spiritual_formation_screen.dart,候选待实测,REG-FORMATION-WEEKLY,FORM-19,需迁移核对,NOT_RUN
+formation,map,新造地图,属灵形成,src/features/spiritual-formation/app/SpiritualFormationPage.jsx#L88,,按源页面及服务权限核对,lib/src/screens/spiritual_formation_screen.dart,候选待实测,REG-FORMATION-MAP,FORM-19,需迁移核对,NOT_RUN
+worldview,narrative,✍️ 叙事重写,首页 → 世界观,src/WorldviewPage.jsx#L281,,按源页面及服务权限核对,lib/src/screens/formation/worldview_screen.dart,候选待实测,REG-WORLDVIEW-NARRATIVE,MAP-08,需迁移核对,NOT_RUN
+worldview,diagnose,🧭 世界观诊断,首页 → 世界观,src/WorldviewPage.jsx#L281,,按源页面及服务权限核对,lib/src/screens/formation/worldview_screen.dart,候选待实测,REG-WORLDVIEW-DIAGNOSE,MAP-08,需迁移核对,NOT_RUN
+worldview,profile,🧩 我的画像,首页 → 世界观,src/WorldviewPage.jsx#L281,,按源页面及服务权限核对,lib/src/screens/formation/worldview_screen.dart,候选待实测,REG-WORLDVIEW-PROFILE,MAP-08,需迁移核对,NOT_RUN
+worldview,history,🗂 历史,首页 → 世界观,src/WorldviewPage.jsx#L281,,按源页面及服务权限核对,lib/src/screens/formation/worldview_screen.dart,候选待实测,REG-WORLDVIEW-HISTORY,MAP-08,需迁移核对,NOT_RUN
+care,entry,撑不住了,心迹 → 危机守护,src/features/crisis-care/app/CrisisCarePage.jsx#L26,,入口保持可访问；写入与照护数据按身份/同意,lib/src/screens/sos_screen.dart,候选待实测,REG-CARE-ENTRY,CARE-01,需迁移核对,NOT_RUN
+care,stabilize,稳一稳,心迹 → 危机守护,src/features/crisis-care/app/CrisisCarePage.jsx#L27,,入口保持可访问；写入与照护数据按身份/同意,lib/src/screens/sos_screen.dart,候选待实测,REG-CARE-STABILIZE,CARE-02,需迁移核对,NOT_RUN
+care,resources,求助热线,心迹 → 危机守护,src/features/crisis-care/app/CrisisCarePage.jsx#L28,,入口保持可访问；写入与照护数据按身份/同意,lib/src/screens/sos_screen.dart,候选待实测,REG-CARE-RESOURCES,CARE-05,需迁移核对,NOT_RUN
+care,safetyplan,安全计划,心迹 → 危机守护,src/features/crisis-care/app/CrisisCarePage.jsx#L29,,入口保持可访问；写入与照护数据按身份/同意,lib/src/screens/sos_screen.dart,候选待实测,REG-CARE-SAFETYPLAN,CARE-03,需迁移核对,NOT_RUN
+care,guardians,守护人,心迹 → 危机守护,src/features/crisis-care/app/CrisisCarePage.jsx#L30,,入口保持可访问；写入与照护数据按身份/同意,lib/src/screens/sos_screen.dart,候选待实测,REG-CARE-GUARDIANS,CARE-03,需迁移核对,NOT_RUN
+care,comfort,属灵安慰,心迹 → 危机守护,src/features/crisis-care/app/CrisisCarePage.jsx#L31,,入口保持可访问；写入与照护数据按身份/同意,lib/src/screens/sos_screen.dart,候选待实测,REG-CARE-COMFORT,CARE-02,需迁移核对,NOT_RUN
+care,addiction,成瘾冲动,心迹 → 危机守护,src/features/crisis-care/app/CrisisCarePage.jsx#L32,,入口保持可访问；写入与照护数据按身份/同意,lib/src/screens/sos_screen.dart,候选待实测,REG-CARE-ADDICTION,CARE-02,需迁移核对,NOT_RUN
+care,trauma,创伤稳定,心迹 → 危机守护,src/features/crisis-care/app/CrisisCarePage.jsx#L33,,入口保持可访问；写入与照护数据按身份/同意,lib/src/screens/sos_screen.dart,候选待实测,REG-CARE-TRAUMA,CARE-02,需迁移核对,NOT_RUN
+care,recovery,危机后,心迹 → 危机守护,src/features/crisis-care/app/CrisisCarePage.jsx#L34,,入口保持可访问；写入与照护数据按身份/同意,lib/src/screens/sos_screen.dart,候选待实测,REG-CARE-RECOVERY,CARE-03,需迁移核对,NOT_RUN
+care,collab,协作,心迹 → 危机守护,src/features/crisis-care/app/CrisisCarePage.jsx#L35,,入口保持可访问；写入与照护数据按身份/同意,lib/src/screens/sos_screen.dart,候选待实测,REG-CARE-COLLAB,CARE-04,需迁移核对,NOT_RUN
+twin,emotions,情感状态,统一门户 → 形成孪生工作区,src/features/formation-twin/FormationTwinWorkspace.jsx#L24,,按源页面及服务权限核对,lib/src/screens/formation_twin_screen.dart,候选待实测,REG-TWIN-EMOTIONS,TWIN-01,需迁移核对,NOT_RUN
+twin,formation,属灵形成,统一门户 → 形成孪生工作区,src/features/formation-twin/FormationTwinWorkspace.jsx#L25,,按源页面及服务权限核对,lib/src/screens/formation_twin_screen.dart,候选待实测,REG-TWIN-FORMATION,TWIN-01,需迁移核对,NOT_RUN
+twin,checkin,状态签到,统一门户 → 形成孪生工作区,src/features/formation-twin/FormationTwinWorkspace.jsx#L26,,按源页面及服务权限核对,lib/src/screens/formation_twin_screen.dart,候选待实测,REG-TWIN-CHECKIN,TWIN-02,需迁移核对,NOT_RUN
+twin,journal,私密日志,统一门户 → 形成孪生工作区,src/features/formation-twin/FormationTwinWorkspace.jsx#L27,,按源页面及服务权限核对,lib/src/screens/formation_twin_screen.dart,候选待实测,REG-TWIN-JOURNAL,TWIN-02,需迁移核对,NOT_RUN
+twin,voice,语音记录,统一门户 → 形成孪生工作区,src/features/formation-twin/FormationTwinWorkspace.jsx#L28,,按源页面及服务权限核对,lib/src/screens/formation_twin_screen.dart,候选待实测,REG-TWIN-VOICE,TWIN-03,需迁移核对,NOT_RUN
+twin,timeline,生命事件,统一门户 → 形成孪生工作区,src/features/formation-twin/FormationTwinWorkspace.jsx#L29,,按源页面及服务权限核对,lib/src/screens/formation_twin_screen.dart,候选待实测,REG-TWIN-TIMELINE,TWIN-02,需迁移核对,NOT_RUN
+twin,sources,数据来源,统一门户 → 形成孪生工作区,src/features/formation-twin/FormationTwinWorkspace.jsx#L30,,按源页面及服务权限核对,lib/src/screens/formation_twin_screen.dart,候选待实测,REG-TWIN-SOURCES,TWIN-01,需迁移核对,NOT_RUN
+portal,home,首页,统一门户,src/features/spiritual-planet/SpiritualPlanetPlatformPage.jsx#L23,,按源页面及服务权限核对,lib/src/screens/spiritual_planet_platform_screen.dart,候选待实测,REG-PORTAL-HOME,PORTAL-03,需迁移核对,NOT_RUN
+portal,today,今日,统一门户,src/features/spiritual-planet/SpiritualPlanetPlatformPage.jsx#L23,,按源页面及服务权限核对,lib/src/screens/spiritual_planet_platform_screen.dart,候选待实测,REG-PORTAL-TODAY,PORTAL-03,需迁移核对,NOT_RUN
+portal,twin,孪生,统一门户,src/features/spiritual-planet/SpiritualPlanetPlatformPage.jsx#L23,,按源页面及服务权限核对,lib/src/screens/formation_twin_screen.dart,候选待实测,REG-PORTAL-TWIN,TWIN-01,需迁移核对,NOT_RUN
+portal,discernment,洞鉴别,统一门户,src/features/spiritual-planet/SpiritualPlanetPlatformPage.jsx#L24,,按源页面及服务权限核对,lib/src/screens/discernment_workspace.dart,候选待实测,REG-PORTAL-DISCERNMENT,DISC-01,需迁移核对,NOT_RUN
+portal,characters,圣经人物,统一门户,src/features/spiritual-planet/SpiritualPlanetPlatformPage.jsx#L24,,按源页面及服务权限核对,lib/src/screens/digital_human_screen.dart,候选待实测,REG-PORTAL-CHARACTERS,DH-01,需迁移核对,NOT_RUN
+portal,practices,操练,统一门户,src/features/spiritual-planet/SpiritualPlanetPlatformPage.jsx#L24,,按源页面及服务权限核对,lib/src/screens/spiritual_planet_platform_screen.dart,候选待实测,REG-PORTAL-PRACTICES,PORTAL-03,需迁移核对,NOT_RUN
+portal,calling,呼召,统一门户,src/features/spiritual-planet/SpiritualPlanetPlatformPage.jsx#L24,,按源页面及服务权限核对,lib/src/screens/spiritual_planet_platform_screen.dart,候选待实测,REG-PORTAL-CALLING,PORTAL-03,需迁移核对,NOT_RUN
+portal,collaboration,同行,统一门户,src/features/spiritual-planet/SpiritualPlanetPlatformPage.jsx#L24,,按源页面及服务权限核对,lib/src/screens/spiritual_planet_platform_screen.dart,候选待实测,REG-PORTAL-COLLABORATION,PORTAL-03,需迁移核对,NOT_RUN
+portal,sunday_school,主日学,统一门户,src/features/spiritual-planet/SpiritualPlanetPlatformPage.jsx#L25,,比对 flag 关闭/开启；待审内容与审核角色门,lib/src/screens/ai_formation_screen.dart,候选待实测,REG-PORTAL-SUNDAY-SCHOOL,AI-01,需迁移核对,NOT_RUN
+portal,timeline,时间线,统一门户,src/features/spiritual-planet/SpiritualPlanetPlatformPage.jsx#L26,,按源页面及服务权限核对,lib/src/screens/spiritual_planet_platform_screen.dart,候选待实测,REG-PORTAL-TIMELINE,PORTAL-03,需迁移核对,NOT_RUN
+portal,search,搜索,统一门户,src/features/spiritual-planet/SpiritualPlanetPlatformPage.jsx#L26,,按源页面及服务权限核对,lib/src/screens/spiritual_planet_platform_screen.dart,候选待实测,REG-PORTAL-SEARCH,PORTAL-03,需迁移核对,NOT_RUN
+portal,actions,行动,统一门户,src/features/spiritual-planet/SpiritualPlanetPlatformPage.jsx#L26,,按源页面及服务权限核对,lib/src/screens/spiritual_planet_platform_screen.dart,候选待实测,REG-PORTAL-ACTIONS,PORTAL-03,需迁移核对,NOT_RUN
+portal,privacy,隐私,统一门户,src/features/spiritual-planet/SpiritualPlanetPlatformPage.jsx#L26,,按源页面及服务权限核对,lib/src/screens/spiritual_planet_platform_screen.dart,候选待实测,REG-PORTAL-PRIVACY,PORTAL-03,需迁移核对,NOT_RUN
+discernment,self_reflection,自我省察,统一门户 → 洞鉴别,src/features/spiritual-planet/DiscernmentWorkspace.jsx#L25,,按源页面及服务权限核对,lib/src/screens/discernment_workspace.dart,候选待实测,REG-DISCERNMENT-SELF-REFLECTION,DISC-01,需迁移核对,NOT_RUN
+discernment,idea,思潮/观点,统一门户 → 洞鉴别,src/features/spiritual-planet/DiscernmentWorkspace.jsx#L25,,按源页面及服务权限核对,lib/src/screens/discernment_workspace.dart,候选待实测,REG-DISCERNMENT-IDEA,DISC-01,需迁移核对,NOT_RUN
+discernment,person,公众人物,统一门户 → 洞鉴别,src/features/spiritual-planet/DiscernmentWorkspace.jsx#L25,,按源页面及服务权限核对,lib/src/screens/discernment_workspace.dart,候选待实测,REG-DISCERNMENT-PERSON,DISC-01,需迁移核对,NOT_RUN
+discernment,event,热点事件,统一门户 → 洞鉴别,src/features/spiritual-planet/DiscernmentWorkspace.jsx#L26,,按源页面及服务权限核对,lib/src/screens/discernment_workspace.dart,候选待实测,REG-DISCERNMENT-EVENT,DISC-01,需迁移核对,NOT_RUN
+discernment,product,商品/课程,统一门户 → 洞鉴别,src/features/spiritual-planet/DiscernmentWorkspace.jsx#L26,,按源页面及服务权限核对,lib/src/screens/discernment_workspace.dart,候选待实测,REG-DISCERNMENT-PRODUCT,DISC-01,需迁移核对,NOT_RUN
+discernment,media,内容/媒体,统一门户 → 洞鉴别,src/features/spiritual-planet/DiscernmentWorkspace.jsx#L26,,按源页面及服务权限核对,lib/src/screens/discernment_workspace.dart,候选待实测,REG-DISCERNMENT-MEDIA,DISC-01,需迁移核对,NOT_RUN
+discernment,mixed,复合案例,统一门户 → 洞鉴别,src/features/spiritual-planet/DiscernmentWorkspace.jsx#L26,,按源页面及服务权限核对,lib/src/screens/discernment_workspace.dart,候选待实测,REG-DISCERNMENT-MIXED,DISC-01,需迁移核对,NOT_RUN
+aif-tab,overview,总览,门训 → AI 时代心意更新,src/features/ai-formation/AiFormationPage.jsx#L17,,比对 flag 关闭/开启；待审内容与审核角色门,lib/src/screens/ai_formation_screen.dart,候选待实测,REG-AIF-TAB-OVERVIEW,AI-01,需迁移核对,NOT_RUN
+aif-tab,context,选择路径,门训 → AI 时代心意更新,src/features/ai-formation/AiFormationPage.jsx#L17,,比对 flag 关闭/开启；待审内容与审核角色门,lib/src/screens/ai_formation_screen.dart,候选待实测,REG-AIF-TAB-CONTEXT,AI-02,需迁移核对,NOT_RUN
+aif-tab,batches,Batch 01–12,门训 → AI 时代心意更新,src/features/ai-formation/AiFormationPage.jsx#L17,,比对 flag 关闭/开启；待审内容与审核角色门,lib/src/screens/ai_formation_screen.dart,候选待实测,REG-AIF-TAB-BATCHES,AI-03,需迁移核对,NOT_RUN
+aif-tab,governance,审核与发布,门训 → AI 时代心意更新,src/features/ai-formation/AiFormationPage.jsx#L17,,比对 flag 关闭/开启；待审内容与审核角色门,lib/src/screens/ai_formation_screen.dart,候选待实测,REG-AIF-TAB-GOVERNANCE,AI-04,需迁移核对,NOT_RUN
+aif-batch,01,模块基础、神学护栏、领域模型与牧养安全契约,门训 → AI 时代心意更新 → Batch 01–12,src/features/ai-formation/program.js#L36,四条课程轨道；LearnerContext v1；S0-S3 中断契约,比对 flag 关闭/开启；待审内容与审核角色门,lib/src/screens/ai_formation_screen.dart,候选待实测,REG-AIF-BATCH-01,AI-03,需迁移核对,NOT_RUN
+aif-batch,02,攻克己身、注意力治理与数字属灵操练,门训 → AI 时代心意更新 → Batch 01–12,src/features/ai-formation/program.js#L37,7/14/30/90天计划；可暂停、简化与删除；非食物替代,比对 flag 关闭/开启；待审内容与审核角色门,lib/src/screens/ai_formation_screen.dart,候选待实测,REG-AIF-BATCH-02,AI-03,需迁移核对,NOT_RUN
+aif-batch,03,AI认知外包、算法世界观与属灵分辨,门训 → AI 时代心意更新 → Batch 01–12,src/features/ai-formation/program.js#L38,AI角色边界；来源与经文核验；学习诚信,比对 flag 关闭/开启；待审内容与审核角色门,lib/src/screens/ai_formation_screen.dart,候选待实测,REG-AIF-BATCH-03,AI-03,需迁移核对,NOT_RUN
+aif-batch,04,身份、欲望、性与虚拟亲密分辨及恢复,门训 → AI 时代心意更新 → Batch 01–12,src/features/ai-formation/program.js#L39,类别化触发记录；短时中断计划；可撤销支持,比对 flag 关闭/开启；待审内容与审核角色门,lib/src/screens/ai_formation_screen.dart,候选待实测,REG-AIF-BATCH-04,AI-03,需迁移核对,NOT_RUN
+aif-batch,05,父母先被塑造：榜样、焦虑、修复与权柄,门训 → AI 时代心意更新 → Batch 01–12,src/features/ai-formation/program.js#L40,父母榜样计划；认罪与修复；权柄边界,比对 flag 关闭/开启；待审内容与审核角色门,lib/src/screens/ai_formation_screen.dart,候选待实测,REG-AIF-BATCH-05,AI-03,需迁移核对,NOT_RUN
+aif-batch,06,家庭注意力生态、数字公约与家庭AI公约,门训 → AI 时代心意更新 → Batch 01–12,src/features/ai-formation/program.js#L41,设备区域；例外与复盘；孩子声音,比对 flag 关闭/开启；待审内容与审核角色门,lib/src/screens/ai_formation_screen.dart,候选待实测,REG-AIF-BATCH-06,AI-03,需迁移核对,NOT_RUN
+aif-batch,07,0-6岁与7-12岁儿童形成,门训 → AI 时代心意更新 → Batch 01–12,src/features/ai-formation/program.js#L42,照护者脚手架；故事与自由游戏；媒介与AI素养,比对 flag 关闭/开启；待审内容与审核角色门,lib/src/screens/ai_formation_screen.dart,候选待实测,REG-AIF-BATCH-07,AI-03,需迁移核对,NOT_RUN
+aif-batch,08,13-15岁与16-18岁青少年自治交还,门训 → AI 时代心意更新 → Batch 01–12,src/features/ai-formation/program.js#L43,诚实疑问；学习诚信；能力级自治,比对 flag 关闭/开启；待审内容与审核角色门,lib/src/screens/ai_formation_screen.dart,候选待实测,REG-AIF-BATCH-08,AI-03,需迁移核对,NOT_RUN
+aif-batch,09,课程、课时、教师讲义与审核发布引擎,门训 → AI 时代心意更新 → Batch 01–12,src/features/ai-formation/program.js#L44,版本课程；多角色审核；可回滚发布,比对 flag 关闭/开启；待审内容与审核角色门,lib/src/screens/ai_formation_screen.dart,候选待实测,REG-AIF-BATCH-09,AI-03,需迁移核对,NOT_RUN
+aif-batch,10,情境、后果、恩典、修复与苏格拉底运行时,门训 → AI 时代心意更新 → Batch 01–12,src/features/ai-formation/program.js#L45,版本绑定会话；暂停与恢复；安全退出,比对 flag 关闭/开启；待审内容与审核角色门,lib/src/screens/ai_formation_screen.dart,候选待实测,REG-AIF-BATCH-10,AI-03,需迁移核对,NOT_RUN
+aif-batch,11,Formation Twin纵向成长回顾,门训 → AI 时代心意更新 → Batch 01–12,src/features/ai-formation/program.js#L46,证据链接轨迹；7/14/30/90复盘；用户纠正,比对 flag 关闭/开启；待审内容与审核角色门,lib/src/screens/ai_formation_screen.dart,候选待实测,REG-AIF-BATCH-11,AI-03,需迁移核对,NOT_RUN
+aif-batch,12,生产认证、治理、红队、隐私与发布证据,门训 → AI 时代心意更新 → Batch 01–12,src/features/ai-formation/program.js#L47,不可变证据范围；人类发布决策；回滚所有权,比对 flag 关闭/开启；待审内容与审核角色门,lib/src/screens/ai_formation_screen.dart,候选待实测,REG-AIF-BATCH-12,AI-03,需迁移核对,NOT_RUN
+attention,dashboard,守心首页,守心,src/features/attention/lib/integration/route-registry.ts#L13,/attention,登录与相关子开关；admin 仅授权角色,lib/src/screens/attention/attention_screen.dart,候选待实测,REG-ATTENTION-DASHBOARD,ATT-01,需迁移核对,NOT_RUN
+attention,covenant,每日立约,守心,src/features/attention/lib/integration/route-registry.ts#L14,/attention/covenant,登录与相关子开关；admin 仅授权角色,lib/src/screens/attention/attention_screen.dart,候选待实测,REG-ATTENTION-COVENANT,ATT-01,需迁移核对,NOT_RUN
+attention,focus,专注模式,守心,src/features/attention/lib/integration/route-registry.ts#L15,/attention/focus,登录与相关子开关；admin 仅授权角色,lib/src/screens/attention/attention_screen.dart,候选待实测,REG-ATTENTION-FOCUS,ATT-02,需迁移核对,NOT_RUN
+attention,ledger,注意力账本,守心,src/features/attention/lib/integration/route-registry.ts#L16,/attention/ledger,登录与相关子开关；admin 仅授权角色,lib/src/screens/attention/attention_screen.dart,候选待实测,REG-ATTENTION-LEDGER,ATT-03,需迁移核对,NOT_RUN
+attention,review,晚间复盘,守心,src/features/attention/lib/integration/route-registry.ts#L17,/attention/review,登录与相关子开关；admin 仅授权角色,lib/src/screens/attention/attention_screen.dart,候选待实测,REG-ATTENTION-REVIEW,ATT-03,需迁移核对,NOT_RUN
+attention,diagnosis,AI 守心洞察,守心,src/features/attention/lib/integration/route-registry.ts#L18,/attention/diagnosis,登录与相关子开关；admin 仅授权角色,lib/src/screens/attention/attention_screen.dart,候选待实测,REG-ATTENTION-DIAGNOSIS,ATT-04,需迁移核对,NOT_RUN
+attention,warfare,争战地图,守心,src/features/attention/lib/integration/route-registry.ts#L19,/attention/warfare,登录与相关子开关；admin 仅授权角色,lib/src/screens/attention/attention_screen.dart,候选待实测,REG-ATTENTION-WARFARE,ATT-04,需迁移核对,NOT_RUN
+attention,reports,周报成长,守心,src/features/attention/lib/integration/route-registry.ts#L20,/attention/reports,登录与相关子开关；admin 仅授权角色,lib/src/screens/attention/attention_screen.dart,候选待实测,REG-ATTENTION-REPORTS,ATT-05,需迁移核对,NOT_RUN
+attention,accountability,同伴守望,守心,src/features/attention/lib/integration/route-registry.ts#L21,/attention/accountability,登录与相关子开关；admin 仅授权角色,lib/src/screens/attention/attention_screen.dart,候选待实测,REG-ATTENTION-ACCOUNTABILITY,ATT-05,需迁移核对,NOT_RUN
+attention,groups,守心小组,守心,src/features/attention/lib/integration/route-registry.ts#L22,/attention/groups,登录与相关子开关；admin 仅授权角色,lib/src/screens/attention/attention_screen.dart,候选待实测,REG-ATTENTION-GROUPS,ATT-05,需迁移核对,NOT_RUN
+attention,privacy,隐私设置,守心,src/features/attention/lib/integration/route-registry.ts#L23,/attention/privacy,登录与相关子开关；admin 仅授权角色,lib/src/screens/attention/attention_screen.dart,候选待实测,REG-ATTENTION-PRIVACY,ATT-05,需迁移核对,NOT_RUN
+attention,admin,运营后台,守心,src/features/attention/lib/integration/route-registry.ts#L24,/attention/admin,登录与相关子开关；admin 仅授权角色,lib/src/screens/attention/attention_screen.dart,候选待实测,REG-ATTENTION-ADMIN,ATT-06,需迁移核对,NOT_RUN
+practice,formation,罪到新造转化,今日心镜 → 灵修操练,src/PracticeHubPage.jsx#L21,,按源页面及服务权限核对,lib/src/screens/practice_hub_screen.dart,候选待实测,REG-PRACTICE-FORMATION,FORM-20,需迁移核对,NOT_RUN
+practice,gratitude,感恩日记,今日心镜 → 灵修操练,src/PracticeHubPage.jsx#L22,,按源页面及服务权限核对,lib/src/screens/practice_hub_screen.dart,候选待实测,REG-PRACTICE-GRATITUDE,FORM-20,需迁移核对,NOT_RUN
+practice,confession,认罪与赦免,今日心镜 → 灵修操练,src/PracticeHubPage.jsx#L23,,按源页面及服务权限核对,lib/src/screens/practice_hub_screen.dart,候选待实测,REG-PRACTICE-CONFESSION,FORM-20,需迁移核对,NOT_RUN
+practice,calendar,教会历,今日心镜 → 灵修操练,src/PracticeHubPage.jsx#L24,,按源页面及服务权限核对,lib/src/screens/practice_hub_screen.dart,候选待实测,REG-PRACTICE-CALENDAR,FORM-20,需迁移核对,NOT_RUN
+practice,accountability,灵修问责,今日心镜 → 灵修操练,src/PracticeHubPage.jsx#L25,,按源页面及服务权限核对,lib/src/screens/practice_hub_screen.dart,候选待实测,REG-PRACTICE-ACCOUNTABILITY,FORM-20,需迁移核对,NOT_RUN
+practice,export,我的数据,今日心镜 → 灵修操练,src/PracticeHubPage.jsx#L26,,按源页面及服务权限核对,lib/src/screens/practice_hub_screen.dart,候选待实测,REG-PRACTICE-EXPORT,FORM-20,需迁移核对,NOT_RUN
+expansion,lament,哀歌 · 向神倾诉,灵修 → 专题 → 全部专题,src/expansion/ExpansionHub.jsx#L16,text,按源页面及服务权限核对,lib/src/screens/expansion/expansion_feature_screen.dart,候选待实测,REG-EXPANSION-LAMENT,DEV-16,需迁移核对,NOT_RUN
+expansion,knowgod,认识神,灵修 → 专题 → 全部专题,src/expansion/ExpansionHub.jsx#L17,knowgod,按源页面及服务权限核对,lib/src/screens/expansion/expansion_feature_screen.dart,候选待实测,REG-EXPANSION-KNOWGOD,DEV-16,需迁移核对,NOT_RUN
+expansion,union,与基督联合,灵修 → 专题 → 全部专题,src/expansion/ExpansionHub.jsx#L18,text,按源页面及服务权限核对,lib/src/screens/expansion/expansion_feature_screen.dart,候选待实测,REG-EXPANSION-UNION,DEV-16,需迁移核对,NOT_RUN
+expansion,delight,以神为乐,灵修 → 专题 → 全部专题,src/expansion/ExpansionHub.jsx#L19,text,按源页面及服务权限核对,lib/src/screens/expansion/expansion_feature_screen.dart,候选待实测,REG-EXPANSION-DELIGHT,DEV-16,需迁移核对,NOT_RUN
+expansion,contentment,基督徒知足,灵修 → 专题 → 全部专题,src/expansion/ExpansionHub.jsx#L20,text,按源页面及服务权限核对,lib/src/screens/expansion/expansion_feature_screen.dart,候选待实测,REG-EXPANSION-CONTENTMENT,DEV-16,需迁移核对,NOT_RUN
+expansion,tender,温柔谦卑,灵修 → 专题 → 全部专题,src/expansion/ExpansionHub.jsx#L21,text,按源页面及服务权限核对,lib/src/screens/expansion/expansion_feature_screen.dart,候选待实测,REG-EXPANSION-TENDER,DEV-16,需迁移核对,NOT_RUN
+expansion,liturgy,文化礼仪→反礼仪,灵修 → 专题 → 全部专题,src/expansion/ExpansionHub.jsx#L22,text,按源页面及服务权限核对,lib/src/screens/expansion/expansion_feature_screen.dart,候选待实测,REG-EXPANSION-LITURGY,DEV-16,需迁移核对,NOT_RUN
+expansion,affections,情感真伪辨,灵修 → 专题 → 全部专题,src/expansion/ExpansionHub.jsx#L23,ratings,按源页面及服务权限核对,lib/src/screens/expansion/expansion_feature_screen.dart,候选待实测,REG-EXPANSION-AFFECTIONS,DEV-16,需迁移核对,NOT_RUN
+expansion,eh,情感健康属灵,灵修 → 专题 → 全部专题,src/expansion/ExpansionHub.jsx#L24,ratings,按源页面及服务权限核对,lib/src/screens/expansion/expansion_feature_screen.dart,候选待实测,REG-EXPANSION-EH,DEV-16,需迁移核对,NOT_RUN
+expansion,ordo,失序之爱 · 重排,灵修 → 专题 → 全部专题,src/expansion/ExpansionHub.jsx#L25,list,按源页面及服务权限核对,lib/src/screens/expansion/expansion_feature_screen.dart,候选待实测,REG-EXPANSION-ORDO,DEV-16,需迁移核对,NOT_RUN
+expansion,spirits,诸灵分辨,灵修 → 专题 → 全部专题,src/expansion/ExpansionHub.jsx#L26,text,按源页面及服务权限核对,lib/src/screens/expansion/expansion_feature_screen.dart,候选待实测,REG-EXPANSION-SPIRITS,DEV-16,需迁移核对,NOT_RUN
+expansion,renovation,心意更新,灵修 → 专题 → 全部专题,src/expansion/ExpansionHub.jsx#L27,ratings,按源页面及服务权限核对,lib/src/screens/expansion/expansion_feature_screen.dart,候选待实测,REG-EXPANSION-RENOVATION,DEV-16,需迁移核对,NOT_RUN
+expansion,chinese,华人本土灵修,灵修 → 专题 → 全部专题,src/expansion/ExpansionHub.jsx#L28,text,按源页面及服务权限核对,lib/src/screens/expansion/expansion_feature_screen.dart,候选待实测,REG-EXPANSION-CHINESE,DEV-16,需迁移核对,NOT_RUN
+expansion,assurance,得救的确据,灵修 → 专题 → 全部专题,src/expansion/ExpansionHub.jsx#L29,text,按源页面及服务权限核对,lib/src/screens/expansion/expansion_feature_screen.dart,候选待实测,REG-EXPANSION-ASSURANCE,DEV-16,需迁移核对,NOT_RUN
+expansion,forgiveness,饶恕与和好,灵修 → 专题 → 全部专题,src/expansion/ExpansionHub.jsx#L30,text,按源页面及服务权限核对,lib/src/screens/expansion/expansion_feature_screen.dart,候选待实测,REG-EXPANSION-FORGIVENESS,DEV-16,需迁移核对,NOT_RUN
+expansion,fellowship,团契生活,灵修 → 专题 → 全部专题,src/expansion/ExpansionHub.jsx#L31,text,按源页面及服务权限核对,lib/src/screens/expansion/expansion_feature_screen.dart,候选待实测,REG-EXPANSION-FELLOWSHIP,DEV-16,需迁移核对,NOT_RUN
+expansion,ruleoflife,安息节奏,灵修 → 专题 → 全部专题,src/expansion/ExpansionHub.jsx#L32,text,按源页面及服务权限核对,lib/src/screens/expansion/expansion_feature_screen.dart,候选待实测,REG-EXPANSION-RULEOFLIFE,DEV-16,需迁移核对,NOT_RUN
+expansion,feargod,敬畏神,灵修 → 专题 → 全部专题,src/expansion/ExpansionHub.jsx#L33,text,按源页面及服务权限核对,lib/src/screens/expansion/expansion_feature_screen.dart,候选待实测,REG-EXPANSION-FEARGOD,DEV-16,需迁移核对,NOT_RUN
+expansion,eucharisteo,感恩 · 数算恩典,灵修 → 专题 → 全部专题,src/expansion/ExpansionHub.jsx#L34,text,按源页面及服务权限核对,lib/src/screens/expansion/expansion_feature_screen.dart,候选待实测,REG-EXPANSION-EUCHARISTEO,DEV-16,需迁移核对,NOT_RUN
+expansion,holiness,成圣与圣洁,灵修 → 专题 → 全部专题,src/expansion/ExpansionHub.jsx#L35,text,按源页面及服务权限核对,lib/src/screens/expansion/expansion_feature_screen.dart,候选待实测,REG-EXPANSION-HOLINESS,DEV-16,需迁移核对,NOT_RUN
+expansion,neighbor,爱邻舍 · 公义款待,灵修 → 专题 → 全部专题,src/expansion/ExpansionHub.jsx#L36,text,按源页面及服务权限核对,lib/src/screens/expansion/expansion_feature_screen.dart,候选待实测,REG-EXPANSION-NEIGHBOR,DEV-16,需迁移核对,NOT_RUN
+expansion,hope,复活盼望,灵修 → 专题 → 全部专题,src/expansion/ExpansionHub.jsx#L37,text,按源页面及服务权限核对,lib/src/screens/expansion/expansion_feature_screen.dart,候选待实测,REG-EXPANSION-HOPE,DEV-16,需迁移核对,NOT_RUN
+expansion,prayerschool,祷告经典,灵修 → 专题 → 全部专题,src/expansion/ExpansionHub.jsx#L38,text,按源页面及服务权限核对,lib/src/screens/expansion/expansion_feature_screen.dart,候选待实测,REG-EXPANSION-PRAYERSCHOOL,DEV-16,需迁移核对,NOT_RUN
+expansion,contemplation,默观 · 在神爱里安息,灵修 → 专题 → 全部专题,src/expansion/ExpansionHub.jsx#L39,text,按源页面及服务权限核对,lib/src/screens/expansion/expansion_feature_screen.dart,候选待实测,REG-EXPANSION-CONTEMPLATION,DEV-16,需迁移核对,NOT_RUN
+expansion,incarnation,道成肉身,灵修 → 专题 → 全部专题,src/expansion/ExpansionHub.jsx#L40,text,按源页面及服务权限核对,lib/src/screens/expansion/expansion_feature_screen.dart,候选待实测,REG-EXPANSION-INCARNATION,DEV-16,需迁移核对,NOT_RUN
+expansion,wisdom,智慧 · 敬畏神地活,灵修 → 专题 → 全部专题,src/expansion/ExpansionHub.jsx#L41,text,按源页面及服务权限核对,lib/src/screens/expansion/expansion_feature_screen.dart,候选待实测,REG-EXPANSION-WISDOM,DEV-16,需迁移核对,NOT_RUN
+expansion,holyspirit,圣灵 · 与圣灵同行,灵修 → 专题 → 全部专题,src/expansion/ExpansionHub.jsx#L42,text,按源页面及服务权限核对,lib/src/screens/expansion/expansion_feature_screen.dart,候选待实测,REG-EXPANSION-HOLYSPIRIT,DEV-16,需迁移核对,NOT_RUN
+expansion,adoption,儿子的名分 · 天父收纳,灵修 → 专题 → 全部专题,src/expansion/ExpansionHub.jsx#L43,text,按源页面及服务权限核对,lib/src/screens/expansion/expansion_feature_screen.dart,候选待实测,REG-EXPANSION-ADOPTION,DEV-16,需迁移核对,NOT_RUN
+expansion,cross,十字架默想,灵修 → 专题 → 全部专题,src/expansion/ExpansionHub.jsx#L44,text,按源页面及服务权限核对,lib/src/screens/expansion/expansion_feature_screen.dart,候选待实测,REG-EXPANSION-CROSS,DEV-16,需迁移核对,NOT_RUN
+expansion,fearofman,怕人 → 敬畏神,灵修 → 专题 → 全部专题,src/expansion/ExpansionHub.jsx#L45,text,按源页面及服务权限核对,lib/src/screens/expansion/expansion_feature_screen.dart,候选待实测,REG-EXPANSION-FEAROFMAN,DEV-16,需迁移核对,NOT_RUN
+expansion,providence,神的护理 · 信靠主权的手,灵修 → 专题 → 全部专题,src/expansion/ExpansionHub.jsx#L46,text,按源页面及服务权限核对,lib/src/screens/expansion/expansion_feature_screen.dart,候选待实测,REG-EXPANSION-PROVIDENCE,DEV-16,需迁移核对,NOT_RUN
+expansion,repentance,悔改的解剖,灵修 → 专题 → 全部专题,src/expansion/ExpansionHub.jsx#L47,text,按源页面及服务权限核对,lib/src/screens/expansion/expansion_feature_screen.dart,候选待实测,REG-EXPANSION-REPENTANCE,DEV-16,需迁移核对,NOT_RUN
+expansion,doubt,与怀疑同行,灵修 → 专题 → 全部专题,src/expansion/ExpansionHub.jsx#L48,text,按源页面及服务权限核对,lib/src/screens/expansion/expansion_feature_screen.dart,候选待实测,REG-EXPANSION-DOUBT,DEV-16,需迁移核对,NOT_RUN
+expansion,generosity,慷慨 · 管家 · 财宝在天,灵修 → 专题 → 全部专题,src/expansion/ExpansionHub.jsx#L49,text,按源页面及服务权限核对,lib/src/screens/expansion/expansion_feature_screen.dart,候选待实测,REG-EXPANSION-GENEROSITY,DEV-16,需迁移核对,NOT_RUN
+expansion,humility,谦卑,灵修 → 专题 → 全部专题,src/expansion/ExpansionHub.jsx#L50,text,按源页面及服务权限核对,lib/src/screens/expansion/expansion_feature_screen.dart,候选待实测,REG-EXPANSION-HUMILITY,DEV-16,需迁移核对,NOT_RUN
+expansion,worddelight,爱慕神的话 · 诗篇119,灵修 → 专题 → 全部专题,src/expansion/ExpansionHub.jsx#L51,text,按源页面及服务权限核对,lib/src/screens/expansion/expansion_feature_screen.dart,候选待实测,REG-EXPANSION-WORDDELIGHT,DEV-16,需迁移核对,NOT_RUN
+expansion,anger,忿怒 · 在神面前处理愤怒,灵修 → 专题 → 全部专题,src/expansion/ExpansionHub.jsx#L52,text,按源页面及服务权限核对,lib/src/screens/expansion/expansion_feature_screen.dart,候选待实测,REG-EXPANSION-ANGER,DEV-16,需迁移核对,NOT_RUN
+expansion,loneliness,孤单 · 被看不见的痛,灵修 → 专题 → 全部专题,src/expansion/ExpansionHub.jsx#L53,text,按源页面及服务权限核对,lib/src/screens/expansion/expansion_feature_screen.dart,候选待实测,REG-EXPANSION-LONELINESS,DEV-16,需迁移核对,NOT_RUN
+expansion,perfectionism,完美主义 · 内在批判者→恩典,灵修 → 专题 → 全部专题,src/expansion/ExpansionHub.jsx#L54,text,按源页面及服务权限核对,lib/src/screens/expansion/expansion_feature_screen.dart,候选待实测,REG-EXPANSION-PERFECTIONISM,DEV-16,需迁移核对,NOT_RUN
+expansion,envy,嫉妒 / 羡慕,灵修 → 专题 → 全部专题,src/expansion/ExpansionHub.jsx#L55,text,按源页面及服务权限核对,lib/src/screens/expansion/expansion_feature_screen.dart,候选待实测,REG-EXPANSION-ENVY,DEV-16,需迁移核对,NOT_RUN
+expansion,burnout,耗竭 · 服事倦怠,灵修 → 专题 → 全部专题,src/expansion/ExpansionHub.jsx#L56,text,按源页面及服务权限核对,lib/src/screens/expansion/expansion_feature_screen.dart,候选待实测,REG-EXPANSION-BURNOUT,DEV-16,需迁移核对,NOT_RUN
+expansion,comfort,安慰的服事 · 与哀哭者同哭,灵修 → 专题 → 全部专题,src/expansion/ExpansionHub.jsx#L57,text,按源页面及服务权限核对,lib/src/screens/expansion/expansion_feature_screen.dart,候选待实测,REG-EXPANSION-COMFORT,DEV-16,需迁移核对,NOT_RUN
+expansion,prodigal,为浪子 / 未信至亲祷告,灵修 → 专题 → 全部专题,src/expansion/ExpansionHub.jsx#L58,text,按源页面及服务权限核对,lib/src/screens/expansion/expansion_feature_screen.dart,候选待实测,REG-EXPANSION-PRODIGAL,DEV-16,需迁移核对,NOT_RUN
+expansion,acedia,属灵麻木 · 正午的魔鬼,灵修 → 专题 → 全部专题,src/expansion/ExpansionHub.jsx#L59,text,按源页面及服务权限核对,lib/src/screens/expansion/expansion_feature_screen.dart,候选待实测,REG-EXPANSION-ACEDIA,DEV-16,需迁移核对,NOT_RUN
+expansion,conscience,良心,灵修 → 专题 → 全部专题,src/expansion/ExpansionHub.jsx#L60,text,按源页面及服务权限核对,lib/src/screens/expansion/expansion_feature_screen.dart,候选待实测,REG-EXPANSION-CONSCIENCE,DEV-16,需迁移核对,NOT_RUN
+expansion,secondcoming,主再来 · 儆醒地活,灵修 → 专题 → 全部专题,src/expansion/ExpansionHub.jsx#L61,text,按源页面及服务权限核对,lib/src/screens/expansion/expansion_feature_screen.dart,候选待实测,REG-EXPANSION-SECONDCOMING,DEV-16,需迁移核对,NOT_RUN
+expansion,chronic,慢性 / 长期受苦,灵修 → 专题 → 全部专题,src/expansion/ExpansionHub.jsx#L62,text,按源页面及服务权限核对,lib/src/screens/expansion/expansion_feature_screen.dart,候选待实测,REG-EXPANSION-CHRONIC,DEV-16,需迁移核对,NOT_RUN
+expansion,parenting,教养儿女 · 家庭门训,灵修 → 专题 → 全部专题,src/expansion/ExpansionHub.jsx#L63,text,按源页面及服务权限核对,lib/src/screens/expansion/expansion_feature_screen.dart,候选待实测,REG-EXPANSION-PARENTING,DEV-16,需迁移核对,NOT_RUN
+expansion,aging,年老 · 善始善终,灵修 → 专题 → 全部专题,src/expansion/ExpansionHub.jsx#L64,text,按源页面及服务权限核对,lib/src/screens/expansion/expansion_feature_screen.dart,候选待实测,REG-EXPANSION-AGING,DEV-16,需迁移核对,NOT_RUN
+expansion,resources,推荐书目 · 圣诗,灵修 → 专题 → 全部专题,src/expansion/ExpansionHub.jsx#L65,resources,按源页面及服务权限核对,lib/src/screens/expansion/expansion_feature_screen.dart,候选待实测,REG-EXPANSION-RESOURCES,DEV-16,需迁移核对,NOT_RUN
+atlas-layer,tribes,十二支派,圣经地图 → 地图图谱 → 地图图层,src/features/bible-map/domain/constants.ts#L17,,按源页面及服务权限核对,lib/src/screens/bible_atlas_screen.dart,候选待实测,REG-ATLAS-LAYER-TRIBES,MAP-02,需迁移核对,NOT_RUN
+atlas-layer,empires,列国帝国,圣经地图 → 地图图谱 → 地图图层,src/features/bible-map/domain/constants.ts#L18,,按源页面及服务权限核对,lib/src/screens/bible_atlas_screen.dart,候选待实测,REG-ATLAS-LAYER-EMPIRES,MAP-02,需迁移核对,NOT_RUN
+atlas-layer,all,全部疆域,圣经地图 → 地图图谱 → 地图图层,src/features/bible-map/domain/constants.ts#L19,,按源页面及服务权限核对,lib/src/screens/bible_atlas_screen.dart,候选待实测,REG-ATLAS-LAYER-ALL,MAP-02,需迁移核对,NOT_RUN
+atlas-layer,prophecies,先知预言,圣经地图 → 地图图谱 → 地图图层,src/features/bible-map/domain/constants.ts#L20,,按源页面及服务权限核对,lib/src/screens/bible_atlas_screen.dart,候选待实测,REG-ATLAS-LAYER-PROPHECIES,MAP-02,需迁移核对,NOT_RUN
+atlas-layer,campaigns,战役路线,圣经地图 → 地图图谱 → 地图图层,src/features/bible-map/domain/constants.ts#L21,,按源页面及服务权限核对,lib/src/screens/bible_atlas_screen.dart,候选待实测,REG-ATLAS-LAYER-CAMPAIGNS,MAP-02,需迁移核对,NOT_RUN
+atlas-layer,people,人物足迹,圣经地图 → 地图图谱 → 地图图层,src/features/bible-map/domain/constants.ts#L22,,按源页面及服务权限核对,lib/src/screens/bible_atlas_screen.dart,候选待实测,REG-ATLAS-LAYER-PEOPLE,MAP-02,需迁移核对,NOT_RUN
+maps,abraham,abraham,圣经地图 → 主题,src/BibleMapsPage.jsx#L18,abraham,按源页面及服务权限核对,lib/src/screens/bible_maps_screen.dart,候选待实测,REG-MAPS-ABRAHAM,MAP-01,需迁移核对,NOT_RUN
+maps,exodus,exodus,圣经地图 → 主题,src/BibleMapsPage.jsx#L19,exodus,按源页面及服务权限核对,lib/src/screens/bible_maps_screen.dart,候选待实测,REG-MAPS-EXODUS,MAP-01,需迁移核对,NOT_RUN
+maps,joshua,joshua,圣经地图 → 主题,src/BibleMapsPage.jsx#L20,joshua,按源页面及服务权限核对,lib/src/screens/bible_maps_screen.dart,候选待实测,REG-MAPS-JOSHUA,MAP-01,需迁移核对,NOT_RUN
+maps,tribes,tribes,圣经地图 → 主题,src/BibleMapsPage.jsx#L22,tribes,按源页面及服务权限核对,lib/src/screens/bible_maps_screen.dart,候选待实测,REG-MAPS-TRIBES,MAP-01,需迁移核对,NOT_RUN
+maps,david,david,圣经地图 → 主题,src/BibleMapsPage.jsx#L23,david,按源页面及服务权限核对,lib/src/screens/bible_maps_screen.dart,候选待实测,REG-MAPS-DAVID,MAP-01,需迁移核对,NOT_RUN
+maps,solomon,solomon,圣经地图 → 主题,src/BibleMapsPage.jsx#L31,solomon,按源页面及服务权限核对,lib/src/screens/bible_maps_screen.dart,候选待实测,REG-MAPS-SOLOMON,MAP-01,需迁移核对,NOT_RUN
+maps,divided,divided,圣经地图 → 主题,src/BibleMapsPage.jsx#L39,divided,按源页面及服务权限核对,lib/src/screens/bible_maps_screen.dart,候选待实测,REG-MAPS-DIVIDED,MAP-01,需迁移核对,NOT_RUN
+maps,jesus,jesus,圣经地图 → 主题,src/BibleMapsPage.jsx#L41,jesus,按源页面及服务权限核对,lib/src/screens/bible_maps_screen.dart,候选待实测,REG-MAPS-JESUS,MAP-01,需迁移核对,NOT_RUN
+maps,passion-week,passion-week,圣经地图 → 主题,src/BibleMapsPage.jsx#L42,passion-week,按源页面及服务权限核对,lib/src/screens/bible_maps_screen.dart,候选待实测,REG-MAPS-PASSION-WEEK,MAP-01,需迁移核对,NOT_RUN
+maps,paul,paul,圣经地图 → 主题,src/BibleMapsPage.jsx#L44,paul,按源页面及服务权限核对,lib/src/screens/bible_maps_screen.dart,候选待实测,REG-MAPS-PAUL,MAP-01,需迁移核对,NOT_RUN
+maps,seven-churches,seven-churches,圣经地图 → 主题,src/BibleMapsPage.jsx#L45,seven-churches,按源页面及服务权限核对,lib/src/screens/bible_maps_screen.dart,候选待实测,REG-MAPS-SEVEN-CHURCHES,MAP-01,需迁移核对,NOT_RUN
+maps,timeline,timeline,圣经地图 → 主题,src/BibleMapsPage.jsx#L47,timeline,按源页面及服务权限核对,lib/src/screens/bible_maps_screen.dart,候选待实测,REG-MAPS-TIMELINE,MAP-01,需迁移核对,NOT_RUN
+maps,characters,characters,圣经地图 → 主题,src/BibleMapsPage.jsx#L48,characters,按源页面及服务权限核对,lib/src/screens/bible_maps_screen.dart,候选待实测,REG-MAPS-CHARACTERS,MAP-01,需迁移核对,NOT_RUN
+maps,jerusalem-history,jerusalem-history,圣经地图 → 主题,src/BibleMapsPage.jsx#L49,jerusalem,按源页面及服务权限核对,lib/src/screens/bible_maps_screen.dart,候选待实测,REG-MAPS-JERUSALEM-HISTORY,MAP-01,需迁移核对,NOT_RUN
+continent,健康教会九标志/nine-marks,九标志概览,今日心镜 → 属灵星球大陆,src/PlanetHome.jsx#L18,nine-marks,按源页面及服务权限核对,lib/src/screens/formation/nine_marks_screen.dart,候选待实测,REG-CONTINENT-NINE-MARKS-D36F3521,FORM-32,需迁移核对,NOT_RUN
+continent,健康教会九标志/sacrament-calendar,圣礼年历,今日心镜 → 属灵星球大陆,src/PlanetHome.jsx#L18,sacrament-calendar,按源页面及服务权限核对,lib/src/screens/formation/batch14_dashboard_screen.dart,候选待实测,REG-CONTINENT-SACRAMENT-CALENDAR-F266C517,FORM-13,需迁移核对,NOT_RUN
+continent,健康教会九标志/church-life,本地教会,今日心镜 → 属灵星球大陆,src/PlanetHome.jsx#L18,church-life,按源页面及服务权限核对,lib/src/screens/formation/church_integration_screen.dart,候选待实测,REG-CONTINENT-CHURCH-LIFE-FC04BA3C,FORM-12,需迁移核对,NOT_RUN
+continent,健康教会九标志/disciple-path,门训路径,今日心镜 → 属灵星球大陆,src/PlanetHome.jsx#L18,disciple-path,按源页面及服务权限核对,lib/src/screens/formation/practice_screens.dart,候选待实测,REG-CONTINENT-DISCIPLE-PATH-ACF6164A,FORM-12,需迁移核对,NOT_RUN
+continent,健康教会九标志/gospel,教会福音诊断,今日心镜 → 属灵星球大陆,src/PlanetHome.jsx#L18,gospel,按源页面及服务权限核对,lib/src/screens/gospel_diagnostic_screen.dart,候选待实测,REG-CONTINENT-GOSPEL-F9B294E7,SOUL-19,需迁移核对,NOT_RUN
+continent,认识自己/ordo-amoris,爱之秩序,今日心镜 → 属灵星球大陆,src/PlanetHome.jsx#L24,ordo-amoris,按源页面及服务权限核对,lib/src/screens/formation/batch14_dashboard_screen.dart,候选待实测,REG-CONTINENT-ORDO-AMORIS-AB479C2E,FORM-03,需迁移核对,NOT_RUN
+continent,认识自己/idolatry,偶像监测,今日心镜 → 属灵星球大陆,src/PlanetHome.jsx#L24,idolatry,按源页面及服务权限核对,,待定位,REG-CONTINENT-IDOLATRY-92724385,SOUL-20,需迁移核对,NOT_RUN
+continent,认识自己/checkup,低潮体检,今日心镜 → 属灵星球大陆,src/PlanetHome.jsx#L24,checkup,按源页面及服务权限核对,lib/src/screens/spiritual_checkup_screen.dart,候选待实测,REG-CONTINENT-CHECKUP-FEBDADAE,SOUL-18,需迁移核对,NOT_RUN
+continent,认识自己/examen,今日省察,今日心镜 → 属灵星球大陆,src/PlanetHome.jsx#L24,examen,按源页面及服务权限核对,lib/src/screens/examen_screen.dart,候选待实测,REG-CONTINENT-EXAMEN-37D1C77C,SOUL-23,需迁移核对,NOT_RUN
+continent,回到福音/gospel,福音诊断室,今日心镜 → 属灵星球大陆,src/PlanetHome.jsx#L30,gospel,按源页面及服务权限核对,lib/src/screens/gospel_diagnostic_screen.dart,候选待实测,REG-CONTINENT-GOSPEL-E21C05B3,SOUL-19,需迁移核对,NOT_RUN
+continent,回到福音/creed-catechism,信经星系,今日心镜 → 属灵星球大陆,src/PlanetHome.jsx#L30,creed-catechism,按源页面及服务权限核对,lib/src/screens/formation/batch14_dashboard_screen.dart,候选待实测,REG-CONTINENT-CREED-CATECHISM-DFB765C5,FORM-04,需迁移核对,NOT_RUN
+continent,回到福音/discern,决策辨识,今日心镜 → 属灵星球大陆,src/PlanetHome.jsx#L30,discern,按源页面及服务权限核对,lib/src/screens/discernment_screen.dart,候选待实测,REG-CONTINENT-DISCERN-A9D6915D,SOUL-24,需迁移核对,NOT_RUN
+continent,回到福音/agent,属灵牧者对话,今日心镜 → 属灵星球大陆,src/PlanetHome.jsx#L30,agent,按源页面及服务权限核对,lib/src/screens/agent_chat_screen.dart,候选待实测,REG-CONTINENT-AGENT-47370683,SOUL-25,需迁移核对,NOT_RUN
+continent,与神同行/hub,灵修操练,今日心镜 → 属灵星球大陆,src/PlanetHome.jsx#L36,hub,按源页面及服务权限核对,lib/src/screens/practice_hub_screen.dart,候选待实测,REG-CONTINENT-HUB-A06FD8FE,FORM-20,需迁移核对,NOT_RUN
+continent,与神同行/attention,守心立约,今日心镜 → 属灵星球大陆,src/PlanetHome.jsx#L36,attention,按源页面及服务权限核对,lib/src/screens/attention/attention_screen.dart,候选待实测,REG-CONTINENT-ATTENTION-92ECDC3E,ATT-01,需迁移核对,NOT_RUN
+continent,与神同行/rule-discernment,规则辨识,今日心镜 → 属灵星球大陆,src/PlanetHome.jsx#L36,rule-discernment,按源页面及服务权限核对,lib/src/screens/formation/batch14_dashboard_screen.dart,候选待实测,REG-CONTINENT-RULE-DISCERNMENT-0DCA90D6,FORM-08,需迁移核对,NOT_RUN
+continent,与神同行/fuel,养料库,今日心镜 → 属灵星球大陆,src/PlanetHome.jsx#L36,fuel,按源页面及服务权限核对,lib/src/screens/fuel_screen.dart,候选待实测,REG-CONTINENT-FUEL-B0AD5B79,SOUL-21,需迁移核对,NOT_RUN
+continent,等候上帝/waiting,等候之路,今日心镜 → 属灵星球大陆,src/PlanetHome.jsx#L43,waiting,按源页面及服务权限核对,lib/src/screens/waiting_detail_screen.dart,候选待实测,REG-CONTINENT-WAITING-37ED1FD0,SOUL-22,需迁移核对,NOT_RUN
+continent,等候上帝/cross-lament-hope,十架哀歌,今日心镜 → 属灵星球大陆,src/PlanetHome.jsx#L43,cross-lament-hope,按源页面及服务权限核对,lib/src/screens/formation/batch14_dashboard_screen.dart,候选待实测,REG-CONTINENT-CROSS-LAMENT-HOPE-51F39E7C,FORM-11,需迁移核对,NOT_RUN
+continent,天路客/pilgrim,进入天路历程,今日心镜 → 属灵星球大陆,src/PlanetHome.jsx#L49,pilgrim,按源页面及服务权限核对,lib/src/screens/pilgrim_screen.dart,候选待实测,REG-CONTINENT-PILGRIM-3EC42F8A,SOUL-15,需迁移核对,NOT_RUN
+continent,天路客/pilgrim-game,天路历程游戏,今日心镜 → 属灵星球大陆,src/PlanetHome.jsx#L49,pilgrim-game,按源页面及服务权限核对,lib/src/screens/web_game_screen.dart,候选待实测,REG-CONTINENT-PILGRIM-GAME-4F07C3BE,SOUL-16,需迁移核对,NOT_RUN
+continent,人格塑造/holy-life,圣洁生活引擎,今日心镜 → 属灵星球大陆,src/PlanetHome.jsx#L55,holy-life,按源页面及服务权限核对,lib/src/screens/formation/holy_life_screen.dart,候选待实测,REG-CONTINENT-HOLY-LIFE-8C526CEA,FORM-17,需迁移核对,NOT_RUN
+continent,人格塑造/spiritual-formation,罪模式转化引擎,今日心镜 → 属灵星球大陆,src/PlanetHome.jsx#L55,spiritual-formation,按源页面及服务权限核对,lib/src/screens/spiritual_formation_screen.dart,候选待实测,REG-CONTINENT-SPIRITUAL-FORMATION-FF08922F,FORM-01,需迁移核对,NOT_RUN
+continent,人格塑造/fhl,信望爱星系,今日心镜 → 属灵星球大陆,src/PlanetHome.jsx#L55,fhl,按源页面及服务权限核对,,待定位,REG-CONTINENT-FHL-93CD3894,SOUL-17,需迁移核对,NOT_RUN
+continent,人格塑造/_close,本周牧养小结,今日心镜 → 属灵星球大陆,src/PlanetHome.jsx#L55,_close,按源页面及服务权限核对,lib/src/screens/spiritual_planet_home_screen.dart,候选待实测,REG-CONTINENT-CLOSE-3F55243B,SOUL-14,需迁移核对,NOT_RUN
+continent,回到福音/exp:union,与基督联合,今日心镜 → 属灵星球大陆,src/expansion/planetEntries.js#L65,exp:union,按源页面及服务权限核对,lib/src/screens/spiritual_planet_home_screen.dart,候选待实测,REG-CONTINENT-EXP-UNION-D1C5605B,SOUL-14,需迁移核对,NOT_RUN
+continent,回到福音/exp:assurance,得救的确据,今日心镜 → 属灵星球大陆,src/expansion/planetEntries.js#L65,exp:assurance,按源页面及服务权限核对,lib/src/screens/spiritual_planet_home_screen.dart,候选待实测,REG-CONTINENT-EXP-ASSURANCE-777EE123,SOUL-14,需迁移核对,NOT_RUN
+continent,回到福音/exp:cross,十字架默想,今日心镜 → 属灵星球大陆,src/expansion/planetEntries.js#L65,exp:cross,按源页面及服务权限核对,lib/src/screens/spiritual_planet_home_screen.dart,候选待实测,REG-CONTINENT-EXP-CROSS-58B9DAD3,SOUL-14,需迁移核对,NOT_RUN
+continent,认识自己/exp:contentment,基督徒知足,今日心镜 → 属灵星球大陆,src/expansion/planetEntries.js#L66,exp:contentment,按源页面及服务权限核对,lib/src/screens/spiritual_planet_home_screen.dart,候选待实测,REG-CONTINENT-EXP-CONTENTMENT-B0B819AA,SOUL-14,需迁移核对,NOT_RUN
+continent,认识自己/exp:fearofman,怕人 → 敬畏神,今日心镜 → 属灵星球大陆,src/expansion/planetEntries.js#L66,exp:fearofman,按源页面及服务权限核对,lib/src/screens/spiritual_planet_home_screen.dart,候选待实测,REG-CONTINENT-EXP-FEAROFMAN-34979050,SOUL-14,需迁移核对,NOT_RUN
+continent,认识自己/exp:perfectionism,完美主义 · 内在批判者,今日心镜 → 属灵星球大陆,src/expansion/planetEntries.js#L66,exp:perfectionism,按源页面及服务权限核对,lib/src/screens/spiritual_planet_home_screen.dart,候选待实测,REG-CONTINENT-EXP-PERFECTIONISM-46F64902,SOUL-14,需迁移核对,NOT_RUN
+continent,等候上帝/exp:lament,哀歌 · 向神倾诉,今日心镜 → 属灵星球大陆,src/expansion/planetEntries.js#L67,exp:lament,按源页面及服务权限核对,lib/src/screens/spiritual_planet_home_screen.dart,候选待实测,REG-CONTINENT-EXP-LAMENT-7C9AAC73,SOUL-14,需迁移核对,NOT_RUN
+continent,等候上帝/exp:hope,复活盼望,今日心镜 → 属灵星球大陆,src/expansion/planetEntries.js#L67,exp:hope,按源页面及服务权限核对,lib/src/screens/spiritual_planet_home_screen.dart,候选待实测,REG-CONTINENT-EXP-HOPE-7BA3A38B,SOUL-14,需迁移核对,NOT_RUN
+continent,等候上帝/exp:doubt,与怀疑同行,今日心镜 → 属灵星球大陆,src/expansion/planetEntries.js#L67,exp:doubt,按源页面及服务权限核对,lib/src/screens/spiritual_planet_home_screen.dart,候选待实测,REG-CONTINENT-EXP-DOUBT-DA0706C1,SOUL-14,需迁移核对,NOT_RUN
+continent,与神同行/exp:prayerschool,祷告经典 · 祷告的学校,今日心镜 → 属灵星球大陆,src/expansion/planetEntries.js#L68,exp:prayerschool,按源页面及服务权限核对,lib/src/screens/spiritual_planet_home_screen.dart,候选待实测,REG-CONTINENT-EXP-PRAYERSCHOOL-DD8A5A8A,SOUL-14,需迁移核对,NOT_RUN
+continent,与神同行/exp:contemplation,默观 · 在神爱里安息,今日心镜 → 属灵星球大陆,src/expansion/planetEntries.js#L68,exp:contemplation,按源页面及服务权限核对,lib/src/screens/spiritual_planet_home_screen.dart,候选待实测,REG-CONTINENT-EXP-CONTEMPLATION-C45BFC4D,SOUL-14,需迁移核对,NOT_RUN
+continent,人格塑造/exp:holiness,成圣 · 治死与穿上,今日心镜 → 属灵星球大陆,src/expansion/planetEntries.js#L69,exp:holiness,按源页面及服务权限核对,lib/src/screens/spiritual_planet_home_screen.dart,候选待实测,REG-CONTINENT-EXP-HOLINESS-21B60654,SOUL-14,需迁移核对,NOT_RUN
+continent,人格塑造/exp:humility,谦卑,今日心镜 → 属灵星球大陆,src/expansion/planetEntries.js#L69,exp:humility,按源页面及服务权限核对,lib/src/screens/spiritual_planet_home_screen.dart,候选待实测,REG-CONTINENT-EXP-HUMILITY-6421B794,SOUL-14,需迁移核对,NOT_RUN
+continent,人格塑造/exp:forgiveness,饶恕与和好,今日心镜 → 属灵星球大陆,src/expansion/planetEntries.js#L69,exp:forgiveness,按源页面及服务权限核对,lib/src/screens/spiritual_planet_home_screen.dart,候选待实测,REG-CONTINENT-EXP-FORGIVENESS-6F818200,SOUL-14,需迁移核对,NOT_RUN
+continent,健康教会九标志/exp:fellowship,团契生活,今日心镜 → 属灵星球大陆,src/expansion/planetEntries.js#L70,exp:fellowship,按源页面及服务权限核对,lib/src/screens/spiritual_planet_home_screen.dart,候选待实测,REG-CONTINENT-EXP-FELLOWSHIP-9A927B10,SOUL-14,需迁移核对,NOT_RUN
+continent,健康教会九标志/exp:neighbor,爱邻舍 · 公义款待,今日心镜 → 属灵星球大陆,src/expansion/planetEntries.js#L70,exp:neighbor,按源页面及服务权限核对,lib/src/screens/spiritual_planet_home_screen.dart,候选待实测,REG-CONTINENT-EXP-NEIGHBOR-3B49B5AF,SOUL-14,需迁移核对,NOT_RUN
+continent,天路客/exp:secondcoming,主再来 · 儆醒地活,今日心镜 → 属灵星球大陆,src/expansion/planetEntries.js#L71,exp:secondcoming,按源页面及服务权限核对,lib/src/screens/spiritual_planet_home_screen.dart,候选待实测,REG-CONTINENT-EXP-SECONDCOMING-CC7B9482,SOUL-14,需迁移核对,NOT_RUN
+continent,天路客/exp:aging,年老 · 善始善终,今日心镜 → 属灵星球大陆,src/expansion/planetEntries.js#L71,exp:aging,按源页面及服务权限核对,lib/src/screens/spiritual_planet_home_screen.dart,候选待实测,REG-CONTINENT-EXP-AGING-C92F9184,SOUL-14,需迁移核对,NOT_RUN
+continent,与神同行/exp:,扩充灵修 · 全部,今日心镜 → 属灵星球大陆,src/expansion/planetEntries.js#L77,exp:,按源页面及服务权限核对,lib/src/screens/spiritual_planet_home_screen.dart,候选待实测,REG-CONTINENT-EXP-0DC613DF,SOUL-14,需迁移核对,NOT_RUN
+link,/amor-survey,匿名关系问卷,Web 直达路径与 App 深链,src/datingPriorityRoute.js#L1,,冷/热启动，身份和参数有效性分别核对,lib/src/screens/dating_priority_screen.dart,候选待实测,REG-LINK-AMOR-SURVEY-0B435195,SOC-17,需迁移核对,NOT_RUN
+link,/amor-survey-sum,匿名关系统计,Web 直达路径与 App 深链,src/datingPriorityRoute.js#L2,,冷/热启动，身份和参数有效性分别核对,lib/src/screens/dating_priority_stats_screen.dart,候选待实测,REG-LINK-AMOR-SURVEY-SUM-27C88045,SOC-18,需迁移核对,NOT_RUN
+link,/caregiver,照护者控制台,Web 直达路径与 App 深链,src/App.jsx#L3316,,冷/热启动，身份和参数有效性分别核对,,待定位,REG-LINK-CAREGIVER-D39EDF36,CARE-04,需迁移核对,NOT_RUN
+link,/seekers,慕道班,Web 直达路径与 App 深链,src/App.jsx#L3325,,冷/热启动，身份和参数有效性分别核对,lib/src/screens/evangelism_screen.dart,候选待实测,REG-LINK-SEEKERS-4A9400BD,SOC-08,需迁移核对,NOT_RUN
+link,/p/{shareToken},公开分享代祷,Web 直达路径与 App 深链,src/App.jsx#L3332,,冷/热启动，身份和参数有效性分别核对,lib/src/screens/shared_prayer_screen.dart,候选待实测,REG-LINK-P-SHARETOKEN-7EA15BAB,SOC-02,需迁移核对,NOT_RUN
+link,/attention/{section?},守心,Web 直达路径与 App 深链,src/App.jsx#L1059,,冷/热启动，身份和参数有效性分别核对,lib/src/screens/attention/attention_screen.dart,候选待实测,REG-LINK-ATTENTION-SECTION-4AC36201,ATT-06,需迁移核对,NOT_RUN
+link,/sunday-school/ai-formation/{route?},AI 时代心意更新,Web 直达路径与 App 深链,src/App.jsx#L1065,,冷/热启动，身份和参数有效性分别核对,lib/src/screens/ai_formation_screen.dart,候选待实测,REG-LINK-SUNDAY-SCHOOL-AI-FORMATION-ROUTE-894D1299,AI-01,需迁移核对,NOT_RUN
+link,/?panel=group-hub,小组中心,Web 直达路径与 App 深链,src/App.jsx#L1079,,冷/热启动，身份和参数有效性分别核对,lib/src/screens/group_hub_screen.dart,候选待实测,REG-LINK-PANEL-GROUP-HUB-2AACC267,SOC-13,需迁移核对,NOT_RUN
+link,/?panel=care-dashboard,关怀面板,Web 直达路径与 App 深链,src/App.jsx#L1079,,冷/热启动，身份和参数有效性分别核对,lib/src/screens/care_dashboard_screen.dart,候选待实测,REG-LINK-PANEL-CARE-DASHBOARD-4051BE4C,SOC-14,需迁移核对,NOT_RUN
+link,/?panel=onboarding,新手引导,Web 直达路径与 App 深链,src/App.jsx#L1079,,冷/热启动，身份和参数有效性分别核对,,待定位,REG-LINK-PANEL-ONBOARDING-6C614691,SOC-16,需迁移核对,NOT_RUN
+link,/?panel=shared-prayer&token={shareToken},公开分享代祷,Web 直达路径与 App 深链,src/App.jsx#L1079,,冷/热启动，身份和参数有效性分别核对,lib/src/screens/shared_prayer_screen.dart,候选待实测,REG-LINK-PANEL-SHARED-PRAYER-TOKEN-SHARETOKEN-85B77627,SOC-02,需迁移核对,NOT_RUN
+link,/?panel=attention&attentionSection={section},守心,Web 直达路径与 App 深链,src/App.jsx#L1091,,冷/热启动，身份和参数有效性分别核对,lib/src/screens/attention/attention_screen.dart,候选待实测,REG-LINK-PANEL-ATTENTION-ATTENTIONSECTION-SECTION-E1DB9063,ATT-06,需迁移核对,NOT_RUN
+link,/?panel=spiritual-formation&formationTab={tab},属灵形成,Web 直达路径与 App 深链,src/App.jsx#L1101,,冷/热启动，身份和参数有效性分别核对,lib/src/screens/spiritual_formation_screen.dart,候选待实测,REG-LINK-PANEL-SPIRITUAL-FORMATION-FORMATIONTAB-TAB-12EBD261,FORM-01,需迁移核对,NOT_RUN
+link,/?panel=mccheyne,麦琴读经,Web 直达路径与 App 深链,src/App.jsx#L1110,,冷/热启动，身份和参数有效性分别核对,lib/src/screens/devotion_screen.dart,候选待实测,REG-LINK-PANEL-MCCHEYNE-9C143255,DEV-10,需迁移核对,NOT_RUN
+link,/?share=book:{id},分享书籍,Web 直达路径与 App 深链,src/App.jsx#L1124,,冷/热启动，身份和参数有效性分别核对,lib/src/screens/books_screen.dart,候选待实测,REG-LINK-SHARE-BOOK-ID-CF8D3176,DEV-08,需迁移核对,NOT_RUN
+link,/?share=hymn:{id},分享诗歌,Web 直达路径与 App 深链,src/App.jsx#L1125,,冷/热启动，身份和参数有效性分别核对,lib/src/screens/hymns_screen.dart,候选待实测,REG-LINK-SHARE-HYMN-ID-350BA576,SOC-03,需迁移核对,NOT_RUN
+link,/account-deletion.html,删除账户,Web 直达路径与 App 深链,public/account-deletion.html#L1,,冷/热启动，身份和参数有效性分别核对,lib/src/screens/account_deletion_screen.dart,候选待实测,REG-LINK-ACCOUNT-DELETION-HTML-F81CB32B,AUTH-05,需迁移核对,NOT_RUN
+link,/oracles.html,列国默示,Web 直达路径与 App 深链,public/oracles.html#L1,,冷/热启动，身份和参数有效性分别核对,lib/src/screens/oracles_screen.dart,候选待实测,REG-LINK-ORACLES-HTML-815045BD,UI-15,需迁移核对,NOT_RUN
+human,moses,摩西,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L10,角色 moses；镜鉴 ID 12；主题 moses-flee-egypt；引用 Exodus 2:11-15,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C001,DH-02,需迁移核对,NOT_RUN
+human,david,大卫,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L37,角色 david；镜鉴 ID 25；主题 david-spare-saul；引用 1 Samuel 24、1 Samuel 26,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C002,DH-02,需迁移核对,NOT_RUN
+human,peter,彼得,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L108,角色 peter；镜鉴 ID 49；主题 peter-call；引用 Matthew 4:18-20、Luke 5:1-11、John 1:40-42,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C003,DH-02,需迁移核对,NOT_RUN
+human,paul,保罗,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L151,角色 paul；镜鉴 ID 51；主题 paul-conversion；引用 Acts 9:1-22、Acts 22:3-21、Acts 26:9-20,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C004,DH-02,需迁移核对,NOT_RUN
+human,adam,亚当,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L264,角色 adam；镜鉴 ID 1；主题 adam-01-case；引用 Genesis 1、Genesis 2,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C005,DH-02,需迁移核对,NOT_RUN
+human,noah,挪亚,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L344,角色 noah；镜鉴 ID 6；主题 noah-01-case；引用 Genesis 6、Genesis 7、Genesis 8,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C006,DH-02,需迁移核对,NOT_RUN
+human,abraham,亚伯拉罕,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L438,角色 abraham；镜鉴 ID 7；主题 abraham-01-case；引用 Genesis 12:1-9,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C007,DH-02,需迁移核对,NOT_RUN
+human,sarah,撒拉,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L469,角色 sarah；镜鉴 ID 8；主题 sarah-01-case；引用 Genesis 17:15-16,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C008,DH-02,需迁移核对,NOT_RUN
+human,isaac,以撒,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L493,角色 isaac；镜鉴 ID 9；主题 isaac-01-case；引用 Genesis 17、Genesis 21:1-7,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C009,DH-02,需迁移核对,NOT_RUN
+human,jacob,雅各,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L551,角色 jacob；镜鉴 ID 10；主题 jacob-01-case；引用 Genesis 25:29-34,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C010,DH-02,需迁移核对,NOT_RUN
+human,joseph,约瑟,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L579,角色 joseph；镜鉴 ID 11；主题 joseph-01-case；引用 Genesis 37:5-11,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C011,DH-02,需迁移核对,NOT_RUN
+human,joshua,约书亚,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L608,角色 joshua；镜鉴 ID 200；主题 joshua-01-case；引用 Numbers 13、Numbers 14,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C012,DH-02,需迁移核对,NOT_RUN
+human,samuel,撒母耳,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L710,角色 samuel；镜鉴 ID 205；主题 samuel-01-case；引用 1 Samuel 1,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C013,DH-02,需迁移核对,NOT_RUN
+human,saul,扫罗,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L760,角色 saul；镜鉴 ID 24；主题 saul-01-case；引用 1 Samuel 9、1 Samuel 10,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C014,DH-02,需迁移核对,NOT_RUN
+human,solomon,所罗门,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L838,角色 solomon；镜鉴 ID 29；主题 solomon-01-case；引用 1 Kings 1、1 Kings 2,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C015,DH-02,需迁移核对,NOT_RUN
+human,elijah,以利亚,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L961,角色 elijah；镜鉴 ID 32；主题 elijah-01-case；引用 1 Kings 17,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C016,DH-02,需迁移核对,NOT_RUN
+human,isaiah,以赛亚,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L1007,角色 isaiah；镜鉴 ID 36；主题 isaiah-01-case；引用 Isaiah 6,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C017,DH-02,需迁移核对,NOT_RUN
+human,jeremiah,耶利米,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L1042,角色 jeremiah；镜鉴 ID 37；主题 jeremiah-01-case；引用 Jeremiah 1:4-10,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C018,DH-02,需迁移核对,NOT_RUN
+human,daniel,但以理,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L1071,角色 daniel；镜鉴 ID 39；主题 daniel-01-case；引用 Daniel 1,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C019,DH-02,需迁移核对,NOT_RUN
+human,ruth,路得,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L1114,角色 ruth；镜鉴 ID 20；主题 ruth-01-case；引用 Ruth 1:6-18,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C020,DH-02,需迁移核对,NOT_RUN
+human,esther,以斯帖,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L1149,角色 esther；镜鉴 ID 42；主题 esther-01-case；引用 Esther 2,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C021,DH-02,需迁移核对,NOT_RUN
+human,mary,马利亚（耶稣的母亲）,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L1194,角色 mary；镜鉴 ID 48；主题 mary-01-case；引用 Luke 1:26-38,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C022,DH-02,需迁移核对,NOT_RUN
+human,john,约翰,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L1229,角色 john；镜鉴 ID 50；主题 john-01-case；引用 Mark 1:19-20,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C023,DH-02,需迁移核对,NOT_RUN
+human,barnabas,巴拿巴,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L1253,角色 barnabas；镜鉴 ID 161；主题 barnabas-01-case；引用 Acts 4:36-37,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C024,DH-02,需迁移核对,NOT_RUN
+human,eve,夏娃,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L1277,角色 eve；镜鉴 ID 2；主题 eve-01-case；引用 Genesis 2:18-25,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C025,DH-02,需迁移核对,NOT_RUN
+human,cain,该隐,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L1307,角色 cain；镜鉴 ID 3；主题 cain-01-case；引用 Genesis 4:3-7,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C026,DH-02,需迁移核对,NOT_RUN
+human,abel,亚伯,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L1334,角色 abel；镜鉴 ID 4；主题 abel-01-case；引用 Genesis 4:2,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C027,DH-02,需迁移核对,NOT_RUN
+human,enoch,以诺,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L1357,角色 enoch；镜鉴 ID 403；主题 enoch-01-case；引用 Genesis 5:21-24,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C028,DH-02,需迁移核对,NOT_RUN
+human,job,约伯,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L1383,角色 job；镜鉴 ID 46；主题 job-01-case；引用 Job 1-2,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C029,DH-02,需迁移核对,NOT_RUN
+human,melchizedek,麦基洗德,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L1440,角色 melchizedek；镜鉴 ID 406；主题 melchizedek-01-case；引用 Genesis 14:18-20,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C030,DH-02,需迁移核对,NOT_RUN
+human,ishmael,以实玛利,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L1465,角色 ishmael；镜鉴 ID 449；主题 ishmael-01-case；引用 Genesis 16:1-16,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C031,DH-02,需迁移核对,NOT_RUN
+human,rebecca,利百加,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L1503,角色 rebecca；镜鉴 ID 74；主题 rebecca-01-case；引用 Genesis 24,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C032,DH-02,需迁移核对,NOT_RUN
+human,esau,以扫,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L1592,角色 esau；镜鉴 ID 73；主题 esau-01-case；引用 Genesis 25:29-34,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C033,DH-02,需迁移核对,NOT_RUN
+human,leah,利亚,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L1620,角色 leah；镜鉴 ID 206；主题 leah-01-case；引用 Genesis 29:21-26,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C034,DH-02,需迁移核对,NOT_RUN
+human,rachel,拉结,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L1648,角色 rachel；镜鉴 ID 207；主题 rachel-01-case；引用 Genesis 29:15-30,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C035,DH-02,需迁移核对,NOT_RUN
+human,aaron,亚伦,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L1686,角色 aaron；镜鉴 ID 13；主题 aaron-01-case；引用 Exodus 4:14-16、Exodus 4:27-31,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C036,DH-02,需迁移核对,NOT_RUN
+human,miriam,米利暗,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L1717,角色 miriam；镜鉴 ID 14；主题 miriam-01-case；引用 Exodus 15:20-21,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C037,DH-02,需迁移核对,NOT_RUN
+human,caleb,迦勒,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L1741,角色 caleb；镜鉴 ID 160；主题 caleb-01-case；引用 Numbers 13:30、Numbers 14:6-9,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C038,DH-02,需迁移核对,NOT_RUN
+human,rahab,喇合,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L1770,角色 rahab；镜鉴 ID 194；主题 rahab-01-case；引用 Joshua 2,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C039,DH-02,需迁移核对,NOT_RUN
+human,deborah,底波拉,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L1816,角色 deborah；镜鉴 ID 17；主题 deborah-01-case；引用 Judges 4:4-5,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C040,DH-02,需迁移核对,NOT_RUN
+human,gideon,基甸,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L1840,角色 gideon；镜鉴 ID 18；主题 gideon-01-case；引用 Judges 6:11-24,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C041,DH-02,需迁移核对,NOT_RUN
+human,samson,参孙,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L1876,角色 samson；镜鉴 ID 19；主题 samson-01-case；引用 Judges 13,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C042,DH-02,需迁移核对,NOT_RUN
+human,hannah,哈拿,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L1923,角色 hannah；镜鉴 ID 22；主题 hannah-01-case；引用 1 Samuel 1:9-18,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C043,DH-02,需迁移核对,NOT_RUN
+human,eli,以利,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L1955,角色 eli；镜鉴 ID 237；主题 eli-01-case；引用 1 Samuel 1:12-17,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C044,DH-02,需迁移核对,NOT_RUN
+human,jonathan,约拿单,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L1983,角色 jonathan；镜鉴 ID 147；主题 jonathan-01-case；引用 1 Samuel 18:1-4,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C045,DH-02,需迁移核对,NOT_RUN
+human,michal,米甲,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L2009,角色 michal；镜鉴 ID 455；主题 michal-01-case；引用 1 Samuel 18:20-29,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C046,DH-02,需迁移核对,NOT_RUN
+human,abigail,亚比该,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L2041,角色 abigail；镜鉴 ID 143；主题 abigail-01-case；引用 1 Samuel 25:14-35,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C047,DH-02,需迁移核对,NOT_RUN
+human,nathan,拿单,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L2085,角色 nathan；镜鉴 ID 422；主题 nathan-01-case；引用 2 Samuel 7:1-17,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C048,DH-02,需迁移核对,NOT_RUN
+human,absalom,押沙龙,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L2124,角色 absalom；镜鉴 ID 189；主题 absalom-01-case；引用 2 Samuel 13:20-39,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C049,DH-02,需迁移核对,NOT_RUN
+human,bathsheba,拔示巴,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L2166,角色 bathsheba；镜鉴 ID 209；主题 bathsheba-01-case；引用 2 Samuel 11,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C050,DH-02,需迁移核对,NOT_RUN
+human,rehoboam,罗波安,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L2215,角色 rehoboam；镜鉴 ID 82；主题 rehoboam-01-case；引用 1 Kings 12:1-15,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C051,DH-02,需迁移核对,NOT_RUN
+human,jeroboam,耶罗波安,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L2252,角色 jeroboam；镜鉴 ID 195；主题 jeroboam-01-case；引用 1 Kings 11:29-39,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C052,DH-02,需迁移核对,NOT_RUN
+human,ahab,亚哈,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L2285,角色 ahab；镜鉴 ID 30；主题 ahab-01-case；引用 1 Kings 18,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C053,DH-02,需迁移核对,NOT_RUN
+human,jezebel,耶洗别,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L2353,角色 jezebel；镜鉴 ID 159；主题 jezebel-01-case；引用 1 Kings 19:1-2,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C054,DH-02,需迁移核对,NOT_RUN
+human,elisha,以利沙,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L2377,角色 elisha；镜鉴 ID 156；主题 elisha-01-case；引用 1 Kings 19:19-21、2 Kings 2,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C055,DH-02,需迁移核对,NOT_RUN
+human,hezekiah,希西家,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L2429,角色 hezekiah；镜鉴 ID 34；主题 hezekiah-01-case；引用 2 Kings 18-19、Isaiah 36-37,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C056,DH-02,需迁移核对,NOT_RUN
+human,josiah,约西亚,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L2587,角色 josiah；镜鉴 ID 188；主题 josiah-01-case；引用 2 Kings 22,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C057,DH-02,需迁移核对,NOT_RUN
+human,ezekiel,以西结,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L2629,角色 ezekiel；镜鉴 ID 170；主题 ezekiel-01-case；引用 Ezekiel 1,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C058,DH-02,需迁移核对,NOT_RUN
+human,hosea,何西阿,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L2679,角色 hosea；镜鉴 ID 40；主题 hosea-01-case；引用 Hosea 1-3,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C059,DH-02,需迁移核对,NOT_RUN
+human,jonah,约拿,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L2740,角色 jonah；镜鉴 ID 437；主题 jonah-01-case；引用 Jonah 1,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C060,DH-02,需迁移核对,NOT_RUN
+human,micah,弥迦,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L2779,角色 micah；镜鉴 ID 134；主题 micah-01-case；引用 Micah 1,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C061,DH-02,需迁移核对,NOT_RUN
+human,habakkuk,哈巴谷,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L2817,角色 habakkuk；镜鉴 ID 136；主题 habakkuk-01-case；引用 Habakkuk 1:1-4,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C062,DH-02,需迁移核对,NOT_RUN
+human,haggai,哈该,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L2843,角色 haggai；镜鉴 ID 138；主题 haggai-01-case；引用 Haggai 1,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C063,DH-02,需迁移核对,NOT_RUN
+human,zechariah_prophet,撒迦利亚,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L2880,角色 zechariah_prophet；镜鉴 ID 139；主题 zechariah_prophet-01-case；引用 Zechariah 1:1-6,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C064,DH-02,需迁移核对,NOT_RUN
+human,ezra,以斯拉,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L2908,角色 ezra；镜鉴 ID 171；主题 ezra-01-case；引用 Ezra 7,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C065,DH-02,需迁移核对,NOT_RUN
+human,nehemiah,尼希米,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L2958,角色 nehemiah；镜鉴 ID 44；主题 nehemiah-01-case；引用 Nehemiah 1,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C066,DH-02,需迁移核对,NOT_RUN
+human,mordecai,末底改,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L2991,角色 mordecai；镜鉴 ID 43；主题 mordecai-01-case；引用 Esther 2:5-7,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C067,DH-02,需迁移核对,NOT_RUN
+human,boaz,波阿斯,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L3016,角色 boaz；镜鉴 ID 21；主题 boaz-01-case；引用 Ruth 2,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C068,DH-02,需迁移核对,NOT_RUN
+human,naomi,拿俄米,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L3061,角色 naomi；镜鉴 ID 172；主题 naomi-01-case；引用 Ruth 1,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C069,DH-02,需迁移核对,NOT_RUN
+human,zechariah_priest,撒迦利亚（施洗约翰之父）,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L3105,角色 zechariah_priest；镜鉴 ID 100；主题 zechariah_priest-01-case；引用 Luke 1:5-23,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C070,DH-02,需迁移核对,NOT_RUN
+human,elizabeth,伊利莎白,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L3146,角色 elizabeth；镜鉴 ID 211；主题 elizabeth-01-case；引用 Luke 1:5-25,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C071,DH-02,需迁移核对,NOT_RUN
+human,joseph_of_nazareth,约瑟（拿撒勒）,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L3189,角色 joseph_of_nazareth；镜鉴 ID 99；主题 joseph_of_nazareth-01-case；引用 Matthew 1:18-25,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C072,DH-02,需迁移核对,NOT_RUN
+human,john_baptist,施洗约翰,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L3219,角色 john_baptist；镜鉴 ID 173；主题 john_baptist-01-case；引用 Matthew 3:1-12、Luke 3:1-18,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C073,DH-02,需迁移核对,NOT_RUN
+human,mary_magdalene,抹大拉的马利亚,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L3273,角色 mary_magdalene；镜鉴 ID 163；主题 mary_magdalene-01-case；引用 Luke 8:1-3,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C074,DH-02,需迁移核对,NOT_RUN
+human,martha,马大,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L3298,角色 martha；镜鉴 ID 101；主题 martha-01-case；引用 Luke 10:38-42,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C075,DH-02,需迁移核对,NOT_RUN
+human,mary_of_bethany,伯大尼的马利亚,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L3325,角色 mary_of_bethany；镜鉴 ID 102；主题 mary_of_bethany-01-case；引用 Luke 10:38-42,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C076,DH-02,需迁移核对,NOT_RUN
+human,lazarus,拉撒路,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L3352,角色 lazarus；镜鉴 ID 103；主题 lazarus-01-case；引用 John 11:1-16,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C077,DH-02,需迁移核对,NOT_RUN
+human,nicodemus,尼哥底母,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L3390,角色 nicodemus；镜鉴 ID 64；主题 nicodemus-01-case；引用 John 3:1-21,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C078,DH-02,需迁移核对,NOT_RUN
+human,joseph_arimathea,亚利马太的约瑟,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L3433,角色 joseph_arimathea；镜鉴 ID 466；主题 joseph_arimathea-01-case；引用 Matthew 27:57、Mark 15:43、Luke 23:50-51,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C079,DH-02,需迁移核对,NOT_RUN
+human,matthew,马太,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L3463,角色 matthew；镜鉴 ID 215；主题 matthew-01-case；引用 Matthew 9:9-13,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C080,DH-02,需迁移核对,NOT_RUN
+human,mark,马可,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L3490,角色 mark；镜鉴 ID 65；主题 mark-01-case；引用 Acts 12:12,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C081,DH-02,需迁移核对,NOT_RUN
+human,luke,路加,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L3513,角色 luke；镜鉴 ID 107；主题 luke-01-case；引用 Colossians 4:14,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C082,DH-02,需迁移核对,NOT_RUN
+human,andrew,安得烈,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L3536,角色 andrew；镜鉴 ID 175；主题 andrew-01-case；引用 John 1:35-42,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C083,DH-02,需迁移核对,NOT_RUN
+human,philip_apostle,腓力（使徒）,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L3566,角色 philip_apostle；镜鉴 ID 213；主题 philip_apostle-01-case；引用 John 1:43-46,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C084,DH-02,需迁移核对,NOT_RUN
+human,thomas,多马,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L3592,角色 thomas；镜鉴 ID 177；主题 thomas-01-case；引用 John 11:16,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C085,DH-02,需迁移核对,NOT_RUN
+human,james_zebedee,雅各（西庇太之子）,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L3615,角色 james_zebedee；镜鉴 ID 212；主题 james_zebedee-01-case；引用 Matthew 4:21-22,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C086,DH-02,需迁移核对,NOT_RUN
+human,james_brother_jesus,雅各（主的兄弟）,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L3639,角色 james_brother_jesus；镜鉴 ID 183；主题 james_brother_jesus-01-case；引用 Matthew 13:55、Mark 6:3,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C087,DH-02,需迁移核对,NOT_RUN
+human,stephen,司提反,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L3665,角色 stephen；镜鉴 ID 164；主题 stephen-01-case；引用 Acts 6:1-6,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C088,DH-02,需迁移核对,NOT_RUN
+human,philip_evangelist,腓利（传福音者）,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L3693,角色 philip_evangelist；镜鉴 ID 796；主题 philip_evangelist-01-case；引用 Acts 6:1-6,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C089,DH-02,需迁移核对,NOT_RUN
+human,timothy,提摩太,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L3721,角色 timothy；镜鉴 ID 198；主题 timothy-01-case；引用 Acts 16:1-3,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C090,DH-02,需迁移核对,NOT_RUN
+human,titus,提多,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L3746,角色 titus；镜鉴 ID 109；主题 titus-01-case；引用 Galatians 2:1-5,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C091,DH-02,需迁移核对,NOT_RUN
+human,silas,西拉,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L3773,角色 silas；镜鉴 ID 108；主题 silas-01-case；引用 Acts 15:22-33,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C092,DH-02,需迁移核对,NOT_RUN
+human,priscilla,百基拉,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L3807,角色 priscilla；镜鉴 ID 469；主题 priscilla-01-case；引用 Acts 18:1-3,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C093,DH-02,需迁移核对,NOT_RUN
+human,aquila,亚居拉,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L3832,角色 aquila；镜鉴 ID 468；主题 aquila-01-case；引用 Acts 18:1-3,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C094,DH-02,需迁移核对,NOT_RUN
+human,lydia,吕底亚,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L3857,角色 lydia；镜鉴 ID 57；主题 lydia-01-case；引用 Acts 16:14,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C095,DH-02,需迁移核对,NOT_RUN
+human,apollos,亚波罗,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L3880,角色 apollos；镜鉴 ID 196；主题 apollos-01-case；引用 Acts 18:24-25,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C096,DH-02,需迁移核对,NOT_RUN
+human,phoebe,非比,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L3904,角色 phoebe；镜鉴 ID 470；主题 phoebe-01-case；引用 Romans 16:1-2,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C097,DH-02,需迁移核对,NOT_RUN
+human,onesimus,阿尼西母,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L3928,角色 onesimus；镜鉴 ID 197；主题 onesimus-01-case；引用 Philemon 1:10-16,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C098,DH-02,需迁移核对,NOT_RUN
+human,philemon,腓利门,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L3957,角色 philemon；镜鉴 ID 181；主题 philemon-01-case；引用 Philemon 1:1-7,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C099,DH-02,需迁移核对,NOT_RUN
+human,cornelius,哥尼流,统一门户 → 圣经人物,e2e/fixtures/digital-human-all100.json#L3986,角色 cornelius；镜鉴 ID 63；主题 cornelius-01-case；引用 Acts 10:1-4,登录、角色目录及内容审核；真实媒体另见 DH-05～08,lib/src/screens/digital_human_screen.dart,候选待实测,DH-C100,DH-02,需迁移核对,NOT_RUN
+scenario,NAV-01,五大主导航,NAV,src/App.jsx,,VISITOR,lib/src/screens/home_shell.dart,候选待实测,NAV-01,,需迁移核对,NOT_RUN
+scenario,NAV-02,登录后返回原目的地,NAV,src/App.jsx,,OWNER,lib/src/screens/home_shell.dart,候选待实测,NAV-02,,需迁移核对,NOT_RUN
+scenario,NAV-03,生命周期与导航栈,NAV,src/App.jsx,,OWNER,lib/src/screens/home_shell.dart,候选待实测,NAV-03,,需迁移核对,NOT_RUN
+scenario,NAV-04,首页快捷入口,NAV,src/App.jsx,,VISITOR,lib/src/screens/home_shell.dart,候选待实测,NAV-04,,需迁移核对,NOT_RUN
+scenario,NAV-05,加载异常恢复,NAV,src/AppErrorBoundary.jsx,,FAULT,lib/src/screens/home_shell.dart,候选待实测,NAV-05,,需迁移核对,NOT_RUN
+scenario,NAV-06,牧养路径入口对应,NAV,src/components/PastoralPathCard.jsx,,OWNER,lib/src/screens/home_shell.dart,候选待实测,NAV-06,,需迁移核对,NOT_RUN
+scenario,AUTH-01,邮箱登录与校验,AUTH,src/LoginScreen.jsx,,ACCOUNTS,lib/src/screens/login_screen.dart,候选待实测,AUTH-01,,需迁移核对,NOT_RUN
+scenario,AUTH-02,验证码注册和密码重置,AUTH,src/LoginScreen.jsx,,ACCOUNTS,lib/src/screens/login_screen.dart,候选待实测,AUTH-02,,需迁移核对,NOT_RUN
+scenario,AUTH-03,会话过期与账户切换,AUTH,src/auth.js,,ACCOUNTS,lib/src/screens/login_screen.dart,候选待实测,AUTH-03,,需迁移核对,NOT_RUN
+scenario,AUTH-04,第三方身份回调,AUTH,src/auth.js,,PROVIDER,lib/src/screens/login_screen.dart,候选待实测,AUTH-04,,需迁移核对,NOT_RUN
+scenario,AUTH-05,账户删除入口及请求,AUTH,public/account-deletion.js,,ACCOUNTS,lib/src/screens/account_deletion_screen.dart,候选待实测,AUTH-05,,需迁移核对,NOT_RUN
+scenario,SPHERE-01,情绪球标签、缩放和选择,SPHERE,src/EmotionSphereScene.jsx,,VISITOR,lib/src/screens/sphere_screen.dart,候选待实测,SPHERE-01,,需迁移核对,NOT_RUN
+scenario,SPHERE-02,首页状态、统计与热度,SPHERE,src/App.jsx,,OWNER,lib/src/screens/sphere_screen.dart,候选待实测,SPHERE-02,,需迁移核对,NOT_RUN
+scenario,SPHERE-03,自然语言检索及经文详情,SPHERE,src/App.jsx,,OWNER,lib/src/screens/sphere_screen.dart,候选待实测,SPHERE-03,,需迁移核对,NOT_RUN
+scenario,SPHERE-04,查询校验、失败和竞态,SPHERE,src/App.jsx,,FAULT,lib/src/screens/sphere_screen.dart,候选待实测,SPHERE-04,,需迁移核对,NOT_RUN
+scenario,SPHERE-05,经文结果保存与导出,SPHERE,src/App.jsx,,OWNER,lib/src/screens/sphere_screen.dart,候选待实测,SPHERE-05,,需迁移核对,NOT_RUN
+scenario,SPHERE-06,文字处理,SPHERE,src/App.jsx,,LANG,lib/src/screens/sphere_screen.dart,候选待实测,SPHERE-06,,需迁移核对,NOT_RUN
+scenario,SPHERE-07,危机输入优先,SPHERE,src/sosKeywords.js,,SAFETY,lib/src/screens/sphere_screen.dart,候选待实测,SPHERE-07,,需迁移核对,NOT_RUN
+scenario,DEV-01,灵修入口与已选子页,DEV,src/components/DevotionTabContainer.jsx,,OWNER,lib/src/screens/devotion_screen.dart,候选待实测,DEV-01,,需迁移核对,NOT_RUN
+scenario,DEV-02,个人灵修建议与麦琴进度,DEV,src/PersonalDevotionPage.jsx,,OWNER,lib/src/screens/devotion_screen.dart,候选待实测,DEV-02,,需迁移核对,NOT_RUN
+scenario,DEV-03,旧版每日灵修内容,DEV,src/DailyDevotionPage.jsx,,OWNER,,待定位,DEV-03,,待确认旧入口,NOT_RUN
+scenario,DEV-04,清晨甘露三种时长,DEV,src/MorningDewPage.jsx,,LANG,lib/src/screens/devotion_screen.dart,候选待实测,DEV-04,,需迁移核对,NOT_RUN
+scenario,DEV-05,两分钟灵修,DEV,src/QuickDevotionPage.jsx,,OWNER,lib/src/screens/devotion/quick_devotion_tab.dart,候选待实测,DEV-05,,需迁移核对,NOT_RUN
+scenario,DEV-06,灵修日记生命周期,DEV,src/DevotionJournalPage.jsx,,OWNER,lib/src/screens/devotion/journal_tab.dart,候选待实测,DEV-06,,需迁移核对,NOT_RUN
+scenario,DEV-07,回收站恢复及永久删除,DEV,src/RecycleBinPage.jsx,,ACCOUNTS,lib/src/screens/recycle_bin_screen.dart,候选待实测,DEV-07,,需迁移核对,NOT_RUN
+scenario,DEV-08,书籍收藏、阅读与分享,DEV,src/SpiritualBooksPage.jsx,,LANG,lib/src/screens/books_screen.dart,候选待实测,DEV-08,,需迁移核对,NOT_RUN
+scenario,DEV-09,计划实作与进度,DEV,src/ReadingPlanPage.jsx,,OWNER,lib/src/screens/devotion/reading_plan_tab.dart,候选待实测,DEV-09,,需迁移核对,NOT_RUN
+scenario,DEV-10,麦琴读经与联动,DEV,src/MccheynePage.jsx,,OWNER,lib/src/screens/devotion_screen.dart,候选待实测,DEV-10,,需迁移核对,NOT_RUN
+scenario,DEV-11,读经书卷章节与译本,DEV,src/BibleReadingPage.jsx,,LANG,lib/src/screens/bible_reading_screen.dart,候选待实测,DEV-11,,需迁移核对,NOT_RUN
+scenario,DEV-12,经文检索及定位,DEV,src/BibleSearchPage.jsx,,LANG,lib/src/screens/bible_search_screen.dart,候选待实测,DEV-12,,需迁移核对,NOT_RUN
+scenario,DEV-13,单节经文背诵,DEV,src/MemoryVersePage.jsx,,OWNER,lib/src/screens/devotion/memory_tab.dart,候选待实测,DEV-13,,需迁移核对,NOT_RUN
+scenario,DEV-14,背经卡组与到期复习,DEV,src/MemoryDeckPage.jsx,,OWNER,lib/src/screens/memory_deck_screen.dart,候选待实测,DEV-14,,需迁移核对,NOT_RUN
+scenario,DEV-15,通知授权和麦琴 08:00,DEV,src/ReminderSettings.jsx,,DEVICE,lib/src/screens/reminder_settings_screen.dart,候选待实测,DEV-15,,需迁移核对,NOT_RUN
+scenario,DEV-16,专题推荐到结果保存,DEV,src/expansion/ExpansionHub.jsx,,OWNER,lib/src/screens/devotion/devotion_topics_tab.dart,候选待实测,DEV-16,,需迁移核对,NOT_RUN
+scenario,DEV-17,个人搜索权限与跳转,DEV,src/PersonalSearchPage.jsx,,ACCOUNTS,lib/src/screens/personal_search_screen.dart,候选待实测,DEV-17,,需迁移核对,NOT_RUN
+scenario,DEV-18,个人数据导出边界,DEV,src/ExportDataPage.jsx,,ACCOUNTS,lib/src/screens/export_data_screen.dart,候选待实测,DEV-18,,需迁移核对,NOT_RUN
+scenario,SOC-01,代祷发布、阿们、更新,SOC,src/PrayerWallPage.jsx,,SOCIAL,lib/src/screens/prayer_screen.dart,候选待实测,SOC-01,,需迁移核对,NOT_RUN
+scenario,SOC-02,匿名分享祷告,SOC,src/SharedPrayerPage.jsx,,SOCIAL,lib/src/screens/shared_prayer_screen.dart,候选待实测,SOC-02,,需迁移核对,NOT_RUN
+scenario,SOC-03,诗歌播放与歌词/曲谱,SOC,src/HymnPlayer.jsx,,DEVICE,lib/src/screens/hymns_screen.dart,候选待实测,SOC-03,,需迁移核对,NOT_RUN
+scenario,SOC-04,社区帖子生命周期,SOC,src/CommunityPage.jsx,,SOCIAL,lib/src/screens/community_screen.dart,候选待实测,SOC-04,,需迁移核对,NOT_RUN
+scenario,SOC-05,分享墙和主日学,SOC,src/ShareWallPage.jsx,,SOCIAL,lib/src/screens/community_screen.dart,候选待实测,SOC-05,,需迁移核对,NOT_RUN
+scenario,SOC-06,见证发表和互动,SOC,src/TestimonyWallPage.jsx,,SOCIAL,lib/src/screens/testimony_wall_screen.dart,候选待实测,SOC-06,,需迁移核对,NOT_RUN
+scenario,SOC-07,主日信息、私记与分享,SOC,src/SermonJournalPage.jsx,,OWNER,lib/src/screens/sunday_screen.dart,候选待实测,SOC-07,,需迁移核对,NOT_RUN
+scenario,SOC-08,公开慕道班,SOC,src/EvangelismPage.jsx,,VISITOR,lib/src/screens/evangelism_screen.dart,候选待实测,SOC-08,,需迁移核对,NOT_RUN
+scenario,SOC-09,福音宣扬与宣教对象,SOC,src/EvangelismPage.jsx,,SOCIAL,lib/src/screens/evangelism_screen.dart,候选待实测,SOC-09,,需迁移核对,NOT_RUN
+scenario,SOC-10,相通、好友及消息生命周期,SOC,src/CommunionPage.jsx,,SOCIAL,lib/src/screens/communion_screen.dart,候选待实测,SOC-10,,需迁移核对,NOT_RUN
+scenario,SOC-11,双人呼叫、语音与留言,SOC,src/CommunionPage.jsx,,DEVICE,lib/src/screens/call_screen.dart,候选待实测,SOC-11,,需迁移核对,NOT_RUN
+scenario,SOC-12,多人语音群,SOC,src/VoiceRoomPage.jsx,,DEVICE,lib/src/screens/voice_groups_screen.dart,候选待实测,SOC-12,,需迁移核对,NOT_RUN
+scenario,SOC-13,小组、邀请码与成员边界,SOC,src/GroupHubPage.jsx,,SOCIAL,lib/src/screens/group_hub_screen.dart,候选待实测,SOC-13,,需迁移核对,NOT_RUN
+scenario,SOC-14,关怀面板与成员授权,SOC,src/CareDashboardPage.jsx,,SOCIAL,lib/src/screens/care_dashboard_screen.dart,候选待实测,SOC-14,,需迁移核对,NOT_RUN
+scenario,SOC-15,属灵伙伴匹配与结束,SOC,src/SpiritualPartnerPage.jsx,,SOCIAL,lib/src/screens/spiritual_partner_screen.dart,候选待实测,SOC-15,,需迁移核对,NOT_RUN
+scenario,SOC-16,新手流程,SOC,src/OnboardingPage.jsx,,OWNER,,待定位,SOC-16,,需迁移核对,NOT_RUN
+scenario,SOC-17,匿名关系问卷排序与边界,SOC,src/DatingPriorityPage.jsx,,VISITOR,lib/src/screens/dating_priority_screen.dart,候选待实测,SOC-17,,需迁移核对,NOT_RUN
+scenario,SOC-18,问卷汇总独立页,SOC,src/DatingPriorityStatsPage.jsx,,LANG,lib/src/screens/dating_priority_stats_screen.dart,候选待实测,SOC-18,,需迁移核对,NOT_RUN
+scenario,MAP-01,圣经地图主题与区划,MAP,src/BibleMapsPage.jsx,,LANG,lib/src/screens/bible_maps_screen.dart,候选待实测,MAP-01,,需迁移核对,NOT_RUN
+scenario,MAP-02,地图图谱、人物旅程及路线,MAP,src/features/bible-map/BibleAtlasPage.tsx,,DEVICE,lib/src/screens/bible_atlas_screen.dart,候选待实测,MAP-02,,需迁移核对,NOT_RUN
+scenario,MAP-03,耶路撒冷沙盘和四类圣殿,MAP,src/JerusalemSandbox.jsx,,LANG,lib/src/screens/jerusalem_sandbox_screen.dart,候选待实测,MAP-03,,需迁移核对,NOT_RUN
+scenario,MAP-04,静态地图加载和链接,MAP,src/BibleMapViewer.jsx,,FAULT,lib/src/screens/bible_maps_screen.dart,候选待实测,MAP-04,,需迁移核对,NOT_RUN
+scenario,MAP-05,人物镜鉴筛选搜索和详情,MAP,src/MirrorPage.jsx,,LANG,lib/src/screens/mirror_screen.dart,候选待实测,MAP-05,,需迁移核对,NOT_RUN
+scenario,MAP-06,人物关系图冷启动和返回,MAP,src/RelationshipGraphView.jsx,,DEVICE,lib/src/screens/mirror_graph_screen.dart,候选待实测,MAP-06,,需迁移核对,NOT_RUN
+scenario,MAP-07,系统工程与状态维度,MAP,src/EngineeringPage.jsx,,OWNER,,待定位,MAP-07,,需迁移核对,NOT_RUN
+scenario,MAP-08,世界观叙事诊断与历史,MAP,src/WorldviewPage.jsx,,OWNER,lib/src/screens/formation/worldview_screen.dart,候选待实测,MAP-08,,需迁移核对,NOT_RUN
+scenario,SOC-19,公共笔记详情、分页、导出与视频,SOC,src/ShareWallPage.jsx,,SOCIAL,lib/src/screens/community_screen.dart,候选待实测,SOC-19,,需迁移核对,NOT_RUN
+scenario,NAV-07,关于和政策入口,NAV,src/App.jsx,,VISITOR,lib/src/screens/profile_screen.dart,候选待实测,NAV-07,,需迁移核对,NOT_RUN
+scenario,DEV-19,私记与显式发布,DEV,src/DevotionJournalPage.jsx,,SOCIAL,lib/src/screens/devotion/journal_tab.dart,候选待实测,DEV-19,,需迁移核对,NOT_RUN
+scenario,AUTH-06,个人资料与头像,AUTH,src/App.jsx,,ACCOUNTS,lib/src/screens/profile_screen.dart,候选待实测,AUTH-06,,需迁移核对,NOT_RUN
+scenario,SOUL-01,情绪签到、历史与趋势,SOUL,src/CheckInPage.jsx,,OWNER,lib/src/screens/checkin_screen.dart,候选待实测,SOUL-01,,需迁移核对,NOT_RUN
+scenario,SOUL-02,今日心镜洞察及三个信号,SOUL,src/components/SoulDashboard.jsx,,ACCOUNTS,lib/src/screens/innerlife_screen.dart,候选待实测,SOUL-02,,需迁移核对,NOT_RUN
+scenario,SOUL-03,每日一问与答复历史,SOUL,src/DailySoulQuestionPage.jsx,,OWNER,lib/src/screens/soul_question_history_screen.dart,候选待实测,SOUL-03,,需迁移核对,NOT_RUN
+scenario,SOUL-04,灵命成长地图,SOUL,src/GrowthMapPage.jsx,,OWNER,lib/src/screens/growth_map_screen.dart,候选待实测,SOUL-04,,需迁移核对,NOT_RUN
+scenario,SOUL-05,决策支持新建、历史、原则,SOUL,src/DecisionSupportPage.jsx,,OWNER,lib/src/screens/decision_support_screen.dart,候选待实测,SOUL-05,,需迁移核对,NOT_RUN
+scenario,SOUL-06,人格分析状态,SOUL,src/PersonalityPage.jsx,,OWNER,lib/src/screens/personality_screen.dart,候选待实测,SOUL-06,,需迁移核对,NOT_RUN
+scenario,SOUL-07,形成图谱的焦点子图与回退,SOUL,src/FormationGraph3D.jsx,,DEVICE,lib/src/screens/formation_graph_screen.dart,候选待实测,SOUL-07,,需迁移核对,NOT_RUN
+scenario,SOUL-08,习惯打卡、撤销与进度,SOUL,src/HabitsPage.jsx,,OWNER,lib/src/screens/habits_screen.dart,候选待实测,SOUL-08,,需迁移核对,NOT_RUN
+scenario,SOUL-09,行为记录和模式库,SOUL,src/BehaviorPage.jsx,,OWNER,lib/src/screens/behavior_screen.dart,候选待实测,SOUL-09,,需迁移核对,NOT_RUN
+scenario,SOUL-10,图表、曲线、历史和里程碑,SOUL,src/FormationChartsPage.jsx,,OWNER,lib/src/screens/formation/formation_charts_screen.dart,候选待实测,SOUL-10,,需迁移核对,NOT_RUN
+scenario,SOUL-11,守护者浮窗与工作区,SOUL,src/components/guardian/GuardianWidget.jsx,,OWNER,lib/src/screens/guardian_screen.dart,候选待实测,SOUL-11,,需迁移核对,NOT_RUN
+scenario,SOUL-12,守护者记忆读取与删除,SOUL,src/components/guardian/GuardianMemoryPanel.jsx,,ACCOUNTS,lib/src/screens/guardian_screen.dart,候选待实测,SOUL-12,,需迁移核对,NOT_RUN
+scenario,SOUL-13,守护者心情快速签到,SOUL,src/components/guardian/EmotionCheckIn.jsx,,OWNER,lib/src/screens/guardian_screen.dart,候选待实测,SOUL-13,,需迁移核对,NOT_RUN
+scenario,SOUL-14,星球大陆入口与专题回跳,SOUL,src/PlanetHome.jsx,,OWNER,lib/src/screens/spiritual_planet_home_screen.dart,候选待实测,SOUL-14,,需迁移核对,NOT_RUN
+scenario,SOUL-15,天路历程阶段与故事,SOUL,src/PilgrimJourneyPage.jsx,,OWNER,lib/src/screens/pilgrim_screen.dart,候选待实测,SOUL-15,,需迁移核对,NOT_RUN
+scenario,SOUL-16,天路历程游戏载入,SOUL,src/features/godot,,DEVICE,lib/src/screens/web_game_screen.dart,候选待实测,SOUL-16,,平台呈现待核,NOT_RUN
+scenario,SOUL-17,信望爱星系,SOUL,src/FaithHopeLovePage.jsx,,OWNER,,待定位,SOUL-17,,需迁移核对,NOT_RUN
+scenario,SOUL-18,低潮体检与下一步,SOUL,src/SpiritualCheckupPage.jsx,,OWNER,lib/src/screens/spiritual_checkup_screen.dart,候选待实测,SOUL-18,,需迁移核对,NOT_RUN
+scenario,SOUL-19,福音诊断室,SOUL,src/GospelDiagnosticPage.jsx,,OWNER,lib/src/screens/gospel_diagnostic_screen.dart,候选待实测,SOUL-19,,需迁移核对,NOT_RUN
+scenario,SOUL-20,偶像监测与挑战,SOUL,src/IdolatryMonitorPage.jsx,,OWNER,,待定位,SOUL-20,,需迁移核对,NOT_RUN
+scenario,SOUL-21,养料库资源,SOUL,src/FuelLibraryPage.jsx,,LANG,lib/src/screens/fuel_screen.dart,候选待实测,SOUL-21,,需迁移核对,NOT_RUN
+scenario,SOUL-22,等候之路,SOUL,src/WaitingPathPage.jsx,,OWNER,lib/src/screens/waiting_detail_screen.dart,候选待实测,SOUL-22,,需迁移核对,NOT_RUN
+scenario,FORM-01,塑造模块本地与后端同步,FORM,src/features/spiritual-formation/app/SpiritualFormationPage.jsx,,FAULT,lib/src/screens/spiritual_formation_screen.dart,候选待实测,FORM-01,,需迁移核对,NOT_RUN
+scenario,FORM-02,圣经默想、背经、省察、认罪,FORM,src/features/spiritual-formation/components/scripture-formation/ScriptureFormationDashboard.jsx,,OWNER,lib/src/screens/formation/lectio_screen.dart,候选待实测,FORM-02,,需迁移核对,NOT_RUN
+scenario,FORM-03,爱之秩序编辑与容错,FORM,src/features/spiritual-formation/components/ordo-amoris/OrdoAmorisDashboard.jsx,,FAULT,lib/src/screens/formation/batch14_dashboard_screen.dart,候选待实测,FORM-03,,需迁移核对,NOT_RUN
+scenario,FORM-04,信经与教理问答,FORM,src/features/spiritual-formation/components/creed-catechism/CreedCatechismGalaxy.jsx,,LANG,lib/src/screens/formation/batch14_dashboard_screen.dart,候选待实测,FORM-04,,需迁移核对,NOT_RUN
+scenario,FORM-05,祷告规则、代祷、诗篇和同在,FORM,src/features/spiritual-formation/components/prayer-communion/PrayerCommunionDashboard.jsx,,OWNER,lib/src/screens/formation/psalm_screen.dart,候选待实测,FORM-05,,需迁移核对,NOT_RUN
+scenario,FORM-06,德性、罪模式、试探与果子,FORM,src/features/spiritual-formation/components/virtue-vice/VirtueViceDashboard.jsx,,OWNER,lib/src/screens/formation/fruit_tracker_screen.dart,候选待实测,FORM-06,,需迁移核对,NOT_RUN
+scenario,FORM-07,生活规则、习惯、安息、非食物禁食,FORM,src/features/spiritual-formation/components/holy-habit/HolyHabitDashboard.jsx,,OWNER,lib/src/screens/formation/practice_screens.dart,候选待实测,FORM-07,,需迁移核对,NOT_RUN
+scenario,FORM-08,规则辨识,FORM,src/features/spiritual-formation/components/rule-discernment/RuleDiscernmentDashboard.jsx,,OWNER,lib/src/screens/formation/batch14_dashboard_screen.dart,候选待实测,FORM-08,,需迁移核对,NOT_RUN
+scenario,FORM-09,信念、偶像、四幕重构、决策,FORM,src/features/spiritual-formation/components/worldview/WorldviewFormationDashboard.jsx,,OWNER,lib/src/screens/spiritual_formation_screen.dart,候选待实测,FORM-09,,需迁移核对,NOT_RUN
+scenario,FORM-10,苦难医治与安全门,FORM,src/features/spiritual-formation/components/suffering-care/SufferingCareDashboard.jsx,,SAFETY,lib/src/screens/spiritual_formation_screen.dart,候选待实测,FORM-10,,需迁移核对,NOT_RUN
+scenario,FORM-11,十架哀歌与盼望,FORM,src/features/spiritual-formation/components/cross-lament-hope/CrossLamentHopeDashboard.jsx,,OWNER,lib/src/screens/formation/batch14_dashboard_screen.dart,候选待实测,FORM-11,,需迁移核对,NOT_RUN
+scenario,FORM-12,群体门训、同行、导师、教会,FORM,src/features/spiritual-formation/components/community-discipleship/CommunityDiscipleshipDashboard.jsx,,SOCIAL,lib/src/screens/formation/church_integration_screen.dart,候选待实测,FORM-12,,需迁移核对,NOT_RUN
+scenario,FORM-13,圣礼年历,FORM,src/features/spiritual-formation/components/sacrament-calendar/SacramentCalendarOrbit.jsx,,LANG,lib/src/screens/formation/batch14_dashboard_screen.dart,候选待实测,FORM-13,,需迁移核对,NOT_RUN
+scenario,FORM-14,恩赐、呼召、服事与使命,FORM,src/features/spiritual-formation/components/gift-calling/GiftCallingDashboard.jsx,,OWNER,lib/src/screens/spiritual_formation_screen.dart,候选待实测,FORM-14,,需迁移核对,NOT_RUN
+scenario,FORM-15,门徒阶段与互动,FORM,src/DiscipleFormationView.jsx,,SOCIAL,lib/src/screens/disciple_formation_screen.dart,候选待实测,FORM-15,,需迁移核对,NOT_RUN
+scenario,FORM-16,团契恩赐呼召入口,FORM,src/GiftCallingView.jsx,,OWNER,lib/src/screens/gift_calling_screen.dart,候选待实测,FORM-16,,需迁移核对,NOT_RUN
+scenario,FORM-17,圣洁生活与定时祷告,FORM,src/features/spiritual-formation/components/HolyLifeEngine.jsx,,OWNER,lib/src/screens/formation/holy_life_screen.dart,候选待实测,FORM-17,,需迁移核对,NOT_RUN
+scenario,FORM-18,转化计划及执行节律,FORM,src/features/spiritual-formation/components/TransformationPlanDashboard.jsx,,OWNER,lib/src/screens/spiritual_formation_screen.dart,候选待实测,FORM-18,,需迁移核对,NOT_RUN
+scenario,FORM-19,每日扫描、思想俘虏和恩典恢复,FORM,src/features/spiritual-formation/components/ThoughtCaptiveFlow.jsx,,OWNER,lib/src/screens/spiritual_formation_screen.dart,候选待实测,FORM-19,,需迁移核对,NOT_RUN
+scenario,FORM-20,操练中心私密任务,FORM,src/PracticeHubPage.jsx,,OWNER,lib/src/screens/practice_hub_screen.dart,候选待实测,FORM-20,,需迁移核对,NOT_RUN
+scenario,FORM-21,知识、导师、分析、治理与企业路线,FORM,src/features/spiritual-formation/components/platform-integration/PlatformIntegrationDashboard.jsx,,ROLES,lib/src/screens/spiritual_formation_screen.dart,候选待实测,FORM-21,,需迁移核对,NOT_RUN
+scenario,FORM-22,教义学习、护教和时间线,FORM,src/DoctrineLearningPage.jsx,,LANG,lib/src/screens/formation/batch14_dashboard_screen.dart,候选待实测,FORM-22,,需迁移核对,NOT_RUN
+scenario,FORM-23,AI 导师和权威边界,FORM,src/AITutorChatPage.jsx,,SAFETY,lib/src/screens/formation/ai_tutor_chat_screen.dart,候选待实测,FORM-23,,需迁移核对,NOT_RUN
+scenario,FORM-24,属灵记忆的同意与撤回,FORM,src/SpiritualMemoryPage.jsx,,ACCOUNTS,lib/src/screens/formation/spiritual_memory_screen.dart,候选待实测,FORM-24,,需迁移核对,NOT_RUN
+scenario,FORM-25,分析报告与证据,FORM,src/FormationAnalyticsPage.jsx,,OWNER,lib/src/screens/formation/analytics_productization_screens.dart,候选待实测,FORM-25,,需迁移核对,NOT_RUN
+scenario,FORM-26,组织角色与租户隔离,FORM,src/OrgConsolePage.jsx,,ROLES,lib/src/screens/formation/org_console_screen.dart,候选待实测,FORM-26,,需迁移核对,NOT_RUN
+scenario,FORM-27,平台后台管理,FORM,src/PlatformAdminPage.jsx,,ROLES,lib/src/screens/formation/platform_admin_screens.dart,候选待实测,FORM-27,,需迁移核对,NOT_RUN
+scenario,FORM-28,方案、计费与危机可达性,FORM,src/BillingPage.jsx,,ROLES,lib/src/screens/formation/platform_admin_screens.dart,候选待实测,FORM-28,,需迁移核对,NOT_RUN
+scenario,FORM-29,产品化和部署信息,FORM,src/ProductizationPage.jsx,,ROLES,lib/src/screens/formation/analytics_productization_screens.dart,候选待实测,FORM-29,,需迁移核对,NOT_RUN
+scenario,FORM-30,形成代理日计划和周回顾,FORM,src/FormationAgentDashboard.jsx,,OWNER,lib/src/screens/formation/formation_dashboard_screen.dart,候选待实测,FORM-30,,需迁移核对,NOT_RUN
+scenario,FORM-31,MVFE 流程,FORM,src/MVFEPage.jsx,,OWNER,,待定位,FORM-31,,需迁移核对,NOT_RUN
+scenario,CARE-01,危机入口从每类场景配对,CARE,src/SOSModal.jsx,,SAFETY,lib/src/screens/sos_screen.dart,候选待实测,CARE-01,,需迁移核对,NOT_RUN
+scenario,CARE-02,稳定操练与退出,CARE,src/features/crisis-care/app/CrisisCarePage.jsx,,SAFETY,lib/src/screens/sos_screen.dart,候选待实测,CARE-02,,需迁移核对,NOT_RUN
+scenario,CARE-03,安全计划、守护网和恢复时间线,CARE,src/features/crisis-care/app/CrisisCarePage.jsx,,SAFETY,lib/src/screens/sos_screen.dart,候选待实测,CARE-03,,需迁移核对,NOT_RUN
+scenario,CARE-04,照护者控制台,CARE,src/features/crisis-care/app/CaregiverConsolePage.jsx,,ROLES,,待定位,CARE-04,,需迁移核对,NOT_RUN
+scenario,CARE-05,本地资源与离线求助,CARE,src/features/crisis-care/app/CrisisCarePage.jsx,,SAFETY,lib/src/screens/sos_screen.dart,候选待实测,CARE-05,,需迁移核对,NOT_RUN
+scenario,SOUL-23,今日省察填写与历史,SOUL,src/ExamenPage.jsx,,OWNER,lib/src/screens/examen_screen.dart,候选待实测,SOUL-23,,需迁移核对,NOT_RUN
+scenario,SOUL-24,智慧辨识的选项边界,SOUL,src/DecisionDiscernmentPage.jsx,,OWNER,lib/src/screens/discernment_screen.dart,候选待实测,SOUL-24,,需迁移核对,NOT_RUN
+scenario,SOUL-25,属灵牧者助手对话,SOUL,src/AgentChatPage.jsx,,OWNER,lib/src/screens/agent_chat_screen.dart,候选待实测,SOUL-25,,需迁移核对,NOT_RUN
+scenario,SOUL-26,守护者文字、免提及危机,SOUL,src/components/guardian/GuardianChatPanel.jsx,,SAFETY,lib/src/screens/guardian_screen.dart,候选待实测,SOUL-26,,需迁移核对,NOT_RUN
+scenario,FORM-32,教会九标志与记录联动,FORM,src/NineMarksPage.jsx,,OWNER,lib/src/screens/formation/nine_marks_screen.dart,候选待实测,FORM-32,,需迁移核对,NOT_RUN
+scenario,FORM-33,已采纳使命、项目与周回顾,FORM,src/MissionLifePage.jsx,,OWNER,lib/src/screens/formation/mission_life_screen.dart,候选待实测,FORM-33,,需迁移核对,NOT_RUN
+scenario,FORM-34,私下代祷和公共代祷分离,FORM,src/IntercessionPage.jsx,,OWNER,lib/src/screens/formation/practice_screens.dart,候选待实测,FORM-34,,需迁移核对,NOT_RUN
+scenario,FORM-35,试探时的退出与恢复,FORM,src/TemptationResistancePage.jsx,,OWNER,lib/src/screens/formation/practice_screens.dart,候选待实测,FORM-35,,需迁移核对,NOT_RUN
+scenario,FORM-36,安息会话与后台,FORM,src/SabbathRestPage.jsx,,DEVICE,lib/src/screens/formation/practice_screens.dart,候选待实测,FORM-36,,需迁移核对,NOT_RUN
+scenario,TWIN-01,孪生来源与缺数据,TWIN,src/features/formation-twin/FormationTwinPage.jsx,,ACCOUNTS,lib/src/screens/formation_twin_screen.dart,候选待实测,TWIN-01,,需迁移核对,NOT_RUN
+scenario,TWIN-02,状态签到、私记与时间线,TWIN,src/features/formation-twin/FormationTwinWorkspace.jsx,,SAFETY,lib/src/screens/formation_twin_screen.dart,候选待实测,TWIN-02,,需迁移核对,NOT_RUN
+scenario,TWIN-03,语音记录确认,TWIN,src/features/formation-twin/FormationTwinWorkspace.jsx,,DEVICE,lib/src/screens/formation_twin_screen.dart,候选待实测,TWIN-03,,需迁移核对,NOT_RUN
+scenario,TWIN-04,情绪成熟反思验证,TWIN,src/features/formation-twin/FormationTwinWorkspace.jsx,,OWNER,lib/src/screens/formation_twin_maturity_panel.dart,候选待实测,TWIN-04,,需迁移核对,NOT_RUN
+scenario,PORTAL-01,门户摘要与行动编排,PORTAL,src/features/spiritual-planet/SpiritualPlanetPlatformPage.jsx,,OWNER,lib/src/screens/spiritual_planet_platform_screen.dart,候选待实测,PORTAL-01,,需迁移核对,NOT_RUN
+scenario,PORTAL-02,门户隐私投影与访问日志,PORTAL,src/features/spiritual-planet/SpiritualPlanetPlatformPage.jsx,,ACCOUNTS,lib/src/screens/spiritual_planet_platform_screen.dart,候选待实测,PORTAL-02,,需迁移核对,NOT_RUN
+scenario,PORTAL-03,门户时间线搜索和模块入口,PORTAL,src/features/spiritual-planet/SpiritualPlanetPlatformPage.jsx,,OWNER,lib/src/screens/spiritual_planet_platform_screen.dart,候选待实测,PORTAL-03,,需迁移核对,NOT_RUN
+scenario,DISC-01,洞鉴别主题与结果确认,DISC,src/features/spiritual-planet/DiscernmentWorkspace.jsx,,OWNER,lib/src/screens/discernment_workspace.dart,候选待实测,DISC-01,,需迁移核对,NOT_RUN
+scenario,DISC-02,洞鉴别失败、权限和危险输入,DISC,src/features/spiritual-planet/DiscernmentWorkspace.jsx,,SAFETY,lib/src/screens/discernment_workspace.dart,候选待实测,DISC-02,,需迁移核对,NOT_RUN
+scenario,DH-01,目录和身份消歧,DH,src/features/spiritual-planet/digital-human/DigitalHumanWorkspace.jsx,,HUMANS,lib/src/screens/digital_human_screen.dart,候选待实测,DH-01,,需迁移核对,NOT_RUN
+scenario,DH-02,经文约束答复及引用,DH,src/features/spiritual-planet/digital-human/DigitalHumanWorkspace.jsx,,HUMANS,lib/src/screens/digital_human_screen.dart,候选待实测,DH-02,,需迁移核对,NOT_RUN
+scenario,DH-03,切换角色、清空、迟到与上下文上限,DH,src/features/spiritual-planet/digital-human/DigitalHumanWorkspace.jsx,,HUMANS,lib/src/screens/digital_human_screen.dart,候选待实测,DH-03,,需迁移核对,NOT_RUN
+scenario,DH-04,研读与关系,DH,src/features/spiritual-planet/digital-human/DigitalHumanWorkspace.jsx,,HUMANS,lib/src/screens/digital_human_screen.dart,候选待实测,DH-04,,需迁移核对,NOT_RUN
+scenario,DH-05,默认预览与发声授权,DH,src/features/spiritual-planet/digital-human/DigitalHumanWorkspace.jsx,,PROVIDER,lib/src/screens/digital_human_screen.dart,候选待实测,DH-05,,需迁移核对,NOT_RUN
+scenario,DH-06,实时收音、转写去重及回退,DH,src/features/spiritual-planet/digital-human/LiveKitRealtimeSession.js,,PROVIDER,lib/src/screens/digital_human_screen.dart,候选待实测,DH-06,,需迁移核对,NOT_RUN
+scenario,DH-07,LiveSpeak 形象代言与消息边界,DH,src/features/spiritual-planet/digital-human/MetaPersonLiveSpeakAdapter.js,,PROVIDER,lib/src/screens/digital_human_screen.dart,候选待实测,DH-07,,需迁移核对,NOT_RUN
+scenario,DH-08,供应商就绪、监控与管理员,DH,src/features/spiritual-planet/digital-human/DigitalHumanWorkspace.jsx,,ROLES,lib/src/screens/digital_human_screen.dart,候选待实测,DH-08,,需迁移核对,NOT_RUN
+scenario,ATT-01,守心首页与每日立约,ATT,src/features/attention/app/AttentionPage.jsx,,OWNER,lib/src/screens/attention/attention_screen.dart,候选待实测,ATT-01,,需迁移核对,NOT_RUN
+scenario,ATT-02,专注定时器与账本联动,ATT,src/features/attention/app/AttentionPage.jsx,,DEVICE,lib/src/screens/attention/attention_screen.dart,候选待实测,ATT-02,,需迁移核对,NOT_RUN
+scenario,ATT-03,注意力账本与晚间复盘,ATT,src/features/attention/app/AttentionPage.jsx,,OWNER,lib/src/screens/attention/attention_screen.dart,候选待实测,ATT-03,,需迁移核对,NOT_RUN
+scenario,ATT-04,洞察、争战地图和守心计划,ATT,src/features/attention/app/AttentionPage.jsx,,OWNER,lib/src/screens/attention/attention_screen.dart,候选待实测,ATT-04,,需迁移核对,NOT_RUN
+scenario,ATT-05,伙伴、小组、周报预览与撤权,ATT,src/features/attention/app/AttentionPage.jsx,,SOCIAL,lib/src/screens/attention/attention_screen.dart,候选待实测,ATT-05,,需迁移核对,NOT_RUN
+scenario,ATT-06,守心后台和直接访问,ATT,src/features/attention/app/AttentionPage.jsx,,ROLES,lib/src/screens/attention/attention_screen.dart,候选待实测,ATT-06,,需迁移核对,NOT_RUN
+scenario,AI-01,主日学 flag 与公开/审核分支,AI,src/features/ai-formation/AiFormationPage.jsx,,ROLES,lib/src/screens/ai_formation_screen.dart,候选待实测,AI-01,,需迁移核对,NOT_RUN
+scenario,AI-02,路径推荐和最小同意,AI,src/features/ai-formation/program.js,,ROLES,lib/src/screens/ai_formation_screen.dart,候选待实测,AI-02,,需迁移核对,NOT_RUN
+scenario,AI-03,Batch 工作区保存、返回和版本,AI,src/features/ai-formation/BatchWorkspace.jsx,,ROLES,lib/src/screens/ai_formation_screen.dart,候选待实测,AI-03,,需迁移核对,NOT_RUN
+scenario,AI-04,审核、发布、撤回和同意范围,AI,src/features/ai-formation/GovernanceWorkspace.jsx,,ROLES,lib/src/screens/ai_formation_screen.dart,候选待实测,AI-04,,需迁移核对,NOT_RUN
+scenario,AI-05,S0–S3 和儿童保护,AI,src/features/ai-formation/BatchWorkspace.jsx,,SAFETY,lib/src/screens/ai_formation_screen.dart,候选待实测,AI-05,,需迁移核对,NOT_RUN
+scenario,AI-06,B11 连接现有孪生,AI,src/features/ai-formation/AiFormationPage.jsx,,ROLES,lib/src/screens/ai_formation_screen.dart,候选待实测,AI-06,,需迁移核对,NOT_RUN
+scenario,MIS-01,宣教旅程、工作台与邻舍之桥,MIS,src/EvangelismPage.jsx,,SOCIAL,lib/src/screens/evangelism_screen.dart,候选待实测,MIS-01,,需迁移核对,NOT_RUN
+scenario,MIS-02,宣教参与旅程与组织运营隔离,MIS,src/components/mission-bridge/MissionBridgePanel.jsx,,ROLES,lib/src/screens/mission_os_screen.dart,候选待实测,MIS-02,,需迁移核对,NOT_RUN
+scenario,MIS-03,项目设计与发布边界,MIS,src/components/mission-bridge/ProgramDesigner.jsx,,ROLES,lib/src/screens/mission_os_screen.dart,候选待实测,MIS-03,,需迁移核对,NOT_RUN
+scenario,MIS-04,装备培训,MIS,src/components/mission-bridge/TrainingConsole.jsx,,ROLES,lib/src/screens/mission_os_screen.dart,候选待实测,MIS-04,,需迁移核对,NOT_RUN
+scenario,MIS-05,宣教内容库,MIS,src/components/mission-bridge/ContentLibrary.jsx,,ROLES,lib/src/screens/mission_os_screen.dart,候选待实测,MIS-05,,需迁移核对,NOT_RUN
+scenario,MIS-06,宣教助手与同意,MIS,src/components/mission-bridge/AgentWorkbench.jsx,,ROLES,lib/src/screens/mission_os_screen.dart,候选待实测,MIS-06,,需迁移核对,NOT_RUN
+scenario,MIS-07,宣教事件、运营和降级,MIS,src/components/mission-bridge/OperationsConsole.jsx,,ROLES,lib/src/screens/mission_os_screen.dart,候选待实测,MIS-07,,需迁移核对,NOT_RUN
+scenario,MIS-08,本地带领者工作区,MIS,src/components/mission-bridge/LocalLeaderWorkspace.jsx,,ROLES,lib/src/screens/mission_os_screen.dart,候选待实测,MIS-08,,需迁移核对,NOT_RUN
+scenario,MIS-09,守心试点项目,MIS,src/components/mission-bridge/AttentionPilotWorkspace.jsx,,SOCIAL,lib/src/screens/mission_os_screen.dart,候选待实测,MIS-09,,需迁移核对,NOT_RUN
+scenario,MIS-10,AI 信仰工作区,MIS,src/components/mission-bridge/AiFaithWorkspace.jsx,,SAFETY,lib/src/screens/mission_os_screen.dart,候选待实测,MIS-10,,需迁移核对,NOT_RUN
+scenario,MIS-11,流动工作者工作区,MIS,src/components/mission-bridge/MobileWorkerWorkspace.jsx,,SOCIAL,lib/src/screens/mission_os_screen.dart,候选待实测,MIS-11,,需迁移核对,NOT_RUN
+scenario,MIS-12,夜班工作区,MIS,src/components/mission-bridge/NightShiftWorkspace.jsx,,SOCIAL,lib/src/screens/mission_os_screen.dart,候选待实测,MIS-12,,需迁移核对,NOT_RUN
+scenario,MIS-13,流动家庭工作区,MIS,src/components/mission-bridge/MobileFamilyWorkspace.jsx,,SOCIAL,lib/src/screens/mission_os_screen.dart,候选待实测,MIS-13,,需迁移核对,NOT_RUN
+scenario,MIS-14,专项支持和线下转介,MIS,src/components/mission-bridge/SpecializedSupportWorkspace.jsx,,SAFETY,lib/src/screens/mission_os_screen.dart,候选待实测,MIS-14,,需迁移核对,NOT_RUN
+scenario,MIS-15,宣教生命周期、组织与保险库,MIS,src/features/mission-os,,ROLES,lib/src/screens/mission_os_screen.dart,候选待实测,MIS-15,,需迁移核对,NOT_RUN
+scenario,MIS-16,宣教离线与恢复,MIS,src/missionBridgeOffline.js,,DEVICE,lib/src/screens/mission_os_screen.dart,候选待实测,MIS-16,,需迁移核对,NOT_RUN
+scenario,UI-01,窄屏、横屏、键盘和安全区,UI,src/styles.css,,DEVICE,lib/src/screens/home_shell.dart,候选待实测,UI-01,,需迁移核对,NOT_RUN
+scenario,UI-02,VoiceOver、TalkBack 与外接键盘,UI,src/components/a11y,,DEVICE,lib/src/screens/home_shell.dart,候选待实测,UI-02,,需迁移核对,NOT_RUN
+scenario,UI-03,大字、对比与减弱动态,UI,src/styles.css,,DEVICE,lib/src/screens/home_shell.dart,候选待实测,UI-03,,需迁移核对,NOT_RUN
+scenario,UI-04,中英文全链与动态文本,UI,src/i18n/runtime.js,,LANG,lib/src/screens/home_shell.dart,候选待实测,UI-04,,需迁移核对,NOT_RUN
+scenario,UI-05,双语分享卡,UI,src/components/ShareCardModal.jsx,,LANG,lib/src/widgets/share_card.dart,候选待实测,UI-05,,需迁移核对,NOT_RUN
+scenario,UI-06,不可信文案的安全渲染,UI,src/sanitize.js,,FAULT,,待定位,UI-06,,需迁移核对,NOT_RUN
+scenario,UI-07,通用语音输入异常与权限,UI,src/hooks/useSpeechInput.js,,DEVICE,lib/src/widgets/voice_hold_button.dart,候选待实测,UI-07,,需迁移核对,NOT_RUN
+scenario,UI-08,播放焦点、静音与系统中断,UI,src/lib/media,,DEVICE,lib/src/services/media_preferences.dart,候选待实测,UI-08,,需迁移核对,NOT_RUN
+scenario,UI-09,英文 TTS 与翻译失败,UI,src/speechText.js,,LANG,lib/src/services/tts_service.dart,候选待实测,UI-09,,需迁移核对,NOT_RUN
+scenario,UI-10,离线壳、更新与缓存隔离,UI,public/sw.js,,DEVICE,lib/src/services/offline_pack.dart,候选待实测,UI-10,,平台呈现待核,NOT_RUN
+scenario,UI-11,HTTP 错误及弱网通用回归,UI,src/api.js,,FAULT,lib/src/services/api_client.dart,候选待实测,UI-11,,需迁移核对,NOT_RUN
+scenario,UI-12,滚动、点击与内存压力,UI,src/App.jsx,,DEVICE,lib/src/screens/home_shell.dart,候选待实测,UI-12,,需迁移核对,NOT_RUN
+scenario,UI-13,私密数据日志和持久化隔离,UI,src/App.jsx,,ACCOUNTS,,待定位,UI-13,,需迁移核对,NOT_RUN
+scenario,UI-14,实时连接恢复与工单认证,UI,src/realtime/realtimeStore.js,,FAULT,lib/src/services/realtime_socket.dart,候选待实测,UI-14,,需迁移核对,NOT_RUN
+scenario,AI-07,学习记录版本、出口与清理,AI,src/features/ai-formation/BatchWorkspace.jsx,,ROLES,lib/src/screens/ai_formation_screen.dart,候选待实测,AI-07,,需迁移核对,NOT_RUN
+scenario,UI-15,列国默示的篇章、主题与朗读,UI,public/oracles.html,,LANG,lib/src/screens/oracles_screen.dart,候选待实测,UI-15,,平台呈现待核,NOT_RUN
+scenario,UI-16,约见时间和时区,UI,src/MeetingScheduleModal.jsx,,SOCIAL,lib/src/screens/widgets/meeting_schedule_sheet.dart,候选待实测,UI-16,,需迁移核对,NOT_RUN
+scenario,UI-17,文本建议与手动编辑,UI,src/components/SuggestField.jsx,,LANG,lib/src/widgets/guided_input.dart,候选待实测,UI-17,,需迁移核对,NOT_RUN
+scenario,UI-18,媒体权限撤销与终止,UI,src/useGlobalAudio.jsx,,DEVICE,,待定位,UI-18,,需迁移核对,NOT_RUN
+scenario,UI-19,加载和空失败的逐屏对照,UI,src/App.jsx,,LANG,lib/src/screens/home_shell.dart,候选待实测,UI-19,,需迁移核对,NOT_RUN
