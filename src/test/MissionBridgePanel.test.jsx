@@ -244,4 +244,31 @@ describe('MissionBridgePanel', () => {
     fireEvent.click(await screen.findByText('过渡青年'))
     expect(await screen.findByText(/尚未建立有效的儿童福利/)).toBeTruthy()
   })
+
+  it('prevents duplicate submissions in TrainingConsole while cohort creation is in flight', async () => {
+    api.fetchMissionBridgeTraining.mockResolvedValue({ metrics: { cohorts: 1 }, cohorts: [] })
+    let resolveCreate
+    api.createMissionBridgeCohort.mockImplementation(
+      () => new Promise((res) => { resolveCreate = res }),
+    )
+
+    render(<MissionBridgePanel token="token" />)
+    await screen.findByText('邻舍之桥')
+    fireEvent.click(screen.getByText('导师小组'))
+
+    const createBtn = await screen.findByRole('button', { name: '创建小组' })
+    fireEvent.change(screen.getByLabelText('小组名称'), {
+      target: { value: '倾听与同行小组' },
+    })
+    const form = createBtn.closest('form')
+
+    fireEvent.submit(form)
+    fireEvent.submit(form)
+    expect(api.createMissionBridgeCohort).toHaveBeenCalledTimes(1)
+    expect(createBtn.disabled).toBe(true)
+
+    resolveCreate({ ok: true })
+    expect(await screen.findByText('小组已创建并锁定项目版本')).toBeTruthy()
+    expect(createBtn.disabled).toBe(false)
+  })
 })
