@@ -1,6 +1,8 @@
+import { useLang } from '../../i18n/LanguageContext'
 import './guidedInput.css'
 
 const SEPARATOR = '；'
+const DEFAULT_OPTION_LABEL = '推荐选项（可多选，也可直接输入）'
 
 function tokens(value) {
   return String(value || '').split(SEPARATOR).map((item) => item.trim()).filter(Boolean)
@@ -15,12 +17,16 @@ export default function GuidedInput({
   value = '',
   onChange,
   multiline = false,
-  optionLabel = '推荐选项（可多选，也可直接输入）',
+  optionLabel,
   className = '',
   style,
   ...inputProps
 }) {
+  const { t } = useLang()
   const selected = tokens(value)
+  const resolvedLabel = optionLabel
+    ? t(optionLabel)
+    : t('推荐选项（可多选，也可直接输入）')
 
   function toggle(option) {
     const exists = selected.includes(option)
@@ -35,8 +41,8 @@ export default function GuidedInput({
   return (
     <div className={`mb-guided-input ${className}`.trim()}>
       {options.length > 0 && (
-        <div className="mb-guided-input__options" aria-label={optionLabel}>
-          <small>{optionLabel}</small>
+        <div className="mb-guided-input__options" aria-label={resolvedLabel || DEFAULT_OPTION_LABEL}>
+          <small>{resolvedLabel}</small>
           <div>
             {options.map((rawOption) => {
               const option = normalizeOption(rawOption)
@@ -49,7 +55,7 @@ export default function GuidedInput({
                   aria-pressed={active}
                   onClick={() => toggle(option.value)}
                 >
-                  {active ? '✓ ' : '+ '}{option.label}
+                  {active ? '✓ ' : '+ '}{t(option.label)}
                 </button>
               )
             })}

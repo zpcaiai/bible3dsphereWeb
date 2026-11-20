@@ -27,6 +27,11 @@ const CONTEXT_OPTIONS = [
   '文体及全书脉络',
   '尚需查证的背景资料',
 ]
+const STRUCTURE_OPTIONS = [
+  '开头—转折—回应三段结构',
+  '对话问答推进层次',
+  '叙事场景与核心宣告对照',
+]
 const MESSAGE_OPTIONS = [
   '这段经文显明上帝怎样的作为',
   '这段经文指出人的真实处境',
@@ -50,6 +55,12 @@ const REVIEW_CHANGE_OPTIONS = [
   '邀请另一位同工共同带领',
   '先安排一对一关怀或专业转介',
 ]
+const REFERRAL_CATEGORY_OPTIONS = [
+  ['pastoral_care', '牧者关怀'],
+  ['counseling', '专业心理辅导'],
+  ['social_support', '社会福利支持'],
+  ['medical_emergency', '医疗或紧急求助'],
+]
 const DEVELOPMENT_OPTIONS = [
   '共同预备并带领一次分享',
   '学习倾听与安全回应',
@@ -64,6 +75,11 @@ export default function LocalLeaderWorkspace({ token }) {
   const [notice, setNotice] = useState('')
   const [busy, setBusy] = useState(false)
   const busyRef = useRef(false)
+  const [observationFeedback, setObservationFeedback] = useState({
+    flags: [],
+    observationPrompts: [],
+  })
+  const [questionsDraft, setQuestionsDraft] = useState('')
   const [observation, setObservation] = useState({
     passageReference: '',
     observation: '',
@@ -96,13 +112,14 @@ export default function LocalLeaderWorkspace({ token }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token])
 
-  const run = async (action, message) => {
+  const run = async (action, message, onResult = null) => {
     if (busyRef.current) return undefined
     busyRef.current = true
     setBusy(true)
     setError('')
     try {
       const value = await action()
+      if (onResult) onResult(value)
       setNotice(message)
       await load()
       return value
@@ -113,6 +130,18 @@ export default function LocalLeaderWorkspace({ token }) {
       busyRef.current = false
       setBusy(false)
     }
+  }
+
+  const toggleReferralCategory = (categoryKey) => {
+    setReview((prev) => {
+      const exists = prev.referralCategories.includes(categoryKey)
+      return {
+        ...prev,
+        referralCategories: exists
+          ? prev.referralCategories.filter((item) => item !== categoryKey)
+          : [...prev.referralCategories, categoryKey],
+      }
+    })
   }
 
   return (
@@ -137,8 +166,8 @@ export default function LocalLeaderWorkspace({ token }) {
           </button>
         ))}
       </nav>
-      {error && <div className="mb-alert error">{error}</div>}
-      {notice && <div className="mb-alert success">{notice}</div>}
+      {error && <div className="mb-alert error" role="alert">{error}</div>}
+      {notice && <div className="mb-alert success" role="status">{notice}</div>}
       {mode === 'course' && (
         <div className="mb-week-list">
           {data.weeks.map((item) => (
@@ -155,54 +184,135 @@ export default function LocalLeaderWorkspace({ token }) {
         </div>
       )}
       {mode === 'observe' && (
-        <form
-          onSubmit={(e) => {
-            e.preventDefault()
-            run(() => saveLocalLeaderObservation(token, observation), t('经文观察已保存'))
-          }}
-        >
-          <GuidedInput
-            options={PASSAGE_OPTIONS}
-            required
-            placeholder={t('经文范围')}
-            value={observation.passageReference}
-            onChange={(passageReference) =>
-              setObservation({ ...observation, passageReference })
-            }
-            aria-label={t('经文范围')}
-          />
-          <GuidedInput
-            multiline
-            options={OBSERVATION_OPTIONS}
-            required
-            minLength={5}
-            placeholder={t('先记录经文中实际看见的重复、对比、人物与行动')}
-            value={observation.observation}
-            onChange={(value) => setObservation({ ...observation, observation: value })}
-            aria-label={t('先记录经文中实际看见的重复、对比、人物与行动')}
-          />
-          <GuidedInput
-            multiline
-            options={CONTEXT_OPTIONS}
-            placeholder={t('上下文与背景')}
-            value={observation.contextNotes}
-            onChange={(contextNotes) => setObservation({ ...observation, contextNotes })}
-            aria-label={t('上下文与背景')}
-          />
-          <GuidedInput
-            multiline
-            options={MESSAGE_OPTIONS}
-            placeholder={t('中心信息草案')}
-            value={observation.centralMessage}
-            onChange={(centralMessage) =>
-              setObservation({ ...observation, centralMessage })
-            }
-            aria-label={t('中心信息草案')}
-          />
-          <button type="submit" disabled={busy}>
-            {t('保存观察')}
-          </button>
-        </form>
+        <>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault()
+              const parsedQuestions = questionsDraft
+                .split(/\r?\n/)
+                .map((q) => q.trim())
+                .filter(Boolean)
+              const payload = {
+                ...observation,
+                applicationQuestions: parsedQuestions,
+              }
+              run(
+                () => saveLocalLeaderObservation(token, payload),
+                t('经文观察已保存'),
+                (res) => {
+                  setObservationFeedback({
+                    flags: Array.isArray(res?.flags) ? res.flags : [],
+                    observationPrompts: Array.isArray(res?.observationPrompts)
+                      ? res.observationPrompts
+                      : [],
+                  })
+                },
+              )
+            }}
+          >
+            <GuidedInput
+              options={PASSAGE_OPTIONS}
+              required
+              placeholder={t('经文范围')}
+              value={observation.passageReference}
+              onChange={(passageReference) =>
+                setObservation({ ...observation, passageReference })
+              }
+              aria-label={t('经文范围')}
+            />
+            <GuidedInput
+              multiline
+              options={OBSERVATION_OPTIONS}
+              required
+              minLength={5}
+              placeholder={t('先记录经文中实际看见的重复、对比、人物与行动')}
+              value={observation.observation}
+              onChange={(value) => setObservation({ ...observation, observation: value })}
+              aria-label={t('先记录经文中实际看见的重复、对比、人物与行动')}
+            />
+            <GuidedInput
+              multiline
+              options={CONTEXT_OPTIONS}
+              placeholder={t('上下文与背景')}
+              value={observation.contextNotes}
+              onChange={(contextNotes) => setObservation({ ...observation, contextNotes })}
+              aria-label={t('上下文与背景')}
+            />
+            <GuidedInput
+              multiline
+              options={STRUCTURE_OPTIONS}
+              placeholder={t('段落结构与脉络笔记')}
+              value={observation.structureNotes}
+              onChange={(structureNotes) => setObservation({ ...observation, structureNotes })}
+              aria-label={t('段落结构与脉络笔记')}
+            />
+            <GuidedInput
+              multiline
+              options={MESSAGE_OPTIONS}
+              placeholder={t('中心信息草案')}
+              value={observation.centralMessage}
+              onChange={(centralMessage) =>
+                setObservation({ ...observation, centralMessage })
+              }
+              aria-label={t('中心信息草案')}
+            />
+            <textarea
+              rows={3}
+              placeholder={t('开放式应用问题（每行一条，留给参与者自由回应）')}
+              aria-label={t('开放式应用问题')}
+              value={questionsDraft}
+              onChange={(e) => {
+                const raw = e.target.value
+                setQuestionsDraft(raw)
+                setObservation({
+                  ...observation,
+                  applicationQuestions: raw
+                    .split(/\r?\n/)
+                    .map((item) => item.trim())
+                    .filter(Boolean),
+                })
+              }}
+            />
+            <button type="submit" disabled={busy}>
+              {t('保存观察')}
+            </button>
+          </form>
+
+          {observationFeedback.flags.length > 0 && (
+            <div
+              className="mb-alert warning"
+              role="alert"
+              data-testid="leader-authoritarian-flags"
+            >
+              <strong>{t('语言边界复核提醒：请避免独断或属灵施压表述')}</strong>
+              <ul>
+                {observationFeedback.flags.map((flag, idx) => {
+                  const text = typeof flag === 'string'
+                    ? flag
+                    : (flag?.message || flag?.reason || flag?.code || '')
+                  return <li key={idx}>{text}</li>
+                })}
+              </ul>
+            </div>
+          )}
+
+          {observationFeedback.observationPrompts.length > 0 && (
+            <div
+              className="mb-observation-prompts"
+              data-testid="leader-observation-prompts"
+            >
+              <strong>{t('经文观察深化提示')}</strong>
+              <ul>
+                {observationFeedback.observationPrompts.map((prompt, idx) => {
+                  const text = typeof prompt === 'string'
+                    ? prompt
+                    : (prompt?.prompt || prompt?.title || '')
+                  return <li key={idx}>{text}</li>
+                })}
+              </ul>
+            </div>
+          )}
+        </>
       )}
       {mode === 'review' && (
         <form
@@ -217,7 +327,7 @@ export default function LocalLeaderWorkspace({ token }) {
           >
             {data.weeks.map((w) => (
               <option key={w.week} value={w.week}>
-                第 {w.week} 周（Week {w.week}）· {w.title}
+                {t('第')} {w.week} {t('周')} · {w.title}
               </option>
             ))}
           </select>
@@ -251,6 +361,19 @@ export default function LocalLeaderWorkspace({ token }) {
             onChange={(nextChange) => setReview({ ...review, nextChange })}
             aria-label={t('下次具体改变')}
           />
+          <fieldset className="mb-referral-categories" data-testid="leader-referral-categories">
+            <legend>{t('如需转介支持（可多选）')}</legend>
+            {REFERRAL_CATEGORY_OPTIONS.map(([catKey, catLabel]) => (
+              <label key={catKey} className="inline">
+                <input
+                  type="checkbox"
+                  checked={review.referralCategories.includes(catKey)}
+                  onChange={() => toggleReferralCategory(catKey)}
+                />
+                {t(catLabel)}
+              </label>
+            ))}
+          </fieldset>
           <button type="submit" disabled={busy}>
             {t('保存复盘')}
           </button>
@@ -301,10 +424,10 @@ export default function LocalLeaderWorkspace({ token }) {
             </button>
           </form>
           <div className="mb-apprentices">
-            {data.apprentices.map((item) => (
-              <div key={item.id}>
-                <strong>{item.name}</strong>
-                <span>{item.goal}</span>
+            {data.apprentices.map((a) => (
+              <div key={a.id}>
+                <strong>{a.name}</strong>
+                <span>{a.developmentGoal}</span>
               </div>
             ))}
           </div>

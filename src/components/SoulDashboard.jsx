@@ -11,8 +11,9 @@ import { t as i18nT } from '../i18n/runtime'
  */
 
 import { useEffect, useState } from 'react'
-import { API_BASE, fetchFormationProfile, fetchWeeklyPastoral, fetchFormationState, fetchFormationNext, fetchFormationTimeline } from '../api'
+import { API_BASE, authFetchInit, bearerHeaders, fetchFormationProfile, fetchWeeklyPastoral, fetchFormationState, fetchFormationNext, fetchFormationTimeline } from '../api'
 import { getToken } from '../auth'
+import PersonalSearchPage from '../PersonalSearchPage'
 import IdolatryMonitorPage from '../IdolatryMonitorPage'
 import WaitingPathPage from '../WaitingPathPage'
 import ExamenPage from '../ExamenPage'
@@ -135,20 +136,100 @@ function deriveInsight({ formation, mvfeLastResult, habits }) {
   const loopDetected = mvfeLastResult?.graph_insight?.loop_detected
 
   if (loopDetected) {
-    const loopType = mvfeLastResult?.graph_insight?.loop_type || '形成回路'
-    return `灵镜检测到「${loopType}」的存在——这是成长的邀请，不是定罪。`
+    const loopType = mvfeLastResult?.graph_insight?.loop_type || i18nT('形成回路')
+    return {
+      emoji: '🪞',
+      title: '今日心镜洞见',
+      body: `${i18nT('灵镜检测到「')}${loopType}${i18nT('」的存在——这是成长的邀请，不是定罪。')}`,
+      verse: i18nT('罗马书 8:1 — 如今那些在基督耶稣里的，就不定罪了。'),
+    }
   }
-  if (drift > 0.35) return '今日内心有些漂移，这或许是一个安静下来、重新锚定的好时机。'
-  if (lastEmo === 'anxiety' || lastEmo === 'fear') return '恐惧不是你的身份。你被那位驱逐惧怕之人所爱。'
-  if (lastEmo === 'peace' || lastEmo === 'gratitude') return '今日内心有平静的流动，这是圣灵同在的温柔印记。'
-  if (lastEmo === 'joy' || lastEmo === 'hope') return '喜乐与盼望是信仰的果实——今天你正结出这样的果子。'
-  if (lastEmo === 'sadness' || lastEmo === 'loneliness') return '悲伤是诚实的祷告。上帝不惧怕你的眼泪，祂与你同在幽谷中。'
-  if ((sv.humility || 0.5) > 0.75 && (sv.spiritual_clarity || 0.5) > 0.7) return '谦逊与灵性清晰是今日你最明亮的属灵标记。'
-  if ((sv.fear_tendency || 0.5) > 0.65) return '你的恐惧倾向正在呼唤更深的信任——祂掌管一切，包括你所惧怕的。'
-  if ((sv.pride_tendency || 0.5) > 0.65) return '骄傲倾向是需要持续悔改的领域。谦卑是门，福音是钥匙。'
-  if (streak >= 7) return `连续 ${streak} 天的操练是恩典的流动，而非成就的积累。继续走。`
-  if (arc.includes('transform') || traj.includes('up')) return '你的人格弧线正向基督的样式靠近——这是圣灵真实做工的证据。'
-  return '每一天的灵修都是将自己放在恩典中——今天也是。'
+  if (drift > 0.35) {
+    return {
+      emoji: '⚓',
+      title: '重新锚定',
+      body: i18nT('今日内心有些漂移，这或许是一个安静下来、重新锚定的好时机。'),
+      verse: i18nT('诗篇 46:10 — 你们要休息，要知道我是神。'),
+    }
+  }
+  if (lastEmo === 'anxiety' || lastEmo === 'fear') {
+    return {
+      emoji: '🕊️',
+      title: '爱里没有惧怕',
+      body: i18nT('恐惧不是你的身份。你被那位驱逐惧怕之人所爱。'),
+      verse: i18nT('约翰一书 4:18 — 爱里没有惧怕；爱既完全，就把惧怕除去。'),
+    }
+  }
+  if (lastEmo === 'peace' || lastEmo === 'gratitude') {
+    return {
+      emoji: '🌿',
+      title: '平安同在',
+      body: i18nT('今日内心有平静的流动，这是圣灵同在的温柔印记。'),
+      verse: i18nT('腓立比书 4:7 — 神所赐出人意外的平安，必在基督耶稣里保守你们的心怀意念。'),
+    }
+  }
+  if (lastEmo === 'joy' || lastEmo === 'hope') {
+    return {
+      emoji: '✨',
+      title: '喜乐与盼望',
+      body: i18nT('喜乐与盼望是信仰的果实——今天你正结出这样的果子。'),
+      verse: i18nT('罗马书 15:13 — 但愿使人有盼望的神，因信将诸般的喜乐、平安充满你们的心。'),
+    }
+  }
+  if (lastEmo === 'sadness' || lastEmo === 'loneliness') {
+    return {
+      emoji: '💧',
+      title: '幽谷中的同在',
+      body: i18nT('悲伤是诚实的祷告。上帝不惧怕你的眼泪，祂与你同在幽谷中。'),
+      verse: i18nT('诗篇 34:18 — 耶和华靠近伤心的人，拯救灵性痛悔的人。'),
+    }
+  }
+  if ((sv.humility || 0.5) > 0.75 && (sv.spiritual_clarity || 0.5) > 0.7) {
+    return {
+      emoji: '🌅',
+      title: '谦逊与清晰',
+      body: i18nT('谦逊与灵性清晰是今日你最明亮的属灵标记。'),
+      verse: i18nT('弥迦书 6:8 — 行公义，好怜悯，存谦卑的心，与你的神同行。'),
+    }
+  }
+  if ((sv.fear_tendency || 0.5) > 0.65) {
+    return {
+      emoji: '🛡️',
+      title: '学习交托',
+      body: i18nT('你的恐惧倾向正在呼唤更深的信任——祂掌管一切，包括你所惧怕的。'),
+      verse: i18nT('诗篇 56:3 — 我惧怕的时候要倚靠你。'),
+    }
+  }
+  if ((sv.pride_tendency || 0.5) > 0.65) {
+    return {
+      emoji: '🌾',
+      title: '回到恩典',
+      body: i18nT('骄傲倾向是需要持续悔改的领域。谦卑是门，福音是钥匙。'),
+      verse: i18nT('雅各书 4:6 — 神阻挡骄傲的人，赐恩给谦卑的人。'),
+    }
+  }
+  if (streak >= 7) {
+    return {
+      emoji: '🔥',
+      title: '恩典的节奏',
+      body: `${i18nT('连续')} ${streak} ${i18nT('天的操练是恩典的流动，而非成就的积累。继续走。')}`,
+      verse: i18nT('加拉太书 6:9 — 我们行善，不可丧志；若不灰心，到了时候就要收成。'),
+    }
+  }
+  if (arc.includes('transform') || traj.includes('up')) {
+    return {
+      emoji: '🌱',
+      title: '更新变化',
+      body: i18nT('你的人格弧线正向基督的样式靠近——这是圣灵真实做工的证据。'),
+      verse: i18nT('哥林多后书 3:18 — 变成主的形状，荣上加荣，如同从主的灵变成的。'),
+    }
+  }
+  return {
+    emoji: '🕊️',
+    title: '今日恩典',
+    body: i18nT('每一天的灵修都是将自己放在恩典中——今天也是。'),
+    verse: i18nT('耶利米哀歌 3:23 — 每早晨，这都是新的；你的诚实极其广大！'),
+  }
 }
 
 function derivePractice({ formation, mvfeLastResult, habits }) {
@@ -210,7 +291,7 @@ export default function SoulDashboard({ user, onOpenDevotion }) {
 
         const [profileData, habitsDash, mvfeDash, mvfeLastRes] = await Promise.all([
           fetchFormationProfile(uid, token).catch(() => null),
-          fetch(`${API_BASE}/habits/dashboard`, { headers: token ? { Authorization: `Bearer ${token}` } : {} })
+          fetch(`${API_BASE}/habits/dashboard`, authFetchInit(token, { headers: bearerHeaders(token) }))
             .then(r => r.ok ? r.json() : null).catch(() => null),
           fetch(`${MVFE_BASE}/dashboard/state?user_id=${uid}&hours=168`)
             .then(r => r.ok ? r.json() : null).catch(() => null),
@@ -219,7 +300,7 @@ export default function SoulDashboard({ user, onOpenDevotion }) {
         ])
         const decisionsRes = await fetch(
           `${API_BASE}/sfds/decisions?user_id=${encodeURIComponent(uid)}`,
-          { headers: { Authorization: `Bearer ${token}` } }
+          authFetchInit(token, { headers: bearerHeaders(token) })
         ).catch(() => null)
         const decisionsRaw = decisionsRes?.ok ? await decisionsRes.json() : []
         const decisions = Array.isArray(decisionsRaw)
@@ -397,6 +478,112 @@ export default function SoulDashboard({ user, onOpenDevotion }) {
             {sig.sub && <div style={{ fontSize: 9.5, color: 'rgba(255,255,255,0.38)', marginTop: 2 }}>{sig.sub}</div>}
           </div>
         ))}
+      </div>
+
+      <div
+        data-testid="soul-dashboard-quick-entries"
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(2, 1fr)',
+          gap: 8,
+          margin: '0 16px 12px',
+        }}
+      >
+        <button
+          type="button"
+          data-testid="soul-entry-ai-tutor"
+          onClick={() => setOverlay('ai-tutor')}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 10,
+            padding: '10px 12px',
+            borderRadius: 12,
+            border: '1px solid rgba(125,211,252,0.22)',
+            background: 'rgba(125,211,252,0.06)',
+            color: '#fff',
+            textAlign: 'left',
+            cursor: 'pointer',
+          }}
+        >
+          <span style={{ fontSize: 18 }}>🕊️</span>
+          <div>
+            <div style={{ fontSize: 12.5, fontWeight: 700 }}>{i18nT('属灵导师对话')}</div>
+            <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)' }}>{i18nT('经文与记忆辅助梳理')}</div>
+          </div>
+        </button>
+
+        <button
+          type="button"
+          data-testid="soul-entry-personal-search"
+          onClick={() => setOverlay('personal-search')}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 10,
+            padding: '10px 12px',
+            borderRadius: 12,
+            border: '1px solid rgba(232,176,75,0.25)',
+            background: 'rgba(232,176,75,0.06)',
+            color: '#fff',
+            textAlign: 'left',
+            cursor: 'pointer',
+          }}
+        >
+          <span style={{ fontSize: 18 }}>🗃️</span>
+          <div>
+            <div style={{ fontSize: 12.5, fontWeight: 700 }}>{i18nT('个人记录检索')}</div>
+            <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)' }}>{i18nT('搜灵修 · 笔记 · 祷告')}</div>
+          </div>
+        </button>
+
+        <button
+          type="button"
+          data-testid="soul-entry-spiritual-memory"
+          onClick={() => setOverlay('spiritual-memory')}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 10,
+            padding: '10px 12px',
+            borderRadius: 12,
+            border: '1px solid rgba(167,139,250,0.25)',
+            background: 'rgba(167,139,250,0.06)',
+            color: '#fff',
+            textAlign: 'left',
+            cursor: 'pointer',
+          }}
+        >
+          <span style={{ fontSize: 18 }}>🧠</span>
+          <div>
+            <div style={{ fontSize: 12.5, fontWeight: 700 }}>{i18nT('属灵记忆库')}</div>
+            <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)' }}>{i18nT('管理授权与生命印记')}</div>
+          </div>
+        </button>
+
+        <button
+          type="button"
+          data-testid="soul-entry-crisis-care"
+          onClick={() => setOverlay('crisis-care')}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 10,
+            padding: '10px 12px',
+            borderRadius: 12,
+            border: '1px solid rgba(248,113,113,0.32)',
+            background: 'rgba(248,113,113,0.08)',
+            color: '#fff',
+            textAlign: 'left',
+            cursor: 'pointer',
+          }}
+        >
+          <span style={{ fontSize: 18 }}>🛟</span>
+          <div>
+            <div style={{ fontSize: 12.5, fontWeight: 700 }}>{i18nT('关怀与危机支持')}</div>
+            <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.55)' }}>{i18nT('真人牧养与安全守护')}</div>
+          </div>
+        </button>
       </div>
 
       <div style={{
@@ -662,9 +849,9 @@ export default function SoulDashboard({ user, onOpenDevotion }) {
               'spiritual-formation': 'spiritual-formation',
               attention: 'attention',
               'growth-map': 'charts',
-              'personal-search': 'spiritual-memory',
+              'personal-search': 'personal-search',
               'export-data': 'spiritual-memory',
-              sos: 'checkup',
+              sos: 'crisis-care',
               partner: 'mentor',
               communion: 'church-life',
             }[target]
@@ -674,7 +861,7 @@ export default function SoulDashboard({ user, onOpenDevotion }) {
             const platformTarget = {
               checkin: 'mvfe', prayer: 'prayer-rule', devotion: 'hub', 'formation-twin': 'formation-twin',
               'spiritual-formation': 'spiritual-formation', attention: 'attention', 'growth-map': 'charts',
-              'mission-life': 'mission-life', 'personal-search': 'spiritual-memory', partner: 'mentor', communion: 'church-life', sos: 'checkup',
+              'mission-life': 'mission-life', 'personal-search': 'personal-search', partner: 'mentor', communion: 'church-life', sos: 'crisis-care',
               'ai-formation': 'ai-formation',
             }[target]
             if (platformTarget) setOverlay(platformTarget)
@@ -687,6 +874,23 @@ export default function SoulDashboard({ user, onOpenDevotion }) {
             if (formationTarget) setOverlay(formationTarget)
           }} />}
           {overlay === 'ai-tutor' && <AITutorChatPage user={user} onBack={() => setOverlay(null)} onOpenCrisis={() => setOverlay('crisis-care')} />}
+          {overlay === 'personal-search' && (
+            <PersonalSearchPage
+              token={getToken()}
+              user={user}
+              onBack={() => setOverlay(null)}
+              onOpenPanel={(panel) => {
+                const mapped = {
+                  devotion: 'hub',
+                  journal: 'hub',
+                  prayer: 'prayer-rule',
+                  'group-hub': 'church-life',
+                  'memory-deck': 'hub',
+                }[panel] || panel
+                setOverlay(mapped)
+              }}
+            />
+          )}
           {overlay === 'crisis-care' && <div className="sf-page"><BackOverlay onBack={() => setOverlay(null)} /><CrisisCarePage user={user} token={getToken()} onOpenLibrary={() => setOverlay('fuel')} /></div>}
           {overlay === 'spiritual-memory' && <SpiritualMemoryPage user={user} onBack={() => setOverlay(null)} />}
           {overlay === 'mvfe' && <MVFEPage user={user} onBack={() => setOverlay(null)} />}

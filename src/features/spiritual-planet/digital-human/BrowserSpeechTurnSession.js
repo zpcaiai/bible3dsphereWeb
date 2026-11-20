@@ -1,4 +1,5 @@
 import { transcribeAudioBlob } from '../../../api'
+import { t } from '../../../i18n/runtime'
 
 export const BROWSER_VOICE_STATES = Object.freeze({
   DISCONNECTED: 'DISCONNECTED',
@@ -8,12 +9,18 @@ export const BROWSER_VOICE_STATES = Object.freeze({
   ERROR: 'ERROR',
 })
 
-const PREFERRED_MIME_TYPES = [
+export const PREFERRED_MIME_TYPES = Object.freeze([
   'audio/webm;codecs=opus',
   'audio/webm',
+  'audio/mp4;codecs=mp4a.40.2',
   'audio/mp4',
+  'audio/ogg;codecs=opus',
   'audio/wav',
-]
+])
+
+export const DEFAULT_RECORDING_TIMESLICE_MS = 250
+export const DEFAULT_MAX_RECORDING_DURATION_MS = 60_000
+export const DEFAULT_MAX_AUDIO_BLOB_BYTES = 10 * 1024 * 1024
 
 function hasMediaRecorderCapture() {
   return typeof globalThis.MediaRecorder !== 'undefined'
@@ -39,6 +46,11 @@ function selectSupportedMimeType() {
   return PREFERRED_MIME_TYPES.find((item) => globalThis.MediaRecorder.isTypeSupported(item)) || ''
 }
 
+function isAbortError(err) {
+  if (!err) return false
+  return err.name === 'AbortError' || /aborted/i.test(String(err.message || ''))
+}
+
 export class BrowserSpeechTurnSession {
   constructor({
     onStateChange = () => {},
@@ -46,12 +58,18 @@ export class BrowserSpeechTurnSession {
     onError = () => {},
     transcribeBlob = transcribeAudioBlob,
     language = 'zh-CN',
+    timesliceMs = DEFAULT_RECORDING_TIMESLICE_MS,
+    maxDurationMs = DEFAULT_MAX_RECORDING_DURATION_MS,
+    maxBlobBytes = DEFAULT_MAX_AUDIO_BLOB_BYTES,
   } = {}) {
     this.onStateChange = onStateChange
     this.onFinalTranscript = onFinalTranscript
     this.onError = onError
     this.transcribeBlob = transcribeBlob
     this.language = language
+    this.timesliceMs = timesliceMs
+    this.maxDurationMs = maxDurationMs
+    this.maxBlobBytes = maxBlobBytes
     this.state = BROWSER_VOICE_STATES.IDLE
     this.avatarSpeaking = false
     this.disposed = false
@@ -62,6 +80,8 @@ export class BrowserSpeechTurnSession {
     this.chunks = []
     this.stopPromise = null
     this.resolveStop = null
+    this.maxDurationTimer = null
+    this.transcribeAbortController = null
   }
 
   getState() {
@@ -72,6 +92,25 @@ export class BrowserSpeechTurnSession {
     if (this.state === next) return
     this.state = next
     this.onStateChange(next)
+  }
+
+  clearMaxDurationTimer() {
+    if (this.maxDurationTimer !== null) {
+      clearTimeout(this.maxDurationTimer)
+      this.maxDurationTimer = null
+    }
+  }
+
+  abortInFlightTranscription() {
+    if (this.transcribeAbortController) {
+      const controller = this.transcribeAbortController
+      this.transcribeAbortController = null
+      try {
+        controller.abort()
+      } catch {
+        // Ignore abort teardown errors.
+      }
+    }
   }
 
   releaseStream(targetStream = this.stream) {
@@ -89,6 +128,9 @@ export class BrowserSpeechTurnSession {
   }
 
   abortActiveResources() {
+    this.clearMaxDurationTimer()
+    this.abortInFlightTranscription()
+
     const recorder = this.recorder
     this.recorder = null
     this.chunks = []
@@ -140,17 +182,17 @@ export class BrowserSpeechTurnSession {
 
   async startRecording() {
     if (this.disposed) {
-      const err = new Error('语音录入会话已关闭。')
+      const err = new Error(t('语音录入会话已关闭。'))
       this.onError(err)
       throw err
     }
     if (this.avatarSpeaking) {
-      const err = new Error('当前采用半双工策略：请等待人物讲述结束后再提问。')
+      const err = new Error(t('当前采用半双工策略：请等待人物讲述结束后再提问。'))
       this.onError(err)
       throw err
     }
     if (!isBrowserVoiceCaptureSupported()) {
-      const err = this.fail('当前浏览器环境不支持语音录入，请改用文字提问。')
+      const err = this.fail(t('当前浏览器环境不支持语音录入，请改用文字提问。'))
       throw err
     }
     if (this.state === BROWSER_VOICE_STATES.RECORDING || this.state === BROWSER_VOICE_STATES.TRANSCRIBING) {
@@ -174,7 +216,7 @@ export class BrowserSpeechTurnSession {
       stream = await globalThis.navigator.mediaDevices.getUserMedia({ audio: true })
     } catch (caught) {
       if (revision !== this.captureRevision || this.disposed || this.avatarSpeaking) return
-      const err = this.fail(caught?.message || '无法访问麦克风，请检查浏览器麦克风权限。')
+      const err = this.fail(caught?.message || t('无法访问麦克风，请检查浏览器麦克风权限。'))
       throw err
     }
 
@@ -193,7 +235,7 @@ export class BrowserSpeechTurnSession {
         : new globalThis.MediaRecorder(stream)
     } catch (caught) {
       this.releaseStream(stream)
-      const err = this.fail(caught?.message || '无法初始化浏览器录音器。')
+      const err = this.fail(caught?.message || t('无法初始化浏览器录音器。'))
       throw err
     }
 
@@ -212,10 +254,11 @@ export class BrowserSpeechTurnSession {
     recorder.onerror = (event) => {
       if (revision !== this.captureRevision || this.disposed) return
       this.captureRevision += 1
-      this.fail(event?.error?.message || '录音过程中发生错误，请重试或改用文字提问。')
+      this.fail(event?.error?.message || t('录音过程中发生错误，请重试或改用文字提问。'))
     }
 
     recorder.onstop = () => {
+      this.clearMaxDurationTimer()
       const finalize = this.resolveStop
       this.resolveStop = null
       this.stopPromise = null
@@ -233,22 +276,36 @@ export class BrowserSpeechTurnSession {
       const contentType = recorder.mimeType || recordedChunks[0]?.type || preferredMimeType || 'audio/webm'
       const blob = new Blob(recordedChunks, { type: contentType })
       if (!blob.size) {
-        this.fail('未能采集到有效语音，请重试或改用文字提问。')
+        this.fail(t('未能采集到有效语音，请重试或改用文字提问。'))
+        finalize?.(null)
+        return
+      }
+      if (blob.size > this.maxBlobBytes) {
+        this.fail(t('录音文件超过 10MB 限制，请缩短录音后重试。'))
         finalize?.(null)
         return
       }
 
+      const abortController = new AbortController()
+      this.transcribeAbortController = abortController
       this.setState(BROWSER_VOICE_STATES.TRANSCRIBING)
       void (async () => {
         try {
-          const result = await this.transcribeBlob(blob, { contentType, language: this.language })
-          if (revision !== this.captureRevision || this.disposed || this.avatarSpeaking) {
+          const result = await this.transcribeBlob(blob, {
+            contentType,
+            language: this.language,
+            signal: abortController.signal,
+          })
+          if (this.transcribeAbortController === abortController) {
+            this.transcribeAbortController = null
+          }
+          if (abortController.signal.aborted || revision !== this.captureRevision || this.disposed || this.avatarSpeaking) {
             finalize?.(null)
             return
           }
           const transcript = String(result?.transcript || '').trim()
           if (!transcript) {
-            this.fail('未能识别到清晰语音，请重试或改用文字提问。')
+            this.fail(t('未能识别到清晰语音，请重试或改用文字提问。'))
             finalize?.(null)
             return
           }
@@ -256,8 +313,11 @@ export class BrowserSpeechTurnSession {
           await this.onFinalTranscript(transcript)
           finalize?.(transcript)
         } catch (caught) {
-          if (revision === this.captureRevision && !this.disposed && !this.avatarSpeaking) {
-            this.fail(caught?.message || '语音转写失败，请重试或改用文字提问。')
+          if (this.transcribeAbortController === abortController) {
+            this.transcribeAbortController = null
+          }
+          if (!isAbortError(caught) && !abortController.signal.aborted && revision === this.captureRevision && !this.disposed && !this.avatarSpeaking) {
+            this.fail(caught?.message || t('语音转写失败，请重试或改用文字提问。'))
           }
           finalize?.(null)
         }
@@ -265,11 +325,20 @@ export class BrowserSpeechTurnSession {
     }
 
     try {
-      recorder.start()
+      recorder.start(this.timesliceMs)
       this.setState(BROWSER_VOICE_STATES.RECORDING)
+      if (this.maxDurationMs > 0) {
+        this.clearMaxDurationTimer()
+        this.maxDurationTimer = setTimeout(() => {
+          this.maxDurationTimer = null
+          if (revision === this.captureRevision && !this.disposed && this.state === BROWSER_VOICE_STATES.RECORDING) {
+            void this.stopRecording()
+          }
+        }, this.maxDurationMs)
+      }
     } catch (caught) {
       this.abortActiveResources()
-      const err = this.fail(caught?.message || '无法启动录音，请重试。')
+      const err = this.fail(caught?.message || t('无法启动录音，请重试。'))
       throw err
     }
   }
@@ -277,7 +346,7 @@ export class BrowserSpeechTurnSession {
   startSpeechRecognitionCapture(revision) {
     const Recognition = getSpeechRecognitionConstructor()
     if (!Recognition) {
-      const err = this.fail('当前浏览器不支持语音识别，请改用文字提问。')
+      const err = this.fail(t('当前浏览器不支持语音识别，请改用文字提问。'))
       throw err
     }
 
@@ -293,6 +362,7 @@ export class BrowserSpeechTurnSession {
     })
 
     const finishStop = (value = null) => {
+      this.clearMaxDurationTimer()
       if (this.resolveStop) {
         const resolve = this.resolveStop
         this.resolveStop = null
@@ -315,7 +385,7 @@ export class BrowserSpeechTurnSession {
         // Ignore stop errors after final result.
       }
       if (!segments) {
-        this.fail('未能识别到清晰语音，请重试或改用文字提问。')
+        this.fail(t('未能识别到清晰语音，请重试或改用文字提问。'))
         finishStop(null)
         return
       }
@@ -329,7 +399,7 @@ export class BrowserSpeechTurnSession {
         })
         .catch((caught) => {
           if (revision !== this.captureRevision || this.disposed || this.avatarSpeaking) return null
-          this.fail(caught?.message || '处理语音识别结果失败。')
+          this.fail(caught?.message || t('处理语音识别结果失败。'))
           return null
         })
         .then((value) => finishStop(value))
@@ -341,10 +411,10 @@ export class BrowserSpeechTurnSession {
       this.captureRevision += 1
       const code = event?.error
       const message = code === 'not-allowed' || code === 'service-not-allowed'
-        ? '麦克风或语音识别权限未开启，请检查浏览器设置。'
+        ? t('麦克风或语音识别权限未开启，请检查浏览器设置。')
         : code === 'no-speech'
-          ? '未能识别到清晰语音，请重试或改用文字提问。'
-          : '语音识别未完成，请重试或改用文字提问。'
+          ? t('未能识别到清晰语音，请重试或改用文字提问。')
+          : t('语音识别未完成，请重试或改用文字提问。')
       this.fail(message)
       finishStop(null)
     }
@@ -353,21 +423,31 @@ export class BrowserSpeechTurnSession {
       if (settled || revision !== this.captureRevision || this.disposed) return
       settled = true
       this.recognition = null
-      this.fail('未能识别到清晰语音，请重试或改用文字提问。')
+      this.fail(t('未能识别到清晰语音，请重试或改用文字提问。'))
       finishStop(null)
     }
 
     try {
       recognition.start()
       this.setState(BROWSER_VOICE_STATES.RECORDING)
+      if (this.maxDurationMs > 0) {
+        this.clearMaxDurationTimer()
+        this.maxDurationTimer = setTimeout(() => {
+          this.maxDurationTimer = null
+          if (revision === this.captureRevision && !this.disposed && this.state === BROWSER_VOICE_STATES.RECORDING) {
+            void this.stopRecording()
+          }
+        }, this.maxDurationMs)
+      }
     } catch (caught) {
       settled = true
-      const err = this.fail(caught?.message || '无法启动语音识别，请重试。')
+      const err = this.fail(caught?.message || t('无法启动语音识别，请重试。'))
       throw err
     }
   }
 
   async stopRecording() {
+    this.clearMaxDurationTimer()
     if (this.disposed || this.state !== BROWSER_VOICE_STATES.RECORDING) {
       return this.stopPromise || null
     }
@@ -378,7 +458,7 @@ export class BrowserSpeechTurnSession {
           this.recorder.stop()
         }
       } catch (caught) {
-        this.fail(caught?.message || '结束录音失败，请重试。')
+        this.fail(caught?.message || t('结束录音失败，请重试。'))
         return null
       }
       return pending
@@ -388,7 +468,7 @@ export class BrowserSpeechTurnSession {
       try {
         this.recognition.stop()
       } catch (caught) {
-        this.fail(caught?.message || '结束语音识别失败，请重试。')
+        this.fail(caught?.message || t('结束语音识别失败，请重试。'))
         return null
       }
       return pending
@@ -404,6 +484,11 @@ export class BrowserSpeechTurnSession {
     }
   }
 
+  muteForAvatarSpeech() {
+    this.avatarSpeaking = true
+    this.cancelRecording()
+  }
+
   beginTurn() {
     this.cancelRecording()
   }
@@ -411,9 +496,10 @@ export class BrowserSpeechTurnSession {
   setAvatarSpeaking(speaking) {
     const next = Boolean(speaking)
     if (this.avatarSpeaking === next) return
-    this.avatarSpeaking = next
     if (next) {
-      this.cancelRecording()
+      this.muteForAvatarSpeech()
+    } else {
+      this.avatarSpeaking = false
     }
   }
 

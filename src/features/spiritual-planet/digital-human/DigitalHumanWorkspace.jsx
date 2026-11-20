@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
+import { useLang } from '../../../i18n/LanguageContext'
+import { getRuntimeLang } from '../../../i18n/runtime'
 import { createDigitalHumanLiveKitToken, createDigitalHumanLiveSpeakToken, createDigitalHumanTurn, getDigitalHumanCatalog, getDigitalHumanRuntime, recordDigitalHumanProviderTelemetry, resolveDigitalHumanIdentity } from './api'
 import { validateCharacterProfile, validateDigitalHumanResponse } from './contracts'
 import { DIGITAL_HUMAN_STATES, isDigitalHumanPlaybackActive } from './DigitalHumanAdapter'
@@ -7,6 +9,7 @@ import { LiveKitRealtimeSession, REALTIME_STATES } from './LiveKitRealtimeSessio
 import {
   createPreviewAnimationLoop,
   isLocalSpeechSynthesisSupported,
+  isWebAudioVisemeSupported,
   LocalPortraitVisemeAdapter,
   NEUTRAL_ANIMATION_FRAME,
 } from './LocalPortraitVisemeAdapter'
@@ -25,8 +28,15 @@ const UI_STATES = Object.freeze({
 })
 
 const STATE_LABELS = {
-  IDLE: '可以提问', LISTENING: '正在聆听', TRANSCRIBING: '正在确认语音', RETRIEVING: '正在查找相关经文',
-  VERIFYING: '正在核验引用与边界', READY_TO_SPEAK: '正在准备语音回复', WAITING_FOR_TOUCH: '请轻触上方数字人以播放语音', SPEAKING: '人物正在讲述', ERROR: '暂时无法完成',
+  IDLE: '可以提问',
+  LISTENING: '正在聆听',
+  TRANSCRIBING: '正在确认语音',
+  RETRIEVING: '正在查找相关经文',
+  VERIFYING: '正在核验引用与边界',
+  READY_TO_SPEAK: '正在准备语音回复',
+  WAITING_FOR_TOUCH: '请轻触上方数字人以播放语音',
+  SPEAKING: '人物正在讲述',
+  ERROR: '暂时无法完成',
 }
 
 const METAPERSON_ORIGIN = 'https://metaperson.avatarsdk.com'
@@ -40,14 +50,22 @@ function EvidenceBadge({ level }) {
   return <span className={`dh-grounding ${level === 'G0_UNSUPPORTED' ? 'blocked' : ''}`}>{level}</span>
 }
 
-function voiceUnavailableReason(runtime, loadError) {
-  if (!runtime) return loadError ? '暂时无法读取语音状态，请重新核对。' : '正在核对语音服务。'
+function voiceUnavailableReason(runtime, loadError, t) {
+  if (!runtime) return loadError ? t('暂时无法读取语音状态，请重新核对。') : t('正在核对语音服务。')
   const requirements = Array.isArray(runtime.readiness?.requirements) ? runtime.readiness.requirements : []
   const missing = requirements.filter(({ state }) => state === 'MISSING')
-  const causes = []
-  if (missing.some(({ code }) => code === 'LIVEKIT_PROJECT')) causes.push('实时语音项目尚未配置')
-  if (missing.some(({ code }) => code === 'STT_WORKER')) causes.push('语音转写服务尚未声明就绪')
-  return causes.length ? `${causes.join('；')}。可先用文字提问。` : '语音提问暂不可用，可先用文字提问。'
+  const hasMissingLiveKit = missing.some(({ code }) => code === 'LIVEKIT_PROJECT')
+  const hasMissingStt = missing.some(({ code }) => code === 'STT_WORKER')
+  if (hasMissingLiveKit && hasMissingStt) {
+    return t('实时语音项目尚未配置；语音转写服务尚未声明就绪。可先用文字提问。')
+  }
+  if (hasMissingLiveKit) {
+    return t('实时语音项目尚未配置。可先用文字提问。')
+  }
+  if (hasMissingStt) {
+    return t('语音转写服务尚未声明就绪。可先用文字提问。')
+  }
+  return t('语音提问暂不可用，可先用文字提问。')
 }
 
 export default function DigitalHumanWorkspace({
@@ -56,6 +74,8 @@ export default function DigitalHumanWorkspace({
   showOperations = true,
   variant = 'full',
 }) {
+  const { lang, t } = useLang()
+  const runtimeLang = getRuntimeLang() || lang
   const [catalog, setCatalog] = useState([])
   const [catalogMeta, setCatalogMeta] = useState(null)
   const [runtime, setRuntime] = useState(null)
@@ -103,10 +123,13 @@ export default function DigitalHumanWorkspace({
   }, [])
 
   const selected = useMemo(() => catalog.find((item) => item.id === selectedId) || null, [catalog, selectedId])
+  const speechLanguage = runtimeLang === 'en' ? 'en-US' : (selected?.voice?.language || 'zh-CN')
+  const displayCharacterName = selected?.canonicalName ? t(selected.canonicalName) : t('圣经人物')
+  const regionLabel = `${displayCharacterName}${t('数字人')}`
   const voiceEnabled = runtime?.liveKitEnabled === true
   const browserVoiceSupported = isBrowserVoiceCaptureSupported()
   const liveSpeakAvailable = Boolean(runtime?.liveSpeakEnabled && selected?.runtimeReady && selected.voice.provider === 'azure')
-  const localAvatarAvailable = !liveSpeakAvailable && Boolean(selected && isLocalSpeechSynthesisSupported())
+  const localAvatarAvailable = !liveSpeakAvailable && Boolean(selected && (isLocalSpeechSynthesisSupported() || isWebAudioVisemeSupported()))
   const avatarAvailable = liveSpeakAvailable || localAvatarAvailable
   const liveSpeakOrigin = runtime?.liveSpeakOrigin
   const playbackActive = avatarAvailable && !avatarFailed && isDigitalHumanPlaybackActive(avatarState)
@@ -135,13 +158,13 @@ export default function DigitalHumanWorkspace({
     return getDigitalHumanRuntime({ signal })
       .then((runtimeData) => {
         if (signal.aborted || revision !== runtimeRequestRevision.current) return
-        if (!runtimeData || typeof runtimeData !== 'object') throw new Error('运行状态资料暂不可用，请重新核对。')
+        if (!runtimeData || typeof runtimeData !== 'object') throw new Error(t('运行状态资料暂不可用，请重新核对。'))
         setRuntime(runtimeData)
       })
       .catch((caught) => {
         if (!signal.aborted && revision === runtimeRequestRevision.current && caught.name !== 'AbortError') setRuntimeLoadError(caught.message)
       })
-  }, [])
+  }, [t])
 
   const retryRuntime = useCallback(() => {
     runtimeRetryRequest.current?.abort()
@@ -161,7 +184,7 @@ export default function DigitalHumanWorkspace({
       .then((catalogData) => {
         if (!active) return
         if (!Array.isArray(catalogData?.characters) || !catalogData.characters.length) {
-          throw new Error('人物资料暂不可用，请重新加载。')
+          throw new Error(t('人物资料暂不可用，请重新加载。'))
         }
         setCatalog(catalogData.characters.map(validateCharacterProfile))
         setCatalogMeta(catalogData)
@@ -171,9 +194,6 @@ export default function DigitalHumanWorkspace({
         controller.abort()
       })
       .finally(() => active && setLoading(false))
-    // Text turns use the actual validated catalog and server-side response
-    // gates. Slow capability/admin diagnostics must not block that path.
-    // Keep runtime null until its real response arrives: providers stay closed.
     void loadRuntime(controller.signal)
     return () => {
       active = false
@@ -181,7 +201,7 @@ export default function DigitalHumanWorkspace({
       runtimeRetryRequest.current?.abort()
       runtimeRequestRevision.current += 1
     }
-  }, [loadAttempt, loadRuntime])
+  }, [loadAttempt, loadRuntime, t])
 
   const resetConversation = useCallback((characterId) => {
     conversationGeneration.current += 1
@@ -230,7 +250,7 @@ export default function DigitalHumanWorkspace({
       && previous.generation === conversationGeneration.current && previous.sessionId === sessionId.current
     if (retryOf && !isRetry) return
     if (isDigitalHumanPlaybackActive(avatarAdapter.current?.getState())) {
-      setError('当前采用半双工策略：请等待人物讲述结束后再提问。')
+      setError(t('当前采用半双工策略：请等待人物讲述结束后再提问。'))
       return
     }
     turnInFlight.current = true
@@ -274,7 +294,7 @@ export default function DigitalHumanWorkspace({
       }
     } catch (caught) {
       if (generation !== conversationGeneration.current || controller.signal.aborted) return
-      setError(caught.message || '请求未完成，请重试。')
+      setError(caught.message || t('请求未完成，请重试。'))
       if (!responseCommitted) {
         setFailedTurn({ text, characterId: selected.id, sessionId: requestSession, generation, userMessageId })
         setQuestion(current => current || text)
@@ -288,7 +308,7 @@ export default function DigitalHumanWorkspace({
         setIsTurnPending(false)
       }
     }
-  }, [selected, failedTurn, stopPreviewPlayback])
+  }, [selected, failedTurn, stopPreviewPlayback, t])
 
   submitRef.current = submitQuestion
 
@@ -350,7 +370,7 @@ export default function DigitalHumanWorkspace({
     }
     let active = true
     const session = new BrowserSpeechTurnSession({
-      language: selected?.voice?.language || 'zh-CN',
+      language: speechLanguage,
       onStateChange: (next) => {
         if (!active) return
         setBrowserVoiceState(next)
@@ -372,7 +392,7 @@ export default function DigitalHumanWorkspace({
       },
       onError: (caught) => {
         if (!active) return
-        setError(caught.message || '语音录入未完成，请重试或改用文字提问。')
+        setError(caught.message || t('语音录入未完成，请重试或改用文字提问。'))
         setUiState(UI_STATES.ERROR)
       },
     })
@@ -385,7 +405,7 @@ export default function DigitalHumanWorkspace({
         browserVoiceAdapter.current = null
       }
     }
-  }, [browserVoiceSupported, selectedId, selected?.voice?.language, sessionRevision])
+  }, [browserVoiceSupported, selectedId, speechLanguage, sessionRevision, t])
 
   useEffect(() => {
     let active = true
@@ -400,7 +420,11 @@ export default function DigitalHumanWorkspace({
       setAvatarState(next)
       const playback = isDigitalHumanPlaybackActive(next)
       realtimeAdapter.current?.setAvatarSpeaking(playback)
-      browserVoiceAdapter.current?.setAvatarSpeaking(playback)
+      if (playback) {
+        browserVoiceAdapter.current?.muteForAvatarSpeech?.()
+      } else {
+        browserVoiceAdapter.current?.setAvatarSpeaking(false)
+      }
       if (next === DIGITAL_HUMAN_STATES.PREPARING_SPEECH) setUiState(UI_STATES.READY_TO_SPEAK)
       else if (next === DIGITAL_HUMAN_STATES.WAITING_FOR_TOUCH) setUiState(UI_STATES.WAITING_FOR_TOUCH)
       else if (next === DIGITAL_HUMAN_STATES.SPEAKING) setUiState(UI_STATES.SPEAKING)
@@ -538,9 +562,6 @@ export default function DigitalHumanWorkspace({
     const generation = conversationGeneration.current
     const lookupRevision = ++identityLookupRevision.current
     try {
-      // Catalog search is intentionally context-free. A bare ambiguous name must
-      // always return candidates instead of inheriting the previously selected
-      // character and silently binding the next session to the wrong identity.
       const result = await resolveDigitalHumanIdentity({ surface: search.trim() })
       if (generation !== conversationGeneration.current || lookupRevision !== identityLookupRevision.current) return
       if (result.status === 'RESOLVED') {
@@ -550,7 +571,7 @@ export default function DigitalHumanWorkspace({
         setIdentityCandidates(result.candidates)
       } else {
         setIdentityCandidates([])
-        setError('没有找到对应的 Core 100 人物。')
+        setError(t('没有找到对应的 Core 100 人物。'))
       }
     } catch (caught) { if (generation === conversationGeneration.current && lookupRevision === identityLookupRevision.current) setError(caught.message) }
   }
@@ -594,56 +615,56 @@ export default function DigitalHumanWorkspace({
     }
   }
 
-  if (loading) return <section className={`dh-shell ${variant === 'embedded' ? 'dh-embedded' : ''}`}><p role="status">正在加载 100 人经文约束目录…</p></section>
-  if (loadError) return <section className={`dh-shell ${variant === 'embedded' ? 'dh-embedded' : ''}`} aria-label="数字人加载失败">
-    <div className="dh-error" role="alert"><span>人物资料暂不可用：{loadError}</span></div>
-    <button className="dh-preview-voice" type="button" onClick={() => setLoadAttempt(value => value + 1)}>重新加载人物资料</button>
+  if (loading) return <section className={`dh-shell ${variant === 'embedded' ? 'dh-embedded' : ''}`}><p role="status">{t('正在加载 100 人经文约束目录…')}</p></section>
+  if (loadError) return <section className={`dh-shell ${variant === 'embedded' ? 'dh-embedded' : ''}`} aria-label={t('数字人加载失败')}>
+    <div className="dh-error" role="alert"><span>{t('人物资料暂不可用：')}{loadError}</span></div>
+    <button className="dh-preview-voice" type="button" onClick={() => setLoadAttempt(value => value + 1)}>{t('重新加载人物资料')}</button>
   </section>
 
   return (
-    <section className={`dh-shell ${variant === 'embedded' ? 'dh-embedded' : ''}`} aria-label={`${selected?.canonicalName || '圣经人物'}数字人`}>
+    <section className={`dh-shell ${variant === 'embedded' ? 'dh-embedded' : ''}`} aria-label={regionLabel}>
       <header className="dh-intro">
-        <div><span>BIBLE DIGITAL HUMAN · v{catalogMeta?.contentVersion}</span><h2>圣经人物 · 经文约束对话</h2><p>AI 只协助检索与表达，不是启示、良心、牧者或最终解释权威。</p></div>
-        <div className="dh-assurance"><strong>{lockCharacter ? (selected?.canonicalName || '—') : (catalogMeta?.characterCount || catalog.length)}</strong><small>{lockCharacter ? `${selected?.englishName || selectedId} · characterId ${selectedId}` : `人物 · ${catalogMeta?.truthCaseCount || 0} Truth Cases`}</small></div>
+        <div><span>BIBLE DIGITAL HUMAN · v{catalogMeta?.contentVersion}</span><h2>{t('圣经人物 · 经文约束对话')}</h2><p>{t('AI 只协助检索与表达，不是启示、良心、牧者或最终解释权威。')}</p></div>
+        <div className="dh-assurance"><strong>{lockCharacter ? (displayCharacterName || '—') : (catalogMeta?.characterCount || catalog.length)}</strong><small>{lockCharacter ? `${selected?.englishName || selectedId} · characterId ${selectedId}` : `${t('人物')} · ${catalogMeta?.truthCaseCount || 0} Truth Cases`}</small></div>
       </header>
 
-      <div className="dh-status" role="status"><span>{STATE_LABELS[uiState]}</span><small>内容 {runtime?.contentReviewState || catalogMeta?.contentReviewState || 'UNKNOWN'} · RAG {runtime?.retrievalMode || 'UNKNOWN'} · Avatar {avatarState} · Realtime {realtimeState}</small></div>
-      {!runtime && <div className="dh-study" role={runtimeLoadError ? 'alert' : 'status'} aria-label="数字人运行状态核对">
-        <p>{runtimeLoadError ? `运行状态暂不可用：${runtimeLoadError}` : '语音、Avatar 和运行配置仍在核对；可先使用经文约束文字提问。'}</p>
+      <div className="dh-status" role="status"><span>{t(STATE_LABELS[uiState])}</span><small>{t('内容')} {runtime?.contentReviewState || catalogMeta?.contentReviewState || 'UNKNOWN'} · RAG {runtime?.retrievalMode || 'UNKNOWN'} · Avatar {avatarState} · Realtime {realtimeState}</small></div>
+      {!runtime && <div className="dh-study" role={runtimeLoadError ? 'alert' : 'status'} aria-label={t('数字人运行状态核对')}>
+        <p>{runtimeLoadError ? `${t('运行状态暂不可用：')}${runtimeLoadError}` : t('语音、Avatar 和运行配置仍在核对；可先使用经文约束文字提问。')}</p>
       </div>}
-      {error && <div className="dh-error" role="alert"><span>{error}</span>{failedTurn && <button type="button" disabled={isTurnPending || playbackActive} onClick={() => submitQuestion(failedTurn.text, failedTurn)}>重试上次提问</button>}<button type="button" onClick={() => setError('')}>关闭</button></div>}
+      {error && <div className="dh-error" role="alert"><span>{error}</span>{failedTurn && <button type="button" disabled={isTurnPending || playbackActive} onClick={() => submitQuestion(failedTurn.text, failedTurn)}>{t('重试上次提问')}</button>}<button type="button" onClick={() => setError('')}>{t('关闭')}</button></div>}
       <DigitalHumanReadinessPanel readiness={runtime?.readiness} />
 
       <div className={`dh-layout ${lockCharacter ? 'dh-layout-locked' : ''}`}>
         {!lockCharacter && <aside className="dh-catalog">
-          <div className="dh-search"><input aria-label="搜索圣经人物" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="姓名、英文名或 characterId" /><button type="button" onClick={resolveSearch}>识别</button></div>
-          {!!identityCandidates.length && <div className="dh-candidates" role="group" aria-label="请选择具体人物"><strong>这个名称对应多位人物，请明确选择：</strong>{identityCandidates.map((item) => <button type="button" key={item.characterId} onClick={() => resetConversation(item.characterId)}>{item.stableLabel}</button>)}</div>}
-          <div className="dh-character-list">{filtered.map((item) => <button type="button" className={selectedId === item.id ? 'active' : ''} key={item.id} onClick={() => resetConversation(item.id)}><CharacterPortrait characterId={item.id} name={item.canonicalName} avatar={item.avatar} size={40} context="catalog" /><span>{item.canonicalName}</span><small>{item.englishName} · {item.catalogTier}</small></button>)}</div>
+          <div className="dh-search"><input aria-label={t('搜索圣经人物')} value={search} onChange={(event) => setSearch(event.target.value)} placeholder={t('姓名、英文名或 characterId')} /><button type="button" onClick={resolveSearch}>{t('识别')}</button></div>
+          {!!identityCandidates.length && <div className="dh-candidates" role="group" aria-label={t('请选择具体人物')}><strong>{t('这个名称对应多位人物，请明确选择：')}</strong>{identityCandidates.map((item) => <button type="button" key={item.characterId} onClick={() => resetConversation(item.characterId)}>{item.stableLabel}</button>)}</div>}
+          <div className="dh-character-list">{filtered.map((item) => <button type="button" className={selectedId === item.id ? 'active' : ''} key={item.id} onClick={() => resetConversation(item.id)}><CharacterPortrait characterId={item.id} name={item.canonicalName} avatar={item.avatar} size={40} context="catalog" /><span>{t(item.canonicalName)}</span><small>{item.englishName} · {item.catalogTier}</small></button>)}</div>
         </aside>}
 
         <div className="dh-experience">
           <section className="dh-stage">
-            {liveSpeakAvailable && !avatarFailed ? <iframe key={sessionRevision} ref={iframeRef} title={`${selected.canonicalName} LiveSpeak Avatar`} src={runtime.liveSpeakEmbedUrl} allow="autoplay" sandbox="allow-scripts allow-same-origin" onError={() => { setAvatarFailed(true); setAvatarState(DIGITAL_HUMAN_STATES.ERROR); setError('Avatar 页面加载失败，已保留文字回答。') }} /> : <div className="dh-portrait-fallback" style={{ gridTemplateColumns: 'minmax(0,1fr)', justifyItems: 'center' }}><AnimatedCharacterStage characterId={selected?.id || selectedId} name={selected?.canonicalName} avatar={selected?.avatar} size={256} frame={animationFrame} onStageTouch={handleStageTouch} /><strong>{selected?.canonicalName}</strong><small>{selected?.englishName} · 文本安全回退</small><p>{selected?.runtimeReady ? 'LiveSpeak 当前不可用。' : 'GLB、Voice 或内容尚未完成人工审批，因此不加载 Avatar。'}</p><button className="dh-preview-voice" type="button" onClick={togglePreviewVoice}>{previewVoicePlaying ? '停止默认预览音色' : '试听默认预览音色'}</button>{avatarFailed && <button type="button" disabled={isTurnPending} onClick={() => { setError(''); setAvatarFailed(false); setAvatarState(DIGITAL_HUMAN_STATES.BOOTING); setSessionRevision((value) => value + 1) }}>重新连接数字人</button>}</div>}
-            {avatarState === DIGITAL_HUMAN_STATES.WAITING_FOR_TOUCH && <p>手机需要轻触数字人画面后才能播放。</p>}
-            <p className="dh-disclosure">{selected?.disclosure}</p>
+            {liveSpeakAvailable && !avatarFailed ? <iframe key={sessionRevision} ref={iframeRef} title={`${selected.canonicalName} LiveSpeak Avatar`} src={runtime.liveSpeakEmbedUrl} allow="autoplay" sandbox="allow-scripts allow-same-origin" onError={() => { setAvatarFailed(true); setAvatarState(DIGITAL_HUMAN_STATES.ERROR); setError(t('Avatar 页面加载失败，已保留文字回答。')) }} /> : <div className="dh-portrait-fallback" style={{ gridTemplateColumns: 'minmax(0,1fr)', justifyItems: 'center' }}><AnimatedCharacterStage characterId={selected?.id || selectedId} name={selected?.canonicalName} avatar={selected?.avatar} size={256} frame={animationFrame} onStageTouch={handleStageTouch} /><strong>{displayCharacterName}</strong><small>{selected?.englishName} · {t('文本安全回退')}</small><p>{selected?.runtimeReady ? t('LiveSpeak 当前不可用。') : t('GLB、Voice 或内容尚未完成人工审批，因此不加载 Avatar。')}</p><button className="dh-preview-voice" type="button" onClick={togglePreviewVoice}>{previewVoicePlaying ? t('停止默认预览音色') : t('试听默认预览音色')}</button>{avatarFailed && <button type="button" disabled={isTurnPending} onClick={() => { setError(''); setAvatarFailed(false); setAvatarState(DIGITAL_HUMAN_STATES.BOOTING); setSessionRevision((value) => value + 1) }}>{t('重新连接数字人')}</button>}</div>}
+            {avatarState === DIGITAL_HUMAN_STATES.WAITING_FOR_TOUCH && <p>{t('手机需要轻触数字人画面后才能播放。')}</p>}
+            <p className="dh-disclosure">{selected?.disclosure ? t(selected.disclosure) : ''}</p>
           </section>
 
           {selected && <DigitalHumanStudyPanel key={selected.id} characterId={selected.id} onAsk={submitQuestion} onSelectCharacter={lockCharacter ? undefined : resetConversation} />}
 
           <section className="dh-conversation" aria-live="polite">
-            {!messages.length && <div className="dh-empty"><strong>从示例问题开始</strong><div>{(selected?.recommendedQuestions || []).slice(0, 4).map((item) => <button type="button" key={item} onClick={() => submitQuestion(item)}>{item}</button>)}</div></div>}
-            {messages.map((item) => item.role === 'user' ? <article className="dh-message user" key={item.id}><span>你</span><p>{item.text}</p></article> : <article className="dh-message assistant" key={item.id}><header><strong>{selected?.canonicalName}</strong><EvidenceBadge level={item.response.groundingLevel} /></header><p>{item.response.displayText}</p>{!!item.response.references.length && <ul>{item.response.references.map((ref) => <li key={`${ref.sourceType}-${ref.locator}`}>{ref.locator} · {ref.claimSupport}</li>)}</ul>}{!!item.response.relatedCharacters.length && <p className="dh-related">人物图：{item.response.relatedCharacters.map((id) => catalog.find((character) => character.id === id)?.canonicalName || id).join(' · ')}</p>}<footer>{item.canSpeak ? '已通过发声门' : '仅文字显示 · 内容或资产仍需人工审核'} · Trace {item.traceId.slice(0, 10)}{item.canSpeak && avatarAvailable && !avatarFailed && <button type="button" disabled={avatarState !== DIGITAL_HUMAN_STATES.READY || isTurnPending || isMicPending || realtimeState === REALTIME_STATES.LISTENING || browserVoiceState === BROWSER_VOICE_STATES.RECORDING || browserVoiceState === BROWSER_VOICE_STATES.TRANSCRIBING} onClick={() => replayReply(item)}>播放语音回复</button>}</footer></article>)}
+            {!messages.length && <div className="dh-empty"><strong>{t('从示例问题开始')}</strong><div>{(selected?.recommendedQuestions || []).slice(0, 4).map((item) => <button type="button" key={item} onClick={() => submitQuestion(item)}>{t(item)}</button>)}</div></div>}
+            {messages.map((item) => item.role === 'user' ? <article className="dh-message user" key={item.id}><span>{t('你')}</span><p>{item.text}</p></article> : <article className="dh-message assistant" key={item.id}><header><strong>{displayCharacterName}</strong><EvidenceBadge level={item.response.groundingLevel} /></header><p>{item.response.displayText}</p>{!!item.response.references.length && <ul>{item.response.references.map((ref) => <li key={`${ref.sourceType}-${ref.locator}`}>{ref.locator} · {ref.claimSupport}</li>)}</ul>}{!!item.response.relatedCharacters.length && <p className="dh-related">{t('人物图：')}{item.response.relatedCharacters.map((id) => catalog.find((character) => character.id === id)?.canonicalName || id).join(' · ')}</p>}<footer>{item.canSpeak ? t('已通过发声门') : t('仅文字显示 · 内容或资产仍需人工审核')} · Trace {item.traceId.slice(0, 10)}{item.canSpeak && avatarAvailable && !avatarFailed && <button type="button" disabled={avatarState !== DIGITAL_HUMAN_STATES.READY || isTurnPending || isMicPending || realtimeState === REALTIME_STATES.LISTENING || browserVoiceState === BROWSER_VOICE_STATES.RECORDING || browserVoiceState === BROWSER_VOICE_STATES.TRANSCRIBING} onClick={() => replayReply(item)}>{t('播放语音回复')}</button>}</footer></article>)}
           </section>
 
           <form className="dh-composer" onSubmit={(event) => { event.preventDefault(); submitQuestion(question) }}>
-            <textarea aria-label="向当前圣经人物提问" value={question} onChange={(event) => setQuestion(event.target.value)} maxLength={1200} placeholder={`向${selected?.canonicalName || '人物'}提问；未有足够证据时系统会拒绝断言。`} />
-            <div><button type="button" onClick={() => resetConversation(selectedId)}>清空本次会话</button><button type="button" onClick={toggleMic} aria-describedby={voiceEnabled ? undefined : voiceNoticeId} disabled={!voiceEnabled || isMicPending || isTurnPending || playbackActive || browserVoiceState === BROWSER_VOICE_STATES.RECORDING || browserVoiceState === BROWSER_VOICE_STATES.TRANSCRIBING || [REALTIME_STATES.PROCESSING, REALTIME_STATES.RECOVERING].includes(realtimeState)}>{isMicPending ? '正在连接语音' : realtimeState === REALTIME_STATES.LISTENING ? '停止收音' : realtimeState === REALTIME_STATES.PROCESSING ? '正在处理语音' : realtimeState === REALTIME_STATES.RECOVERING ? '语音正在重连' : '语音提问'}</button>{browserVoiceSupported && <><button type="button" className={browserVoiceState === BROWSER_VOICE_STATES.RECORDING ? 'recording' : undefined} onClick={toggleBrowserVoice} disabled={isTurnPending || playbackActive || isMicPending || realtimeState === REALTIME_STATES.LISTENING || browserVoiceState === BROWSER_VOICE_STATES.TRANSCRIBING}>{browserVoiceState === BROWSER_VOICE_STATES.RECORDING ? '结束录音并发送' : browserVoiceState === BROWSER_VOICE_STATES.TRANSCRIBING ? '正在转写语音' : '录音转写提问'}</button>{browserVoiceState === BROWSER_VOICE_STATES.RECORDING && <button type="button" onClick={cancelBrowserVoice}>取消录音</button>}</>}<button className="primary" type="submit" disabled={!question.trim() || isTurnPending || playbackActive}>发送并核验</button></div>
+            <textarea aria-label={t('向当前圣经人物提问')} value={question} onChange={(event) => setQuestion(event.target.value)} maxLength={1200} placeholder={`${t('向')}${displayCharacterName}${t('提问；未有足够证据时系统会拒绝断言。')}`} />
+            <div><button type="button" onClick={() => resetConversation(selectedId)}>{t('清空本次会话')}</button><button type="button" onClick={toggleMic} aria-describedby={voiceEnabled ? undefined : voiceNoticeId} disabled={!voiceEnabled || isMicPending || isTurnPending || playbackActive || browserVoiceState === BROWSER_VOICE_STATES.RECORDING || browserVoiceState === BROWSER_VOICE_STATES.TRANSCRIBING || [REALTIME_STATES.PROCESSING, REALTIME_STATES.RECOVERING].includes(realtimeState)}>{isMicPending ? t('正在连接语音') : realtimeState === REALTIME_STATES.LISTENING ? t('停止收音') : realtimeState === REALTIME_STATES.PROCESSING ? t('正在处理语音') : realtimeState === REALTIME_STATES.RECOVERING ? t('语音正在重连') : t('语音提问')}</button>{browserVoiceSupported && <><button type="button" className={browserVoiceState === BROWSER_VOICE_STATES.RECORDING ? 'recording' : undefined} onClick={toggleBrowserVoice} disabled={isTurnPending || playbackActive || isMicPending || realtimeState === REALTIME_STATES.LISTENING || browserVoiceState === BROWSER_VOICE_STATES.TRANSCRIBING}>{browserVoiceState === BROWSER_VOICE_STATES.RECORDING ? t('结束录音并发送') : browserVoiceState === BROWSER_VOICE_STATES.TRANSCRIBING ? t('正在转写语音') : t('录音转写提问')}</button>{browserVoiceState === BROWSER_VOICE_STATES.RECORDING && <button type="button" onClick={cancelBrowserVoice}>{t('取消录音')}</button>}</>}<button className="primary" type="submit" disabled={!question.trim() || isTurnPending || playbackActive}>{t('发送并核验')}</button></div>
             {!voiceEnabled && <>
-              <p id={voiceNoticeId} className="dh-privacy" role="status">{voiceUnavailableReason(runtime, runtimeLoadError)}</p>
-              {(runtime || runtimeLoadError) && <div><button type="button" onClick={retryRuntime} disabled={isTurnPending || playbackActive}>重新核对运行状态</button></div>}
+              <p id={voiceNoticeId} className="dh-privacy" role="status">{voiceUnavailableReason(runtime, runtimeLoadError, t)}</p>
+              {(runtime || runtimeLoadError) && <div><button type="button" onClick={retryRuntime} disabled={isTurnPending || playbackActive}>{t('重新核对运行状态')}</button></div>}
             </>}
           </form>
-          <p className="dh-privacy">默认不持久化原始麦克风音频或转录正文；审计仅保存人物、证据等级、引用、原因码、延迟与 Trace ID。</p>
+          <p className="dh-privacy">{t('默认不持久化原始麦克风音频或转录正文；审计仅保存人物、证据等级、引用、原因码、延迟与 Trace ID。')}</p>
         </div>
       </div>
       {showOperations && <DigitalHumanOperationsPanel enabled={runtime?.operationsDashboardEnabled} />}

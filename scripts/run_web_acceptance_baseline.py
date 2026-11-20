@@ -20,6 +20,7 @@ import importlib.util
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import sys
@@ -61,6 +62,7 @@ DEFAULT_VITEST_TARGETS: tuple[str, ...] = (
     "src/features/crisis-care/__tests__/crisisCarePage.smoke.test.jsx",
     "src/features/crisis-care/__tests__/soulTabsCrisis.test.jsx",
     "src/test/AttentionPage.test.jsx",
+    "src/test/AttentionFocusA4.test.jsx",
     "src/test/attentionIntegration.test.ts",
     "src/__tests__/MirrorPageDigitalHuman.test.jsx",
     "src/test/PlanetHome.test.jsx",
@@ -71,23 +73,27 @@ DEFAULT_VITEST_TARGETS: tuple[str, ...] = (
     "src/test/BibleAtlasGraphSlice.test.tsx",
     "src/test/soulTabsHabitsLibrary.test.jsx",
     "src/test/expansionEndpoints.contract.test.js",
-    "src/test/AppAndCallNotesBugfixSlice.test.jsx",
+    "src/test/ExpansionResult.render.test.jsx",
+    "src/test/DatingPriorityStandaloneRoute.test.jsx",
+    "src/test/Stage1BugfixesSlice.test.jsx",
+    "src/test/WebCoreAcceptanceSuites.test.jsx",
     "src/test/sanitize.test.js",
 )
 
 # Deterministic mapping from Web source files referenced in cases.csv to real Vitest suites.
+# Every mapped suite is AST/source-verified to genuinely import its mapped Web source module.
 WEB_SOURCE_TO_VITEST_SUITES: dict[str, tuple[str, ...]] = {
-    "src/App.jsx": ("src/test/AppAndCallNotesBugfixSlice.test.jsx",),
+    "src/App.jsx": ("src/test/DatingPriorityStandaloneRoute.test.jsx",),
     "src/PlanetHome.jsx": ("src/test/PlanetHome.test.jsx",),
-    "src/MirrorPage.jsx": (
-        "src/__tests__/MirrorPageDigitalHuman.test.jsx",
-        "src/features/spiritual-planet/__tests__/digitalHumanContracts.test.js",
-    ),
-    "src/PrayerWallPage.jsx": ("src/test/SharedPrayerApiSlice.test.jsx",),
+    "src/MirrorPage.jsx": ("src/__tests__/MirrorPageDigitalHuman.test.jsx",),
+    "src/PrayerWallPage.jsx": ("src/test/WebCoreAcceptanceSuites.test.jsx",),
     "src/ShareWallPage.jsx": ("src/test/ShareWallSundaySchool.test.jsx",),
-    "src/BibleMapsPage.jsx": ("src/test/BibleAtlasGraphSlice.test.tsx",),
-    "src/features/bible-map/domain/constants.ts": ("src/test/BibleAtlasGraphSlice.test.tsx",),
-    "src/components/SoulDashboard.jsx": ("src/test/soulTabsHabitsLibrary.test.jsx",),
+    "src/BibleMapsPage.jsx": ("src/test/WebCoreAcceptanceSuites.test.jsx",),
+    "src/features/bible-map/domain/constants.ts": ("src/test/WebCoreAcceptanceSuites.test.jsx",),
+    "src/components/SoulDashboard.jsx": (
+        "src/test/WebCoreAcceptanceSuites.test.jsx",
+        "src/test/Stage1BugfixesSlice.test.jsx",
+    ),
     "src/components/SoulTabs.jsx": (
         "src/test/soulTabsHabitsLibrary.test.jsx",
         "src/features/crisis-care/__tests__/soulTabsCrisis.test.jsx",
@@ -97,8 +103,8 @@ WEB_SOURCE_TO_VITEST_SUITES: dict[str, tuple[str, ...]] = {
     ),
     "src/components/DevotionTabContainer.jsx": ("src/test/DevotionTabContainer.test.jsx",),
     "src/components/mission-bridge/MissionBridgePanel.jsx": ("src/test/MissionBridgePanel.test.jsx",),
-    "src/expansion/planetEntries.js": ("src/test/expansionEndpoints.contract.test.js",),
-    "src/expansion/ExpansionHub.jsx": ("src/test/expansionEndpoints.contract.test.js",),
+    "src/expansion/planetEntries.js": ("src/test/WebCoreAcceptanceSuites.test.jsx",),
+    "src/expansion/ExpansionHub.jsx": ("src/test/ExpansionResult.render.test.jsx",),
     "src/features/spiritual-planet/SpiritualPlanetPlatformPage.jsx": (
         "src/features/spiritual-planet/__tests__/SpiritualPlanetPlatformPage.test.jsx",
     ),
@@ -107,7 +113,6 @@ WEB_SOURCE_TO_VITEST_SUITES: dict[str, tuple[str, ...]] = {
     ),
     "src/features/spiritual-planet/digital-human/DigitalHumanWorkspace.jsx": (
         "src/features/spiritual-planet/__tests__/DigitalHumanWorkspace.test.jsx",
-        "src/features/spiritual-planet/__tests__/digitalHumanContracts.test.js",
     ),
     "src/features/ai-formation/AiFormationPage.jsx": (
         "src/features/ai-formation/__tests__/AiFormationPage.test.jsx",
@@ -119,17 +124,41 @@ WEB_SOURCE_TO_VITEST_SUITES: dict[str, tuple[str, ...]] = {
         "src/features/formation-twin/__tests__/FormationTwinWorkspace.test.jsx",
     ),
     "src/features/spiritual-formation/app/SpiritualFormationPage.jsx": (
-        "src/features/spiritual-formation/__tests__/PlatformIntegrationDashboard.test.jsx",
+        "src/test/WebCoreAcceptanceSuites.test.jsx",
     ),
     "src/features/crisis-care/app/CrisisCarePage.jsx": (
         "src/features/crisis-care/__tests__/crisisCarePage.smoke.test.jsx",
     ),
-    "src/features/attention/app/AttentionPage.jsx": ("src/test/AttentionPage.test.jsx",),
+    "src/features/attention/app/AttentionPage.jsx": (
+        "src/test/AttentionPage.test.jsx",
+        "src/test/AttentionFocusA4.test.jsx",
+    ),
     "src/features/attention/lib/integration/route-registry.ts": (
         "src/test/attentionIntegration.test.ts",
     ),
     "src/sanitize.js": ("src/test/sanitize.test.js",),
 }
+
+_COMMENT_STRIP_RE = re.compile(r"//[^\n]*|/\*[\s\S]*?\*/")
+_STATIC_FROM_SPECIFIER_RE = re.compile(
+    r"""\b(?:import|export)\s+(?:type\s+)?[^;'"]*?\bfrom\s*["']([^"']+)["']"""
+)
+_SIDE_EFFECT_IMPORT_RE = re.compile(r"""\bimport\s*["']([^"']+)["']""")
+_DYNAMIC_IMPORT_SPECIFIER_RE = re.compile(r"""(?<!\.)\bimport\s*\(\s*["']([^"']+)["']\s*\)""")
+_VI_MOCK_CALL_RE = re.compile(
+    r"""\bvi\.(?:doMock|mock)\s*\(\s*["']([^"']+)["']([\s\S]{0,240})"""
+)
+_RESOLVE_EXTENSIONS: tuple[str, ...] = (
+    "",
+    ".js",
+    ".jsx",
+    ".ts",
+    ".tsx",
+    "/index.js",
+    "/index.jsx",
+    "/index.ts",
+    "/index.tsx",
+)
 
 KNOWN_WEB_EXTERNAL_BLOCKERS: dict[str, dict[str, str]] = {
     "DH-05": {
@@ -205,6 +234,81 @@ def _normalize_rel_suite_path(raw_name: str, web_repo: Path) -> str:
         return candidate.as_posix()
 
 
+def _resolve_relative_module(specifier: str, importer_file: Path, web_repo: Path) -> str | None:
+    if not specifier.startswith("."):
+        return None
+    base_candidate = importer_file.parent / specifier
+    repo_resolved = web_repo.resolve()
+    for ext in _RESOLVE_EXTENSIONS:
+        candidate = Path(f"{base_candidate}{ext}")
+        if candidate.is_file():
+            try:
+                return candidate.resolve().relative_to(repo_resolved).as_posix()
+            except ValueError:
+                return None
+    return None
+
+
+def extract_suite_genuine_imports(suite_file: Path, web_repo: Path) -> set[str]:
+    """Return repo-relative Web source paths genuinely imported (and not mocked out) by suite_file."""
+    raw_source = suite_file.read_text(encoding="utf-8")
+    stripped = _COMMENT_STRIP_RE.sub("", raw_source)
+
+    fully_mocked: set[str] = set()
+    for match in _VI_MOCK_CALL_RE.finditer(stripped):
+        specifier, tail = match.group(1), match.group(2)
+        if "importOriginal" not in tail and "importActual" not in tail:
+            resolved_mock = _resolve_relative_module(specifier, suite_file, web_repo)
+            if resolved_mock:
+                fully_mocked.add(resolved_mock)
+
+    imported: set[str] = set()
+    for pattern in (_STATIC_FROM_SPECIFIER_RE, _SIDE_EFFECT_IMPORT_RE, _DYNAMIC_IMPORT_SPECIFIER_RE):
+        for match in pattern.finditer(stripped):
+            resolved = _resolve_relative_module(match.group(1), suite_file, web_repo)
+            if resolved and resolved not in fully_mocked:
+                imported.add(resolved)
+    return imported
+
+
+def verify_web_source_suite_mappings(
+    web_repo: Path,
+    mappings: dict[str, tuple[str, ...]] | None = None,
+) -> dict[str, list[str]]:
+    """Fail closed if any WEB_SOURCE_TO_VITEST_SUITES entry maps to a suite that does not import it."""
+    active_mappings = WEB_SOURCE_TO_VITEST_SUITES if mappings is None else mappings
+    repo_root = web_repo.resolve()
+    verified: dict[str, list[str]] = {}
+    violations: list[str] = []
+
+    for web_source, suite_list in active_mappings.items():
+        source_path = repo_root / web_source
+        if not source_path.is_file():
+            violations.append(f"Mapped Web source does not exist: {web_source}")
+            continue
+        if not suite_list:
+            violations.append(f"Mapped Web source has empty Vitest suite tuple: {web_source}")
+            continue
+        for suite_rel in suite_list:
+            suite_path = repo_root / suite_rel
+            if not suite_path.is_file():
+                violations.append(f"Mapped Vitest suite does not exist for {web_source}: {suite_rel}")
+                continue
+            genuine_imports = extract_suite_genuine_imports(suite_path, repo_root)
+            if web_source not in genuine_imports:
+                violations.append(
+                    f"Vitest suite '{suite_rel}' does not genuinely import mapped source '{web_source}' "
+                    f"(resolved imports: {sorted(genuine_imports)})"
+                )
+        verified[web_source] = list(suite_list)
+
+    if violations:
+        raise ValueError(
+            "WEB_SOURCE_TO_VITEST_SUITES import-verification failed:\n- " + "\n- ".join(violations)
+        )
+    return verified
+
+
 def run_web_acceptance_precheck(
     *,
     suite_dir: str | os.PathLike[str],
@@ -223,6 +327,8 @@ def run_web_acceptance_precheck(
         raise ValueError(
             f"Refusing output_dir '{out_path}' inside sealed baseline suite_dir '{suite_path}'."
         )
+
+    verified_mappings = verify_web_source_suite_mappings(web_repo_path)
 
     pre_hashes = _snapshot_suite_sha256(suite_path)
     validation_receipt = validate_acceptance_suite(
@@ -476,6 +582,8 @@ def run_web_acceptance_precheck(
         "baseline_suite_sha256_before": pre_hashes,
         "baseline_suite_sha256_after": post_hashes,
         "baseline_immutability_verified": pre_hashes == post_hashes,
+        "suite_import_integrity_verified": bool(verified_mappings),
+        "verified_source_mapping_count": len(verified_mappings),
         "vitest_process": {
             "pid": vitest_pid,
             "returncode": vitest_rc,

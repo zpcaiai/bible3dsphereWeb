@@ -1,3 +1,4 @@
+import importlib.util
 import unittest
 from pathlib import Path
 
@@ -72,8 +73,12 @@ class TestWebDpSlicesRegression(unittest.TestCase):
         self.assertIn("export async function amenSharedPrayer(shareToken)", api_src)
         self.assertIn("${API_BASE}/prayer-share/${encodeURIComponent(shareToken)}", api_src)
         self.assertNotIn("${API_BASE}/prayers/shared/", api_src)
-        self.assertNotIn("${API_BASE}/personal/search", api_src)
+        self.assertIn("export const COOKIE_SESSION_SENTINEL = 'cookie-session'", api_src)
+        self.assertIn("export function bearerHeaders(token, extra = {})", api_src)
+        self.assertIn("export async function searchPersonal(kw, token, options = {})", api_src)
+        self.assertIn("${API_BASE}/personal/search?", api_src)
         self.assertIn("/prayer-share/tok-pray-88", test_file)
+        self.assertIn("/personal/search?", test_file)
 
     def test_slice_8_growth_curve_and_formation_history_wired(self):
         growth_map = (ROOT / "src/GrowthMapPage.jsx").read_text(encoding="utf-8")
@@ -183,6 +188,33 @@ class TestWebDpSlicesRegression(unittest.TestCase):
         self.assertIn("import subpageAutoEn from './subpage-en.js'", i18n_src)
         self.assertIn("'当前使命画像': 'Current Mission Profile'", subpage_en_src)
         self.assertIn("'载入到当前分辨': 'Load into Current Discernment'", subpage_en_src)
+
+    def test_slice_20_honest_acceptance_runner_import_verification(self):
+        runner_path = ROOT / "scripts/run_web_acceptance_baseline.py"
+        spec = importlib.util.spec_from_file_location("run_web_acceptance_baseline", runner_path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+
+        verified = module.verify_web_source_suite_mappings(ROOT)
+        self.assertGreaterEqual(len(verified), 24)
+        self.assertIn("src/test/WebCoreAcceptanceSuites.test.jsx", verified["src/PrayerWallPage.jsx"])
+        self.assertIn("src/test/WebCoreAcceptanceSuites.test.jsx", verified["src/BibleMapsPage.jsx"])
+        self.assertIn("src/test/WebCoreAcceptanceSuites.test.jsx", verified["src/components/SoulDashboard.jsx"])
+        self.assertIn(
+            "src/test/WebCoreAcceptanceSuites.test.jsx",
+            verified["src/features/spiritual-formation/app/SpiritualFormationPage.jsx"],
+        )
+
+        with self.assertRaises(ValueError):
+            module.verify_web_source_suite_mappings(
+                ROOT,
+                {"src/components/SoulDashboard.jsx": ("src/test/soulTabsHabitsLibrary.test.jsx",)},
+            )
+        with self.assertRaises(ValueError):
+            module.verify_web_source_suite_mappings(
+                ROOT,
+                {"src/PrayerWallPage.jsx": ("src/test/SharedPrayerApiSlice.test.jsx",)},
+            )
 
 
 if __name__ == "__main__":
