@@ -11,13 +11,26 @@ function resolveDefaultApiBase() {
 
 export const API_BASE = configuredApiBase || resolveDefaultApiBase()
 
-function authenticatedHeaders(token, json = false) {
-  return {
-    ...(json ? { 'Content-Type': 'application/json' } : {}),
-    ...(token && token !== 'cookie-session'
-      ? { Authorization: `Bearer ${token}` }
-      : {}),
+export const COOKIE_SESSION_SENTINEL = 'cookie-session'
+
+export function bearerHeaders(token, extra = {}) {
+  const headers = { ...extra }
+  if (token && token !== COOKIE_SESSION_SENTINEL) {
+    headers.Authorization = `Bearer ${token}`
   }
+  return headers
+}
+
+export function authFetchInit(token, init = {}) {
+  const next = { ...init }
+  if (token === COOKIE_SESSION_SENTINEL && !next.credentials) {
+    next.credentials = 'same-origin'
+  }
+  return next
+}
+
+export function authenticatedHeaders(token, json = false) {
+  return bearerHeaders(token, json ? { 'Content-Type': 'application/json' } : {})
 }
 
 async function readApiJson(response, fallbackMessage) {
@@ -336,7 +349,7 @@ export async function fetchSermon(query) {
 export async function fetchDailySnapshot(token, { signal } = {}) {
   const response = await fetch(`${API_BASE}/daily-snapshot`, {
     signal,
-    headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+    headers: token && token !== COOKIE_SESSION_SENTINEL ? { 'Authorization': `Bearer ${token}` } : {},
   })
   if (!response.ok) return null
   const data = await response.json()
@@ -346,7 +359,7 @@ export async function fetchDailySnapshot(token, { signal } = {}) {
 export async function fetchEmotionTrajectory(token, limit = 30, { signal } = {}) {
   const response = await fetch(`${API_BASE}/user/emotion-trajectory?limit=${limit}`, {
     signal,
-    headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+    headers: token && token !== COOKIE_SESSION_SENTINEL ? { 'Authorization': `Bearer ${token}` } : {},
   })
   if (!response.ok) return null
   const data = await response.json()
@@ -379,7 +392,17 @@ export async function fetchMeditationQuestions(reference, text) {
   return data.questions || []
 }
 
-export async function transcribeAudioBlob(audioBlob, { contentType, language } = {}) {
+export async function transcribeAudioBlob(audioBlob, langOrOptions = {}, maybeOptions = {}) {
+  const opts = typeof langOrOptions === 'string'
+    ? { ...(maybeOptions || {}), language: langOrOptions }
+    : (langOrOptions || {})
+  const {
+    contentType,
+    language,
+    token = null,
+    signal: externalSignal,
+    timeoutMs = 30000,
+  } = opts
   const form = new FormData()
   const type = contentType || audioBlob?.type || 'audio/webm'
   const speechLanguage = language || (getRuntimeLang() === 'en' ? 'en-US' : 'zh-CN')
@@ -387,19 +410,59 @@ export async function transcribeAudioBlob(audioBlob, { contentType, language } =
     ? 'mp4'
     : type.includes('mpeg') || type.includes('mp3')
       ? 'mp3'
-      : type.includes('wav')
-        ? 'wav'
-        : 'webm'
+      : type.includes('ogg')
+        ? 'ogg'
+        : type.includes('wav')
+          ? 'wav'
+          : 'webm'
   form.append('file', audioBlob, `voice.${extension}`)
   // Short utterances are easy to misclassify. The visible UI language is a
   // strong hint and lets the backend select Deepgram's matching Nova model.
   form.append('language', speechLanguage)
 
-  const response = await fetch(`${API_BASE}/speech/transcribe`, {
+  if (externalSignal?.aborted) {
+    throw externalSignal.reason || new DOMException('Aborted', 'AbortError')
+  }
+
+  const timeoutController = typeof AbortController !== 'undefined' ? new AbortController() : null
+  let timedOut = false
+  const timer = timeoutController && timeoutMs > 0
+    ? setTimeout(() => {
+        timedOut = true
+        timeoutController.abort(new Error('语音转写超时，请稍后重试。'))
+      }, timeoutMs)
+    : null
+  const onExternalAbort = () => {
+    timeoutController?.abort(externalSignal?.reason || new DOMException('Aborted', 'AbortError'))
+  }
+  if (externalSignal && timeoutController) {
+    externalSignal.addEventListener('abort', onExternalAbort, { once: true })
+  }
+
+  const headers = bearerHeaders(token)
+  const fetchInit = authFetchInit(token, {
     method: 'POST',
+    ...(Object.keys(headers).length ? { headers } : {}),
     body: form,
+    credentials: 'same-origin',
+    ...(timeoutController ? { signal: timeoutController.signal } : (externalSignal ? { signal: externalSignal } : {})),
   })
-  const responseType = response.headers.get('content-type') || ''
+
+  let response
+  try {
+    response = await fetch(`${API_BASE}/speech/transcribe`, fetchInit)
+  } catch (err) {
+    if (timedOut) {
+      throw new Error('语音转写超时，请稍后重试。')
+    }
+    throw err
+  } finally {
+    if (timer) clearTimeout(timer)
+    if (externalSignal && timeoutController) {
+      externalSignal.removeEventListener('abort', onExternalAbort)
+    }
+  }
+  const responseType = response.headers?.get?.('content-type') || ''
   const data = responseType.includes('application/json') ? await response.json() : {}
   if (!response.ok) {
     if (response.status === 503) throw new Error('云转写未配置：请在后端设置 DEEPGRAM_API_KEY。')
@@ -417,7 +480,7 @@ export async function transcribeAudioBlob(audioBlob, { contentType, language } =
 // ── A1: 每日灵魂一问 ──────────────────────────────────────────
 export async function fetchDailySoulQuestion(token) {
   const response = await fetch(`${API_BASE}/daily-soul-question`, {
-    headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+    headers: token && token !== COOKIE_SESSION_SENTINEL ? { 'Authorization': `Bearer ${token}` } : {},
   })
   const data = await response.json()
   if (!response.ok) throw new Error(data.detail || 'Failed')
@@ -427,7 +490,7 @@ export async function fetchDailySoulQuestion(token) {
 export async function saveSoulAnswer(answer, saveToJournal, token) {
   const response = await fetch(`${API_BASE}/daily-soul-question/answer`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
+    headers: { 'Content-Type': 'application/json', ...(token && token !== COOKIE_SESSION_SENTINEL ? { 'Authorization': `Bearer ${token}` } : {}) },
     body: JSON.stringify({ answer, save_to_journal: saveToJournal }),
   })
   const data = await response.json()
@@ -437,7 +500,7 @@ export async function saveSoulAnswer(answer, saveToJournal, token) {
 
 export async function fetchSoulQuestionHistory(token) {
   const response = await fetch(`${API_BASE}/daily-soul-question/history`, {
-    headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+    headers: token && token !== COOKIE_SESSION_SENTINEL ? { 'Authorization': `Bearer ${token}` } : {},
   })
   const data = await response.json()
   return data.ok ? data.items : []
@@ -446,7 +509,7 @@ export async function fetchSoulQuestionHistory(token) {
 // ── A3: 属灵健康检查 ──────────────────────────────────────────
 export async function fetchSpiritualHealthCheck(token) {
   const response = await fetch(`${API_BASE}/spiritual-health-check`, {
-    headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+    headers: token && token !== COOKIE_SESSION_SENTINEL ? { 'Authorization': `Bearer ${token}` } : {},
   })
   if (!response.ok) return null
   const data = await response.json()
@@ -456,7 +519,7 @@ export async function fetchSpiritualHealthCheck(token) {
 // ── A4: 属灵伙伴 ──────────────────────────────────────────────
 export async function fetchPartnerStatus(token) {
   const response = await fetch(`${API_BASE}/spiritual-partner/status`, {
-    headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+    headers: token && token !== COOKIE_SESSION_SENTINEL ? { 'Authorization': `Bearer ${token}` } : {},
   })
   if (!response.ok) return null
   const data = await response.json()
@@ -466,7 +529,7 @@ export async function fetchPartnerStatus(token) {
 export async function requestPartner(partnerEmail, token) {
   const response = await fetch(`${API_BASE}/spiritual-partner/request`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
+    headers: { 'Content-Type': 'application/json', ...(token && token !== COOKIE_SESSION_SENTINEL ? { 'Authorization': `Bearer ${token}` } : {}) },
     body: JSON.stringify({ partner_email: partnerEmail }),
   })
   const data = await response.json()
@@ -477,7 +540,7 @@ export async function requestPartner(partnerEmail, token) {
 export async function respondPartner(requester, accept, token) {
   const response = await fetch(`${API_BASE}/spiritual-partner/respond`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
+    headers: { 'Content-Type': 'application/json', ...(token && token !== COOKIE_SESSION_SENTINEL ? { 'Authorization': `Bearer ${token}` } : {}) },
     body: JSON.stringify({ requester, accept }),
   })
   const data = await response.json()
@@ -488,7 +551,7 @@ export async function respondPartner(requester, accept, token) {
 export async function sendEncouragement(token) {
   const response = await fetch(`${API_BASE}/spiritual-partner/encourage`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
+    headers: { 'Content-Type': 'application/json', ...(token && token !== COOKIE_SESSION_SENTINEL ? { 'Authorization': `Bearer ${token}` } : {}) },
     body: JSON.stringify({}),
   })
   const data = await response.json()
@@ -498,7 +561,7 @@ export async function sendEncouragement(token) {
 // ── A7: 里程碑徽章 ────────────────────────────────────────────
 export async function fetchMilestones(token) {
   const response = await fetch(`${API_BASE}/milestones`, {
-    headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+    headers: token && token !== COOKIE_SESSION_SENTINEL ? { 'Authorization': `Bearer ${token}` } : {},
   })
   if (!response.ok) return []
   const data = await response.json()
@@ -512,7 +575,7 @@ export async function fetchMilestones(token) {
 export async function markChapterRead(book, chapter, highlight, token) {
   const response = await fetch(`${API_BASE}/bible-reading/mark`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
+    headers: { 'Content-Type': 'application/json', ...(token && token !== COOKIE_SESSION_SENTINEL ? { 'Authorization': `Bearer ${token}` } : {}) },
     body: JSON.stringify({ book, chapter, highlight }),
   })
   const data = await response.json()
@@ -522,7 +585,7 @@ export async function markChapterRead(book, chapter, highlight, token) {
 
 export async function fetchReadingProgress(token) {
   const response = await fetch(`${API_BASE}/bible-reading/progress`, {
-    headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+    headers: token && token !== COOKIE_SESSION_SENTINEL ? { 'Authorization': `Bearer ${token}` } : {},
   })
   if (!response.ok) return { items: [], by_book: {} }
   const data = await response.json()
@@ -651,7 +714,7 @@ export async function fetchBiblicalExample(query) {
 export async function* sendChat(messages, sessionId, token) {
   devlog(`[api] sendChat session=${sessionId} msgs=${messages.length}`)
   const headers = { 'Content-Type': 'application/json' }
-  if (token) headers['Authorization'] = `Bearer ${token}`
+  if (token && token !== COOKIE_SESSION_SENTINEL) headers['Authorization'] = `Bearer ${token}`
   const response = await fetch(`${API_BASE}/chat`, {
     method: 'POST',
     headers,
@@ -693,9 +756,8 @@ export async function* sendChat(messages, sessionId, token) {
 
 export async function fetchPrayers(limit = 40, offset = 0, token = null) {
   devlog(`[api] fetchPrayers limit=${limit} offset=${offset}`)
-  const headers = {}
-  if (token) headers['Authorization'] = `Bearer ${token}`
-  const response = await fetch(`${API_BASE}/prayers?limit=${limit}&offset=${offset}`, { headers })
+  const headers = bearerHeaders(token)
+  const response = await fetch(`${API_BASE}/prayers?limit=${limit}&offset=${offset}`, authFetchInit(token, { headers }))
   const contentType = response.headers.get('content-type') || ''
   if (!contentType.includes('application/json')) {
     throw new Error('后端服务未运行（请先启动 backend/main.py）')
@@ -708,13 +770,12 @@ export async function fetchPrayers(limit = 40, offset = 0, token = null) {
 
 export async function submitPrayer(content, isAnonymous, token, isPublic = false) {
   devlog(`[api] submitPrayer anon=${isAnonymous} len=${content.length}`)
-  const headers = { 'Content-Type': 'application/json' }
-  if (token) headers['Authorization'] = `Bearer ${token}`
-  const response = await fetch(`${API_BASE}/prayers`, {
+  const headers = bearerHeaders(token, { 'Content-Type': 'application/json' })
+  const response = await fetch(`${API_BASE}/prayers`, authFetchInit(token, {
     method: 'POST',
     headers,
     body: JSON.stringify({ content, is_anonymous: isAnonymous, is_public: isPublic }),
-  })
+  }))
   const contentType = response.headers.get('content-type') || ''
   if (!contentType.includes('application/json')) {
     throw new Error('后端服务未运行（请先启动 backend/main.py）')
@@ -728,7 +789,7 @@ export async function submitPrayer(content, isAnonymous, token, isPublic = false
 export async function amenPrayer(prayerId, token) {
   devlog(`[api] amenPrayer id=${prayerId}`)
   const headers = {}
-  if (token) headers['Authorization'] = `Bearer ${token}`
+  if (token && token !== COOKIE_SESSION_SENTINEL) headers['Authorization'] = `Bearer ${token}`
   const response = await fetch(`${API_BASE}/prayers/${prayerId}/amen`, {
     method: 'POST',
     headers,
@@ -746,7 +807,7 @@ export async function amenPrayer(prayerId, token) {
 export async function updatePrayer(prayerId, content, token) {
   devlog(`[api] updatePrayer id=${prayerId}`)
   const headers = { 'Content-Type': 'application/json' }
-  if (token) headers['Authorization'] = `Bearer ${token}`
+  if (token && token !== COOKIE_SESSION_SENTINEL) headers['Authorization'] = `Bearer ${token}`
   const response = await fetch(`${API_BASE}/prayers/${prayerId}`, {
     method: 'PUT',
     headers,
@@ -765,7 +826,7 @@ export async function updatePrayer(prayerId, content, token) {
 export async function updatePrayerStatus(prayerId, status, token) {
   devlog(`[api] updatePrayerStatus id=${prayerId} status=${status}`)
   const headers = { 'Content-Type': 'application/json' }
-  if (token) headers['Authorization'] = `Bearer ${token}`
+  if (token && token !== COOKIE_SESSION_SENTINEL) headers['Authorization'] = `Bearer ${token}`
   const response = await fetch(`${API_BASE}/prayers/${prayerId}/status`, {
     method: 'PATCH',
     headers,
@@ -779,7 +840,7 @@ export async function updatePrayerStatus(prayerId, status, token) {
 export async function deletePrayer(prayerId, token) {
   devlog(`[api] deletePrayer id=${prayerId}`)
   const headers = {}
-  if (token) headers['Authorization'] = `Bearer ${token}`
+  if (token && token !== COOKIE_SESSION_SENTINEL) headers['Authorization'] = `Bearer ${token}`
   const response = await fetch(`${API_BASE}/prayers/${prayerId}`, {
     method: 'DELETE',
     headers,
@@ -797,7 +858,7 @@ export async function deletePrayer(prayerId, token) {
 export async function restorePrayer(prayerId, token) {
   devlog(`[api] restorePrayer id=${prayerId}`)
   const headers = {}
-  if (token) headers['Authorization'] = `Bearer ${token}`
+  if (token && token !== COOKIE_SESSION_SENTINEL) headers['Authorization'] = `Bearer ${token}`
   const response = await fetch(`${API_BASE}/prayers/${prayerId}/restore`, {
     method: 'POST',
     headers,
@@ -835,7 +896,7 @@ export async function amenSharedPrayer(shareToken) {
 export async function fetchEvangelismPrayers(limit = 40, offset = 0, token = null) {
   devlog(`[api] fetchEvangelismPrayers limit=${limit} offset=${offset}`)
   const headers = {}
-  if (token) headers['Authorization'] = `Bearer ${token}`
+  if (token && token !== COOKIE_SESSION_SENTINEL) headers['Authorization'] = `Bearer ${token}`
   const response = await fetch(`${API_BASE}/evangelism?limit=${limit}&offset=${offset}`, { headers })
   const contentType = response.headers.get('content-type') || ''
   if (!contentType.includes('application/json')) {
@@ -850,7 +911,7 @@ export async function fetchEvangelismPrayers(limit = 40, offset = 0, token = nul
 export async function submitEvangelismPrayer(content, isAnonymous, token, kind = 'prayer') {
   devlog(`[api] submitEvangelismPrayer anon=${isAnonymous} kind=${kind} len=${content.length}`)
   const headers = { 'Content-Type': 'application/json' }
-  if (token) headers['Authorization'] = `Bearer ${token}`
+  if (token && token !== COOKIE_SESSION_SENTINEL) headers['Authorization'] = `Bearer ${token}`
   const response = await fetch(`${API_BASE}/evangelism`, {
     method: 'POST',
     headers,
@@ -869,7 +930,7 @@ export async function submitEvangelismPrayer(content, isAnonymous, token, kind =
 export async function amenEvangelismPrayer(prayerId, token) {
   devlog(`[api] amenEvangelismPrayer id=${prayerId}`)
   const headers = {}
-  if (token) headers['Authorization'] = `Bearer ${token}`
+  if (token && token !== COOKIE_SESSION_SENTINEL) headers['Authorization'] = `Bearer ${token}`
   const response = await fetch(`${API_BASE}/evangelism/${prayerId}/amen`, {
     method: 'POST',
     headers,
@@ -887,7 +948,7 @@ export async function amenEvangelismPrayer(prayerId, token) {
 export async function updateEvangelismPrayer(prayerId, content, token) {
   devlog(`[api] updateEvangelismPrayer id=${prayerId}`)
   const headers = { 'Content-Type': 'application/json' }
-  if (token) headers['Authorization'] = `Bearer ${token}`
+  if (token && token !== COOKIE_SESSION_SENTINEL) headers['Authorization'] = `Bearer ${token}`
   const response = await fetch(`${API_BASE}/evangelism/${prayerId}`, {
     method: 'PUT',
     headers,
@@ -906,7 +967,7 @@ export async function updateEvangelismPrayer(prayerId, content, token) {
 export async function deleteEvangelismPrayer(prayerId, token) {
   devlog(`[api] deleteEvangelismPrayer id=${prayerId}`)
   const headers = {}
-  if (token) headers['Authorization'] = `Bearer ${token}`
+  if (token && token !== COOKIE_SESSION_SENTINEL) headers['Authorization'] = `Bearer ${token}`
   const response = await fetch(`${API_BASE}/evangelism/${prayerId}`, {
     method: 'DELETE',
     headers,
@@ -924,7 +985,7 @@ export async function deleteEvangelismPrayer(prayerId, token) {
 export async function restoreEvangelismPrayer(prayerId, token) {
   devlog(`[api] restoreEvangelismPrayer id=${prayerId}`)
   const headers = {}
-  if (token) headers['Authorization'] = `Bearer ${token}`
+  if (token && token !== COOKIE_SESSION_SENTINEL) headers['Authorization'] = `Bearer ${token}`
   const response = await fetch(`${API_BASE}/evangelism/${prayerId}/restore`, {
     method: 'POST',
     headers,
@@ -964,7 +1025,7 @@ export const reviewEvangelismTestimony = (token, id, approve) =>
 export async function submitCheckin(payload, token) {
   devlog(`[api] submitCheckin emotion=${payload.emotionLabel} anon=${!token}`)
   const headers = { 'Content-Type': 'application/json' }
-  if (token) headers['Authorization'] = `Bearer ${token}`
+  if (token && token !== COOKIE_SESSION_SENTINEL) headers['Authorization'] = `Bearer ${token}`
   const response = await fetch(`${API_BASE}/user/checkin`, {
     method: 'POST',
     headers,
@@ -982,9 +1043,9 @@ export async function submitCheckin(payload, token) {
 
 export async function fetchJournals(token, limit = 50, offset = 0) {
   devlog(`[api] fetchJournals limit=${limit} offset=${offset}`)
-  const response = await fetch(`${API_BASE}/devotion/journals?limit=${limit}&offset=${offset}`, {
-    headers: token ? { 'Authorization': `Bearer ${token}` } : {},
-  })
+  const response = await fetch(`${API_BASE}/devotion/journals?limit=${limit}&offset=${offset}`, authFetchInit(token, {
+    headers: bearerHeaders(token),
+  }))
   const contentType = response.headers.get('content-type') || ''
   if (!contentType.includes('application/json')) {
     throw new Error('后端服务未运行（请先启动 backend/main.py）')
@@ -997,11 +1058,11 @@ export async function fetchJournals(token, limit = 50, offset = 0) {
 
 export async function saveJournal(payload, token) {
   devlog(`[api] saveJournal date=${payload.date} title=${payload.title?.slice(0, 30)}`)
-  const response = await fetch(`${API_BASE}/devotion/journals`, {
+  const response = await fetch(`${API_BASE}/devotion/journals`, authFetchInit(token, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
+    headers: bearerHeaders(token, { 'Content-Type': 'application/json' }),
     body: JSON.stringify(payload),
-  })
+  }))
   const contentType = response.headers.get('content-type') || ''
   if (!contentType.includes('application/json')) {
     throw new Error('后端服务未运行（请先启动 backend/main.py）')
@@ -1014,10 +1075,10 @@ export async function saveJournal(payload, token) {
 
 export async function deleteJournal(journalId, token) {
   devlog(`[api] deleteJournal id=${journalId}`)
-  const response = await fetch(`${API_BASE}/devotion/journals/${journalId}`, {
+  const response = await fetch(`${API_BASE}/devotion/journals/${journalId}`, authFetchInit(token, {
     method: 'DELETE',
-    headers: token ? { 'Authorization': `Bearer ${token}` } : {},
-  })
+    headers: bearerHeaders(token),
+  }))
   const contentType = response.headers.get('content-type') || ''
   if (!contentType.includes('application/json')) {
     throw new Error('后端服务未运行（请先启动 backend/main.py）')
@@ -1032,9 +1093,9 @@ export async function deleteJournal(journalId, token) {
 
 export async function fetchSermonJournals(token, limit = 50, offset = 0) {
   devlog(`[api] fetchSermonJournals limit=${limit} offset=${offset}`)
-  const response = await fetch(`${API_BASE}/sermon/journals?limit=${limit}&offset=${offset}`, {
-    headers: token ? { 'Authorization': `Bearer ${token}` } : {},
-  })
+  const response = await fetch(`${API_BASE}/sermon/journals?limit=${limit}&offset=${offset}`, authFetchInit(token, {
+    headers: bearerHeaders(token),
+  }))
   const contentType = response.headers.get('content-type') || ''
   if (!contentType.includes('application/json')) {
     throw new Error('后端服务未运行（请先启动 backend/main.py）')
@@ -1062,11 +1123,11 @@ export async function saveSermonJournal(payload, token) {
     encouragement: payload.encouragement || '',
     phase: payload.phase || 'active',
   }
-  const response = await fetch(`${API_BASE}/sermon/journals`, {
+  const response = await fetch(`${API_BASE}/sermon/journals`, authFetchInit(token, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
+    headers: bearerHeaders(token, { 'Content-Type': 'application/json' }),
     body: JSON.stringify(body),
-  })
+  }))
   const contentType = response.headers.get('content-type') || ''
   if (!contentType.includes('application/json')) {
     throw new Error('后端服务未运行（请先启动 backend/main.py）')
@@ -1079,10 +1140,10 @@ export async function saveSermonJournal(payload, token) {
 
 export async function deleteSermonJournal(journalId, token) {
   devlog(`[api] deleteSermonJournal id=${journalId}`)
-  const response = await fetch(`${API_BASE}/sermon/journals/${journalId}`, {
+  const response = await fetch(`${API_BASE}/sermon/journals/${journalId}`, authFetchInit(token, {
     method: 'DELETE',
-    headers: token ? { 'Authorization': `Bearer ${token}` } : {},
-  })
+    headers: bearerHeaders(token),
+  }))
   const contentType = response.headers.get('content-type') || ''
   if (!contentType.includes('application/json')) {
     throw new Error('后端服务未运行（请先启动 backend/main.py）')
@@ -1097,9 +1158,9 @@ export async function deleteSermonJournal(journalId, token) {
 
 export async function fetchPersonalNotes(token) {
   devlog(`[api] fetchPersonalNotes`)
-  const response = await fetch(`${API_BASE}/personal/notes`, {
-    headers: token ? { 'Authorization': `Bearer ${token}` } : {},
-  })
+  const response = await fetch(`${API_BASE}/personal/notes`, authFetchInit(token, {
+    headers: bearerHeaders(token),
+  }))
   const contentType = response.headers.get('content-type') || ''
   if (!contentType.includes('application/json')) {
     throw new Error('后端服务未运行（请先启动 backend/main.py）')
@@ -1112,11 +1173,11 @@ export async function fetchPersonalNotes(token) {
 
 export async function savePersonalNote(payload, token) {
   devlog(`[api] savePersonalNote id=${payload.id} date=${payload.date}`)
-  const response = await fetch(`${API_BASE}/personal/notes`, {
+  const response = await fetch(`${API_BASE}/personal/notes`, authFetchInit(token, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
+    headers: bearerHeaders(token, { 'Content-Type': 'application/json' }),
     body: JSON.stringify(payload),
-  })
+  }))
   const contentType = response.headers.get('content-type') || ''
   if (!contentType.includes('application/json')) {
     throw new Error('后端服务未运行（请先启动 backend/main.py）')
@@ -1129,10 +1190,10 @@ export async function savePersonalNote(payload, token) {
 
 export async function deletePersonalNote(noteId, token) {
   devlog(`[api] deletePersonalNote id=${noteId}`)
-  const response = await fetch(`${API_BASE}/personal/notes/${noteId}`, {
+  const response = await fetch(`${API_BASE}/personal/notes/${noteId}`, authFetchInit(token, {
     method: 'DELETE',
-    headers: token ? { 'Authorization': `Bearer ${token}` } : {},
-  })
+    headers: bearerHeaders(token),
+  }))
   const contentType = response.headers.get('content-type') || ''
   if (!contentType.includes('application/json')) {
     throw new Error('后端服务未运行（请先启动 backend/main.py）')
@@ -1143,70 +1204,115 @@ export async function deletePersonalNote(noteId, token) {
   return data
 }
 
-export async function searchPersonal(kw, token) {
+const PERSONAL_SEARCH_SOURCES = ['devotion', 'personal_note', 'sermon', 'prayer', 'minutes', 'memory']
+
+function emptyPersonalSearchGroups() {
+  return {
+    devotion: [],
+    personal_note: [],
+    sermon: [],
+    prayer: [],
+    minutes: [],
+    memory: [],
+  }
+}
+
+function emptyPersonalSearchCounts() {
+  return {
+    devotion: 0,
+    personal_note: 0,
+    sermon: 0,
+    prayer: 0,
+    minutes: 0,
+    memory: 0,
+  }
+}
+
+export async function searchPersonal(kw, token, options = {}) {
   const query = String(kw || '').trim()
   devlog(`[api] searchPersonal kw=${query}`)
-  if (!query) return { query: '', results: [], total: 0 }
-
-  const needle = query.toLowerCase()
-  const candidates = []
-
-  if (token) {
-    const [journalsRes, notesRes] = await Promise.allSettled([
-      fetchJournals(token, 200, 0),
-      fetchPersonalNotes(token),
-    ])
-    if (journalsRes.status === 'fulfilled' && Array.isArray(journalsRes.value?.items)) {
-      for (const item of journalsRes.value.items) {
-        candidates.push({ source: 'journal', ...item })
-      }
-    }
-    if (notesRes.status === 'fulfilled' && Array.isArray(notesRes.value?.items)) {
-      for (const item of notesRes.value.items) {
-        candidates.push({ source: 'personal_note', ...item })
-      }
+  if (!query) {
+    return {
+      success: true,
+      query: '',
+      total: 0,
+      counts: emptyPersonalSearchCounts(),
+      groups: emptyPersonalSearchGroups(),
+      results: [],
     }
   }
 
-  // Merge/fallback with local personal_notes & journal_entries (guarded against
-  // corrupted JSON or non-browser environments).
-  let localNotes = []
-  let localEntries = []
-  if (typeof localStorage !== 'undefined') {
-    try {
-      const parsed = JSON.parse(localStorage.getItem('personal_notes') || '[]')
-      localNotes = Array.isArray(parsed) ? parsed : []
-    } catch {
-      localNotes = []
-    }
-    try {
-      const parsed = JSON.parse(localStorage.getItem('journal_entries') || '[]')
-      localEntries = Array.isArray(parsed) ? parsed : []
-    } catch {
-      localEntries = []
-    }
-  }
-  for (const item of localNotes) {
-    if (item && typeof item === 'object') candidates.push({ source: item.source || 'personal_note', ...item })
-  }
-  for (const item of localEntries) {
-    if (item && typeof item === 'object') candidates.push({ source: item.source || 'journal', ...item })
+  const { limit = 30, offset = 0, sources, signal } = options || {}
+  const params = new URLSearchParams({
+    q: query,
+    limit: String(limit),
+    offset: String(offset),
+  })
+  if (Array.isArray(sources) && sources.length > 0) {
+    params.set('sources', sources.join(','))
+  } else if (typeof sources === 'string' && sources.trim()) {
+    params.set('sources', sources.trim())
   }
 
-  const seen = new Set()
-  const results = []
-  for (const item of candidates) {
-    const text = JSON.stringify(item).toLowerCase()
-    if (!text.includes(needle)) continue
-    const dedupeKey = item.id != null
-      ? `${item.source || 'item'}:id:${item.id}`
-      : `${item.source || 'item'}:raw:${item.date || ''}:${item.title || ''}:${item.content || item.reflection || ''}`
-    if (seen.has(dedupeKey)) continue
-    seen.add(dedupeKey)
-    results.push(item)
+  const response = await fetch(`${API_BASE}/personal/search?${params}`, {
+    method: 'GET',
+    headers: bearerHeaders(token, { 'X-Lang': getRuntimeLang() }),
+    credentials: 'same-origin',
+    ...(signal ? { signal } : {}),
+  })
+
+  const contentType = response.headers?.get?.('content-type') || ''
+  if (contentType && !contentType.includes('application/json')) {
+    const err = new Error('后端服务未运行（请先启动 backend/main.py）')
+    err.status = response.status
+    throw err
   }
 
-  return { query, results, total: results.length }
+  const data = await response.json().catch(() => ({}))
+  if (!response.ok) {
+    const detail = data?.detail
+      || data?.error
+      || (response.status === 401
+        ? '请先登录后再检索个人记录'
+        : response.status === 403
+          ? '无权访问该个人检索记录'
+          : `个人检索失败 (${response.status})`)
+    const err = new Error(typeof detail === 'string' ? detail : JSON.stringify(detail))
+    err.status = response.status
+    throw err
+  }
+
+  const rawGroups = data?.groups && typeof data.groups === 'object' ? data.groups : {}
+  const rawResults = Array.isArray(data?.results) ? data.results : []
+  const groups = emptyPersonalSearchGroups()
+  for (const key of PERSONAL_SEARCH_SOURCES) {
+    if (Array.isArray(rawGroups[key])) {
+      groups[key] = rawGroups[key]
+    }
+  }
+  if (!Object.values(rawGroups).some((arr) => Array.isArray(arr) && arr.length > 0) && rawResults.length > 0) {
+    for (const item of rawResults) {
+      const src = PERSONAL_SEARCH_SOURCES.includes(item?.source) ? item.source : 'personal_note'
+      groups[src].push(item)
+    }
+  }
+  const counts = emptyPersonalSearchCounts()
+  for (const key of PERSONAL_SEARCH_SOURCES) {
+    counts[key] = typeof data?.counts?.[key] === 'number' ? data.counts[key] : groups[key].length
+  }
+  const results = rawResults.length > 0
+    ? rawResults
+    : PERSONAL_SEARCH_SOURCES.flatMap((key) => groups[key])
+  const total = typeof data?.total === 'number' ? data.total : results.length
+
+  return {
+    success: data?.success !== false,
+    query: data?.query ?? query,
+    total,
+    counts,
+    groups,
+    results,
+  }
 }
 
 // ── User Profile API ─────────────────────────────────────────
@@ -1215,7 +1321,7 @@ export async function updateUserProfile(payload, token) {
   devlog(`[api] updateUserProfile nickname=${payload.nickname}`)
   const response = await fetch(`${API_BASE}/user/profile`, {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
+    headers: { 'Content-Type': 'application/json', ...(token && token !== COOKIE_SESSION_SENTINEL ? { 'Authorization': `Bearer ${token}` } : {}) },
     body: JSON.stringify(payload),
   })
   const contentType = response.headers.get('content-type') || ''
@@ -1275,7 +1381,7 @@ export async function fetchTTS(text, language_code = 'zh-CN', voice_name = 'zh-C
 export async function fetchSharedNotes(token = null, page = 1, limit = 20) {
   devlog(`[api] fetchSharedNotes page=${page}`)
   const headers = {}
-  if (token) headers['Authorization'] = `Bearer ${token}`
+  if (token && token !== COOKIE_SESSION_SENTINEL) headers['Authorization'] = `Bearer ${token}`
   const response = await fetch(`${API_BASE}/shared/notes?page=${page}&limit=${limit}`, { headers })
   if (response.status === 401) {
     return { ok: false, requireLogin: true, items: [], total: 0, pages: 0 }
@@ -1289,7 +1395,7 @@ export async function fetchSharedNotes(token = null, page = 1, limit = 20) {
 export async function fetchBibleStudy(book, chapter, verses, token = null) {
   devlog(`[api] fetchBibleStudy ${book} ${chapter}`)
   const headers = { 'Content-Type': 'application/json' }
-  if (token) headers['Authorization'] = `Bearer ${token}`
+  if (token && token !== COOKIE_SESSION_SENTINEL) headers['Authorization'] = `Bearer ${token}`
   const response = await fetch(`${API_BASE}/bible/study`, {
     method: 'POST',
     headers,
@@ -1306,7 +1412,7 @@ export async function fetchBibleStudy(book, chapter, verses, token = null) {
 export async function toggleShareSermonJournal(journalId, token = null) {
   devlog(`[api] toggleShareSermonJournal id=${journalId}`)
   const headers = { 'Content-Type': 'application/json' }
-  if (token) headers['Authorization'] = `Bearer ${token}`
+  if (token && token !== COOKIE_SESSION_SENTINEL) headers['Authorization'] = `Bearer ${token}`
   const response = await fetch(`${API_BASE}/sermon/journals/${journalId}/share`, {
     method: 'POST',
     headers,
@@ -1319,7 +1425,7 @@ export async function toggleShareSermonJournal(journalId, token = null) {
 export async function toggleShareNote(noteId, token = null) {
   devlog(`[api] toggleShareNote id=${noteId}`)
   const headers = { 'Content-Type': 'application/json' }
-  if (token) headers['Authorization'] = `Bearer ${token}`
+  if (token && token !== COOKIE_SESSION_SENTINEL) headers['Authorization'] = `Bearer ${token}`
   const response = await fetch(`${API_BASE}/personal/notes/${noteId}/share`, {
     method: 'POST',
     headers,
@@ -1333,7 +1439,7 @@ export async function toggleShareNote(noteId, token = null) {
 export async function amenSharedNote(noteId, token) {
   devlog(`[api] amenSharedNote id=${noteId}`)
   const headers = { 'Content-Type': 'application/json' }
-  if (token) headers['Authorization'] = `Bearer ${token}`
+  if (token && token !== COOKIE_SESSION_SENTINEL) headers['Authorization'] = `Bearer ${token}`
   const response = await fetch(`${API_BASE}/shared/notes/${noteId}/amen`, { method: 'POST', headers })
   if (response.status === 401) throw new Error('Login required')
   if (!response.ok) throw new Error('Amen failed')
@@ -1345,7 +1451,7 @@ export async function amenSharedNote(noteId, token) {
 export async function fetchRecycleBin(token) {
   devlog('[api] fetchRecycleBin')
   const headers = {}
-  if (token) headers['Authorization'] = `Bearer ${token}`
+  if (token && token !== COOKIE_SESSION_SENTINEL) headers['Authorization'] = `Bearer ${token}`
   const response = await fetch(`${API_BASE}/recycle-bin`, { headers })
   if (response.status === 401) throw new Error('Login required')
   if (!response.ok) {
@@ -1362,7 +1468,7 @@ export async function fetchRecycleBin(token) {
 export async function restoreRecycleItem(type, id, token) {
   devlog(`[api] restoreRecycleItem type=${type} id=${id}`)
   const headers = {}
-  if (token) headers['Authorization'] = `Bearer ${token}`
+  if (token && token !== COOKIE_SESSION_SENTINEL) headers['Authorization'] = `Bearer ${token}`
   const response = await fetch(`${API_BASE}/recycle-bin/${type}/${id}/restore`, {
     method: 'POST',
     headers,
@@ -1381,7 +1487,7 @@ export async function regulateBehavior(task, energyLevel = 3, motivation = 5, to
   devlog(`[api] regulateBehavior task=${task} energy=${energyLevel}`)
   const response = await fetch(`${API_BASE}/behavior/regulate`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
+    headers: { 'Content-Type': 'application/json', ...(token && token !== COOKIE_SESSION_SENTINEL ? { 'Authorization': `Bearer ${token}` } : {}) },
     body: JSON.stringify({ task, energy_level: energyLevel, motivation })
   })
   const contentType = response.headers.get('content-type') || ''
@@ -1398,7 +1504,7 @@ export async function createHabit(habitName, anchor = '', energyLevel = 3, token
   devlog(`[api] createHabit name=${habitName}`)
   const response = await fetch(`${API_BASE}/habits/create`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
+    headers: { 'Content-Type': 'application/json', ...(token && token !== COOKIE_SESSION_SENTINEL ? { 'Authorization': `Bearer ${token}` } : {}) },
     body: JSON.stringify({ habit_name: habitName, anchor, energy_level: energyLevel })
   })
   const contentType = response.headers.get('content-type') || ''
@@ -1414,7 +1520,7 @@ export async function createHabit(habitName, anchor = '', energyLevel = 3, token
 export async function fetchHabits(token) {
   devlog(`[api] fetchHabits`)
   const response = await fetch(`${API_BASE}/habits`, {
-    headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+    headers: token && token !== COOKIE_SESSION_SENTINEL ? { 'Authorization': `Bearer ${token}` } : {}
   })
   const contentType = response.headers.get('content-type') || ''
   if (!contentType.includes('application/json')) {
@@ -1430,7 +1536,7 @@ export async function executeHabit(habitId, energyLevel = 3, token) {
   devlog(`[api] executeHabit ${habitId} energy=${energyLevel}`)
   const response = await fetch(`${API_BASE}/habits/${habitId}/execute`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
+    headers: { 'Content-Type': 'application/json', ...(token && token !== COOKIE_SESSION_SENTINEL ? { 'Authorization': `Bearer ${token}` } : {}) },
     body: JSON.stringify({ habit_id: habitId, energy_level: energyLevel })
   })
   const contentType = response.headers.get('content-type') || ''
@@ -1447,7 +1553,7 @@ export async function logHabitExecution(habitId, tierExecuted, wasCompleted, com
   devlog(`[api] logHabitExecution ${habitId} tier=${tierExecuted} completed=${wasCompleted}`)
   const response = await fetch(`${API_BASE}/habits/${habitId}/log`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
+    headers: { 'Content-Type': 'application/json', ...(token && token !== COOKIE_SESSION_SENTINEL ? { 'Authorization': `Bearer ${token}` } : {}) },
     body: JSON.stringify({ 
       habit_id: habitId, 
       tier_executed: tierExecuted,
@@ -1470,7 +1576,7 @@ export async function logHabitExecution(habitId, tierExecuted, wasCompleted, com
 export async function fetchHabitsDashboard(token) {
   devlog(`[api] fetchHabitsDashboard`)
   const response = await fetch(`${API_BASE}/habits/dashboard`, {
-    headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+    headers: token && token !== COOKIE_SESSION_SENTINEL ? { 'Authorization': `Bearer ${token}` } : {}
   })
   const contentType = response.headers.get('content-type') || ''
   if (!contentType.includes('application/json')) {
@@ -1487,7 +1593,7 @@ export async function fetchHabitsDashboard(token) {
 export async function fetchFormationProfile(userId, token) {
   devlog(`[api] fetchFormationProfile userId=${userId}`)
   const response = await fetch(`${API_BASE}/sfds/v3/formation/profile/${userId}`, {
-    headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+    headers: token && token !== COOKIE_SESSION_SENTINEL ? { 'Authorization': `Bearer ${token}` } : {}
   })
   const contentType = response.headers.get('content-type') || ''
   if (!contentType.includes('application/json')) {
@@ -1502,7 +1608,7 @@ export async function fetchFormationProfile(userId, token) {
 export async function fetchFormationDimensions(token) {
   devlog(`[api] fetchFormationDimensions`)
   const response = await fetch(`${API_BASE}/sfds/v3/formation/dimensions`, {
-    headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+    headers: token && token !== COOKIE_SESSION_SENTINEL ? { 'Authorization': `Bearer ${token}` } : {}
   })
   const contentType = response.headers.get('content-type') || ''
   if (!contentType.includes('application/json')) {
@@ -1521,7 +1627,7 @@ export async function saveReflectionAnswers(userId, answers, token) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+      ...(token && token !== COOKIE_SESSION_SENTINEL ? { 'Authorization': `Bearer ${token}` } : {})
     },
     body: JSON.stringify({ user_id: String(userId), answers })
   })
@@ -1534,7 +1640,7 @@ export async function saveReflectionAnswers(userId, answers, token) {
 
 export async function fetchReflectionAnswers(userId, token) {
   const response = await fetch(`${API_BASE}/reflection/load?user_id=${userId}`, {
-    headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+    headers: token && token !== COOKIE_SESSION_SENTINEL ? { 'Authorization': `Bearer ${token}` } : {}
   })
   const contentType = response.headers.get('content-type') || ''
   if (!contentType.includes('application/json')) throw new Error('后端服务未运行')
@@ -1548,7 +1654,7 @@ export async function fetchReflectionAnswers(userId, token) {
 export async function fetchBehaviorHistory(userId, token, limit = 30) {
   devlog(`[api] fetchBehaviorHistory userId=${userId} limit=${limit}`)
   const response = await fetch(`${API_BASE}/behavior/history?user_id=${userId}&limit=${limit}`, {
-    headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+    headers: token && token !== COOKIE_SESSION_SENTINEL ? { 'Authorization': `Bearer ${token}` } : {}
   })
   const contentType = response.headers.get('content-type') || ''
   if (!contentType.includes('application/json')) {
@@ -1563,7 +1669,7 @@ export async function fetchBehaviorHistory(userId, token, limit = 30) {
 export async function fetchBehaviorStats(userId, token) {
   devlog(`[api] fetchBehaviorStats userId=${userId}`)
   const response = await fetch(`${API_BASE}/behavior/stats?user_id=${userId}`, {
-    headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+    headers: token && token !== COOKIE_SESSION_SENTINEL ? { 'Authorization': `Bearer ${token}` } : {}
   })
   const contentType = response.headers.get('content-type') || ''
   if (!contentType.includes('application/json')) {
@@ -1583,7 +1689,7 @@ export async function createHabitsFromFormationPlan(userId, planItems, planType,
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+      ...(token && token !== COOKIE_SESSION_SENTINEL ? { 'Authorization': `Bearer ${token}` } : {})
     },
     body: JSON.stringify({
       user_id: userId,
@@ -1612,7 +1718,7 @@ export async function fetchBibleVideo(book, chapter, verses, token = null) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+        ...(token && token !== COOKIE_SESSION_SENTINEL ? { 'Authorization': `Bearer ${token}` } : {}),
       },
       body: JSON.stringify({ book, chapter, verses }),
       signal: controller.signal,
@@ -1653,7 +1759,7 @@ export async function fetchSeekersClassCourses() {
 // ─────────────────────────────────────────────────────────────────────────────
 const voiceHeaders = (token, json = false) => ({
   ...(json ? { 'Content-Type': 'application/json' } : {}),
-  ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  ...(token && token !== COOKIE_SESSION_SENTINEL ? { Authorization: `Bearer ${token}` } : {}),
 })
 
 export async function fetchVoiceConfig(token) {
@@ -1767,7 +1873,7 @@ export function filmVideoUrl(result) {
 // ─────────────────────────────────────────────────────────────────────────────
 const idolHeaders = (token, json = false) => ({
   ...(json ? { 'Content-Type': 'application/json' } : {}),
-  ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  ...(token && token !== COOKIE_SESSION_SENTINEL ? { Authorization: `Bearer ${token}` } : {}),
 })
 
 export async function fetchIdolatryMeta() {
@@ -1808,7 +1914,7 @@ export async function fetchIdolatryLatest(token) {
 // ─────────────────────────────────────────────────────────────────────────────
 const waitHeaders = (token, json = false) => ({
   ...(json ? { 'Content-Type': 'application/json' } : {}),
-  ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  ...(token && token !== COOKIE_SESSION_SENTINEL ? { Authorization: `Bearer ${token}` } : {}),
 })
 
 export async function fetchWaitingMeta() {
@@ -1879,7 +1985,7 @@ export async function submitWaitingReflection(caseId, payload, token) {
 // ─────────────────────────────────────────────────────────────────────────────
 export async function fetchWeeklyPastoral(token) {
   const res = await fetch(`${API_BASE}/pastoral/weekly`, {
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
+    headers: token && token !== COOKIE_SESSION_SENTINEL ? { Authorization: `Bearer ${token}` } : {},
   })
   if (!res.ok) throw new Error('加载牧养小结失败')
   return res.json()
@@ -1890,7 +1996,7 @@ export async function fetchWeeklyPastoral(token) {
 // ─────────────────────────────────────────────────────────────────────────────
 const examenHeaders = (token, json = false) => ({
   ...(json ? { 'Content-Type': 'application/json' } : {}),
-  ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  ...(token && token !== COOKIE_SESSION_SENTINEL ? { Authorization: `Bearer ${token}` } : {}),
 })
 
 export async function fetchExamenToday(token) {
@@ -1919,7 +2025,7 @@ export async function fetchExamenHistory(token, limit = 30) {
 // ─────────────────────────────────────────────────────────────────────────────
 const pushHeaders = (token, json = false) => ({
   ...(json ? { 'Content-Type': 'application/json' } : {}),
-  ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  ...(token && token !== COOKIE_SESSION_SENTINEL ? { Authorization: `Bearer ${token}` } : {}),
 })
 
 export async function fetchVapidKey() {
@@ -1950,7 +2056,7 @@ export async function testPush(token) {
 // ─────────────────────────────────────────────────────────────────────────────
 const rdHeaders = (token, json = false) => ({
   ...(json ? { 'Content-Type': 'application/json' } : {}),
-  ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  ...(token && token !== COOKIE_SESSION_SENTINEL ? { Authorization: `Bearer ${token}` } : {}),
 })
 export async function fetchReadingStatus(planId, token) {
   const res = await fetch(`${API_BASE}/reading/status?plan_id=${encodeURIComponent(planId)}`, { headers: rdHeaders(token) })
@@ -1998,7 +2104,7 @@ export async function deleteMemoryVerse(id, token) {
 // ─────────────────────────────────────────────────────────────────────────────
 const hubHeaders = (token, json = false) => ({
   ...(json ? { 'Content-Type': 'application/json' } : {}),
-  ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  ...(token && token !== COOKIE_SESSION_SENTINEL ? { Authorization: `Bearer ${token}` } : {}),
 })
 export async function addGratitude(content, token) {
   const res = await fetch(`${API_BASE}/gratitude`, { method: 'POST', headers: hubHeaders(token, true), body: JSON.stringify({ content }) })
@@ -2038,13 +2144,13 @@ export async function exportMyData(token) {
 export async function diagnoseGospel(payload, token) {
   const res = await fetch(`${API_BASE}/gospel/diagnose`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+    headers: { 'Content-Type': 'application/json', ...(token && token !== COOKIE_SESSION_SENTINEL ? { Authorization: `Bearer ${token}` } : {}) },
     body: JSON.stringify(payload),
   })
   const d = await res.json().catch(() => ({})); if (!res.ok) throw new Error(d.detail || '诊断失败'); return d
 }
 export async function fetchGospelHistory(token, limit = 20) {
-  const res = await fetch(`${API_BASE}/gospel/history?limit=${limit}`, { headers: token ? { Authorization: `Bearer ${token}` } : {} })
+  const res = await fetch(`${API_BASE}/gospel/history?limit=${limit}`, { headers: token && token !== COOKIE_SESSION_SENTINEL ? { Authorization: `Bearer ${token}` } : {} })
   if (!res.ok) throw new Error('加载失败'); return res.json()
 }
 
@@ -2053,7 +2159,7 @@ export async function fetchGospelHistory(token, limit = 20) {
 // ─────────────────────────────────────────────────────────────────────────────
 const _dAuth = (token, json = false) => ({
   ...(json ? { 'Content-Type': 'application/json' } : {}),
-  ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  ...(token && token !== COOKIE_SESSION_SENTINEL ? { Authorization: `Bearer ${token}` } : {}),
 })
 
 export async function fetchDiscipleMeta() {
@@ -2123,7 +2229,7 @@ export async function fetchDiscipleMilestones(token) {
 // 清晨甘露 / Morning Dew (司布真默想)
 // ─────────────────────────────────────────────────────────────────────────────
 export async function fetchDewToday(tier = 10, token) {
-  const res = await fetch(`${API_BASE}/dew/today?tier=${tier}`, { headers: token ? { Authorization: `Bearer ${token}` } : {} })
+  const res = await fetch(`${API_BASE}/dew/today?tier=${tier}`, { headers: token && token !== COOKIE_SESSION_SENTINEL ? { Authorization: `Bearer ${token}` } : {} })
   if (!res.ok) throw new Error('加载今日甘露失败'); return res.json()
 }
 
@@ -2132,7 +2238,7 @@ export async function fetchDewToday(tier = 10, token) {
 // ─────────────────────────────────────────────────────────────────────────────
 export async function submitCheckup(ratings, token) {
   const res = await fetch(`${API_BASE}/checkup/submit`, {
-    method: 'POST', headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+    method: 'POST', headers: { 'Content-Type': 'application/json', ...(token && token !== COOKIE_SESSION_SENTINEL ? { Authorization: `Bearer ${token}` } : {}) },
     body: JSON.stringify({ ratings, use_ai: true }),
   })
   const d = await res.json().catch(() => ({})); if (!res.ok) throw new Error(d.detail || '体检失败'); return d
@@ -2142,11 +2248,11 @@ export async function submitCheckup(ratings, token) {
 // 天路客 / Pilgrim Journey
 // ─────────────────────────────────────────────────────────────────────────────
 export async function fetchPilgrimCurrent(token) {
-  const res = await fetch(`${API_BASE}/pilgrim/current`, { headers: token ? { Authorization: `Bearer ${token}` } : {} })
+  const res = await fetch(`${API_BASE}/pilgrim/current`, { headers: token && token !== COOKIE_SESSION_SENTINEL ? { Authorization: `Bearer ${token}` } : {} })
   if (!res.ok) throw new Error('加载天路历程失败'); return res.json()
 }
 export async function fetchPilgrimJourney(token) {
-  const res = await fetch(`${API_BASE}/pilgrim/journey`, { headers: token ? { Authorization: `Bearer ${token}` } : {} })
+  const res = await fetch(`${API_BASE}/pilgrim/journey`, { headers: token && token !== COOKIE_SESSION_SENTINEL ? { Authorization: `Bearer ${token}` } : {} })
   if (!res.ok) throw new Error('加载旅程失败'); return res.json()
 }
 
@@ -2155,7 +2261,7 @@ export async function fetchPilgrimJourney(token) {
 // ─────────────────────────────────────────────────────────────────────────────
 export async function evaluateVirtues(stateVector, token) {
   const res = await fetch(`${API_BASE}/virtues/evaluate`, {
-    method: 'POST', headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+    method: 'POST', headers: { 'Content-Type': 'application/json', ...(token && token !== COOKIE_SESSION_SENTINEL ? { Authorization: `Bearer ${token}` } : {}) },
     body: JSON.stringify({ state_vector: stateVector || {}, use_ai: true }),
   })
   const d = await res.json().catch(() => ({})); if (!res.ok) throw new Error(d.detail || '评估失败'); return d
@@ -2166,7 +2272,7 @@ export async function evaluateVirtues(stateVector, token) {
 // ─────────────────────────────────────────────────────────────────────────────
 export async function runDiscernment(payload, token) {
   const res = await fetch(`${API_BASE}/discern/run`, {
-    method: 'POST', headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+    method: 'POST', headers: { 'Content-Type': 'application/json', ...(token && token !== COOKIE_SESSION_SENTINEL ? { Authorization: `Bearer ${token}` } : {}) },
     body: JSON.stringify(payload),
   })
   const d = await res.json().catch(() => ({})); if (!res.ok) throw new Error(d.detail || '辨识失败'); return d
@@ -2182,7 +2288,7 @@ export async function fetchFuelPack(key, ai = 0) {
   const res = await fetch(`${API_BASE}/fuel/pack/${key}?ai=${ai}`); if (!res.ok) throw new Error('加载失败'); return res.json()
 }
 export async function fetchRecommendedFuel(token) {
-  const res = await fetch(`${API_BASE}/formation/recommend`, { headers: token ? { Authorization: `Bearer ${token}` } : {} })
+  const res = await fetch(`${API_BASE}/formation/recommend`, { headers: token && token !== COOKIE_SESSION_SENTINEL ? { Authorization: `Bearer ${token}` } : {} })
   const d = await res.json().catch(() => ({})); if (!res.ok) throw new Error(d.detail || '加载失败'); return d
 }
 
@@ -2190,12 +2296,12 @@ export async function fetchRecommendedFuel(token) {
 // 双属灵 Agent / Spiritual Agents (司布真 / 钟马田)
 // ─────────────────────────────────────────────────────────────────────────────
 export async function fetchAgentMeta(token) {
-  const res = await fetch(`${API_BASE}/agent/meta`, { headers: token ? { Authorization: `Bearer ${token}` } : {} })
+  const res = await fetch(`${API_BASE}/agent/meta`, { headers: token && token !== COOKIE_SESSION_SENTINEL ? { Authorization: `Bearer ${token}` } : {} })
   if (!res.ok) throw new Error('加载失败'); return res.json()
 }
 export async function chatAgent(agent, messages, token) {
   const res = await fetch(`${API_BASE}/agent/chat`, {
-    method: 'POST', headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+    method: 'POST', headers: { 'Content-Type': 'application/json', ...(token && token !== COOKIE_SESSION_SENTINEL ? { Authorization: `Bearer ${token}` } : {}) },
     body: JSON.stringify({ agent, messages }),
   })
   const d = await res.json().catch(() => ({})); if (!res.ok) throw new Error(d.detail || '对话失败'); return d
@@ -2204,7 +2310,7 @@ export async function chatAgent(agent, messages, token) {
 
 // ===== 在线社区 =====
 export async function fetchCommunityFeed(limit = 20, offset = 0, token) {
-  const headers = token ? { Authorization: `Bearer ${token}` } : {}
+  const headers = token && token !== COOKIE_SESSION_SENTINEL ? { Authorization: `Bearer ${token}` } : {}
   const r = await fetch(`${API_BASE}/community/feed?limit=${limit}&offset=${offset}`, { headers })
   const ct = r.headers.get('content-type') || ''
   if (!ct.includes('application/json')) throw new Error('后端服务未运行（请先启动 backend/main.py）')
@@ -2215,7 +2321,7 @@ export async function fetchCommunityFeed(limit = 20, offset = 0, token) {
 export async function createCommunityPost({ content, statusKey, statusLabel, statusEmoji }, token, isPublic = false) {
   const r = await fetch(`${API_BASE}/community/feed`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+    headers: { 'Content-Type': 'application/json', ...(token && token !== COOKIE_SESSION_SENTINEL ? { Authorization: `Bearer ${token}` } : {}) },
     body: JSON.stringify({ content: content || '', status_key: statusKey || '', status_label: statusLabel || '', status_emoji: statusEmoji || '', is_public: isPublic }),
   })
   const data = await r.json().catch(() => ({}))
@@ -2223,19 +2329,19 @@ export async function createCommunityPost({ content, statusKey, statusLabel, sta
   return data
 }
 export async function deleteCommunityPost(id, token) {
-  const r = await fetch(`${API_BASE}/community/feed/${id}`, { method: 'DELETE', headers: token ? { Authorization: `Bearer ${token}` } : {} })
+  const r = await fetch(`${API_BASE}/community/feed/${id}`, { method: 'DELETE', headers: token && token !== COOKIE_SESSION_SENTINEL ? { Authorization: `Bearer ${token}` } : {} })
   const data = await r.json().catch(() => ({}))
   if (!r.ok) throw new Error(data.detail || '删除失败')
   return data
 }
 export async function amenCommunityPost(id, token) {
-  const r = await fetch(`${API_BASE}/community/feed/${id}/amen`, { method: 'POST', headers: token ? { Authorization: `Bearer ${token}` } : {} })
+  const r = await fetch(`${API_BASE}/community/feed/${id}/amen`, { method: 'POST', headers: token && token !== COOKIE_SESSION_SENTINEL ? { Authorization: `Bearer ${token}` } : {} })
   const data = await r.json().catch(() => ({}))
   if (!r.ok) throw new Error(data.detail || '操作失败')
   return data
 }
 export async function fetchCommunityComments(postId, token) {
-  const r = await fetch(`${API_BASE}/community/feed/${postId}/comments`, { headers: token ? { Authorization: `Bearer ${token}` } : {} })
+  const r = await fetch(`${API_BASE}/community/feed/${postId}/comments`, { headers: token && token !== COOKIE_SESSION_SENTINEL ? { Authorization: `Bearer ${token}` } : {} })
   const data = await r.json().catch(() => ({}))
   if (!r.ok) throw new Error(data.detail || '加载评论失败')
   return data
@@ -2243,7 +2349,7 @@ export async function fetchCommunityComments(postId, token) {
 export async function createCommunityComment(postId, content, token) {
   const r = await fetch(`${API_BASE}/community/feed/${postId}/comments`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+    headers: { 'Content-Type': 'application/json', ...(token && token !== COOKIE_SESSION_SENTINEL ? { Authorization: `Bearer ${token}` } : {}) },
     body: JSON.stringify({ content }),
   })
   const data = await r.json().catch(() => ({}))
@@ -2251,7 +2357,7 @@ export async function createCommunityComment(postId, content, token) {
   return data
 }
 export async function deleteCommunityComment(id, token) {
-  const r = await fetch(`${API_BASE}/community/feed/comments/${id}`, { method: 'DELETE', headers: token ? { Authorization: `Bearer ${token}` } : {} })
+  const r = await fetch(`${API_BASE}/community/feed/comments/${id}`, { method: 'DELETE', headers: token && token !== COOKIE_SESSION_SENTINEL ? { Authorization: `Bearer ${token}` } : {} })
   const data = await r.json().catch(() => ({}))
   if (!r.ok) throw new Error(data.detail || '删除失败')
   return data
@@ -2262,7 +2368,7 @@ export async function deleteCommunityComment(id, token) {
 // ─────────────────────────────────────────────────────────────────────────────
 const churchHeaders = (token, json = false) => ({
   ...(json ? { 'Content-Type': 'application/json' } : {}),
-  ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  ...(token && token !== COOKIE_SESSION_SENTINEL ? { Authorization: `Bearer ${token}` } : {}),
 })
 
 export async function fetchMyChurch(token) {
@@ -2335,7 +2441,7 @@ export async function fetchMemoryMilestones(token) {
 // ─────────────────────────────────────────────────────────────────────────────
 const twHeaders = (token, json = false) => ({
   ...(json ? { 'Content-Type': 'application/json' } : {}),
-  ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  ...(token && token !== COOKIE_SESSION_SENTINEL ? { Authorization: `Bearer ${token}` } : {}),
 })
 
 export async function fetchTestimonies(limit = 20, offset = 0, token = null) {
@@ -2393,7 +2499,7 @@ export async function fetchGratitudeReview(days = 7, token) {
 // ─────────────────────────────────────────────────────────────────────────────
 const _gAuth = (token, json = false) => ({
   ...(json ? { 'Content-Type': 'application/json' } : {}),
-  ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  ...(token && token !== COOKIE_SESSION_SENTINEL ? { Authorization: `Bearer ${token}` } : {}),
 })
 
 export async function fetchGiftMeta() {
@@ -2433,45 +2539,45 @@ export async function fetchWorldviewMeta() {
 
 // ── 统一成长闭环 (/api/formation) ──
 export async function fetchFormationState(token) {
-  const res = await fetch(`${API_BASE}/formation/state`, { headers: token ? { Authorization: `Bearer ${token}` } : {} })
+  const res = await fetch(`${API_BASE}/formation/state`, { headers: token && token !== COOKIE_SESSION_SENTINEL ? { Authorization: `Bearer ${token}` } : {} })
   const d = await res.json().catch(() => ({})); if (!res.ok) throw new Error(d.detail || '加载失败'); return d
 }
 export async function fetchFormationTimeline(token, limit = 30, source = null) {
   const qs = new URLSearchParams({ limit: String(limit) }); if (source) qs.set('source', source)
-  const res = await fetch(`${API_BASE}/formation/timeline?${qs.toString()}`, { headers: token ? { Authorization: `Bearer ${token}` } : {} })
+  const res = await fetch(`${API_BASE}/formation/timeline?${qs.toString()}`, { headers: token && token !== COOKIE_SESSION_SENTINEL ? { Authorization: `Bearer ${token}` } : {} })
   const d = await res.json().catch(() => ({})); if (!res.ok) throw new Error(d.detail || '加载失败'); return d
 }
 export async function fetchFormationNext(token) {
-  const res = await fetch(`${API_BASE}/formation/next`, { headers: token ? { Authorization: `Bearer ${token}` } : {} })
+  const res = await fetch(`${API_BASE}/formation/next`, { headers: token && token !== COOKIE_SESSION_SENTINEL ? { Authorization: `Bearer ${token}` } : {} })
   const d = await res.json().catch(() => ({})); if (!res.ok) throw new Error(d.detail || '加载失败'); return d
 }
 export async function fetchFormationCurve(token, days = 90, bucket = 'week') {
   const qs = new URLSearchParams({ days: String(days), bucket })
-  const res = await fetch(`${API_BASE}/formation/curve?${qs.toString()}`, { headers: token ? { Authorization: `Bearer ${token}` } : {} })
+  const res = await fetch(`${API_BASE}/formation/curve?${qs.toString()}`, { headers: token && token !== COOKIE_SESSION_SENTINEL ? { Authorization: `Bearer ${token}` } : {} })
   const d = await res.json().catch(() => ({})); if (!res.ok) throw new Error(d.detail || '加载失败'); return d
 }
 
 // ── 关怀可见性同意 (/api/care/my-consent) ──
 export async function fetchCareConsent(token) {
-  const res = await fetch(`${API_BASE}/care/my-consent`, { headers: token ? { Authorization: `Bearer ${token}` } : {} })
+  const res = await fetch(`${API_BASE}/care/my-consent`, { headers: token && token !== COOKIE_SESSION_SENTINEL ? { Authorization: `Bearer ${token}` } : {} })
   const d = await res.json().catch(() => ({})); if (!res.ok) throw new Error(d.detail || '加载失败'); return d
 }
 export async function saveCareConsent(share, token) {
-  const res = await fetch(`${API_BASE}/care/my-consent`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) }, body: JSON.stringify({ share_formation_flags: share }) })
+  const res = await fetch(`${API_BASE}/care/my-consent`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...(token && token !== COOKIE_SESSION_SENTINEL ? { Authorization: `Bearer ${token}` } : {}) }, body: JSON.stringify({ share_formation_flags: share }) })
   const d = await res.json().catch(() => ({})); if (!res.ok) throw new Error(d.detail || '保存失败'); return d
 }
 export async function postFormationEvent(payload, token) {
-  const res = await fetch(`${API_BASE}/formation/event`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) }, body: JSON.stringify(payload) })
+  const res = await fetch(`${API_BASE}/formation/event`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...(token && token !== COOKIE_SESSION_SENTINEL ? { Authorization: `Bearer ${token}` } : {}) }, body: JSON.stringify(payload) })
   const d = await res.json().catch(() => ({})); if (!res.ok) throw new Error(d.detail || '写入失败'); return d
 }
 export async function postFormationBaseline(payload, token) {
-  const res = await fetch(`${API_BASE}/formation/baseline`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) }, body: JSON.stringify(payload) })
+  const res = await fetch(`${API_BASE}/formation/baseline`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...(token && token !== COOKIE_SESSION_SENTINEL ? { Authorization: `Bearer ${token}` } : {}) }, body: JSON.stringify(payload) })
   const d = await res.json().catch(() => ({})); if (!res.ok) throw new Error(d.detail || '诊断失败'); return d
 }
 
 // ── 统一辨识 (/api/discernment) ──
 export async function diagnoseDiscernment(payload, token) {
-  const res = await fetch(`${API_BASE}/discernment/diagnose`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) }, body: JSON.stringify(payload) })
+  const res = await fetch(`${API_BASE}/discernment/diagnose`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...(token && token !== COOKIE_SESSION_SENTINEL ? { Authorization: `Bearer ${token}` } : {}) }, body: JSON.stringify(payload) })
   const d = await res.json().catch(() => ({})); if (!res.ok) throw new Error(d.detail || '诊断失败'); return d
 }
 
@@ -2557,7 +2663,7 @@ export function clearSwrCache() {
 // ─────────────────────────────────────────────────────────────────────────────
 const lectioHeaders = (token, json = false) => ({
   ...(json ? { 'Content-Type': 'application/json' } : {}),
-  ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  ...(token && token !== COOKIE_SESSION_SENTINEL ? { Authorization: `Bearer ${token}` } : {}),
 })
 
 export async function fetchLectioPassages(token) {
@@ -2611,7 +2717,7 @@ export async function fetchLectioHistory(token, limit = 30) {
 // ─────────────────────────────────────────────────────────────────────────────
 const psalmHeaders = (token, json = false) => ({
   ...(json ? { 'Content-Type': 'application/json' } : {}),
-  ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  ...(token && token !== COOKIE_SESSION_SENTINEL ? { Authorization: `Bearer ${token}` } : {}),
 })
 
 export async function fetchPsalms(token) {
@@ -2666,7 +2772,7 @@ export async function fetchPsalmHistory(token, limit = 30) {
 // ─────────────────────────────────────────────────────────────────────────────
 const missionHeaders = (token, json = false) => ({
   ...(json ? { 'Content-Type': 'application/json' } : {}),
-  ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  ...(token && token !== COOKIE_SESSION_SENTINEL ? { Authorization: `Bearer ${token}` } : {}),
 })
 export async function fetchMissionDomains(token) {
   const res = await fetch(`${API_BASE}/mission-life/domains`, { headers: missionHeaders(token) })
@@ -2708,18 +2814,17 @@ export async function fetchMissionReview(token) {
 // ─────────────────────────────────────────────────────────────────────────────
 // B1-6 新 skill 统一封装：祷告规则/代祷/同在/试探/果子/安息/禁食
 // ─────────────────────────────────────────────────────────────────────────────
-const _fH = (token, json = false) => ({
+const _fH = (token, json = false) => bearerHeaders(token, {
   ...(json ? { 'Content-Type': 'application/json' } : {}),
   'X-Lang': getRuntimeLang(),
-  ...(token ? { Authorization: `Bearer ${token}` } : {}),
 })
 async function _fGet(path, token) {
-  const r = await fetch(`${API_BASE}${path}`, { headers: _fH(token) })
+  const r = await fetch(`${API_BASE}${path}`, authFetchInit(token, { headers: _fH(token) }))
   if (!r.ok) throw new Error('加载失败')
   return r.json()
 }
 async function _fPost(path, body, token) {
-  const r = await fetch(`${API_BASE}${path}`, { method: 'POST', headers: _fH(token, true), body: JSON.stringify(body || {}) })
+  const r = await fetch(`${API_BASE}${path}`, authFetchInit(token, { method: 'POST', headers: _fH(token, true), body: JSON.stringify(body || {}) }))
   const d = await r.json().catch(() => ({}))
   if (!r.ok) throw new Error(d.detail || '操作失败')
   return d
@@ -2774,7 +2879,7 @@ export const formationApi = {
 // B7 群体/门训 + B9 教义 统一封装
 // ─────────────────────────────────────────────────────────────────────────────
 async function _fPatch(path, body, token) {
-  const r = await fetch(`${API_BASE}${path}`, { method: 'PATCH', headers: _fH(token, true), body: JSON.stringify(body || {}) })
+  const r = await fetch(`${API_BASE}${path}`, authFetchInit(token, { method: 'PATCH', headers: _fH(token, true), body: JSON.stringify(body || {}) }))
   const d = await r.json().catch(() => ({})); if (!r.ok) throw new Error(d.detail || '操作失败'); return d
 }
 
@@ -2870,7 +2975,7 @@ export const prodApi = {
 }
 
 async function _fDelete(path, token) {
-  const r = await fetch(`${API_BASE}${path}`, { method: 'DELETE', headers: _fH(token) })
+  const r = await fetch(`${API_BASE}${path}`, authFetchInit(token, { method: 'DELETE', headers: _fH(token) }))
   const d = await r.json().catch(() => ({}))
   if (!r.ok) throw new Error(d.detail || '操作失败')
   return d
@@ -2936,7 +3041,7 @@ export const platformApi = {
 // Church Health OS · 健康教会九标志 (9Marks 教会健康生态层)
 // ─────────────────────────────────────────────────────────────────────────────
 async function _fPut(path, body, token) {
-  const r = await fetch(`${API_BASE}${path}`, { method: 'PUT', headers: _fH(token, true), body: JSON.stringify(body || {}) })
+  const r = await fetch(`${API_BASE}${path}`, authFetchInit(token, { method: 'PUT', headers: _fH(token, true), body: JSON.stringify(body || {}) }))
   const d = await r.json().catch(() => ({}))
   if (!r.ok) throw new Error(d.detail || '操作失败')
   return d
@@ -3092,27 +3197,29 @@ export const attentionApi = {
     return _attentionJson(res, '暂时无法加载成长曲线，请稍后再试。')
   },
   activeFocusSession: async (token) => {
-    const res = await fetch(`${API_BASE}/attention/focus-sessions/active`, { headers: _fH(token) })
+    const res = await fetch(`${API_BASE}/attention/focus-sessions/active`, authFetchInit(token, { headers: _fH(token) }))
     return _attentionJson(res, '暂时无法加载专注状态。')
   },
   startFocusSession: async (body, token) => {
-    const res = await fetch(`${API_BASE}/attention/focus-sessions`, { method: 'POST', headers: _fH(token, true), body: JSON.stringify(body || {}) })
+    const res = await fetch(`${API_BASE}/attention/focus-sessions`, authFetchInit(token, { method: 'POST', headers: _fH(token, true), body: JSON.stringify(body || {}) }))
     return _attentionJson(res, '开始专注时遇到问题。')
   },
   endFocusSession: async (id, body, token) => {
-    const res = await fetch(`${API_BASE}/attention/focus-sessions/${encodeURIComponent(id)}/end`, { method: 'POST', headers: _fH(token, true), body: JSON.stringify(body || {}) })
+    const res = await fetch(`${API_BASE}/attention/focus-sessions/${encodeURIComponent(id)}/end`, authFetchInit(token, { method: 'POST', headers: _fH(token, true), body: JSON.stringify(body || {}) }))
     return _attentionJson(res, '结束专注时遇到问题。')
   },
   interruptFocusSession: async (id, body, token) => {
-    const res = await fetch(`${API_BASE}/attention/focus-sessions/${encodeURIComponent(id)}/interrupt`, { method: 'POST', headers: _fH(token, true), body: JSON.stringify(body || {}) })
+    const res = await fetch(`${API_BASE}/attention/focus-sessions/${encodeURIComponent(id)}/interrupt`, authFetchInit(token, { method: 'POST', headers: _fH(token, true), body: JSON.stringify(body || {}) }))
     return _attentionJson(res, '记录中断时遇到问题。')
   },
-  listFocusSessions: async ({ from, to, limit } = {}, token) => {
+  listFocusSessions: async ({ from, to, limit } = {}, token, timezone = '') => {
     const qs = new URLSearchParams()
     if (from) qs.set('from', from)
     if (to) qs.set('to', to)
     if (limit) qs.set('limit', String(limit))
-    const res = await fetch(`${API_BASE}/attention/focus-sessions${qs.toString() ? `?${qs}` : ''}`, { headers: _fH(token) })
+    const headers = _fH(token)
+    if (timezone) headers['X-Timezone'] = timezone
+    const res = await fetch(`${API_BASE}/attention/focus-sessions${qs.toString() ? `?${qs}` : ''}`, authFetchInit(token, { headers }))
     return _attentionJson(res, '暂时无法加载专注记录。')
   },
   listEntries: async ({ date } = {}, token) => {

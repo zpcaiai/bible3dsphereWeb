@@ -1,4 +1,4 @@
-import React, { useEffect, useId, useMemo, useState } from 'react'
+import React, { useEffect, useId, useMemo, useRef, useState } from 'react'
 import { attentionApi } from '../../../api'
 import {
   ATTENTION_DURATION_OPTIONS,
@@ -441,31 +441,65 @@ function AttentionCovenantScreen({ covenant, token, timezone, onSaved, onBack, o
   )
 }
 
+function formatFocusHistoryDuration(session) {
+  if (session?.actualMinutes === 0) {
+    return `${i18nT('< 1 分钟')} (0 ${i18nT('分钟')})`
+  }
+  if (session?.actualMinutes != null) {
+    return `${session.actualMinutes} ${i18nT('分钟')}`
+  }
+  return `${i18nT('计划')} ${session?.plannedMinutes ?? 25} ${i18nT('分钟')}`
+}
+
 function FocusScreen({ token, onBack, openPage }) {
   const [active, setActive] = useState(null)
   const [sessions, setSessions] = useState([])
   const [form, setForm] = useState({ focusType: 'mission', plannedMinutes: 25, intention: '', openingPrayer: FOCUS_TYPE_META.mission.prayer })
   const [message, setMessage] = useState('')
   const [busy, setBusy] = useState(false)
-  const [tick, setTick] = useState(Date.now())
+  const [tick, setTick] = useState(() => Date.now())
   const [closingReflection, setClosingReflection] = useState('')
   const [interruptionReason, setInterruptionReason] = useState('')
+  const busyRef = useRef(false)
+  const localTimezone = useMemo(() => {
+    try {
+      return Intl.DateTimeFormat().resolvedOptions().timeZone || ''
+    } catch {
+      return ''
+    }
+  }, [])
 
   useEffect(() => {
     let cancelled = false
-    Promise.allSettled([attentionApi.activeFocusSession(token), attentionApi.listFocusSessions({ limit: 10 }, token)]).then(([a, l]) => {
+    Promise.allSettled([
+      attentionApi.activeFocusSession(token),
+      attentionApi.listFocusSessions({ limit: 10 }, token, localTimezone),
+    ]).then(([a, l]) => {
       if (cancelled) return
       if (a.status === 'fulfilled') setActive(a.value.active)
       if (l.status === 'fulfilled') setSessions(l.value.sessions || [])
       if (a.status === 'rejected' && l.status === 'rejected') setMessage(i18nT('暂时无法加载专注状态，请稍后重试。'))
     })
     return () => { cancelled = true }
-  }, [token])
+  }, [token, localTimezone])
 
   useEffect(() => {
     if (!active) return undefined
-    const id = window.setInterval(() => setTick(Date.now()), 1000)
-    return () => window.clearInterval(id)
+    const syncNow = () => setTick(Date.now())
+    syncNow()
+    const id = window.setInterval(syncNow, 1000)
+    const onVisibilityChange = () => {
+      if (typeof document === 'undefined' || document.visibilityState === 'visible') {
+        syncNow()
+      }
+    }
+    window.addEventListener('focus', syncNow)
+    document.addEventListener('visibilitychange', onVisibilityChange)
+    return () => {
+      window.clearInterval(id)
+      window.removeEventListener('focus', syncNow)
+      document.removeEventListener('visibilitychange', onVisibilityChange)
+    }
   }, [active])
 
   function patch(values) {
@@ -473,76 +507,119 @@ function FocusScreen({ token, onBack, openPage }) {
   }
 
   async function start() {
+    if (busyRef.current) return
+    busyRef.current = true
     setBusy(true)
     setMessage('')
     try {
       const result = await attentionApi.startFocusSession(form, token)
       setActive(result.session)
-      setSessions((current) => [result.session, ...current])
+      setTick(Date.now())
+      setSessions((current) => [result.session, ...current.filter((s) => s.id !== result.session?.id)])
     } catch (err) {
+      const isConflict = err?.status === 409
+        || err?.code === 'ACTIVE_FOCUS_SESSION_EXISTS'
+        || err?.payload?.code === 'ACTIVE_FOCUS_SESSION_EXISTS'
+      if (isConflict) {
+        let existingActive = err?.active || err?.payload?.active || err?.payload?.session || null
+        if (!existingActive) {
+          try {
+            const activeRes = await attentionApi.activeFocusSession(token)
+            existingActive = activeRes?.active || null
+          } catch {
+            existingActive = null
+          }
+        }
+        if (existingActive) {
+          setActive(existingActive)
+          setTick(Date.now())
+          setSessions((current) => [existingActive, ...current.filter((s) => s.id !== existingActive.id)])
+          setMessage(i18nT('已恢复正在进行的专注时段。'))
+          return
+        }
+      }
       setMessage(err.message || i18nT('开始专注时遇到问题。'))
     } finally {
+      busyRef.current = false
       setBusy(false)
     }
   }
 
   async function end() {
-    if (!active) return
+    if (!active || busyRef.current) return
+    busyRef.current = true
     setBusy(true)
+    setMessage('')
     try {
       const result = await attentionApi.endFocusSession(active.id, { closingReflection }, token)
+      const endedSession = result.session
       setActive(null)
-      setSessions((current) => [result.session, ...current.filter((s) => s.id !== result.session.id)])
+      setSessions((current) => [endedSession, ...current.filter((s) => s.id !== endedSession?.id)])
       setClosingReflection('')
+      const resolvedMinutes = endedSession?.actualMinutes ?? active.actualMinutes ?? active.plannedMinutes ?? 25
       try {
         window.sessionStorage.setItem('attention:ledger-draft', JSON.stringify({
           category: active.focusType || 'mission',
           activityName: active.intention || i18nT('{label}记录', { label: FOCUS_TYPE_META[active.focusType]?.label || i18nT('专注') }),
-          durationMinutes: result.session.actualMinutes || active.plannedMinutes || 25,
-          attentionState: active.interrupted ? 'scattered' : 'focused',
+          durationMinutes: resolvedMinutes,
+          attentionState: (endedSession?.interrupted ?? active.interrupted) ? 'scattered' : 'focused',
         }))
       } catch { /* transient prefill is optional */ }
       openPage('ledger')
     } catch (err) {
       setMessage(err.message || i18nT('结束专注时遇到问题。'))
     } finally {
+      busyRef.current = false
       setBusy(false)
     }
   }
 
   async function interrupt() {
-    if (!active) return
+    if (!active || busyRef.current) return
     const reason = interruptionReason.trim()
     if (!reason) return
+    busyRef.current = true
+    setBusy(true)
     try {
       const result = await attentionApi.interruptFocusSession(active.id, { interruptionReason: reason }, token)
       setActive(result.session)
+      setSessions((current) => [result.session, ...current.filter((s) => s.id !== result.session?.id)])
       setInterruptionReason('')
       setMessage(i18nT('已记录中断。看见牵引，是重新归回的开始。'))
     } catch (err) {
       setMessage(err.message || i18nT('记录中断时遇到问题。'))
+    } finally {
+      busyRef.current = false
+      setBusy(false)
     }
   }
 
-  const elapsed = active ? Math.max(0, Math.floor((tick - new Date(active.startedAt).getTime()) / 60000)) : 0
-  const remaining = active ? Math.max(0, Number(active.plannedMinutes || 0) - elapsed) : 0
+  const rawStartedMs = active?.startedAt ? new Date(active.startedAt).getTime() : tick
+  const startedMs = Number.isFinite(rawStartedMs) ? rawStartedMs : tick
+  const plannedMs = Math.max(0, Number(active?.plannedMinutes || 0) * 60_000)
+  const remainingMs = active ? Math.max(0, startedMs + plannedMs - tick) : 0
+  const totalRemainingSec = Math.ceil(remainingMs / 1000)
+  const remMinutes = Math.floor(totalRemainingSec / 60)
+  const remSeconds = totalRemainingSec % 60
+  const countdownMmSs = `${String(remMinutes).padStart(2, '0')}:${String(remSeconds).padStart(2, '0')}`
+  const elapsed = active ? Math.max(0, Math.floor((tick - startedMs) / 60000)) : 0
 
   return (
     <main className="attn-page">
       <PageHeader title={i18nT("专注模式")} subtitle={i18nT("以祷告开始一段使命专注，结束后把实际时间带回账本。")} onBack={onBack} />
-      {message ? <div className="attn-alert">{message}</div> : null}
+      {message ? <div className="attn-alert" role="status" data-testid="focus-status-banner">{message}</div> : null}
       <section className="attn-grid">
         <AttentionCard title={active ? i18nT('专注进行中') : i18nT('开始一段专注')}>
           {active ? (
             <div className="attn-focus-timer" aria-live="polite">
-              <strong>{remaining} {i18nT("分钟")}</strong>
+              <strong data-testid="focus-countdown-mmss">{countdownMmSs}</strong>
               <span>{i18nT("已进行")} {elapsed} {i18nT("分钟 / 计划")} {active.plannedMinutes} {i18nT("分钟")}</span>
               <p>{active.intention || i18nT('愿这段注意力忠心献上。')}</p>
               <Field label={i18nT("刚才是什么牵引了注意力？")}>
-                <input value={interruptionReason} onChange={(event) => setInterruptionReason(event.target.value)} placeholder={i18nT("只在需要记录中断时填写")}  aria-label={i18nT("只在需要记录中断时填写")}/>
+                <input value={interruptionReason} onChange={(event) => setInterruptionReason(event.target.value)} placeholder={i18nT("只在需要记录中断时填写")} aria-label={i18nT("只在需要记录中断时填写")}/>
               </Field>
               <Field label={i18nT("结束时的一句话复盘")}>
-                <textarea rows={3} value={closingReflection} onChange={(event) => setClosingReflection(event.target.value)} placeholder={i18nT("这段专注结束时，我留意到…")}  aria-label={i18nT("这段专注结束时，我留意到…")}/>
+                <textarea rows={3} value={closingReflection} onChange={(event) => setClosingReflection(event.target.value)} placeholder={i18nT("这段专注结束时，我留意到…")} aria-label={i18nT("这段专注结束时，我留意到…")}/>
               </Field>
               <div className="attn-footer-actions">
                 <button type="button" className="attn-button" disabled={busy} onClick={end}>{i18nT("结束专注")}</button>
@@ -558,14 +635,22 @@ function FocusScreen({ token, onBack, openPage }) {
               <Field label={i18nT("计划时长")}>
                 <div className="attn-pill-grid">{ATTENTION_DURATION_OPTIONS.map((min) => <button key={min} type="button" aria-pressed={form.plannedMinutes === min} className={`attn-pill ${form.plannedMinutes === min ? 'active' : ''}`} onClick={() => patch({ plannedMinutes: min })}>{min} {i18nT("分钟")}</button>)}</div>
               </Field>
-              <Field label={i18nT("这段专注献给什么？")}><input value={form.intention} onChange={(e) => patch({ intention: e.target.value })} placeholder={i18nT("例如：完成一个核心任务")}  aria-label={i18nT("例如：完成一个核心任务")}/></Field>
+              <Field label={i18nT("这段专注献给什么？")}><input value={form.intention} onChange={(e) => patch({ intention: e.target.value })} placeholder={i18nT("例如：完成一个核心任务")} aria-label={i18nT("例如：完成一个核心任务")}/></Field>
               <Field label={i18nT("开始祷告")}><textarea rows={4} value={form.openingPrayer} onChange={(e) => patch({ openingPrayer: e.target.value })} /></Field>
               <button type="button" className="attn-button" disabled={busy} onClick={start}>{busy ? i18nT('启动中…') : i18nT('开始专注')}</button>
             </div>
           )}
         </AttentionCard>
         <AttentionCard title={i18nT("最近专注")}>
-          <SimpleList items={sessions.slice(0, 8)} empty={i18nT("还没有专注记录。")} render={(s) => <span>{FOCUS_TYPE_META[s.focusType]?.label || s.focusType} · {s.actualMinutes || s.plannedMinutes} {i18nT("分钟")}{s.interrupted ? i18nT(' · 有中断') : ''}</span>} />
+          <SimpleList
+            items={sessions.slice(0, 8)}
+            empty={i18nT("还没有专注记录。")}
+            render={(s) => (
+              <span data-testid={`focus-history-item-${s.id}`}>
+                {FOCUS_TYPE_META[s.focusType]?.label || s.focusType} · {formatFocusHistoryDuration(s)}{s.interrupted ? i18nT(' · 有中断') : ''}
+              </span>
+            )}
+          />
         </AttentionCard>
       </section>
     </main>

@@ -25,10 +25,20 @@ const COHORT_OPTIONS = [
   '家庭支持实践小组',
 ]
 
+function isCandidateEvidenceIncomplete(res) {
+  if (!res || typeof res !== 'object') return false
+  if (res.evaluation?.eligibleForHumanReview === false) return true
+  const status = String(
+    res.status || res.candidate?.status || res.evaluation?.status || '',
+  ).toLowerCase()
+  return ['incomplete', 'needs_more_evidence', 'pending_evidence', 'draft', 'insufficient_evidence'].includes(status)
+}
+
 export default function TrainingConsole({ token, programs = [] }) {
   const [data, setData] = useState({ metrics: {}, cohorts: [] })
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
+  const [warningNotice, setWarningNotice] = useState('')
   const [busy, setBusy] = useState(false)
   const busyRef = useRef(false)
   const [cohort, setCohort] = useState({
@@ -53,14 +63,28 @@ export default function TrainingConsole({ token, programs = [] }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token])
 
-  const run = async (action, message) => {
+  useEffect(() => {
+    if (!Array.isArray(programs) || programs.length === 0) return
+    setCohort((prev) => {
+      const hasMatch = programs.some((p) => p.id === prev.programId)
+      if (hasMatch) return prev
+      return { ...prev, programId: programs[0]?.id || '' }
+    })
+  }, [programs])
+
+  const run = async (action, resolveFeedback) => {
     if (busyRef.current) return
     busyRef.current = true
     setBusy(true)
     setError('')
+    setWarningNotice('')
     try {
-      await action()
-      setNotice(message)
+      const res = await action()
+      if (typeof resolveFeedback === 'function') {
+        resolveFeedback(res)
+      } else {
+        setNotice(resolveFeedback)
+      }
       await load()
     } catch (e) {
       setError(e.message)
@@ -85,8 +109,17 @@ export default function TrainingConsole({ token, programs = [] }) {
           </div>
         ))}
       </div>
-      {error && <div className="mb-alert error">{error}</div>}
-      {notice && <div className="mb-alert success">{notice}</div>}
+      {error && <div className="mb-alert error" role="alert">{error}</div>}
+      {warningNotice && (
+        <div
+          className="mb-alert warning"
+          role="status"
+          data-testid="trainer-candidate-incomplete-warning"
+        >
+          {warningNotice}
+        </div>
+      )}
+      {notice && <div className="mb-alert success" role="status">{notice}</div>}
       <div className="mb-training-grid">
         <form
           onSubmit={(e) => {
@@ -99,6 +132,7 @@ export default function TrainingConsole({ token, programs = [] }) {
         >
           <h3>{t('创建项目小组')}</h3>
           <select
+            aria-label={t('选择项目')}
             value={cohort.programId}
             onChange={(e) => setCohort({ ...cohort, programId: e.target.value })}
           >
@@ -164,7 +198,21 @@ export default function TrainingConsole({ token, programs = [] }) {
           e.preventDefault()
           run(
             () => submitMissionBridgeTrainerCandidate(token, candidate),
-            t('候选证据已提交人工评审'),
+            (res) => {
+              if (isCandidateEvidenceIncomplete(res)) {
+                setNotice('')
+                const missing = Array.isArray(res?.evaluation?.missingEvidence)
+                  ? res.evaluation.missingEvidence.join('、')
+                  : ''
+                setWarningNotice(
+                  missing
+                    ? `${t('候选人证据尚未齐备，暂未进入人工评审队列。缺失项：')}${missing}`
+                    : t('候选人证据尚未齐备，暂未进入人工评审队列；请补齐证据后再提交。'),
+                )
+              } else {
+                setNotice(t('候选证据已提交人工评审'))
+              }
+            },
           )
         }}
       >

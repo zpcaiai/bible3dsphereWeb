@@ -1,5 +1,9 @@
-import { useEffect, useState } from 'react'
-import { fetchAttentionPilotDashboard, saveAttentionPilotTrigger, startAttentionPilotRecovery } from '../../missionBridgeApi'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import {
+  fetchAttentionPilotDashboard,
+  saveAttentionPilotTrigger,
+  startAttentionPilotRecovery,
+} from '../../missionBridgeApi'
 import { t } from '../../i18n/runtime'
 import './attentionPilotWorkspace.css'
 import GuidedInput from './GuidedInput'
@@ -9,4 +13,188 @@ const GRACE_OPTIONS = ['复发不定义我的身份，我愿意重新开始', '�
 const ENVIRONMENT_OPTIONS = ['把设备移出当前空间', '关闭非必要通知', '设置睡前设备停放点', '暂时离开容易触发的环境']
 const REPLACEMENT_OPTIONS = ['离开屏幕并走动五分钟', '联系守望伙伴', '做一次短祷告与呼吸练习', '完成一个十分钟离线任务']
 const SUPPORT_OPTIONS = ['请今晚与我简短联系', '请帮助我复盘触发情境', '请陪我制定下一步环境调整']
-export default function AttentionPilotWorkspace({token}){const[data,setData]=useState({flow:[],metrics:{},privacyRules:[]});const[mode,setMode]=useState('flow');const[error,setError]=useState('');const[notice,setNotice]=useState('');const[trigger,setTrigger]=useState({triggerCategory:'fatigue',intensity:3,contextSummary:''});const[recovery,setRecovery]=useState({category:'short_video',severity:3,graceStatement:'复发不定义我的身份，我愿意重新开始',environmentChange:'把设备移出当前空间',replacementAction:'离开屏幕并走动五分钟',supportRequest:''});const load=()=>fetchAttentionPilotDashboard(token).then(setData).catch(e=>setError(e.message));useEffect(()=>{load()},[token]);const run=async(action,message)=>{setError('');try{const value=await action();setNotice(value.message||message);await load()}catch(e){setError(e.message)}};return <section className="mb-attention-pilot"><div className="mb-attention-privacy">{data.privacyRules.map(rule=><span key={rule}>✓ {rule}</span>)}</div><div className="mb-attention-metrics">{Object.entries(data.metrics||{}).map(([key,value])=><div key={key}><strong>{value}</strong><span>{key}</span></div>)}</div><nav>{[['flow','30天流程'],['trigger','记录触发'],['recovery','失败后恢复']].map(([key,label])=><button type="button" className={mode===key?'active':''} onClick={()=>setMode(key)} key={key}>{t(label)}</button>)}</nav>{error&&<div className="mb-alert error">{error}</div>}{notice&&<div className="mb-alert success">{notice}</div>}{mode==='flow'&&<div className="mb-attention-flow">{data.flow.map((item,index)=><div key={item}><strong>{index+1}</strong><span>{item}</span></div>)}</div>}{mode==='trigger'&&<form onSubmit={e=>{e.preventDefault();run(()=>saveAttentionPilotTrigger(token,trigger),'触发已按类别记录')}}><select value={trigger.triggerCategory} onChange={e=>setTrigger({...trigger,triggerCategory:e.target.value})}><option value="fatigue">疲劳</option><option value="emotion">情绪</option><option value="time">时间</option><option value="place">场所</option><option value="social">社交</option><option value="other">其他</option></select><input type="range" min="1" max="5" value={trigger.intensity} onChange={e=>setTrigger({...trigger,intensity:Number(e.target.value)})}/><GuidedInput multiline options={CONTEXT_OPTIONS} maxLength={240} placeholder={t('只写简短情境，不填写链接、色情内容或具体搜索词')} value={trigger.contextSummary} onChange={contextSummary=>setTrigger({...trigger,contextSummary})} aria-label={t('只写简短情境，不填写链接、色情内容或具体搜索词')}/><button>{t('私密保存触发')}</button></form>}{mode==='recovery'&&<form onSubmit={e=>{e.preventDefault();run(()=>startAttentionPilotRecovery(token,recovery),'恢复计划已开始')}}><select value={recovery.category} onChange={e=>setRecovery({...recovery,category:e.target.value})}><option value="short_video">短视频</option><option value="gaming">游戏</option><option value="sexual_content">色情内容（不记录细节）</option><option value="other">其他</option></select><GuidedInput multiline options={GRACE_OPTIONS} required value={recovery.graceStatement} onChange={graceStatement=>setRecovery({...recovery,graceStatement})}/><GuidedInput multiline options={ENVIRONMENT_OPTIONS} required value={recovery.environmentChange} onChange={environmentChange=>setRecovery({...recovery,environmentChange})}/><GuidedInput multiline options={REPLACEMENT_OPTIONS} required value={recovery.replacementAction} onChange={replacementAction=>setRecovery({...recovery,replacementAction})}/><GuidedInput options={SUPPORT_OPTIONS} placeholder={t('可选：向守望伙伴发出的求助摘要')} value={recovery.supportRequest} onChange={supportRequest=>setRecovery({...recovery,supportRequest})} aria-label={t('可选：向守望伙伴发出的求助摘要')}/><button>{t('开始恢复，不从零定罪')}</button></form>}</section>}
+
+export default function AttentionPilotWorkspace({ token }) {
+  const [data, setData] = useState({ flow: [], metrics: {}, privacyRules: [] })
+  const [mode, setMode] = useState('flow')
+  const [error, setError] = useState('')
+  const [notice, setNotice] = useState('')
+  const [busy, setBusy] = useState(false)
+  const busyRef = useRef(false)
+  const [trigger, setTrigger] = useState({
+    triggerCategory: 'fatigue',
+    intensity: 3,
+    contextSummary: '',
+  })
+  const [recovery, setRecovery] = useState({
+    category: 'short_video',
+    severity: 3,
+    graceStatement: '复发不定义我的身份，我愿意重新开始',
+    environmentChange: '把设备移出当前空间',
+    replacementAction: '离开屏幕并走动五分钟',
+    supportRequest: '',
+  })
+
+  const load = useCallback(
+    () =>
+      fetchAttentionPilotDashboard(token)
+        .then(setData)
+        .catch((e) => setError(e.message)),
+    [token],
+  )
+
+  useEffect(() => {
+    void load()
+  }, [load])
+
+  const run = async (action, message) => {
+    if (busyRef.current) return
+    busyRef.current = true
+    setBusy(true)
+    setError('')
+    try {
+      const value = await action()
+      setNotice(value?.message || message)
+      await load()
+    } catch (e) {
+      setError(e.message)
+    } finally {
+      busyRef.current = false
+      setBusy(false)
+    }
+  }
+
+  return (
+    <section className="mb-attention-pilot">
+      <div className="mb-attention-privacy">
+        {data.privacyRules.map((rule) => (
+          <span key={rule}>✓ {rule}</span>
+        ))}
+      </div>
+      <div className="mb-attention-metrics">
+        {Object.entries(data.metrics || {}).map(([key, value]) => (
+          <div key={key}>
+            <strong>{value}</strong>
+            <span>{key}</span>
+          </div>
+        ))}
+      </div>
+      <nav>
+        {[
+          ['flow', '30天流程'],
+          ['trigger', '记录触发'],
+          ['recovery', '失败后恢复'],
+        ].map(([key, label]) => (
+          <button
+            type="button"
+            className={mode === key ? 'active' : ''}
+            onClick={() => setMode(key)}
+            key={key}
+          >
+            {t(label)}
+          </button>
+        ))}
+      </nav>
+      {error && <div className="mb-alert error">{error}</div>}
+      {notice && <div className="mb-alert success">{notice}</div>}
+      {mode === 'flow' && (
+        <div className="mb-attention-flow">
+          {data.flow.map((item, index) => (
+            <div key={item}>
+              <strong>{index + 1}</strong>
+              <span>{item}</span>
+            </div>
+          ))}
+        </div>
+      )}
+      {mode === 'trigger' && (
+        <form
+          onSubmit={(e) => {
+            e.preventDefault()
+            void run(() => saveAttentionPilotTrigger(token, trigger), '触发已按类别记录')
+          }}
+        >
+          <select
+            value={trigger.triggerCategory}
+            onChange={(e) => setTrigger({ ...trigger, triggerCategory: e.target.value })}
+          >
+            <option value="fatigue">疲劳</option>
+            <option value="emotion">情绪</option>
+            <option value="time">时间</option>
+            <option value="place">场所</option>
+            <option value="social">社交</option>
+            <option value="other">其他</option>
+          </select>
+          <input
+            type="range"
+            min="1"
+            max="5"
+            value={trigger.intensity}
+            onChange={(e) => setTrigger({ ...trigger, intensity: Number(e.target.value) })}
+          />
+          <GuidedInput
+            multiline
+            options={CONTEXT_OPTIONS}
+            maxLength={240}
+            placeholder={t('只写简短情境，不填写链接、色情内容或具体搜索词')}
+            value={trigger.contextSummary}
+            onChange={(contextSummary) => setTrigger({ ...trigger, contextSummary })}
+            aria-label={t('只写简短情境，不填写链接、色情内容或具体搜索词')}
+          />
+          <button type="submit" disabled={busy}>
+            {t('私密保存触发')}
+          </button>
+        </form>
+      )}
+      {mode === 'recovery' && (
+        <form
+          onSubmit={(e) => {
+            e.preventDefault()
+            void run(() => startAttentionPilotRecovery(token, recovery), '恢复计划已开始')
+          }}
+        >
+          <select
+            value={recovery.category}
+            onChange={(e) => setRecovery({ ...recovery, category: e.target.value })}
+          >
+            <option value="short_video">短视频</option>
+            <option value="gaming">游戏</option>
+            <option value="sexual_content">色情内容（不记录细节）</option>
+            <option value="other">其他</option>
+          </select>
+          <GuidedInput
+            multiline
+            options={GRACE_OPTIONS}
+            required
+            value={recovery.graceStatement}
+            onChange={(graceStatement) => setRecovery({ ...recovery, graceStatement })}
+          />
+          <GuidedInput
+            multiline
+            options={ENVIRONMENT_OPTIONS}
+            required
+            value={recovery.environmentChange}
+            onChange={(environmentChange) => setRecovery({ ...recovery, environmentChange })}
+          />
+          <GuidedInput
+            multiline
+            options={REPLACEMENT_OPTIONS}
+            required
+            value={recovery.replacementAction}
+            onChange={(replacementAction) => setRecovery({ ...recovery, replacementAction })}
+          />
+          <GuidedInput
+            options={SUPPORT_OPTIONS}
+            placeholder={t('可选：向守望伙伴发出的求助摘要')}
+            value={recovery.supportRequest}
+            onChange={(supportRequest) => setRecovery({ ...recovery, supportRequest })}
+            aria-label={t('可选：向守望伙伴发出的求助摘要')}
+          />
+          <button type="submit" disabled={busy}>
+            {t('开始恢复，不从零定罪')}
+          </button>
+        </form>
+      )}
+    </section>
+  )
+}
